@@ -1,0 +1,1132 @@
+{
+  "slug": "bi-analytics",
+  "title": "BI Analytics",
+  "total_weeks": 17,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "Excel for Business Analysis",
+      "phase": "Foundations",
+      "commitment_hours": "25--35",
+      "context": "Master Excel as a professional data analysis tool. Learn PivotTables, advanced formulas, and data cleaning techniques used daily by BI analysts in real organisations.",
+      "topics": [
+        "PivotTables and PivotCharts: grouping, filtering, calculated fields",
+        "Advanced formulas: VLOOKUP, XLOOKUP, INDEX/MATCH, SUMIFS, COUNTIFS",
+        "Data cleaning: Remove Duplicates, Text to Columns, Flash Fill, Power Query basics",
+        "Conditional formatting for data highlighting and heatmaps",
+        "Named ranges and dynamic arrays (FILTER, UNIQUE, SORT)"
+      ],
+      "tasks": [
+        "Download a retail sales dataset (Kaggle Superstore or similar) and load it into Excel",
+        "Build three PivotTables: sales by region, top products by revenue, monthly trend",
+        "Write XLOOKUP and SUMIFS formulas to enrich the dataset with lookup data",
+        "Clean the dataset: fix date formats, remove blanks, standardise category names",
+        "Create a one-page summary dashboard using PivotCharts and slicers"
+      ],
+      "project": "Sales Summary Dashboard: Use the Superstore dataset to build an interactive Excel dashboard showing KPIs (Total Revenue, Avg Order Value, Return Rate), regional breakdown, and monthly trend. Add slicers for category and year. This will be your Week 1 portfolio artefact.",
+      "resources": [
+        {
+          "label": "YouTube: ExcelJet channel — PivotTable deep dive (search: 'ExcelJet PivotTable 2024')",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Leila Gharani — XLOOKUP tutorial (search: 'Leila Gharani XLOOKUP complete guide')",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Dataset: Kaggle Superstore Sales — kaggle.com/datasets/vivek468/superstore-dataset-final",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Microsoft Excel documentation: support.microsoft.com/excel (dynamic arrays section)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: MyOnlineTrainingHub — Power Query for beginners",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "Why is XLOOKUP preferred over VLOOKUP in modern Excel, and what are its key advantages?",
+        "What is the difference between a PivotTable calculated field and a helper column in the source data?",
+        "When would you use Power Query instead of manual data cleaning steps?",
+        "Explain the difference between SUMIF and SUMIFS with an example."
+      ],
+      "exercises": [
+        "Build a PivotTable that shows profit margin by product category, sorted descending",
+        "Write an XLOOKUP that returns the region name from a separate lookup table based on a store ID",
+        "Use Power Query to merge two tables (Orders and Returns) and flag returned orders",
+        "Create a heatmap using conditional formatting on a month x category profit matrix"
+      ],
+      "outputs": [
+        "Excel dashboard file (.xlsx) with interactive slicers",
+        "GitHub repository created with a /week-01-excel folder",
+        "README.md describing the dataset and 3 key insights"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "SQL for Data Retrieval",
+      "phase": "Foundations",
+      "commitment_hours": "25--35",
+      "context": "Learn SQL as the primary language of data access in BI. Write queries that retrieve, filter, aggregate, and join data — the skills used in 100\\% of BI analyst job descriptions.",
+      "topics": [
+        "SELECT, WHERE, ORDER BY, LIMIT — basic retrieval",
+        "Aggregate functions: COUNT, SUM, AVG, MIN, MAX with GROUP BY and HAVING",
+        "JOINs: INNER, LEFT, RIGHT, FULL OUTER — when and why to use each",
+        "Subqueries and Common Table Expressions (CTEs)",
+        "String and date functions: CONCAT, SUBSTRING, DATEDIFF, DATE_TRUNC"
+      ],
+      "tasks": [
+        "Set up a local PostgreSQL or SQLite database; load the Northwind dataset",
+        "Write 10 queries covering all basic operations (SELECT, filter, GROUP BY, JOIN)",
+        "Answer 5 business questions using SQL (top customers, slowest-moving products, etc.)",
+        "Write a CTE that calculates monthly revenue growth rate",
+        "Export query results to CSV and import into Excel for a combined workflow"
+      ],
+      "project": "Customer Analysis with SQL: Query the Northwind database to answer: Who are the top 10 customers by lifetime value? Which product categories have declining sales? What is the average time between order and delivery by region? Write a brief report summarising your findings.",
+      "resources": [
+        {
+          "label": "YouTube: Programming with Mosh — SQL Tutorial for Beginners (full video)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Dataset: Northwind database — github.com/pthom/northwind_psql",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Interactive practice: sqlzoo.net (complete SELECT and JOIN sections)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Mode SQL Tutorial: mode.com/sql-tutorial (CTE and subquery sections)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Alex the Analyst — SQL for Data Analysts playlist",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is the difference between WHERE and HAVING? Give an example where HAVING is required.",
+        "Explain a scenario where a LEFT JOIN gives different results from an INNER JOIN.",
+        "Why are CTEs preferred over nested subqueries for readability?",
+        "What does GROUP BY do, and what error occurs if you forget it?"
+      ],
+      "exercises": [
+        "Find all customers who placed more than 5 orders and their total spend",
+        "Write a query using a CTE to rank products by revenue within each category",
+        "Calculate the month-over-month revenue change using a self-join or LAG() function",
+        "Join Orders, Order Details, and Products to get a full line-item sales report"
+      ],
+      "outputs": [
+        "SQL query file (.sql) with 15+ queries solving real business questions",
+        "CSV export of top-customer analysis",
+        "GitHub folder /week-02-sql with README describing each query's business purpose"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Introduction to Tableau",
+      "phase": "Foundations",
+      "commitment_hours": "25--35",
+      "context": "Get productive in Tableau Public within one week. Learn to connect data, build visualisations, and think in Tableau's visual grammar of marks, dimensions, and measures.",
+      "topics": [
+        "Tableau interface: shelves, cards, marks panel, Show Me",
+        "Dimensions vs Measures vs Discrete vs Continuous — Tableau's core model",
+        "Bar charts, line charts, scatter plots, maps, treemaps in Tableau",
+        "Filters: quick filters, context filters, top N filters",
+        "Calculated fields basics: IF, CASE, date calculations, string functions"
+      ],
+      "tasks": [
+        "Install Tableau Public (free) and connect to the Superstore CSV",
+        "Build 5 chart types: bar, line, scatter, filled map, treemap",
+        "Create a calculated field: profit ratio = SUM(Profit) / SUM(Sales)",
+        "Add interactive filters (category, year, region) to a dashboard",
+        "Publish your first dashboard to Tableau Public"
+      ],
+      "project": "Regional Performance Dashboard: Build a 3-view Tableau dashboard showing: (1) sales map by state, (2) category performance bar chart, (3) monthly profit trend line. Add a region filter that updates all views simultaneously. Publish to Tableau Public.",
+      "resources": [
+        {
+          "label": "Tableau eLearning: training.tableau.com (free Tableau Desktop Specialist prep)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Andy Kriebel — Tableau Fundamentals playlist (Workout Wednesday creator)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Tableau Tim — Getting Started with Tableau 2024",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Dataset: Sample Superstore (built into Tableau)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Tableau community: community.tableau.com (Viz of the Day for inspiration)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is the difference between a dimension and a measure in Tableau?",
+        "Explain why context filters must be set before other filters in Tableau.",
+        "What does the FIXED level of detail (LOD) expression do?",
+        "How does Tableau handle NULL values in aggregated measures?"
+      ],
+      "exercises": [
+        "Build a scatter plot of Sales vs Profit coloured by Category with a trend line",
+        "Create a calculated field that classifies orders as High/Medium/Low profit",
+        "Build a dual-axis chart showing Sales bars and Profit Ratio line",
+        "Use a Top N filter to show only the top 10 customers by sales"
+      ],
+      "outputs": [
+        "Tableau Public dashboard (published, shareable URL)",
+        "GitHub /week-03-tableau folder with screenshot and link",
+        "One-paragraph business summary of the dashboard insights"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Advanced Tableau",
+      "phase": "Advanced Visualisation",
+      "commitment_hours": "25--35",
+      "context": "Move beyond basic charts to build production-quality Tableau dashboards with LOD expressions, table calculations, parameters, and polished design principles.",
+      "topics": [
+        "Level of Detail (LOD) expressions: FIXED, INCLUDE, EXCLUDE — use cases",
+        "Table calculations: WINDOW_SUM, RUNNING_TOTAL, RANK, PERCENTILE",
+        "Parameters: dynamic reference lines, top-N controls, scenario analysis",
+        "Dashboard design principles: layout containers, floating vs tiled, colour theory",
+        "Sets and set actions for custom interactivity"
+      ],
+      "tasks": [
+        "Write 3 LOD expressions: customer first order date, cohort revenue, category share",
+        "Build a cohort retention heatmap using table calculations",
+        "Add a parameter to dynamically switch between Sales, Profit, and Quantity metrics",
+        "Design a dashboard following a professional colour palette (max 3 colours)",
+        "Add set actions so clicking a region filters all other charts"
+      ],
+      "project": "Executive Sales Dashboard: Build a C-suite-ready Tableau dashboard with: KPI scorecard using LOD (YTD vs prior year), cohort analysis heatmap, dynamic metric selector via parameter, and clean branding. Suitable for a portfolio showcase.",
+      "resources": [
+        {
+          "label": "YouTube: Tableau Tim — LOD Expressions explained (search: 'Tableau LOD 2024')",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Book: Storytelling with Data by Cole Nussbaumer Knaflic (Chapters 1-5)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Workout Wednesday: workout-wednesday.com (download weekly challenges)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: DataPlusScience — Table Calculations playlist",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Tableau Help: help.tableau.com (Parameters and Set Actions docs)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "Explain with an example when you would use FIXED LOD vs INCLUDE LOD.",
+        "What is the difference between RUNNING_TOTAL and WINDOW_SUM table calculations?",
+        "How do parameters differ from filters in Tableau?",
+        "What principle from Storytelling with Data most changed how you design charts?"
+      ],
+      "exercises": [
+        "Calculate customer lifetime value using a FIXED LOD expression",
+        "Build a running total area chart showing cumulative revenue by month",
+        "Create a dynamic title that updates when a parameter value changes",
+        "Rebuild an existing chart removing all chart junk (gridlines, borders, legends where redundant)"
+      ],
+      "outputs": [
+        "Executive-quality Tableau dashboard published to Tableau Public",
+        "2 Workout Wednesday solutions",
+        "Design notes: what you changed after peer feedback"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Power BI Fundamentals",
+      "phase": "Advanced Visualisation",
+      "commitment_hours": "25--35",
+      "context": "Learn Power BI Desktop from scratch. Understand how Power BI differs from Tableau, build your first reports, and master the data loading and transformation layer.",
+      "topics": [
+        "Power BI Desktop interface: Report, Data, Model views",
+        "Connecting to data: CSV, Excel, SQL Server, Web connectors",
+        "Power Query Editor: transformations, merge queries, append queries",
+        "Basic DAX: SUM, COUNT, CALCULATE, FILTER, basic measures vs calculated columns",
+        "Relationships in the data model: star schema vs snowflake schema"
+      ],
+      "tasks": [
+        "Install Power BI Desktop and load the AdventureWorks sample dataset",
+        "Use Power Query to clean and transform the data (remove nulls, change types, rename columns)",
+        "Build a star schema model with fact and dimension tables",
+        "Write 5 DAX measures: Total Sales, Total Cost, Gross Profit, Profit\\%, YTD Sales",
+        "Build a 3-page report: Overview, Product Detail, Customer Analysis"
+      ],
+      "project": "AdventureWorks Sales Report: Build a 3-page Power BI report for a fictional bicycle company. Page 1: Executive KPIs. Page 2: Product performance matrix with conditional formatting. Page 3: Customer segmentation by geography. Use slicers on every page.",
+      "resources": [
+        {
+          "label": "YouTube: Guy in a Cube — Power BI for Beginners 2024 playlist",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Microsoft Learn: learn.microsoft.com/power-bi (free official learning paths)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Dataset: AdventureWorks (available from Microsoft sample datasets)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: SQLBI — Introduction to DAX (Italiano Bicchieri series)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Power BI Community: community.powerbi.com (forum for troubleshooting)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is the difference between a DAX measure and a calculated column?",
+        "Explain the star schema and why it is preferred for Power BI models.",
+        "What does CALCULATE do in DAX, and why is it considered the most important function?",
+        "How does Power Query differ from SQL as a data transformation tool?"
+      ],
+      "exercises": [
+        "Write a DAX measure for Gross Profit Margin that handles division by zero",
+        "Use CALCULATE with FILTER to compute sales for a specific product category only",
+        "In Power Query, merge the Orders and Products tables and add a Revenue column",
+        "Build a matrix visual with conditional formatting on profit margin"
+      ],
+      "outputs": [
+        "Power BI .pbix file committed to GitHub (or PDF export if file size is large)",
+        "DAX measures documented in a README",
+        "Data model diagram screenshot"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Advanced Power BI and DAX",
+      "phase": "Advanced Visualisation",
+      "commitment_hours": "25--35",
+      "context": "Master the advanced DAX functions that separate junior from senior Power BI developers. Learn time intelligence, iterators, and complex filter context manipulation.",
+      "topics": [
+        "Time intelligence: TOTALYTD, SAMEPERIODLASTYEAR, DATEADD, DATESYTD",
+        "Iterator functions: SUMX, AVERAGEX, RANKX, MAXX",
+        "Filter context vs row context — the most misunderstood DAX concept",
+        "Variables in DAX: VAR...RETURN for readable complex measures",
+        "Row-level security (RLS) setup and testing"
+      ],
+      "tasks": [
+        "Write DAX measures for: YTD Sales, Prior Year Sales, YoY\\% Change, Rolling 3-Month Average",
+        "Use RANKX to rank products by revenue, handling ties correctly",
+        "Refactor your previous measures using VAR...RETURN for clarity",
+        "Set up row-level security so a manager sees only their region's data",
+        "Build a time-intelligence dashboard with period-over-period comparison cards"
+      ],
+      "project": "Time Intelligence Financial Dashboard: Build a Power BI dashboard showing YTD Revenue vs Prior Year, monthly trend with rolling average, YoY growth waterfall chart, and regional heat map with RLS. This is a hire-ready portfolio piece for analyst roles.",
+      "resources": [
+        {
+          "label": "SQLBI: dax.guide (free, comprehensive DAX function reference)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: SQLBI — Filter Context and Row Context explained",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Book: The Definitive Guide to DAX by Marco Russo and Alberto Ferrari (Chapters 1-6)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Curbal — Time Intelligence in Power BI playlist",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Microsoft Docs: learn.microsoft.com/dax (official function reference)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "Explain filter context vs row context with a concrete DAX example.",
+        "Why does SUMX iterate row by row while SUM operates on a column directly?",
+        "What does SAMEPERIODLASTYEAR require in your date table to work correctly?",
+        "When would you use RANKX with ALLSELECTED vs ALL?"
+      ],
+      "exercises": [
+        "Write a measure that returns 'N/A' if there is no prior year data instead of BLANK",
+        "Use SUMX to calculate a weighted average unit price across all transactions",
+        "Build a dynamic comparison: user selects current vs prior period via a slicer",
+        "Create a DAX measure that calculates the running 12-month average revenue"
+      ],
+      "outputs": [
+        "Advanced Power BI report with time intelligence measures",
+        "DAX measures library file (.dax or documented in README)",
+        "RLS implementation with test screenshots"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "SQL for BI Reporting",
+      "phase": "SQL and Data Modelling",
+      "commitment_hours": "25--35",
+      "context": "Advance your SQL to the level required for BI engineering: window functions, complex aggregations, query optimisation, and building views that power dashboards.",
+      "topics": [
+        "Window functions: ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, NTILE",
+        "PARTITION BY and ORDER BY inside window functions",
+        "Complex aggregations: ROLLUP, CUBE, GROUPING SETS",
+        "Query optimisation: EXPLAIN plans, index usage, avoiding full table scans",
+        "Views, materialised views, and stored procedures for BI"
+      ],
+      "tasks": [
+        "Rewrite your Week 2 queries using window functions where applicable",
+        "Calculate month-over-month sales change using LAG without a self-join",
+        "Build a sales ranking report using DENSE_RANK partitioned by region",
+        "Create a database view that aggregates daily sales data for a dashboard",
+        "Run EXPLAIN on your slowest query and identify the performance bottleneck"
+      ],
+      "project": "BI Reporting Layer: Design and build a SQL reporting layer for the Northwind database. Create views for: (1) Monthly sales summary, (2) Customer RFM scores (Recency, Frequency, Monetary), (3) Product performance by category and quarter. Document how a Tableau or Power BI report would connect to these views.",
+      "resources": [
+        {
+          "label": "YouTube: Tech TFQ — Window Functions in SQL (full tutorial)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Mode SQL Tutorial: mode.com/sql-tutorial/sql-window-functions",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "PostgreSQL docs: postgresql.org/docs (Window Functions section)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Corey Schafer — SQLite and Python tutorial (useful for local practice)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "SQLZoo: sqlzoo.net/wiki/Window_functions",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is the difference between RANK and DENSE_RANK when there are ties?",
+        "When would you use ROLLUP vs CUBE in GROUP BY?",
+        "Explain what a materialised view is and when it is preferable to a regular view.",
+        "How does adding an index improve query performance? What are the trade-offs?"
+      ],
+      "exercises": [
+        "Calculate a 3-month rolling average of monthly revenue using window functions",
+        "Assign customers to quartiles (Q1-Q4) by lifetime value using NTILE(4)",
+        "Write a query using GROUPING SETS to show totals by region, category, and grand total",
+        "Create a view called vw_monthly_sales and connect it to a Tableau or Power BI report"
+      ],
+      "outputs": [
+        "SQL reporting layer: 3 views + 10 window function queries",
+        "EXPLAIN plan analysis for at least one query",
+        "GitHub /week-07-sql-bi folder with full documentation"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Data Modelling and Warehouse Concepts",
+      "phase": "SQL and Data Modelling",
+      "commitment_hours": "25--35",
+      "context": "Understand how modern data warehouses are structured and modelled. Learn dimensional modelling, star schemas, and the fundamentals of dbt — the standard tool for warehouse transformation.",
+      "topics": [
+        "Dimensional modelling: fact tables, dimension tables, surrogate keys",
+        "Star schema vs snowflake schema — trade-offs and when to use each",
+        "Slowly Changing Dimensions (SCD) Type 1, 2, and 3",
+        "Introduction to dbt (data build tool): models, tests, documentation",
+        "Modern data stack overview: ingestion (Fivetran/Airbyte), warehouse (BigQuery/Snowflake), transformation (dbt), BI (Tableau/Power BI)"
+      ],
+      "tasks": [
+        "Design a star schema for an e-commerce business on paper (identify facts and dimensions)",
+        "Implement the schema in PostgreSQL: create fact and dimension tables with relationships",
+        "Install dbt Core (free) and initialise a project against your PostgreSQL database",
+        "Write 3 dbt models: dim_customers, dim_products, fct_orders",
+        "Add schema tests (not_null, unique) to your dbt models and run dbt test"
+      ],
+      "project": "Mini Data Warehouse: Build a small data warehouse from raw Northwind data using dbt. Create staging models, dimension models, and a fact model. Run dbt docs generate and host the docs. Connect Power BI to the mart layer and build a simple KPI dashboard on top.",
+      "resources": [
+        {
+          "label": "dbt Learn: courses.getdbt.com (free Fundamentals course — complete all modules)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Kahan Data Solutions — dbt Tutorial for Beginners",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Book: The Data Warehouse Toolkit by Ralph Kimball (Chapters 1-3)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Seattle Data Guy — Modern Data Stack explained",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "dbt documentation: docs.getdbt.com (Models and Tests sections)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is the difference between a fact table and a dimension table?",
+        "Explain SCD Type 2 and give a real business example where it is necessary.",
+        "What does dbt do that raw SQL cannot, and why has it become the industry standard?",
+        "Why is a star schema preferred over a normalised schema for analytics queries?"
+      ],
+      "exercises": [
+        "Draw an entity-relationship diagram for a hotel booking data warehouse (facts: bookings, dimensions: guest, room, date, property)",
+        "Implement a SCD Type 2 dimension table for product price history in SQL",
+        "Write a dbt model with a Jinja macro that generates a date spine",
+        "Add dbt tests for uniqueness and not-null on all primary keys in your models"
+      ],
+      "outputs": [
+        "dbt project with 3+ models, tests, and documentation",
+        "Star schema diagram",
+        "Power BI report connected to the dbt mart layer"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Business Statistics for BI",
+      "phase": "Analytics and Insights",
+      "commitment_hours": "25--35",
+      "context": "Develop the statistical intuition that separates data reporters from true analysts. Learn to describe distributions, understand uncertainty, and communicate statistical findings to non-technical stakeholders.",
+      "topics": [
+        "Descriptive statistics: mean, median, mode, variance, standard deviation, IQR",
+        "Distributions: normal, skewed, bimodal — and what they imply about the data",
+        "Correlation and causation: Pearson r, Spearman r, interpreting r-values",
+        "Outlier detection: IQR method, z-scores, and business impact of outliers",
+        "Intro to probability: conditional probability, Bayes intuition for business decisions"
+      ],
+      "tasks": [
+        "Calculate descriptive statistics for a retail dataset in both Excel and SQL",
+        "Visualise the distribution of order values using a histogram in Tableau",
+        "Calculate and interpret correlation between marketing spend and revenue in Excel",
+        "Identify and flag statistical outliers in a sales dataset using the IQR method",
+        "Write a plain-English interpretation of your statistical findings for a non-technical manager"
+      ],
+      "project": "Statistical Sales Analysis: Analyse a retail dataset statistically. Identify which product categories have the most variable profit margins, whether there is a significant correlation between discount rate and order value, and what the distribution of customer lifetime value looks like. Present findings as a 2-page written report.",
+      "resources": [
+        {
+          "label": "YouTube: StatQuest with Josh Starmer — Statistics Fundamentals playlist",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: CrashCourse Statistics — episodes 1-10",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Khan Academy: khanacademy.org/math/statistics-probability",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Dataset: Kaggle Superstore or any retail dataset with financial columns",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Excel: use the Analysis ToolPak add-in for descriptive statistics",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "When is the median a better measure of central tendency than the mean?",
+        "Correlation is not causation — give two business examples where this mistake is commonly made.",
+        "What is a 95\\% confidence interval and how would you explain it to a sales manager?",
+        "Why can outliers distort a simple average KPI on a dashboard, and what should you do instead?"
+      ],
+      "exercises": [
+        "Calculate the z-score of each transaction in a dataset and flag those above 2.5",
+        "Create a box plot in Tableau showing the distribution of profit by category",
+        "Compute Pearson correlation between discount and profit in Excel",
+        "Write a 200-word business memo summarising the key statistical finding from your analysis"
+      ],
+      "outputs": [
+        "Statistical analysis report (PDF or Markdown)",
+        "Tableau histogram and box plot visualisations",
+        "Updated dashboard with robust statistics"
+      ]
+    },
+    {
+      "number": 10,
+      "title": "A/B Testing and Hypothesis Testing",
+      "phase": "Analytics and Insights",
+      "commitment_hours": "25--35",
+      "context": "Learn how businesses make data-driven decisions through controlled experiments. Master A/B testing methodology, hypothesis testing, and how to communicate results that influence business strategy.",
+      "topics": [
+        "Hypothesis testing framework: null hypothesis, alternative hypothesis, p-value, alpha",
+        "t-test: independent samples and paired samples — when to use each",
+        "Chi-square test for categorical data (conversion rates, user behaviour)",
+        "Statistical power, sample size calculation, Type I and Type II errors",
+        "A/B testing in practice: experiment design, guardrail metrics, stopping rules"
+      ],
+      "tasks": [
+        "Design a hypothetical A/B test for an e-commerce checkout page improvement",
+        "Use Excel or Python to conduct an independent samples t-test on two sales groups",
+        "Calculate the required sample size for your test using a power calculator",
+        "Run a chi-square test comparing conversion rates between two marketing channels",
+        "Write a 1-page A/B test results report suitable for a product manager"
+      ],
+      "project": "E-Commerce A/B Test Analysis: You are given results from a 2-week A/B test on a product page. Analyse whether the change significantly improved conversion rate (chi-square test) and average order value (t-test). Account for multiple comparisons. Write a recommendation report with statistical evidence.",
+      "resources": [
+        {
+          "label": "YouTube: StatQuest — p-values, t-tests, chi-square tests (individual videos)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Evan Miller: evanmiller.org/ab-testing (sample size calculator)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: CXL — A/B Testing Mistakes to Avoid",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Optimizely Blog: optimizely.com/optimization-glossary (A/B testing glossary)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Book: Trustworthy Online Controlled Experiments by Kohavi et al. (Chapter 1)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "Explain p-value in plain English to a marketing manager who has never studied statistics.",
+        "What is statistical power and why does a sample size that is too small lead to unreliable results?",
+        "What is a Type I error and what business consequence does it have in an A/B test?",
+        "Why should you avoid stopping a test early when it looks significant?"
+      ],
+      "exercises": [
+        "Conduct a t-test in Excel using the TTEST function on two simulated sales groups",
+        "Use a chi-square test to determine if there is a significant difference in conversion rates between mobile and desktop users",
+        "Calculate the minimum detectable effect size for a test given 80\\% power and 5\\% alpha",
+        "Critique a provided 'A/B test report' that has 3 statistical errors — identify and explain them"
+      ],
+      "outputs": [
+        "A/B test analysis report with statistical results",
+        "Sample size calculation with justification",
+        "GitHub /week-10-abtesting folder with data, analysis, and report"
+      ]
+    },
+    {
+      "number": 11,
+      "title": "KPIs, Metrics Design, and Data Storytelling",
+      "phase": "Analytics and Insights",
+      "commitment_hours": "25--35",
+      "context": "Learn to design meaningful KPIs that drive business decisions, and master the craft of data storytelling — the most differentiating skill for senior BI analysts.",
+      "topics": [
+        "KPI design principles: SMART metrics, leading vs lagging indicators, vanity vs actionable metrics",
+        "The North Star metric framework and OKRs (Objectives and Key Results)",
+        "Narrative structure for data presentations: situation-complication-resolution",
+        "Chart selection guide: when to use each chart type",
+        "Colour, typography, and layout in data visualisation design"
+      ],
+      "tasks": [
+        "Critique a provided bad dashboard: identify 5 design problems and redesign it",
+        "Define a North Star metric and 3 supporting KPIs for a fictional e-commerce business",
+        "Build a 5-slide data story presentation from a dataset (insight first, evidence second)",
+        "Rebuild a chart you made earlier using Storytelling with Data principles",
+        "Write a 300-word executive summary of a BI project you have completed"
+      ],
+      "project": "Data Story Presentation: Choose one of your previous analyses and turn it into a 6-slide narrative presentation. Structure: (1) Business context, (2) Problem/opportunity, (3) Key finding 1, (4) Key finding 2, (5) Recommendation with projected impact, (6) Next steps. Design using minimal, clean visuals.",
+      "resources": [
+        {
+          "label": "Book: Storytelling with Data by Cole Nussbaumer Knaflic (complete the book)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Cole Nussbaumer Knaflic — Storytelling with Data channel",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Neil Patel — Vanity Metrics vs Actionable Metrics",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Blog: Amplitude — North Star Metric guide (search: 'amplitude north star metric')",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Colour tool: colorbrewer2.org (colour palettes for data visualisation)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is the difference between a leading indicator and a lagging indicator? Give an example of each.",
+        "Why is 'number of page views' a vanity metric, and what would be a better alternative?",
+        "Describe the situation-complication-resolution narrative structure and apply it to a BI scenario.",
+        "What chart type would you use to show part-to-whole relationships, and why not a 3D pie chart?"
+      ],
+      "exercises": [
+        "Redesign a given cluttered bar chart to follow Storytelling with Data principles",
+        "Write a one-sentence insight headline for each chart in your portfolio dashboards",
+        "Create a KPI framework for a hotel: identify 1 North Star, 3 supporting KPIs, 3 leading indicators",
+        "Record a 3-minute video walkthrough of your data story presentation"
+      ],
+      "outputs": [
+        "6-slide data story presentation (PDF)",
+        "Before/after dashboard redesign",
+        "KPI framework document"
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Python for BI Analysts",
+      "phase": "Python and Automation",
+      "commitment_hours": "25--35",
+      "context": "Add Python to your BI toolkit. Use pandas for data manipulation beyond Excel's limits, automate repetitive report generation, and build exploratory analysis workflows.",
+      "topics": [
+        "Python setup: Anaconda, Jupyter Notebooks, VS Code for data work",
+        "pandas fundamentals: DataFrames, Series, read_csv, head, info, describe",
+        "Data manipulation: filtering, groupby, merge, pivot_table, apply",
+        "Data cleaning with pandas: fillna, dropna, astype, string methods",
+        "Basic matplotlib and seaborn for quick EDA plots"
+      ],
+      "tasks": [
+        "Set up Python with Anaconda and open a Jupyter Notebook",
+        "Load the Superstore dataset into a pandas DataFrame and explore it",
+        "Reproduce your Week 1 Excel analysis (PivotTable equivalent) using groupby",
+        "Clean a messy dataset: handle nulls, fix data types, standardise strings",
+        "Generate a 5-chart EDA report using matplotlib and seaborn, saved as PNG files"
+      ],
+      "project": "Automated Monthly Report: Write a Python script that reads a sales CSV, calculates 5 KPIs (Total Revenue, Avg Order Value, Top Category, YoY Growth, Customer Count), generates 3 charts, and saves everything to a dated output folder. Schedule it to run monthly using Windows Task Scheduler.",
+      "resources": [
+        {
+          "label": "YouTube: Corey Schafer — Pandas Tutorial playlist (complete all videos)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Book: Python for Data Analysis by Wes McKinney (Chapters 1-8)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Alex the Analyst — Python for BI Analysts playlist",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Kaggle: kaggle.com/learn/pandas (free micro-course)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "seaborn gallery: seaborn.pydata.org/examples (for chart inspiration)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is a pandas DataFrame and how does it relate to a SQL table?",
+        "Explain the difference between groupby().sum() and pivot_table() in pandas.",
+        "When would you use pandas merge vs SQL JOIN? Are they equivalent?",
+        "What does the apply() method do, and when is it better to use vectorised operations instead?"
+      ],
+      "exercises": [
+        "Reproduce a PivotTable from Excel exactly using pandas groupby and agg",
+        "Write a function that takes a DataFrame and returns a data quality report (nulls, types, unique values)",
+        "Merge two DataFrames on a customer ID and calculate revenue per customer",
+        "Create a seaborn heatmap showing correlation between all numeric columns in a dataset"
+      ],
+      "outputs": [
+        "Python automation script for monthly report generation",
+        "Jupyter Notebook with EDA analysis",
+        "GitHub /week-12-python folder with script, sample output, and README"
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Cloud BI: Google Looker Studio and BigQuery",
+      "phase": "Python and Automation",
+      "commitment_hours": "25--35",
+      "context": "Experience the modern cloud BI stack. Connect BigQuery (Google's cloud data warehouse) to Looker Studio and build a live, shared dashboard — the setup used by thousands of companies.",
+      "topics": [
+        "Google Cloud Platform basics: projects, BigQuery datasets, public datasets",
+        "BigQuery SQL: standard SQL dialect, partitioned tables, query cost management",
+        "Looker Studio (formerly Data Studio): connecting to BigQuery, blended data sources",
+        "Scheduled reports and email delivery in Looker Studio",
+        "Intro to Looker (enterprise): LookML concepts and the modelling layer"
+      ],
+      "tasks": [
+        "Create a free Google Cloud account and explore BigQuery public datasets",
+        "Query the BigQuery public dataset bigquery-public-data.chicago_taxi_trips using SQL",
+        "Calculate average trip duration and revenue by hour of day in BigQuery",
+        "Connect Looker Studio to your BigQuery query results",
+        "Build a live Looker Studio dashboard and share the URL"
+      ],
+      "project": "Chicago Taxi Analytics Dashboard: Use the BigQuery public taxi dataset to build a Looker Studio dashboard showing: peak hours by ride volume, average fare by pickup neighbourhood, weekly trend, and driver revenue distribution. Share a live public URL for your portfolio.",
+      "resources": [
+        {
+          "label": "Google Cloud Skills Boost: cloudskillsboost.google (free BigQuery intro labs)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Google Cloud Tech — BigQuery for Data Analysts playlist",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Looker Studio Help: support.google.com/looker-studio",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Avi Singh PowerBI — Looker Studio 2024 tutorial",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "BigQuery public datasets: cloud.google.com/bigquery/public-data",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What is a partitioned table in BigQuery and how does it reduce query cost?",
+        "What is the difference between Looker Studio and Looker (enterprise)?",
+        "How does BigQuery pricing work and what can you do to minimise costs?",
+        "What are the limitations of Looker Studio compared to Tableau and Power BI?"
+      ],
+      "exercises": [
+        "Write a BigQuery query that calculates hour-over-hour ride volume change using LAG",
+        "Create a blended data source in Looker Studio combining two different date-range queries",
+        "Set up a scheduled email delivery of your Looker Studio report",
+        "Calculate the query cost before running a large BigQuery query using the dry-run feature"
+      ],
+      "outputs": [
+        "Live Looker Studio dashboard (public URL)",
+        "BigQuery SQL queries committed to GitHub",
+        "Cost optimisation notes for BigQuery"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "AI-Assisted BI Workflows",
+      "phase": "AI and Modern BI",
+      "commitment_hours": "25--35",
+      "context": "Integrate AI tools into your BI workflow to dramatically increase productivity. Learn prompt engineering for data analysis, AI-assisted DAX and SQL writing, and the emerging AI features in Power BI and Tableau.",
+      "topics": [
+        "Prompt engineering for data analysis: writing effective prompts for ChatGPT/Claude",
+        "AI-assisted SQL and DAX: generate, explain, and debug queries with AI",
+        "Power BI Copilot and Tableau AI features: current capabilities and limitations",
+        "AI for data storytelling: generating insights and narrative from data",
+        "Responsible AI use: verifying AI-generated code, avoiding hallucinations in analysis"
+      ],
+      "tasks": [
+        "Use Claude or ChatGPT to generate a complex DAX measure from a plain-English description",
+        "Use AI to debug a broken SQL query — document the prompt and the fix",
+        "Ask AI to explain what a dashboard should show given a business question",
+        "Use Power BI Copilot (if available) to auto-generate a report page",
+        "Write 5 effective prompts for data analysis tasks and compare AI vs manual output quality"
+      ],
+      "project": "AI-Accelerated Dashboard Build: Reproduce your Week 6 Power BI dashboard but this time use AI assistance for all DAX measures, the data model design, and the chart selection rationale. Document: which AI suggestions you used, which you rejected, and why. Measure time taken vs the original build.",
+      "resources": [
+        {
+          "label": "Anthropic: claude.ai (use Claude for data analysis assistance)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: How to Use AI for Data Analysis — search recent 2024/2025 tutorials",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Microsoft Blog: powerbi.microsoft.com (Copilot feature announcements)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "GitHub Copilot docs: docs.github.com/copilot (for SQL and Python assistance)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Towards Data Science: towardsdatascience.com (articles on AI-assisted analytics)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What makes a good prompt for generating DAX or SQL code? Give an example of a weak vs strong prompt.",
+        "What are the risks of using AI-generated SQL in a production BI environment?",
+        "How should you verify that an AI-generated measure is calculating correctly?",
+        "What tasks in BI are currently NOT well-suited to AI automation, and why?"
+      ],
+      "exercises": [
+        "Write a prompt that generates a complete star schema SQL script from a business description",
+        "Use AI to explain a complex DAX formula to a junior analyst in plain English",
+        "Ask AI to critique your dashboard design and implement 3 of its suggestions",
+        "Build a Jupyter Notebook where you use AI-generated pandas code to clean a messy dataset"
+      ],
+      "outputs": [
+        "AI-assisted Power BI dashboard with documentation",
+        "Prompt library for BI tasks (GitHub)",
+        "Time comparison: AI-assisted vs manual build"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "BI Portfolio and Interview Preparation",
+      "phase": "AI and Modern BI",
+      "commitment_hours": "25--35",
+      "context": "Curate a professional BI portfolio and prepare for technical interviews. Learn what hiring managers look for, how to present BI work, and how to answer the 20 most common BI interview questions.",
+      "topics": [
+        "BI portfolio requirements: what projects show hiring ability vs learning",
+        "GitHub for BI analysts: README quality, folder structure, screenshot standards",
+        "LinkedIn optimisation for BI roles: keywords, featured section, project links",
+        "BI interview question types: technical SQL/DAX, case studies, stakeholder scenarios",
+        "Salary negotiation and career progression in BI: analyst to senior to manager"
+      ],
+      "tasks": [
+        "Audit all GitHub projects: ensure every repo has a README, screenshot, and business context",
+        "Write a polished README for your best BI project (use the STAR format for each section)",
+        "Update LinkedIn with all BI tools (Tableau, Power BI, SQL, dbt, Looker Studio)",
+        "Practice 10 SQL interview questions from a BI interview question bank",
+        "Write answers to 5 behavioural questions using the STAR method (Situation, Task, Action, Result)"
+      ],
+      "project": "Portfolio Presentation Deck: Create a 10-slide personal portfolio presentation that a recruiter could look at in 5 minutes. Include: your background, 4 project highlights with screenshots and business impact, tools you use, and a contact/call-to-action slide. This is separate from any individual project README.",
+      "resources": [
+        {
+          "label": "YouTube: Alex the Analyst — BI Analyst Portfolio Tips",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "DataLemur: datalemur.com (SQL interview questions for analysts)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "StrataScratch: stratascratch.com (SQL and Python interview questions)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Book: Cracking the PM Interview by Gayle McDowell (for case study frameworks)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "LinkedIn Learning: search 'BI Analyst Interview Prep' (free with LinkedIn premium trial)",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "How would you explain a complex BI solution to a non-technical stakeholder in 2 minutes?",
+        "A stakeholder says your dashboard numbers don't match their Excel — walk through how you investigate.",
+        "How would you prioritise 5 dashboard requests when you have capacity for 2?",
+        "What is your favourite SQL window function and how have you used it in a real project?"
+      ],
+      "exercises": [
+        "Solve 10 SQL problems on DataLemur at the medium difficulty level",
+        "Do a mock interview with a peer: they ask 5 SQL questions, you answer on a shared screen",
+        "Time yourself: explain your best project in exactly 2 minutes, no notes",
+        "Write a cover letter paragraph for a BI Analyst role at a company you admire"
+      ],
+      "outputs": [
+        "Polished GitHub portfolio (all projects with READMEs and screenshots)",
+        "LinkedIn profile updated with BI keywords and project links",
+        "10-slide portfolio presentation PDF"
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Capstone Project — Week 1: Design and Build",
+      "phase": "Capstone",
+      "commitment_hours": "25--35",
+      "context": "Begin your end-to-end BI capstone project. Choose a real dataset from a domain you are interested in, define business questions, design the data model, and build the first version of your dashboard.",
+      "topics": [
+        "Project scoping: defining stakeholder personas, business questions, success metrics",
+        "Data source evaluation and ingestion planning",
+        "End-to-end BI architecture: raw data to dashboard",
+        "Documentation standards for BI projects",
+        "Version control with Git for BI: branching, commits for report iterations"
+      ],
+      "tasks": [
+        "Choose a domain (healthcare, finance, retail, sports, etc.) and find a rich public dataset (10k+ rows)",
+        "Write a 1-page project brief: business context, 5 questions to answer, tools to use",
+        "Build your data model in Power BI or design the SQL schema",
+        "Create the first dashboard page (executive overview) with at least 4 KPI cards",
+        "Commit daily to GitHub with meaningful commit messages"
+      ],
+      "project": "Capstone BI Solution: Build a complete, end-to-end BI solution on a real-world dataset. Requirements: at least 3 dashboard pages, a documented data model, SQL or dbt transformation layer, 10 DAX or calculated measures, interactive filters, and a written business report. This is your portfolio centrepiece.",
+      "resources": [
+        {
+          "label": "Dataset sources: data.world, Kaggle, data.gov, Google Dataset Search",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "YouTube: Guy in a Cube — End-to-end Power BI project walkthrough",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "GitHub: use feature branches for each dashboard page",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Miro or draw.io: use for data model and dashboard wireframe diagrams",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Project management: use GitHub Issues to track tasks",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What makes a BI project suitable for a portfolio versus an internal tool?",
+        "How do you scope a BI project to avoid scope creep?",
+        "What documentation would a senior analyst expect to see alongside a dashboard?",
+        "How would you present your capstone project in a job interview?"
+      ],
+      "exercises": [
+        "Write a data dictionary for your chosen dataset (column name, type, description, example value)",
+        "Draw a wireframe of your 3-page dashboard before building it",
+        "Write the business questions your capstone must answer as formal requirement statements",
+        "Build the data model diagram using draw.io and commit it to GitHub"
+      ],
+      "outputs": [
+        "Project brief (1 page, PDF)",
+        "Data model diagram",
+        "Wireframe for all 3 dashboard pages",
+        "First dashboard page (executive overview) in Power BI or Tableau"
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Capstone Project — Week 2: Complete and Present",
+      "phase": "Capstone",
+      "commitment_hours": "25--35",
+      "context": "Complete your capstone BI solution, polish the presentation, and prepare to defend your design decisions. This week you become a BI analyst, not a student.",
+      "topics": [
+        "Dashboard polish: consistent formatting, colour, typography, white space",
+        "Performance optimisation: reducing Power BI model size, optimising DAX",
+        "Writing BI project documentation: technical README, business report, data dictionary",
+        "Presenting BI work to stakeholders: framing insights, handling questions",
+        "Continuous improvement: what you would add with more time (and why you did not)"
+      ],
+      "tasks": [
+        "Complete all 3 dashboard pages with full interactivity",
+        "Write the technical README: data source, model, measures, tool versions",
+        "Write the business report: 3 key insights with evidence and recommendations",
+        "Record a 5-minute walkthrough video of the complete solution",
+        "Publish everything to GitHub with a tagged release"
+      ],
+      "project": "Capstone Delivery: Deliver your complete BI solution including: (1) Published dashboard (Tableau Public or Power BI Service), (2) GitHub repository with full documentation, (3) 5-minute demo video, (4) Written business report. Share all links in your LinkedIn profile and GitHub README.",
+      "resources": [
+        {
+          "label": "YouTube: review any tools from previous weeks as needed for polish",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Grammarly or Claude: use AI to proofread your business report",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "Loom: loom.com (free screen recording for your walkthrough video)",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "GitHub releases: docs.github.com/repositories/releasing-projects-on-github",
+          "url": "",
+          "note": ""
+        },
+        {
+          "label": "LinkedIn: post your capstone as an article or in your featured section",
+          "url": "",
+          "note": ""
+        }
+      ],
+      "questions": [
+        "What would you do differently if you were starting this project again?",
+        "If a stakeholder asks why a number looks wrong, walk through your investigation process step by step.",
+        "How would you extend this project into a production BI system? What would need to change?",
+        "What is the most important lesson you learned from building this capstone?"
+      ],
+      "exercises": [
+        "Optimise your Power BI model: remove unused columns from import, check DAX performance using Performance Analyzer",
+        "Get a peer to use your dashboard for 10 minutes and write down every point of confusion",
+        "Fix the top 3 usability issues your peer found",
+        "Write a LinkedIn post announcing your completed capstone with the dashboard link"
+      ],
+      "outputs": [
+        "Complete BI solution: published dashboard + full GitHub documentation",
+        "5-minute walkthrough video (Loom link in README)",
+        "Written business report (PDF)",
+        "LinkedIn post with capstone link",
+        "GitHub tagged release v1.0"
+      ]
+    }
+  ]
+}

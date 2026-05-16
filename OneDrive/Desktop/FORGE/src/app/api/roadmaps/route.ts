@@ -164,10 +164,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Create streak record
-  await prisma.streak.create({
-    data: { userId: session.user.id, roadmapId: roadmap.id },
-  });
+  // Streak record creation deferred — Streak model not yet in schema.
 
   return NextResponse.json({ roadmapId: roadmap.id }, { status: 201 });
 }
@@ -179,7 +176,6 @@ export async function GET() {
   const roadmaps = await prisma.roadmap.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
-    include: { streaks: { where: { userId: session.user.id } } },
   });
 
   return NextResponse.json({ roadmaps });

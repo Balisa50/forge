@@ -10,18 +10,9 @@ export async function DELETE() {
 
   const userId = session.user.id;
 
-  // Delete in correct dependency order
-  await prisma.$transaction([
-    prisma.interrogationAnswer.deleteMany({ where: { interrogation: { checkin: { userId } } } }),
-    prisma.interrogation.deleteMany({ where: { checkin: { userId } } }),
-    prisma.checkin.deleteMany({ where: { userId } }),
-    prisma.streak.deleteMany({ where: { userId } }),
-    prisma.roadmapTask.deleteMany({ where: { phase: { track: { roadmap: { userId } } } } }),
-    prisma.roadmapPhase.deleteMany({ where: { track: { roadmap: { userId } } } }),
-    prisma.roadmapTrack.deleteMany({ where: { roadmap: { userId } } }),
-    prisma.roadmap.deleteMany({ where: { userId } }),
-    prisma.user.delete({ where: { id: userId } }),
-  ]);
+  // Cascading deletes in the Prisma schema handle the dependent rows
+  // (roadmaps/tracks/phases/tasks/checkins/interrogations) automatically.
+  await prisma.user.delete({ where: { id: userId } });
 
   return NextResponse.json({ ok: true });
 }

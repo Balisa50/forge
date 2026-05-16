@@ -62,19 +62,21 @@ export default async function JournalPage() {
               {c.interrogation && (
                 <div style={{ borderTop: "1px solid var(--border)", paddingTop: "0.875rem" }}>
                   <div className="flex gap-2" style={{ flexWrap: "wrap" }}>
-                    {[
-                      { label: "M", value: c.interrogation.masteryScore },
-                      { label: "Ap", value: c.interrogation.applicationScore },
-                      { label: "An", value: c.interrogation.analysisScore },
-                      { label: "R", value: c.interrogation.recallScore },
-                      { label: "D", value: c.interrogation.depthScore },
-                    ].map((s) => (
-                      <span key={s.label} className="score-pill" style={{ color: s.value >= 7 ? "var(--green)" : s.value >= 5 ? "var(--yellow)" : "var(--red)" }}>
-                        {s.label}:{s.value.toFixed(1)}
-                      </span>
-                    ))}
-                    <span className="score-pill" style={{ color: "var(--blue)" }}>
-                      Overall:{c.interrogation.overallScore.toFixed(1)}
+                    <span
+                      className="score-pill"
+                      style={{
+                        color:
+                          c.interrogation.overallScore >= 7
+                            ? "var(--green)"
+                            : c.interrogation.overallScore >= 5
+                            ? "var(--yellow)"
+                            : "var(--red)",
+                      }}
+                    >
+                      Score: {c.interrogation.overallScore.toFixed(1)}/10
+                    </span>
+                    <span className="score-pill" style={{ color: c.interrogation.passed ? "var(--green)" : "var(--red)" }}>
+                      {c.interrogation.passed ? "PASSED" : "FAILED"}
                     </span>
                   </div>
                   {c.interrogation.feedback && (
