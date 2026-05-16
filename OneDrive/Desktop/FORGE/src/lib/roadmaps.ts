@@ -42,6 +42,11 @@ export interface Roadmap {
 const DATA_DIR = path.join(process.cwd(), "data", "roadmaps");
 
 const META: Record<string, { tagline: string; outcome: string; gradient: string }> = {
+  "ai-engineering": {
+    tagline: "Zero to shipping AI products — LLMs, RAG, agents, evals, observability, deployment",
+    outcome: "Ship a real AI product to a public URL with auth, evals, observability, and real users",
+    gradient: "from-fuchsia-500 via-purple-500 to-violet-600",
+  },
   "data-science": {
     tagline: "From Python first principles to a deployed ML model with a portfolio",
     outcome: "Ship a capstone that uses real-world data, statistical reasoning, and a deployed model",
