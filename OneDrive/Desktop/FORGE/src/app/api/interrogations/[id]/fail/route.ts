@@ -45,7 +45,7 @@ export async function POST(
       data: {
         passed: false,
         completedAt: new Date(),
-        antiCheatFlags: { push: { reason, detectedAt: new Date().toISOString() } },
+        feedback: `Auto-failed: ${reason.replace(/_/g, " ")}`,
       },
     }),
     prisma.checkin.update({

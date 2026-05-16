@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { PROFESSOR_SYSTEM_PROMPT, type MCQQuestion } from "@/lib/interrogation";
-import OpenAI from "openai";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { PROFESSOR_SYSTEM_PROMPT, type GeneratedQuestion } from "@/lib/interrogation";
+import { createWithFallback } from "@/lib/openai";
+import type OpenAI from "openai";
+import { Prisma } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
@@ -83,8 +83,7 @@ export async function POST(
   ];
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+    const { completion } = await createWithFallback({
       messages,
       temperature: 0.7,
       max_tokens: 800,
@@ -92,41 +91,41 @@ export async function POST(
     });
 
     const content = completion.choices[0].message.content ?? "{}";
-    const question = JSON.parse(content) as MCQQuestion;
+    const question = JSON.parse(content) as GeneratedQuestion;
 
     // Validate required fields
-    if (!question.question || !question.options || !question.correctAnswer) {
+    if (!question.question || !question.rubric || !question.rubric.mustMention) {
       return NextResponse.json({ error: "Invalid question format from AI" }, { status: 500 });
     }
 
-    // Save question to transcript (without correct answer — client never sees it)
+    // Save question + rubric to transcript (rubric stays server-side)
     const updatedTranscript = [
       ...transcript,
       {
         role: "assistant",
-        content,
+        content: JSON.stringify({ question: question.question }),
         questionNumber,
         topic: question.topic,
+        type: question.type,
+        rubric: question.rubric,
       },
     ];
 
     await prisma.interrogation.update({
       where: { id: interrogationId },
       data: {
-        transcript: updatedTranscript,
+        transcript: updatedTranscript as unknown as Prisma.InputJsonValue,
         tokensUsed: { increment: completion.usage?.total_tokens ?? 0 },
       },
     });
 
-    // Return question WITHOUT correct answer
+    // Return question WITHOUT the rubric — client never sees it
     return NextResponse.json({
       question: {
         questionNumber: question.questionNumber,
         type: question.type,
         question: question.question,
-        options: question.options,
         topic: question.topic,
-        // correctAnswer is intentionally NOT returned to client
       },
     });
   } catch (err) {

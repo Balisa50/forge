@@ -205,12 +205,12 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/register" className="forge-btn forge-btn-primary" style={{ padding: "1rem 3rem", fontSize: "1.125rem" }}>Forge Your Path →</Link>
-            <a
-              href="#"
+            <Link
+              href="/guest"
               style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.875rem", color: "var(--text-dim)", textDecoration: "none" }}
             >
-              <ExternalLink size={13} /> See a sample build log
-            </a>
+              <ExternalLink size={13} /> Try as guest →
+            </Link>
           </div>
         </motion.div>
       </section>
