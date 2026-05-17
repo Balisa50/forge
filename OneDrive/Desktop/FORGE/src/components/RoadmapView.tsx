@@ -125,7 +125,7 @@ function TaskDetailContent({ detail, isLocked }: { detail: string; isLocked: boo
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem", marginBottom: "0.5rem", opacity: isLocked ? 0.7 : 1 }}>
       {parsed.context && (
-        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, maxWidth: "60ch" }}>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55 }}>
           {parsed.context}
         </p>
       )}

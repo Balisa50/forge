@@ -73,7 +73,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       <section className="mx-auto max-w-4xl px-6 py-8 space-y-7">
         {/* Context — friendlier, normal weight */}
         {w.context && (
-          <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.6, maxWidth: "60ch" }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.6 }}>
             {w.context}
           </p>
         )}
