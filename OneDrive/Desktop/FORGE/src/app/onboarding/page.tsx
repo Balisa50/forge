@@ -165,68 +165,31 @@ export default function OnboardingPage() {
         if (effectiveCurated) setSelectedCurated(effectiveCurated);
       }
 
-      // Seed the user's roadmap from one of three sources, in priority order:
-      //   1. Curated mastery JSON  → /api/roadmaps/from-curated (instant, hand-curated)
-      //   2. roadmap.sh path or custom title → /api/roadmaps/generate (AI-built)
-      //   3. AI failure              → /api/roadmaps (static fallback skeleton)
+      // Seed the user's roadmap from the curated mastery JSON. The roadmap
+      // picker forces a curated selection — there is no AI-generated path.
       if (needsRoadmap) {
-        const mode = scheduleId === "custom" ? "custom" : scheduleId === "weekday" ? "weekday" : "daily";
-
-        if (effectiveCurated) {
-          setLoadingMessage(`Loading the ${effectiveCurated.title} mastery roadmap...`);
-          const res = await fetch("/api/roadmaps/from-curated", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              slug: effectiveCurated.slug,
-              commitDays,
-              targetDate: targetDate || undefined,
-            }),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            console.error("[ONBOARDING] Curated roadmap seed failed:", res.status, data);
-            setError(data.error || "Couldn't load the roadmap. Try again.");
-            setLoading(false);
-            setLoadingMessage("");
-            return;
-          }
-        } else {
-          const title = selectedPath ? selectedPath.title : (roadmapTitle.trim() || "My Learning Journey");
-          setLoadingMessage(selectedPath
-            ? `Building your ${title} roadmap from roadmap.sh...`
-            : journeyType === "project"
-              ? "Breaking your project into milestones..."
-              : "Generating your personalized curriculum..."
-          );
-          const res = await fetch("/api/roadmaps/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title,
-              mode,
-              commitDays,
-              type: selectedPath ? "learn" : journeyType,
-              targetDate: targetDate || undefined,
-              roadmapshId: selectedPath?.id ?? undefined,
-              roadmapshDescription: selectedPath?.description ?? undefined,
-            }),
-          });
-          const resData = await res.json().catch(() => ({}));
-          if (!res.ok || resData.error) {
-            console.error("[ONBOARDING] AI roadmap failed:", res.status, resData);
-            const fallbackRes = await fetch("/api/roadmaps", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ title, mode, commitDays }),
-            });
-            if (!fallbackRes.ok) {
-              setError("Failed to create roadmap. Please try again.");
-              setLoading(false);
-              setLoadingMessage("");
-              return;
-            }
-          }
+        if (!effectiveCurated) {
+          setError("Pick a learning path before continuing.");
+          setLoading(false);
+          return;
+        }
+        setLoadingMessage(`Loading the ${effectiveCurated.title} mastery roadmap...`);
+        const res = await fetch("/api/roadmaps/from-curated", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slug: effectiveCurated.slug,
+            commitDays,
+            targetDate: targetDate || undefined,
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          console.error("[ONBOARDING] Curated roadmap seed failed:", res.status, data);
+          setError(data.error || "Couldn't load the roadmap. Try again.");
+          setLoading(false);
+          setLoadingMessage("");
+          return;
         }
         setLoadingMessage("");
       }
@@ -276,8 +239,8 @@ export default function OnboardingPage() {
     : "";
 
   const checkinDesc = scheduleId === "daily"
-    ? "On each committed day, you must submit proof of work and pass an AI interrogation."
-    : `On your committed days (${scheduleId === "weekday" ? "Mon-Fri" : "your chosen days"}), you must submit proof of work and pass an AI interrogation.`;
+    ? "On each committed day, you submit proof of work (live URL or GitHub repo)."
+    : `On your committed days (${scheduleId === "weekday" ? "Mon-Fri" : "your chosen days"}), you submit proof of work (live URL or GitHub repo).`;
 
   return (
     <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
@@ -667,11 +630,9 @@ export default function OnboardingPage() {
 
               <div className="flex flex-col gap-3 mb-6">
                 {([
-                  { Icon: Clock, title: "Submit Real Proof", desc: needsRoadmap ? "Every committed day you submit a live GitHub repo or deployed URL. The system verifies it exists, is not empty, and was recently updated. No fake links." : "Students submit a verified GitHub repo or live URL every committed day. The system checks it's real — no fake links pass.", color: "var(--red)" },
-                  { Icon: FlaskConical, title: "AI Interrogation", desc: "3 open-ended questions about what you built and why. Minimum 40% to pass. No multiple choice — you explain your work in your own words. The AI grades your understanding, not your grammar.", color: "var(--green)" },
-                  { Icon: Flame, title: "Grace Days", desc: "5 grace days per month. Miss a committed day for any reason — use a grace day. No penalty, no questions. They reset every month. Use them wisely.", color: "var(--accent)" },
-                  { Icon: Shield, title: "Integrity Only Goes Up", desc: "Your integrity score starts at 0 and only increases — through clean check-ins, perfect defences, helping peers, and explaining your work in your own words. No surveillance, no deductions.", color: "var(--blue)" },
-                  { Icon: AlertTriangle, title: "Respite", desc: "Up to 5 respites. Life happens — use a Respite to pause your roadmap for a few days without falling behind. Useful for emergencies, travel, or just breathing. Not a cheat code.", color: "var(--yellow)" },
+                  { Icon: Clock, title: "Real Projects, Real Proof", desc: needsRoadmap ? "Every committed day you submit a live GitHub repo or deployed URL. The system verifies it exists, is not empty, and was recently updated. No fake links." : "Students submit a verified GitHub repo or live URL every committed day. The system checks it's real — no fake links pass.", color: "var(--red)" },
+                  { Icon: ClipboardCheck, title: "Day-by-Day Learning", desc: "Every week breaks into 7 day-cards. Each day has hand-picked videos, exercises, and reflections. Days unlock one at a time — no overwhelm, no jumping ahead.", color: "var(--green)" },
+                  { Icon: UserCheck, title: "Mentor Review (Optional)", desc: "If you're paired with a mentor, they review your check-ins and unlock weeks when you're ready. Otherwise it's on the honor system — your repo is the proof.", color: "var(--blue)" },
                   { Icon: TrendingDown, title: "Verified Certificate", desc: "Complete your roadmap and earn a cryptographically verified certificate with your pass rate, hours logged, and task count. Shareable with employers. Cannot be faked.", color: "var(--green)" },
                 ] as const).map((item) => (
                   <div key={item.title} className="forge-card" style={{ padding: "0.875rem 1.125rem", display: "flex", gap: "0.875rem", alignItems: "flex-start" }}>

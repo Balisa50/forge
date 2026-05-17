@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp, ExternalLink, BookOpen, CirclePlay, BookMarked, Target, HelpCircle, X, Loader2, ClipboardCheck, Code2, HelpCircle as HelpIcon, Play } from "lucide-react";
+import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp, ExternalLink, BookOpen, BookMarked, Target, ClipboardCheck, Code2, HelpCircle as HelpIcon, Play } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { parseTaskDetail } from "@/lib/parse-task-detail";
 import ResourceViewer from "@/components/ResourceViewer";
@@ -223,14 +223,6 @@ function DetailBlock({
   );
 }
 
-type TutorState = {
-  taskId: string;
-  question: string;
-  hint: string | null;
-  loading: boolean;
-  open: boolean;
-};
-
 export default function RoadmapView({
   roadmap,
   curatedSlug,
@@ -242,30 +234,9 @@ export default function RoadmapView({
 }) {
   const [activeTrack, setActiveTrack] = useState(roadmap.tracks[0]?.id ?? "");
   const [expandedPhase, setExpandedPhase] = useState<string | null>(roadmap.tracks[0]?.phases[0]?.id ?? null);
-  const [tutor, setTutor] = useState<TutorState | null>(null);
   const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
 
   const track = roadmap.tracks.find((t) => t.id === activeTrack);
-
-  const openTutor = (taskId: string) => {
-    setTutor({ taskId, question: "", hint: null, loading: false, open: true });
-  };
-
-  const askTutor = async () => {
-    if (!tutor) return;
-    setTutor((t) => t && { ...t, loading: true, hint: null });
-    try {
-      const res = await fetch("/api/tutor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ taskId: tutor.taskId, question: tutor.question }),
-      });
-      const data = await res.json();
-      setTutor((t) => t && { ...t, loading: false, hint: data.hint ?? data.error ?? "Try again." });
-    } catch {
-      setTutor((t) => t && { ...t, loading: false, hint: "Network error — try again." });
-    }
-  };
 
   return (
     <div>
@@ -535,37 +506,6 @@ export default function RoadmapView({
                                       Check In Now
                                     </a>
 
-                                    {/* Stuck? */}
-                                    <button
-                                      type="button"
-                                      onClick={() => openTutor(task.id)}
-                                      style={{
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        gap: "0.375rem",
-                                        background: "none",
-                                        border: "1px solid var(--border)",
-                                        borderRadius: "6px",
-                                        padding: "0.3125rem 0.75rem",
-                                        cursor: "pointer",
-                                        fontFamily: "var(--font-mono)",
-                                        fontSize: "0.6875rem",
-                                        color: "var(--text-dim)",
-                                        letterSpacing: "0.05em",
-                                        transition: "all 0.15s",
-                                      }}
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.borderColor = "var(--accent)";
-                                        e.currentTarget.style.color = "var(--accent)";
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.borderColor = "var(--border)";
-                                        e.currentTarget.style.color = "var(--text-dim)";
-                                      }}
-                                    >
-                                      <HelpCircle size={11} />
-                                      Stuck?
-                                    </button>
                                   </div>
                                 )}
 
@@ -702,90 +642,6 @@ export default function RoadmapView({
 
       {/* Resource viewer modal */}
       {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
-
-      {/* Tutor panel */}
-      <AnimatePresence>
-        {tutor?.open && (
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 24 }}
-            transition={{ duration: 0.18 }}
-            style={{
-              position: "fixed",
-              bottom: "1.5rem",
-              right: "1.5rem",
-              width: "min(420px, calc(100vw - 2rem))",
-              zIndex: 50,
-            }}
-          >
-            <div
-              className="forge-panel"
-              style={{ padding: "1.25rem", boxShadow: "0 8px 32px rgba(0,0,0,0.45)" }}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <HelpCircle size={16} color="var(--accent)" strokeWidth={2} />
-                  <span style={{ fontFamily: "var(--font-headline)", fontSize: "1rem" }}>
-                    Stuck?
-                  </span>
-                </div>
-                <button
-                  onClick={() => setTutor(null)}
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem" }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginBottom: "0.75rem", lineHeight: 1.5 }}>
-                Describe where you&apos;re stuck. The tutor will nudge you — not solve it for you.
-              </p>
-
-              <textarea
-                value={tutor.question}
-                onChange={(e) => setTutor((t) => t && { ...t, question: e.target.value })}
-                placeholder="e.g. I don't understand why my useEffect runs twice..."
-                className="forge-input"
-                rows={3}
-                style={{ resize: "none", marginBottom: "0.75rem", fontSize: "0.875rem" }}
-                disabled={tutor.loading}
-              />
-
-              {tutor.hint && (
-                <div
-                  style={{
-                    background: "rgba(245,158,11,0.06)",
-                    border: "1px solid rgba(245,158,11,0.2)",
-                    borderRadius: "6px",
-                    padding: "0.75rem",
-                    fontSize: "0.875rem",
-                    lineHeight: 1.6,
-                    color: "var(--text-primary)",
-                    marginBottom: "0.75rem",
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  {tutor.hint}
-                </div>
-              )}
-
-              <button
-                onClick={askTutor}
-                disabled={tutor.loading}
-                className="forge-btn forge-btn-primary"
-                style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.375rem" }}
-              >
-                {tutor.loading
-                  ? <><Loader2 size={14} className="animate-spin" /> Thinking...</>
-                  : tutor.hint ? "Ask again" : "Get a hint"
-                }
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

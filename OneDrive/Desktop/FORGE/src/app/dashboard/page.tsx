@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame } from "lucide-react";
-import GraceDayWidget from "@/components/GraceDayWidget";
 
 function getDaysRemaining(targetDate: Date | null | undefined): number | null {
   if (!targetDate) return null;
@@ -33,13 +32,6 @@ export default async function DashboardPage() {
 
   const isStudent = dbUser?.role === "student";
   const isMentorLearner = dbUser?.role === "mentor" && dbUser.isAlsoLearning;
-
-  // Grace days used this calendar month
-  const now = new Date();
-  const graceDaysUsed = await prisma.graceDay.count({
-    where: { userId, month: now.getMonth() + 1, year: now.getFullYear() },
-  });
-  const graceDaysLeft = Math.max(0, 5 - graceDaysUsed);
 
   // Combine remaining queries in parallel (user data already fetched above)
   const [activeRoadmap, orgMembership] = await Promise.all([
@@ -136,8 +128,7 @@ export default async function DashboardPage() {
               </div>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "0.25rem" }}>
                 It&apos;s been {daysSinceLastCheckin} day{daysSinceLastCheckin === 1 ? "" : "s"} since your last verified session.
-                {" "}Life happens — that&apos;s what grace days are for.
-                The path is still here. Your next task is waiting.
+                {" "}The path is still here. Your next task is waiting.
               </p>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
                 {lastCheckin && `Last session: ${new Date(lastCheckin.createdAt).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}`}
@@ -161,10 +152,6 @@ export default async function DashboardPage() {
               <div style={{ color: "var(--text-secondary)", fontSize: "0.9375rem" }}>You haven&apos;t checked in today. Complete your session before midnight.</div>
             </div>
             <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary">Start Check-in</Link>
-          </div>
-          {/* Grace days */}
-          <div style={{ borderTop: "1px solid rgba(239,68,68,0.15)", paddingTop: "0.875rem" }}>
-            <GraceDayWidget graceDaysLeft={graceDaysLeft} />
           </div>
         </div>
       )}

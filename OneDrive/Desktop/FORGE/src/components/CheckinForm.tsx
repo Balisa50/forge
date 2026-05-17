@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Link2, FlaskConical, Clock, Loader2, CheckCircle2 } from "lucide-react";
-import InterrogationChat from "./InterrogationChat";
+import { Link2, Clock, Loader2, CheckCircle2, Send } from "lucide-react";
 
 interface Task {
   id: string;
@@ -35,8 +34,6 @@ interface Roadmap {
 
 export default function CheckinForm({
   roadmap,
-  userId,
-  userName,
 }: {
   roadmap: Roadmap;
   userId: string;
@@ -50,9 +47,7 @@ export default function CheckinForm({
   const [projectUrl, setProjectUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
-  const [interrogationId, setInterrogationId] = useState<string | null>(null);
-  const [checkinId, setCheckinId] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const selectedTrack = roadmap.tracks.find((t) => t.id === selectedTrackId);
   const availableTasks = selectedTrack?.phases
@@ -102,23 +97,22 @@ export default function CheckinForm({
         return;
       }
 
-      setCheckinId(data.checkinId);
-      setInterrogationId(data.interrogationId);
+      setSubmitted(true);
+      // Tiny celebration pause then back to dashboard
+      setTimeout(() => router.push("/dashboard"), 1500);
     } catch {
       setError("Something went wrong. Please try again.");
       setSubmitting(false);
     }
   };
 
-  if (interrogationId && checkinId) {
+  if (submitted) {
     return (
-      <InterrogationChat
-        interrogationId={interrogationId}
-        checkinId={checkinId}
-        taskId={selectedTaskId}
-        userName={userName}
-        onComplete={() => router.push("/dashboard")}
-      />
+      <div className="forge-panel" style={{ padding: "3rem 1.5rem", textAlign: "center" }}>
+        <CheckCircle2 size={48} style={{ color: "var(--green)", margin: "0 auto 1rem" }} />
+        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.5rem" }}>Check-in submitted</h2>
+        <p style={{ color: "var(--text-secondary)" }}>Proof recorded. Returning to your dashboard…</p>
+      </div>
     );
   }
 
@@ -302,18 +296,18 @@ export default function CheckinForm({
         {submitting
           ? <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
               <Loader2 size={18} className="animate-spin" />
-              Starting Interrogation...
+              Submitting…
             </span>
           : <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-              <FlaskConical size={18} strokeWidth={1.5} />
-              START INTERROGATION
+              <Send size={18} strokeWidth={1.5} />
+              Submit check-in
             </span>
         }
       </button>
 
       {selectedTask && (
         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", textAlign: "center", marginTop: "1rem" }}>
-          You&apos;ll answer 3 open-ended questions about <strong style={{ color: "var(--text-secondary)" }}>{selectedTask.title}</strong>. Genuine effort passes.
+          Submitting proof for <strong style={{ color: "var(--text-secondary)" }}>{selectedTask.title}</strong>. Your mentor (if assigned) will review.
         </p>
       )}
     </form>

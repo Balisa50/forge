@@ -102,7 +102,9 @@ export async function POST(req: NextRequest) {
   });
   if (!task) return NextResponse.json({ error: "Task not found" }, { status: 404 });
 
-  // Create check-in record
+  // Solo check-ins pass on submission. Verification is the URL reachability
+  // check above — no AI interrogation. Mentor learners get reviewed via the
+  // mentor's review queue (mentor can still rate this check-in manually).
   const checkin = await prisma.checkin.create({
     data: {
       userId,
@@ -113,26 +115,15 @@ export async function POST(req: NextRequest) {
       evidenceType,
       evidenceUrl,
       evidenceData: evidenceData as object,
-      status: "failed", // Will update to "passed" when interrogation passes
+      status: "passed",
     },
   });
 
-  // Create interrogation record
-  const interrogation = await prisma.interrogation.create({
-    data: {
-      checkinId: checkin.id,
-      transcript: [],
-    },
-  });
-
-  // Update task status to in_progress
+  // Mark the task as in_progress (mentor or learner can advance it themselves)
   await prisma.task.update({
     where: { id: taskId },
     data: { status: "in_progress" },
   });
 
-  return NextResponse.json({
-    checkinId: checkin.id,
-    interrogationId: interrogation.id,
-  }, { status: 201 });
+  return NextResponse.json({ checkinId: checkin.id, passed: true }, { status: 201 });
 }
