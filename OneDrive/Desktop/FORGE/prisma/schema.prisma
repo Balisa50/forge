@@ -95,6 +95,7 @@ model User {
   commentsAsMentee  MentorComment[]  @relation("MentorCommentMentee")
   resourcesGiven    MentorResource[] @relation("MentorResourceMentor")
   resourcesReceived MentorResource[] @relation("MentorResourceMentee")
+  mentorInvites     MentorInvite[]   @relation("MentorInviteMentor")
   certificates      Certificate[]
   cohortEnrollments CohortEnrollment[]
   podMemberships    PodMember[]
@@ -395,6 +396,33 @@ model MentorComment {
 
   @@index([menteeId, taskId])
   @@index([mentorId, menteeId])
+}
+
+/// Invite code a mentor generates so learners can pair with them.
+///
+/// One mentor can have many active codes, each scoped to a specific
+/// curated roadmap path (the one they're qualified to mentor). A code
+/// can be one-time (`maxUses=1`) or unlimited (`maxUses=null`).
+/// When a mentee redeems the code:
+///   - a MentorLink(mentorId, menteeId) is created
+///   - if roadmapSlug is set, the mentee's onboarding pre-selects it
+model MentorInvite {
+  id          String    @id @default(cuid())
+  code        String    @unique // human-typeable, 10 chars
+  mentorId    String
+  /// Curated roadmap slug this invite mentors on (null = mentor's choice with mentee)
+  roadmapSlug String?
+  /// Optional friendly label so a mentor can have several codes
+  label       String?
+  maxUses     Int?      // null = unlimited
+  usesCount   Int       @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  mentor      User      @relation("MentorInviteMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@index([mentorId, isActive])
 }
 
 /// An extra resource a mentor grants to one mentee for a specific task.

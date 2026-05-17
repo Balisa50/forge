@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare } from "lucide-react";
+import MentorInvitesPanel from "@/components/MentorInvitesPanel";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -42,11 +43,13 @@ export default async function MentorDashboardPage() {
           </p>
         </div>
 
+        <MentorInvitesPanel />
+
         <div className="forge-panel" style={{ padding: "3rem", textAlign: "center", marginTop: "2rem" }}>
           <Users size={48} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>No Mentees Yet</h2>
-          <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "400px", margin: "0 auto" }}>
-            You haven&apos;t been paired with any students yet. An organization admin will assign students to you.
+          <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "440px", margin: "0 auto" }}>
+            Generate an invite code above and share it with a learner. When they redeem it during signup, they appear here.
           </p>
         </div>
       </div>
@@ -158,6 +161,8 @@ export default async function MentorDashboardPage() {
       </div>
 
       {/* Section title */}
+      <MentorInvitesPanel />
+
       <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>
         Your Mentees
       </div>

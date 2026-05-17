@@ -81,9 +81,10 @@ export default function OnboardingPage() {
   const [orgName, setOrgName] = useState("");
   const [orgDesc, setOrgDesc] = useState("");
 
-  // Invite code (for mentor/student joining existing org)
+  // Invite code (mentee redeeming mentor code; mentor optionally joining via legacy org)
   const [inviteCode, setInviteCode] = useState("");
   const [orgError, setOrgError] = useState("");
+  const [invitePreview, setInvitePreview] = useState<{ valid: boolean; mentor?: { name: string | null; email: string }; roadmapSlug?: string | null; error?: string } | null>(null);
 
   const selectedSchedule = SCHEDULES.find((s) => s.id === scheduleId)!;
   const commitDays = scheduleId === "custom" ? customDays : selectedSchedule.commitDays;
@@ -113,52 +114,28 @@ export default function OnboardingPage() {
     if (idx > 0) setStep(steps[idx - 1]);
   };
 
-  const createOrgIfNeeded = async () => {
+  /**
+   * Mentee redeems a mentor's invite code → creates MentorLink + returns
+   * the roadmap the mentor scoped it to (so we can pre-select it).
+   * Mentor role no longer needs any code at signup — they just generate
+   * their own from the dashboard.
+   */
+  const redeemMentorCodeIfNeeded = async (): Promise<string | null | "fail"> => {
     setOrgError("");
+    if (role !== "student" || !inviteCode.trim()) return null;
 
-    // Bootcamp admin: create a new organization
-    if (role === "bootcamp" && orgName.trim()) {
-      const res = await fetch("/api/org", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: orgName.trim(), description: orgDesc.trim() }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setOrgError(data.error ?? "Failed to create organization.");
-        return false;
-      }
+    const res = await fetch("/api/mentor/invites/redeem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: inviteCode.trim() }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setOrgError(data.error ?? "Couldn't redeem that code. Ask your mentor for a fresh one.");
+      return "fail";
     }
-
-    // Student: join org via invite code (required)
-    if (role === "student" && inviteCode.trim()) {
-      const res = await fetch("/api/org/join", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inviteCode: inviteCode.trim() }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setOrgError(data.error ?? "Invalid invite code. Ask your bootcamp or mentor for a valid code.");
-        return false;
-      }
-    }
-
-    // Mentor: optionally join org via invite code (joins directly as mentor)
-    if (role === "mentor" && inviteCode.trim()) {
-      const res = await fetch("/api/org/join", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inviteCode: inviteCode.trim(), joinAs: "mentor" }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setOrgError(data.error ?? "Invalid invite code.");
-        return false;
-      }
-    }
-
-    return true;
+    const data = await res.json();
+    return (data.roadmapSlug as string | null) ?? null;
   };
 
   const handleComplete = async () => {
@@ -167,10 +144,21 @@ export default function OnboardingPage() {
     setError("");
 
     try {
-      // Create org first if needed
-      if (role !== "learner") {
-        const success = await createOrgIfNeeded();
-        if (!success) { setLoading(false); return; }
+      // Mentee role: redeem the mentor's code first (mandatory if they entered one)
+      let mentorRoadmapSlug: string | null = null;
+      if (role === "student") {
+        const result = await redeemMentorCodeIfNeeded();
+        if (result === "fail") { setLoading(false); return; }
+        mentorRoadmapSlug = result;
+      }
+
+      // Mentee's own pick takes priority; if they didn't pick but the
+      // mentor's invite was scoped to a roadmap, use that.
+      let effectiveCurated = selectedCurated;
+      if (mentorRoadmapSlug && !effectiveCurated) {
+        const { CURATED_ROADMAPS } = await import("@/lib/curated-roadmaps-client");
+        effectiveCurated = CURATED_ROADMAPS.find((r) => r.slug === mentorRoadmapSlug) ?? null;
+        if (effectiveCurated) setSelectedCurated(effectiveCurated);
       }
 
       // Seed the user's roadmap from one of three sources, in priority order:
@@ -180,13 +168,13 @@ export default function OnboardingPage() {
       if (needsRoadmap) {
         const mode = scheduleId === "custom" ? "custom" : scheduleId === "weekday" ? "weekday" : "daily";
 
-        if (selectedCurated) {
-          setLoadingMessage(`Loading the ${selectedCurated.title} mastery roadmap...`);
+        if (effectiveCurated) {
+          setLoadingMessage(`Loading the ${effectiveCurated.title} mastery roadmap...`);
           const res = await fetch("/api/roadmaps/from-curated", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              slug: selectedCurated.slug,
+              slug: effectiveCurated.slug,
               commitDays,
               targetDate: targetDate || undefined,
             }),
@@ -362,41 +350,61 @@ export default function OnboardingPage() {
                 }
               </p>
 
-              {/* Invite code for students */}
+              {/* Mentee enters their mentor's pairing code */}
               {role === "student" && (
                 <div className="forge-panel" style={{ padding: "1.5rem", textAlign: "left", marginBottom: "1.5rem" }}>
-                  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", marginBottom: "0.5rem" }}>Join Your Organization</h3>
+                  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", marginBottom: "0.5rem" }}>Pair with your mentor</h3>
                   <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem" }}>
-                    Enter the invite code your bootcamp or mentor gave you. You&apos;ll be added as a student with full accountability tracking.
+                    Enter the code your mentor gave you. It looks like <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>XXXX-XXXX</span>.
+                    If they scoped it to a specific path, that path will be auto-selected for you.
                   </p>
                   <input
                     type="text"
                     className="forge-input"
-                    placeholder="Enter invite code"
+                    placeholder="ABCD-EFGH"
                     value={inviteCode}
-                    onChange={(e) => setInviteCode(e.target.value)}
-                    style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.15em", textAlign: "center", fontSize: "1.25rem", padding: "1rem" }}
+                    onChange={(e) => {
+                      const v = e.target.value.toUpperCase();
+                      setInviteCode(v);
+                      setInvitePreview(null);
+                    }}
+                    onBlur={async () => {
+                      const code = inviteCode.trim();
+                      if (!code) { setInvitePreview(null); return; }
+                      try {
+                        const res = await fetch(`/api/mentor/invites/redeem?code=${encodeURIComponent(code)}`);
+                        const data = await res.json();
+                        setInvitePreview(data);
+                      } catch {
+                        setInvitePreview({ valid: false, error: "Couldn't verify code" });
+                      }
+                    }}
+                    style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.15em", textAlign: "center", fontSize: "1.25rem", padding: "1rem", textTransform: "uppercase" }}
                   />
+                  {invitePreview?.valid && invitePreview.mentor && (
+                    <div style={{ marginTop: "0.625rem", padding: "0.625rem 0.875rem", borderRadius: 8, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)" }}>
+                      <p style={{ color: "var(--green)", fontSize: "0.8125rem" }}>
+                        ✓ Pairing with <strong>{invitePreview.mentor.name ?? invitePreview.mentor.email}</strong>
+                        {invitePreview.roadmapSlug && <span style={{ color: "var(--text-secondary)" }}> on the <strong>{invitePreview.roadmapSlug.replace(/-/g, " ")}</strong> path</span>}
+                      </p>
+                    </div>
+                  )}
+                  {invitePreview && invitePreview.valid === false && (
+                    <div style={{ marginTop: "0.5rem", color: "var(--red)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}>
+                      {invitePreview.error ?? "Code not valid"}
+                    </div>
+                  )}
                   {orgError && <div style={{ color: "var(--red)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", marginTop: "0.5rem" }}>{orgError}</div>}
                 </div>
               )}
 
-              {/* Invite code for mentors */}
+              {/* Mentor onboarding: no code needed at signup — they generate their own from the dashboard */}
               {role === "mentor" && (
                 <div className="forge-panel" style={{ padding: "1.5rem", textAlign: "left", marginBottom: "1.5rem" }}>
-                  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", marginBottom: "0.5rem" }}>Join an Organization</h3>
-                  <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem" }}>
-                    If your bootcamp gave you an invite code, enter it here. You&apos;ll be added as a mentor who can view student progress and pair with mentees. Or leave blank to mentor independently.
+                  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", marginBottom: "0.5rem" }}>Generate codes after signup</h3>
+                  <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.55 }}>
+                    Once you&apos;re in, your mentor dashboard lets you generate as many pairing codes as you like — one per learner, or one per cohort. Each code can be scoped to a specific path (AI Engineering, ML Engineering, Full Stack, etc.) so learners land on the right roadmap.
                   </p>
-                  <input
-                    type="text"
-                    className="forge-input"
-                    placeholder="Invite code (optional)"
-                    value={inviteCode}
-                    onChange={(e) => setInviteCode(e.target.value)}
-                    style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
-                  />
-                  {orgError && <div style={{ color: "var(--red)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", marginTop: "0.5rem" }}>{orgError}</div>}
                 </div>
               )}
 
