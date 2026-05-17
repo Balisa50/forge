@@ -3,8 +3,9 @@
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Flame, Swords, Clock, TrendingDown, Shield, FlaskConical, CalendarDays, CalendarCheck, CalendarRange, Building2, UserCheck, User, ArrowRight, GraduationCap, Video, Target, AlertTriangle, Search, ExternalLink } from "lucide-react";
+import { Flame, Swords, Clock, TrendingDown, Shield, FlaskConical, CalendarDays, CalendarCheck, CalendarRange, Building2, UserCheck, User, ArrowRight, GraduationCap, Video, Target, AlertTriangle, Search, ExternalLink, Sparkles } from "lucide-react";
 import { ROADMAPSH_PATHS, ROADMAPSH_CATEGORIES, type RoadmapShPath } from "@/lib/roadmapsh-paths";
+import { CURATED_ROADMAPS, type CuratedRoadmapPickerEntry } from "@/lib/curated-roadmaps-client";
 
 type UserRole = "learner" | "student" | "mentor" | "bootcamp";
 
@@ -74,6 +75,7 @@ export default function OnboardingPage() {
   const [isAlsoLearning, setIsAlsoLearning] = useState(false);
   const [roadmapTitle, setRoadmapTitle] = useState("");
   const [selectedPath, setSelectedPath] = useState<RoadmapShPath | null>(null);
+  const [selectedCurated, setSelectedCurated] = useState<CuratedRoadmapPickerEntry | null>(null);
   const [pathSearch, setPathSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [journeyType, setJourneyType] = useState<"learn" | "project">("learn");
@@ -181,44 +183,67 @@ export default function OnboardingPage() {
         if (!success) { setLoading(false); return; }
       }
 
-      // Generate AI-powered roadmap for learners, students, and mentors who learn
+      // Seed the user's roadmap from one of three sources, in priority order:
+      //   1. Curated mastery JSON  → /api/roadmaps/from-curated (instant, hand-curated)
+      //   2. roadmap.sh path or custom title → /api/roadmaps/generate (AI-built)
+      //   3. AI failure              → /api/roadmaps (static fallback skeleton)
       if (needsRoadmap) {
-        const title = selectedPath ? selectedPath.title : (roadmapTitle.trim() || "My Learning Journey");
         const mode = scheduleId === "custom" ? "custom" : scheduleId === "weekday" ? "weekday" : "daily";
-        setLoadingMessage(selectedPath
-          ? `Building your ${title} roadmap from roadmap.sh...`
-          : journeyType === "project"
-            ? "Breaking your project into milestones..."
-            : "Generating your personalized curriculum..."
-        );
-        const res = await fetch("/api/roadmaps/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title,
-            mode,
-            commitDays,
-            type: selectedPath ? "learn" : journeyType,
-            targetDate: targetDate || undefined,
-            roadmapshId: selectedPath?.id ?? undefined,
-            roadmapshDescription: selectedPath?.description ?? undefined,
-          }),
-        });
-        // generate route uses streaming response (always HTTP 200) — check body for errors too
-        const resData = await res.json().catch(() => ({}));
-        if (!res.ok || resData.error) {
-          console.error("[ONBOARDING] AI roadmap failed:", res.status, resData);
-          // Fallback to static roadmap if AI fails
-          const fallbackRes = await fetch("/api/roadmaps", {
+
+        if (selectedCurated) {
+          setLoadingMessage(`Loading the ${selectedCurated.title} mastery roadmap...`);
+          const res = await fetch("/api/roadmaps/from-curated", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, mode, commitDays }),
+            body: JSON.stringify({
+              slug: selectedCurated.slug,
+              commitDays,
+              targetDate: targetDate || undefined,
+            }),
           });
-          if (!fallbackRes.ok) {
-            setError("Failed to create roadmap. Please try again.");
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            console.error("[ONBOARDING] Curated roadmap seed failed:", res.status, data);
+            setError(data.error || "Couldn't load the roadmap. Try again.");
             setLoading(false);
             setLoadingMessage("");
             return;
+          }
+        } else {
+          const title = selectedPath ? selectedPath.title : (roadmapTitle.trim() || "My Learning Journey");
+          setLoadingMessage(selectedPath
+            ? `Building your ${title} roadmap from roadmap.sh...`
+            : journeyType === "project"
+              ? "Breaking your project into milestones..."
+              : "Generating your personalized curriculum..."
+          );
+          const res = await fetch("/api/roadmaps/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title,
+              mode,
+              commitDays,
+              type: selectedPath ? "learn" : journeyType,
+              targetDate: targetDate || undefined,
+              roadmapshId: selectedPath?.id ?? undefined,
+              roadmapshDescription: selectedPath?.description ?? undefined,
+            }),
+          });
+          const resData = await res.json().catch(() => ({}));
+          if (!res.ok || resData.error) {
+            console.error("[ONBOARDING] AI roadmap failed:", res.status, resData);
+            const fallbackRes = await fetch("/api/roadmaps", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ title, mode, commitDays }),
+            });
+            if (!fallbackRes.ok) {
+              setError("Failed to create roadmap. Please try again.");
+              setLoading(false);
+              setLoadingMessage("");
+              return;
+            }
           }
         }
         setLoadingMessage("");
@@ -518,14 +543,19 @@ export default function OnboardingPage() {
           {/* ─── Step: Roadmap browser ──────────────────────────────── */}
           {step === "roadmap" && needsRoadmap && (
             <RoadmapBrowser
+              selectedCurated={selectedCurated}
+              setSelectedCurated={(c) => {
+                setSelectedCurated(c);
+                if (c) { setSelectedPath(null); setRoadmapTitle(""); }
+              }}
               selectedPath={selectedPath}
-              setSelectedPath={(p) => { setSelectedPath(p); if (p) setRoadmapTitle(""); }}
+              setSelectedPath={(p) => { setSelectedPath(p); if (p) { setRoadmapTitle(""); setSelectedCurated(null); } }}
               pathSearch={pathSearch}
               setPathSearch={setPathSearch}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
               roadmapTitle={roadmapTitle}
-              setRoadmapTitle={(t) => { setRoadmapTitle(t); if (t) setSelectedPath(null); }}
+              setRoadmapTitle={(t) => { setRoadmapTitle(t); if (t) { setSelectedPath(null); setSelectedCurated(null); } }}
               journeyType={journeyType}
               setJourneyType={setJourneyType}
               onBack={prevStep}
@@ -779,6 +809,8 @@ export default function OnboardingPage() {
 // ── Roadmap Browser sub-component ──────────────────────────────────────────
 
 interface RoadmapBrowserProps {
+  selectedCurated: CuratedRoadmapPickerEntry | null;
+  setSelectedCurated: (c: CuratedRoadmapPickerEntry | null) => void;
   selectedPath: RoadmapShPath | null;
   setSelectedPath: (p: RoadmapShPath | null) => void;
   pathSearch: string;
@@ -794,6 +826,7 @@ interface RoadmapBrowserProps {
 }
 
 function RoadmapBrowser({
+  selectedCurated, setSelectedCurated,
   selectedPath, setSelectedPath,
   pathSearch, setPathSearch,
   activeCategory, setActiveCategory,
@@ -810,7 +843,7 @@ function RoadmapBrowser({
     });
   }, [pathSearch, activeCategory]);
 
-  const canContinue = !!(selectedPath || roadmapTitle.trim());
+  const canContinue = !!(selectedCurated || selectedPath || roadmapTitle.trim());
 
   return (
     <motion.div key="roadmap" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
@@ -818,8 +851,65 @@ function RoadmapBrowser({
         Choose Your Path
       </h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem", fontSize: "0.9375rem" }}>
-        Pick a roadmap.sh path — or describe your own below.
+        Start with a mastery roadmap — or pick a roadmap.sh path, or describe your own.
       </p>
+
+      {/* ─── Curated mastery roadmaps (the featured option) ───────── */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles size={14} style={{ color: "var(--accent)" }} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--accent)" }}>
+            Mastery roadmaps · hand-curated, zero to expert
+          </span>
+        </div>
+
+        {selectedCurated ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "1rem 1.125rem", marginBottom: "0.75rem", background: "rgba(245,158,11,0.08)", border: "1px solid var(--accent)", borderRadius: "10px" }}>
+            <span style={{ fontSize: "1.75rem" }}>{selectedCurated.emoji}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem" }}>{selectedCurated.title}</div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: "0.125rem" }}>{selectedCurated.tagline}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginTop: "0.375rem" }}>
+                {selectedCurated.weeks} weeks · {selectedCurated.phases} phases · every week with topics, project, deep questions, resources, exercises
+              </div>
+            </div>
+            <button onClick={() => setSelectedCurated(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "1.25rem", padding: "0.25rem" }}>×</button>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", maxHeight: "320px", overflowY: "auto", paddingRight: "4px" }}>
+            {CURATED_ROADMAPS.map((c) => (
+              <button
+                key={c.slug}
+                type="button"
+                onClick={() => setSelectedCurated(c)}
+                style={{
+                  padding: "0.875rem", borderRadius: "10px", textAlign: "left", cursor: "pointer",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-card)",
+                  transition: "all 0.12s",
+                  display: "flex", alignItems: "flex-start", gap: "0.625rem",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
+              >
+                <span style={{ fontSize: "1.5rem", flexShrink: 0, lineHeight: 1 }}>{c.emoji}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.9375rem", marginBottom: "0.125rem" }}>{c.title}</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{c.tagline}</div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.375rem" }}>{c.weeks}w · {c.phases} phases</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ─── Divider ─────────────────────────────────────────────── */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
+        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>or roadmap.sh path</span>
+        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+      </div>
 
       {/* Selected path badge */}
       {selectedPath && (
