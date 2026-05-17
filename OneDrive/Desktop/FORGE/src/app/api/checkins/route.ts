@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { verifyProjectUrl } from "@/lib/verify-url";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
   const trackId = formData.get("trackId") as string;
   const taskId = formData.get("taskId") as string;
   const description = formData.get("description") as string;
+  const projectUrl = (formData.get("projectUrl") as string | null)?.trim() || null;
   const screenshotFile = formData.get("screenshot") as File | null;
 
   if (!roadmapId || !trackId || !taskId || !description) {
@@ -21,6 +23,20 @@ export async function POST(req: NextRequest) {
 
   if (description.trim().length < 50) {
     return NextResponse.json({ error: "Description too short (min 50 characters)" }, { status: 400 });
+  }
+
+  // The contract requires proof: either a verifiable URL (live repo / deploy)
+  // OR a screenshot. If a URL is supplied, we verify it before allowing the
+  // check-in to start. This is what "Submit Real Proof" promises.
+  if (!projectUrl && !screenshotFile) {
+    return NextResponse.json({ error: "Submit proof: a GitHub repo, a deployed URL, or a screenshot." }, { status: 400 });
+  }
+
+  if (projectUrl) {
+    const result = await verifyProjectUrl(projectUrl);
+    if (!result.verified) {
+      return NextResponse.json({ error: result.error ?? "Couldn't verify that URL." }, { status: 400 });
+    }
   }
 
   // Verify ownership
@@ -42,16 +58,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Already checked in successfully today" }, { status: 409 });
   }
 
-  // Process screenshot
-  let evidenceUrl: string | null = null;
+  // Process evidence. URL evidence is preferred (and already verified above);
+  // a screenshot is stored as a fallback.
+  let evidenceUrl: string | null = projectUrl;
+  let evidenceType = projectUrl ? "url" : "screenshot";
   let evidenceData: Record<string, unknown> | null = null;
 
   if (screenshotFile) {
-    // Store as base64 for local dev (in production, upload to S3)
     const bytes = await screenshotFile.arrayBuffer();
     const base64 = Buffer.from(bytes).toString("base64");
     const mimeType = screenshotFile.type || "image/png";
-    evidenceUrl = `data:${mimeType};base64,${base64.slice(0, 100)}...`; // truncated for db
+    if (!evidenceUrl) evidenceUrl = `data:${mimeType};base64,${base64.slice(0, 100)}...`;
     evidenceData = {
       filename: screenshotFile.name,
       size: screenshotFile.size,
@@ -74,7 +91,7 @@ export async function POST(req: NextRequest) {
       trackId,
       taskId,
       description,
-      evidenceType: "screenshot",
+      evidenceType,
       evidenceUrl,
       evidenceData: evidenceData as object,
       status: "failed", // Will update to "passed" when interrogation passes

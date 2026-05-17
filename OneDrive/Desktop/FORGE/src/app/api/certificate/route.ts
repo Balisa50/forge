@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { signCert } from "@/lib/cert-signature";
 // POST: Generate a certificate for a completed roadmap
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -68,24 +69,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Certificate already issued for this roadmap", verifyCode: existing.verifyCode }, { status: 409 });
   }
 
-  const [cert] = await prisma.$transaction([
-    prisma.certificate.create({
-      data: {
-        userId,
-        roadmapId,
-        title: roadmap.title,
-        totalTasks: allTasks.length,
-        totalHours: Math.round(totalHours),
-        passRate: Number(passRate.toFixed(2)),
-      },
-    }),
+  // Create the certificate first (assigns id, verifyCode, issuedAt), then
+  // sign canonical fields with HMAC-SHA256 and store the signature back.
+  const cert = await prisma.certificate.create({
+    data: {
+      userId,
+      roadmapId,
+      title: roadmap.title,
+      totalTasks: allTasks.length,
+      totalHours: Math.round(totalHours),
+      passRate: Number(passRate.toFixed(2)),
+    },
+  });
+
+  const signature = signCert({
+    id: cert.id,
+    userId: cert.userId,
+    roadmapId: cert.roadmapId,
+    title: cert.title,
+    totalTasks: cert.totalTasks,
+    totalHours: cert.totalHours,
+    passRate: cert.passRate,
+    issuedAt: cert.issuedAt,
+  });
+
+  await prisma.$transaction([
+    prisma.certificate.update({ where: { id: cert.id }, data: { signature } }),
     prisma.roadmap.update({
       where: { id: roadmapId },
       data: { isActive: false, description: JSON.stringify(certificateData) },
     }),
   ]);
 
-  return NextResponse.json({ ...certificateData, id: cert.id, verifyCode: cert.verifyCode }, { status: 201 });
+  return NextResponse.json({ ...certificateData, id: cert.id, verifyCode: cert.verifyCode, signature }, { status: 201 });
 }
 
 // GET: Verify a certificate by code

@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const INTEGRITY_DEDUCTIONS: Record<string, number> = {
-  tab_switch: 5,
-  copy_paste: 10,
-  devtools: 15,
-  fast_pass: 10,
-};
-
+/**
+ * Anti-cheat auto-fail trigger (tab switch, copy-paste, devtools, fast-pass).
+ *
+ * The contract says: "Integrity only goes up — no surveillance, no deductions."
+ * So this route fails the interrogation + check-in BUT does NOT deduct from
+ * integrityScore. We log the event for the user's own audit history.
+ *
+ * Integrity is earned by passing cleanly. Cheating doesn't subtract — it
+ * just fails to add. That's the only honest reading of the contract.
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -29,15 +32,11 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const deduction = INTEGRITY_DEDUCTIONS[reason] ?? 5;
-
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { integrityScore: true },
   });
-
-  const currentScore = user?.integrityScore ?? 100;
-  const newScore = Math.max(0, currentScore - deduction);
+  const currentScore = user?.integrityScore ?? 0;
 
   await Promise.all([
     prisma.interrogation.update({
@@ -45,25 +44,22 @@ export async function POST(
       data: {
         passed: false,
         completedAt: new Date(),
-        feedback: `Auto-failed: ${reason.replace(/_/g, " ")}`,
+        feedback: `Auto-failed: ${String(reason).replace(/_/g, " ")}`,
       },
     }),
     prisma.checkin.update({
       where: { id: interrogation.checkinId },
       data: { status: "failed" },
     }),
-    prisma.user.update({
-      where: { id: session.user.id },
-      data: { integrityScore: newScore },
-    }),
+    // Note: integrityScore is NOT changed. Contract: "Integrity only goes up."
     prisma.integrityLog.create({
       data: {
         userId: session.user.id,
         event: reason,
-        description: `Auto-fail: ${reason.replace(/_/g, " ")} during interrogation`,
+        description: `Auto-fail: ${String(reason).replace(/_/g, " ")} during interrogation`,
         scoreBefore: currentScore,
-        scoreAfter: newScore,
-        delta: -deduction,
+        scoreAfter: currentScore,
+        delta: 0,
       },
     }),
   ]);

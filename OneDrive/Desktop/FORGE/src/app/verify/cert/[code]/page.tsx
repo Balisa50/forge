@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Clock, Award, Fingerprint, Target } from "lucide-react";
+import { CheckCircle2, Clock, Award, Fingerprint, Target, ShieldAlert } from "lucide-react";
+import { verifyCertSignature } from "@/lib/cert-signature";
 
 export default async function VerifyCertPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
@@ -13,6 +14,24 @@ export default async function VerifyCertPage({ params }: { params: Promise<{ cod
   });
 
   if (!cert) notFound();
+
+  // Cryptographically verify the certificate. A row that's been tampered
+  // with (or one signed before signing was introduced) shows a warning.
+  const signatureValid = cert.signature
+    ? verifyCertSignature(
+        {
+          id: cert.id,
+          userId: cert.userId,
+          roadmapId: cert.roadmapId,
+          title: cert.title,
+          totalTasks: cert.totalTasks,
+          totalHours: cert.totalHours,
+          passRate: cert.passRate,
+          issuedAt: cert.issuedAt,
+        },
+        cert.signature,
+      )
+    : null;
 
   const strongPassRate = cert.passRate >= 0.8;
 
@@ -29,9 +48,19 @@ export default async function VerifyCertPage({ params }: { params: Promise<{ cod
           }}>
             <CheckCircle2 size={32} color="var(--green)" strokeWidth={1.5} />
           </div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--green)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-            VERIFIED CERTIFICATE
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: signatureValid === false ? "var(--red)" : "var(--green)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+            {signatureValid === false
+              ? "⚠ SIGNATURE MISMATCH"
+              : signatureValid === true
+                ? "CRYPTOGRAPHICALLY VERIFIED"
+                : "VERIFIED CERTIFICATE"}
           </div>
+          {signatureValid === false && (
+            <p style={{ color: "var(--red)", fontSize: "0.8125rem", maxWidth: 360, margin: "0 auto 0.75rem" }}>
+              <ShieldAlert size={12} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} />
+              This certificate&apos;s data does not match its cryptographic signature. It may have been altered.
+            </p>
+          )}
           <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2rem", letterSpacing: "0.05em" }}>The Forge</h1>
         </div>
 

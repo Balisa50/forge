@@ -6,9 +6,11 @@
  * grades it against the rubric. 10 questions, 10 points each, 70 to pass.
  */
 
-export const TOTAL_QUESTIONS = 10;
+// Matches the contract page exactly: "3 open-ended questions, 40% to pass."
+// 3 × 10 = 30 max points. 40% = 12 points to pass.
+export const TOTAL_QUESTIONS = 3;
 export const MAX_POINTS_PER_QUESTION = 10;
-export const PASS_THRESHOLD = 70; // out of TOTAL_QUESTIONS * MAX_POINTS_PER_QUESTION
+export const PASS_THRESHOLD = 12; // 40% of (TOTAL_QUESTIONS * MAX_POINTS_PER_QUESTION)
 
 export type QuestionType =
   | "APPLICATION"
@@ -95,22 +97,14 @@ QUESTION FORMAT — RETURN EXACTLY ONE QUESTION AS VALID JSON:
   }
 }
 
-QUESTION SEQUENCE (follow this order):
-Q1: APPLICATION — realistic scenario using their actual work
-Q2: DEBUGGING — "if you change X to Y, what breaks and why?"
-Q3: CONCEPTUAL_DEPTH — the WHY question
-Q4: EVIDENCE_CROSS_CHECK — based on something in evidence they didn't mention
-Q5: EDGE_CASE — beyond the happy path
-Q6: TRADE_OFF — "why X over Y? consequences?"
-Q7: DEEPER_APPLICATION — different aspect than Q1
-Q8: HISTORY_RECALL — references past session (if none: ask about a concept they should know)
-Q9: HISTORY_CONNECTION — connects past to today
-Q10: SYNTHESIS — hardest, connects multiple concepts
+QUESTION SEQUENCE (exactly these three, in order):
+Q1: APPLICATION — a realistic scenario that uses what they claim they built. Ask how they'd extend or modify it.
+Q2: CONCEPTUAL_DEPTH — the WHY question. Probe the reasoning behind a key choice in their work.
+Q3: TRADE_OFF or EDGE_CASE — push beyond the happy path. What would break, and why?
 
-CODE QUESTIONS: At least 3 of ${TOTAL_QUESTIONS} questions must include a code snippet in markdown fence blocks.
-Use the student's actual code if available from evidence. Otherwise write realistic code based on their work.
+CODE: At least one of the three questions should reference a code snippet (markdown fence) from their work.
 
-PASS THRESHOLD: ${PASS_THRESHOLD}/${TOTAL_QUESTIONS * MAX_POINTS_PER_QUESTION} total points.`;
+PASS THRESHOLD: ${PASS_THRESHOLD}/${TOTAL_QUESTIONS * MAX_POINTS_PER_QUESTION} points (40%).`;
 
 export const GRADE_PROMPT = (
   studentName: string,

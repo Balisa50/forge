@@ -278,6 +278,9 @@ model Certificate {
   totalTasks  Int
   totalHours  Float
   passRate    Float    @default(0)
+  /// HMAC-SHA256 signature over (id|userId|roadmapId|title|totalTasks|totalHours|passRate|issuedAt)
+  /// using CERT_SECRET. Lets us verify a certificate without trusting the DB row alone.
+  signature   String?
   issuedAt    DateTime @default(now())
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
