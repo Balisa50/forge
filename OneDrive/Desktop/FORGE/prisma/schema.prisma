@@ -367,6 +367,11 @@ model MentorLink {
   orgId     String?
   note      String?
   isActive  Boolean  @default(true)
+  /// Mentor-controlled visibility flags for what the mentee sees in their
+  /// dashboard. Stored as JSON so we can grow the surface without further
+  /// migrations. Shape: { pod: boolean, certificates: boolean, analytics: boolean, journal: boolean, leaderboard: boolean }
+  /// Missing keys default to TRUE (visible) so existing rows aren't broken.
+  visibility Json?
   createdAt DateTime @default(now())
 
   mentor    User          @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)

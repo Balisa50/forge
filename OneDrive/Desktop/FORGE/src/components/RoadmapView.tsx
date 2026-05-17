@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp, ExternalLink, BookOpen, CirclePlay, BookMarked, Target, HelpCircle, X, Loader2, ClipboardCheck, Code2, HelpCircle as HelpIcon } from "lucide-react";
+import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp, ExternalLink, BookOpen, CirclePlay, BookMarked, Target, HelpCircle, X, Loader2, ClipboardCheck, Code2, HelpCircle as HelpIcon, Play } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { parseTaskDetail } from "@/lib/parse-task-detail";
+import ResourceViewer from "@/components/ResourceViewer";
 
 interface Task {
   id: string;
@@ -232,6 +233,7 @@ export default function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
   const [activeTrack, setActiveTrack] = useState(roadmap.tracks[0]?.id ?? "");
   const [expandedPhase, setExpandedPhase] = useState<string | null>(roadmap.tracks[0]?.phases[0]?.id ?? null);
   const [tutor, setTutor] = useState<TutorState | null>(null);
+  const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
 
   const track = roadmap.tracks.find((t) => t.id === activeTrack);
 
@@ -579,55 +581,57 @@ export default function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
                                     {task.resources.map((resource, ri) => {
                                       const parsed = parseResource(resource);
 
-                                      if (parsed.type === "youtube") {
+                                      if (parsed.type === "youtube" && parsed.href) {
+                                        const href = parsed.href;
                                         return (
-                                          <a
+                                          <button
                                             key={ri}
-                                            href={parsed.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            type="button"
+                                            onClick={() => setViewer({ url: href, label: parsed.label })}
                                             style={{
                                               display: "inline-flex",
                                               alignItems: "center",
                                               gap: "0.375rem",
                                               fontSize: "0.8125rem",
                                               color: "#ff4444",
-                                              textDecoration: "none",
+                                              background: "transparent",
+                                              border: "none",
+                                              padding: 0,
+                                              cursor: "pointer",
                                               fontFamily: "var(--font-body)",
-                                              transition: "opacity 0.15s",
+                                              textAlign: "left",
                                             }}
-                                            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-                                            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                                           >
-                                            <CirclePlay size={14} />
+                                            <Play size={13} />
                                             {parsed.label}
-                                          </a>
+                                          </button>
                                         );
                                       }
 
-                                      if (parsed.type === "url") {
+                                      if (parsed.type === "url" && parsed.href) {
+                                        const href = parsed.href;
                                         return (
-                                          <a
+                                          <button
                                             key={ri}
-                                            href={parsed.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            type="button"
+                                            onClick={() => setViewer({ url: href, label: parsed.label })}
                                             style={{
                                               display: "inline-flex",
                                               alignItems: "center",
                                               gap: "0.375rem",
                                               fontSize: "0.8125rem",
                                               color: "var(--blue)",
-                                              textDecoration: "none",
+                                              background: "transparent",
+                                              border: "none",
+                                              padding: 0,
+                                              cursor: "pointer",
                                               fontFamily: "var(--font-body)",
-                                              transition: "opacity 0.15s",
+                                              textAlign: "left",
                                             }}
-                                            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-                                            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                                           >
                                             <ExternalLink size={12} />
                                             {parsed.label}
-                                          </a>
+                                          </button>
                                         );
                                       }
 
@@ -673,6 +677,9 @@ export default function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
       ) : (
         <p style={{ color: "var(--text-secondary)" }}>No tracks found.</p>
       )}
+
+      {/* Resource viewer modal */}
+      {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
 
       {/* Tutor panel */}
       <AnimatePresence>

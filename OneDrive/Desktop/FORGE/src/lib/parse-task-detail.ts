@@ -53,6 +53,19 @@ function stripListMarker(line: string): string {
   return line.replace(/^\s*(?:[-*•]|\d+\.|Q\d+:?)\s*/i, "").trim();
 }
 
+/** Strip the markdown formatting markers (** and ___) and normalise dashes
+ *  so the rendered content reads like prose, not like an LLM output. */
+function humanise(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, "$1")    // **bold** → bold
+    .replace(/__([^_]+)__/g, "$1")          // __bold__ → bold
+    .replace(/\*([^*]+)\*/g, "$1")          // *italic* → italic
+    .replace(/—/g, " — ")                   // tighten em-dashes
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 export function parseTaskDetail(detail: string): ParsedTaskDetail {
   if (!detail) {
     return { context: "", topics: [], tasks: [], project: "", questions: [], exercises: [] };
@@ -92,11 +105,11 @@ export function parseTaskDetail(detail: string): ParsedTaskDetail {
       projectLines.push(line.trim());
     } else {
       const stripped = stripListMarker(line);
-      if (stripped) out[current].push(stripped);
+      if (stripped) out[current].push(humanise(stripped));
     }
   }
 
-  out.context = contextLines.join(" ").trim();
-  out.project = projectLines.join(" ").trim();
+  out.context = humanise(contextLines.join(" "));
+  out.project = humanise(projectLines.join(" "));
   return out;
 }

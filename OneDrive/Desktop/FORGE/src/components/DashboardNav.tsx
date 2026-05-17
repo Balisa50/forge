@@ -28,12 +28,26 @@ import {
   Award,
 } from "lucide-react";
 
+import type { VisibilityMap } from "@/lib/visibility";
+import { DEFAULT_VISIBILITY } from "@/lib/visibility";
+
 interface DashboardNavProps {
   user: User;
   userRole: string;
   orgRole?: string | null;
   isAlsoLearning?: boolean;
+  /** Mentor-controlled visibility flags. Filters which sections show. */
+  visibility?: VisibilityMap;
 }
+
+const VISIBILITY_KEYS_BY_HREF: Record<string, keyof VisibilityMap> = {
+  "/dashboard/pod": "pod",
+  "/dashboard/certificates": "certificates",
+  "/dashboard/analytics": "analytics",
+  "/dashboard/journal": "journal",
+  "/dashboard/calendar": "calendar",
+  "/dashboard/notes": "notes",
+};
 
 const ROLE_LABELS: Record<string, { label: string; color: string }> = {
   learner:  { label: "Solo Learner", color: "var(--accent)" },
@@ -111,10 +125,15 @@ function getNavItems(userRole: string, isAlsoLearning: boolean): NavItem[] {
   }
 }
 
-export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning = false }: DashboardNavProps) {
+export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning = false, visibility }: DashboardNavProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const NAV_ITEMS = getNavItems(userRole, isAlsoLearning);
+  const vis = visibility ?? DEFAULT_VISIBILITY;
+  const NAV_ITEMS = getNavItems(userRole, isAlsoLearning).filter((item) => {
+    const key = VISIBILITY_KEYS_BY_HREF[item.href];
+    if (!key) return true;
+    return vis[key] !== false;
+  });
   const roleInfo = ROLE_LABELS[userRole] ?? ROLE_LABELS.learner;
 
   const closeMobile = () => setMobileOpen(false);

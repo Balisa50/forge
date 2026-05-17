@@ -8,6 +8,7 @@ import {
   Clock, ExternalLink, Send, Loader2, Unlock, ShieldCheck, RotateCcw,
   Link2, Plus, Trash2,
 } from "lucide-react";
+import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 
 interface Checkin {
   id: string;
@@ -276,6 +277,8 @@ export default function MenteeDrilldownPage() {
           </div>
         </div>
       </div>
+
+      <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
 
       {/* Roadmaps */}
       {roadmaps.length === 0 && (
