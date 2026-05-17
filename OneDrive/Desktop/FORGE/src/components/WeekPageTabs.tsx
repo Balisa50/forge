@@ -25,14 +25,18 @@ import ResourceViewer from "@/components/ResourceViewer";
  * in a new tab. Real watch-URLs embed inline via ResourceViewer.
  */
 
-function isEmbeddableVideo(url: string): boolean {
+/**
+ * YouTube embedding is a permanent source of pain: wrong video IDs, deleted
+ * videos, channel "embedding disabled" flags, search-URLs that can't iframe,
+ * and the dreaded "Error 153 — Video player configuration error". We bail on
+ * the whole thing. Every YouTube link opens in a new tab; only docs / PDFs
+ * / non-YouTube URLs go through the in-app viewer.
+ */
+function shouldOpenInNewTab(url: string): boolean {
   try {
     const u = new URL(url);
-    if (!u.hostname.includes("youtube.com") && !u.hostname.includes("youtu.be")) return true;
-    if (u.hostname.includes("youtu.be")) return !!u.pathname.slice(1);
-    if (u.searchParams.get("v")) return true;
-    return false; // youtube.com/results?search_query=... → can't embed
-  } catch { return true; }
+    return u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
+  } catch { return false; }
 }
 
 export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: string }) {
@@ -71,9 +75,10 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
   const [manuallyOpen, setManuallyOpen] = useState<Record<number, boolean>>({});
   const isOpen = (idx: number) => idx === currentDayIdx || manuallyOpen[idx];
 
-  // Open video/resource: if it can't be embedded, open in a new tab directly.
+  // Open video/resource. YouTube always goes to a new tab — its iframe is
+  // unreliable. Everything else uses the in-app viewer.
   const openItem = (url: string, label: string) => {
-    if (!isEmbeddableVideo(url)) {
+    if (shouldOpenInNewTab(url)) {
       window.open(url, "_blank", "noopener,noreferrer");
       return;
     }
