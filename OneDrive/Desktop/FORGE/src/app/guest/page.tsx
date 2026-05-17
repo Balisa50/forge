@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 export default function GuestPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,8 +16,10 @@ export default function GuestPage() {
         if (cancelled) return;
         const signin = await signIn("credentials", { email, password, redirect: false });
         if (cancelled) return;
-        if (signin?.error) throw new Error(signin.error);
-        router.replace("/onboarding");
+        if (!signin?.ok || signin?.error) throw new Error(signin?.error || "Sign-in failed");
+        // Full reload so the proxy middleware re-reads the new session cookie.
+        // router.replace doesn't trigger middleware in v5 reliably.
+        window.location.href = "/onboarding";
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Something went wrong");
       }
@@ -27,7 +27,7 @@ export default function GuestPage() {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, []);
 
   return (
     <main
