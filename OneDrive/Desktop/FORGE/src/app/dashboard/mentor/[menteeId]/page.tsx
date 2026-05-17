@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, MessageSquare, CheckCircle2, AlertTriangle, Lock,
-  Clock, ExternalLink, Send, Loader2,
+  Clock, ExternalLink, Send, Loader2, Unlock, ShieldCheck, RotateCcw,
 } from "lucide-react";
 
 interface Checkin {
@@ -131,6 +131,28 @@ export default function MenteeDrilldownPage() {
       await load();
     } catch (e) {
       alert(e instanceof Error ? e.message : "Failed to post comment");
+    } finally {
+      setPosting(null);
+    }
+  };
+
+  const handleAction = async (task: MenteeTask, action: "unlock" | "verify" | "reopen") => {
+    const verb = action === "unlock" ? "unlock this week" : action === "verify" ? "verify this week (bypass interrogation)" : "reopen this week";
+    if (!confirm(`${verb}?`)) return;
+    setPosting(task.id);
+    try {
+      const res = await fetch(`/api/mentor/tasks/${task.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, menteeId }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Could not ${action}`);
+      }
+      await load();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Action failed");
     } finally {
       setPosting(null);
     }
@@ -389,6 +411,43 @@ export default function MenteeDrilldownPage() {
                               </ul>
                             </div>
                           )}
+
+                          {/* Mentor actions (super-powers) */}
+                          <div style={{ marginTop: "0.875rem", paddingTop: "0.75rem", borderTop: "1px dashed var(--border)", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                            {task.status === "locked" && (
+                              <button
+                                onClick={() => handleAction(task, "unlock")}
+                                disabled={posting === task.id}
+                                className="forge-btn forge-btn-ghost"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.8125rem", color: "var(--accent)", borderColor: "rgba(245,158,11,0.3)" }}
+                              >
+                                <Unlock size={13} /> Unlock for them
+                              </button>
+                            )}
+                            {(task.status === "available" || task.status === "in_progress" || task.status === "pending_verification") && (
+                              <button
+                                onClick={() => handleAction(task, "verify")}
+                                disabled={posting === task.id}
+                                className="forge-btn forge-btn-ghost"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.8125rem", color: "var(--green)", borderColor: "rgba(34,197,94,0.3)" }}
+                              >
+                                <ShieldCheck size={13} /> Verify directly
+                              </button>
+                            )}
+                            {(task.status === "verified" || task.status === "failed") && (
+                              <button
+                                onClick={() => handleAction(task, "reopen")}
+                                disabled={posting === task.id}
+                                className="forge-btn forge-btn-ghost"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.8125rem", color: "var(--blue)", borderColor: "rgba(59,130,246,0.3)" }}
+                              >
+                                <RotateCcw size={13} /> Reopen for redo
+                              </button>
+                            )}
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginLeft: "auto", alignSelf: "center" }}>
+                              Mentor overrides are logged as notes
+                            </span>
+                          </div>
 
                           {/* New comment */}
                           <div style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>

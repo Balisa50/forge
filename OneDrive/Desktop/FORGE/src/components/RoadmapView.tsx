@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp, ExternalLink, BookOpen, CirclePlay, BookMarked, Target, HelpCircle, X, Loader2 } from "lucide-react";
+import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp, ExternalLink, BookOpen, CirclePlay, BookMarked, Target, HelpCircle, X, Loader2, ClipboardCheck, Code2, HelpCircle as HelpIcon } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { parseTaskDetail } from "@/lib/parse-task-detail";
 
 interface Task {
   id: string;
@@ -45,9 +46,29 @@ const TASK_STATUS: Record<string, { Icon: LucideIcon; color: string; label: stri
   failed:               { Icon: XCircle,      color: "var(--red)",       label: "Failed" },
 };
 
-/** Convert "YouTube: Channel — Topic" into a clickable YouTube search link */
-function parseResource(resource: string): { type: "url" | "youtube" | "book" | "text"; label: string; href?: string } {
-  // YouTube channel reference
+/** Resource strings from curated roadmaps come in three shapes:
+ *    "Label — https://url (note)"        — curated (new)
+ *    "Label — https://url"               — curated (no note)
+ *    "YouTube: Channel — Topic"          — AI-generated
+ *    "Book: Title"                       — AI-generated
+ *    "https://full-url"                  — raw URL
+ *    "domain.com/path"                   — embedded domain
+ *
+ *  parseResource returns a uniform shape the UI can render.
+ */
+function parseResource(resource: string): { type: "url" | "youtube" | "book" | "text"; label: string; href?: string; note?: string } {
+  // Curated format: "Label — https://url" or "Label — https://url (note)"
+  const curatedMatch = resource.match(/^(.+?)\s+[—–-]\s+(https?:\/\/\S+?)(?:\s*\(([^)]+)\))?$/);
+  if (curatedMatch) {
+    return {
+      type: "url",
+      label: curatedMatch[1].trim(),
+      href: curatedMatch[2].trim(),
+      note: curatedMatch[3]?.trim(),
+    };
+  }
+
+  // YouTube reference (AI-generated)
   const ytMatch = resource.match(/^YouTube:\s*(.+?)(?:\s*[—–-]\s*(.+))?$/i);
   if (ytMatch) {
     const channel = ytMatch[1].trim();
@@ -62,29 +83,141 @@ function parseResource(resource: string): { type: "url" | "youtube" | "book" | "
 
   // Book reference
   if (resource.startsWith("Book:")) {
-    return {
-      type: "book",
-      label: resource.replace(/^Book:\s*/, ""),
-    };
+    return { type: "book", label: resource.replace(/^Book:\s*/, "") };
   }
 
-  // URL
+  // Raw URL
   if (resource.startsWith("http://") || resource.startsWith("https://")) {
     try {
       const url = new URL(resource);
       const host = url.hostname.replace("www.", "");
-      const path = url.pathname.length > 1 ? url.pathname.slice(0, 40) : "";
-      return {
-        type: "url",
-        label: `${host}${path}${url.pathname.length > 40 ? "..." : ""}`,
-        href: resource,
-      };
+      return { type: "url", label: host + (url.pathname.length > 1 ? url.pathname.slice(0, 40) : ""), href: resource };
     } catch {
       return { type: "url", label: resource.slice(0, 60), href: resource };
     }
   }
 
+  // Embedded domain (e.g. "kaggle.com/datasets/...")
+  const domainMatch = resource.match(/^(?:[^\s(]*?\b)?((?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s)]*)?)/i);
+  if (domainMatch) {
+    const url = domainMatch[1].startsWith("http") ? domainMatch[1] : `https://${domainMatch[1]}`;
+    return { type: "url", label: resource, href: url };
+  }
+
   return { type: "text", label: resource };
+}
+
+/** Render a task's detail. If it parses into the curated 5-section shape,
+ *  render each section nicely. Otherwise fall back to a plain paragraph. */
+function TaskDetailContent({ detail, isLocked }: { detail: string; isLocked: boolean }) {
+  const parsed = parseTaskDetail(detail);
+  const hasStructure = parsed.topics.length || parsed.tasks.length || parsed.project || parsed.questions.length || parsed.exercises.length;
+
+  if (!hasStructure) {
+    return (
+      <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "0.5rem" }}>
+        {detail}
+      </p>
+    );
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem", marginBottom: "0.5rem", opacity: isLocked ? 0.7 : 1 }}>
+      {parsed.context && (
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, maxWidth: "60ch" }}>
+          {parsed.context}
+        </p>
+      )}
+
+      {parsed.topics.length > 0 && (
+        <DetailBlock title="What you'll learn" icon={BookOpen} accent="#60a5fa">
+          <ul className="grid gap-1.5 md:grid-cols-2">
+            {parsed.topics.map((t, i) => (
+              <li key={i} style={{ display: "flex", gap: "0.5rem", fontSize: "0.875rem", color: "var(--text-primary)", lineHeight: 1.5 }}>
+                <span style={{ color: "#60a5fa", flexShrink: 0 }}>•</span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </DetailBlock>
+      )}
+
+      {parsed.tasks.length > 0 && (
+        <DetailBlock title="What to do" icon={ClipboardCheck} accent="#34d399">
+          <ol style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {parsed.tasks.map((t, i) => (
+              <li key={i} style={{ display: "flex", gap: "0.625rem", fontSize: "0.875rem", color: "var(--text-primary)", lineHeight: 1.55 }}>
+                <span style={{ flexShrink: 0, width: "1.25rem", height: "1.25rem", borderRadius: "50%", background: "#34d39922", color: "#34d399", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", display: "grid", placeItems: "center", fontWeight: 600 }}>
+                  {i + 1}
+                </span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ol>
+        </DetailBlock>
+      )}
+
+      {parsed.project && (
+        <DetailBlock title="Real-world project to build" icon={Target} accent="#fb923c">
+          <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", lineHeight: 1.65, background: "rgba(251,146,60,0.06)", border: "1px solid rgba(251,146,60,0.18)", padding: "0.875rem 1rem", borderRadius: 8 }}>
+            {parsed.project}
+          </p>
+        </DetailBlock>
+      )}
+
+      {parsed.questions.length > 0 && (
+        <DetailBlock title="Think for yourself" icon={HelpIcon} accent="#f472b6">
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+            {parsed.questions.map((q, i) => (
+              <div key={i} style={{ background: "rgba(244,114,182,0.05)", border: "1px solid rgba(244,114,182,0.15)", padding: "0.75rem 0.875rem", borderRadius: 8 }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "#f472b6", textTransform: "uppercase", marginBottom: "0.25rem" }}>Q{i + 1}</p>
+                <p style={{ fontSize: "0.875rem", color: "var(--text-primary)", lineHeight: 1.55 }}>{q}</p>
+              </div>
+            ))}
+          </div>
+        </DetailBlock>
+      )}
+
+      {parsed.exercises.length > 0 && (
+        <DetailBlock title="Practice exercises" icon={Code2} accent="#38bdf8">
+          <ol style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {parsed.exercises.map((e, i) => (
+              <li key={i} style={{ display: "flex", gap: "0.625rem", fontSize: "0.875rem", color: "var(--text-primary)", lineHeight: 1.55 }}>
+                <span style={{ flexShrink: 0, width: "1.25rem", height: "1.25rem", borderRadius: "50%", background: "#38bdf822", color: "#38bdf8", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", display: "grid", placeItems: "center", fontWeight: 600 }}>
+                  {i + 1}
+                </span>
+                <span>{e}</span>
+              </li>
+            ))}
+          </ol>
+        </DetailBlock>
+      )}
+    </div>
+  );
+}
+
+function DetailBlock({
+  title,
+  icon: Icon,
+  accent,
+  children,
+}: {
+  title: string;
+  icon: LucideIcon;
+  accent: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+        <span style={{ width: 24, height: 24, borderRadius: 6, background: `${accent}1f`, color: accent, display: "grid", placeItems: "center" }}>
+          <Icon size={13} strokeWidth={2} />
+        </span>
+        <h4 style={{ fontFamily: "var(--font-headline)", fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{title}</h4>
+      </div>
+      {children}
+    </section>
+  );
 }
 
 type TutorState = {
@@ -283,24 +416,19 @@ export default function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
                                 <div style={{
                                   fontFamily: "var(--font-body)",
                                   fontWeight: 700,
-                                  fontSize: "1rem",
+                                  fontSize: "1.0625rem",
                                   color: isVerified ? "var(--green)" : isLocked ? "var(--text-dim)" : "var(--text-primary)",
                                   textDecoration: isVerified ? "line-through" : "none",
                                   textDecorationColor: "rgba(34,197,94,0.3)",
-                                  marginBottom: "0.375rem",
+                                  marginBottom: "0.5rem",
                                 }}>
                                   {task.title}
                                 </div>
 
-                                {/* Detail */}
-                                <p style={{
-                                  color: "var(--text-secondary)",
-                                  fontSize: "0.875rem",
-                                  lineHeight: 1.6,
-                                  marginBottom: task.why || task.milestone ? "0.5rem" : 0,
-                                }}>
-                                  {task.detail}
-                                </p>
+                                {/* Detail — parsed into structured sections when it's a curated week, else plain paragraph */}
+                                <TaskDetailContent detail={task.detail} isLocked={isLocked} />
+                                {/* legacy spacer compatibility */}
+                                <span style={{ display: "none" }}>{task.why || task.milestone ? "" : ""}</span>
 
                                 {/* Why */}
                                 {task.why && (

@@ -7,19 +7,16 @@ import { Flame, Swords, Clock, TrendingDown, Shield, FlaskConical, CalendarDays,
 import { ROADMAPSH_PATHS, ROADMAPSH_CATEGORIES, type RoadmapShPath } from "@/lib/roadmapsh-paths";
 import { CURATED_ROADMAPS, type CuratedRoadmapPickerEntry } from "@/lib/curated-roadmaps-client";
 
-type UserRole = "learner" | "student" | "mentor" | "bootcamp";
+type UserRole = "learner" | "student" | "mentor";
 
 /**
  * Steps vary by role:
- *   Learner/Student:           role → intro → roadmap → schedule → consequences → contract
+ *   Learner:                   role → intro → roadmap → schedule → consequences → contract
+ *   Student (joining via code):role → intro → roadmap → schedule → consequences → contract
  *   Mentor (also learning):    role → intro → mentorLearn → roadmap → schedule → consequences → contract
  *   Mentor (mentor only):      role → intro → mentorLearn → consequences → contract
- *   Bootcamp:                  role → intro → consequences → contract
  */
 function getStepsForRole(role: UserRole | null, isAlsoLearning: boolean) {
-  if (role === "bootcamp") {
-    return ["role", "intro", "consequences", "contract"] as const;
-  }
   if (role === "mentor") {
     if (isAlsoLearning) {
       return ["role", "intro", "mentorLearn", "roadmap", "schedule", "deadline", "consequences", "contract"] as const;
@@ -40,23 +37,16 @@ const ROLES = [
   {
     id: "student" as UserRole,
     Icon: GraduationCap,
-    title: "Student",
-    desc: "I'm part of a bootcamp, school, or mentored group. I have an invite code.",
+    title: "Mentee",
+    desc: "I'm being mentored by someone here. I have an invite code from my mentor.",
     color: "var(--green)",
   },
   {
     id: "mentor" as UserRole,
     Icon: UserCheck,
     title: "Mentor",
-    desc: "I'm guiding students. I want to track their progress and verify their work.",
+    desc: "I'm guiding learners. I review their work, unlock their progress, and grant them resources.",
     color: "var(--blue)",
-  },
-  {
-    id: "bootcamp" as UserRole,
-    Icon: Building2,
-    title: "Bootcamp / School Admin",
-    desc: "I run a program. I need to create an organization, set deadlines, and manage cohorts.",
-    color: "var(--orange, #ff7c3a)",
   },
 ];
 
@@ -363,56 +353,14 @@ export default function OnboardingPage() {
             <motion.div key="intro" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="text-center">
               <div style={{ marginBottom: "1rem", color: "var(--accent)", display: "flex", justifyContent: "center" }}><Flame size={56} strokeWidth={1.5} /></div>
               <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "3rem", color: "var(--text-primary)", marginBottom: "1rem" }}>Welcome to The Forge</h1>
-              <p style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.8, maxWidth: "480px", margin: "0 auto 1.5rem" }}>
-                {role === "bootcamp"
-                  ? "Set up your organization. Your students and mentors will join using an invite code. You can create your own learning path later if you want."
-                  : role === "mentor"
-                    ? "You're here to guide others. Join an organization if you have an invite code, or mentor independently. You can optionally create your own learning path from the dashboard."
-                    : role === "student"
-                      ? "You're joining an organization. Enter your invite code below, then set up your learning path."
-                      : "You're about to enter an accountability system that takes learning seriously. You set the pace. We hold you to it. No exceptions."
+              <p style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.7, maxWidth: "480px", margin: "0 auto 1.5rem" }}>
+                {role === "mentor"
+                  ? "You're here to guide others. Optionally enter an invite code from a learning group, or mentor independently. You'll see every mentee's weekly work and decide when they're ready to move forward."
+                  : role === "student"
+                    ? "You're being mentored. Enter the invite code your mentor gave you, then pick what you're learning."
+                    : "You're about to enter an accountability system that takes learning seriously. You set the pace. The Forge holds you to it. No exceptions."
                 }
               </p>
-
-              {/* Proctoring notice for roles that take exams */}
-              {(role === "learner" || role === "student") && (
-                <div className="forge-card" style={{ padding: "1rem 1.25rem", display: "flex", gap: "0.75rem", alignItems: "flex-start", marginBottom: "1.5rem", borderColor: "var(--blue)" }}>
-                  <Video size={18} strokeWidth={1.5} style={{ color: "var(--blue)", flexShrink: 0, marginTop: "0.125rem" }} />
-                  <div>
-                    <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.875rem", marginBottom: "0.25rem", color: "var(--blue)" }}>Camera Proctoring Enabled</div>
-                    <div style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", lineHeight: 1.5 }}>
-                      During exams, your camera will be active. AI monitors for: no person visible, multiple people, or looking away. This cannot be disabled.
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Org setup for bootcamp */}
-              {role === "bootcamp" && (
-                <div className="forge-panel" style={{ padding: "1.5rem", textAlign: "left", marginBottom: "1.5rem" }}>
-                  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", marginBottom: "1rem" }}>Create Your Organization</h3>
-                  <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem" }}>
-                    Your students and mentors will join using an invite code generated after creation.
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    <input
-                      type="text"
-                      className="forge-input"
-                      placeholder="Organization name (e.g. CodeCamp Africa)"
-                      value={orgName}
-                      onChange={(e) => setOrgName(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      className="forge-input"
-                      placeholder="Description (optional)"
-                      value={orgDesc}
-                      onChange={(e) => setOrgDesc(e.target.value)}
-                    />
-                    {orgError && <div style={{ color: "var(--red)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}>{orgError}</div>}
-                  </div>
-                </div>
-              )}
 
               {/* Invite code for students */}
               {role === "student" && (
@@ -458,7 +406,7 @@ export default function OnboardingPage() {
                   onClick={nextStep}
                   className="forge-btn forge-btn-primary"
                   style={{ padding: "0.875rem 2.5rem", fontSize: "1rem" }}
-                  disabled={(role === "bootcamp" && !orgName.trim()) || (role === "student" && !inviteCode.trim())}
+                  disabled={role === "student" && !inviteCode.trim()}
                 >
                   {role === "learner" ? "I'm Ready" : "Continue"}
                 </button>
@@ -843,7 +791,7 @@ function RoadmapBrowser({
     });
   }, [pathSearch, activeCategory]);
 
-  const canContinue = !!(selectedCurated || selectedPath || roadmapTitle.trim());
+  const canContinue = !!selectedCurated;
 
   return (
     <motion.div key="roadmap" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
@@ -915,46 +863,10 @@ function RoadmapBrowser({
         )}
       </div>
 
-      {/* Divider before "build your own" fallback */}
       {!selectedCurated && (
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
-          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>or describe your own goal</span>
-          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-        </div>
-      )}
-
-      {/* Custom learn-vs-ship toggle, only when no curated path is picked */}
-      {!selectedCurated && (
-        <div className="flex gap-3 mb-4">
-          {([["learn", GraduationCap, "Learn a Skill"], ["project", Swords, "Ship a Project"]] as const).map(([t, Icon, label]) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setJourneyType(t)}
-              style={{
-                flex: 1, padding: "0.75rem", borderRadius: "8px", cursor: "pointer",
-                border: journeyType === t ? "1px solid var(--accent)" : "1px solid var(--border)",
-                background: journeyType === t ? "rgba(245,158,11,0.06)" : "var(--bg-card)",
-                textAlign: "center", transition: "all 0.15s",
-              }}
-            >
-              <Icon size={20} strokeWidth={1.5} style={{ margin: "0 auto 0.375rem", display: "block", color: journeyType === t ? "var(--accent)" : "var(--text-dim)" }} />
-              <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.875rem", color: journeyType === t ? "var(--accent)" : "var(--text-primary)" }}>{label}</div>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {!selectedCurated && (
-        <input
-          type="text"
-          value={roadmapTitle}
-          onChange={(e) => setRoadmapTitle(e.target.value)}
-          className="forge-input"
-          placeholder={journeyType === "project" ? "e.g. Build a SaaS MVP, Portfolio Website..." : "e.g. Game Dev, Blockchain, Robotics..."}
-          style={{ marginBottom: "1.25rem" }}
-        />
+        <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", textAlign: "center", marginBottom: "1.25rem", fontFamily: "var(--font-mono)" }}>
+          Pick one to continue. You can switch later from the dashboard.
+        </p>
       )}
 
       <div className="flex gap-3">
