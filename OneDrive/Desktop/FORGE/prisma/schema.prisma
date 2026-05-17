@@ -76,6 +76,14 @@ model User {
   onboardingDone   Boolean   @default(false)
   isPublic         Boolean   @default(true)
   isGuest          Boolean   @default(false)
+  /// True when the account was created via mentor join code (no password
+  /// signup). These users sign in via their stored recoveryToken or via
+  /// cookie persistence; the login form doesn't apply to them.
+  isCodeOnly       Boolean   @default(false)
+  /// Long random token that lets a code-only mentee sign back in on a new
+  /// device. Stored hashed-free because it's the user's only key — they
+  /// hold the secret in their bookmark, we just look it up.
+  recoveryToken    String?   @unique
   stripeCustomerId String?
   emailVerified    DateTime?
   image            String?

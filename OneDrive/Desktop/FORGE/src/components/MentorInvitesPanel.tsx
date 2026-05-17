@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Copy, CheckCircle2, Plus, Trash2, Loader2, Link2 } from "lucide-react";
+import { Copy, CheckCircle2, Plus, Trash2, Loader2, Link2, Share2 } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 
 interface Invite {
@@ -74,15 +74,17 @@ export default function MentorInvitesPanel() {
     await load();
   };
 
-  const copy = async (code: string) => {
+  const copy = async (text: string, key: string) => {
     try {
-      await navigator.clipboard.writeText(code);
-      setCopied(code);
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
       setTimeout(() => setCopied(null), 1500);
     } catch {
       // ignore
     }
   };
+
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
     <section className="forge-panel" style={{ padding: "1.5rem", marginBottom: "2rem" }}>
@@ -90,7 +92,7 @@ export default function MentorInvitesPanel() {
         <div>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem" }}>Invite codes</h2>
           <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginTop: "0.125rem" }}>
-            Share a code with a learner. When they redeem it on signup, you become their mentor.
+            Share the <strong style={{ color: "var(--accent)" }}>Share link</strong> — your mentee clicks it, picks a name, and is in the dashboard. No signup, no password.
           </p>
         </div>
       </div>
@@ -179,11 +181,19 @@ export default function MentorInvitesPanel() {
               >
                 <code style={{ fontFamily: "var(--font-mono)", fontSize: "1rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--text-primary)" }}>{i.code}</code>
                 <button
-                  onClick={() => copy(i.code)}
+                  onClick={() => copy(i.code, `code-${i.id}`)}
                   className="forge-btn forge-btn-ghost"
                   style={{ padding: "0.3rem 0.625rem", fontSize: "0.6875rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}
                 >
-                  {copied === i.code ? <><CheckCircle2 size={11} /> Copied</> : <><Copy size={11} /> Copy</>}
+                  {copied === `code-${i.id}` ? <><CheckCircle2 size={11} /> Copied</> : <><Copy size={11} /> Code</>}
+                </button>
+                <button
+                  onClick={() => copy(`${baseUrl}/j/${i.code}`, `link-${i.id}`)}
+                  className="forge-btn forge-btn-ghost"
+                  style={{ padding: "0.3rem 0.625rem", fontSize: "0.6875rem", display: "inline-flex", gap: "0.25rem", alignItems: "center", color: "var(--accent)", borderColor: "rgba(245,158,11,0.3)" }}
+                  title="Share a one-click join link instead — mentee skips signup entirely"
+                >
+                  {copied === `link-${i.id}` ? <><CheckCircle2 size={11} /> Copied</> : <><Share2 size={11} /> Share link</>}
                 </button>
                 <span style={{ flex: 1, fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
                   <Link2 size={10} style={{ display: "inline", marginRight: 4 }} />
