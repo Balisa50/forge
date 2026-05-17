@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import RoadmapView from "@/components/RoadmapView";
 import Link from "next/link";
+import { loadAllRoadmaps, type RoadmapWeek } from "@/lib/roadmaps";
 
 export default async function RoadmapPage() {
   const session = await auth();
@@ -23,6 +24,36 @@ export default async function RoadmapPage() {
       },
     },
   });
+
+  // Match the DB roadmap to its curated curriculum JSON so we can show the
+  // new beginner-friendly Day-by-Day view inline on the dashboard. Falls back
+  // gracefully when no curriculum matches.
+  const curatedSlug = (() => {
+    if (!roadmap) return null;
+    const match = loadAllRoadmaps().find((r) => r.title === roadmap.title);
+    return match?.slug ?? null;
+  })();
+
+  const weekByTaskId: Record<string, RoadmapWeek> = {};
+  if (roadmap && curatedSlug) {
+    const all = loadAllRoadmaps();
+    const curriculum = all.find((r) => r.slug === curatedSlug);
+    if (curriculum) {
+      const byNumber = new Map<number, RoadmapWeek>(curriculum.weeks.map((w) => [w.number, w]));
+      for (const t of roadmap.tracks) {
+        for (const p of t.phases) {
+          for (const task of p.tasks) {
+            const m = task.title.match(/^Week\s+(\d+)/i);
+            if (m) {
+              const n = parseInt(m[1], 10);
+              const w = byNumber.get(n);
+              if (w) weekByTaskId[task.id] = w;
+            }
+          }
+        }
+      }
+    }
+  }
 
   if (!roadmap) {
     return (
@@ -52,7 +83,7 @@ export default async function RoadmapPage() {
         <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary">Check In Today</Link>
       </div>
 
-      <RoadmapView roadmap={roadmap} />
+      <RoadmapView roadmap={roadmap} curatedSlug={curatedSlug} weekByTaskId={weekByTaskId} />
     </div>
   );
 }

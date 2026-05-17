@@ -6,6 +6,8 @@ import { Lock, Clock, Zap, Search, CheckCircle2, XCircle, ChevronDown, ChevronUp
 import type { LucideIcon } from "lucide-react";
 import { parseTaskDetail } from "@/lib/parse-task-detail";
 import ResourceViewer from "@/components/ResourceViewer";
+import WeekPageTabs from "@/components/WeekPageTabs";
+import type { RoadmapWeek } from "@/lib/roadmaps";
 
 interface Task {
   id: string;
@@ -229,7 +231,15 @@ type TutorState = {
   open: boolean;
 };
 
-export default function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
+export default function RoadmapView({
+  roadmap,
+  curatedSlug,
+  weekByTaskId,
+}: {
+  roadmap: Roadmap;
+  curatedSlug?: string | null;
+  weekByTaskId?: Record<string, RoadmapWeek>;
+}) {
   const [activeTrack, setActiveTrack] = useState(roadmap.tracks[0]?.id ?? "");
   const [expandedPhase, setExpandedPhase] = useState<string | null>(roadmap.tracks[0]?.phases[0]?.id ?? null);
   const [tutor, setTutor] = useState<TutorState | null>(null);
@@ -427,8 +437,20 @@ export default function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
                                   {task.title}
                                 </div>
 
-                                {/* Detail — parsed into structured sections when it's a curated week, else plain paragraph */}
-                                <TaskDetailContent detail={task.detail} isLocked={isLocked} />
+                                {/* Detail — when a matching curriculum week exists, render the
+                                    rich Day-by-Day tabs UI (videos, unlockable days, progress).
+                                    Otherwise fall back to the parsed legacy view. */}
+                                {(() => {
+                                  const curatedWeek = weekByTaskId?.[task.id];
+                                  if (curatedWeek && curatedSlug && !isLocked) {
+                                    return (
+                                      <div style={{ marginBottom: "0.75rem" }}>
+                                        <WeekPageTabs week={curatedWeek} slug={curatedSlug} />
+                                      </div>
+                                    );
+                                  }
+                                  return <TaskDetailContent detail={task.detail} isLocked={isLocked} />;
+                                })()}
                                 {/* legacy spacer compatibility */}
                                 <span style={{ display: "none" }}>{task.why || task.milestone ? "" : ""}</span>
 
