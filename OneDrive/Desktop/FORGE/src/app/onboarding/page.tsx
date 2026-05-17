@@ -11,9 +11,10 @@ type UserRole = "learner" | "student" | "mentor";
 
 /**
  * Steps vary by role:
- *   Learner:                   role → intro → roadmap → schedule → consequences → contract
- *   Student (joining via code):role → intro → roadmap → schedule → consequences → contract
- *   Mentor (also learning):    role → intro → mentorLearn → roadmap → schedule → consequences → contract
+ *   Learner (solo):            role → intro → roadmap → schedule → deadline → consequences → contract
+ *   Mentee (joining a mentor): role → intro → roadmap → consequences → contract
+ *                              (mentor controls cadence + deadlines — mentee just commits)
+ *   Mentor (also learning):    role → intro → mentorLearn → roadmap → schedule → deadline → consequences → contract
  *   Mentor (mentor only):      role → intro → mentorLearn → consequences → contract
  */
 function getStepsForRole(role: UserRole | null, isAlsoLearning: boolean) {
@@ -22,6 +23,9 @@ function getStepsForRole(role: UserRole | null, isAlsoLearning: boolean) {
       return ["role", "intro", "mentorLearn", "roadmap", "schedule", "deadline", "consequences", "contract"] as const;
     }
     return ["role", "intro", "mentorLearn", "consequences", "contract"] as const;
+  }
+  if (role === "student") {
+    return ["role", "intro", "roadmap", "consequences", "contract"] as const;
   }
   return ["role", "intro", "roadmap", "schedule", "deadline", "consequences", "contract"] as const;
 }
@@ -341,12 +345,12 @@ export default function OnboardingPage() {
             <motion.div key="intro" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="text-center">
               <div style={{ marginBottom: "1rem", color: "var(--accent)", display: "flex", justifyContent: "center" }}><Flame size={56} strokeWidth={1.5} /></div>
               <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "3rem", color: "var(--text-primary)", marginBottom: "1rem" }}>Welcome to The Forge</h1>
-              <p style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.7, maxWidth: "480px", margin: "0 auto 1.5rem" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.6, maxWidth: "440px", margin: "0 auto 1.5rem", textAlign: "center" }}>
                 {role === "mentor"
-                  ? "You're here to guide others. Optionally enter an invite code from a learning group, or mentor independently. You'll see every mentee's weekly work and decide when they're ready to move forward."
+                  ? "You guide. They build. You decide when they're ready to move forward."
                   : role === "student"
-                    ? "You're being mentored. Enter the invite code your mentor gave you, then pick what you're learning."
-                    : "You're about to enter an accountability system that takes learning seriously. You set the pace. The Forge holds you to it. No exceptions."
+                    ? "Enter the code your mentor gave you, then pick what you're learning."
+                    : "You set the pace. The Forge holds you to it."
                 }
               </p>
 
@@ -400,10 +404,9 @@ export default function OnboardingPage() {
 
               {/* Mentor onboarding: no code needed at signup — they generate their own from the dashboard */}
               {role === "mentor" && (
-                <div className="forge-panel" style={{ padding: "1.5rem", textAlign: "left", marginBottom: "1.5rem" }}>
-                  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", marginBottom: "0.5rem" }}>Generate codes after signup</h3>
-                  <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.55 }}>
-                    Once you&apos;re in, your mentor dashboard lets you generate as many pairing codes as you like — one per learner, or one per cohort. Each code can be scoped to a specific path (AI Engineering, ML Engineering, Full Stack, etc.) so learners land on the right roadmap.
+                <div className="forge-panel" style={{ padding: "1rem 1.25rem", textAlign: "left", marginBottom: "1.5rem" }}>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.5 }}>
+                    You&apos;ll generate pairing codes from your dashboard. One per learner. Each code can be scoped to a path.
                   </p>
                 </div>
               )}

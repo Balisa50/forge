@@ -212,9 +212,6 @@ export default function LandingPage() {
               <ExternalLink size={13} /> Browse the roadmaps →
             </Link>
           </div>
-          <div className="mt-3 text-xs" style={{ color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
-            <Link href="/guest" style={{ color: "var(--text-dim)" }}>or try as guest, no signup</Link>
-          </div>
         </motion.div>
       </section>
 

@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import DashboardNav from "@/components/DashboardNav";
-import GuestBanner from "@/components/GuestBanner";
 import { effectiveVisibility } from "@/lib/visibility";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -36,9 +35,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex" }}>
-      {dbUser.isGuest && <GuestBanner />}
-      {/* Push layout down only on desktop — mobile shows a floating chip instead */}
-      <div className={dbUser.isGuest ? "with-guest-banner" : ""} style={{ display: "flex", flex: 1, width: "100%" }}>
+      <div style={{ display: "flex", flex: 1, width: "100%" }}>
         <DashboardNav
           user={session.user}
           userRole={dbUser.role}

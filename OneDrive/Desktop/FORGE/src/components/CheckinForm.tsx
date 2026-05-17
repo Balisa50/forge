@@ -123,7 +123,7 @@ export default function CheckinForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: "680px" }}>
+    <form onSubmit={handleSubmit} style={{ width: "100%" }}>
       {error && (
         <div style={{ background: "rgba(255,45,45,0.1)", border: "1px solid var(--red)", borderRadius: "4px", padding: "0.75rem 1rem", marginBottom: "1.5rem", color: "var(--red)", fontSize: "0.875rem" }}>
           {error}

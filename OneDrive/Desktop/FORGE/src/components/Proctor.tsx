@@ -124,10 +124,9 @@ export default function Proctor({ interrogationId, onIntegrityFail }: Props) {
     document.addEventListener("paste", onPaste);
     document.addEventListener("contextmenu", onContextMenu);
 
-    // Try to lock fullscreen on mount (best-effort; user can refuse)
-    void (async () => {
-      try { await document.documentElement.requestFullscreen({ navigationUI: "hide" }); } catch { /* ignore */ }
-    })();
+    // We DO NOT auto-request fullscreen here — mobile browsers reject it
+    // unless triggered by a user gesture, and some throw layout-breaking
+    // errors. Fullscreen is a manual user action via the OS controls.
 
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);

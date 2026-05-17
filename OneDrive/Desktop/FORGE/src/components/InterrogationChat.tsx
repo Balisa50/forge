@@ -149,6 +149,12 @@ export default function InterrogationChat({
   const [dynamicTotal, setDynamicTotal] = useState<number>(TOTAL_QUESTIONS);
   const [awaitingReview, setAwaitingReview] = useState(false);
 
+  // Gate: don't auto-start. Mobile browsers reject getUserMedia and
+  // requestFullscreen unless they fire from a real user gesture, so we wait
+  // until the student presses "Begin". Camera + fullscreen attempt only
+  // start after this click.
+  const [examStarted, setExamStarted] = useState(false);
+
   // "I'm stuck" AI tutor state
   const [showTutor, setShowTutor] = useState(false);
   const [tutorQuestion, setTutorQuestion] = useState("");
@@ -215,7 +221,9 @@ export default function InterrogationChat({
     }
   }, [interrogationId]);
 
-  useEffect(() => { fetchQuestion(1); }, [fetchQuestion]);
+  useEffect(() => {
+    if (examStarted) fetchQuestion(1);
+  }, [fetchQuestion, examStarted]);
 
   const submitAnswer = useCallback(async (text: string) => {
     if (submitting || answerResult) return;
@@ -591,10 +599,40 @@ export default function InterrogationChat({
     );
   }
 
+  // ───────────────────────── PRE-EXAM "BEGIN" SCREEN ─────────────────────────
+  // Required so getUserMedia + requestFullscreen run from a real user gesture
+  // (iOS Safari + several Android browsers refuse otherwise → blank screen).
+  if (!examStarted) {
+    return (
+      <div style={{ maxWidth: 560, margin: "2rem auto", padding: "2rem", textAlign: "center" }} className="forge-panel">
+        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.75rem" }}>Ready when you are</h2>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.65, marginBottom: "1.5rem" }}>
+          When you tap <strong>Begin</strong>, your camera turns on and the exam starts. We log tab-switches, window-blur, and pastes so your mentor can review. Nothing is recorded except periodic still snapshots.
+        </p>
+        <ul style={{ textAlign: "left", maxWidth: 380, margin: "0 auto 1.5rem", color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.7 }}>
+          <li>📸 Webcam snapshot every 30 seconds</li>
+          <li>🚪 Leaving this tab is logged</li>
+          <li>📋 Pasting large blocks is logged</li>
+          <li>⏱️ Each question has a 7-minute timer</li>
+        </ul>
+        <button
+          onClick={() => setExamStarted(true)}
+          className="forge-btn forge-btn-primary"
+          style={{ padding: "0.875rem 2rem", fontSize: "1rem" }}
+        >
+          Begin
+        </button>
+        <p style={{ marginTop: "1rem", fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
+          If you deny camera access, the exam still runs — your mentor will see the access was refused.
+        </p>
+      </div>
+    );
+  }
+
   // ───────────────────────────────── ACTIVE EXAM ─────────────────────────────────
   return (
     <div style={{ maxWidth: "720px", margin: "0 auto" }}>
-      {/* Live proctoring: camera snapshots + tab-switch / fullscreen / paste logging */}
+      {/* Live proctoring — only mounted after the user clicked Begin */}
       <Proctor interrogationId={interrogationId} />
 
       {/* Exam header bar */}
