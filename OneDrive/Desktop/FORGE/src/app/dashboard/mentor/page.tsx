@@ -163,8 +163,16 @@ export default async function MentorDashboardPage() {
       {/* Section title */}
       <MentorInvitesPanel />
 
-      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>
-        Your Mentees
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", gap: "0.75rem", flexWrap: "wrap" }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+          Your Mentees
+        </div>
+        <Link
+          href="/dashboard/mentor/reviews"
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--accent)", padding: "0.4rem 0.75rem", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 6 }}
+        >
+          Pending reviews <ArrowRight size={11} />
+        </Link>
       </div>
 
       <div className="flex flex-col gap-6">

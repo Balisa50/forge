@@ -9,6 +9,7 @@ import {
   Link2, Plus, Trash2,
 } from "lucide-react";
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
+import MentorQuestionBank from "@/components/MentorQuestionBank";
 
 interface Checkin {
   id: string;
@@ -548,6 +549,9 @@ export default function MenteeDrilldownPage() {
                               </ul>
                             </div>
                           )}
+
+                          {/* Mentor's question bank for this task */}
+                          <MentorQuestionBank taskId={task.id} menteeId={menteeId} />
 
                           {/* Mentor actions (super-powers) */}
                           <div style={{ marginTop: "0.875rem", paddingTop: "0.75rem", borderTop: "1px dashed var(--border)", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>

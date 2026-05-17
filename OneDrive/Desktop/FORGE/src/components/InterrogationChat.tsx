@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { highlightCode } from "@/lib/interrogation";
 import { formatTime } from "@/lib/utils";
 import { AlertTriangle, Check, X, HelpCircle, Loader2, Share2, Copy, CheckCheck } from "lucide-react";
+import Proctor from "@/components/Proctor";
 
 interface OpenQuestion {
   questionNumber: number;
@@ -143,6 +144,11 @@ export default function InterrogationChat({
   const [showReveal, setShowReveal] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // Mentor-async mode metadata (set when the first question comes back with mode="mentor_async")
+  const [mode, setMode] = useState<"ai_solo" | "mentor_async">("ai_solo");
+  const [dynamicTotal, setDynamicTotal] = useState<number>(TOTAL_QUESTIONS);
+  const [awaitingReview, setAwaitingReview] = useState(false);
+
   // "I'm stuck" AI tutor state
   const [showTutor, setShowTutor] = useState(false);
   const [tutorQuestion, setTutorQuestion] = useState("");
@@ -196,6 +202,12 @@ export default function InterrogationChat({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setQuestion(data.question);
+      if (data.question?.mode === "mentor_async") {
+        setMode("mentor_async");
+        if (typeof data.question?.totalQuestions === "number") {
+          setDynamicTotal(data.question.totalQuestions);
+        }
+      }
       setLoading(false);
     } catch {
       setApiError(true);
@@ -222,6 +234,22 @@ export default function InterrogationChat({
       clearTimeout(timeout);
       const data = await res.json();
       setSubmitting(false);
+
+      // Mentor-async mode: server doesn't grade per-question. Show a soft
+      // "saved" state and move on. When `completed: true` comes back, flip
+      // to the awaiting-review screen.
+      if (data.pendingReview) {
+        setAnswerResult({
+          score: 0,
+          feedback: data.message ?? "Answer saved — your mentor will grade it.",
+          hitKeypoints: [],
+          missedKeypoints: [],
+        });
+        if (data.completed) {
+          setAwaitingReview(true);
+        }
+        return;
+      }
 
       const result: AnswerResult = {
         score: data.score ?? 0,
@@ -302,6 +330,20 @@ export default function InterrogationChat({
       return <span key={i} style={{ whiteSpace: "pre-wrap" }}>{part}</span>;
     });
   };
+
+  // ───────────────────── MENTOR REVIEW PENDING (no auto-grade) ─────────────────────
+  if (awaitingReview) {
+    return (
+      <div style={{ maxWidth: 560, margin: "4rem auto", padding: "2.5rem 2rem", textAlign: "center" }} className="forge-panel">
+        <Check size={42} style={{ color: "var(--green)", margin: "0 auto 1rem" }} />
+        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Submitted — awaiting mentor review</h2>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+          Your mentor wrote these questions and grades them personally. You&apos;ll see the verdict (and any feedback) on your Mentor Notes page as soon as they review it.
+        </p>
+        <button onClick={onComplete} className="forge-btn forge-btn-primary" style={{ padding: "0.625rem 1.5rem" }}>Back to dashboard</button>
+      </div>
+    );
+  }
 
   // ───────────────────────── DRAMATIC COMPLETION REVEAL ─────────────────────────
   if (isComplete) {
@@ -552,6 +594,9 @@ export default function InterrogationChat({
   // ───────────────────────────────── ACTIVE EXAM ─────────────────────────────────
   return (
     <div style={{ maxWidth: "720px", margin: "0 auto" }}>
+      {/* Live proctoring: camera snapshots + tab-switch / fullscreen / paste logging */}
+      <Proctor interrogationId={interrogationId} />
+
       {/* Exam header bar */}
       <div
         className="forge-panel"
@@ -563,13 +608,15 @@ export default function InterrogationChat({
       >
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--blue)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-            ⚡ THE PROFESSOR &nbsp;·&nbsp; {userName}
+            {mode === "mentor_async" ? "🧑‍🏫 YOUR MENTOR" : "⚡ THE PROFESSOR"} &nbsp;·&nbsp; {userName}
           </div>
           <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem", marginTop: "0.125rem" }}>
-            Question {questionNum}/{TOTAL_QUESTIONS}
+            Question {questionNum}/{dynamicTotal}
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.125rem" }}>
-            {runningScore} pts &nbsp;·&nbsp; need {PASS_THRESHOLD} total to pass
+            {mode === "mentor_async"
+              ? "Mentor grades after you submit"
+              : `${runningScore} pts · need ${PASS_THRESHOLD} total to pass`}
           </div>
         </div>
         <TimerRing timeLeft={timeLeft} total={SECONDS_PER_QUESTION} />
@@ -577,7 +624,7 @@ export default function InterrogationChat({
 
       {/* Question progress dots */}
       <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center", marginBottom: "1.25rem" }}>
-        {Array.from({ length: TOTAL_QUESTIONS }, (_, i) => (
+        {Array.from({ length: dynamicTotal }, (_, i) => (
           <div
             key={i}
             style={{
@@ -748,13 +795,13 @@ export default function InterrogationChat({
                   )}
                 </div>
 
-                {questionNum < TOTAL_QUESTIONS ? (
+                {questionNum < dynamicTotal ? (
                   <button
                     onClick={nextQuestion}
                     className="forge-btn forge-btn-blue"
                     style={{ width: "100%", padding: "0.875rem", fontSize: "1rem" }}
                   >
-                    Next Question ({questionNum + 1}/{TOTAL_QUESTIONS}) →
+                    Next Question ({questionNum + 1}/{dynamicTotal}) →
                   </button>
                 ) : (
                   <div style={{ textAlign: "center", padding: "1.5rem" }}>

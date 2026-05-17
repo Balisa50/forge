@@ -74,13 +74,62 @@ export async function POST(
   if (!questionEntry) return NextResponse.json({ error: "Question not found" }, { status: 400 });
 
   const rubric = questionEntry.rubric;
+  const questionData = JSON.parse(questionEntry.content) as { question: string };
+
+  // ─── MENTOR-AUTHORED MODE: defer grading to the mentor ─────────────
+  if (interrogation.mode === "mentor_async") {
+    const mentorTranscript = [
+      ...transcript,
+      {
+        role: "user",
+        content: answerText ?? "",
+        questionNumber,
+        timeSpent,
+        pendingReview: true,
+      },
+    ];
+
+    // Count total mentor questions to know if we're done
+    const totalMentorQuestions = mentorTranscript.filter(
+      (t) => (t as { role: string; type?: string }).role === "assistant" && (t as { type?: string }).type === "MENTOR_AUTHORED",
+    ).length;
+    const answered = mentorTranscript.filter(
+      (t) => (t as { role: string }).role === "user" && typeof (t as { questionNumber?: number }).questionNumber === "number",
+    ).length;
+
+    const isLast = answered >= totalMentorQuestions;
+
+    await prisma.interrogation.update({
+      where: { id: interrogationId },
+      data: {
+        transcript: mentorTranscript as unknown as object,
+        ...(isLast ? { completedAt: new Date(), feedback: "Awaiting mentor review." } : {}),
+      },
+    });
+
+    if (isLast) {
+      await prisma.checkin.update({
+        where: { id: interrogation.checkinId },
+        data: { status: "pending_review" },
+      });
+      await prisma.task.update({
+        where: { id: interrogation.checkin.task.id },
+        data: { status: "pending_verification" },
+      });
+    }
+
+    return NextResponse.json({
+      completed: isLast,
+      pendingReview: true,
+      message: isLast ? "All answers submitted. Your mentor will review and grade." : "Answer saved.",
+    });
+  }
+
   if (!rubric) {
     return NextResponse.json({ error: "Rubric missing — question malformed" }, { status: 500 });
   }
 
-  const questionData = JSON.parse(questionEntry.content) as { question: string };
-
-  // ─── GRADE THE ANSWER ─────────────────────────────────────────────
+  // ─── AI SOLO MODE — original auto-grading path ────────────────────
   const gradePrompt = GRADE_PROMPT(studentName, questionData.question, rubric, answerText ?? "");
 
   let graded: GradedAnswer = {

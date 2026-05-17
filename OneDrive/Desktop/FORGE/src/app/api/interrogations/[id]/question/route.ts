@@ -38,6 +38,71 @@ export async function POST(
   const task = checkin.task;
   const studentName = checkin.user.name;
 
+  // ─── MENTOR-AUTHORED PATH ─────────────────────────────────────────
+  // If this mentee has an active mentor with pre-written questions on
+  // this task, serve those instead of calling the AI. The interrogation
+  // mode is flipped so /answer defers grading to the mentor.
+  const link = await prisma.mentorLink.findFirst({
+    where: { menteeId: session.user.id, isActive: true },
+    orderBy: { createdAt: "asc" },
+    select: { mentorId: true },
+  });
+
+  if (link) {
+    const bank = await prisma.mentorQuestion.findMany({
+      where: { taskId: task.id, mentorId: link.mentorId, isActive: true },
+      orderBy: { position: "asc" },
+      take: 10,
+    });
+    if (bank.length > 0) {
+      // Flip the interrogation's mode if it isn't already
+      if (interrogation.mode !== "mentor_async") {
+        await prisma.interrogation.update({
+          where: { id: interrogationId },
+          data: { mode: "mentor_async", mentorReviewerId: link.mentorId },
+        });
+      }
+
+      const idx = (questionNumber as number) - 1;
+      const q = bank[idx];
+      if (!q) {
+        return NextResponse.json({ error: "No more mentor questions" }, { status: 400 });
+      }
+
+      // Cap at the size of the bank — TOTAL_QUESTIONS is dynamic in this mode.
+      const existingTranscript = interrogation.transcript as Array<{ role: string; content: string }>;
+      const updatedTranscript = [
+        ...existingTranscript,
+        {
+          role: "assistant",
+          content: JSON.stringify({ question: q.prompt }),
+          questionNumber,
+          topic: "mentor_question",
+          type: "MENTOR_AUTHORED",
+          mentorQuestionId: q.id,
+          rubric: q.rubric ? { idealAnswer: q.idealAnswer ?? "", mustMention: [], pitfalls: [], scoring: {}, mentorRubric: q.rubric } : null,
+        },
+      ];
+
+      await prisma.interrogation.update({
+        where: { id: interrogationId },
+        data: { transcript: updatedTranscript as unknown as Prisma.InputJsonValue },
+      });
+
+      return NextResponse.json({
+        question: {
+          questionNumber,
+          type: "MENTOR_AUTHORED",
+          question: q.prompt,
+          topic: "mentor_question",
+          totalQuestions: bank.length,
+          mode: "mentor_async",
+        },
+      });
+    }
+  }
+  // ─── END MENTOR-AUTHORED PATH ─────────────────────────────────────
+
   // Build evidence context from screenshot
   const evidenceData = checkin.evidenceData as Record<string, unknown> | null;
   const evidenceContext = evidenceData

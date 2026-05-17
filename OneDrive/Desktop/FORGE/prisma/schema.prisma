@@ -96,6 +96,7 @@ model User {
   resourcesGiven    MentorResource[] @relation("MentorResourceMentor")
   resourcesReceived MentorResource[] @relation("MentorResourceMentee")
   mentorInvites     MentorInvite[]   @relation("MentorInviteMentor")
+  mentorQuestions   MentorQuestion[] @relation("MentorQuestionMentor")
   certificates      Certificate[]
   cohortEnrollments CohortEnrollment[]
   podMemberships    PodMember[]
@@ -200,10 +201,11 @@ model Task {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
-  phase            Phase            @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phase            Phase             @relation(fields: [phaseId], references: [id], onDelete: Cascade)
   checkins         Checkin[]
   mentorComments   MentorComment[]
   mentorResources  MentorResource[]
+  mentorQuestions  MentorQuestion[]
 }
 
 model Checkin {
@@ -228,18 +230,49 @@ model Checkin {
 }
 
 model Interrogation {
-  id           String   @id @default(cuid())
-  checkinId    String   @unique
-  passed       Boolean  @default(false)
-  isDefence    Boolean  @default(false)
-  overallScore Float    @default(0)
-  feedback     String?
-  transcript   Json     @default("[]")
-  tokensUsed   Int      @default(0)
-  createdAt    DateTime @default(now())
-  completedAt  DateTime?
+  id               String    @id @default(cuid())
+  checkinId        String    @unique
+  passed           Boolean   @default(false)
+  isDefence        Boolean   @default(false)
+  overallScore     Float     @default(0)
+  feedback         String?
+  /// Mixed-content transcript: open-ended Q&A + proctor snapshots + integrity events.
+  /// Schema is `Array<{ role, content, ... }>` with kind = "question"|"answer"|"snapshot"|"event".
+  transcript       Json      @default("[]")
+  tokensUsed       Int       @default(0)
+  /// "ai_solo" (AI Professor grades) | "mentor_async" (mentor authored + grades)
+  mode             String    @default("ai_solo")
+  /// When mode = mentor_async, set to the mentor who graded. Used by mentee's UI.
+  mentorReviewerId String?
+  mentorReviewedAt DateTime?
+  createdAt        DateTime  @default(now())
+  completedAt      DateTime?
 
-  checkin      Checkin  @relation(fields: [checkinId], references: [id], onDelete: Cascade)
+  checkin          Checkin   @relation(fields: [checkinId], references: [id], onDelete: Cascade)
+}
+
+/// A question the mentor pre-writes for one of a mentee's tasks.
+/// When the mentee starts the interrogation for that task, FORGE serves
+/// these in order instead of generating with AI. After all answers are
+/// submitted, the interrogation goes into the mentor's review queue.
+model MentorQuestion {
+  id           String   @id @default(cuid())
+  taskId       String
+  mentorId     String
+  position     Int      @default(0)
+  prompt       String
+  /// Hidden from the mentee; visible to the mentor during grading.
+  rubric       String?
+  /// Optional reference answer the mentor wrote (helps when they grade later).
+  idealAnswer  String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  task         Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  mentor       User     @relation("MentorQuestionMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, mentorId, isActive])
 }
 
 model IntegrityLog {
