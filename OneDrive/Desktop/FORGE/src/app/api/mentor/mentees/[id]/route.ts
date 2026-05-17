@@ -64,9 +64,13 @@ export async function GET(
                     },
                   },
                   mentorComments: {
+                    orderBy: { createdAt: "desc" },
+                    select: { id: true, body: true, createdAt: true, readAt: true, authorRole: true, kind: true, mentorId: true },
+                  },
+                  mentorResources: {
                     where: { mentorId },
                     orderBy: { createdAt: "desc" },
-                    select: { id: true, body: true, createdAt: true, readAt: true },
+                    select: { id: true, title: true, url: true, note: true, createdAt: true },
                   },
                 },
               },

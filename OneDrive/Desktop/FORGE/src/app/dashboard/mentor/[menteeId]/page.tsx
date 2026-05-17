@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   ArrowLeft, MessageSquare, CheckCircle2, AlertTriangle, Lock,
   Clock, ExternalLink, Send, Loader2, Unlock, ShieldCheck, RotateCcw,
+  Link2, Plus, Trash2,
 } from "lucide-react";
 
 interface Checkin {
@@ -23,6 +24,17 @@ interface MentorComment {
   body: string;
   createdAt: string;
   readAt: string | null;
+  authorRole: "mentor" | "mentee";
+  kind: "note" | "request_unlock" | "action_log";
+  mentorId: string;
+}
+
+interface MentorGrantedResource {
+  id: string;
+  title: string;
+  url: string;
+  note: string | null;
+  createdAt: string;
 }
 
 interface MenteeTask {
@@ -37,6 +49,7 @@ interface MenteeTask {
   sortOrder: number;
   checkins: Checkin[];
   mentorComments: MentorComment[];
+  mentorResources: MentorGrantedResource[];
 }
 
 interface MenteeRoadmap {
@@ -91,6 +104,7 @@ export default function MenteeDrilldownPage() {
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [draft, setDraft] = useState<Record<string, string>>({});
+  const [resDraft, setResDraft] = useState<Record<string, { title: string; url: string; note: string }>>({});
   const [posting, setPosting] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -131,6 +145,40 @@ export default function MenteeDrilldownPage() {
       await load();
     } catch (e) {
       alert(e instanceof Error ? e.message : "Failed to post comment");
+    } finally {
+      setPosting(null);
+    }
+  };
+
+  const handleGrantResource = async (task: MenteeTask) => {
+    const r = resDraft[task.id];
+    if (!r?.title?.trim() || !r?.url?.trim()) return;
+    setPosting(task.id);
+    try {
+      const res = await fetch("/api/mentor/resources", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId: task.id, menteeId, title: r.title.trim(), url: r.url.trim(), note: r.note?.trim() || undefined }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Could not add resource");
+      }
+      setResDraft({ ...resDraft, [task.id]: { title: "", url: "", note: "" } });
+      await load();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setPosting(null);
+    }
+  };
+
+  const handleDeleteResource = async (resourceId: string, taskId: string) => {
+    if (!confirm("Remove this resource for the mentee?")) return;
+    setPosting(taskId);
+    try {
+      await fetch(`/api/mentor/resources?id=${resourceId}`, { method: "DELETE" });
+      await load();
     } finally {
       setPosting(null);
     }
@@ -383,31 +431,117 @@ export default function MenteeDrilldownPage() {
                             </p>
                           )}
 
-                          {/* Existing comments */}
+                          {/* Mentor-granted resources */}
+                          <div style={{ marginTop: "0.875rem" }}>
+                            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+                              Extra resources you&apos;ve given them
+                            </p>
+                            {task.mentorResources.length > 0 && (
+                              <ul className="flex flex-col gap-2" style={{ marginBottom: "0.625rem" }}>
+                                {task.mentorResources.map((r) => (
+                                  <li
+                                    key={r.id}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "0.5rem",
+                                      padding: "0.5rem 0.75rem",
+                                      borderRadius: 8,
+                                      border: "1px solid var(--border)",
+                                      background: "var(--bg-card)",
+                                    }}
+                                  >
+                                    <Link2 size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                                    <a href={r.url} target="_blank" rel="noreferrer noopener" style={{ flex: 1, fontSize: "0.875rem", color: "var(--text-primary)", textDecoration: "none" }}>
+                                      <span style={{ fontWeight: 500 }}>{r.title}</span>
+                                      {r.note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginLeft: "0.5rem" }}>— {r.note}</span>}
+                                    </a>
+                                    <button
+                                      onClick={() => handleDeleteResource(r.id, task.id)}
+                                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem" }}
+                                    >
+                                      <Trash2 size={12} />
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr auto", gap: "0.375rem" }}>
+                              <input
+                                value={resDraft[task.id]?.title ?? ""}
+                                onChange={(e) => setResDraft({ ...resDraft, [task.id]: { ...(resDraft[task.id] ?? { title: "", url: "", note: "" }), title: e.target.value } })}
+                                placeholder="Resource title"
+                                style={{ padding: "0.4rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
+                              />
+                              <input
+                                value={resDraft[task.id]?.url ?? ""}
+                                onChange={(e) => setResDraft({ ...resDraft, [task.id]: { ...(resDraft[task.id] ?? { title: "", url: "", note: "" }), url: e.target.value } })}
+                                placeholder="https://..."
+                                style={{ padding: "0.4rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleGrantResource(task)}
+                                disabled={!(resDraft[task.id]?.title?.trim() && resDraft[task.id]?.url?.trim()) || posting === task.id}
+                                className="forge-btn forge-btn-primary"
+                                style={{ padding: "0.4rem 0.75rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}
+                              >
+                                <Plus size={13} /> Grant
+                              </button>
+                            </div>
+                            <input
+                              value={resDraft[task.id]?.note ?? ""}
+                              onChange={(e) => setResDraft({ ...resDraft, [task.id]: { ...(resDraft[task.id] ?? { title: "", url: "", note: "" }), note: e.target.value } })}
+                              placeholder="Why this resource? (optional)"
+                              style={{ marginTop: "0.375rem", width: "100%", padding: "0.4rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
+                            />
+                          </div>
+
+                          {/* Two-way thread (both your notes + mentee replies) */}
                           {task.mentorComments.length > 0 && (
                             <div style={{ marginTop: "0.875rem" }}>
                               <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
-                                Your notes
+                                Conversation
                               </p>
                               <ul className="flex flex-col gap-2">
-                                {task.mentorComments.map((cm) => (
-                                  <li
-                                    key={cm.id}
-                                    style={{
-                                      padding: "0.625rem 0.75rem",
-                                      borderRadius: 8,
-                                      background: "rgba(245,158,11,0.07)",
-                                      border: "1px solid rgba(245,158,11,0.2)",
-                                      fontSize: "0.875rem",
-                                      color: "var(--text-primary)",
-                                    }}
-                                  >
-                                    <p>{cm.body}</p>
-                                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
-                                      {new Date(cm.createdAt).toLocaleString()} {cm.readAt ? "· read" : "· unread"}
-                                    </p>
-                                  </li>
-                                ))}
+                                {task.mentorComments.map((cm) => {
+                                  const fromMentee = cm.authorRole === "mentee";
+                                  const isAction = cm.kind === "action_log";
+                                  const isRequest = cm.kind === "request_unlock";
+                                  return (
+                                    <li
+                                      key={cm.id}
+                                      style={{
+                                        padding: "0.625rem 0.75rem",
+                                        borderRadius: 8,
+                                        background: isAction
+                                          ? "rgba(59,130,246,0.06)"
+                                          : isRequest
+                                            ? "rgba(244,114,182,0.08)"
+                                            : fromMentee
+                                              ? "var(--bg-card)"
+                                              : "rgba(245,158,11,0.07)",
+                                        border: isAction
+                                          ? "1px solid rgba(59,130,246,0.18)"
+                                          : isRequest
+                                            ? "1px solid rgba(244,114,182,0.25)"
+                                            : fromMentee
+                                              ? "1px solid var(--border)"
+                                              : "1px solid rgba(245,158,11,0.2)",
+                                        fontSize: "0.875rem",
+                                        color: "var(--text-primary)",
+                                      }}
+                                    >
+                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: isRequest ? "#f472b6" : isAction ? "#60a5fa" : fromMentee ? "var(--text-dim)" : "var(--accent)", marginBottom: "0.25rem" }}>
+                                        {isAction ? "Action log" : isRequest ? "Unlock request" : fromMentee ? `${mentee.name ?? "Mentee"}` : "You"}
+                                      </p>
+                                      <p>{cm.body}</p>
+                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
+                                        {new Date(cm.createdAt).toLocaleString()} {cm.readAt ? "· read" : "· unread"}
+                                      </p>
+                                    </li>
+                                  );
+                                })}
                               </ul>
                             </div>
                           )}

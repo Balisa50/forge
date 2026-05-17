@@ -93,6 +93,8 @@ model User {
   mentees           MentorLink[]     @relation("MenteeUser")
   commentsAsMentor  MentorComment[]  @relation("MentorCommentMentor")
   commentsAsMentee  MentorComment[]  @relation("MentorCommentMentee")
+  resourcesGiven    MentorResource[] @relation("MentorResourceMentor")
+  resourcesReceived MentorResource[] @relation("MentorResourceMentee")
   certificates      Certificate[]
   cohortEnrollments CohortEnrollment[]
   podMemberships    PodMember[]
@@ -197,9 +199,10 @@ model Task {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
-  phase            Phase           @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phase            Phase            @relation(fields: [phaseId], references: [id], onDelete: Cascade)
   checkins         Checkin[]
   mentorComments   MentorComment[]
+  mentorResources  MentorResource[]
 }
 
 model Checkin {
@@ -369,22 +372,46 @@ model MentorLink {
   @@unique([mentorId, menteeId])
 }
 
-/// A note left by a mentor on a specific mentee's task (one week of curriculum).
-/// Mentee sees these inline on their roadmap. Mentor sees their own notes
-/// back when revisiting the mentee's task. `readAt` lets us show "new" badges.
+/// A message in the mentor-mentee thread, scoped to one task (one week).
+/// `authorRole` is either "mentor" or "mentee" so the same row supports both
+/// sides of the conversation. `kind` differentiates regular notes from
+/// "request_unlock" pings the mentee can fire.
+/// `readAt` is set when the OTHER party has seen the message.
 model MentorComment {
-  id        String    @id @default(cuid())
-  taskId    String
-  mentorId  String
-  menteeId  String
-  body      String
-  readAt    DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  taskId      String
+  mentorId    String
+  menteeId    String
+  authorRole  String    @default("mentor") // "mentor" | "mentee"
+  kind        String    @default("note")    // "note" | "request_unlock" | "action_log"
+  body        String
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   task      Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   mentor    User @relation("MentorCommentMentor", fields: [mentorId], references: [id], onDelete: Cascade)
   mentee    User @relation("MentorCommentMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@index([menteeId, taskId])
+  @@index([mentorId, menteeId])
+}
+
+/// An extra resource a mentor grants to one mentee for a specific task.
+/// Shows up inline on the mentee's roadmap alongside the curated resources.
+model MentorResource {
+  id         String   @id @default(cuid())
+  taskId     String
+  mentorId   String
+  menteeId   String
+  title      String
+  url        String
+  note       String?
+  createdAt  DateTime @default(now())
+
+  task      Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  mentor    User @relation("MentorResourceMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee    User @relation("MentorResourceMentee", fields: [menteeId], references: [id], onDelete: Cascade)
 
   @@index([menteeId, taskId])
   @@index([mentorId, menteeId])

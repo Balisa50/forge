@@ -13,6 +13,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendNotification } from "@/lib/notify";
 
 type Action = "unlock" | "verify" | "reopen";
 const ALLOWED: Action[] = ["unlock", "verify", "reopen"];
@@ -65,7 +66,7 @@ export async function PATCH(
       id: taskId,
       phase: { track: { roadmap: { userId: menteeId } } },
     },
-    select: { id: true, status: true },
+    select: { id: true, status: true, title: true },
   });
   if (!task) {
     return NextResponse.json({ error: "Task not in mentee's roadmap" }, { status: 400 });
@@ -90,9 +91,18 @@ export async function PATCH(
         mentorId,
         menteeId,
         body: NOTE_FOR_ACTION[action],
+        authorRole: "mentor",
+        kind: "action_log",
       },
     }),
   ]);
+
+  void sendNotification("mentor-action", {
+    recipientId: menteeId,
+    actorId: mentorId,
+    taskTitle: task.title,
+    payload: { action },
+  });
 
   return NextResponse.json({ task: updated, action });
 }

@@ -14,7 +14,7 @@ export default async function SettingsPage() {
   if (!user) return null;
 
   return (
-    <div style={{ maxWidth: "600px" }}>
+    <div style={{ maxWidth: "960px", margin: "0 auto" }}>
       <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Settings</h1>
       <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Manage your account and preferences.</p>
 

@@ -18,22 +18,40 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const taskId = url.searchParams.get("taskId");
 
-  const comments = await prisma.mentorComment.findMany({
-    where: { menteeId, ...(taskId ? { taskId } : {}) },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      taskId: true,
-      body: true,
-      createdAt: true,
-      readAt: true,
-      mentor: { select: { id: true, name: true, image: true } },
-    },
-  });
+  const [comments, resources] = await Promise.all([
+    prisma.mentorComment.findMany({
+      where: { menteeId, ...(taskId ? { taskId } : {}) },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        taskId: true,
+        body: true,
+        createdAt: true,
+        readAt: true,
+        authorRole: true,
+        kind: true,
+        mentor: { select: { id: true, name: true, image: true } },
+      },
+    }),
+    prisma.mentorResource.findMany({
+      where: { menteeId, ...(taskId ? { taskId } : {}) },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        taskId: true,
+        title: true,
+        url: true,
+        note: true,
+        createdAt: true,
+        mentor: { select: { id: true, name: true } },
+      },
+    }),
+  ]);
 
   return NextResponse.json({
     comments,
-    unreadCount: comments.filter((c) => !c.readAt).length,
+    resources,
+    unreadCount: comments.filter((c) => !c.readAt && c.authorRole === "mentor").length,
   });
 }
 

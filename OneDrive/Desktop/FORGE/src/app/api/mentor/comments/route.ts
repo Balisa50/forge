@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendNotification } from "@/lib/notify";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -44,15 +45,22 @@ export async function POST(req: NextRequest) {
       id: taskId,
       phase: { track: { roadmap: { userId: menteeId } } },
     },
-    select: { id: true },
+    select: { id: true, title: true },
   });
   if (!task) {
     return NextResponse.json({ error: "Task not in mentee's roadmap" }, { status: 400 });
   }
 
   const comment = await prisma.mentorComment.create({
-    data: { taskId, mentorId, menteeId, body: text },
+    data: { taskId, mentorId, menteeId, body: text, authorRole: "mentor", kind: "note" },
     select: { id: true, body: true, createdAt: true, readAt: true },
+  });
+
+  void sendNotification("mentor-left-note", {
+    recipientId: menteeId,
+    actorId: mentorId,
+    taskTitle: task.title,
+    payload: { body: text },
   });
 
   return NextResponse.json({ comment }, { status: 201 });
