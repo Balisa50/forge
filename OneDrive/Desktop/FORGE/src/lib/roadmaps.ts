@@ -17,12 +17,36 @@ export interface RoadmapResource {
   note: string;
 }
 
+/** Item inside a single day of a week. The richer interface that
+ *  replaces the wall-of-text "topics" list. */
+export type DayItemKind = "video" | "reading" | "exercise" | "reflection";
+
+export interface DayItem {
+  kind: DayItemKind;
+  title: string;
+  url?: string;              // for video + reading
+  duration_min?: number;     // for video
+  creator?: string;          // for video — channel/author
+  why?: string;              // one-line "why this matters"
+  body?: string;             // for exercise + reflection — the prompt
+}
+
+export interface RoadmapDay {
+  number: number;            // 1-7 within the week
+  title: string;             // "What is an AI Engineer?"
+  summary?: string;          // 1 line tucked under the day card
+  items: DayItem[];          // 1-4 cards per day
+}
+
 export interface RoadmapWeek {
   number: number;
   title: string;
   phase: string;
   commitment_hours: string;
   context: string;
+  /** NEW: optional day-by-day breakdown. When present, the UI defaults to
+   *  the day-by-day view. When absent, falls back to the Overview tab. */
+  days?: RoadmapDay[];
   topics: string[];
   tasks: string[];
   project: string;

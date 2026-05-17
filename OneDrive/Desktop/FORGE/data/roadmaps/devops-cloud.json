@@ -5,53 +5,235 @@
   "weeks": [
     {
       "number": 1,
-      "title": "Linux — The Operating System Underneath Everything",
+      "title": "What a server actually is",
       "phase": "Foundations",
-      "commitment_hours": "20-25",
-      "context": "Every server you'll ever manage is Linux. Every Docker container is Linux. Every Kubernetes pod is Linux. This week you get fluent in the command line, processes, filesystems, networking, and the conventions that have been stable since the 1990s.",
+      "commitment_hours": "5–8",
+      "context": "Servers feel mythical until you've SSH'd into one. This week you'll rent a real Linux server for ~$0, log into it, install a web server, and serve a page from it. Welcome to the cloud.",
+      "days": [
+        {
+          "number": 1,
+          "title": "What is a server?",
+          "summary": "Demystify the cloud",
+          "items": [
+            {
+              "kind": "video",
+              "title": "What is a server? (in 4 minutes)",
+              "url": "https://www.youtube.com/watch?v=u3JZnSrkbhU",
+              "duration_min": 4,
+              "creator": "Tonio Liebrand",
+              "why": "Plain English — no jargon"
+            },
+            {
+              "kind": "video",
+              "title": "How the cloud works",
+              "url": "https://www.youtube.com/watch?v=AluPzytlEXY",
+              "duration_min": 8,
+              "creator": "Tom Scott",
+              "why": "Real-world tour"
+            },
+            {
+              "kind": "reflection",
+              "title": "Trace a request you made today",
+              "body": "When you opened forge-ab.vercel.app, what physical computer served the page? Where in the world is it? (Hint: AWS us-east-1 probably.)"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Linux basics — the OS of every server",
+          "summary": "Today you learn the language servers speak",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Learn Linux in 5 minutes",
+              "url": "https://www.youtube.com/watch?v=ROjZy1WbCIA",
+              "duration_min": 5,
+              "creator": "ThePrimeagen",
+              "why": "Fast, hilarious, useful"
+            },
+            {
+              "kind": "video",
+              "title": "20 Linux commands every developer should know",
+              "url": "https://www.youtube.com/watch?v=gd7BXuUQ91w",
+              "duration_min": 15,
+              "creator": "freeCodeCamp",
+              "why": "ls, cd, mkdir, cat, pwd, vim..."
+            },
+            {
+              "kind": "exercise",
+              "title": "Open a terminal",
+              "body": "Mac: Cmd+Space → Terminal. Windows: install WSL (search YouTube). Run: `ls`, `cd ~`, `mkdir test`, `cd test`, `pwd`. That's Linux on your machine."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Rent your first server",
+          "summary": "Your own server, anywhere",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Get a free Oracle Cloud VM in 10 minutes",
+              "url": "https://www.youtube.com/results?search_query=oracle+cloud+free+vm+ubuntu+beginner+2026",
+              "duration_min": 12,
+              "creator": "NetworkChuck",
+              "why": "Free forever, real Linux server"
+            },
+            {
+              "kind": "exercise",
+              "title": "Create + SSH in",
+              "body": "Follow the video. Get a free Oracle Cloud / DigitalOcean trial / AWS free tier VM. Download the SSH key. Run `ssh -i key.pem ubuntu@your-ip`. You're inside a real server, anywhere in the world."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Install Nginx — serve your first page",
+          "summary": "It's serving. From the cloud. By you.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Install Nginx + serve HTML on Ubuntu",
+              "url": "https://www.youtube.com/results?search_query=install+nginx+ubuntu+serve+html+beginner",
+              "duration_min": 10,
+              "creator": "Tutorialspoint",
+              "why": "From scratch"
+            },
+            {
+              "kind": "exercise",
+              "title": "Serve your name",
+              "body": "On the server: `sudo apt update && sudo apt install nginx -y`. Visit your server's IP in a browser. You'll see Nginx's welcome page. Now edit `/var/www/html/index.html` to say your name. Refresh. Your name is now served from a real server."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Buy a domain — or use a free one",
+          "summary": "From IP to domain",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Connect a domain to a server in 5 minutes",
+              "url": "https://www.youtube.com/results?search_query=point+domain+to+server+a+record+beginner",
+              "duration_min": 8,
+              "creator": "DigitalOcean",
+              "why": "DNS basics"
+            },
+            {
+              "kind": "reading",
+              "title": "Free subdomain via DuckDNS",
+              "url": "https://www.duckdns.org/",
+              "why": "If you don't want to buy a domain ($10 cheapest)"
+            },
+            {
+              "kind": "exercise",
+              "title": "Point a domain at your IP",
+              "body": "Get a free subdomain (duckdns.org). Point its A record to your server's IP. In ~10 minutes, your-name.duckdns.org serves your page."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "HTTPS — make it secure",
+          "summary": "A real, secure URL — yours",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Free HTTPS with Let's Encrypt",
+              "url": "https://www.youtube.com/results?search_query=lets+encrypt+nginx+certbot+beginner",
+              "duration_min": 10,
+              "creator": "Learn Linux TV",
+              "why": "Free SSL in 5 commands"
+            },
+            {
+              "kind": "exercise",
+              "title": "Add HTTPS",
+              "body": "Install certbot. Run `sudo certbot --nginx`. Visit https://your-domain. Browser shows the green padlock. You did SSL."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship + reflect",
+          "summary": "You operate cloud infrastructure now",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Document what you built",
+              "body": "Write a README in a GitHub repo. Include: server provider, distro, what you installed, what URL serves your page, screenshots. This is your first DevOps artifact."
+            },
+            {
+              "kind": "reflection",
+              "title": "What's still scary?",
+              "body": "Logging into a server felt like sneaking into the Matrix. What part still feels mythical? We'll go there in Week 4."
+            }
+          ]
+        }
+      ],
       "topics": [
-        "The shell — bash basics, common aliases, prompt customisation",
-        "Filesystem hierarchy — /etc, /var, /usr, /opt, /home, /tmp, /proc",
-        "File permissions and ownership — chmod, chown, the octal notation",
-        "Process management — ps, top, htop, kill, nohup, &",
-        "Package management — apt (Debian/Ubuntu), dnf (RHEL/Fedora), apk (Alpine)",
-        "systemd — units, services, journalctl, the post-2015 standard",
-        "Networking basics — ip, ss, netstat, tcpdump, ping, traceroute",
-        "SSH — keys, config, port forwarding, jump hosts"
+        "What a server is",
+        "Cloud providers",
+        "Linux basics",
+        "SSH",
+        "Installing Nginx",
+        "Serving HTML",
+        "DNS basics",
+        "HTTPS via Let's Encrypt"
       ],
       "tasks": [
-        "Get a free cloud VM (Oracle Cloud Free Tier, or AWS Free Tier, or Hetzner $5/mo)",
-        "SSH in using a key (not a password); disable password auth on the server",
-        "Install nginx as a systemd service; verify it's running; serve a simple HTML page",
-        "Solve 25 OverTheWire Bandit levels (1-25)",
-        "Write a bash script that monitors disk usage and emails (or pushes to ntfy.sh) if any partition is > 80% full"
+        "Install a terminal (Mac) or WSL (Windows)",
+        "Get a free cloud VM (Oracle / DO / AWS)",
+        "SSH in",
+        "Install Nginx",
+        "Serve an HTML page that says your name",
+        "Point a free subdomain at your server",
+        "Add free HTTPS with Let's Encrypt"
       ],
-      "project": "Build Your Personal Server. Provision a cheap VM (Hetzner $5/mo is the sweet spot). Set up: ssh-key-only auth, nginx with HTTPS via Let's Encrypt, an ufw firewall allowing only 22/80/443, fail2ban for brute-force protection, automatic security updates. Document everything in SERVER.md so you can rebuild it from scratch in 30 minutes.",
+      "project": "A real Linux server, accessible at a real HTTPS URL, serving your HTML page. README on GitHub documenting every step. This is the first thing a DevOps engineer can show.",
       "resources": [
-        { "label": "Missing Semester — MIT", "url": "https://missing.csail.mit.edu/", "note": "free MIT course; lectures 1-6 are essential" },
-        { "label": "Linux Journey", "url": "https://linuxjourney.com/", "note": "free, the most beginner-friendly Linux tutorial" },
-        { "label": "explainshell.com", "url": "https://explainshell.com/", "note": "paste any shell command and get a guided explanation; bookmark forever" },
-        { "label": "DigitalOcean — Linux tutorials archive", "url": "https://www.digitalocean.com/community/tutorials", "note": "free, hundreds of well-written practical tutorials" },
-        { "label": "OverTheWire — Bandit", "url": "https://overthewire.org/wargames/bandit/", "note": "the canonical Linux terminal-skills game; first 25 levels are foundational" },
-        { "label": "ArchWiki", "url": "https://wiki.archlinux.org/", "note": "even on Ubuntu, the ArchWiki is the best Linux reference on the internet" }
+        {
+          "label": "Tonio Liebrand — What is a server?",
+          "url": "https://www.youtube.com/watch?v=u3JZnSrkbhU",
+          "note": "YouTube · 4 min"
+        },
+        {
+          "label": "ThePrimeagen — Linux in 5 min",
+          "url": "https://www.youtube.com/watch?v=ROjZy1WbCIA",
+          "note": "YouTube · 5 min"
+        },
+        {
+          "label": "NetworkChuck — Free Oracle VM",
+          "url": "https://www.networkchuck.com/",
+          "note": "Channel full of free-cloud tutorials"
+        },
+        {
+          "label": "DigitalOcean Community",
+          "url": "https://www.digitalocean.com/community/tutorials",
+          "note": "Highest-quality DevOps tutorials anywhere"
+        },
+        {
+          "label": "Let's Encrypt",
+          "url": "https://letsencrypt.org/getting-started/",
+          "note": "Free SSL certificates"
+        }
       ],
       "questions": [
-        "Run `ls -la /etc`. Pick 5 files you've never seen; look up what each does. What's surprising?",
-        "What's the difference between `>` and `>>`? Demonstrate with a file you create.",
-        "Your service won't start. journalctl -u my-service.service shows an error. Walk through the troubleshoot.",
-        "Tail your nginx access log. What's the most common path requested? Are there suspicious requests?"
+        "When you SSH'd in, what physical machine were you on? Where in the world? Look it up.",
+        "When you typed `sudo apt install nginx`, what actually happened? Trace the steps in your head.",
+        "Visit your domain. Open dev tools → Network. See the headers. Find `Server: nginx`. You set that.",
+        "What did installing HTTPS feel like? Was it harder or easier than you expected?"
       ],
       "exercises": [
-        "Write a one-liner that finds the 10 largest files in your home directory.",
-        "Configure ssh-agent + keychain so you only enter your key passphrase once per boot.",
-        "Set up a systemd service that runs a Python script on boot; verify journalctl shows logs.",
-        "Use tcpdump to capture and inspect HTTPS handshake traffic to your nginx."
+        "Add a /about page on your server",
+        "Use `htop` on the server — what's running? Watch CPU spike when you refresh the page",
+        "Set up `ufw` (uncomplicated firewall) — only allow ports 22, 80, 443",
+        "Add a custom 404 page in Nginx"
       ],
       "outputs": [
-        "Personal server running with nginx + HTTPS at a real domain",
-        "Server hardening script in SERVER.md",
-        "25 Bandit levels solved",
-        "Disk-monitoring bash script + cron entry"
+        "A working free cloud VM you own",
+        "Nginx serving HTML at https://your-domain",
+        "GitHub repo with step-by-step README",
+        "A reflection note on what cloud feels like now"
       ]
     },
     {
@@ -79,12 +261,36 @@
       ],
       "project": "Build a DNS + TLS Setup for Your Domain. Buy a cheap domain ($1/yr on Namecheap, or use your existing one). Point it at your server with A + AAAA records via Cloudflare. Configure Cloudflare proxying + caching rules. Set up TLS with Let's Encrypt (certbot) and verify A+ grade on ssllabs.com. Document every step in DNS-TLS.md.",
       "resources": [
-        { "label": "Computer Networking: A Top-Down Approach (Kurose & Ross)", "url": "https://gaia.cs.umass.edu/kurose_ross/index.php", "note": "free PDF available; the canonical networking textbook" },
-        { "label": "Julia Evans — Networking zines", "url": "https://wizardzines.com/", "note": "paid zines but her free blog has dozens of networking deep-dives" },
-        { "label": "Cloudflare Learning — DNS", "url": "https://www.cloudflare.com/learning/dns/what-is-dns/", "note": "free, the best DNS explainers anywhere" },
-        { "label": "How HTTPS Works — howhttps.works", "url": "https://howhttps.works/", "note": "comic-style explainer of TLS in 10 minutes" },
-        { "label": "Let's Encrypt — Documentation", "url": "https://letsencrypt.org/docs/", "note": "official; how to get free certificates with certbot" },
-        { "label": "Qualys SSL Labs — Server Test", "url": "https://www.ssllabs.com/ssltest/", "note": "free, scan any HTTPS site for cipher quality and config issues" }
+        {
+          "label": "Computer Networking: A Top-Down Approach (Kurose & Ross)",
+          "url": "https://gaia.cs.umass.edu/kurose_ross/index.php",
+          "note": "free PDF available; the canonical networking textbook"
+        },
+        {
+          "label": "Julia Evans — Networking zines",
+          "url": "https://wizardzines.com/",
+          "note": "paid zines but her free blog has dozens of networking deep-dives"
+        },
+        {
+          "label": "Cloudflare Learning — DNS",
+          "url": "https://www.cloudflare.com/learning/dns/what-is-dns/",
+          "note": "free, the best DNS explainers anywhere"
+        },
+        {
+          "label": "How HTTPS Works — howhttps.works",
+          "url": "https://howhttps.works/",
+          "note": "comic-style explainer of TLS in 10 minutes"
+        },
+        {
+          "label": "Let's Encrypt — Documentation",
+          "url": "https://letsencrypt.org/docs/",
+          "note": "official; how to get free certificates with certbot"
+        },
+        {
+          "label": "Qualys SSL Labs — Server Test",
+          "url": "https://www.ssllabs.com/ssltest/",
+          "note": "free, scan any HTTPS site for cipher quality and config issues"
+        }
       ],
       "questions": [
         "Your domain works in one browser but not another. List 5 hypotheses; demonstrate one debugging tool for each.",
@@ -130,12 +336,36 @@
       ],
       "project": "Build a Modern Git Workflow on One of Your Repos. Enforce: branch protection on main (no direct pushes), required CI checks, required reviews, conventional commits via husky + commitlint, automatic changelog generation, semantic-release for tagging. Document the workflow in CONTRIBUTING.md.",
       "resources": [
-        { "label": "Pro Git book — Scott Chacon", "url": "https://git-scm.com/book/en/v2", "note": "free book, the canonical reference" },
-        { "label": "Atlassian — Git tutorials", "url": "https://www.atlassian.com/git/tutorials", "note": "free, the friendliest visual explanations of branches and merges" },
-        { "label": "Trunk-based development — trunkbaseddevelopment.com", "url": "https://trunkbaseddevelopment.com/", "note": "official site explaining the workflow; concise and opinionated" },
-        { "label": "Conventional Commits Specification", "url": "https://www.conventionalcommits.org/en/v1.0.0/", "note": "official, the standard commit-message format" },
-        { "label": "GitHub Actions — Documentation", "url": "https://docs.github.com/en/actions", "note": "official, your CI/CD platform reference" },
-        { "label": "Semantic Release — Documentation", "url": "https://semantic-release.gitbook.io/semantic-release/", "note": "official, automated versioning + changelog from your commits" }
+        {
+          "label": "Pro Git book — Scott Chacon",
+          "url": "https://git-scm.com/book/en/v2",
+          "note": "free book, the canonical reference"
+        },
+        {
+          "label": "Atlassian — Git tutorials",
+          "url": "https://www.atlassian.com/git/tutorials",
+          "note": "free, the friendliest visual explanations of branches and merges"
+        },
+        {
+          "label": "Trunk-based development — trunkbaseddevelopment.com",
+          "url": "https://trunkbaseddevelopment.com/",
+          "note": "official site explaining the workflow; concise and opinionated"
+        },
+        {
+          "label": "Conventional Commits Specification",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "note": "official, the standard commit-message format"
+        },
+        {
+          "label": "GitHub Actions — Documentation",
+          "url": "https://docs.github.com/en/actions",
+          "note": "official, your CI/CD platform reference"
+        },
+        {
+          "label": "Semantic Release — Documentation",
+          "url": "https://semantic-release.gitbook.io/semantic-release/",
+          "note": "official, automated versioning + changelog from your commits"
+        }
       ],
       "questions": [
         "Your team has 50 engineers shipping multiple PRs daily. What breaks with long-lived feature branches?",
@@ -181,12 +411,36 @@
       ],
       "project": "Build a 3-Tier App Stack on AWS Manually. Frontend on S3 + CloudFront, backend on a single EC2 (or App Runner), database on RDS Postgres. Hand-write the IAM policies. Document every console click in INFRA-MANUAL.md. Next week you'll throw this away and do it with Terraform — feeling the pain of manual is the lesson.",
       "resources": [
-        { "label": "AWS — Documentation", "url": "https://docs.aws.amazon.com/", "note": "official, the canonical reference; use the services' Getting Started guides" },
-        { "label": "Adrian Cantrill — AWS courses (paid)", "url": "https://learn.cantrill.io/", "note": "paid but the most respected AWS instructor; some free YouTube content as well" },
-        { "label": "AWS — Free Tier", "url": "https://aws.amazon.com/free/", "note": "official, what's free for 12 months and what's free forever; budget against this" },
-        { "label": "Last Week in AWS — Corey Quinn", "url": "https://www.lastweekinaws.com/", "note": "newsletter, the canonical AWS commentary; mostly free" },
-        { "label": "AWS Well-Architected Framework", "url": "https://aws.amazon.com/architecture/well-architected/", "note": "official, the canonical 'best practices across pillars' reference" },
-        { "label": "AWS Pricing Calculator", "url": "https://calculator.aws/", "note": "official, estimate before you spend; always run a what-if before clicking" }
+        {
+          "label": "AWS — Documentation",
+          "url": "https://docs.aws.amazon.com/",
+          "note": "official, the canonical reference; use the services' Getting Started guides"
+        },
+        {
+          "label": "Adrian Cantrill — AWS courses (paid)",
+          "url": "https://learn.cantrill.io/",
+          "note": "paid but the most respected AWS instructor; some free YouTube content as well"
+        },
+        {
+          "label": "AWS — Free Tier",
+          "url": "https://aws.amazon.com/free/",
+          "note": "official, what's free for 12 months and what's free forever; budget against this"
+        },
+        {
+          "label": "Last Week in AWS — Corey Quinn",
+          "url": "https://www.lastweekinaws.com/",
+          "note": "newsletter, the canonical AWS commentary; mostly free"
+        },
+        {
+          "label": "AWS Well-Architected Framework",
+          "url": "https://aws.amazon.com/architecture/well-architected/",
+          "note": "official, the canonical 'best practices across pillars' reference"
+        },
+        {
+          "label": "AWS Pricing Calculator",
+          "url": "https://calculator.aws/",
+          "note": "official, estimate before you spend; always run a what-if before clicking"
+        }
       ],
       "questions": [
         "Your EC2 instance can reach the internet but not your RDS. List 5 things to check.",
@@ -232,12 +486,36 @@
       ],
       "project": "Containerise One Real App. Take an existing application (your URL shortener from the web roadmap, or any other). Write a production-grade Dockerfile: multi-stage, non-root user, minimal base image, health check, proper signal handling. docker-compose for local dev with all dependencies. Image must be under 200MB and start in under 5 seconds.",
       "resources": [
-        { "label": "Docker — Official Documentation", "url": "https://docs.docker.com/", "note": "official, work through Get Started + Build" },
-        { "label": "Bret Fisher — Docker Mastery course (Udemy)", "url": "https://www.udemy.com/course/docker-mastery/", "note": "paid but on sale often; the canonical Docker course" },
-        { "label": "Docker — Best practices for writing Dockerfiles", "url": "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/", "note": "official, every Dockerfile should follow these" },
-        { "label": "Liz Rice — What is a Container?", "url": "https://www.youtube.com/watch?v=8fi7uSYlOdc", "note": "YouTube, the canonical talk explaining containers as Linux processes" },
-        { "label": "Julia Evans — How containers work", "url": "https://jvns.ca/blog/2016/10/10/what-even-is-a-container/", "note": "blog, the friendliest deep-dive on what a container actually is" },
-        { "label": "Buildkit — Documentation", "url": "https://docs.docker.com/build/buildkit/", "note": "official, modern Docker build features (cache mounts, secrets, multi-platform)" }
+        {
+          "label": "Docker — Official Documentation",
+          "url": "https://docs.docker.com/",
+          "note": "official, work through Get Started + Build"
+        },
+        {
+          "label": "Bret Fisher — Docker Mastery course (Udemy)",
+          "url": "https://www.udemy.com/course/docker-mastery/",
+          "note": "paid but on sale often; the canonical Docker course"
+        },
+        {
+          "label": "Docker — Best practices for writing Dockerfiles",
+          "url": "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+          "note": "official, every Dockerfile should follow these"
+        },
+        {
+          "label": "Liz Rice — What is a Container?",
+          "url": "https://www.youtube.com/watch?v=8fi7uSYlOdc",
+          "note": "YouTube, the canonical talk explaining containers as Linux processes"
+        },
+        {
+          "label": "Julia Evans — How containers work",
+          "url": "https://jvns.ca/blog/2016/10/10/what-even-is-a-container/",
+          "note": "blog, the friendliest deep-dive on what a container actually is"
+        },
+        {
+          "label": "Buildkit — Documentation",
+          "url": "https://docs.docker.com/build/buildkit/",
+          "note": "official, modern Docker build features (cache mounts, secrets, multi-platform)"
+        }
       ],
       "questions": [
         "Your image is 1.5GB. Where are the layers? Use `docker history` to see. Which layer is biggest? Can it be smaller?",
@@ -283,12 +561,36 @@
       ],
       "project": "Build a Production-Like Local Dev Environment. For your URL shortener (or any project), compose stack with: app, postgres, redis, mailpit (catches outbound emails), nginx as reverse proxy. Hot reload on code changes. Database seeded with realistic test data. Single command (`make dev` or `docker compose up`) brings up everything. Document in DEV.md.",
       "resources": [
-        { "label": "Docker Compose — Documentation", "url": "https://docs.docker.com/compose/", "note": "official, work through Compose specification and best practices" },
-        { "label": "Mailpit — SMTP testing tool", "url": "https://mailpit.axllent.org/docs/", "note": "official, catches all outgoing email in dev so you can preview" },
-        { "label": "Bret Fisher — Compose v2 walkthroughs", "url": "https://www.youtube.com/c/BretFisherDockerCaptain", "note": "YouTube, the canonical Docker educator" },
-        { "label": "VS Code Dev Containers", "url": "https://code.visualstudio.com/docs/devcontainers/containers", "note": "official, fully reproducible dev environments via Docker" },
-        { "label": "Tilt — Documentation", "url": "https://docs.tilt.dev/", "note": "official, hot reload + K8s-aware local dev" },
-        { "label": "Compose specification (the spec itself)", "url": "https://github.com/compose-spec/compose-spec", "note": "GitHub, the spec that compose implementations follow" }
+        {
+          "label": "Docker Compose — Documentation",
+          "url": "https://docs.docker.com/compose/",
+          "note": "official, work through Compose specification and best practices"
+        },
+        {
+          "label": "Mailpit — SMTP testing tool",
+          "url": "https://mailpit.axllent.org/docs/",
+          "note": "official, catches all outgoing email in dev so you can preview"
+        },
+        {
+          "label": "Bret Fisher — Compose v2 walkthroughs",
+          "url": "https://www.youtube.com/c/BretFisherDockerCaptain",
+          "note": "YouTube, the canonical Docker educator"
+        },
+        {
+          "label": "VS Code Dev Containers",
+          "url": "https://code.visualstudio.com/docs/devcontainers/containers",
+          "note": "official, fully reproducible dev environments via Docker"
+        },
+        {
+          "label": "Tilt — Documentation",
+          "url": "https://docs.tilt.dev/",
+          "note": "official, hot reload + K8s-aware local dev"
+        },
+        {
+          "label": "Compose specification (the spec itself)",
+          "url": "https://github.com/compose-spec/compose-spec",
+          "note": "GitHub, the spec that compose implementations follow"
+        }
       ],
       "questions": [
         "Your `docker compose up` takes 90 seconds the first time. What's the slowest service? Can you parallelise its startup?",
@@ -334,12 +636,36 @@
       ],
       "project": "Harden Your Containerised App. End-state: image built from distroless or Chainguard, non-root user, read-only filesystem, signed with Cosign, SBOM published, automatic vulnerability scan on every CI build. Document the security posture in SECURITY.md. Set up a weekly cron CI that re-scans for new CVEs and alerts you.",
       "resources": [
-        { "label": "Trivy — Documentation", "url": "https://aquasecurity.github.io/trivy/", "note": "official, the most-popular open-source scanner" },
-        { "label": "Chainguard Images", "url": "https://images.chainguard.dev/", "note": "official, the modern minimal-and-secure container images" },
-        { "label": "Cosign / Sigstore — Documentation", "url": "https://docs.sigstore.dev/", "note": "official, signing and verification standard" },
-        { "label": "Anchore Syft — SBOM generator", "url": "https://github.com/anchore/syft", "note": "GitHub, the most-used open-source SBOM tool" },
-        { "label": "Google distroless images", "url": "https://github.com/GoogleContainerTools/distroless", "note": "GitHub, minimal base images with no shell or package manager" },
-        { "label": "SLSA — Supply chain levels for software artifacts", "url": "https://slsa.dev/", "note": "official, the canonical framework for supply chain security maturity" }
+        {
+          "label": "Trivy — Documentation",
+          "url": "https://aquasecurity.github.io/trivy/",
+          "note": "official, the most-popular open-source scanner"
+        },
+        {
+          "label": "Chainguard Images",
+          "url": "https://images.chainguard.dev/",
+          "note": "official, the modern minimal-and-secure container images"
+        },
+        {
+          "label": "Cosign / Sigstore — Documentation",
+          "url": "https://docs.sigstore.dev/",
+          "note": "official, signing and verification standard"
+        },
+        {
+          "label": "Anchore Syft — SBOM generator",
+          "url": "https://github.com/anchore/syft",
+          "note": "GitHub, the most-used open-source SBOM tool"
+        },
+        {
+          "label": "Google distroless images",
+          "url": "https://github.com/GoogleContainerTools/distroless",
+          "note": "GitHub, minimal base images with no shell or package manager"
+        },
+        {
+          "label": "SLSA — Supply chain levels for software artifacts",
+          "url": "https://slsa.dev/",
+          "note": "official, the canonical framework for supply chain security maturity"
+        }
       ],
       "questions": [
         "Your app image has 47 HIGH CVEs from the base. Do they actually affect you? How do you decide what's real?",
@@ -385,12 +711,36 @@
       ],
       "project": "Replace Docker with Podman in Your Local Dev. Take your week-6 compose setup. Convert it to use Podman's `podman compose` or `podman play kube`. Verify everything still works. Document the migration in PODMAN.md and decide whether to keep using Podman.",
       "resources": [
-        { "label": "Podman — Documentation", "url": "https://podman.io/docs/installation", "note": "official, the daemonless Docker alternative" },
-        { "label": "OCI image specification", "url": "https://github.com/opencontainers/image-spec", "note": "GitHub, the standard image format underneath Docker / Podman / etc." },
-        { "label": "containerd — Documentation", "url": "https://containerd.io/docs/", "note": "official, the runtime that Kubernetes actually uses" },
-        { "label": "Liz Rice — Container Security book chapters (free)", "url": "https://www.lizrice.com/", "note": "blog with free chapters of the canonical container-security book" },
-        { "label": "Firecracker — Documentation", "url": "https://firecracker-microvm.github.io/", "note": "official, the microVM that powers AWS Lambda" },
-        { "label": "nerdctl — containerd CLI", "url": "https://github.com/containerd/nerdctl", "note": "GitHub, the Docker-compatible CLI for containerd" }
+        {
+          "label": "Podman — Documentation",
+          "url": "https://podman.io/docs/installation",
+          "note": "official, the daemonless Docker alternative"
+        },
+        {
+          "label": "OCI image specification",
+          "url": "https://github.com/opencontainers/image-spec",
+          "note": "GitHub, the standard image format underneath Docker / Podman / etc."
+        },
+        {
+          "label": "containerd — Documentation",
+          "url": "https://containerd.io/docs/",
+          "note": "official, the runtime that Kubernetes actually uses"
+        },
+        {
+          "label": "Liz Rice — Container Security book chapters (free)",
+          "url": "https://www.lizrice.com/",
+          "note": "blog with free chapters of the canonical container-security book"
+        },
+        {
+          "label": "Firecracker — Documentation",
+          "url": "https://firecracker-microvm.github.io/",
+          "note": "official, the microVM that powers AWS Lambda"
+        },
+        {
+          "label": "nerdctl — containerd CLI",
+          "url": "https://github.com/containerd/nerdctl",
+          "note": "GitHub, the Docker-compatible CLI for containerd"
+        }
       ],
       "questions": [
         "Why does Kubernetes not run Docker anymore (k8s 1.24+)? What does it run instead?",
@@ -436,12 +786,36 @@
       ],
       "project": "Run Your URL Shortener (or any app) on Local Kubernetes. Use kind. Define: Deployment with 3 replicas, Service, Ingress, ConfigMap, Secret. Test rolling updates. Test pod failures (kill one, watch K8s reschedule). Document in K8S.md. Single command (`make k8s-deploy`) brings everything up.",
       "resources": [
-        { "label": "Kubernetes — Concepts documentation", "url": "https://kubernetes.io/docs/concepts/", "note": "official, the canonical reference; read top to bottom for an evening" },
-        { "label": "Kubernetes the Hard Way — Kelsey Hightower", "url": "https://github.com/kelseyhightower/kubernetes-the-hard-way", "note": "GitHub, build K8s from scratch; deeply educational" },
-        { "label": "Sandeep Dinesh — Kubernetes by Example", "url": "https://kubernetesbyexample.com/", "note": "free interactive walkthroughs" },
-        { "label": "kind — Documentation", "url": "https://kind.sigs.k8s.io/", "note": "official, the standard way to run K8s locally on Docker" },
-        { "label": "k9s — Terminal UI for Kubernetes", "url": "https://k9scli.io/", "note": "official, the canonical TUI; way better than kubectl for daily use" },
-        { "label": "kubectl Cheat Sheet — Kubernetes", "url": "https://kubernetes.io/docs/reference/kubectl/cheatsheet/", "note": "official, every kubectl command worth knowing" }
+        {
+          "label": "Kubernetes — Concepts documentation",
+          "url": "https://kubernetes.io/docs/concepts/",
+          "note": "official, the canonical reference; read top to bottom for an evening"
+        },
+        {
+          "label": "Kubernetes the Hard Way — Kelsey Hightower",
+          "url": "https://github.com/kelseyhightower/kubernetes-the-hard-way",
+          "note": "GitHub, build K8s from scratch; deeply educational"
+        },
+        {
+          "label": "Sandeep Dinesh — Kubernetes by Example",
+          "url": "https://kubernetesbyexample.com/",
+          "note": "free interactive walkthroughs"
+        },
+        {
+          "label": "kind — Documentation",
+          "url": "https://kind.sigs.k8s.io/",
+          "note": "official, the standard way to run K8s locally on Docker"
+        },
+        {
+          "label": "k9s — Terminal UI for Kubernetes",
+          "url": "https://k9scli.io/",
+          "note": "official, the canonical TUI; way better than kubectl for daily use"
+        },
+        {
+          "label": "kubectl Cheat Sheet — Kubernetes",
+          "url": "https://kubernetes.io/docs/reference/kubectl/cheatsheet/",
+          "note": "official, every kubectl command worth knowing"
+        }
       ],
       "questions": [
         "Kill a pod with `kubectl delete pod`. What happens within 5 seconds? Why?",
@@ -487,12 +861,36 @@
       ],
       "project": "Production-Harden Your K8s App. Add: probes, resources, HPA (3-10 replicas), PV for stateful data, PodDisruptionBudget allowing only 1 pod down at a time, graceful shutdown handler. Load-test until HPA scales; document the scaling event. PROD-K8S.md captures every decision.",
       "resources": [
-        { "label": "Kubernetes — Configure liveness, readiness, and startup probes", "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/", "note": "official, the canonical probe reference" },
-        { "label": "Kubernetes — Horizontal Pod Autoscaler walkthrough", "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/", "note": "official, end-to-end HPA tutorial" },
-        { "label": "Bryan Liles — How to size your Kubernetes Pods", "url": "https://www.youtube.com/results?search_query=bryan+liles+kubernetes+sizing", "note": "YouTube talks on resource sizing in K8s" },
-        { "label": "Programming Kubernetes (book) — Heinz, Hausenblas", "url": "https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/", "note": "O'Reilly, deep on controllers and how things actually work" },
-        { "label": "Kubernetes the Cinematic Universe — Honeycomb blog", "url": "https://www.honeycomb.io/blog", "note": "blog, deeply honest production stories" },
-        { "label": "Bobby Tables — kubelet probes deep dive", "url": "https://srcco.de/", "note": "blog, deep technical content on K8s primitives" }
+        {
+          "label": "Kubernetes — Configure liveness, readiness, and startup probes",
+          "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+          "note": "official, the canonical probe reference"
+        },
+        {
+          "label": "Kubernetes — Horizontal Pod Autoscaler walkthrough",
+          "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/",
+          "note": "official, end-to-end HPA tutorial"
+        },
+        {
+          "label": "Bryan Liles — How to size your Kubernetes Pods",
+          "url": "https://www.youtube.com/results?search_query=bryan+liles+kubernetes+sizing",
+          "note": "YouTube talks on resource sizing in K8s"
+        },
+        {
+          "label": "Programming Kubernetes (book) — Heinz, Hausenblas",
+          "url": "https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/",
+          "note": "O'Reilly, deep on controllers and how things actually work"
+        },
+        {
+          "label": "Kubernetes the Cinematic Universe — Honeycomb blog",
+          "url": "https://www.honeycomb.io/blog",
+          "note": "blog, deeply honest production stories"
+        },
+        {
+          "label": "Bobby Tables — kubelet probes deep dive",
+          "url": "https://srcco.de/",
+          "note": "blog, deep technical content on K8s primitives"
+        }
       ],
       "questions": [
         "Your liveness probe is too aggressive (5s timeout). Pods get killed mid-startup. What's the fix?",
@@ -538,12 +936,36 @@
       ],
       "project": "Package Your App as a Helm Chart. Take your week-10 K8s app. Convert all YAML to a `charts/myapp/` Helm chart. Three values files: dev, staging, prod. Dependencies: postgres + redis charts. Pre-install hook for migrations. Document install and upgrade in CHART.md. Lint with `helm lint` and `helm template` to verify output.",
       "resources": [
-        { "label": "Helm — Documentation", "url": "https://helm.sh/docs/", "note": "official, work through Getting Started + Charts" },
-        { "label": "Artifact Hub", "url": "https://artifacthub.io/", "note": "official Helm chart discovery (CNCF project)" },
-        { "label": "Bitnami Charts — GitHub", "url": "https://github.com/bitnami/charts", "note": "GitHub, the most-used community chart collection; read one to learn patterns" },
-        { "label": "Kustomize — Documentation", "url": "https://kustomize.io/", "note": "official, the alternative to Helm; built into kubectl" },
-        { "label": "Helmfile — Documentation", "url": "https://github.com/helmfile/helmfile", "note": "GitHub, for managing many Helm releases" },
-        { "label": "Jamie Tanna — Helm patterns and anti-patterns", "url": "https://www.jvt.me/tags/helm/", "note": "blog with multiple practical Helm posts" }
+        {
+          "label": "Helm — Documentation",
+          "url": "https://helm.sh/docs/",
+          "note": "official, work through Getting Started + Charts"
+        },
+        {
+          "label": "Artifact Hub",
+          "url": "https://artifacthub.io/",
+          "note": "official Helm chart discovery (CNCF project)"
+        },
+        {
+          "label": "Bitnami Charts — GitHub",
+          "url": "https://github.com/bitnami/charts",
+          "note": "GitHub, the most-used community chart collection; read one to learn patterns"
+        },
+        {
+          "label": "Kustomize — Documentation",
+          "url": "https://kustomize.io/",
+          "note": "official, the alternative to Helm; built into kubectl"
+        },
+        {
+          "label": "Helmfile — Documentation",
+          "url": "https://github.com/helmfile/helmfile",
+          "note": "GitHub, for managing many Helm releases"
+        },
+        {
+          "label": "Jamie Tanna — Helm patterns and anti-patterns",
+          "url": "https://www.jvt.me/tags/helm/",
+          "note": "blog with multiple practical Helm posts"
+        }
       ],
       "questions": [
         "Your Helm template renders incorrectly. What's the debugging workflow? `helm template`, `helm install --dry-run --debug`?",
@@ -589,12 +1011,36 @@
       ],
       "project": "Add Linkerd to Your K8s App. Install Linkerd. Inject it into your deployment. Run a traffic split between v1 and v2 of your app. Observe success rate + latency in linkerd-viz. Document the experience: was the operational overhead worth the observability? Document in MESH.md.",
       "resources": [
-        { "label": "Linkerd — Documentation", "url": "https://linkerd.io/2.18/overview/", "note": "official, the simplest service mesh; great free Edge release" },
-        { "label": "Istio — Documentation", "url": "https://istio.io/latest/docs/", "note": "official, the most-featured mesh; complex but powerful" },
-        { "label": "Cilium — Documentation", "url": "https://docs.cilium.io/", "note": "official, eBPF-based CNI and mesh; what modern clusters increasingly run" },
-        { "label": "William Morgan — Buoyant blog (creator of Linkerd)", "url": "https://buoyant.io/blog", "note": "blog, the canonical voice on what meshes are for" },
-        { "label": "Liz Rice — Learning eBPF (free chapters)", "url": "https://www.lizrice.com/", "note": "the canonical book on eBPF; free preview chapters" },
-        { "label": "Service Mesh Hub vs Anchor and other comparisons", "url": "https://layer5.io/learn/service-mesh-landscape", "note": "free, comparison resource for the service mesh landscape" }
+        {
+          "label": "Linkerd — Documentation",
+          "url": "https://linkerd.io/2.18/overview/",
+          "note": "official, the simplest service mesh; great free Edge release"
+        },
+        {
+          "label": "Istio — Documentation",
+          "url": "https://istio.io/latest/docs/",
+          "note": "official, the most-featured mesh; complex but powerful"
+        },
+        {
+          "label": "Cilium — Documentation",
+          "url": "https://docs.cilium.io/",
+          "note": "official, eBPF-based CNI and mesh; what modern clusters increasingly run"
+        },
+        {
+          "label": "William Morgan — Buoyant blog (creator of Linkerd)",
+          "url": "https://buoyant.io/blog",
+          "note": "blog, the canonical voice on what meshes are for"
+        },
+        {
+          "label": "Liz Rice — Learning eBPF (free chapters)",
+          "url": "https://www.lizrice.com/",
+          "note": "the canonical book on eBPF; free preview chapters"
+        },
+        {
+          "label": "Service Mesh Hub vs Anchor and other comparisons",
+          "url": "https://layer5.io/learn/service-mesh-landscape",
+          "note": "free, comparison resource for the service mesh landscape"
+        }
       ],
       "questions": [
         "Your app handles 100 RPS. The Linkerd sidecar adds ~1ms latency and ~10MB RAM per pod. Is it worth it? What if 10000 RPS?",
@@ -640,12 +1086,36 @@
       ],
       "project": "Reproduce Your Week-4 Stack with Terraform. End-state: `terraform apply` brings up your entire 3-tier app. Modules for: vpc, ec2, rds, s3, iam. Remote state in S3. Two environments (dev and prod) using the same modules. Documented in INFRA-CODE.md. You should be able to `terraform destroy` and `terraform apply` repeatedly to get identical infrastructure.",
       "resources": [
-        { "label": "Terraform — Documentation", "url": "https://developer.hashicorp.com/terraform/docs", "note": "official, the canonical reference" },
-        { "label": "OpenTofu — Documentation", "url": "https://opentofu.org/docs/", "note": "official, the open-source fork after Terraform's license change" },
-        { "label": "Terraform Best Practices — Anton Babenko", "url": "https://www.terraform-best-practices.com/", "note": "free book by the most-known Terraform community contributor" },
-        { "label": "Terragrunt — Documentation", "url": "https://terragrunt.gruntwork.io/docs/", "note": "official, the wrapper that handles DRY-state patterns" },
-        { "label": "Yevgeniy Brikman — Terraform: Up & Running (book)", "url": "https://www.terraformupandrunning.com/", "note": "paid book, the most-recommended Terraform book" },
-        { "label": "AWS provider documentation", "url": "https://registry.terraform.io/providers/hashicorp/aws/latest/docs", "note": "official, the daily-reference for AWS resources" }
+        {
+          "label": "Terraform — Documentation",
+          "url": "https://developer.hashicorp.com/terraform/docs",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "OpenTofu — Documentation",
+          "url": "https://opentofu.org/docs/",
+          "note": "official, the open-source fork after Terraform's license change"
+        },
+        {
+          "label": "Terraform Best Practices — Anton Babenko",
+          "url": "https://www.terraform-best-practices.com/",
+          "note": "free book by the most-known Terraform community contributor"
+        },
+        {
+          "label": "Terragrunt — Documentation",
+          "url": "https://terragrunt.gruntwork.io/docs/",
+          "note": "official, the wrapper that handles DRY-state patterns"
+        },
+        {
+          "label": "Yevgeniy Brikman — Terraform: Up & Running (book)",
+          "url": "https://www.terraformupandrunning.com/",
+          "note": "paid book, the most-recommended Terraform book"
+        },
+        {
+          "label": "AWS provider documentation",
+          "url": "https://registry.terraform.io/providers/hashicorp/aws/latest/docs",
+          "note": "official, the daily-reference for AWS resources"
+        }
       ],
       "questions": [
         "You ran `terraform apply` and it wants to destroy + recreate an RDS instance. What's the danger? How do you check before clicking yes?",
@@ -691,12 +1161,36 @@
       ],
       "project": "Deploy Your App to EKS via Terraform + Helm. End-state: `make infra` → `make deploy` brings up an EKS cluster and deploys your app. Public URL with TLS via ACM. Pods access S3 via IRSA. Cluster autoscaler scales nodes. Document in EKS.md. Cost: budget under $50/mo.",
       "resources": [
-        { "label": "AWS EKS — Documentation", "url": "https://docs.aws.amazon.com/eks/", "note": "official, the canonical EKS reference" },
-        { "label": "terraform-aws-eks module", "url": "https://github.com/terraform-aws-modules/terraform-aws-eks", "note": "GitHub, the community-standard module" },
-        { "label": "AWS Load Balancer Controller", "url": "https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/", "note": "official, integrates K8s Ingress with AWS ALB" },
-        { "label": "Karpenter — Documentation", "url": "https://karpenter.sh/docs/", "note": "official, AWS's modern node autoscaler" },
-        { "label": "GKE — Documentation", "url": "https://cloud.google.com/kubernetes-engine/docs", "note": "official, often considered the best managed K8s experience" },
-        { "label": "Container roadmap — AWS", "url": "https://github.com/aws/containers-roadmap", "note": "GitHub, what AWS is shipping next for ECS/EKS; useful signal" }
+        {
+          "label": "AWS EKS — Documentation",
+          "url": "https://docs.aws.amazon.com/eks/",
+          "note": "official, the canonical EKS reference"
+        },
+        {
+          "label": "terraform-aws-eks module",
+          "url": "https://github.com/terraform-aws-modules/terraform-aws-eks",
+          "note": "GitHub, the community-standard module"
+        },
+        {
+          "label": "AWS Load Balancer Controller",
+          "url": "https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/",
+          "note": "official, integrates K8s Ingress with AWS ALB"
+        },
+        {
+          "label": "Karpenter — Documentation",
+          "url": "https://karpenter.sh/docs/",
+          "note": "official, AWS's modern node autoscaler"
+        },
+        {
+          "label": "GKE — Documentation",
+          "url": "https://cloud.google.com/kubernetes-engine/docs",
+          "note": "official, often considered the best managed K8s experience"
+        },
+        {
+          "label": "Container roadmap — AWS",
+          "url": "https://github.com/aws/containers-roadmap",
+          "note": "GitHub, what AWS is shipping next for ECS/EKS; useful signal"
+        }
       ],
       "questions": [
         "Your EKS pods can't reach RDS. List 5 things to check (security group, NACL, route table, IAM, DNS).",
@@ -742,12 +1236,36 @@
       ],
       "project": "Build a Cloud-Choice Decision Document. For your URL shortener (and 3 hypothetical apps — a B2B SaaS, a mobile API, a high-traffic media site), document the cost and engineering trade-off of deploying on AWS, GCP, Vercel + Fly, Cloudflare. Pick a primary cloud for each and justify. Commit as CLOUDS.md.",
       "resources": [
-        { "label": "37signals — Why we left the cloud (blog series)", "url": "https://world.hey.com/dhh", "note": "the canonical contrarian voice; honest cost numbers" },
-        { "label": "Vantage — cloud cost comparison tool", "url": "https://www.vantage.sh/", "note": "free tier, transparent cloud cost data" },
-        { "label": "Bens Bites + Last Week in AWS (Corey Quinn)", "url": "https://www.lastweekinaws.com/", "note": "newsletter, the most-honest AWS pricing commentary" },
-        { "label": "Crossplane — Documentation", "url": "https://docs.crossplane.io/", "note": "official, K8s-style declarative infra across clouds" },
-        { "label": "Pulumi — Documentation", "url": "https://www.pulumi.com/docs/", "note": "official, infrastructure as code in your favourite language" },
-        { "label": "Cloudflare — Workers documentation", "url": "https://developers.cloudflare.com/workers/", "note": "official, the most-loved edge compute platform" }
+        {
+          "label": "37signals — Why we left the cloud (blog series)",
+          "url": "https://world.hey.com/dhh",
+          "note": "the canonical contrarian voice; honest cost numbers"
+        },
+        {
+          "label": "Vantage — cloud cost comparison tool",
+          "url": "https://www.vantage.sh/",
+          "note": "free tier, transparent cloud cost data"
+        },
+        {
+          "label": "Bens Bites + Last Week in AWS (Corey Quinn)",
+          "url": "https://www.lastweekinaws.com/",
+          "note": "newsletter, the most-honest AWS pricing commentary"
+        },
+        {
+          "label": "Crossplane — Documentation",
+          "url": "https://docs.crossplane.io/",
+          "note": "official, K8s-style declarative infra across clouds"
+        },
+        {
+          "label": "Pulumi — Documentation",
+          "url": "https://www.pulumi.com/docs/",
+          "note": "official, infrastructure as code in your favourite language"
+        },
+        {
+          "label": "Cloudflare — Workers documentation",
+          "url": "https://developers.cloudflare.com/workers/",
+          "note": "official, the most-loved edge compute platform"
+        }
       ],
       "questions": [
         "Your AWS bill is $200/mo. Render or Fly.io: $80/mo. What might you be losing? What might you be gaining?",
@@ -793,12 +1311,36 @@
       ],
       "project": "Eliminate Secrets from Your Repo. Take your URL shortener. Audit git history for any committed secrets. Migrate to Doppler (or AWS Secrets Manager + ESO for K8s deployments). Implement automatic secret rotation for at least one secret (DB password). Document in SECRETS.md. Run gitleaks in CI to prevent regression.",
       "resources": [
-        { "label": "Doppler — Documentation", "url": "https://docs.doppler.com/docs", "note": "official, the most-loved hosted secrets platform" },
-        { "label": "AWS Secrets Manager — Documentation", "url": "https://docs.aws.amazon.com/secretsmanager/", "note": "official, the AWS-native option" },
-        { "label": "HashiCorp Vault — Documentation", "url": "https://developer.hashicorp.com/vault/docs", "note": "official, when you need self-hosted" },
-        { "label": "External Secrets Operator", "url": "https://external-secrets.io/", "note": "official, bridges cloud secrets to K8s" },
-        { "label": "SOPS — Documentation", "url": "https://github.com/getsops/sops", "note": "GitHub, encrypt YAML/JSON secrets in git" },
-        { "label": "gitleaks — Documentation", "url": "https://github.com/gitleaks/gitleaks", "note": "GitHub, the most-used secret-in-git scanner" }
+        {
+          "label": "Doppler — Documentation",
+          "url": "https://docs.doppler.com/docs",
+          "note": "official, the most-loved hosted secrets platform"
+        },
+        {
+          "label": "AWS Secrets Manager — Documentation",
+          "url": "https://docs.aws.amazon.com/secretsmanager/",
+          "note": "official, the AWS-native option"
+        },
+        {
+          "label": "HashiCorp Vault — Documentation",
+          "url": "https://developer.hashicorp.com/vault/docs",
+          "note": "official, when you need self-hosted"
+        },
+        {
+          "label": "External Secrets Operator",
+          "url": "https://external-secrets.io/",
+          "note": "official, bridges cloud secrets to K8s"
+        },
+        {
+          "label": "SOPS — Documentation",
+          "url": "https://github.com/getsops/sops",
+          "note": "GitHub, encrypt YAML/JSON secrets in git"
+        },
+        {
+          "label": "gitleaks — Documentation",
+          "url": "https://github.com/gitleaks/gitleaks",
+          "note": "GitHub, the most-used secret-in-git scanner"
+        }
       ],
       "questions": [
         "You committed an AWS access key. Rotate it. How long does the leaked key remain valid? Search engines have already scraped it.",
@@ -844,12 +1386,36 @@
       ],
       "project": "Build a Real CI/CD Pipeline End-to-End. Every PR: tests run + preview env spun up at pr-123.your-domain.com. Every merge to main: auto-deploy to staging.your-domain.com. Every git tag (v*): manual approval, then deploy to production with canary (10% → 100%). Rollback in <60 seconds. Document in PIPELINE.md.",
       "resources": [
-        { "label": "GitHub Actions — Documentation (full)", "url": "https://docs.github.com/en/actions", "note": "official, the canonical reference" },
-        { "label": "Argo Rollouts — Documentation", "url": "https://argo-rollouts.readthedocs.io/", "note": "official, the leading progressive delivery controller for K8s" },
-        { "label": "Flagger — Documentation", "url": "https://docs.flagger.app/", "note": "official, the alternative to Argo Rollouts; integrates with multiple meshes" },
-        { "label": "Continuous Delivery — Jez Humble (book)", "url": "https://continuousdelivery.com/", "note": "the foundational text; still the canonical CD reference" },
-        { "label": "GitHub Actions Marketplace", "url": "https://github.com/marketplace?type=actions", "note": "official, browse for actions; verify any you adopt" },
-        { "label": "GitLab CI — Documentation", "url": "https://docs.gitlab.com/ee/ci/", "note": "official, the canonical alternative to GitHub Actions" }
+        {
+          "label": "GitHub Actions — Documentation (full)",
+          "url": "https://docs.github.com/en/actions",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "Argo Rollouts — Documentation",
+          "url": "https://argo-rollouts.readthedocs.io/",
+          "note": "official, the leading progressive delivery controller for K8s"
+        },
+        {
+          "label": "Flagger — Documentation",
+          "url": "https://docs.flagger.app/",
+          "note": "official, the alternative to Argo Rollouts; integrates with multiple meshes"
+        },
+        {
+          "label": "Continuous Delivery — Jez Humble (book)",
+          "url": "https://continuousdelivery.com/",
+          "note": "the foundational text; still the canonical CD reference"
+        },
+        {
+          "label": "GitHub Actions Marketplace",
+          "url": "https://github.com/marketplace?type=actions",
+          "note": "official, browse for actions; verify any you adopt"
+        },
+        {
+          "label": "GitLab CI — Documentation",
+          "url": "https://docs.gitlab.com/ee/ci/",
+          "note": "official, the canonical alternative to GitHub Actions"
+        }
       ],
       "questions": [
         "Your CI takes 12 minutes. What's the slowest job? What can be parallelised? What can be cached?",
@@ -895,12 +1461,36 @@
       ],
       "project": "Migrate Your CI/CD to GitOps with Argo CD. Take your week-17 pipeline. Refactor so that CI builds + pushes container images, but DEPLOYMENT is done via git commits to an env-specific repo (or branch). Argo CD watches the env repo and reconciles. Document in GITOPS.md. Compare the experience to push-style CD.",
       "resources": [
-        { "label": "Argo CD — Documentation", "url": "https://argo-cd.readthedocs.io/", "note": "official, the canonical reference" },
-        { "label": "Flux — Documentation", "url": "https://fluxcd.io/flux/", "note": "official, the alternative GitOps tool; CNCF graduated" },
-        { "label": "OpenGitOps — Principles", "url": "https://opengitops.dev/", "note": "official, the CNCF specification of GitOps principles" },
-        { "label": "GitOps Working Group (CNCF)", "url": "https://github.com/cncf/tag-app-delivery/blob/main/gitops-wg/README.md", "note": "GitHub, the canonical thinking on what GitOps means" },
-        { "label": "Codefresh — Argo CD tutorials", "url": "https://codefresh.io/learn/argo-cd/", "note": "free, hands-on Argo CD walkthroughs" },
-        { "label": "Argo CD ApplicationSet", "url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/", "note": "official, scaling many apps with templates" }
+        {
+          "label": "Argo CD — Documentation",
+          "url": "https://argo-cd.readthedocs.io/",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "Flux — Documentation",
+          "url": "https://fluxcd.io/flux/",
+          "note": "official, the alternative GitOps tool; CNCF graduated"
+        },
+        {
+          "label": "OpenGitOps — Principles",
+          "url": "https://opengitops.dev/",
+          "note": "official, the CNCF specification of GitOps principles"
+        },
+        {
+          "label": "GitOps Working Group (CNCF)",
+          "url": "https://github.com/cncf/tag-app-delivery/blob/main/gitops-wg/README.md",
+          "note": "GitHub, the canonical thinking on what GitOps means"
+        },
+        {
+          "label": "Codefresh — Argo CD tutorials",
+          "url": "https://codefresh.io/learn/argo-cd/",
+          "note": "free, hands-on Argo CD walkthroughs"
+        },
+        {
+          "label": "Argo CD ApplicationSet",
+          "url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/",
+          "note": "official, scaling many apps with templates"
+        }
       ],
       "questions": [
         "Your prod cluster diverged from git (someone kubectl-edited a Deployment). What does Argo CD do? What should you do?",
@@ -946,12 +1536,36 @@
       ],
       "project": "Add Full Observability to Your K8s App. Install Prometheus + Grafana + Loki + Tempo. Instrument your app with OpenTelemetry. Build a Grafana dashboard with: RED metrics, resource usage, error rate, deploy markers. Set up 5 alerts: high error rate, high latency, low success rate, pod crash, disk space. Document in OBSERVABILITY.md.",
       "resources": [
-        { "label": "Prometheus — Documentation", "url": "https://prometheus.io/docs/introduction/overview/", "note": "official, the canonical reference" },
-        { "label": "Grafana — Documentation", "url": "https://grafana.com/docs/grafana/latest/", "note": "official, dashboards + alerting + data sources" },
-        { "label": "OpenTelemetry — Documentation", "url": "https://opentelemetry.io/docs/", "note": "official, the open instrumentation standard" },
-        { "label": "Brendan Gregg — USE Method", "url": "https://www.brendangregg.com/usemethod.html", "note": "the foundational performance-debugging methodology" },
-        { "label": "Tom Wilkie — RED Method", "url": "https://thenewstack.io/monitoring-microservices-red-method/", "note": "blog, the canonical RED article" },
-        { "label": "kube-prometheus-stack — Helm chart", "url": "https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack", "note": "GitHub, the de-facto K8s monitoring install" }
+        {
+          "label": "Prometheus — Documentation",
+          "url": "https://prometheus.io/docs/introduction/overview/",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "Grafana — Documentation",
+          "url": "https://grafana.com/docs/grafana/latest/",
+          "note": "official, dashboards + alerting + data sources"
+        },
+        {
+          "label": "OpenTelemetry — Documentation",
+          "url": "https://opentelemetry.io/docs/",
+          "note": "official, the open instrumentation standard"
+        },
+        {
+          "label": "Brendan Gregg — USE Method",
+          "url": "https://www.brendangregg.com/usemethod.html",
+          "note": "the foundational performance-debugging methodology"
+        },
+        {
+          "label": "Tom Wilkie — RED Method",
+          "url": "https://thenewstack.io/monitoring-microservices-red-method/",
+          "note": "blog, the canonical RED article"
+        },
+        {
+          "label": "kube-prometheus-stack — Helm chart",
+          "url": "https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack",
+          "note": "GitHub, the de-facto K8s monitoring install"
+        }
       ],
       "questions": [
         "Your dashboard shows p95 latency = 1.2s but p99 = 8s. What's happening at the tail? What metrics would help you find out?",
@@ -997,12 +1611,36 @@
       ],
       "project": "Define and Implement SLOs for Your URL Shortener. Pick realistic SLOs (don't go 99.99%). Configure burn-rate alerts in Prometheus/Grafana. Write runbooks for the top 5 alert types. Set up PagerDuty (or BetterStack) for on-call paging. Document everything in SLOS.md + RUNBOOKS.md. Simulate one incident and run a post-mortem.",
       "resources": [
-        { "label": "Site Reliability Engineering (the Google book, free online)", "url": "https://sre.google/sre-book/table-of-contents/", "note": "free, the foundational text; read chapters 1-4 + 12-13" },
-        { "label": "The Site Reliability Workbook (Google, free)", "url": "https://sre.google/workbook/table-of-contents/", "note": "free, the practical companion volume" },
-        { "label": "Charity Majors — observability + on-call writing", "url": "https://charity.wtf/", "note": "blog, the canonical voice on modern SRE" },
-        { "label": "Sloth — SLO generator", "url": "https://sloth.dev/", "note": "official, generates Prometheus rules from simple SLO definitions" },
-        { "label": "PagerDuty — Incident Response", "url": "https://response.pagerduty.com/", "note": "official, free book on incident response procedures" },
-        { "label": "BetterStack — On-call documentation", "url": "https://betterstack.com/docs/uptime/", "note": "official, modern affordable alternative to PagerDuty" }
+        {
+          "label": "Site Reliability Engineering (the Google book, free online)",
+          "url": "https://sre.google/sre-book/table-of-contents/",
+          "note": "free, the foundational text; read chapters 1-4 + 12-13"
+        },
+        {
+          "label": "The Site Reliability Workbook (Google, free)",
+          "url": "https://sre.google/workbook/table-of-contents/",
+          "note": "free, the practical companion volume"
+        },
+        {
+          "label": "Charity Majors — observability + on-call writing",
+          "url": "https://charity.wtf/",
+          "note": "blog, the canonical voice on modern SRE"
+        },
+        {
+          "label": "Sloth — SLO generator",
+          "url": "https://sloth.dev/",
+          "note": "official, generates Prometheus rules from simple SLO definitions"
+        },
+        {
+          "label": "PagerDuty — Incident Response",
+          "url": "https://response.pagerduty.com/",
+          "note": "official, free book on incident response procedures"
+        },
+        {
+          "label": "BetterStack — On-call documentation",
+          "url": "https://betterstack.com/docs/uptime/",
+          "note": "official, modern affordable alternative to PagerDuty"
+        }
       ],
       "questions": [
         "Your SLO is 99.5% availability. Over a 30-day window, how much downtime is allowed? Did you blow your budget this month?",
@@ -1048,12 +1686,36 @@
       ],
       "project": "Cut Your AWS Bill by 30%. Apply: right-sizing, Spot for non-prod, S3 lifecycle policies (IA after 30d, Glacier after 90d), Reserved Instances or Savings Plans for steady workloads. Document the journey in FINOPS.md with before/after numbers. Set up a monthly review process.",
       "resources": [
-        { "label": "AWS Well-Architected Framework — Cost Optimization pillar", "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html", "note": "official, the canonical reference" },
-        { "label": "Vantage — Cloud Cost Handbook", "url": "https://www.vantage.sh/cloud-cost-handbook", "note": "free, the canonical FinOps reference" },
-        { "label": "Last Week in AWS — Corey Quinn", "url": "https://www.lastweekinaws.com/", "note": "newsletter, the most-honest AWS pricing commentary" },
-        { "label": "Kubecost — Documentation", "url": "https://docs.kubecost.com/", "note": "official, the canonical K8s cost-attribution tool" },
-        { "label": "FinOps Foundation", "url": "https://www.finops.org/", "note": "official, the industry standards body for FinOps" },
-        { "label": "AWS Compute Optimizer", "url": "https://docs.aws.amazon.com/compute-optimizer/", "note": "official, free service that recommends right-sizing" }
+        {
+          "label": "AWS Well-Architected Framework — Cost Optimization pillar",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "Vantage — Cloud Cost Handbook",
+          "url": "https://www.vantage.sh/cloud-cost-handbook",
+          "note": "free, the canonical FinOps reference"
+        },
+        {
+          "label": "Last Week in AWS — Corey Quinn",
+          "url": "https://www.lastweekinaws.com/",
+          "note": "newsletter, the most-honest AWS pricing commentary"
+        },
+        {
+          "label": "Kubecost — Documentation",
+          "url": "https://docs.kubecost.com/",
+          "note": "official, the canonical K8s cost-attribution tool"
+        },
+        {
+          "label": "FinOps Foundation",
+          "url": "https://www.finops.org/",
+          "note": "official, the industry standards body for FinOps"
+        },
+        {
+          "label": "AWS Compute Optimizer",
+          "url": "https://docs.aws.amazon.com/compute-optimizer/",
+          "note": "official, free service that recommends right-sizing"
+        }
       ],
       "questions": [
         "Your top AWS cost is NAT Gateway. Why? What's the typical cause? How do you cut it?",
@@ -1099,12 +1761,36 @@
       ],
       "project": "Build a Tested Disaster Recovery Plan. For your URL shortener: automated daily backups (RDS, S3), 30-day retention, point-in-time recovery, cross-region S3 replication for static assets, Velero for K8s state. Perform a full restore drill: spin up a new region from backups, verify functionality. Document in DR.md.",
       "resources": [
-        { "label": "AWS — Disaster Recovery whitepaper", "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html", "note": "official, the canonical reference" },
-        { "label": "Velero — Documentation", "url": "https://velero.io/docs/", "note": "official, the leading K8s backup tool" },
-        { "label": "PostgreSQL — Continuous archiving and PITR", "url": "https://www.postgresql.org/docs/current/continuous-archiving.html", "note": "official, the canonical PostgreSQL backup reference" },
-        { "label": "GitLab — How we tested our backups", "url": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/", "note": "blog, the canonical 'we lost data' post-mortem worth reading" },
-        { "label": "Charity Majors — Why I test in production", "url": "https://charity.wtf/", "note": "blog, the philosophy that backups are belief, restores are knowledge" },
-        { "label": "AWS — Backup service documentation", "url": "https://docs.aws.amazon.com/aws-backup/", "note": "official, the centralised backup service across AWS services" }
+        {
+          "label": "AWS — Disaster Recovery whitepaper",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "Velero — Documentation",
+          "url": "https://velero.io/docs/",
+          "note": "official, the leading K8s backup tool"
+        },
+        {
+          "label": "PostgreSQL — Continuous archiving and PITR",
+          "url": "https://www.postgresql.org/docs/current/continuous-archiving.html",
+          "note": "official, the canonical PostgreSQL backup reference"
+        },
+        {
+          "label": "GitLab — How we tested our backups",
+          "url": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/",
+          "note": "blog, the canonical 'we lost data' post-mortem worth reading"
+        },
+        {
+          "label": "Charity Majors — Why I test in production",
+          "url": "https://charity.wtf/",
+          "note": "blog, the philosophy that backups are belief, restores are knowledge"
+        },
+        {
+          "label": "AWS — Backup service documentation",
+          "url": "https://docs.aws.amazon.com/aws-backup/",
+          "note": "official, the centralised backup service across AWS services"
+        }
       ],
       "questions": [
         "Your DR runbook says 'restore RDS from snapshot'. How long does it actually take? Have you measured?",
@@ -1150,12 +1836,36 @@
       ],
       "project": "Cloud Security Audit + Hardening Pass. Run Prowler on your AWS account. Fix every HIGH finding. Document the remaining ones with justification in CLOUD-SECURITY.md. Set up GuardDuty alerts. Verify every IAM policy is least-privilege. Generate a one-page security posture report.",
       "resources": [
-        { "label": "AWS Well-Architected — Security pillar", "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html", "note": "official, the canonical reference" },
-        { "label": "Prowler — Documentation", "url": "https://github.com/prowler-cloud/prowler", "note": "GitHub, the most-used open-source cloud security scanner" },
-        { "label": "ScoutSuite", "url": "https://github.com/nccgroup/ScoutSuite", "note": "GitHub, alternative multi-cloud security scanner from NCC Group" },
-        { "label": "AWS Security Maturity Model", "url": "https://maturitymodel.security.aws.dev/en/model/", "note": "official, the canonical maturity framework" },
-        { "label": "Last Week in AWS Security", "url": "https://www.lastweekinaws.com/podcast/", "note": "podcast + newsletter, what's actually happening in AWS security" },
-        { "label": "Cloud Security Alliance — Guidance", "url": "https://cloudsecurityalliance.org/research/cloud-controls-matrix/", "note": "official, the industry-standard controls matrix" }
+        {
+          "label": "AWS Well-Architected — Security pillar",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
+          "note": "official, the canonical reference"
+        },
+        {
+          "label": "Prowler — Documentation",
+          "url": "https://github.com/prowler-cloud/prowler",
+          "note": "GitHub, the most-used open-source cloud security scanner"
+        },
+        {
+          "label": "ScoutSuite",
+          "url": "https://github.com/nccgroup/ScoutSuite",
+          "note": "GitHub, alternative multi-cloud security scanner from NCC Group"
+        },
+        {
+          "label": "AWS Security Maturity Model",
+          "url": "https://maturitymodel.security.aws.dev/en/model/",
+          "note": "official, the canonical maturity framework"
+        },
+        {
+          "label": "Last Week in AWS Security",
+          "url": "https://www.lastweekinaws.com/podcast/",
+          "note": "podcast + newsletter, what's actually happening in AWS security"
+        },
+        {
+          "label": "Cloud Security Alliance — Guidance",
+          "url": "https://cloudsecurityalliance.org/research/cloud-controls-matrix/",
+          "note": "official, the industry-standard controls matrix"
+        }
       ],
       "questions": [
         "Your IAM has a user with AdministratorAccess. Justify it or remove it. What's the alternative for daily work?",
@@ -1201,12 +1911,36 @@
       ],
       "project": "Build a Full Production Stack for One Real App. End-state: an app of your choice (your URL shortener works, or fork something popular) running on EKS via Terraform via Argo CD with: HTTPS at a real domain, full observability (Prometheus + Grafana + Loki + Tempo), backups + tested restore, secrets in Doppler/Secrets Manager, CI/CD on every PR. Public GitHub repo. Documented blog post about the stack. This is what 'I can operate cloud infrastructure' actually looks like.",
       "resources": [
-        { "label": "Site Reliability Engineering (Google book)", "url": "https://sre.google/sre-book/table-of-contents/", "note": "free, your capstone reference; focus on chapters 4, 12, 13" },
-        { "label": "CNCF Landscape", "url": "https://landscape.cncf.io/", "note": "official, the canonical map of the cloud-native ecosystem" },
-        { "label": "Made with ML — MLOps course (free)", "url": "https://madewithml.com/courses/mlops/", "note": "even if non-ML, the deployment + monitoring chapters are gold" },
-        { "label": "Honeycomb — Observability Engineering book chapters (free)", "url": "https://www.honeycomb.io/", "note": "free chapters of the canonical observability book" },
-        { "label": "Charity Majors — production patterns talks", "url": "https://charity.wtf/", "note": "the philosophy of modern operations" },
-        { "label": "DevOps Topologies — Matthew Skelton", "url": "https://web.devopstopologies.com/", "note": "free, the canonical reference for org structures around DevOps" }
+        {
+          "label": "Site Reliability Engineering (Google book)",
+          "url": "https://sre.google/sre-book/table-of-contents/",
+          "note": "free, your capstone reference; focus on chapters 4, 12, 13"
+        },
+        {
+          "label": "CNCF Landscape",
+          "url": "https://landscape.cncf.io/",
+          "note": "official, the canonical map of the cloud-native ecosystem"
+        },
+        {
+          "label": "Made with ML — MLOps course (free)",
+          "url": "https://madewithml.com/courses/mlops/",
+          "note": "even if non-ML, the deployment + monitoring chapters are gold"
+        },
+        {
+          "label": "Honeycomb — Observability Engineering book chapters (free)",
+          "url": "https://www.honeycomb.io/",
+          "note": "free chapters of the canonical observability book"
+        },
+        {
+          "label": "Charity Majors — production patterns talks",
+          "url": "https://charity.wtf/",
+          "note": "the philosophy of modern operations"
+        },
+        {
+          "label": "DevOps Topologies — Matthew Skelton",
+          "url": "https://web.devopstopologies.com/",
+          "note": "free, the canonical reference for org structures around DevOps"
+        }
       ],
       "questions": [
         "Anyone clones your capstone repo. Can they deploy it in <60 minutes? Test by giving it to a friend.",

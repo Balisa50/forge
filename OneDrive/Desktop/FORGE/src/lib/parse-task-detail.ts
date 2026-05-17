@@ -34,17 +34,31 @@ export interface ParsedTaskDetail {
   exercises: string[];
 }
 
+/** Recognised section headings, matched against the line AFTER its `**`
+ *  markers and trailing colon have been stripped. */
 const HEADINGS: { key: keyof Omit<ParsedTaskDetail, "context">; matchers: RegExp[] }[] = [
-  { key: "topics",    matchers: [/^\*?\*?topics? to study\*?\*?:?\s*$/i, /^\*?\*?topics?\*?\*?:?\s*$/i] },
-  { key: "tasks",     matchers: [/^\*?\*?tasks? (?:&|and) deliverables?\*?\*?:?\s*$/i, /^\*?\*?deliverables?\*?\*?:?\s*$/i] },
-  { key: "project",   matchers: [/^\*?\*?real[- ]world project\*?\*?:?\s*$/i, /^\*?\*?project\*?\*?:?\s*$/i] },
-  { key: "questions", matchers: [/^\*?\*?think like an?.+\*?\*?:?\s*$/i, /^\*?\*?questions on your data\*?\*?:?\s*$/i] },
-  { key: "exercises", matchers: [/^\*?\*?practical exercises?\*?\*?:?\s*$/i, /^\*?\*?exercises?\*?\*?:?\s*$/i] },
+  { key: "topics",    matchers: [/^topics? to study$/i, /^what you'?ll learn( this week)?$/i, /^topics?$/i] },
+  { key: "tasks",     matchers: [/^tasks? (?:&|and) deliverables?$/i, /^what to do$/i, /^deliverables?$/i] },
+  { key: "project",   matchers: [/^real[- ]world project$/i, /^build this.*$/i, /^project$/i] },
+  { key: "questions", matchers: [/^think like an?.+$/i, /^questions on your data$/i, /^think for yourself$/i, /^questions to ask yourself$/i] },
+  { key: "exercises", matchers: [/^practical exercises?$/i, /^practice exercises?$/i, /^practice.*try these$/i, /^exercises?$/i] },
 ];
 
+/** Strip leading/trailing **, then trailing colon, then whitespace. */
+function cleanHeadingCandidate(line: string): string {
+  return line
+    .trim()
+    .replace(/^\*+/, "")
+    .replace(/\*+$/, "")
+    .replace(/:$/, "")
+    .trim();
+}
+
 function whichHeading(line: string): keyof Omit<ParsedTaskDetail, "context"> | null {
+  const clean = cleanHeadingCandidate(line);
+  if (!clean) return null;
   for (const h of HEADINGS) {
-    if (h.matchers.some((m) => m.test(line.trim()))) return h.key;
+    if (h.matchers.some((m) => m.test(clean))) return h.key;
   }
   return null;
 }
