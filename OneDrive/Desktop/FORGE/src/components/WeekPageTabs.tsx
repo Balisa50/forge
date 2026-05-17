@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2, Play, FileText, PenLine, Circle, Lock, Target, Code2, HelpCircle,
-  ExternalLink, ChevronDown,
+  ExternalLink, ChevronDown, ArrowRight, Sparkles,
 } from "lucide-react";
 import type { RoadmapWeek } from "@/lib/roadmaps";
 import ResourceViewer from "@/components/ResourceViewer";
@@ -49,11 +49,36 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
     if (typeof window === "undefined") return;
     try { setDone(JSON.parse(window.localStorage.getItem(storageKey) ?? "{}")); } catch { /* */ }
   }, [storageKey]);
-  const toggle = (key: string) => {
-    const next = { ...done, [key]: !done[key] };
+  const persist = (next: Record<string, boolean>) => {
     setDone(next);
     if (typeof window !== "undefined") window.localStorage.setItem(storageKey, JSON.stringify(next));
   };
+  const toggle = (key: string) => persist({ ...done, [key]: !done[key] });
+
+  // Mark every item on a day done (or undo it). Used by the big primary button
+  // at the bottom of the current day so the learner doesn't have to click each
+  // circle individually.
+  const markDay = (dayNumber: number, allDoneTarget: boolean) => {
+    if (!week.days) return;
+    const d = week.days.find((x) => x.number === dayNumber);
+    if (!d) return;
+    const next = { ...done };
+    d.items.forEach((_, i) => { next[`d${dayNumber}-i${i}`] = allDoneTarget; });
+    persist(next);
+  };
+
+  // Toast for clicking a locked day. Self-clearing after 2.4s.
+  const [lockedToast, setLockedToast] = useState<string | null>(null);
+  useEffect(() => {
+    if (!lockedToast) return;
+    const t = setTimeout(() => setLockedToast(null), 2400);
+    return () => clearTimeout(t);
+  }, [lockedToast]);
+
+  // Brief "Day N done — Day N+1 unlocked" celebration. Tracks the highest day
+  // index we've ever seen complete so we only fire on the rising edge.
+  const [justUnlockedDay, setJustUnlockedDay] = useState<number | null>(null);
+  const [maxDoneIdx, setMaxDoneIdx] = useState<number>(-1);
 
   // Day completion %s
   const dayPct = useMemo(() => {
@@ -70,6 +95,20 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
     const idx = dayPct.findIndex((p) => p < 100);
     return idx === -1 ? dayPct.length : idx; // dayPct.length = all done
   }, [dayPct]);
+
+  // Fire celebration toast when a new day gets completed (current advances).
+  useEffect(() => {
+    const newlyDone = currentDayIdx - 1; // last index that just hit 100%
+    if (newlyDone >= 0 && newlyDone > maxDoneIdx) {
+      setMaxDoneIdx(newlyDone);
+      // Only celebrate if we've actually loaded progress (avoid first-load fire).
+      if (Object.keys(done).length > 0) {
+        setJustUnlockedDay(newlyDone + 1); // 1-based day number
+        const t = setTimeout(() => setJustUnlockedDay(null), 3200);
+        return () => clearTimeout(t);
+      }
+    }
+  }, [currentDayIdx, maxDoneIdx, done]);
 
   // Allow the user to manually expand a completed day to revisit it.
   const [manuallyOpen, setManuallyOpen] = useState<Record<number, boolean>>({});
@@ -128,7 +167,10 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
           >
             <button
               onClick={() => {
-                if (isLocked) return;
+                if (isLocked) {
+                  setLockedToast(`Day ${d.number} unlocks when you finish Day ${d.number - 1}`);
+                  return;
+                }
                 if (isCurrent) return; // current day can't be collapsed
                 setManuallyOpen((m) => ({ ...m, [idx]: !m[idx] }));
               }}
@@ -140,7 +182,7 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                 padding: "1rem 1.125rem",
                 background: "none",
                 border: "none",
-                cursor: isLocked ? "not-allowed" : isCurrent ? "default" : "pointer",
+                cursor: isLocked ? "help" : isCurrent ? "default" : "pointer",
                 textAlign: "left",
                 color: "var(--text-primary)",
               }}
@@ -265,6 +307,44 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                     );
                   })}
                 </ul>
+
+                {/* Day footer: one-click mark done / undo */}
+                <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.05em" }}>
+                    {d.items.filter((_, i) => done[`d${d.number}-i${i}`]).length}/{d.items.length} items · {pct}%
+                  </p>
+                  {isDone ? (
+                    <button
+                      onClick={() => markDay(d.number, false)}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "0.375rem",
+                        background: "transparent", color: "var(--text-dim)",
+                        border: "1px solid var(--border)", borderRadius: 6,
+                        padding: "0.4375rem 0.875rem", cursor: "pointer",
+                        fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.05em",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Undo · re-do Day {d.number}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => markDay(d.number, true)}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "0.375rem",
+                        background: "var(--accent)", color: "#000",
+                        border: "none", borderRadius: 6,
+                        padding: "0.5rem 1rem", cursor: "pointer",
+                        fontFamily: "var(--font-body)", fontSize: "0.8125rem", letterSpacing: "0.02em",
+                        fontWeight: 700,
+                      }}
+                    >
+                      <CheckCircle2 size={14} />
+                      Mark Day {d.number} done
+                      {idx + 1 < (week.days?.length ?? 0) && <ArrowRight size={14} />}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </article>
@@ -285,6 +365,49 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
       )}
 
       {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
+
+      {/* Floating toast: locked-day tap */}
+      {lockedToast && (
+        <div
+          role="status"
+          style={{
+            position: "fixed", bottom: "1.5rem", left: "50%", transform: "translateX(-50%)",
+            background: "var(--bg-panel)", border: "1px solid var(--border)",
+            borderRadius: 10, padding: "0.625rem 1rem",
+            color: "var(--text-primary)", fontSize: "0.8125rem",
+            display: "flex", alignItems: "center", gap: "0.5rem",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.4)", zIndex: 9999,
+          }}
+        >
+          <Lock size={14} style={{ color: "var(--accent)" }} />
+          {lockedToast}
+        </div>
+      )}
+
+      {/* Celebration banner: day just unlocked */}
+      {justUnlockedDay !== null && (
+        <div
+          role="status"
+          style={{
+            position: "fixed", bottom: "1.5rem", left: "50%", transform: "translateX(-50%)",
+            background: "linear-gradient(135deg, rgba(34,197,94,0.18), rgba(245,158,11,0.12))",
+            border: "1px solid rgba(34,197,94,0.4)",
+            borderRadius: 10, padding: "0.75rem 1.125rem",
+            color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 600,
+            display: "flex", alignItems: "center", gap: "0.5rem",
+            boxShadow: "0 8px 32px rgba(34,197,94,0.25)", zIndex: 9999,
+          }}
+        >
+          <Sparkles size={16} style={{ color: "var(--green)" }} />
+          Day {justUnlockedDay} done
+          {(week.days && justUnlockedDay < week.days.length) && (
+            <>
+              <ArrowRight size={14} style={{ color: "var(--accent)" }} />
+              Day {justUnlockedDay + 1} unlocked
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
