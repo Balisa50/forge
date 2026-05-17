@@ -1,0 +1,1234 @@
+{
+  "slug": "ml-engineering",
+  "title": "ML Engineering",
+  "total_weeks": 24,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "Python and NumPy for ML — The Numerical Stack",
+      "phase": "Foundations",
+      "commitment_hours": "20-30",
+      "context": "ML engineering is matrix multiplication wrapped in software engineering. This week you get fluent in the numerical stack — NumPy, broadcasting, vectorisation — that everything else (PyTorch, scikit-learn, JAX) builds on. By Friday, you should never write a for-loop over a NumPy array again.",
+      "topics": [
+        "NumPy arrays — dtypes, shapes, strides, why .reshape() is free and .copy() is not",
+        "Broadcasting rules — when shapes are compatible, how to read a broadcast error",
+        "Vectorised operations — np.where, np.select, masking, fancy indexing",
+        "Linear algebra in NumPy — matmul, einsum, solve, eigendecomposition",
+        "Random number generation — np.random.Generator vs legacy, reproducible seeds",
+        "Memory model — views vs copies, when to .copy() to avoid surprise mutations",
+        "Pandas as NumPy on rails — Series, DataFrame, groupby, when Pandas hides bugs",
+        "Profiling — %timeit, line_profiler, what makes Python ML code slow"
+      ],
+      "tasks": [
+        "Install Python 3.12 + uv, set up a project venv, install numpy, pandas, scipy, scikit-learn, matplotlib, jupyterlab",
+        "Solve 30 problems from the 100 NumPy exercises repo — minimum the first 50",
+        "Take a synthetic dataset (1M rows, 10 cols) and time three implementations of the same aggregation: Python for-loop, Pandas .apply, NumPy vectorised. Report timings.",
+        "Write a function that computes pairwise cosine similarity for 1000 vectors of dim 128 in pure NumPy (no for-loop)",
+        "Take any tabular dataset you have and produce a 1-page EDA notebook — shape, dtypes, missing pattern, distributions, correlations"
+      ],
+      "project": "Build a NumPy-only linear regression. Implement: data loading, train/test split, normal-equation closed-form solution, prediction, R² + RMSE. Use the California Housing dataset. Compare your R² to scikit-learn's LinearRegression. They should match to 4 decimal places. Add a second mode using gradient descent (manual, not autograd). Plot loss vs epoch. This becomes your reference implementation when you move to PyTorch in week 9.",
+      "resources": [
+        { "label": "NumPy — Quickstart tutorial", "url": "https://numpy.org/doc/stable/user/quickstart.html", "note": "official, the canonical starting point" },
+        { "label": "100 NumPy exercises", "url": "https://github.com/rougier/numpy-100", "note": "GitHub, the standard NumPy fluency drill" },
+        { "label": "From Python to NumPy — Nicolas Rougier", "url": "https://www.labri.fr/perso/nrougier/from-python-to-numpy/", "note": "free book, deep on vectorisation patterns" },
+        { "label": "Pandas — Getting started tutorials", "url": "https://pandas.pydata.org/docs/getting_started/intro_tutorials/index.html", "note": "official, work through all 10 short tutorials" },
+        { "label": "Jeremy Howard — Practical Linear Algebra for Data Science", "url": "https://github.com/fastai/numerical-linear-algebra", "note": "GitHub, FastAI's numerical linear algebra course — free, lectures on YouTube" },
+        { "label": "Sebastian Raschka — Calculus and statistics for ML cheat sheets", "url": "https://github.com/rasbt/python-machine-learning-book-3rd-edition", "note": "GitHub, code that backs the canonical ML textbook" }
+      ],
+      "questions": [
+        "Time your three aggregation implementations. What's the speedup from for-loop to NumPy? Is it 10x, 100x, 1000x? Why does the curve flatten beyond a certain size?",
+        "Your gradient-descent linear regression — at what learning rate does it diverge? What does the loss curve look like? What does that tell you about choosing learning rates later?",
+        "Look at your EDA. Which column has the most missing values? If you naively dropped rows with any missing, how many rows would you lose? Is that acceptable for downstream training?",
+        "Profile your pairwise-similarity function for 100, 1000, 10000 vectors. Where does memory become the limit before CPU does?"
+      ],
+      "exercises": [
+        "Implement softmax in NumPy that's numerically stable (subtract max before exp). Test on a vector with one large value (e.g. 1000) and verify it doesn't overflow.",
+        "Write a function `train_test_split(X, y, test_size=0.2, seed=42)` from scratch using np.random.Generator. Reproduce it twice to verify determinism.",
+        "Implement min-max scaling AND standardisation AS classes with .fit() and .transform() methods. Match sklearn's API surface.",
+        "Take a Pandas DataFrame with 1M rows; perform a groupby aggregation. Time it vs the equivalent NumPy approach. Where does Pandas win? Where does it lose?"
+      ],
+      "outputs": [
+        "Repo numpy-foundations with at least 50 of the 100 NumPy exercises solved",
+        "Repo linear-regression-from-scratch with closed-form + gradient-descent implementations matching sklearn",
+        "EDA notebook on a real dataset committed as eda.ipynb",
+        "Timing benchmark CSV comparing for-loop / pandas / NumPy on the same task"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "The Math Behind the Models — Statistics, Probability, and Linear Algebra",
+      "phase": "Foundations",
+      "commitment_hours": "25-30",
+      "context": "Most ML failures are statistical failures dressed up as engineering ones. This week you anchor the math — distributions, expectation, variance, central limit, Bayes, eigenvectors — to the actual things you'll see in train loops and eval reports. If you skip this week you'll spend 23 weeks pattern-matching without understanding.",
+      "topics": [
+        "Distributions you actually meet — Normal, Bernoulli, Categorical, Beta, Poisson",
+        "Sampling and the Central Limit Theorem — why averaging fixes things",
+        "Bias and variance — bias-variance decomposition, why both matter",
+        "Probability vs likelihood — the deepest source of beginner confusion",
+        "Bayes rule — prior, likelihood, posterior, why ML is mostly applied Bayes",
+        "Linear algebra essentials — matrix-vector multiplication as composition of linear maps",
+        "Eigenvectors and eigenvalues — what PCA is actually doing",
+        "Information theory primer — entropy, cross-entropy, KL divergence"
+      ],
+      "tasks": [
+        "Generate samples from 5 distributions in NumPy; plot histograms; verify mean and variance match the analytical values",
+        "Implement the bias-variance decomposition on a simple problem (e.g. polynomial regression of degree 1-15 on a noisy sine wave); plot bias², variance, total error",
+        "Implement PCA from scratch using SVD; apply to MNIST 784-dim vectors; reconstruct images from top-50 components",
+        "Implement cross-entropy loss in NumPy; verify against PyTorch's nn.CrossEntropyLoss on 10 random inputs",
+        "Pick a simple Bayesian problem (the disease-test problem) and compute the posterior by hand AND in code; convince yourself the answer is right"
+      ],
+      "project": "Build a Statistical EDA tool. Given any CSV, produce: per-column distribution plot (with best-fit reference distribution), correlation heatmap, mutual information matrix, missing-data pattern visualisation, outlier detection (IQR + isolation forest), and a 1-page automated report. Use SciPy for the statistics, Plotly for interactivity. Run it on 3 different real datasets. This becomes your first move on every new ML problem.",
+      "resources": [
+        { "label": "3Blue1Brown — Essence of Linear Algebra", "url": "https://www.3blue1brown.com/topics/linear-algebra", "note": "YouTube series, watch all 15 episodes — the single best linear algebra resource ever made" },
+        { "label": "3Blue1Brown — Essence of Calculus", "url": "https://www.3blue1brown.com/topics/calculus", "note": "YouTube series, watch the first 8 episodes" },
+        { "label": "StatQuest with Josh Starmer", "url": "https://www.youtube.com/c/joshstarmer", "note": "YouTube channel, the friendliest stats explainer; watch his bias-variance and PCA videos" },
+        { "label": "Mathematics for Machine Learning — Deisenroth, Faisal, Ong", "url": "https://mml-book.github.io/", "note": "free PDF book, the canonical intermediate textbook" },
+        { "label": "Seeing Theory — Brown University", "url": "https://seeing-theory.brown.edu/", "note": "interactive visualisations of probability concepts" },
+        { "label": "Information Theory, Inference, and Learning Algorithms — David MacKay", "url": "https://www.inference.org.uk/itila/", "note": "free PDF, the canonical info theory book — read chapters 1-5" }
+      ],
+      "questions": [
+        "Plot bias and variance for polynomial regression at degrees 1, 3, 5, 10, 15. Where's the sweet spot? What does this tell you about the meaning of capacity in any model?",
+        "Reconstruct an MNIST digit from 1, 5, 10, 50, 200 PCA components. At what point does it become recognisable? What does this say about effective dimensionality?",
+        "Run the same disease-test Bayes problem with prior 1% vs 50%. Same test specs. How wildly does the posterior swing? What's the engineering implication for fraud detection or rare-disease classifiers?",
+        "Compute cross-entropy between two distributions that differ only slightly. Then between two that differ a lot. What's the order of magnitude? Why is cross-entropy a better loss than MSE for classification?"
+      ],
+      "exercises": [
+        "Implement PCA two ways: via eigendecomposition of the covariance matrix and via SVD of the data matrix. Verify they give the same projections.",
+        "Implement KL divergence between two Gaussians using the closed-form formula. Verify against the Monte Carlo estimate (sample 10k times, average log-ratio).",
+        "Write a function that samples from a 2D Gaussian with given mean and covariance using the Cholesky trick. Compare with np.random.multivariate_normal.",
+        "Take a real dataset and compute the mutual information between each feature and the target using sklearn.feature_selection.mutual_info_classif. Which features are most informative? Compare to a correlation-only ranking."
+      ],
+      "outputs": [
+        "Notebook with bias-variance plot, PCA reconstruction images, cross-entropy verification",
+        "Repo statistical-eda-tool with the automated EDA producing reports on 3 datasets",
+        "Hand-derived solution + code for one Bayes problem, committed as notes/bayes.md",
+        "All exercises in exercises/week-02/"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "scikit-learn — The Library That Started It All",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "Before PyTorch, before deep learning, there was scikit-learn. It's still the right tool for 80% of tabular problems. This week you learn its API deeply — Pipeline, ColumnTransformer, cross_val_score, GridSearchCV — because once you know it, every ML library makes sense.",
+      "topics": [
+        "The estimator API — .fit(), .predict(), .transform(), why every model looks the same",
+        "Pipeline and ColumnTransformer — composing preprocessing + model in one object",
+        "Train/validation/test splits — why three, when one is enough",
+        "Cross-validation — k-fold, stratified, time-series-split, group k-fold",
+        "Hyperparameter search — GridSearchCV, RandomizedSearchCV, Optuna",
+        "Categorical encoding — OneHot, Target, Ordinal, when each is right",
+        "Imputation strategies — mean, median, mode, KNN, iterative",
+        "Class imbalance — class_weight, SMOTE, when to bother"
+      ],
+      "tasks": [
+        "Build a Pipeline for the Titanic dataset: ColumnTransformer (numeric standardise, categorical one-hot, missing imputation) + a model. Fit, evaluate on test.",
+        "Run 5-fold cross-validation on three model families (Logistic Regression, Random Forest, Gradient Boosting). Report mean and std of accuracy.",
+        "Run hyperparameter search with both GridSearchCV and Optuna; compare time-to-best-score",
+        "Take a tabular dataset and try 5 different categorical encoding strategies; report effect on a downstream model",
+        "Implement learning curves: plot training and validation score as a function of training set size"
+      ],
+      "project": "Build a Tabular Benchmark. Given any CSV with a target column, your tool: detects column types, builds an appropriate preprocessing pipeline, runs 5 model families (Logistic/Linear Regression, Random Forest, XGBoost, LightGBM, CatBoost) with default + tuned hyperparameters, produces a leaderboard with metrics, time to fit, time to predict. Test on 3 different datasets — Titanic, California Housing, Adult Income. This is the rapid-prototyping tool you'll reuse forever.",
+      "resources": [
+        { "label": "scikit-learn — User Guide", "url": "https://scikit-learn.org/stable/user_guide.html", "note": "official, work through chapters 1-6 over the week" },
+        { "label": "Andreas Müller — Applied ML in Python", "url": "https://github.com/amueller/ml-workshop-4-of-4", "note": "GitHub, sklearn core developer's workshop materials" },
+        { "label": "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow — Aurélien Géron", "url": "https://github.com/ageron/handson-ml3", "note": "GitHub, code from the canonical book; buy the book if you can" },
+        { "label": "Optuna — Documentation", "url": "https://optuna.org/", "note": "official, the most-used hyperparameter optimisation library" },
+        { "label": "Kaggle Learn — Intermediate ML", "url": "https://www.kaggle.com/learn/intermediate-machine-learning", "note": "official short course, very practical" },
+        { "label": "imbalanced-learn — Documentation", "url": "https://imbalanced-learn.org/stable/", "note": "official, the standard library for class-imbalance handling" }
+      ],
+      "questions": [
+        "On your tabular benchmark, which model wins on each dataset? Is the winner consistent? When do tree-based models beat linear models, and why?",
+        "Compare default hyperparameters to tuned hyperparameters across your 5 models. Which model benefits most from tuning? Which is most robust to defaults?",
+        "GridSearchCV vs Optuna on the same hyperparameter space (10 params, 20 evals). Which finds a better score? Which is faster?",
+        "On a class-imbalanced dataset, compare class_weight='balanced' to SMOTE oversampling. Which improves recall on the minority class more? Which damages overall accuracy less?"
+      ],
+      "exercises": [
+        "Write a Pipeline that handles a dataset with mixed types: 5 numeric (some missing), 3 categorical, 1 text. Verify it can fit on the dataset.",
+        "Implement custom cross-validation: 80/10/10 train/val/test with a fixed seed, repeated 5 times with different seeds. Report mean and std.",
+        "Build a learning curve plot: for training set sizes 100, 500, 1000, 5000, 10000, plot train and val score. What does the gap tell you about overfitting?",
+        "Use SHAP to explain predictions of your best tree-based model on 5 held-out examples. Document one prediction where the explanation surprised you."
+      ],
+      "outputs": [
+        "Repo tabular-benchmark with the benchmarking tool running on 3 datasets, leaderboard committed as RESULTS.md",
+        "Cross-validation report comparing model families with mean ± std metrics",
+        "SHAP explanation notebook for 5 predictions",
+        "Optuna study persisted as a SQLite DB you can re-load and visualise"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Feature Engineering — Where Models Are Won or Lost",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "A well-engineered feature beats a fancier model 80% of the time. This week you learn the canonical feature-engineering patterns — interactions, encodings, time features, target encoding done safely — and you learn how to build a Feature Store-like discipline even if you never use a real Feature Store.",
+      "topics": [
+        "Numeric transformations — log, Box-Cox, Yeo-Johnson, when each helps",
+        "Interaction features — multiplicative, polynomial, why most are ignored by tree models",
+        "Time features — hour-of-day, day-of-week, time-since-event, lagged features",
+        "Target encoding — the right way (k-fold), the wrong way (leakage city)",
+        "Frequency and count encoding for high-cardinality categoricals",
+        "Aggregation features — group statistics from history",
+        "Text features for tabular pipelines — TF-IDF, sentence embeddings as features",
+        "Feature selection — filter, wrapper, embedded; when to bother"
+      ],
+      "tasks": [
+        "Take the Bike Sharing dataset and build at least 15 engineered features (time features, lags, rolling stats, interactions); measure lift",
+        "Implement k-fold target encoding from scratch; verify zero leakage by checking that out-of-fold predictions never use their own target",
+        "Use feature importance from a tree model to drop the bottom 50% of features; verify the score doesn't degrade",
+        "Build a Pipeline that includes a custom transformer that adds time features; integrate it into a model",
+        "On a high-cardinality categorical (say, a column with 10000+ unique values) try frequency, target, and embedding encodings; compare downstream metric"
+      ],
+      "project": "Build a Feature Store Lite. A small library where each feature is a typed Python function with a name, version, and decorator that registers it. Given a dataframe and a list of feature names, your tool computes them in order, caching intermediate dataframes to disk (Parquet). Track lineage — which features depend on which. Versioning — feature v2 doesn't overwrite v1. Test on the Bike Sharing dataset with 20 features; show that adding a new feature doesn't trigger recomputation of unchanged features.",
+      "resources": [
+        { "label": "Feature Engineering for Machine Learning — Alice Zheng", "url": "https://www.oreilly.com/library/view/feature-engineering-for/9781491953235/", "note": "O'Reilly book, the canonical reference, summary available free as a Kaggle notebook" },
+        { "label": "Kaggle — Feature Engineering course", "url": "https://www.kaggle.com/learn/feature-engineering", "note": "official short course with exercises" },
+        { "label": "Featuretools — Documentation", "url": "https://featuretools.alteryx.com/", "note": "official, automated feature engineering library, worth knowing the patterns" },
+        { "label": "Category Encoders library", "url": "https://contrib.scikit-learn.org/category_encoders/", "note": "scikit-learn-contrib package with 15+ categorical encoders" },
+        { "label": "How to Win a Data Science Competition — Coursera (free audit)", "url": "https://www.coursera.org/learn/competitive-data-science", "note": "Coursera, free audit, week 3 on feature engineering is gold" },
+        { "label": "Feast — open-source Feature Store", "url": "https://docs.feast.dev/", "note": "official, the production Feature Store; even just reading the design teaches you the discipline" }
+      ],
+      "questions": [
+        "On Bike Sharing, what's the single highest-impact engineered feature? What was the score before and after adding it?",
+        "Compare a model trained on raw features vs a model trained on raw + engineered features. What's the lift? How does it change as you go from 100 to 10000 training examples?",
+        "Run target encoding with and without k-fold isolation; measure validation score. Why does naive target encoding give an artificially high train score?",
+        "On a categorical with 10000 unique values, which encoding wins downstream? Why does one-hot fail at this scale?"
+      ],
+      "exercises": [
+        "Write a custom sklearn-compatible transformer that adds time-based features (hour, day-of-week, is-weekend, is-holiday) from a datetime column.",
+        "Implement target encoding with k-fold isolation as a sklearn Transformer. Test that out-of-fold predictions match expected mean.",
+        "Use Featuretools to auto-generate features on a real dataset; manually inspect the top 20 features it created — which would you have invented by hand?",
+        "Build a Feature Selection function that uses mutual information to rank features and returns the top-k. Compare downstream metric vs using all features."
+      ],
+      "outputs": [
+        "Repo bike-sharing-features with 15+ engineered features and ablation analysis",
+        "Repo feature-store-lite with caching, versioning, lineage tracking",
+        "Notebook comparing categorical encodings on a high-cardinality column",
+        "Notes/feature-engineering.md — your decision tree for engineering features by problem type"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Linear and Logistic Regression — Truly Understanding the Workhorse",
+      "phase": "Classical ML",
+      "commitment_hours": "20-25",
+      "context": "Linear and logistic regression are still in production at every Fortune 500. They're interpretable, fast, robust, and they often beat XGBoost when the data is genuinely linear. This week you go deep on what they actually compute, when they fail, and what regularisation does to coefficients.",
+      "topics": [
+        "OLS regression — closed form, gradient descent, when each is preferred",
+        "Logistic regression — likelihood, log-odds, the sigmoid as a smooth indicator",
+        "Regularisation — L1 (Lasso), L2 (Ridge), Elastic Net, what they do to coefficients",
+        "Interaction and polynomial terms — explicit feature engineering for linear models",
+        "Multi-class extensions — one-vs-rest, multinomial, softmax",
+        "Diagnostics — residual plots, leverage, Cook's distance, why they matter",
+        "Coefficient interpretation — odds ratios, partial effects, why they break with multicollinearity",
+        "When to reach for linear — sample-efficient, interpretable, fast inference, online learnable"
+      ],
+      "tasks": [
+        "Fit OLS on the California Housing data; interpret coefficients in original units; plot residuals to check assumptions",
+        "Fit logistic regression on a binary classification task; compute and interpret odds ratios",
+        "Compare Ridge, Lasso, Elastic Net with increasing regularisation strength; plot how coefficients shrink",
+        "Demonstrate overfitting with high-degree polynomial features; show how regularisation rescues it",
+        "Implement Stochastic Gradient Descent for logistic regression from scratch; match sklearn within 1% accuracy"
+      ],
+      "project": "Build a Loan Default Predictor — interpretable edition. Use the Kaggle Home Credit Default Risk dataset (or any credit dataset). Build a logistic-regression-based model with thoughtful feature engineering. Goal: ROC AUC > 0.78. Critically, your deliverable is interpretability: a report showing exactly why each prediction was made, the global feature importance, and an analysis of which sub-populations the model treats unfairly. Compare to XGBoost on the same features.",
+      "resources": [
+        { "label": "Introduction to Statistical Learning (ISLR) — chapters 3 & 4", "url": "https://www.statlearning.com/", "note": "free PDF, the canonical intro stats textbook" },
+        { "label": "Statsmodels documentation — Regression", "url": "https://www.statsmodels.org/stable/regression.html", "note": "official, gives you statistical diagnostics sklearn doesn't" },
+        { "label": "Andrew Ng — CS229 lectures 1-4 (lecture notes)", "url": "https://cs229.stanford.edu/notes2022fall/main_notes.pdf", "note": "Stanford lecture notes, free PDF, exactly the math you need" },
+        { "label": "scikit-learn — Linear models user guide", "url": "https://scikit-learn.org/stable/modules/linear_model.html", "note": "official, every variant explained" },
+        { "label": "InterpretML by Microsoft", "url": "https://interpret.ml/docs/", "note": "official, the leading toolkit for interpretable models, Explainable Boosting Machine is worth knowing" },
+        { "label": "Christopher Olah — Visualizing Representations", "url": "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/", "note": "blog, classic, helps build intuition for what models compute" }
+      ],
+      "questions": [
+        "On California Housing, what's the residual plot for your OLS model — does it show heteroskedasticity? Does fixing it (with log transform on target) improve your test R²?",
+        "Add 10 polynomial features to logistic regression on a 1000-row binary classification task. Without regularisation, train accuracy → 1.0 but val accuracy collapses. With Ridge, what α value rescues val accuracy?",
+        "On your loan model, the coefficient for `debt_to_income` is positive. Increase someone's DTI by 0.1 — by how many percentage points does their default probability rise? Is that intuitive?",
+        "Compare your interpretable logistic model to an XGBoost on the same features. By how much does AUC improve? Is the loss of interpretability worth it for a credit-decision use case?"
+      ],
+      "exercises": [
+        "Implement Ridge regression from scratch using the closed-form solution. Verify it matches sklearn's Ridge for the same α.",
+        "Implement Lasso with coordinate descent (since closed form doesn't exist). Verify it produces sparse solutions for large α.",
+        "Fit logistic regression with class_weight='balanced' on an imbalanced dataset; compare AUC, precision, recall vs unweighted.",
+        "Use SHAP (TreeSHAP or LinearSHAP) to explain 5 individual loan predictions. Verify the linear-model explanations are exactly the per-feature × coefficient contributions."
+      ],
+      "outputs": [
+        "Repo loan-default-interpretable with AUC > 0.78 on test, fairness analysis report",
+        "Notebook comparing Ridge/Lasso/Elastic Net coefficient shrinkage",
+        "From-scratch SGD logistic regression matching sklearn",
+        "Notes/linear-models.md — when linear beats trees, with examples from your week's work"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Trees and Ensembles — The Tabular Powerhouse",
+      "phase": "Classical ML",
+      "commitment_hours": "25-30",
+      "context": "Decision trees by themselves are unstable. Hundreds of them, averaged or boosted, dominate every tabular ML competition. This week you understand why — bagging, boosting, gradient boosting — and you become fluent in XGBoost, LightGBM, and CatBoost.",
+      "topics": [
+        "Decision trees — splitting criteria (Gini, entropy, MSE), max depth, leaf size",
+        "Bagging — bootstrap aggregation, why it reduces variance",
+        "Random Forest — bagged trees + random feature subsampling, why both",
+        "Boosting — sequentially correcting errors, gradient boosting math",
+        "XGBoost vs LightGBM vs CatBoost — the differences that matter in practice",
+        "Hyperparameter tuning for boosting — learning rate, depth, n_estimators, regularisation",
+        "Early stopping — using a validation set to find the right n_estimators",
+        "Feature importance and partial dependence — what trees do, not just predict"
+      ],
+      "tasks": [
+        "Fit a Random Forest and an XGBoost on the same tabular dataset; compare metrics, training time, prediction time",
+        "Hand-implement a depth-2 decision tree on a toy dataset; verify your splits match what sklearn would find",
+        "Run hyperparameter search for XGBoost using Optuna on a real dataset; report best ROC AUC",
+        "Use early stopping on a boosting model; observe how it picks n_estimators automatically",
+        "Compute and plot SHAP global feature importance vs sklearn's built-in importance for the same model; explain why they differ"
+      ],
+      "project": "Build a Kaggle-style Tabular Competition Solver. Pick a real competition (Titanic, House Prices, Tabular Playground Series). Build the full pipeline: EDA, feature engineering, three boosting models (XGBoost, LightGBM, CatBoost), stacking them with a logistic meta-learner. Target: top-25% on the public leaderboard. Document every decision in a NOTEBOOK.md so future-you can read it as a playbook.",
+      "resources": [
+        { "label": "XGBoost — Documentation", "url": "https://xgboost.readthedocs.io/en/stable/", "note": "official, read 'Introduction to Boosted Trees' and 'Parameter Tuning'" },
+        { "label": "LightGBM — Parameters Tuning", "url": "https://lightgbm.readthedocs.io/en/latest/Parameters-Tuning.html", "note": "official, the parameter guide is essential" },
+        { "label": "CatBoost — Documentation", "url": "https://catboost.ai/en/docs/", "note": "official, especially for categorical-heavy datasets" },
+        { "label": "Tianqi Chen — XGBoost paper", "url": "https://arxiv.org/abs/1603.02754", "note": "ArXiv paper, the original by the author, very readable" },
+        { "label": "Bojan Tunguz — Kaggle Grandmaster threads on X", "url": "https://x.com/tunguz", "note": "X profile, a working Grandmaster's daily tips on tabular ML" },
+        { "label": "Kaggle — past winning solutions", "url": "https://www.kaggle.com/discussions/general/375789", "note": "Kaggle, the meta-thread of winning solutions; read 5 from competitions in your problem area" }
+      ],
+      "questions": [
+        "On the same dataset, train Random Forest with 100 vs 1000 trees. What changes in AUC? In training time? At what point do you stop adding trees?",
+        "Boosting with learning_rate=0.01 vs 0.3, with appropriately tuned n_estimators each — which generalises better? Why is low LR + many estimators usually preferred?",
+        "Run your XGBoost with early_stopping_rounds=10. At what n_estimators does it actually stop? What does the train/val score look like across iterations?",
+        "Compare the top 10 features by built-in feature_importances_ vs SHAP. Are they the same? In which direction do they disagree, and which would you trust more for a stakeholder explanation?"
+      ],
+      "exercises": [
+        "Implement a single decision tree from scratch (recursive splits, MSE for regression, Gini for classification). Match sklearn's output for max_depth=3.",
+        "Implement bagging from scratch: fit N trees on bootstrap samples, predict by majority vote. Compare variance vs a single tree.",
+        "Use SHAP's TreeExplainer on an XGBoost model; produce force plots for 3 individual predictions and a summary plot for global importance.",
+        "Build a stacking ensemble: fit 3 different models, then a meta-learner (logistic regression) on out-of-fold predictions. Compare ensemble to best single model."
+      ],
+      "outputs": [
+        "Public Kaggle notebook for one competition, top-25% on public LB",
+        "Repo trees-and-ensembles with implementations + comparison notebook",
+        "SHAP explanation report with force plots for 3 individual predictions",
+        "Stacking ensemble producing a measurable lift over best single model"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Clustering and Dimensionality Reduction — When You Don't Have Labels",
+      "phase": "Classical ML",
+      "commitment_hours": "20-25",
+      "context": "Most real-world data isn't labelled. Clustering finds structure. Dimensionality reduction makes high-dim data tractable and visualisable. This week you learn K-Means, DBSCAN, HDBSCAN, PCA, UMAP, t-SNE — and you learn when each lies to you.",
+      "topics": [
+        "K-Means — the algorithm, elbow method, silhouette score, when k-means fails",
+        "DBSCAN and HDBSCAN — density-based clustering, no need to pre-specify k",
+        "Gaussian Mixture Models — soft clustering with probabilistic assignments",
+        "Hierarchical clustering — agglomerative, the dendrogram",
+        "PCA — when linear projection is enough",
+        "UMAP and t-SNE — non-linear embedding, visualisation only",
+        "Cluster evaluation — silhouette, Davies-Bouldin, when there are no labels",
+        "Anomaly detection — Isolation Forest, One-Class SVM, when these beat clustering"
+      ],
+      "tasks": [
+        "Cluster a customer dataset (e.g. Online Retail UCI) with K-Means; pick k via elbow + silhouette",
+        "Apply DBSCAN to the same data; compare clusters and what each picks up",
+        "Reduce MNIST 784-dim to 2D with PCA, UMAP, and t-SNE; compare visualisations",
+        "Implement Isolation Forest for outlier detection on a known-anomaly dataset; measure AUC against ground-truth labels",
+        "Use HDBSCAN to find clusters of varying density on a synthetic two-moons + outlier dataset"
+      ],
+      "project": "Build a Customer Segmentation Tool. Take a real retail or e-commerce dataset (Kaggle Online Retail or RFM data). Compute RFM features per customer. Cluster with K-Means and HDBSCAN. Visualise with UMAP coloured by cluster. Profile each cluster (mean RFM, % of revenue, retention rate). Build a 1-page report a marketing team could act on. This is the kind of analysis that ships in real businesses every week.",
+      "resources": [
+        { "label": "scikit-learn — Clustering user guide", "url": "https://scikit-learn.org/stable/modules/clustering.html", "note": "official, the comparison plots alone teach you when to use what" },
+        { "label": "UMAP — Documentation", "url": "https://umap-learn.readthedocs.io/", "note": "official, the algorithm explanation pages are genuinely good math writing" },
+        { "label": "HDBSCAN — How HDBSCAN Works", "url": "https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html", "note": "official, the best explainer for hierarchical density-based clustering" },
+        { "label": "StatQuest — t-SNE clearly explained", "url": "https://www.youtube.com/watch?v=NEaUSP4YerM", "note": "YouTube, the friendliest walkthrough of t-SNE" },
+        { "label": "Distill — How to Use t-SNE Effectively", "url": "https://distill.pub/2016/misread-tsne/", "note": "blog, the canonical 'don't trust your t-SNE plot' essay" },
+        { "label": "Anomaly Detection for Dummies — Sebastian Raschka tutorial", "url": "https://sebastianraschka.com/blog/index.html", "note": "blog, multiple posts on unsupervised methods" }
+      ],
+      "questions": [
+        "Run K-Means with k from 2 to 15 on your retail data. Plot the elbow + silhouette. Do they agree on the right k? What if they don't?",
+        "Apply t-SNE to MNIST. Run it twice with different random seeds. How different are the visualisations? What does that tell you about over-interpreting t-SNE clusters?",
+        "On your two-moons + outlier dataset, K-Means + HDBSCAN + DBSCAN — which correctly separates the two moons AND ignores outliers? Why does K-Means fail here?",
+        "Isolation Forest on a financial transaction dataset — what's the precision@top-100 (of your top 100 'most anomalous' transactions, how many are real anomalies)? Is that good enough for a fraud team?"
+      ],
+      "exercises": [
+        "Implement K-Means from scratch with k-means++ initialisation. Match sklearn on a small dataset.",
+        "Compute the silhouette score from scratch on a clustering result. Verify against sklearn.silhouette_score.",
+        "Run PCA on a 50-feature dataset; plot cumulative explained variance. How many components capture 95% of variance? 99%?",
+        "Build a hybrid pipeline: HDBSCAN to find dense clusters + Isolation Forest to flag points in no cluster. Apply to a customer dataset."
+      ],
+      "outputs": [
+        "Repo customer-segmentation with the RFM clustering tool + marketing report",
+        "MNIST visualisation comparing PCA / UMAP / t-SNE",
+        "Anomaly detection benchmark notebook with AUC against ground truth",
+        "Notes/clustering.md — your decision tree for picking a clustering method by data shape"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Time Series — Forecasting When Order Matters",
+      "phase": "Classical ML",
+      "commitment_hours": "25-30",
+      "context": "Time series breaks every standard ML assumption — your train/test split must respect time, your features must include history without leakage, your evaluation must be backtested. This week you learn the classical approaches (ARIMA, exponential smoothing) and the modern ones (gradient boosting on lag features, neural forecasters).",
+      "topics": [
+        "Time series components — trend, seasonality, cyclicality, residual",
+        "Stationarity — what it is, how to test, how to achieve it",
+        "Classical models — ARIMA, SARIMA, exponential smoothing (ETS)",
+        "Feature engineering for time series — lags, rolling means, time features, calendar features",
+        "Cross-validation for time series — TimeSeriesSplit, walk-forward, why naive k-fold leaks",
+        "Forecasting metrics — MAPE, sMAPE, MASE; which to use when",
+        "Modern approaches — gradient boosting on engineered features, Prophet, neural forecasters",
+        "Multivariate and hierarchical forecasting — when you have related series"
+      ],
+      "tasks": [
+        "Forecast the Bike Sharing or Air Passengers dataset with three methods: ETS, SARIMA, gradient boosting on lag features",
+        "Compute sMAPE and MASE for each; compare on a held-out future window",
+        "Build proper walk-forward validation: predict day t+1 given data up to day t, slide forward, accumulate predictions",
+        "Apply Prophet to a dataset with strong seasonality; inspect the decomposed components",
+        "Demonstrate target leakage by including future information in your features; show how badly it overstates performance"
+      ],
+      "project": "Build a Sales Forecasting Tool. Pick a real retail or store dataset (M5 competition, Rossmann, or any local dataset). Build a per-SKU + per-store hierarchical forecasting pipeline: lag features, rolling stats, calendar effects (holidays in your region!), promotional flags. Model: LightGBM with target = sales. Walk-forward backtest over 6 months. Target: sMAPE under 25% on the test window. Compare to a naive seasonal baseline.",
+      "resources": [
+        { "label": "Rob Hyndman — Forecasting: Principles and Practice (3rd ed)", "url": "https://otexts.com/fpp3/", "note": "free online book, the canonical time series textbook, R-flavoured but concepts are universal" },
+        { "label": "scikit-learn — TimeSeriesSplit documentation", "url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html", "note": "official, the right split for time series" },
+        { "label": "Nixtla — neuralforecast and statsforecast docs", "url": "https://nixtlaverse.nixtla.io/", "note": "official, the modern Python ecosystem for fast time series forecasting" },
+        { "label": "Facebook — Prophet quickstart", "url": "https://facebook.github.io/prophet/docs/quick_start.html", "note": "official, easy first model for strong-seasonality data" },
+        { "label": "Kaggle M5 Forecasting winners' write-ups", "url": "https://www.kaggle.com/competitions/m5-forecasting-accuracy/discussion/163684", "note": "Kaggle, the canonical thread of winning approaches" },
+        { "label": "Skforecast — Documentation", "url": "https://skforecast.org/", "note": "official, scikit-learn-style time series forecasting with lag features done correctly" }
+      ],
+      "questions": [
+        "On Air Passengers, ETS / SARIMA / LightGBM-on-lags — which has the best sMAPE? Where does each fail (long horizon, sudden regime change)?",
+        "Compare your forecast against a naive 'last week's value' baseline. How much better is your model? Is the lift worth the complexity for a production team?",
+        "Build a model that uses lag-7 in addition to lag-1; verify it improves performance during a known weekly seasonality. What happens if you accidentally use lag-0?",
+        "Your test window includes a known holiday week. Without a holiday feature, what does your model predict? Add a holiday flag — by how much does the MASE improve specifically on those days?"
+      ],
+      "exercises": [
+        "Implement walk-forward backtesting as a function: given a model, features, target, and a date range, slide a 1-week window forward and accumulate predictions + metrics.",
+        "Decompose a time series into trend + seasonal + residual using statsmodels.seasonal_decompose. Plot each.",
+        "Build feature engineering: lag_1, lag_7, lag_28, rolling_mean_7, rolling_std_28, day_of_week, is_holiday. Verify zero leakage by checking that features at time t never use data from t+1.",
+        "Compare three forecasting libraries on the same series: statsmodels (SARIMA), Prophet, statsforecast (AutoARIMA). Report fitting time and forecast accuracy."
+      ],
+      "outputs": [
+        "Repo sales-forecasting with sMAPE < 25% on a 6-month walk-forward backtest",
+        "Comparison notebook ETS / SARIMA / LightGBM with metrics + plots",
+        "Documented walk-forward backtesting harness reusable for any series",
+        "Notes/time-series.md — your forecasting decision tree by problem shape"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "PyTorch — From NumPy to GPUs and Autograd",
+      "phase": "Deep Learning",
+      "commitment_hours": "25-30",
+      "context": "PyTorch is NumPy with two upgrades: it runs on GPUs and it knows how to differentiate. Master those two upgrades and the entire deep learning stack becomes legible. This week you rebuild last week's models in PyTorch — first manually, then with the high-level API.",
+      "topics": [
+        "Tensors — creation, dtypes, devices (cpu/cuda/mps), comparison to NumPy",
+        "Autograd — requires_grad, backward, .grad, the computational graph",
+        "nn.Module — the standard interface, parameters, state_dict",
+        "Optimisers — SGD, Adam, AdamW, the role of momentum and weight decay",
+        "Loss functions — CrossEntropyLoss, BCEWithLogitsLoss, MSE, why these specific implementations",
+        "DataLoader and Dataset — the standard data pipeline, why batching matters",
+        "Training loops — what every loop must do, what to log",
+        "GPU basics — moving tensors and models, CUDA out-of-memory triage"
+      ],
+      "tasks": [
+        "Install PyTorch with the right CUDA version (or MPS on Mac); verify torch.cuda.is_available() or torch.backends.mps.is_available()",
+        "Reimplement linear regression in PyTorch from scratch: tensors with requires_grad, manual gradient descent, no optimiser, no loss class",
+        "Reimplement it again using nn.Module + nn.Linear + optim.SGD + MSELoss",
+        "Train a small MLP on MNIST; reach ≥97% test accuracy",
+        "Save and load a model with torch.save / torch.load using state_dict"
+      ],
+      "project": "Build a Tabular Deep Learner. Train a 3-layer MLP on a tabular dataset (Adult Income, California Housing, or your choice). Add proper preprocessing (standardisation, embeddings for categorical), batch normalisation, dropout. Compare to your XGBoost from week 6 on the same task. PyTorch should usually lose on tabular — confirm this empirically. Write a 500-word reflection on WHY trees still beat neural networks on tabular data.",
+      "resources": [
+        { "label": "PyTorch — Tutorials (Get Started)", "url": "https://pytorch.org/tutorials/", "note": "official, work through the 60-min Blitz and the Intro to PyTorch series" },
+        { "label": "PyTorch — Documentation (torch.nn)", "url": "https://pytorch.org/docs/stable/nn.html", "note": "official, your daily reference" },
+        { "label": "Andrej Karpathy — Neural Networks: Zero to Hero", "url": "https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ", "note": "YouTube, the single best deep learning lecture series ever made, watch lectures 1-4 this week" },
+        { "label": "Sebastian Raschka — Deep Learning Fundamentals", "url": "https://lightning.ai/courses/deep-learning-fundamentals/", "note": "free Lightning AI course, very practical" },
+        { "label": "Aladdin Persson — PyTorch tutorials playlist", "url": "https://www.youtube.com/c/AladdinPersson", "note": "YouTube channel, the most comprehensive practical PyTorch tutorials" },
+        { "label": "Fast.ai — Practical Deep Learning for Coders", "url": "https://course.fast.ai/", "note": "official, free, the canonical practical course; uses fastai library on top of PyTorch" }
+      ],
+      "questions": [
+        "Time a 1000×1000 matrix multiplication on CPU and GPU. What's the speedup? How does it change at 5000×5000?",
+        "Train an MLP on MNIST with batch size 32, 256, 1024, 4096. How does training loss curve change? How does final test accuracy?",
+        "Compare your PyTorch MLP to your week-6 XGBoost on a tabular dataset. Which wins? By how much? At what dataset size does the neural net become competitive?",
+        "Turn dropout off in your MLP. What happens to the gap between train and test accuracy? What does this tell you about regularisation for deep nets?"
+      ],
+      "exercises": [
+        "Manually compute gradients for a tiny network (2 layers, no nonlinearity) by hand on paper for one example. Verify by running PyTorch and reading .grad.",
+        "Implement a custom Dataset for the Titanic dataset. Verify a DataLoader iterates over it in batches.",
+        "Implement a training loop with: best-val-checkpoint saving, learning rate scheduling (StepLR), gradient clipping (nn.utils.clip_grad_norm_).",
+        "Profile a forward + backward pass with torch.profiler. Identify the slowest op. What does that tell you about where to optimise first?"
+      ],
+      "outputs": [
+        "Repo pytorch-foundations with linear regression (manual + nn.Module), MLP on MNIST ≥97%",
+        "Repo tabular-deep-learner with comparison to XGBoost, reflection report",
+        "Verified saved-and-reloaded model checkpoint that matches original predictions exactly",
+        "GPU vs CPU benchmark CSV"
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Convolutional Neural Networks — Vision",
+      "phase": "Deep Learning",
+      "commitment_hours": "25-30",
+      "context": "Convolutions remain the workhorse of vision (Vision Transformers are catching up but still mostly use convolutional stems and feature maps in their attention layers). This week you understand convolutions deeply, build a CNN from scratch, and learn transfer learning — the single most useful technique in computer vision.",
+      "topics": [
+        "Convolution as a mathematical operation — kernels, stride, padding, dilation",
+        "Why convolutions — translation equivariance, parameter sharing, locality",
+        "Pooling — max, average, why we still use it, when it hurts",
+        "Receptive field — what your last layer sees, how it grows with depth",
+        "Modern CNN architectures — ResNet, ResNeXt, EfficientNet, ConvNeXt",
+        "Batch normalisation and layer normalisation — what they do, when to use",
+        "Transfer learning — load pretrained backbone, freeze, fine-tune, why this is 99% of vision in practice",
+        "Data augmentation — RandAugment, AutoAugment, MixUp, what helps"
+      ],
+      "tasks": [
+        "Implement a 2D convolution layer from scratch using only NumPy; verify against PyTorch's nn.Conv2d for the same input + kernel",
+        "Build a small CNN (3 conv blocks + 2 FC) for CIFAR-10 from scratch; reach ≥75% test accuracy",
+        "Train the same task using transfer learning: pretrained ResNet-50, replace the final layer, fine-tune. Compare time-to-convergence and final accuracy",
+        "Add data augmentation (RandAugment from torchvision); measure lift on a held-out test set",
+        "Visualise filters from the first conv layer of your trained model; visualise feature maps for one input"
+      ],
+      "project": "Build an Image Classifier for a Custom Dataset. Pick a real problem — your own labelled photos, a Kaggle vision dataset like ASL Alphabet, a domain-specific task (medical image classification, crop disease detection). Use transfer learning from a pretrained backbone. Achieve ≥90% test accuracy. Deploy with a Gradio or Streamlit demo where someone can upload an image and get a prediction. This is the most portable portfolio project in vision.",
+      "resources": [
+        { "label": "Stanford — CS231n notes (Convolutional Networks)", "url": "https://cs231n.github.io/convolutional-networks/", "note": "official lecture notes, the canonical CNN reference" },
+        { "label": "Karpathy — CS231n YouTube lectures", "url": "https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv", "note": "YouTube, Karpathy's CS231n lectures, watch lectures 5 and 7" },
+        { "label": "Distill — Feature Visualization", "url": "https://distill.pub/2017/feature-visualization/", "note": "blog, beautiful interactive piece on what CNN filters learn" },
+        { "label": "PyTorch — Transfer Learning Tutorial", "url": "https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html", "note": "official, the canonical recipe" },
+        { "label": "timm — PyTorch image models library", "url": "https://timm.fast.ai/", "note": "official, hundreds of pretrained backbones in one library" },
+        { "label": "albumentations — Image augmentation library", "url": "https://albumentations.ai/docs/", "note": "official, faster than torchvision transforms with more augmentations" }
+      ],
+      "questions": [
+        "On CIFAR-10, train your scratch CNN for 50 epochs. Plot train and val accuracy. Where does overfitting start? What's the gap?",
+        "Train a ResNet-50 from scratch on CIFAR-10 (don't load pretrained). What accuracy do you reach? Now load ImageNet pretrained and fine-tune — how much faster do you reach the same accuracy?",
+        "Compute the receptive field of your CNN's last conv layer. Is it larger than a typical CIFAR-10 image (32×32)? What's the implication for using global average pooling?",
+        "Compare with and without data augmentation on a small dataset (e.g. 1000 images for 5 classes). What's the accuracy lift? At what point does augmentation stop helping?"
+      ],
+      "exercises": [
+        "Implement a Conv2d layer from scratch with stride, padding, and dilation in NumPy. Verify exactly against PyTorch on a small input.",
+        "Use a pretrained ResNet-50 as a feature extractor — freeze the backbone, train only a logistic regression head on top. Compare to full fine-tuning.",
+        "Implement Grad-CAM to visualise what region of an image drove a particular prediction. Apply to 3 examples from your custom dataset.",
+        "Compute model parameters and FLOPs for ResNet-18, ResNet-50, ResNet-152 using a library like fvcore or torchinfo. What's the accuracy-vs-compute trade-off?"
+      ],
+      "outputs": [
+        "Repo cnn-from-scratch with conv-from-NumPy + small CNN on CIFAR-10 ≥75%",
+        "Repo custom-image-classifier with transfer learning ≥90% on your dataset, deployed demo",
+        "Grad-CAM visualisations for 3 example predictions",
+        "Filter and feature map visualisations from your trained model"
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Transformers and Sequence Models — The Architecture That Ate the World",
+      "phase": "Deep Learning",
+      "commitment_hours": "30-35",
+      "context": "Every language model, every modern vision model, every protein folding model — Transformers. This week you build one from scratch (yes, really), understand self-attention deeply, and then use Hugging Face for everything you do after.",
+      "topics": [
+        "Tokenisation — BPE, WordPiece, SentencePiece, what GPT and BERT actually input",
+        "Embeddings — token + positional, why both",
+        "Self-attention — query, key, value, the dot-product formula, the scaling factor",
+        "Multi-head attention — why we split into heads, what each can specialise in",
+        "Encoder vs decoder vs encoder-decoder — BERT vs GPT vs T5, when each fits",
+        "Modern variants — Rotary embeddings, FlashAttention, grouped-query attention",
+        "Hugging Face Transformers — loading models, datasets, training with Trainer",
+        "Fine-tuning — full vs LoRA vs prefix tuning, when each is worth it"
+      ],
+      "tasks": [
+        "Implement scaled dot-product attention from scratch in PyTorch (no nn.MultiheadAttention); verify on a tiny example",
+        "Build a 2-layer Transformer encoder from scratch and train it on a tiny synthetic copy-task to verify it works",
+        "Load a pretrained BERT from Hugging Face; fine-tune on a text classification task (SST-2, AG News, or one of your data); reach published baseline accuracy",
+        "Fine-tune the same model with LoRA (via PEFT); compare trainable params, time-to-train, final accuracy",
+        "Use a pretrained tokeniser to tokenise the same English and non-English sentence; observe the difference in token count and what it implies for cost"
+      ],
+      "project": "Build a Text Classifier — Hugging Face Edition. Pick a real classification problem: spam detection on a real inbox dump, sentiment on tweets in your language, intent classification on customer-support emails. Fine-tune DistilBERT (or a multilingual MiniLM). Achieve F1 > 0.85 on your test set. Deploy as a FastAPI endpoint with a 1-input demo. The same pipeline is what production teams ship.",
+      "resources": [
+        { "label": "Andrej Karpathy — Let's build GPT", "url": "https://www.youtube.com/watch?v=kCc8FmEb1nY", "note": "YouTube, 2 hours, the single best Transformer-from-scratch lecture; watch it twice" },
+        { "label": "The Illustrated Transformer — Jay Alammar", "url": "https://jalammar.github.io/illustrated-transformer/", "note": "blog, the canonical visual explainer for Transformers" },
+        { "label": "Hugging Face — NLP Course", "url": "https://huggingface.co/learn/nlp-course/", "note": "official, free, the best practical course for using Transformers" },
+        { "label": "Attention Is All You Need (paper)", "url": "https://arxiv.org/abs/1706.03762", "note": "ArXiv paper, the original; read once, then read it again after the Karpathy video" },
+        { "label": "PEFT — Documentation", "url": "https://huggingface.co/docs/peft/index", "note": "official, the canonical library for parameter-efficient fine-tuning (LoRA, prefix tuning)" },
+        { "label": "Sebastian Raschka — Understanding Large Language Models", "url": "https://magazine.sebastianraschka.com/", "note": "newsletter, the most reliable signal-to-noise source on LLMs and Transformers" }
+      ],
+      "questions": [
+        "On your tiny synthetic copy task, how many layers and heads does your scratch Transformer need to learn perfectly? What does this tell you about the relationship between task difficulty and architecture size?",
+        "Compare full fine-tuning vs LoRA on the same task. How many parameters does each update? How much GPU memory does each use? Final accuracy?",
+        "Inspect attention weights from layer 1 vs layer 4 of your fine-tuned model on a sample sentence. Do early layers attend to syntax (adjacent words) and later layers to semantics (related concepts)? Is this stereotype true on your data?",
+        "Cost out fine-tuning DistilBERT on 10k examples on (a) a free Colab GPU, (b) a single A100 rented for $1.50/hr. When does cloud GPU pay off?"
+      ],
+      "exercises": [
+        "Implement positional encoding using sinusoidal formulas; plot it. Then implement learned positional embeddings; compare on the same task.",
+        "Use Hugging Face datasets library to load and preprocess one of GLUE's tasks; tokenise with the model's tokeniser.",
+        "Implement gradient checkpointing on your training to fit a bigger model in memory; observe the speed-vs-memory trade-off.",
+        "Use the HF Trainer with mixed precision (fp16); compare training time and final accuracy vs fp32."
+      ],
+      "outputs": [
+        "Repo transformer-from-scratch with the 2-layer encoder working on a copy task",
+        "Repo text-classifier-hf with fine-tuned model + deployed FastAPI demo + F1 > 0.85",
+        "LoRA vs full fine-tune comparison committed as RESULTS.md",
+        "Attention visualisation notebook for your fine-tuned model"
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Generative Modelling — From Autoencoders to Diffusion",
+      "phase": "Deep Learning",
+      "commitment_hours": "25-30",
+      "context": "Generation is now the dominant use of deep learning — for text (LLMs), images (diffusion), audio, video. This week covers the spectrum: autoencoders, VAEs, GANs (briefly, mostly historical), and diffusion models, the current state of the art for images.",
+      "topics": [
+        "Autoencoders — encoder + decoder, reconstruction loss, the bottleneck",
+        "Variational Autoencoders — KL term, the reparameterisation trick, why VAEs blur",
+        "Generative Adversarial Networks — generator + discriminator, why they're hard to train",
+        "Diffusion models — forward diffusion adding noise, reverse process learning to denoise",
+        "DDPM and DDIM — the two foundational diffusion formulations",
+        "Stable Diffusion — latent diffusion, what makes it efficient",
+        "Conditional generation — classifier-free guidance, text-to-image",
+        "Modern alternatives — flow matching, consistency models, why diffusion may be replaced"
+      ],
+      "tasks": [
+        "Build and train a basic autoencoder on MNIST; visualise reconstructions",
+        "Build a VAE on MNIST; sample from the latent space and decode; observe the smooth interpolation",
+        "Train a tiny DDPM on MNIST or Fashion-MNIST from scratch; generate samples; observe the noise-to-image schedule",
+        "Use a pretrained Stable Diffusion model (via diffusers) to generate 5 images from text prompts; measure latency",
+        "Implement classifier-free guidance for your tiny DDPM; show how guidance scale affects sample quality vs diversity"
+      ],
+      "project": "Build a Domain-Specific Image Generator. Pick a narrow domain (logos, anime portraits, architectural drawings, your own photographs). Fine-tune Stable Diffusion using LoRA on 30-100 images using a tool like Kohya's ss or diffusers. Generate 20 new samples. Evaluate quality by human inspection + CLIP similarity to text descriptions. This is the same pipeline real teams use for branded AI art generation.",
+      "resources": [
+        { "label": "Lilian Weng — What are Diffusion Models?", "url": "https://lilianweng.github.io/posts/2021-07-11-diffusion-models/", "note": "blog, the canonical deep-dive on diffusion math" },
+        { "label": "Jay Alammar — The Illustrated Stable Diffusion", "url": "https://jalammar.github.io/illustrated-stable-diffusion/", "note": "blog, the visual explainer for Stable Diffusion's architecture" },
+        { "label": "Hugging Face — Diffusers documentation", "url": "https://huggingface.co/docs/diffusers/index", "note": "official, the standard library, very clean API" },
+        { "label": "fast.ai — Stable Diffusion course (Part 2)", "url": "https://course.fast.ai/Lessons/part2.html", "note": "official, free, builds diffusion from scratch lecture by lecture" },
+        { "label": "Yang Song's blog — Generative Modeling by Estimating Gradients", "url": "https://yang-song.net/blog/2021/score/", "note": "Stanford researcher's deep-dive on score-based diffusion math" },
+        { "label": "Kohya_ss — LoRA training UI", "url": "https://github.com/bmaltais/kohya_ss", "note": "GitHub, the most-used tool for community fine-tuning of Stable Diffusion" }
+      ],
+      "questions": [
+        "Train your VAE with KL weights 0.1, 1.0, 10.0. How does the latent space change? At which weight do samples look most diverse? Most reconstruction-faithful?",
+        "Run your DDPM with 50, 250, 1000 denoising steps. How does sample quality differ? How does inference time scale?",
+        "Generate 100 images with your Stable Diffusion LoRA at guidance scales 1, 5, 10, 20. Where does the trade-off between fidelity to prompt and creativity feel right?",
+        "On your domain-specific LoRA, compute CLIP similarity between generated images and a prompt describing the target. How does this compare to base Stable Diffusion without LoRA?"
+      ],
+      "exercises": [
+        "Train a denoising autoencoder by adding noise to MNIST inputs and reconstructing the clean version. Compare to a non-denoising autoencoder for downstream classification accuracy of the latent.",
+        "Implement the reparameterisation trick in PyTorch — verify gradients flow through it correctly.",
+        "Use stable-diffusion image-to-image mode to transform 3 of your photos into different styles.",
+        "Use a CLIP model to embed both your generated images and your training prompts; visualise with UMAP."
+      ],
+      "outputs": [
+        "Repo generative-models with autoencoder + VAE + tiny DDPM all running on MNIST",
+        "Repo domain-lora with the fine-tuned Stable Diffusion LoRA + 20 sample images + CLIP evaluation",
+        "Notebook comparing 4 generative methods on MNIST: AE, VAE, GAN, DDPM",
+        "Notes/generative-models.md — when to use each, with one-line use-case examples"
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Experiment Tracking — Stop Losing Track of What Worked",
+      "phase": "ML Infrastructure",
+      "commitment_hours": "20-25",
+      "context": "Untracked experiments are wasted experiments. By week 12 you have probably already run 100 training jobs and lost the details of half of them. This week you build the discipline — Weights & Biases or MLflow, hyperparameter logging, artifact storage, reproducibility — that turns ML from random walks into compounding progress.",
+      "topics": [
+        "What to track — code version, config, dataset version, metrics, artifacts, environment",
+        "Weights & Biases — the dominant hosted experiment tracker",
+        "MLflow — the open-source equivalent, runs anywhere",
+        "Hydra — the configuration framework that pairs well with both",
+        "Determinism and seeding — what makes ML 'reproducible' (and why it never fully is)",
+        "Artifact versioning — DVC, lakeFS, S3, for big files git won't take",
+        "Model versioning — saving models with semantic version metadata",
+        "Experiment hygiene — naming runs, tagging, archiving, the rituals that scale"
+      ],
+      "tasks": [
+        "Sign up for Weights & Biases free tier; instrument one of your earlier training scripts; verify metrics + config logged",
+        "Take a hyperparameter sweep (4 LR values × 2 batch sizes); run them via wandb sweeps; visualise results",
+        "Add Hydra config to one project: separate YAML files for model, optimiser, data; verify you can override anything from CLI",
+        "Set up seed_everything across torch, numpy, random; verify the same config produces the same metric to 4 decimal places twice",
+        "Store a trained model as a wandb artifact + log its evaluation metrics with it"
+      ],
+      "project": "Instrument All Earlier Projects. Take 3 training scripts you've written in earlier weeks. Add wandb logging to each. Add Hydra configs to each. Run 3 sweeps (LR, batch size, model size) on each. Build a single Markdown report comparing the best run from each project: tabular vs vision vs text. The discipline is the point — this is what production ML teams expect on day 1.",
+      "resources": [
+        { "label": "Weights & Biases — Get Started", "url": "https://docs.wandb.ai/quickstart", "note": "official, integrates into any PyTorch or sklearn loop in 5 lines" },
+        { "label": "MLflow — Quickstart", "url": "https://mlflow.org/docs/latest/quickstart.html", "note": "official, the open-source alternative; can self-host" },
+        { "label": "Hydra — Configuration framework", "url": "https://hydra.cc/docs/intro/", "note": "official, Meta's config framework, the cleanest way to manage many experiments" },
+        { "label": "Reproducibility checklist — Joelle Pineau", "url": "https://www.cs.mcgill.ca/~jpineau/ReproducibilityChecklist.pdf", "note": "PDF, the canonical reproducibility checklist for ML research" },
+        { "label": "DVC — Documentation", "url": "https://dvc.org/doc", "note": "official, Git for data, the most-used tool for dataset versioning" },
+        { "label": "Made With ML — MLOps section", "url": "https://madewithml.com/courses/mlops/", "note": "free online course, very practical, covers tracking + config + monitoring" }
+      ],
+      "questions": [
+        "Run the same training script twice with the same seed but on different hardware (your laptop vs Colab GPU). Are the metrics identical? If not, why?",
+        "Across your 3 sweeps, which hyperparameter had the biggest effect on each task? Was it the same for all three?",
+        "Add a 'wandb tag' for major versions of your code. Six weeks from now, can you find the v1 results vs v2 results easily? Test the workflow.",
+        "Compare the time it takes to set up wandb vs MLflow vs hand-rolled CSV logging. Which is the right choice for a solo project vs a 5-person team vs a 50-person team?"
+      ],
+      "exercises": [
+        "Refactor one of your training scripts so all configurable params come from a Hydra config; verify `python train.py model.lr=0.01 data.batch_size=256` works.",
+        "Implement a `seed_everything(seed)` function that seeds torch, numpy, random, and CUDA backends; test that two runs with the same seed produce the same first batch.",
+        "Set up a wandb sweep config (YAML) that runs Bayesian optimisation over 3 hyperparameters; launch it.",
+        "Use DVC to version a dataset; commit a v1, modify a row, commit v2; verify you can `dvc checkout` to either."
+      ],
+      "outputs": [
+        "3 earlier projects fully instrumented with wandb logging",
+        "3 hyperparameter sweep results visualised in wandb",
+        "Hydra configs in each project, demonstrating CLI overrides",
+        "Reproducibility report comparing 3 runs with the same seed across 3 environments"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "GPU Training — Single GPU, Then Multi-GPU",
+      "phase": "ML Infrastructure",
+      "commitment_hours": "25-30",
+      "context": "Most ML engineers never train past one GPU. Most ML problems never need to. But you should know how multi-GPU training works — DataParallel, DistributedDataParallel, FSDP — because the techniques (gradient accumulation, mixed precision, activation checkpointing) help even on a single GPU.",
+      "topics": [
+        "GPU memory hierarchy — global memory, shared memory, registers; why bigger batch ≠ free",
+        "Mixed precision (fp16, bf16) — what works on what hardware, why bf16 is winning",
+        "Gradient accumulation — emulating a bigger batch without the memory",
+        "Gradient checkpointing — trading compute for memory",
+        "DataParallel vs DistributedDataParallel — why DDP wins always",
+        "Fully Sharded Data Parallel (FSDP) — when models don't fit on one GPU",
+        "Lightning Fabric and HuggingFace Accelerate — the libraries that make multi-GPU easy",
+        "Cloud GPU rentals — Modal, RunPod, Vast.ai, Lambda Labs — when each is right"
+      ],
+      "tasks": [
+        "Run a training job on a free cloud GPU (Colab T4 or Modal free tier); compare wall-clock to CPU training",
+        "Enable mixed precision (torch.cuda.amp.autocast); measure speedup and verify accuracy unchanged",
+        "Implement gradient accumulation to train with effective batch size 256 on a GPU that only fits 64; verify final accuracy matches a real batch 256 run",
+        "Enable gradient checkpointing on a Transformer fine-tune; measure memory savings",
+        "Use HuggingFace Accelerate to run the same training on a single GPU and 2 GPUs (if available, else simulate); compare epoch time"
+      ],
+      "project": "Train a Real Model on Rented GPUs. Pick a non-trivial task (fine-tune a 1B parameter LLM on instruction data, or fine-tune Stable Diffusion on a custom dataset, or train a CIFAR-100 model from scratch to >85% accuracy). Use a cloud GPU service (Modal, RunPod, Lambda Labs). Budget: under $20. Track total spend. Write a 1000-word post-mortem on what went well, what went wrong, what you'd do differently with twice the budget.",
+      "resources": [
+        { "label": "HuggingFace — Accelerate quickstart", "url": "https://huggingface.co/docs/accelerate/quicktour", "note": "official, write distributed training code that runs anywhere" },
+        { "label": "PyTorch Lightning Fabric", "url": "https://lightning.ai/docs/fabric/stable/", "note": "official, alternative to Accelerate; lighter weight" },
+        { "label": "Modal — GPU compute platform docs", "url": "https://modal.com/docs/guide/gpu", "note": "official, easiest cloud GPU rental for Python developers" },
+        { "label": "Stas Bekman — Machine Learning Engineering open book", "url": "https://github.com/stas00/ml-engineering", "note": "GitHub, the canonical open-source reference for scaling LLMs and large training" },
+        { "label": "Hugging Face — Efficient Training on Multiple GPUs", "url": "https://huggingface.co/docs/transformers/perf_train_gpu_many", "note": "official, comparison of DataParallel, DDP, FSDP, ZeRO" },
+        { "label": "Tim Dettmers — Which GPU(s) to get for deep learning", "url": "https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/", "note": "blog, the canonical GPU-buying guide updated annually" }
+      ],
+      "questions": [
+        "Train a ResNet-50 on CIFAR with fp32 vs bf16 (or fp16) mixed precision. What's the speedup? Is final accuracy within noise?",
+        "Train with batch sizes 32, 256, and (via accumulation) 2048 effective. How does the accuracy change? At what point does bigger batch hurt generalisation?",
+        "Profile your training with torch.profiler. What fraction of time is data loading vs forward vs backward? Is the GPU idle waiting for data?",
+        "Cost out training your project on a $1/hr T4 vs a $4/hr A100. Which is cheaper end-to-end given the speedup?"
+      ],
+      "exercises": [
+        "Wrap an existing training script with HuggingFace Accelerate; verify `accelerate launch train.py` produces the same result as `python train.py`.",
+        "Profile data loading on your training; if it's > 10% of step time, add num_workers and pin_memory to your DataLoader; remeasure.",
+        "Implement gradient accumulation correctly: only call optimizer.step() and zero_grad() every N batches.",
+        "Estimate model size in GB given parameter count and dtype; verify against what nvidia-smi shows after model load."
+      ],
+      "outputs": [
+        "Real training run completed on cloud GPU, $-spend tracked, model artifact saved",
+        "Mixed-precision benchmark: fp32 vs bf16 on the same task",
+        "Gradient accumulation verification: matches real-batch run within noise",
+        "Post-mortem report documenting decisions and what you'd do differently"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Data Versioning and Pipelines — Beyond Notebooks",
+      "phase": "ML Infrastructure",
+      "commitment_hours": "20-25",
+      "context": "Notebooks are great for exploration, terrible for repeatable training. This week you build pipelines: data ingestion, validation, transformation, training, eval — all as Python with retries, idempotency, and versioning. Tools change (Airflow → Prefect → Dagster), the patterns don't.",
+      "topics": [
+        "Pipelines as DAGs — directed acyclic graphs of dependent tasks",
+        "Idempotency — running a step twice gives the same result",
+        "Caching — what to cache, where, when to invalidate",
+        "Data validation — Great Expectations, Pandera, schema-on-read",
+        "Orchestrators — Airflow, Prefect, Dagster — comparing the three",
+        "Workflow as code — why we don't drag-and-drop pipelines anymore",
+        "Scheduling vs event-driven — cron, sensors, manual triggers",
+        "Pipeline observability — what to log, what to alert on"
+      ],
+      "tasks": [
+        "Refactor one of your earlier notebooks into a Python pipeline with at least 4 steps (load, clean, train, eval); each step is its own function",
+        "Add data validation with Pandera or Great Expectations after the load step; verify it catches a manually-corrupted row",
+        "Add caching: if the cleaned data exists on disk and the source hasn't changed, skip the clean step",
+        "Implement the same pipeline in Prefect with a @flow; schedule it daily; verify it runs",
+        "Add structured logging to every step so you can grep through pipeline history"
+      ],
+      "project": "Build a Daily Forecasting Pipeline. Take your week-8 sales forecasting work and turn it into a daily pipeline: ingest new data from a CSV (or API), validate against a schema, retrain the model on the rolling window, generate forecasts for the next 7 days, save them to a versioned location. Run the pipeline 5 times across 5 days. Track forecast quality day by day. This is what a production forecasting team does every morning.",
+      "resources": [
+        { "label": "Prefect — Documentation", "url": "https://docs.prefect.io/", "note": "official, modern Python-first orchestrator; recommended for solo and small teams" },
+        { "label": "Dagster — Documentation", "url": "https://docs.dagster.io/", "note": "official, the asset-centric alternative; more rigorous for data engineers" },
+        { "label": "Airflow — Documentation", "url": "https://airflow.apache.org/docs/", "note": "official, the elder statesman; you'll meet it at every large company" },
+        { "label": "Pandera — Documentation", "url": "https://pandera.readthedocs.io/", "note": "official, the lightest-weight DataFrame validation library" },
+        { "label": "Great Expectations — Quickstart", "url": "https://docs.greatexpectations.io/docs/oss/tutorials/quickstart/", "note": "official, heavier but more enterprise-friendly" },
+        { "label": "Designing Data-Intensive Applications — Martin Kleppmann (chapters 11-12)", "url": "https://dataintensive.net/", "note": "book, the canonical reference for data systems thinking; pricey but worth it" }
+      ],
+      "questions": [
+        "Your pipeline has 4 steps. If step 3 fails, what happens? Does step 1 re-run? Should it?",
+        "After 5 days of running, which step's runtime grew the most? Is there an O(n²) somewhere that won't survive 6 months?",
+        "Compare Prefect, Dagster, Airflow on your simple DAG. Which felt the most natural in Python? Which has the best UI for debugging a failed run?",
+        "Add a deliberately-bad input row (negative sales, missing date). Does your data validation catch it? Does your pipeline halt or skip the row? What's the right policy for your use case?"
+      ],
+      "exercises": [
+        "Write a pipeline step that's idempotent: even if it's called twice, the output state is the same. Test by calling it twice and verifying no duplicate writes.",
+        "Add a Pandera schema check for one DataFrame in your pipeline; verify it catches an out-of-range value.",
+        "Use Prefect's caching (`cache_key_fn`) on a slow step; verify the second run skips the step.",
+        "Configure your pipeline to send a Slack or email alert when a run fails; manually fail a step and verify the alert fires."
+      ],
+      "outputs": [
+        "Repo daily-forecasting-pipeline with the Prefect flow running on a 5-day backtest",
+        "Data validation report showing 1 caught failure",
+        "Pipeline observability: logs + alerts on failure",
+        "Notes/orchestrators.md — your decision criteria for Prefect vs Dagster vs Airflow"
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Containers and Reproducibility — Dockerfile as a Lab Notebook",
+      "phase": "ML Infrastructure",
+      "commitment_hours": "20-25",
+      "context": "If it doesn't run in a container, it doesn't reproduce. This week you containerise everything. You learn Docker properly, write production-grade Dockerfiles for ML, understand multi-stage builds, and you stop saying 'it works on my machine'.",
+      "topics": [
+        "Docker fundamentals — image vs container, layers, registries",
+        "Dockerfile best practices for Python ML — base image, layer caching, .dockerignore",
+        "Multi-stage builds — small final images even with heavy build dependencies",
+        "GPU containers — the NVIDIA Container Toolkit, why nvidia/cuda matters",
+        "Volume mounts and bind mounts — where data lives, where models live",
+        "docker-compose for local development — Postgres + Redis + your app",
+        "Image registries — Docker Hub, GitHub Container Registry, ECR",
+        "Reproducibility — pinning Python version, OS, CUDA, library versions"
+      ],
+      "tasks": [
+        "Containerise one of your training scripts so `docker run` produces the same model artifact your laptop does",
+        "Use a multi-stage build to keep the final image under 500MB even with PyTorch installed",
+        "Set up a docker-compose stack: Postgres + Redis + your training service",
+        "Run a GPU container with nvidia/cuda base; verify torch.cuda.is_available() inside",
+        "Push a versioned image to GitHub Container Registry; verify another machine can pull and run"
+      ],
+      "project": "Containerise Your Forecasting Pipeline. Take your week-15 daily forecasting pipeline and make it fully containerised: one Dockerfile for the pipeline service, one docker-compose for local dev with Postgres + MinIO (S3-compatible) + the pipeline. Pin every dependency. Verify someone else (a colleague, or just a fresh clone on a different machine) can `git clone && docker compose up` and have everything working in 5 minutes.",
+      "resources": [
+        { "label": "Docker — Best practices for writing Dockerfiles", "url": "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/", "note": "official, the canonical reference" },
+        { "label": "Real Python — Docker for Python developers", "url": "https://realpython.com/tutorials/docker/", "note": "tutorial collection, very practical" },
+        { "label": "Anthony Sottile — How Python containers actually work", "url": "https://www.youtube.com/watch?v=oQpgUe1MtPI", "note": "YouTube talk, the deepest dive on Python in Docker" },
+        { "label": "Docker — Multi-stage builds", "url": "https://docs.docker.com/build/building/multi-stage/", "note": "official, essential for ML images" },
+        { "label": "NVIDIA Container Toolkit — Documentation", "url": "https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/index.html", "note": "official, required for GPU containers" },
+        { "label": "BuildKit and image caching — Docker docs", "url": "https://docs.docker.com/build/cache/", "note": "official, the most underused performance feature" }
+      ],
+      "questions": [
+        "What's your final image size? Where can you cut another 200MB? Is it worth it?",
+        "How long does a clean rebuild take? How long does a rebuild after changing just one Python file? If they're close, your layer caching is broken — fix it.",
+        "Run your training inside the container with a mounted dataset volume vs a copy-into-image. How does first-run time differ? How does subsequent run time differ?",
+        "Container image vs Python venv vs Conda env — when is each the right answer for an ML project?"
+      ],
+      "exercises": [
+        "Write a Dockerfile that uses BuildKit's `--mount=type=cache` for pip cache. Verify subsequent builds are faster.",
+        "Convert one of your services to docker-compose with a Postgres database. Verify the app waits for the database to be healthy before starting.",
+        "Create a minimal `nvidia-smi-test` GPU container; run it on a cloud GPU instance; verify GPU is visible inside.",
+        "Add a healthcheck to your container; verify Docker reports the container as healthy when running, unhealthy when broken."
+      ],
+      "outputs": [
+        "Repo daily-forecasting-pipeline now fully containerised with Dockerfile + docker-compose",
+        "Final image under 500MB documented in README",
+        "Image pushed to GHCR with a version tag",
+        "5-minute setup verified by spinning up on a fresh VM"
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Model Serving — From Notebook to Production Endpoint",
+      "phase": "Model Serving",
+      "commitment_hours": "25-30",
+      "context": "A model in a notebook helps nobody. This week you wrap models in HTTP endpoints with batching, queuing, monitoring, autoscaling. You learn FastAPI, BentoML, NVIDIA Triton, and the trade-offs between bespoke and managed serving.",
+      "topics": [
+        "Serving patterns — sync request/response, async with queue, batch",
+        "FastAPI for simple model serving — when it's enough",
+        "Dynamic batching — combining concurrent requests into one GPU batch",
+        "ONNX — converting models to a common format for portable serving",
+        "TensorRT — NVIDIA's compiler for fast GPU inference",
+        "Triton Inference Server — the production serving platform for big-iron deployments",
+        "BentoML — Python-first packaging and deployment",
+        "Cold start vs warm — the per-request and per-instance economics"
+      ],
+      "tasks": [
+        "Wrap one of your trained models in a FastAPI endpoint with /predict; load test with locust or oha at 100 RPS",
+        "Add Pydantic request/response models so invalid inputs return 422 instead of 500",
+        "Implement dynamic batching: a queue collects up to 32 requests or waits 10ms, whichever first; run them as a batch",
+        "Convert one of your models to ONNX; verify outputs match within 1e-4",
+        "Serve the ONNX model via ONNX Runtime; benchmark latency vs the PyTorch version"
+      ],
+      "project": "Build a Production Model Server. Take your best classifier (from any earlier week). Wrap it in FastAPI with: Pydantic validation, batching, /predict and /healthz endpoints, Prometheus metrics, structured logging. Containerise. Deploy to a free cloud (Render, Fly.io, or Modal). Load test from a separate machine at 100 RPS. Document: p50 / p95 / p99 latency, cost per request, cost per million requests.",
+      "resources": [
+        { "label": "FastAPI — Documentation", "url": "https://fastapi.tiangolo.com/", "note": "official, work through the tutorial chapters" },
+        { "label": "BentoML — Documentation", "url": "https://docs.bentoml.com/", "note": "official, the most ML-aware Python serving framework" },
+        { "label": "NVIDIA Triton Inference Server", "url": "https://docs.nvidia.com/deeplearning/triton-inference-server/", "note": "official, the production GPU server for serious inference workloads" },
+        { "label": "ONNX — Tutorials", "url": "https://github.com/onnx/tutorials", "note": "GitHub, the official tutorials, covering PyTorch → ONNX export and inference" },
+        { "label": "Ray Serve — Documentation", "url": "https://docs.ray.io/en/latest/serve/index.html", "note": "official, popular for serving multiple models with autoscaling" },
+        { "label": "Made with ML — Serving section", "url": "https://madewithml.com/courses/mlops/api/", "note": "free online course, covers FastAPI serving for ML" }
+      ],
+      "questions": [
+        "Your FastAPI endpoint at 100 RPS — what's p50? p99? What's the bottleneck — CPU, GPU, network, your code?",
+        "Compare PyTorch eager vs ONNX Runtime for the same model. What's the speedup? Is accuracy unchanged?",
+        "At what request rate does dynamic batching start to help? Plot throughput vs batch waiting time.",
+        "Cost out serving 1M predictions/day on Render ($7/mo always-on) vs Modal ($/request serverless). At what volume does always-on win?"
+      ],
+      "exercises": [
+        "Add an /admin/reload endpoint that loads a new model version without restarting the server. Verify zero-downtime swap.",
+        "Implement a circuit breaker: if the model errors 5 times in 30 seconds, the endpoint returns 503 for 60 seconds before retrying.",
+        "Add Prometheus instrumentation; expose /metrics; verify scraping with a local Prometheus.",
+        "Implement A/B routing: 90% of requests go to model v1, 10% to v2; log which served each request."
+      ],
+      "outputs": [
+        "Repo production-model-server with FastAPI + batching + observability + container",
+        "Deployed endpoint live on a cloud provider",
+        "Load test report with p50/p95/p99 latencies and cost analysis",
+        "ONNX-converted variant with verified accuracy and benchmark"
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Model Monitoring — Catching the Silent Failures",
+      "phase": "Model Serving",
+      "commitment_hours": "20-25",
+      "context": "Most production model failures are silent — the model keeps responding, but the answers slowly drift wrong. This week you build the monitoring that catches it: data drift, concept drift, prediction distribution shifts, business metric correlations.",
+      "topics": [
+        "What can go wrong in production — input drift, output drift, performance drift",
+        "Data drift detection — KL divergence, Population Stability Index, Wasserstein distance",
+        "Concept drift — the relationship between X and y changes, not just X",
+        "Shadow deployment — running the new model on real traffic without serving its predictions",
+        "Online metrics — measuring against business KPIs vs offline ML metrics",
+        "Outlier detection at serving time — when an input is so different you should refuse to predict",
+        "Alerting strategy — what triggers a page, what triggers an email, what just logs",
+        "Tools — Evidently, NannyML, WhyLabs, your own roll-your-own"
+      ],
+      "tasks": [
+        "Install Evidently; run a drift report comparing two slices of one of your datasets; inspect the output",
+        "Compute Population Stability Index (PSI) by hand on one feature between two time windows; verify against a library implementation",
+        "Set up logging of every prediction your week-17 server makes (input + prediction + timestamp) to a SQLite DB",
+        "Run an Evidently dashboard against a week's worth of logged predictions to detect drift",
+        "Implement shadow deployment: route 100% of traffic to model A but ALSO send to model B; log both predictions and compare"
+      ],
+      "project": "Add Monitoring to Your Production Server. Take your week-17 server. Add: every prediction logged to a database, a nightly drift-detection job that compares this week's input distribution to last week's, an alert (Slack webhook or email) if drift exceeds a threshold, an Evidently dashboard for visual inspection. Run it for 7 days against synthetic traffic that gradually shifts. Verify your alert fires when the shift exceeds your threshold.",
+      "resources": [
+        { "label": "Evidently AI — Documentation", "url": "https://docs.evidentlyai.com/", "note": "official, the most-used open-source drift and monitoring library" },
+        { "label": "NannyML — Documentation", "url": "https://nannyml.readthedocs.io/", "note": "official, focused on estimating performance without ground truth labels" },
+        { "label": "WhyLabs — Free tier", "url": "https://whylabs.ai/free-tier", "note": "official, hosted monitoring SaaS with free tier" },
+        { "label": "Aparna Dhinakaran — A complete guide to ML observability", "url": "https://arize.com/blog-course/machine-learning-monitoring/", "note": "blog series, the canonical primer on production ML monitoring" },
+        { "label": "Chip Huyen — Data Distribution Shifts and Monitoring", "url": "https://huyenchip.com/2022/02/07/data-distribution-shifts-and-monitoring.html", "note": "blog, very practical taxonomy of drift types" },
+        { "label": "Population Stability Index explained — Towards Data Science", "url": "https://towardsdatascience.com/checking-model-stability-and-population-shift-with-psi-and-csi-6d12af008783", "note": "blog, walks through PSI math step by step" }
+      ],
+      "questions": [
+        "Your alert fired because PSI crossed 0.2 on a feature. What does that actually mean for the model? Is it big enough to retrain? Is it big enough to investigate?",
+        "You have predictions but no ground truth. How do you estimate performance? What does NannyML do that's different from drift detection?",
+        "Shadow deployment showed model B has lower error than model A on the same traffic. Is that enough to switch? What else do you check (latency, cost, calibration)?",
+        "What's the most expensive monitoring miss in your industry — silent failure of recommendations, of fraud detection, of pricing? How fast must your monitoring close that loop?"
+      ],
+      "exercises": [
+        "Implement PSI from scratch (binned distributions, summed bin contributions to PSI); test on two distributions you know are similar and two you know are different.",
+        "Set up an Evidently Test Suite — automated regression checks on every batch of new data.",
+        "Build a baseline drift detector: split a stable dataset into two halves; compute PSI per feature; the highest value is your noise floor; any future PSI above 3× that triggers an alert.",
+        "Write a 'safe fallback' wrapper around your model: if input distribution is too far from training, return a default + log a 'model declined' event."
+      ],
+      "outputs": [
+        "Repo monitored-production-server with logged predictions + nightly drift job",
+        "Working alert that fired during simulated drift",
+        "Evidently dashboard committed (deployed as static or screenshotted)",
+        "Notes/monitoring.md — your monitoring playbook for any future ML production"
+      ]
+    },
+    {
+      "number": 19,
+      "title": "A/B Testing Models — Statistical Truth, Production Edition",
+      "phase": "Model Serving",
+      "commitment_hours": "20-25",
+      "context": "Offline metrics lie. Models that win on test sets often lose on real users. This week you set up real A/B testing infrastructure, compute sample sizes correctly, avoid the most common stats mistakes, and make ship/no-ship decisions on production evidence.",
+      "topics": [
+        "Why offline metrics aren't enough — distribution shift between offline and online",
+        "Sample size and power — how many users do you need to detect a 1% lift?",
+        "Two-sample tests — t-test, chi-square, Mann-Whitney; assumptions and when each fails",
+        "Sequential testing and early stopping — why naive peeking inflates false positive rate",
+        "Bayesian A/B testing — when posterior probability beats p-values",
+        "Experimentation platforms — PostHog, GrowthBook, Statsig, hand-rolled",
+        "Confounders and Simpson's paradox — what to control for when randomisation isn't perfect",
+        "Holdouts — never running the test on 100%, keeping a control group forever"
+      ],
+      "tasks": [
+        "Implement a power calculation: given baseline metric, MDE, alpha, beta — output required sample size",
+        "Set up a simple A/B framework: random 50/50 assignment, persisted in a cookie or user ID, sticky across sessions",
+        "Run a simulated A/B test: model A and model B on a benchmark dataset; compute p-values; verify they're correct via repeated simulation",
+        "Read about and implement Bayesian A/B testing for one of your metrics; compare conclusion to frequentist",
+        "Set up a 'shadow + treatment' funnel: shadow first (validate technical correctness), then ramp to 5%, 25%, 50% with checkpoints"
+      ],
+      "project": "Build an A/B Testing Service. A small Python service with endpoints: `/assign` (returns variant for a user), `/event` (logs a conversion or outcome), `/results` (computes lift, confidence intervals, p-value). Store assignments and events in SQLite. Build a small Streamlit dashboard showing live test results. Run one simulated 1-week test against synthetic traffic; verify you reach correct conclusions.",
+      "resources": [
+        { "label": "Trustworthy Online Controlled Experiments — Kohavi, Tang, Xu", "url": "https://experimentguide.com/", "note": "book by the experts who built A/B testing at Microsoft, Amazon, Booking; the canonical reference" },
+        { "label": "Evan Miller — How not to run an A/B test", "url": "https://www.evanmiller.org/how-not-to-run-an-ab-test.html", "note": "blog, classic essay on the peeking problem" },
+        { "label": "PostHog — Documentation (feature flags + experiments)", "url": "https://posthog.com/docs/experiments", "note": "official, the easiest start-to-finish experimentation platform with a free tier" },
+        { "label": "GrowthBook — Documentation", "url": "https://docs.growthbook.io/", "note": "official, open-source alternative to PostHog" },
+        { "label": "Statsig — Open A/B testing methodology docs", "url": "https://docs.statsig.com/stats/methodology/", "note": "official, very transparent about their statistical methods" },
+        { "label": "Sequential Testing — Lan and DeMets", "url": "https://en.wikipedia.org/wiki/Group_sequential_design", "note": "Wikipedia, the math behind alpha-spending and group sequential designs" }
+      ],
+      "questions": [
+        "Your baseline conversion rate is 5%. You want to detect a 0.5pp lift with 80% power and 5% significance. How many users do you need? Now do it for a 0.1pp lift — how does the number scale?",
+        "Peek at an A/B test result at day 1, 3, 7. If the test 'reaches significance' on day 3 but not day 7, what's the actual probability that the variant is better?",
+        "Simulate 1000 A/B tests where both variants are identical (true lift = 0). At what false positive rate does naive 'p < 0.05 stop and ship' converge to?",
+        "When would you choose Bayesian over frequentist for an A/B test? Cost of being wrong, sample size, stakeholder communication — pick one and justify."
+      ],
+      "exercises": [
+        "Implement a sample size calculator for a two-proportion z-test; verify against an online calculator.",
+        "Write a sticky-assignment function: hash user_id with experiment_id to a 0-1 float; bucket into variants by ranges. Verify uniformity over 100k users.",
+        "Compute a 95% confidence interval for the difference of two proportions both with formulas and by bootstrap; verify they agree.",
+        "Build a Streamlit dashboard for a running test: live counts per variant, conversion rate, p-value, CI. Update on refresh."
+      ],
+      "outputs": [
+        "Repo ab-testing-service with /assign, /event, /results endpoints",
+        "Streamlit dashboard for live test monitoring",
+        "Simulation showing your inference is correctly calibrated under H0",
+        "Notes/ab-testing.md — sample size cheat sheet + common mistakes you've now avoided"
+      ]
+    },
+    {
+      "number": 20,
+      "title": "Recommender Systems — When the Output Depends on the User",
+      "phase": "Model Serving",
+      "commitment_hours": "25-30",
+      "context": "Recommenders are the most-deployed ML systems in the world — Netflix, Amazon, YouTube, Spotify. The architecture is distinct from classification or forecasting: candidates, ranking, re-ranking, the cold-start problem, exploration. This week you build one end to end.",
+      "topics": [
+        "Collaborative filtering — implicit vs explicit feedback, user-item matrices",
+        "Matrix factorisation — Alternating Least Squares, SVD++, why dot product works",
+        "Embeddings for recommenders — two-tower models, the dominant production pattern",
+        "Candidate generation vs ranking — the two-stage architecture",
+        "Cold-start — new user, new item, content features",
+        "Exploration vs exploitation — multi-armed bandits, Thompson sampling",
+        "Evaluation — precision@k, recall@k, NDCG, MAP, the metrics that actually matter",
+        "Diversity and serendipity — when 'most relevant' is not the goal"
+      ],
+      "tasks": [
+        "Load MovieLens 1M; build a user-item interaction matrix; visualise sparsity",
+        "Implement ALS-based collaborative filtering using `implicit` library; evaluate with NDCG@10 on a held-out test set",
+        "Build a two-tower model in PyTorch: user tower + item tower; train on the same data; compare to ALS",
+        "Implement a content-based baseline: TF-IDF on movie genres + title; verify it solves cold-start better than CF",
+        "Implement an epsilon-greedy bandit on top of your recommender; verify epsilon=0.1 gives 10% random recommendations"
+      ],
+      "project": "Build a Music or Movie Recommender. Use MovieLens, Spotify Million Playlist Dataset, or scrape your own Spotify listening history. Build the two-stage system: a candidate generator (two-tower or ALS) producing top-1000, then a re-ranker producing the final top-10. Evaluate offline (NDCG@10). Build a small Streamlit demo where you log in (or paste your user ID) and see your recommendations. This is one of the strongest portfolio projects in classical ML.",
+      "resources": [
+        { "label": "Microsoft — Recommenders open-source repo", "url": "https://github.com/recommenders-team/recommenders", "note": "GitHub, the most-complete collection of recommender implementations with notebooks" },
+        { "label": "Eugene Yan — Real-world recommendation system architectures", "url": "https://eugeneyan.com/writing/system-design-for-discovery/", "note": "blog, walks through how Netflix, YouTube, Pinterest actually build recommenders" },
+        { "label": "Liang et al. — Variational Autoencoders for Collaborative Filtering", "url": "https://arxiv.org/abs/1802.05814", "note": "ArXiv paper, the canonical deep-learning-for-CF paper" },
+        { "label": "implicit — Documentation", "url": "https://implicit.readthedocs.io/", "note": "official, the fastest ALS implementation for Python" },
+        { "label": "TensorFlow Recommenders", "url": "https://www.tensorflow.org/recommenders", "note": "official, opinionated framework for two-tower architectures" },
+        { "label": "Lessons learned from the Netflix Prize", "url": "https://web.stanford.edu/~jurafsky/mintz.pdf", "note": "PDF, classic talk on what actually worked at Netflix vs the academic literature" }
+      ],
+      "questions": [
+        "ALS vs two-tower neural CF on the same dataset — what's the NDCG@10 difference? Which trains faster? Which is easier to serve at scale?",
+        "Cold-start on a brand-new user with one interaction — does your CF recommend useful items? Does your content-based fallback?",
+        "Add diversity to your top-10: pick a subset that maximises pairwise dissimilarity in item embeddings. Does NDCG drop? Does user-perceived quality (in your view) go up?",
+        "Cost out serving recommendations at 1M users/day. Where's the bottleneck — embedding inference, top-k retrieval, ranking?"
+      ],
+      "exercises": [
+        "Implement matrix factorisation by hand using SGD: minimise reconstruction error over observed entries; compare to library ALS.",
+        "Train a two-tower model with in-batch negative sampling: positive = real interaction, negatives = other items in the batch. Verify NDCG goes up over training.",
+        "Use FAISS to build an approximate nearest-neighbour index over item embeddings; query for the top-100 most similar items to a given user embedding.",
+        "Implement Thompson sampling for a multi-armed bandit with Beta priors; simulate 10000 rounds; compare cumulative regret to epsilon-greedy."
+      ],
+      "outputs": [
+        "Repo movie-recommender with two-stage architecture working",
+        "Offline evaluation report with NDCG@10 across CF / two-tower / content-based",
+        "Streamlit demo serving recommendations live",
+        "Notes/recommenders.md — your two-stage recommender design cheat sheet"
+      ]
+    },
+    {
+      "number": 21,
+      "title": "MLOps Pipelines — Training as Software Engineering",
+      "phase": "MLOps & Monitoring",
+      "commitment_hours": "25-30",
+      "context": "Real ML teams ship training as code — versioned, tested, automatically triggered, automatically evaluated, automatically deployed. This week you wire your training into CI/CD: every push retests your pipeline, every merge triggers a training run, every successful run produces a new model artifact.",
+      "topics": [
+        "CI/CD for ML — what's different from web app CI/CD",
+        "Pipeline triggers — code change, data change, schedule, manual",
+        "Testing ML code — unit tests for transformations, behavioural tests for models",
+        "Reproducible builds — pinning code + data + environment",
+        "Model registry — where artifacts live with metadata + versions",
+        "Automated evaluation gates — refuse to promote a model that loses on regression suite",
+        "Canary deployment — 1% → 10% → 100% with automatic rollback",
+        "GitOps for ML — declarative deployment config in git"
+      ],
+      "tasks": [
+        "Add GitHub Actions to one of your ML repos: lint + test + train on push to main",
+        "Write 5 unit tests for one of your feature engineering functions (edge cases, empty input, null handling)",
+        "Write 3 behavioural tests for one of your models (CheckList-style: invariance, directional expectations)",
+        "Set up MLflow Model Registry; register a model; promote it through 'staging' → 'production' stages",
+        "Implement an evaluation gate in CI: training must hit AUC > 0.78 on the test set or the job fails"
+      ],
+      "project": "Wire One Full Project into MLOps. Pick any earlier project. Add: GitHub Actions for testing + training, MLflow model registry with stages, automatic deployment of approved models to your serving endpoint, regression evals that block promotion. Run the loop 3 times — push a small change, watch it train, eval, register, deploy automatically. Document the full pipeline in a README diagram.",
+      "resources": [
+        { "label": "Made with ML — MLOps Course (full)", "url": "https://madewithml.com/courses/mlops/", "note": "free online course, the most-recommended end-to-end MLOps course" },
+        { "label": "MLflow — Documentation", "url": "https://mlflow.org/docs/latest/index.html", "note": "official, the de-facto open-source model registry and tracking server" },
+        { "label": "DVC — Data Version Control + CML", "url": "https://dvc.org/doc", "note": "official, version data + CI/CD for ML (CML adds GitHub Actions integration)" },
+        { "label": "Eugene Yan — Testing ML Systems", "url": "https://eugeneyan.com/writing/testing-ml/", "note": "blog, the canonical primer on testing for ML code" },
+        { "label": "GitHub Actions — Documentation", "url": "https://docs.github.com/en/actions", "note": "official, the most-used CI/CD platform" },
+        { "label": "Chip Huyen — Designing Machine Learning Systems (book)", "url": "https://huyenchip.com/books.html", "note": "book, the canonical ML systems design textbook; read chapters 9-10 on infrastructure and MLOps" }
+      ],
+      "questions": [
+        "Your CI job times out after 6 hours. What can you parallelise? What can you cache?",
+        "An engineer pushes a change that drops AUC by 0.5%. Your eval gate blocks deployment. Is that the right threshold? Too tight, too loose?",
+        "Compare MLflow self-hosted to a hosted alternative (Weights & Biases Model Registry, Comet ML). For your scale, which is the right choice?",
+        "Your canary deploy sends 1% of traffic to v2. After 1 hour, you have 100 observations. Is that enough to decide? How would you set up an automated rollback condition?"
+      ],
+      "exercises": [
+        "Write a GitHub Actions workflow that runs pytest on every push; have one test deliberately fail; verify the workflow status is red.",
+        "Write a behavioural test for a classifier: 'flipping the gender feature should change the prediction by < 1%'. (This is a fairness test.)",
+        "Implement a `promote_model` script that takes a run_id, evaluates against a regression set, and only promotes to production if metrics meet thresholds.",
+        "Configure a canary deployment: 1% of traffic routes to the new model; if its error rate exceeds 1.5× the production rate over 30 minutes, route 100% back."
+      ],
+      "outputs": [
+        "GitHub Actions running on one project with tests + training",
+        "MLflow registry with at least 3 versions of one model, each tagged staging/production/archived",
+        "End-to-end pipeline: git push → automatic train → automatic deploy verified working 3 times",
+        "Diagram of the full pipeline committed as PIPELINE.md"
+      ]
+    },
+    {
+      "number": 22,
+      "title": "Distributed Training and Big Data — When One Machine Isn't Enough",
+      "phase": "MLOps & Monitoring",
+      "commitment_hours": "25-30",
+      "context": "Most ML work fits on a single machine. Some doesn't. This week you learn the patterns: Spark for big-data preprocessing, distributed PyTorch for training, the strategies that scale (DDP, ZeRO, FSDP), and the cost of distribution.",
+      "topics": [
+        "When you need distributed — concrete signs your data or model is too big for one machine",
+        "Apache Spark for preprocessing — DataFrame API, when Spark beats Pandas",
+        "Distributed Data Parallel (DDP) in PyTorch — how gradient sync works",
+        "Fully Sharded Data Parallel (FSDP) — when models don't fit on one GPU",
+        "DeepSpeed and ZeRO — Microsoft's alternative for very large models",
+        "Cluster management — Ray, Kubernetes, SkyPilot for ML at scale",
+        "Cost economics — when distribution pays off, when it's overkill",
+        "Debugging distributed jobs — the new failure modes"
+      ],
+      "tasks": [
+        "Install pyspark; do feature engineering on a 10GB+ dataset (try the NYC Taxi public dataset); compare to Pandas",
+        "Run a small distributed PyTorch training job (DDP) on 2 GPUs (or simulate with 2 processes); verify final accuracy matches a single-process run",
+        "Use Ray to parallelise hyperparameter search across multiple processes; compare to sequential search",
+        "Read SkyPilot's docs; set up a single cloud job with a sky launch command",
+        "Cost out training a 7B-parameter LLM with DDP across 4× A100 vs 1× H100; pick the right architecture"
+      ],
+      "project": "Train Something That Doesn't Fit on Your Laptop. Pick a model + dataset combination that's genuinely too big for your local machine: training a 1B-parameter Transformer on a 5GB text corpus, training a vision transformer on ImageNet sample, fine-tuning a 7B LLM on instructions. Use cloud GPUs (Modal, RunPod, or SkyPilot). Budget: under $30. Track total cost. Write a 1500-word blog post: what worked, what didn't, what surprised you about scaling.",
+      "resources": [
+        { "label": "Apache Spark — PySpark Quickstart", "url": "https://spark.apache.org/docs/latest/api/python/getting_started/quickstart_df.html", "note": "official, the DataFrame API you'll actually use" },
+        { "label": "PyTorch — DDP Tutorial", "url": "https://pytorch.org/tutorials/intermediate/ddp_tutorial.html", "note": "official, the canonical reference for multi-GPU training" },
+        { "label": "PyTorch — FSDP Tutorial", "url": "https://pytorch.org/tutorials/intermediate/FSDP_tutorial.html", "note": "official, for when models don't fit on one GPU" },
+        { "label": "DeepSpeed — Documentation", "url": "https://www.deepspeed.ai/", "note": "official, Microsoft's library; ZeRO-3 is what trains the biggest open models" },
+        { "label": "Ray — Documentation", "url": "https://docs.ray.io/", "note": "official, Python-native distributed compute; their ML libraries are top-tier" },
+        { "label": "SkyPilot — Documentation", "url": "https://docs.skypilot.co/", "note": "official, multi-cloud spot-instance runner; saves serious money on long training jobs" },
+        { "label": "Stas Bekman — ML Engineering open book (distributed sections)", "url": "https://github.com/stas00/ml-engineering", "note": "GitHub, the most-honest production reference for scaling LLMs" }
+      ],
+      "questions": [
+        "Your Spark job takes 5 minutes for what Pandas does in 30 seconds locally. Why? What's the right data size to switch?",
+        "DDP across 2 GPUs — is it 2× faster than 1 GPU, or less? Where does the gap come from (gradient sync overhead, data loading, batch size scaling)?",
+        "You're spending $20/hr on a cluster but only utilising 40% of the GPUs. What's wrong? Data pipeline? Synchronisation? Heterogeneous batch sizes?",
+        "Compare training a model on 4× A100 ($4/hr each) vs 1× H100 ($10/hr). Where does each win — for training throughput, for inference, for cost?"
+      ],
+      "exercises": [
+        "Convert a Pandas feature engineering pipeline to PySpark; verify the output is identical row by row on a small sample.",
+        "Use `torchrun` to launch a DDP training job across 2 processes locally; verify gradient sync produces the correct final model.",
+        "Use Ray Tune to run 20 parallel hyperparameter trials; compare wall-clock time to sequential Optuna.",
+        "Write a SkyPilot YAML for a training job that uses cheapest available spot instance across 3 clouds; launch it."
+      ],
+      "outputs": [
+        "Repo distributed-training with one real distributed training run completed",
+        "PySpark notebook doing a real preprocessing job on >10GB data",
+        "Cost report: actual cloud spend vs estimate, lessons learned",
+        "Blog post / writeup committed as DISTRIBUTED.md"
+      ]
+    },
+    {
+      "number": 23,
+      "title": "Responsible ML — Fairness, Privacy, Explainability",
+      "phase": "MLOps & Monitoring",
+      "commitment_hours": "20-25",
+      "context": "Models that are accurate but biased ship harm. Models that are accurate but unexplainable lose user trust. This week you measure bias, build explanations, and design for privacy — these aren't optional, they're the difference between ML in production and ML on a slide deck.",
+      "topics": [
+        "Definitions of fairness — demographic parity, equalised odds, calibration; why no model can satisfy all",
+        "Measuring bias — disaggregated metrics across protected groups",
+        "Mitigation — reweighting, adversarial debiasing, post-processing",
+        "Explainability — local vs global, model-agnostic vs model-specific",
+        "SHAP — TreeSHAP, KernelSHAP, DeepSHAP",
+        "Counterfactual explanations — 'what would have to change for a different outcome?'",
+        "Differential privacy — what it actually provides, why it's hard",
+        "GDPR, AI Act, and regulatory considerations — what compliance actually requires"
+      ],
+      "tasks": [
+        "Take any of your earlier classifiers; compute disaggregated metrics across a protected attribute (gender, race, age); identify gaps",
+        "Apply one bias-mitigation technique (reweighting via Fairlearn); measure trade-off in accuracy vs fairness",
+        "Use SHAP to explain 5 predictions from your best model; verify local explanations on a held-out example by perturbing the features",
+        "Generate counterfactual explanations using DiCE: 'change income from X to Y, prediction flips'",
+        "Read the OpenDP introduction; implement a noisy histogram with the Laplace mechanism"
+      ],
+      "project": "Add a Fairness and Explainability Layer to One Production Model. Pick your loan default predictor or another consequential model. Compute per-group metrics (gender, age bucket, region). If gaps exist > 5pp, attempt mitigation. Add SHAP-based per-prediction explanations to the API. Build a 'why was I rejected' endpoint that returns counterfactuals: 'if your debt-to-income were 0.05 lower, you would have been approved'. Document everything in a MODEL_CARD.md.",
+      "resources": [
+        { "label": "Fairlearn — Documentation", "url": "https://fairlearn.org/", "note": "official, Microsoft's open-source fairness library, the most-used" },
+        { "label": "SHAP — Documentation", "url": "https://shap.readthedocs.io/", "note": "official, the canonical explanation library" },
+        { "label": "DiCE — Diverse Counterfactual Explanations", "url": "https://github.com/interpretml/DiCE", "note": "GitHub, Microsoft Research, the leading counterfactual library" },
+        { "label": "Google — Model Cards", "url": "https://modelcards.withgoogle.com/about", "note": "official, the canonical format for documenting models' intended use and limitations" },
+        { "label": "OpenDP — Documentation", "url": "https://docs.opendp.org/", "note": "official, Harvard's differential privacy library" },
+        { "label": "Solon Barocas, Moritz Hardt, Arvind Narayanan — Fairness and Machine Learning (free book)", "url": "https://fairmlbook.org/", "note": "free book, the canonical textbook on algorithmic fairness" },
+        { "label": "Cynthia Dwork — The Algorithmic Foundations of Differential Privacy", "url": "https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf", "note": "PDF, the foundational textbook on DP, by one of the inventors" }
+      ],
+      "questions": [
+        "On your model, what's the false positive rate for group A vs group B? What's the false negative rate? Which gap does the use case actually care about most?",
+        "You mitigated bias and lost 1% AUC. Is that worth it? Who decides? How does this conversation go with a product manager who only sees the headline metric?",
+        "SHAP says feature X is the most important for a denied loan. Counterfactual says 'reduce feature X by 0.1 to be approved'. Are these consistent? When could they conflict?",
+        "Your differentially-private histogram has epsilon = 1. Some queries are noisier than expected. What's the privacy-utility trade-off? At what epsilon is the data unusable?"
+      ],
+      "exercises": [
+        "Compute equalised-odds metrics manually from a confusion matrix split by group; verify against Fairlearn's MetricFrame.",
+        "Train two models: standard, and reweighted with Fairlearn. Compare disaggregated metrics + overall accuracy.",
+        "Use SHAP to compute global feature importance on your model; produce a beeswarm plot.",
+        "Implement the Laplace mechanism for differential privacy on a count query; visualise the noise distribution at epsilon = 0.1, 1.0, 10."
+      ],
+      "outputs": [
+        "Disaggregated metrics report committed as FAIRNESS.md for one production model",
+        "MODEL_CARD.md following Google's template, committed in the repo",
+        "SHAP explanations integrated into your production API",
+        "Counterfactual 'why was I rejected' endpoint serving real explanations"
+      ]
+    },
+    {
+      "number": 24,
+      "title": "Capstone — A Full ML System, Shipped",
+      "phase": "Capstone",
+      "commitment_hours": "30-40",
+      "context": "The final week. Every technique from weeks 1-23 collapses into one shipped system. Real data, real model, real serving, real monitoring, real users. This is what an ML engineer does in their first month at a company — and what you can now do solo.",
+      "topics": [
+        "Scoping ruthlessly — what's v1, what's v2, what's never",
+        "End-to-end thinking — data pipeline + model + serving + monitoring as one system",
+        "Writing the system design before the code",
+        "User research — would anyone actually use this?",
+        "Quality bar — when 'good enough to ship' is right, when it's not",
+        "Launching publicly — how to get the first 10 users",
+        "Documentation — README, architecture diagram, model card, runbook",
+        "The post-mortem — what worked, what didn't, what's next"
+      ],
+      "tasks": [
+        "Pick ONE project. Write the README before any code. Sell it to yourself.",
+        "Sketch the system architecture on paper: data sources, pipelines, training, serving, monitoring. Photo to repo.",
+        "Talk to 3 potential users about the problem (not the solution); record what they said in USER_RESEARCH.md",
+        "Define success metrics numerically: what does 'this works' mean? Be specific.",
+        "Hard deadline: a public URL with the system serving real predictions by day 7."
+      ],
+      "project": "Build and ship ONE complete ML system to a public URL. It must include: real data pipeline (versioned, scheduled), trained model (with eval suite, hyperparameter sweep, experiment tracking), production serving (containerised, with batching and monitoring), CI/CD (tests + auto-deploy on merge), a small frontend or API that demonstrates value, monitoring dashboard, model card, fairness analysis if relevant. Pick a problem you actually care about — your own data, your own pain. Share the launch on Twitter, HN, your blog, your audience.",
+      "resources": [
+        { "label": "Chip Huyen — Designing Machine Learning Systems (book)", "url": "https://huyenchip.com/books.html", "note": "book, the canonical book; bookmark for the capstone, especially chapters on iteration and feedback loops" },
+        { "label": "Made with ML — full course revisited", "url": "https://madewithml.com/courses/mlops/", "note": "free online course, work through the deployment and CI sections in the capstone week" },
+        { "label": "Vicki Boykis — ML in real life talks", "url": "https://vickiboykis.com/", "note": "blog/talks, working ML engineer's blog with deeply honest production stories" },
+        { "label": "Eugene Yan — Real-world ML write-ups", "url": "https://eugeneyan.com/writing/", "note": "blog, a deep archive of real-world ML system stories worth modelling after" },
+        { "label": "Show HN guidelines", "url": "https://news.ycombinator.com/showhn.html", "note": "official, if you launch on Hacker News, read first" },
+        { "label": "Lukas Biewald — How to be a good ML engineer (talks)", "url": "https://www.youtube.com/c/WeightsBiases", "note": "YouTube, Weights & Biases founder's talks; the rituals of mature ML engineers" }
+      ],
+      "questions": [
+        "Have someone read just your README. Do they understand what your system does? Would they try it?",
+        "Day 3 of the week: are you on track for a public URL by day 7? If not, what gets cut?",
+        "Post launch: how many people clicked? Of those, how many got value? What does that tell you?",
+        "Post-mortem: what surprised you most? What did the last 23 weeks of practice make easy that would have been hard 24 weeks ago?"
+      ],
+      "exercises": [
+        "Write a one-paragraph elevator pitch that doesn't use the word 'AI' or 'ML'. If you can't, your project isn't differentiated enough.",
+        "Build a feedback widget into your product: thumbs up/down + comment. Read every entry the day after launch.",
+        "Run your capstone through a launch checklist: model card committed, monitoring on, alerts wired, eval suite green, README sells it, repo is public.",
+        "Write a public post-mortem in PUBLIC.md: what worked, what didn't, what surprised you, what's next."
+      ],
+      "outputs": [
+        "One ML system at a public custom domain serving real predictions",
+        "Public launch — Twitter, HN, blog, Reddit — with measurable engagement",
+        "Repo with: README, ARCHITECTURE.md, MODEL_CARD.md, PUBLIC.md, all under MIT or similar",
+        "At least 10 unique users in the first week (analytics or signups)",
+        "This becomes the centrepiece of your portfolio — the artifact that proves ML engineer"
+      ]
+    }
+  ]
+}

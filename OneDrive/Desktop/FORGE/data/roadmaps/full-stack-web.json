@@ -1,0 +1,1232 @@
+{
+  "slug": "full-stack-web",
+  "title": "Full Stack Web",
+  "total_weeks": 24,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "The Web Itself — HTTP, HTML, CSS, and the Browser as a Runtime",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "Before frameworks, the web is HTML over HTTP rendered by a browser. This week you build pages with no framework, learn what the browser is actually doing, and understand the protocol. If you skip this, you'll spend years confused about why React works the way it does.",
+      "topics": [
+        "How the browser loads a page — DNS, TCP, HTTP, HTML parsing, CSSOM, render tree, layout, paint",
+        "HTML semantics — header, main, nav, article, section, aside, footer, why they matter",
+        "Forms — input types, validation, GET vs POST, multipart for files",
+        "CSS box model — content/padding/border/margin, box-sizing border-box",
+        "CSS layout — flexbox, grid, when each fits",
+        "CSS specificity and the cascade — why your style isn't applying",
+        "Responsive design — mobile-first, breakpoints, fluid typography",
+        "Browser dev tools — Network, Performance, Elements, Application panels"
+      ],
+      "tasks": [
+        "Build a personal landing page with semantic HTML + handcrafted CSS — no framework. Deploy to GitHub Pages.",
+        "Inspect a real website with dev tools; document the request waterfall: how many requests, total bytes, time to first paint",
+        "Build a contact form that POSTs to httpbin.org/post and renders the response without page reload (use fetch())",
+        "Implement a responsive grid that adapts at 640px, 1024px, 1280px breakpoints",
+        "Recreate any production landing page (Stripe, Linear, Vercel) pixel-close in pure CSS — choose one"
+      ],
+      "project": "Build a Pure-HTML Personal Site. No frameworks, no build step, no JavaScript libraries — just HTML, CSS, and (optionally) vanilla JS. 4 pages: home, about, projects, blog. Deploy to GitHub Pages on your username.github.io. Achieve Lighthouse 100/100/100/100. This becomes your first portfolio piece — recruiters care that you can do this without a framework.",
+      "resources": [
+        { "label": "MDN Web Docs — Learn web development", "url": "https://developer.mozilla.org/en-US/docs/Learn", "note": "official, the canonical curriculum, free; work through HTML and CSS basics" },
+        { "label": "Josh Comeau — CSS for JavaScript Developers", "url": "https://css-for-js.dev/", "note": "paid course but the free articles are the best CSS writing on the internet" },
+        { "label": "Kevin Powell — YouTube channel", "url": "https://www.youtube.com/c/KevinPowell", "note": "YouTube, the best free CSS teacher on YouTube" },
+        { "label": "web.dev — Learn HTML / CSS / Performance", "url": "https://web.dev/learn/", "note": "official Google, multiple free courses; especially the Learn Performance course" },
+        { "label": "MDN — HTTP overview", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview", "note": "official, read this AND the Headers and Status reference pages" },
+        { "label": "Frontend Mentor — challenges", "url": "https://www.frontendmentor.io/", "note": "official, design-to-code challenges with real Figma files, free tier is enough" }
+      ],
+      "questions": [
+        "Open the Network tab on a popular site (Stripe.com, GitHub.com). What's the largest single resource? What's the longest-blocking request? What would you do to speed it up?",
+        "Build the same layout with flexbox AND grid. Which felt more natural for the layout shape? In which would you reach for the other?",
+        "Your responsive site at 320px width — does any text overflow? Does any image break the layout? What does it tell you about choosing breakpoints?",
+        "Run Lighthouse on your pure-HTML site. What's your score on Performance, Accessibility, Best Practices, SEO? Where's the easiest 5-point win?"
+      ],
+      "exercises": [
+        "Write semantic HTML for a recipe page: header with site nav, main article with recipe content, aside with related recipes, footer. Verify with the W3C validator.",
+        "Build a 3-column responsive card grid that becomes 1-column at < 640px, 2-column at 640-1024px, 3-column above. Use CSS Grid.",
+        "Style an input field, a select, and a button to be visually consistent. Solve the cross-browser default-styles problem.",
+        "Implement a sticky header that stays at the top during scroll but reduces height after 100px of scroll. No JavaScript — pure CSS if possible (use scroll-driven animations) or minimal JS."
+      ],
+      "outputs": [
+        "Personal site deployed at username.github.io with Lighthouse 100s documented",
+        "Recreated landing page from one of the named companies, screenshot vs original",
+        "Notebook of HTTP waterfall analysis on 3 real sites",
+        "All exercises committed under exercises/week-01/"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "JavaScript and TypeScript — The Language of the Web",
+      "phase": "Foundations",
+      "commitment_hours": "25-30",
+      "context": "JavaScript is the language. TypeScript is the language with the safety net. This week you become fluent in modern JS (ES2024+) and then add the type layer that turns chaos into code that scales.",
+      "topics": [
+        "Modern JavaScript — const/let, destructuring, spread, optional chaining, nullish coalescing",
+        "Functions — arrow vs regular, this binding, closures",
+        "Asynchrony — Promises, async/await, why callback hell is dead",
+        "Modules — import/export, dynamic imports, why CommonJS is legacy",
+        "Iterables and generators — for...of, yield, async generators",
+        "TypeScript fundamentals — primitives, unions, intersections, type vs interface",
+        "Generics — when they help, when they hurt",
+        "Utility types — Partial, Pick, Omit, Record, ReturnType"
+      ],
+      "tasks": [
+        "Install Node.js 22+ (LTS) and pnpm (or use bun); set up a TypeScript project from scratch with tsconfig.json",
+        "Convert a 200-line JavaScript file (your or a tutorial's) to fully-typed TypeScript with no `any`",
+        "Build a fetch wrapper with typed responses using generics — `api<User>('/users/1')` returns Promise<User>",
+        "Solve 20 problems on JavaScript-only sites (HackerRank, Codewars, LeetCode easy) using modern syntax — no var, no callbacks",
+        "Write a generator function that yields Fibonacci numbers lazily; consume it with take(10)"
+      ],
+      "project": "Build a CLI Tool in TypeScript. Pick a real personal need — a markdown linter for your blog posts, a duplicate-file finder, a 'time spent in folders' tracker. Use commander.js for arg parsing, zod for input validation, strict TypeScript throughout. Publish to npm or install via `npx`. The CLI should be useful enough that you actually use it weekly.",
+      "resources": [
+        { "label": "TypeScript Handbook", "url": "https://www.typescriptlang.org/docs/handbook/intro.html", "note": "official, work through The Basics + Everyday Types + Narrowing" },
+        { "label": "Matt Pocock — Total TypeScript Beginner's Tutorial", "url": "https://www.totaltypescript.com/tutorials/beginners-typescript", "note": "free interactive course, the best TS introduction in 2025" },
+        { "label": "You Don't Know JS Yet — Kyle Simpson (2nd ed)", "url": "https://github.com/getify/You-Dont-Know-JS", "note": "GitHub book, free, the canonical deep-dive on JavaScript itself" },
+        { "label": "Lydia Hallie — JavaScript questions", "url": "https://github.com/lydiahallie/javascript-questions", "note": "GitHub, 100+ tricky JS questions with explanations; test your knowledge" },
+        { "label": "Axel Rauschmayer — Deep JavaScript book", "url": "https://exploringjs.com/deep-js/", "note": "free book, the canonical reference for ES2024+" },
+        { "label": "TypeScript Deep Dive — Basarat Ali Syed", "url": "https://basarat.gitbook.io/typescript", "note": "free book, the depth that the official handbook doesn't have" }
+      ],
+      "questions": [
+        "Take a function with three optional parameters using ?: ... how does that differ from accepting an options object with optional keys? Which API would you prefer to use and why?",
+        "Run a fetch call without await — what does it return? Now await it — what does it return? When would you want the un-awaited version?",
+        "Refactor a function that uses `any` for the input — try to use generics, then unknown + narrowing, then a discriminated union. Which feels best for callers?",
+        "Convert a Promise.all of 5 fetch calls to Promise.allSettled — when is each the right choice?"
+      ],
+      "exercises": [
+        "Write a typed debounce function. The returned function should preserve the original function's argument types and return type.",
+        "Use a discriminated union to model an API response: `{ status: 'success', data: T } | { status: 'error', error: string }`. Write code that handles both.",
+        "Implement a typed event emitter: `on('user-login', (user: User) => ...)`, `emit('user-login', user)` should be type-checked.",
+        "Build a typed environment-variable loader: a function that reads process.env and returns a strictly-typed config object; throws clearly when a variable is missing."
+      ],
+      "outputs": [
+        "TypeScript CLI tool published to npm or installable via npx",
+        "Converted JavaScript-to-TypeScript file with zero `any`",
+        "20 solved JS problems committed under exercises/",
+        "Notes/typescript.md — your TypeScript cheat sheet of patterns you keep reaching for"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Git, GitHub, and the Daily Development Loop",
+      "phase": "Foundations",
+      "commitment_hours": "15-20",
+      "context": "Git is more important than your framework. By Friday you can branch, merge, rebase, resolve conflicts, write good commit messages, open clean pull requests, and review someone else's PR thoughtfully — the daily work of every software engineer.",
+      "topics": [
+        "Git mental model — commits as snapshots, branches as pointers, HEAD as a pointer to a pointer",
+        "The daily commands — clone, status, add, commit, push, pull, branch, checkout, merge, rebase",
+        "Conflict resolution — what a conflict actually is, how to read the markers, how to abort",
+        "Rewriting history — interactive rebase, squash, fixup, amend, when each is safe",
+        "Remotes — origin vs upstream, fetch vs pull, force-with-lease",
+        "Git workflows — trunk-based, GitFlow, GitHub Flow — what real teams use",
+        "Good commit messages — Conventional Commits, the imperative form, why it matters",
+        "Pull requests — small, atomic, reviewable; how to write a description"
+      ],
+      "tasks": [
+        "Configure global git: name, email, default branch main, pull rebase true, useful aliases",
+        "On one of your earlier projects, write commit messages that follow Conventional Commits (feat:, fix:, chore:); rewrite history with interactive rebase to clean up",
+        "Open a pull request on your own repo from a feature branch to main; merge with squash",
+        "Find an open-source project; fork it, fix a typo or improve a docstring, open a real PR upstream",
+        "Practice the rebase-on-stale-main workflow: rebase your feature branch onto an updated main, resolve any conflicts cleanly"
+      ],
+      "project": "Make a Real Open-Source Contribution. Pick a project you use (one of your dependencies — Next.js, FastAPI, requests, axios). Find a 'good first issue' or a typo in docs. Read CONTRIBUTING.md. Fork, branch, fix, commit conventionally, open a PR with a clear description. Engage with feedback. Get the PR merged (or closed with a clear reason). This is more valuable than any tutorial.",
+      "resources": [
+        { "label": "Pro Git book", "url": "https://git-scm.com/book/en/v2", "note": "free book, the canonical reference; read chapters 2, 3, 5, 7" },
+        { "label": "Atlassian — Git tutorials", "url": "https://www.atlassian.com/git/tutorials", "note": "the friendliest start; visual explanations for branches and merging" },
+        { "label": "Oh My Git — interactive game", "url": "https://ohmygit.org/", "note": "free downloadable game; teaches Git through puzzles" },
+        { "label": "Conventional Commits — Specification", "url": "https://www.conventionalcommits.org/en/v1.0.0/", "note": "the canonical commit message format" },
+        { "label": "GitHub Docs — Contributing to open source", "url": "https://opensource.guide/how-to-contribute/", "note": "official guide to making a first OSS contribution" },
+        { "label": "git-scm — gitworkflows man page", "url": "https://git-scm.com/docs/gitworkflows", "note": "official, surprisingly readable overview of common workflows" }
+      ],
+      "questions": [
+        "Run `git log --oneline --graph --all` on one of your repos. Is the history clean and linear, or a tangled mess? What would you change about your commit habits?",
+        "Find a merged PR in any major open-source repo (Next.js, React, FastAPI). Read the discussion. What did the author do right? What would you do differently?",
+        "Force-push deleted a commit. How would you recover it? (Hint: reflog.)",
+        "A teammate's force-push erased your work in progress. What's the policy you'd establish to prevent it?"
+      ],
+      "exercises": [
+        "Create a feature branch, make 5 commits, then squash them down to 2 logical commits via interactive rebase.",
+        "Deliberately create a merge conflict between two branches; resolve it manually; verify both intentions are preserved.",
+        "Create a `.gitignore` for a Node + Python + Mac dev environment. Verify it ignores node_modules, __pycache__, .DS_Store, .env.",
+        "Set up a Git hook that runs lint + format on pre-commit using husky + lint-staged."
+      ],
+      "outputs": [
+        "Merged (or seriously-reviewed) PR on an upstream open-source repo",
+        "Clean commit history on one of your projects, demonstrating Conventional Commits",
+        "Configured global .gitconfig with aliases and useful defaults",
+        "Pre-commit hook running lint + format on a project"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Bash, the Terminal, and Linux Survival",
+      "phase": "Foundations",
+      "commitment_hours": "15-20",
+      "context": "Every server you deploy to is Linux. Every CI pipeline runs in a shell. By Friday you live in the terminal — pipes, redirection, ssh, jq, grep, find — instead of clicking through GUIs that slow you down.",
+      "topics": [
+        "The shell — what bash actually is, what zsh adds, why fish is delightful",
+        "Pipes and redirection — stdout, stderr, /dev/null, > vs >>",
+        "Core tools — grep, sed, awk, cut, sort, uniq, xargs",
+        "File operations — ls flags, find, du -sh, df -h",
+        "Process management — ps, kill, top, htop, lsof",
+        "Networking from CLI — curl, dig, traceroute, nc, ssh",
+        "JSON on the CLI — jq, the most underrated tool",
+        "Shell scripting basics — when bash is right, when reach for Python instead"
+      ],
+      "tasks": [
+        "Install a modern terminal (iTerm2 / Wezterm / Warp) and configure a prompt (Starship, p10k)",
+        "Solve 10 terminal challenges on commandlinechallenge.com or overthewire.org bandit (first 15 levels)",
+        "Write a bash one-liner that finds the 10 largest files in your home directory",
+        "Use curl + jq to call any JSON API and extract a specific field; format output",
+        "Set up SSH keys for GitHub (Ed25519); ssh into a free cloud VM (Oracle Cloud Free Tier)"
+      ],
+      "project": "Build a Daily Server Health Script. A 100-line bash (or Python) script that you can run on any Linux server and get a one-page report: uptime, load, disk usage, memory, top 5 CPU processes, top 5 memory processes, recent SSH logins, recent failed logins, disk I/O. Run it via cron at 8am daily on a free cloud VM you set up.",
+      "resources": [
+        { "label": "missing-semester — MIT", "url": "https://missing.csail.mit.edu/", "note": "free MIT course on the tools they don't teach you in CS class, lectures 1-6" },
+        { "label": "explainshell.com", "url": "https://explainshell.com/", "note": "paste any shell command and get a guided explanation; bookmark forever" },
+        { "label": "Julia Evans — zines", "url": "https://wizardzines.com/", "note": "paid zines on bash, networking, debugging; some free comics on her blog" },
+        { "label": "jq — Tutorial", "url": "https://jqlang.github.io/jq/tutorial/", "note": "official, every JSON manipulation pattern you'll ever need" },
+        { "label": "OverTheWire — Bandit", "url": "https://overthewire.org/wargames/bandit/", "note": "official, the canonical Linux terminal training game; first 25 levels are foundational" },
+        { "label": "Linux Journey", "url": "https://linuxjourney.com/", "note": "free, the most beginner-friendly Linux tutorial" }
+      ],
+      "questions": [
+        "Your script runs at 8am but produces no email. How would you debug — what's the standard logging location for cron failures?",
+        "You have a 10GB log file. Find every line containing 'ERROR' that doesn't also contain 'expected'. Write the one-liner.",
+        "ssh into your server fails with 'Permission denied (publickey)'. List 5 things you'd check.",
+        "A process is hung. ps tells you its PID. Kill it gently first, then forcefully. What's the difference?"
+      ],
+      "exercises": [
+        "Write a one-liner that counts unique IP addresses in an nginx access log.",
+        "Use awk to compute the average response time from a server log column.",
+        "Write a bash function called `gcom` that does `git add -A && git commit -m \"$1\"`. Add it to your shell rc file.",
+        "Use jq to extract names of all users who have more than 100 followers from a JSON array of GitHub user data."
+      ],
+      "outputs": [
+        "Daily-running server-health script on a real cloud VM",
+        "Configured terminal + prompt + dotfiles repo (init for the rest of your life)",
+        "Solved at least 15 OverTheWire Bandit levels",
+        "Notes/bash-cheatsheet.md — the 30 commands you'll use forever"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "React — The Component Mental Model",
+      "phase": "Frontend",
+      "commitment_hours": "25-30",
+      "context": "React broke the web in half. Component, state, props, rendering — these four ideas underpin every modern frontend framework. This week you build the mental model on plain React + Vite, before any Next.js magic obscures what's happening.",
+      "topics": [
+        "Components — function components, why class components are legacy",
+        "JSX — what it compiles to, why props.children matters",
+        "State — useState, when to lift state, when state should live on the server",
+        "Effects — useEffect, the dependency array, cleanup, why it's harder than it looks",
+        "Refs — useRef, when to escape React's model",
+        "Forms — controlled vs uncontrolled, why react-hook-form exists",
+        "Lists and keys — why keys matter for reconciliation",
+        "Rendering performance — memo, useMemo, useCallback, when each is worth it (often: not)"
+      ],
+      "tasks": [
+        "Scaffold a Vite + React + TypeScript project; understand every file the template generated",
+        "Build a counter component, then refactor to lift state up to a parent that holds two counters",
+        "Build a controlled form with 4 fields + validation; submit fires a fake API call with loading state",
+        "Build a list of items with filter/sort; verify the key prop is correct (use id, not index)",
+        "Use the React DevTools profiler on a deliberately slow component; identify the wasted render"
+      ],
+      "project": "Build a Todo App Beyond Todos. A todo app, yes — but with categories, due dates, drag-to-reorder, dark mode, keyboard shortcuts (j/k navigation, x to toggle), localStorage persistence. No backend yet. Make it good enough you'd actually use it for a week.",
+      "resources": [
+        { "label": "React — official documentation (new docs at react.dev)", "url": "https://react.dev/learn", "note": "official, the new docs are excellent; work through Quick Start + Thinking in React + Describing the UI" },
+        { "label": "Kent C. Dodds — Epic React (free intro chapters)", "url": "https://www.epicreact.dev/learn", "note": "the most respected React teacher; full course is paid but the free overview articles are gold" },
+        { "label": "Josh Comeau — The Joy of React", "url": "https://www.joyofreact.com/", "note": "paid course but the free tutorial on useEffect is the best on the internet" },
+        { "label": "Tao Of React — Alex Kondov", "url": "https://alexkondov.com/tao-of-react/", "note": "free, the canonical opinionated guide to React patterns" },
+        { "label": "Vite — Documentation", "url": "https://vite.dev/guide/", "note": "official, the modern dev server / build tool; replaces CRA" },
+        { "label": "React Hook Form — Documentation", "url": "https://react-hook-form.com/get-started", "note": "official, the form library you'll actually want for real forms" }
+      ],
+      "questions": [
+        "Your useEffect runs every render. Look at the dependency array — what's missing? What if you remove the dependency array entirely?",
+        "Add useMemo to your filtered todo list. Compare React DevTools profiler before and after. Is the perf actually better or are you just adding indirection?",
+        "Toggle a list item's `done` state. Does the whole list re-render, or just that item? Trace it in the profiler.",
+        "Build a textarea with controlled state. Type 1000 characters. Is there lag? At what point does controlled-form pattern fail?"
+      ],
+      "exercises": [
+        "Build a custom hook `useLocalStorage<T>(key, initial)` with typed getter/setter and SSR safety.",
+        "Build a typeahead search component with debounced input and async results; show loading state.",
+        "Implement a `useDebounce` hook and verify it cleans up the timer on unmount.",
+        "Refactor a deeply prop-drilled component to use React Context; measure if the perf differs in profiler."
+      ],
+      "outputs": [
+        "Repo todo-app-beyond with all features working, deployed to Vercel",
+        "10 reusable custom hooks in hooks/ directory",
+        "React DevTools profiler screenshots demonstrating you can read render performance",
+        "Notes/react-mental-model.md — your one-pager on when to use which hook"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Next.js App Router — Where Most Frontend Jobs Are Going",
+      "phase": "Frontend",
+      "commitment_hours": "25-30",
+      "context": "Next.js App Router is the dominant React production stack. Server Components, the file-based router, Server Actions, route handlers, layouts — these are the building blocks of every Next.js codebase. This week you build a real app on it.",
+      "topics": [
+        "Server Components vs Client Components — the boundary, the 'use client' directive",
+        "File-based routing — pages, layouts, loading, error, not-found, route groups",
+        "Dynamic routes — [slug], [...slug], generateStaticParams",
+        "Data fetching in Server Components — fetch with caching, revalidation, parallel vs waterfall",
+        "Server Actions — form submissions without an API route",
+        "Route Handlers — when you still need /api routes",
+        "Middleware — request rewrites, auth gates, header manipulation",
+        "Streaming and Suspense — what users see while data loads"
+      ],
+      "tasks": [
+        "Scaffold a Next.js 15+ App Router project with TypeScript + Tailwind",
+        "Build a blog with /[slug] pages that fetch from a markdown file or a CMS; pre-render with generateStaticParams",
+        "Add a contact form using a Server Action; validate with Zod; redirect on success",
+        "Implement nested layouts: a marketing layout for / and a dashboard layout for /app/*",
+        "Add a route handler at /api/og for dynamic Open Graph images using @vercel/og"
+      ],
+      "project": "Build a Blog with CMS. Next.js App Router + MDX for content + Tailwind for styling + Vercel for hosting. Posts live in a content/ folder as .mdx files; pre-rendered at build time with generateStaticParams. Add a tag system, search, RSS feed, OG image generation, dark mode. Lighthouse 100s. Deploy to a custom domain. This is the same architecture as Lee Robinson's, Josh Comeau's, and most developer blogs.",
+      "resources": [
+        { "label": "Next.js — Documentation (App Router)", "url": "https://nextjs.org/docs", "note": "official, work through Getting Started + Routing + Data Fetching" },
+        { "label": "Lee Robinson — Next.js Conf talks", "url": "https://leerob.io/", "note": "Vercel's VP DX; his blog has practical Next.js patterns" },
+        { "label": "Robin Wieruch — The Road to Next", "url": "https://www.road-to-next.com/", "note": "paid book but free preview is substantial; modern Next.js patterns" },
+        { "label": "Theo (t3.gg) — YouTube", "url": "https://www.youtube.com/c/TheoBrowne1017", "note": "YouTube, opinionated Next.js commentary, fast updates as Next.js evolves" },
+        { "label": "Next.js examples repo", "url": "https://github.com/vercel/next.js/tree/canary/examples", "note": "official, 200+ runnable examples for every integration" },
+        { "label": "Vercel — Patterns library", "url": "https://www.patterns.dev/", "note": "official, the canonical reference for App Router patterns" }
+      ],
+      "questions": [
+        "View source on a Server Component page vs a Client Component page. What's the HTML difference? Why does this matter for SEO?",
+        "Disable JavaScript in your browser; load your blog. Does it still work? It should — Server Components render server-side.",
+        "Two of your data fetches don't depend on each other. Are they running in parallel or waterfall? Use the Network tab to verify.",
+        "Add `'use client'` to a parent component. Now its children — are they still server or client? Trace through to verify."
+      ],
+      "exercises": [
+        "Implement a search-as-you-type using `useSearchParams` and `router.replace`; URL must remain shareable.",
+        "Build a paginated list with cursor-based URLs; back/forward browser buttons work correctly.",
+        "Implement Suspense around a slow async server component; show a skeleton loader in loading.tsx.",
+        "Create a middleware that redirects logged-in users away from /login to /dashboard."
+      ],
+      "outputs": [
+        "Blog deployed at a custom domain with Lighthouse 100s",
+        "MDX content pipeline with at least 3 real posts",
+        "RSS feed and dynamic OG images working",
+        "Notes/next-app-router.md — your decision tree for Server vs Client Components"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Tailwind CSS and Design Systems — Building Beautiful Fast",
+      "phase": "Frontend",
+      "commitment_hours": "20-25",
+      "context": "Tailwind is the dominant CSS approach in modern React. Combined with shadcn/ui (copy-paste components, not a library), you can build production-quality UI faster than ever. This week you build the muscle.",
+      "topics": [
+        "Tailwind core — utility-first, the box model in utilities, why arbitrary values matter",
+        "Responsive design with breakpoints — sm/md/lg/xl/2xl modifiers",
+        "Dark mode patterns — class strategy, the dark: modifier",
+        "Custom theme — extending tailwind.config, design tokens, CSS variables",
+        "shadcn/ui — components-as-source-code, when this approach wins",
+        "Radix UI primitives — accessible interactive components",
+        "Lucide / Heroicons / Phosphor — icon libraries",
+        "Framer Motion / Motion One — animations that respect users"
+      ],
+      "tasks": [
+        "Install Tailwind + shadcn/ui on your blog from week 6",
+        "Build a design system page that shows your colour palette, type scale, spacing, button variants",
+        "Use shadcn/ui to add a command palette (cmdk) to your blog: cmd+k opens search",
+        "Add dark mode with a system preference toggle that persists in localStorage",
+        "Build a hero section with a subtle animated gradient using Framer Motion (or CSS)"
+      ],
+      "project": "Build a Production-Quality UI Kit. Take 8-12 components from a real product (Linear-style nav, Stripe-style pricing table, Notion-style command palette, Vercel-style deploy button) and rebuild them in your own design system. Tailwind + shadcn/ui base. Make it a Storybook or a static showcase site. This is portfolio gold for frontend roles.",
+      "resources": [
+        { "label": "Tailwind CSS — Documentation", "url": "https://tailwindcss.com/docs", "note": "official, the docs are themselves the canonical reference; v4 is current" },
+        { "label": "shadcn/ui — Documentation", "url": "https://ui.shadcn.com/docs", "note": "official, the dominant React component pattern in 2025; CLI installs components into your repo" },
+        { "label": "Radix UI Primitives", "url": "https://www.radix-ui.com/primitives", "note": "official, accessible component primitives; shadcn/ui sits on top" },
+        { "label": "Josh Comeau — A Modern CSS Reset", "url": "https://www.joshwcomeau.com/css/custom-css-reset/", "note": "blog, what to put at the top of every project before Tailwind" },
+        { "label": "Refactoring UI — Adam Wathan, Steve Schoger (book)", "url": "https://www.refactoringui.com/", "note": "paid book, the canonical 'how to design well as a developer' book" },
+        { "label": "Motion (Framer Motion) — Documentation", "url": "https://motion.dev/docs", "note": "official, the standard React animation library" }
+      ],
+      "questions": [
+        "Compare a Tailwind class soup vs an equivalent CSS-modules approach for the same component. Which is faster to write? To read in 6 months?",
+        "Run Lighthouse on a page heavy with Framer Motion animations. What's the Cumulative Layout Shift score? Are your animations causing layout thrashing?",
+        "Pick a Radix primitive (e.g. Dialog). Keyboard-only navigation — escape closes, focus traps, focus return on close. Did you have to write any of that?",
+        "Your design system uses --color-primary as a CSS variable. Where do you store the value? How does dark mode swap it without re-renders?"
+      ],
+      "exercises": [
+        "Build a Tailwind-themed button with 4 variants × 3 sizes using class-variance-authority (cva) and tailwind-merge.",
+        "Implement a responsive masonry layout using CSS Grid + arbitrary Tailwind values.",
+        "Build a modal that traps focus, closes on escape, returns focus on close. Use Radix Dialog as the base.",
+        "Animate a list of cards in/out as items are added/removed using Framer Motion's AnimatePresence."
+      ],
+      "outputs": [
+        "UI kit with 8-12 production-quality components; live demo page deployed",
+        "Design system documented in a single .md or Storybook",
+        "Dark mode + light mode + system preference all working with no flash",
+        "Notes/tailwind.md — the patterns you keep reaching for"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "State Management at Scale — Beyond useState",
+      "phase": "Frontend",
+      "commitment_hours": "20-25",
+      "context": "When state grows, useState isn't enough. This week you learn the modern state landscape: Zustand for client state, TanStack Query for server state, URL state for shareability, Jotai/Recoil for atomic state — and when reaching for these is over-engineering.",
+      "topics": [
+        "Categories of state — local UI, global client, server cache, URL, form",
+        "Zustand — the simplest global state, why most teams pick it",
+        "TanStack Query (React Query) — the right way to do server cache",
+        "Server-state vs client-state — the boundary, why mixing them creates pain",
+        "URL state — useSearchParams, when state belongs in the URL",
+        "Form state — react-hook-form vs raw useState",
+        "Context vs Zustand — when each is appropriate",
+        "Stale time, cache time, refetch on focus — TanStack Query's mental model"
+      ],
+      "tasks": [
+        "Refactor a deeply prop-drilled component tree into a Zustand store; verify renders don't cascade",
+        "Wrap a fetch-heavy page with TanStack Query; observe instant cached responses on revisit",
+        "Move a filter state into URL search params; verify reload and share preserve the filter",
+        "Build a form with react-hook-form + Zod for validation; track dirty/touched fields",
+        "Add optimistic updates to a mutation: UI updates immediately, rolls back on error"
+      ],
+      "project": "Build a Kanban Board. Drag-and-drop columns and cards, persisted to localStorage initially. Use Zustand for the board state, TanStack Query for the (mocked) backend sync, react-hook-form + Zod for the card-edit form. Add keyboard shortcuts. Add undo/redo. Implement optimistic mutations so the UI never feels laggy. This single project demonstrates 80% of frontend interview competence.",
+      "resources": [
+        { "label": "Zustand — Documentation", "url": "https://zustand.docs.pmnd.rs/", "note": "official, the most-used React state library; the docs are short and excellent" },
+        { "label": "TanStack Query — Documentation", "url": "https://tanstack.com/query/latest/docs/framework/react/overview", "note": "official, the canonical server-state library" },
+        { "label": "TkDodo's Blog — Practical React Query", "url": "https://tkdodo.eu/blog/practical-react-query", "note": "blog, the canonical deep-dive series by TanStack Query's maintainer" },
+        { "label": "React Hook Form — Documentation", "url": "https://react-hook-form.com/", "note": "official, the form library to know" },
+        { "label": "Zod — Documentation", "url": "https://zod.dev/", "note": "official, runtime validation that produces TypeScript types" },
+        { "label": "dnd-kit — Documentation", "url": "https://dndkit.com/", "note": "official, the React drag-and-drop library; you'll use it in the kanban project" }
+      ],
+      "questions": [
+        "TanStack Query has staleTime: 0 by default. What does that mean in practice? Why is the default not better?",
+        "Refactor a form from useState to react-hook-form. How many re-renders did you eliminate per keystroke? Verify in profiler.",
+        "Move filter state to URL — what's the trade-off when you have 10+ filters? When does URL state become a liability?",
+        "Zustand vs Redux Toolkit — pick a real codebase decision. Which would you use for a 2-person startup? For a 50-person team?"
+      ],
+      "exercises": [
+        "Build a Zustand store with persisted middleware (localStorage). Verify state persists across page reloads.",
+        "Set up TanStack Query with a query key factory pattern for type-safe keys.",
+        "Implement infinite scroll with useInfiniteQuery; load 20 items at a time.",
+        "Build a multi-step form with react-hook-form's useFieldArray for dynamic fields."
+      ],
+      "outputs": [
+        "Repo kanban-board deployed; drag and drop working; optimistic updates; undo/redo",
+        "All 4 state categories used appropriately in the kanban",
+        "TanStack Query devtools enabled in dev mode; demonstrating cache behaviour",
+        "Notes/state-management.md — your decision tree for which state goes where"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Node.js, Express, and the Server Side of JavaScript",
+      "phase": "Backend",
+      "commitment_hours": "25-30",
+      "context": "Before Hono and Bun, there was Node + Express. Most production codebases you'll touch still run on it. This week you understand the runtime — event loop, streams, modules — and build a real REST API on it.",
+      "topics": [
+        "The Node.js runtime — event loop, libuv, what makes it different from a browser",
+        "Modules — CommonJS vs ESM, why this is still a mess",
+        "The standard library — fs, path, stream, http, what every Node dev should know",
+        "Express — middleware, routing, error handling",
+        "Async patterns — callbacks (legacy), promises, async/await",
+        "Process management — env vars, signals, graceful shutdown",
+        "Performance — clustering, worker threads, async vs CPU-bound work",
+        "Alternatives — Fastify (faster), Hono (edge-friendly), Bun's built-in router"
+      ],
+      "tasks": [
+        "Install Node 22 LTS; verify `node --version`; understand the difference between Node and Bun",
+        "Build a CRUD REST API for `notes` (create, read, list, update, delete); store in memory first",
+        "Add middleware: logging (morgan), error handling, CORS, body parsing",
+        "Implement graceful shutdown: SIGTERM closes the HTTP server and existing connections cleanly",
+        "Benchmark your Express API with `oha` or `autocannon` at 1000 RPS; profile with --prof"
+      ],
+      "project": "Build a URL Shortener Backend. Express + TypeScript + SQLite (with better-sqlite3). Endpoints: POST /shorten (input long URL, output short code), GET /:code (redirect), GET /stats/:code (click count, last click). Add rate limiting (express-rate-limit), input validation (zod), and basic auth (just an API key for v1). Deploy to a real host. The endpoints will get hit in week 10 when you do auth properly.",
+      "resources": [
+        { "label": "Node.js — Official documentation", "url": "https://nodejs.org/docs/latest/api/", "note": "official, the canonical reference" },
+        { "label": "Express — Documentation", "url": "https://expressjs.com/", "note": "official; the docs are the canonical learning material" },
+        { "label": "Node.js Design Patterns — Mario Casciaro", "url": "https://www.nodejsdesignpatterns.com/", "note": "paid book, the canonical Node.js advanced reference" },
+        { "label": "The Node.js Event Loop — Tyler Hawkins", "url": "https://www.youtube.com/watch?v=8aGhZQkoFbQ", "note": "YouTube, the clearest visual explanation of the event loop in 18 minutes" },
+        { "label": "Hono — Documentation", "url": "https://hono.dev/", "note": "official, the modern alternative to Express; runs everywhere" },
+        { "label": "better-sqlite3 — Documentation", "url": "https://github.com/WiseLibs/better-sqlite3/wiki", "note": "GitHub, the fastest sync SQLite driver; perfect for small APIs" }
+      ],
+      "questions": [
+        "Time a CPU-heavy task on your Express server. Does it block other requests? What if you offload it to a worker thread?",
+        "Your API benchmarks at 1500 RPS. Where's the bottleneck — JS execution, JSON serialisation, DB? Use the Node profiler.",
+        "Send SIGTERM to your running server. Does it exit cleanly or does it kill in-flight requests? Add graceful shutdown if not.",
+        "Compare Express to Hono for the same endpoint. RPS difference? Code clarity?"
+      ],
+      "exercises": [
+        "Write a middleware that times every request and adds an `X-Response-Time` header.",
+        "Implement a streaming response endpoint: stream a large JSON file rather than loading it all into memory.",
+        "Set up Pino structured logging; verify logs are JSON in production, pretty in dev.",
+        "Implement a global error handler that converts uncaught Zod errors to 422 responses with field-level details."
+      ],
+      "outputs": [
+        "Repo url-shortener-api deployed to Render or Fly.io with custom domain",
+        "Rate limiting verified by hammering with oha; verify 429s appear correctly",
+        "Graceful shutdown working: SIGTERM closes connections cleanly",
+        "Benchmark report comparing Express + Hono on the same endpoint"
+      ]
+    },
+    {
+      "number": 10,
+      "title": "PostgreSQL, Prisma, and Designing Data You Won't Regret",
+      "phase": "Backend",
+      "commitment_hours": "25-30",
+      "context": "Postgres is the right default for 99% of apps. Prisma makes the TypeScript developer experience excellent. This week you learn schema design, indexes, transactions — the database knowledge that separates juniors who fear migrations from seniors who change schemas confidently.",
+      "topics": [
+        "Postgres fundamentals — tables, columns, types, primary keys, foreign keys",
+        "Schema design — normalisation vs denormalisation, when to break the rules",
+        "Indexes — B-tree, GIN, partial, when each helps, when they hurt writes",
+        "Transactions and isolation levels — what 'serialisable' actually means",
+        "Prisma — the schema file, generator, client, migration workflow",
+        "Migrations — never edit a migration after it's deployed",
+        "N+1 queries — the most common performance bug; use Prisma's include vs select",
+        "Connection pooling — why you need it, pgBouncer for serverless"
+      ],
+      "tasks": [
+        "Install Postgres locally (or use Supabase free tier or Neon free tier)",
+        "Design a 5-table schema for a blog: User, Post, Comment, Tag, PostTag join; draw the ERD first",
+        "Implement the schema in Prisma; run migrations; seed with realistic test data",
+        "Write 10 queries: simple finds, joins, aggregations, group-by; benchmark with EXPLAIN ANALYZE",
+        "Add the obvious missing indexes; rerun EXPLAIN ANALYZE; observe the improvements"
+      ],
+      "project": "Migrate Your URL Shortener to Postgres + Prisma. Take the in-memory or SQLite version from week 9. Move it to Postgres with Prisma. Add a User model + per-user link tracking. Add migrations. Add a seed script that generates 10000 fake links + click logs to stress-test queries. Document the indexes you added and the query speedups.",
+      "resources": [
+        { "label": "PostgreSQL — Official tutorial", "url": "https://www.postgresql.org/docs/current/tutorial.html", "note": "official, work through the first 5 chapters" },
+        { "label": "Prisma — Documentation", "url": "https://www.prisma.io/docs", "note": "official, the canonical TypeScript ORM" },
+        { "label": "Markus Winand — Use the Index, Luke!", "url": "https://use-the-index-luke.com/", "note": "free book, the canonical reference on SQL indexing" },
+        { "label": "Robin Wieruch — Postgres + Prisma + Next.js tutorial", "url": "https://www.robinwieruch.de/", "note": "blog, multiple practical tutorials integrating the stack" },
+        { "label": "Designing Data-Intensive Applications — Martin Kleppmann (chapters 7-9)", "url": "https://dataintensive.net/", "note": "book, deep on transactions, consistency, partitioning; pricey but worth it" },
+        { "label": "pganalyze — Modern Postgres performance series", "url": "https://pganalyze.com/blog", "note": "blog, real-world production Postgres optimisation case studies" }
+      ],
+      "questions": [
+        "EXPLAIN ANALYZE your slowest query before adding an index. What was the cost? After adding the index? When does the index hurt?",
+        "Your link-click count is updated on every redirect — at 1000 redirects/sec, what's the database load? Would a write-behind cache help? At what scale?",
+        "Run two parallel transactions that update the same row. With the default isolation level, what happens? With SERIALIZABLE?",
+        "Your Prisma query loads a Post with all its Comments. Look at the SQL it generated. Is it one query, two queries, or an N+1?"
+      ],
+      "exercises": [
+        "Add a unique constraint on a column; verify it rejects duplicates with a clear Prisma error.",
+        "Implement soft deletes using a deletedAt column + a Prisma middleware that filters them.",
+        "Write a partial index for active users (`WHERE deleted_at IS NULL`); compare to a full index.",
+        "Use Prisma's transaction client to atomically update two related rows; verify rollback on error."
+      ],
+      "outputs": [
+        "Repo url-shortener-api now on Postgres + Prisma; deployed",
+        "Documented indexes added with before/after EXPLAIN ANALYZE",
+        "10000-row seed script and a verified query that's fast under load",
+        "Notes/postgres-prisma.md — your schema design + index decision tree"
+      ]
+    },
+    {
+      "number": 11,
+      "title": "REST API Design — Endpoints People Don't Hate",
+      "phase": "Backend",
+      "commitment_hours": "20-25",
+      "context": "Most REST APIs are inconsistent, surprising, and painful. This week you learn the conventions that make APIs predictable: resource modelling, status codes, pagination, errors, versioning. Then you write the OpenAPI spec for your URL shortener.",
+      "topics": [
+        "Resource modelling — nouns over verbs, plural collections, sub-resources",
+        "HTTP methods — GET/POST/PUT/PATCH/DELETE, idempotency, safety",
+        "Status codes — 2xx success, 3xx redirect, 4xx client error, 5xx server error",
+        "Error response shape — RFC 7807 problem details, consistent shape",
+        "Pagination — cursor vs offset, when each fits",
+        "Filtering, sorting, sparse fieldsets",
+        "Versioning — URL, header, content negotiation; the trade-offs",
+        "OpenAPI 3.x — documenting the API, generating SDKs"
+      ],
+      "tasks": [
+        "Audit your week-10 URL shortener against the conventions above; list 5 things that are wrong",
+        "Refactor the API to fix them; rename endpoints, fix status codes, add cursor pagination",
+        "Write an OpenAPI spec for the API (use Scalar, Stoplight, or hand-write YAML)",
+        "Generate a typed client SDK from the OpenAPI using openapi-typescript-codegen",
+        "Add a typed error response shape (problem+json style)"
+      ],
+      "project": "Build a Public API with Real Documentation. Take your URL shortener and ship an OpenAPI 3.1 spec + interactive Scalar or Swagger UI documentation at /docs. Document every endpoint, every error response, every authentication detail. Include a 'Try it' button that works. Document rate limits. This is what every API as a product looks like — Stripe, Twilio, OpenAI, GitHub.",
+      "resources": [
+        { "label": "OpenAPI Specification 3.1", "url": "https://spec.openapis.org/oas/v3.1.0", "note": "official, the spec itself is well-written" },
+        { "label": "Scalar — API Reference UI", "url": "https://github.com/scalar/scalar", "note": "GitHub, modern alternative to Swagger UI, much better DX" },
+        { "label": "RESTful Web Services Cookbook — Subbu Allamaraju", "url": "https://www.oreilly.com/library/view/restful-web-services/9780596809140/", "note": "O'Reilly book, the canonical REST design reference; older but evergreen" },
+        { "label": "RFC 7807 — Problem Details for HTTP APIs", "url": "https://datatracker.ietf.org/doc/html/rfc7807", "note": "official RFC, the standard error response shape" },
+        { "label": "Stripe API Reference", "url": "https://stripe.com/docs/api", "note": "official, the canonical 'this is what a great API doc looks like'; read it for taste" },
+        { "label": "JSON:API — Specification", "url": "https://jsonapi.org/", "note": "an opinionated spec for JSON REST APIs; useful as a reference even if you don't adopt it wholesale" }
+      ],
+      "questions": [
+        "POST /links/{id}/visits to increment visit count — is this RESTful? What's the more idiomatic alternative?",
+        "Your DELETE returns 200 with the deleted resource. What status code do most APIs use for DELETE? Why does it matter?",
+        "Cursor-based pagination — what cursor do you use? Why is offset-based pagination broken for changing data?",
+        "Bump your API to v2 with a breaking change. Do you put v2 in the URL, in a header, or use content negotiation? Justify."
+      ],
+      "exercises": [
+        "Add a /healthz endpoint that returns 200 with a JSON body including version + dependencies status.",
+        "Implement cursor-based pagination using opaque tokens (base64 the last seen ID + sort key).",
+        "Return validation errors in problem+json format with field-level errors.",
+        "Generate a TypeScript client SDK from your OpenAPI spec; verify a real call against the deployed API works."
+      ],
+      "outputs": [
+        "Updated API with REST conventions applied and OpenAPI spec",
+        "/docs endpoint serving interactive Scalar or Swagger UI",
+        "Generated SDK used in a client app",
+        "Notes/api-design.md — your principles, with examples from real APIs you admire"
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Authentication and Authorization — Done Right",
+      "phase": "Backend",
+      "commitment_hours": "25-30",
+      "context": "Auth is the foothold for every other security mistake. This week you understand sessions vs JWTs, OAuth flows, password hashing, multi-factor, role-based access — and you wire real auth into your URL shortener.",
+      "topics": [
+        "Sessions vs JWTs — when each fits, why sessions are usually right",
+        "Password storage — bcrypt vs argon2, never plain or md5",
+        "OAuth 2.0 fundamentals — authorization code flow, why PKCE matters",
+        "OpenID Connect — OAuth + identity layer, what you actually want for login",
+        "Auth provider services — Clerk, Auth0, Supabase Auth, NextAuth/Auth.js, building it yourself",
+        "Magic link vs password vs social login — UX trade-offs",
+        "Multi-factor authentication — TOTP, WebAuthn / passkeys",
+        "Role-based access control — roles, permissions, policy as code"
+      ],
+      "tasks": [
+        "Add Auth.js (NextAuth v5) to a Next.js project with email + Google OAuth",
+        "Implement password reset via magic link (the only sane password reset)",
+        "Add a 'sign in with Google' flow; understand each redirect in the OAuth dance",
+        "Add a TOTP-based 2FA flow using `otplib` or `speakeasy`",
+        "Implement RBAC: an `admin` route that only users with role='admin' can access"
+      ],
+      "project": "Add Real Auth to Your URL Shortener. Migrate from API-key auth to full user accounts. Magic link login as primary, with optional Google OAuth. Each user owns their links. Admin users can see all links. Add a /me endpoint, a /profile page, a delete-my-account flow that respects data retention rules. Deploy. Make sure password reset, email verification, session expiration, and logout all work end to end.",
+      "resources": [
+        { "label": "Auth.js (NextAuth v5) — Documentation", "url": "https://authjs.dev/", "note": "official, the most-used auth library for Next.js" },
+        { "label": "OWASP — Authentication Cheat Sheet", "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html", "note": "official, the canonical auth security reference" },
+        { "label": "Lucia Auth — Documentation", "url": "https://lucia-auth.com/", "note": "official, modern roll-your-own auth in TypeScript; great learning resource even if you use Auth.js" },
+        { "label": "OAuth 2.0 Simplified — Aaron Parecki", "url": "https://www.oauth.com/", "note": "free book, the canonical OAuth 2.0 explanation" },
+        { "label": "Clerk — Documentation", "url": "https://clerk.com/docs", "note": "official, hosted auth as a service; learn it even if you don't use it" },
+        { "label": "Web Authentication: An API for accessing Public Key Credentials Level 2 (passkeys)", "url": "https://webauthn.guide/", "note": "the modern passwordless future; a friendly intro to WebAuthn" }
+      ],
+      "questions": [
+        "Trace through the OAuth code flow with PKCE step by step. What's the role of the code_verifier? What attack does PKCE prevent?",
+        "Sessions stored in Postgres vs JWTs — which is better for a single app? For a microservices architecture? Why?",
+        "Your password hashing takes 200ms per login. Is that good or bad? Why is slow password hashing intentional?",
+        "User signs up, never verifies email, leaves the account dormant. After how long do you delete it? What's your data retention policy?"
+      ],
+      "exercises": [
+        "Implement a session middleware: validates a session cookie, attaches user to req.user, returns 401 if invalid.",
+        "Set up Auth.js with at least 2 providers (email + Google) in a Next.js app.",
+        "Implement role-based access control as a middleware: only users with role X can access route Y.",
+        "Configure HTTP-only, secure, same-site cookies for sessions. Verify in browser dev tools."
+      ],
+      "outputs": [
+        "Auth wired into the URL shortener with email + Google OAuth + TOTP 2FA",
+        "Password reset and email verification flows working end to end",
+        "RBAC: admin and user roles with appropriate route protection",
+        "Notes/auth.md — your decision tree for build vs Clerk/Auth0/Supabase Auth"
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Payments with Stripe — The Easy Way to Lose All Your Money",
+      "phase": "Real-World Features",
+      "commitment_hours": "20-25",
+      "context": "If your product takes money, it uses Stripe (or sometimes Lemon Squeezy, Paddle for international tax). Integrating Stripe wrong has caused real companies to lose hundreds of thousands. This week you do it right.",
+      "topics": [
+        "Stripe primitives — Customers, Products, Prices, Subscriptions, PaymentIntents",
+        "Checkout vs Elements — when to use the hosted page vs custom UI",
+        "Webhooks — why they're the source of truth, why signature verification matters",
+        "Idempotency keys — preventing double charges from network retries",
+        "Subscription lifecycle — trial, active, past_due, canceled — and what to do at each state",
+        "Refunds and disputes — partial vs full, chargebacks",
+        "Tax — Stripe Tax vs Paddle vs Merchant of Record",
+        "Testing — Stripe CLI, test cards, webhook forwarding"
+      ],
+      "tasks": [
+        "Create a Stripe account; install Stripe CLI; trigger test webhooks locally",
+        "Build a Stripe Checkout integration that takes a payment for a one-time product",
+        "Build a subscription flow with a 7-day trial; verify the lifecycle events fire correctly",
+        "Implement webhook handling with signature verification + idempotency",
+        "Build a customer portal so users can cancel/upgrade subscriptions"
+      ],
+      "project": "Add Pricing to Your URL Shortener. Two paid plans: $5/mo for 1000 links/mo, $20/mo for unlimited. Free tier capped at 10 links. Use Stripe Checkout for new subscriptions, the customer portal for managing existing ones. Webhook-driven entitlements: when subscription becomes active, the user's plan updates in your DB. Build a billing page that shows current plan + usage + an upgrade button. Test with the Stripe CLI before deploying.",
+      "resources": [
+        { "label": "Stripe — Documentation", "url": "https://stripe.com/docs", "note": "official, the canonical API docs anywhere; read Subscriptions + Webhooks chapters" },
+        { "label": "Stripe CLI", "url": "https://stripe.com/docs/stripe-cli", "note": "official, the tool that makes webhook development sane" },
+        { "label": "Lee Robinson — How to Build a SaaS in Next.js", "url": "https://github.com/leerob/saas-starter", "note": "GitHub, the canonical reference repo for Stripe + Next.js + Postgres" },
+        { "label": "Patrick McKenzie — Stripe Atlas Guide to SaaS Billing", "url": "https://www.kalzumeus.com/2020/05/19/stripe-atlas-saas-guide/", "note": "blog, the most-cited essay on SaaS billing" },
+        { "label": "Lemon Squeezy — Merchant of Record alternative", "url": "https://docs.lemonsqueezy.com/", "note": "official, simpler than Stripe for international tax; worth knowing" },
+        { "label": "Stripe Tax — Documentation", "url": "https://stripe.com/docs/tax", "note": "official, add-on that handles sales tax + VAT" }
+      ],
+      "questions": [
+        "Your webhook handler crashes. Stripe retries with exponential backoff. What happens if your code runs twice? Test it.",
+        "User subscribes, immediately cancels — what state does Stripe leave them in? When does access actually end? How does your UI communicate that?",
+        "Compare Stripe Checkout vs custom Elements UI. Which loses fewer customers in the checkout funnel? Which costs you more engineering?",
+        "Your subscription's `current_period_end` says June 30 but it's actually July 5 — what's the lag? Why webhooks instead of polling for source of truth?"
+      ],
+      "exercises": [
+        "Implement webhook signature verification using `stripe.webhooks.constructEvent`. Verify rejection of an unsigned request.",
+        "Add idempotency keys to your subscription creation; verify duplicate POSTs don't create duplicate subscriptions.",
+        "Build a webhook event handler for `customer.subscription.deleted`; verify your DB downgrades the user.",
+        "Implement a billing usage limit: when the user hits their plan limit, return 402 Payment Required + a clear UI."
+      ],
+      "outputs": [
+        "URL shortener with working Stripe subscriptions, deployed",
+        "Webhook handler tested with Stripe CLI and verified in production",
+        "Billing page showing current plan, usage, upgrade button",
+        "Notes/stripe.md — your gotchas list (webhook idempotency, subscription state machine)"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Email — Transactional, Marketing, and Why Your Inbox Hates You",
+      "phase": "Real-World Features",
+      "commitment_hours": "15-20",
+      "context": "Every app sends email. Doing it wrong (low deliverability, ugly templates, no unsubscribe) costs you users. This week you set up real transactional + marketing email with proper DKIM/SPF/DMARC, beautiful templates, and a working unsubscribe flow.",
+      "topics": [
+        "Transactional email — Resend, Postmark, AWS SES; how they differ",
+        "Marketing email — Loops, Mailchimp, ConvertKit; CAN-SPAM and GDPR rules",
+        "Deliverability — SPF, DKIM, DMARC, why your email lands in spam",
+        "React Email — building HTML emails with components",
+        "Templates and personalisation — placeholders, segmentation, A/B subject lines",
+        "Unsubscribe — one-click vs preference centre, regulatory requirements",
+        "Bounce and complaint handling — what to do with hard bounces",
+        "Plain-text fallback — every HTML email needs one"
+      ],
+      "tasks": [
+        "Sign up for Resend free tier; verify a domain with DKIM and SPF; send a test email",
+        "Install React Email; build a 'welcome' email template with your branding",
+        "Implement triggered emails in your URL shortener: welcome on signup, receipt on subscription, weekly digest of clicks",
+        "Build an unsubscribe flow that updates a user's preferences in your DB",
+        "Send a real email to your own inbox; check the source for SPF/DKIM/DMARC pass headers"
+      ],
+      "project": "Build a Full Email Layer for Your URL Shortener. Welcome email + verify-email + password reset + receipt + weekly usage digest + cancellation confirmation. Use React Email for templates. Use Resend for transactional delivery. Add an unsubscribe-from-marketing flag (but always send transactional). Test deliverability with mail-tester.com — aim for 9/10 or higher.",
+      "resources": [
+        { "label": "Resend — Documentation", "url": "https://resend.com/docs", "note": "official, the modern transactional email service; great DX" },
+        { "label": "React Email — Documentation", "url": "https://react.email/docs", "note": "official, components for building reliable HTML emails" },
+        { "label": "Mailgun — Email Best Practices", "url": "https://documentation.mailgun.com/en/latest/best_practices.html", "note": "official; deliverability fundamentals" },
+        { "label": "MailerCheck or Mail Tester", "url": "https://www.mail-tester.com/", "note": "free, send your test email to a given address, get a 10-point deliverability score with diagnosis" },
+        { "label": "Loops — Marketing automation", "url": "https://loops.so/docs", "note": "official, modern marketing email tool that pairs well with Resend" },
+        { "label": "Litmus — Email design + testing platform", "url": "https://www.litmus.com/", "note": "official, the standard for testing across email clients (Outlook, Gmail, Apple Mail)" }
+      ],
+      "questions": [
+        "Your welcome email lands in spam. What's the most likely cause? Check your DKIM and SPF setup.",
+        "Run your email through mail-tester.com. What's the score? Where did you lose points?",
+        "Your weekly digest is 60KB of HTML. Gmail clips emails over 102KB. Is that a problem now? At what subscriber count is your bandwidth a real cost?",
+        "User clicks unsubscribe but transactional emails (receipts) still send. Is that legal? Is it good UX?"
+      ],
+      "exercises": [
+        "Build a React Email template with components for header, body, footer. Render it to HTML.",
+        "Set up SPF, DKIM, DMARC records for a custom domain; verify with mxtoolbox.com.",
+        "Implement one-click unsubscribe per the List-Unsubscribe header.",
+        "Build a bounce-handling webhook that marks users as un-deliverable after 3 hard bounces."
+      ],
+      "outputs": [
+        "Custom domain configured with passing DKIM + SPF + DMARC",
+        "5 transactional emails working in the URL shortener",
+        "Mail-tester score 9/10 or higher for transactional sends",
+        "Notes/email.md — your deliverability checklist for any future product"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "File Uploads, Object Storage, and CDNs",
+      "phase": "Real-World Features",
+      "commitment_hours": "20-25",
+      "context": "Profile pictures, user-generated content, document attachments — every app needs file uploads. Done wrong, you're paying for petabytes of dead storage and serving images through your slow Node server. This week you do it right.",
+      "topics": [
+        "S3 and S3-compatible services — Cloudflare R2, Backblaze B2, MinIO",
+        "Presigned URLs — uploads that don't pass through your server",
+        "Image optimisation — resizing, format conversion (AVIF, WebP), lazy loading",
+        "CDN basics — Cloudflare, Fastly, Bunny.net; cache headers; purging",
+        "Direct-to-S3 uploads with progress tracking",
+        "File validation — type, size, content-sniffing for security",
+        "Privacy — signed URLs vs public URLs, expiration",
+        "Image services — Cloudinary, Cloudflare Images, ImageKit — when to outsource"
+      ],
+      "tasks": [
+        "Set up an S3-compatible bucket (R2, B2, or AWS S3); configure CORS",
+        "Implement direct-to-S3 upload using presigned URLs — file does not pass through your backend",
+        "Add client-side image resizing before upload (avoid uploading 10MB photos)",
+        "Set up Cloudflare CDN in front of your bucket; verify cache hit headers",
+        "Implement signed URLs for private files with 1-hour expiration"
+      ],
+      "project": "Add Avatar Uploads to Your URL Shortener. User profile gets an avatar. Direct-to-R2 upload using presigned URLs. Server stores only the URL. Resize on upload to 256×256 webp. Serve via Cloudflare CDN. Verify the file never touches your Node server. Test with 10 concurrent uploads.",
+      "resources": [
+        { "label": "AWS — Presigned URLs documentation", "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html", "note": "official, the canonical pattern for direct uploads" },
+        { "label": "Cloudflare R2 — Documentation", "url": "https://developers.cloudflare.com/r2/", "note": "official, S3-compatible storage with no egress fees; the right default in 2025" },
+        { "label": "Imgproxy — image optimisation", "url": "https://docs.imgproxy.net/", "note": "official, the standard self-hosted image optimisation server" },
+        { "label": "MDN — File API and Drag-and-Drop", "url": "https://developer.mozilla.org/en-US/docs/Web/API/File", "note": "official, browser APIs for files" },
+        { "label": "Uppy — File uploader library", "url": "https://uppy.io/docs/", "note": "official, the canonical pluggable file upload library with progress and pausing" },
+        { "label": "Cloudflare Images — Documentation", "url": "https://developers.cloudflare.com/images/", "note": "official; if you don't want to operate imgproxy" }
+      ],
+      "questions": [
+        "Upload a 10MB image. Where's the time going — network upload, server processing, S3 PUT? If your server's bandwidth is 1Gbps and a user's home connection is 10Mbps, who's the bottleneck?",
+        "Compare hot vs cached response from Cloudflare CDN. What's the latency difference? At what cache hit rate does the CDN start saving you real money?",
+        "Your presigned URL expired during upload. What error does the user see? How do you fix the UX?",
+        "Implement public URL vs signed URL for the same file. When is each appropriate?"
+      ],
+      "exercises": [
+        "Generate a presigned URL on the server; upload from the browser; verify the file lands in the bucket without touching the server.",
+        "Implement client-side image resizing using canvas (or browser-image-compression library).",
+        "Set Cache-Control: public, max-age=31536000, immutable on your uploaded objects; verify the CDN caches indefinitely.",
+        "Implement a file-type check using both the file extension AND the magic bytes (file content signature)."
+      ],
+      "outputs": [
+        "Direct-to-R2 avatar upload working in the URL shortener",
+        "Cloudflare CDN configured + cache hit headers verified",
+        "Signed URLs working with verified expiration",
+        "Notes/file-uploads.md — the architecture for any future file-upload feature"
+      ]
+    },
+    {
+      "number": 16,
+      "title": "WebSockets and Real-time — When HTTP Isn't Enough",
+      "phase": "Real-World Features",
+      "commitment_hours": "20-25",
+      "context": "Chat, notifications, live cursors, collaborative editing — real-time features need persistent connections. This week you understand WebSockets, Server-Sent Events, and the modern abstractions (PartyKit, Soketi, Ably) that make real-time tractable.",
+      "topics": [
+        "WebSocket basics — handshake, frames, ping/pong, closing",
+        "Server-Sent Events — when SSE beats WebSocket (one-way streams)",
+        "Hosting real-time — sticky sessions, why serverless struggles",
+        "Pub/sub patterns — Redis pub/sub, NATS, Kafka",
+        "Hosted real-time services — Ably, Pusher, PartyKit, Liveblocks",
+        "Conflict-free replicated data types (CRDTs) — Yjs, Automerge",
+        "Operational transformation vs CRDTs — Google Docs vs Figma",
+        "Scaling real-time — horizontal scaling, sharding by room"
+      ],
+      "tasks": [
+        "Build a single-room chat using native WebSocket on a Node server",
+        "Add presence: show which users are online + their cursor positions",
+        "Migrate to Server-Sent Events for one-way updates (e.g. notification feed)",
+        "Set up a free PartyKit account; deploy a real-time room hosted on edge",
+        "Implement a collaborative todo list using Yjs with persistence to Postgres"
+      ],
+      "project": "Add Real-time Click Tracking to Your URL Shortener. Open the dashboard and watch clicks happen in real time. Use Server-Sent Events for the simple stream. Add a presence indicator showing who else is currently viewing the dashboard. Deploy to Fly.io (sticky sessions work) or PartyKit. Test by hitting your shortened links from another browser; verify the dashboard updates instantly.",
+      "resources": [
+        { "label": "MDN — WebSocket API", "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket", "note": "official, the canonical browser reference" },
+        { "label": "PartyKit — Documentation", "url": "https://docs.partykit.io/", "note": "official, the easiest way to deploy real-time servers; runs on Cloudflare Workers" },
+        { "label": "Ably — Realtime Documentation", "url": "https://ably.com/docs", "note": "official, hosted pub/sub; great free tier" },
+        { "label": "Liveblocks — Documentation", "url": "https://liveblocks.io/docs", "note": "official, real-time collaboration as a service (cursors, comments, document)" },
+        { "label": "Yjs — Documentation", "url": "https://docs.yjs.dev/", "note": "official, the dominant CRDT library; powers many production collab apps" },
+        { "label": "Martin Kleppmann — CRDTs the hard parts", "url": "https://www.youtube.com/watch?v=x7drE24geUw", "note": "YouTube, the canonical talk on what CRDTs actually do" }
+      ],
+      "questions": [
+        "Run 100 WebSocket clients against your server. What's the memory per connection? At what client count does your server fall over?",
+        "Compare SSE to WebSocket for the same one-way notification stream. Which is simpler to deploy? Which scales better behind a CDN?",
+        "Add a second instance of your real-time server behind a load balancer. Without pub/sub, what breaks? With Redis pub/sub, what changes?",
+        "Build a collaborative todo with Yjs and have two browsers edit at once with network partition. What happens when they reconnect? Do the changes merge or conflict?"
+      ],
+      "exercises": [
+        "Implement a heartbeat: server sends ping every 30s; if no pong in 5s, close the connection.",
+        "Build an SSE endpoint that streams server-side events; verify clients reconnect with Last-Event-ID after a network blip.",
+        "Implement a presence indicator: each connected user gets a unique colour + name; broadcast on join/leave.",
+        "Add JWT auth to your WebSocket handshake; reject connections without a valid token."
+      ],
+      "outputs": [
+        "Real-time click tracking working on the URL shortener dashboard",
+        "Collaborative todo list with Yjs persisting to Postgres",
+        "Deployed PartyKit or Fly.io real-time service",
+        "Notes/realtime.md — when to use SSE vs WebSocket vs hosted pub/sub"
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Testing — Unit, Integration, E2E",
+      "phase": "Performance & DX",
+      "commitment_hours": "20-25",
+      "context": "Untested code is unshipped code. This week you set up the three layers of testing — unit (Vitest), integration (API + DB), end-to-end (Playwright) — for your URL shortener. Then you wire them into CI so they run on every push.",
+      "topics": [
+        "Testing pyramid — unit > integration > E2E in count, value flips at higher levels",
+        "Vitest — the modern Vite-native test runner; replaces Jest for most projects",
+        "Testing Library — the philosophy of testing what users see, not implementation",
+        "API integration testing — supertest, hitting real HTTP routes with a real DB",
+        "Test databases — pristine schema per test, transaction rollback, Testcontainers",
+        "Playwright — the cross-browser E2E framework; what makes it better than Cypress",
+        "Visual regression — Chromatic, Percy, Playwright's built-in visual comparison",
+        "Mocks vs the real thing — when each is appropriate"
+      ],
+      "tasks": [
+        "Set up Vitest in your URL shortener; write 10 unit tests for your code under src/lib",
+        "Set up Testing Library; write 5 component tests for your React components",
+        "Set up supertest + a test DB; write integration tests for /shorten and /stats endpoints",
+        "Set up Playwright; write E2E tests for the critical user flow: sign up, shorten a link, view stats",
+        "Wire all tests into GitHub Actions; every push must pass before merging"
+      ],
+      "project": "Make Your URL Shortener Test-Bulletproof. Get to 70%+ unit coverage on your business logic, 100% on critical paths (auth, payments, link creation). Add Playwright tests for the 5 most-used user flows. Add a 'flaky test detector' that retries failures and tags them. Add visual regression for the landing + dashboard pages. CI must pass before merge.",
+      "resources": [
+        { "label": "Vitest — Documentation", "url": "https://vitest.dev/guide/", "note": "official, the modern test runner of choice" },
+        { "label": "Testing Library — Documentation", "url": "https://testing-library.com/docs/", "note": "official, the philosophy plus API reference" },
+        { "label": "Kent C. Dodds — Testing JavaScript course outline", "url": "https://testingjavascript.com/", "note": "paid course but the philosophy notes are free; the canonical voice in JS testing" },
+        { "label": "Playwright — Documentation", "url": "https://playwright.dev/docs/intro", "note": "official, the dominant cross-browser E2E framework" },
+        { "label": "Testcontainers — Documentation (Node)", "url": "https://node.testcontainers.org/", "note": "official, ephemeral Postgres/Redis containers for integration tests" },
+        { "label": "Martin Fowler — Test Pyramid", "url": "https://martinfowler.com/articles/practical-test-pyramid.html", "note": "blog, the canonical essay on which tests to write" }
+      ],
+      "questions": [
+        "Your Playwright tests pass locally but fail in CI. List 5 things to check.",
+        "A flaky test passed 9 of 10 runs. Do you delete it, retry it, or fix it? What's the criterion?",
+        "Your unit tests have 95% coverage but you keep shipping bugs. What kind of tests are missing? Where in the pyramid?",
+        "Compare Playwright vs Cypress vs WebdriverIO for the same E2E flow. Which felt the most natural? Which had the best debugging?"
+      ],
+      "exercises": [
+        "Write a test for a function that depends on the current time; verify it passes by using fake timers (vi.useFakeTimers).",
+        "Mock a network request in Vitest using msw; verify your code handles 200, 401, 500 responses correctly.",
+        "Set up Testcontainers for Postgres; write an integration test that uses a real DB with a transaction that rolls back after each test.",
+        "Write a Playwright test that signs up a user, creates a link, and verifies the redirect works. Run it on Chromium, Firefox, and WebKit."
+      ],
+      "outputs": [
+        "URL shortener at 70%+ unit test coverage, 100% on critical paths",
+        "5 Playwright E2E tests for top user flows",
+        "GitHub Actions workflow running tests on every push",
+        "Notes/testing.md — your test pyramid for any future project"
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Performance — Web Vitals and Bundle Size",
+      "phase": "Performance & DX",
+      "commitment_hours": "20-25",
+      "context": "Slow apps lose users. This week you measure, then optimise: bundle size, Core Web Vitals (LCP, INP, CLS), database queries, API latencies. You learn what's worth optimising and what's premature.",
+      "topics": [
+        "Core Web Vitals — LCP, INP, CLS; what each measures and how to fix",
+        "Bundle analysis — what's in your JS bundle, how to shrink it",
+        "Image optimisation — formats (AVIF, WebP), responsive images, lazy loading",
+        "Code splitting — dynamic imports, route-level splits, what loads upfront",
+        "Database query optimisation — N+1 detection, indexes, query plans",
+        "API response caching — HTTP cache, ETag, application cache (Redis)",
+        "Edge caching — Vercel/Cloudflare CDN for static + dynamic responses",
+        "Real-user monitoring — Vercel Analytics, Sentry Performance, Pino logs"
+      ],
+      "tasks": [
+        "Run Lighthouse on your URL shortener; record current scores for Performance / Accessibility / Best Practices / SEO",
+        "Analyse the JS bundle with @next/bundle-analyzer; identify the 3 largest dependencies",
+        "Add Vercel Analytics (or Plausible); deploy; observe real-user Web Vitals",
+        "Find your slowest API endpoint; profile, fix one query with an index or a refactor",
+        "Add response caching with Cache-Control headers; verify the CDN edge-caches"
+      ],
+      "project": "2x the Speed of Your URL Shortener. Establish baselines: bundle size, LCP, INP, p50/p95 API latency. Apply targeted optimisations: image optimisation, route-level code splitting, dropping a heavy dependency, query optimisation, CDN caching. Document the before/after numbers. Don't blindly add lazy() everywhere — measure first, optimise where it pays.",
+      "resources": [
+        { "label": "web.dev — Learn Web Vitals", "url": "https://web.dev/explore/learn-core-web-vitals", "note": "official, the canonical reference; the 'Optimise' sections are gold" },
+        { "label": "Vercel — Web Analytics + Speed Insights", "url": "https://vercel.com/docs/speed-insights", "note": "official, drop-in real-user monitoring for Next.js" },
+        { "label": "Addy Osmani — Image Optimisation", "url": "https://images.guide/", "note": "free book, the canonical reference on web image optimisation" },
+        { "label": "Bundlephobia", "url": "https://bundlephobia.com/", "note": "free, check the size of any npm package before installing" },
+        { "label": "Calibre — performance monitoring", "url": "https://calibreapp.com/docs", "note": "official, professional performance monitoring; their blog is gold" },
+        { "label": "Tim Kadlec — Web Performance writing", "url": "https://timkadlec.com/", "note": "blog, working performance consultant's evergreen advice" }
+      ],
+      "questions": [
+        "Your LCP is 3.5s. What element is the LCP element? What's the largest contributor to its delay — server response, render-blocking JS, image download?",
+        "Your bundle is 800KB after gzip. What's the single dependency that's adding the most? Can it be lazy-loaded, replaced, or dropped?",
+        "Your p99 API latency is 2x your p50. What's likely causing the long tail — cold starts, slow queries, network spikes?",
+        "Cache-Control: s-maxage=3600 — what does that do? When does the CDN refresh? What happens when you push a deploy?"
+      ],
+      "exercises": [
+        "Replace a heavy moment.js usage with date-fns or dayjs; measure bundle reduction.",
+        "Convert hero image from JPEG to AVIF with a JPEG fallback; verify the savings.",
+        "Add ETag headers to your API; verify clients send If-None-Match and you respond 304 when unchanged.",
+        "Implement Redis-backed response caching for a slow endpoint; measure latency improvement."
+      ],
+      "outputs": [
+        "2x improvement on at least one Web Vital metric, documented",
+        "Bundle reduced by at least 30%, documented",
+        "Slow API endpoint optimised with measured latency drop",
+        "Web Vitals dashboard live with real user data"
+      ]
+    },
+    {
+      "number": 19,
+      "title": "CI/CD and Deploy — Shipping on Every Merge",
+      "phase": "Performance & DX",
+      "commitment_hours": "20-25",
+      "context": "Slow CI demotivates. Manual deploys break. This week you build a real CI/CD pipeline: tests on PR, preview deploys, automatic production deploy on merge, with rollback. Then you do it on Vercel, on Fly.io, on AWS to compare.",
+      "topics": [
+        "CI vs CD vs CD (Continuous Integration / Delivery / Deployment) — what each means",
+        "GitHub Actions — workflows, jobs, matrix, caching, reusable workflows",
+        "Preview deploys — every PR gets a URL; how Vercel and Fly do it",
+        "Vercel deploys — the simplest path for Next.js",
+        "Fly.io / Render / Railway — when you need a real container with a long-lived process",
+        "AWS / GCP / Azure — when (and when not) to use cloud-of-the-three",
+        "Rollback — how to revert a bad deploy in 60 seconds",
+        "Secrets management — env vars, Vault, AWS Secrets Manager, Doppler"
+      ],
+      "tasks": [
+        "Set up GitHub Actions for your URL shortener: lint + typecheck + test on every PR",
+        "Deploy to Vercel; enable preview deploys for every branch",
+        "Deploy the same app to Fly.io with a real Postgres; compare cold start vs Vercel serverless",
+        "Set up Doppler or 1Password Secrets to manage env vars; configure both your local dev and prod",
+        "Practice a rollback: deploy a bad version, then roll back via Vercel CLI in under 60 seconds"
+      ],
+      "project": "Set Up a Real Multi-Environment Pipeline. Your URL shortener should have: a `develop` branch that auto-deploys to staging.your-domain.com, a `main` branch that auto-deploys to your-domain.com, every PR getting its own preview URL. Database migrations run automatically. Secrets are managed via Doppler. Rollback to any previous deploy in <60 seconds. Document the pipeline in DEPLOYMENT.md.",
+      "resources": [
+        { "label": "GitHub Actions — Documentation", "url": "https://docs.github.com/en/actions", "note": "official, work through the Quickstart + Reusing workflows" },
+        { "label": "Vercel — Documentation", "url": "https://vercel.com/docs", "note": "official, the easiest production deploy path for Next.js" },
+        { "label": "Fly.io — Documentation", "url": "https://fly.io/docs/", "note": "official, modern containerised deploys close to your users" },
+        { "label": "Render — Documentation", "url": "https://render.com/docs", "note": "official, the friendliest 'Heroku-like' platform in 2025" },
+        { "label": "Doppler — Documentation", "url": "https://docs.doppler.com/docs", "note": "official, the most-loved secrets management tool" },
+        { "label": "The Twelve-Factor App", "url": "https://12factor.net/", "note": "the foundational manifesto for cloud-deployable apps; still relevant" }
+      ],
+      "questions": [
+        "Your CI takes 8 minutes. Where is the time going? What can be parallelised or cached?",
+        "Compare a Vercel deploy (serverless functions) to a Fly.io deploy (long-running container) for the same app. Cold start latency? Cost at 100 RPS? Cost at 10000 RPS?",
+        "A database migration in your deploy fails. What's the rollback story? Does your app come up in a broken state?",
+        "Compare cost: a $20/mo Fly.io VM running your app vs Vercel's hobby tier at the same traffic. When does each win?"
+      ],
+      "exercises": [
+        "Write a GitHub Actions matrix that tests against Node 20, 22 and Postgres 15, 16; verify all four combinations pass.",
+        "Cache pnpm-store between runs to cut install time; measure the speedup.",
+        "Write a deploy script that runs `prisma migrate deploy` before starting the server; verify zero-downtime deploys.",
+        "Set up Sentry for crash reporting; deploy a deliberately-failing endpoint; verify the error appears in Sentry within 60 seconds."
+      ],
+      "outputs": [
+        "Three environments (dev / staging / prod) with auto-deploys",
+        "Preview deploys on every PR",
+        "Doppler-managed secrets across all environments",
+        "Sub-60s rollback verified in practice"
+      ]
+    },
+    {
+      "number": 20,
+      "title": "Observability — Logs, Metrics, Traces in Production",
+      "phase": "Performance & DX",
+      "commitment_hours": "20-25",
+      "context": "Your app is broken in production. Without observability, you'll be guessing. This week you wire structured logs (Pino), metrics (Prometheus or hosted), and traces (OpenTelemetry) into your URL shortener.",
+      "topics": [
+        "Logs vs metrics vs traces — the three pillars",
+        "Structured logging — JSON logs, why string logs are dead",
+        "Pino — the fastest Node.js logger",
+        "OpenTelemetry — the open standard for traces, metrics, logs",
+        "Hosted observability — Datadog, New Relic, Honeycomb, Axiom, Better Stack",
+        "Crash reporting — Sentry, Rollbar, what these add over plain logging",
+        "Uptime monitoring — UptimeRobot, Better Stack, page-status-style services",
+        "On-call rotations and alerting — what to wake up for vs what to email"
+      ],
+      "tasks": [
+        "Add Pino structured logging to your URL shortener; verify logs are JSON in production, pretty in dev",
+        "Add Sentry crash reporting; deploy a deliberate crash; verify it appears in Sentry",
+        "Set up Axiom or Better Stack free tier; ship logs to it; build a dashboard for request rates and error rates",
+        "Add OpenTelemetry tracing to one critical path; visualise the spans in Honeycomb or Jaeger",
+        "Set up uptime monitoring; configure an alert for downtime > 60 seconds"
+      ],
+      "project": "Build a Production Observability Setup. By end of week, your URL shortener has: structured Pino logs shipped to Axiom, Sentry for crashes with source maps uploaded, OpenTelemetry tracing for the request lifecycle, a status page (Instatus or hand-rolled), uptime alerts to your phone via SMS. Document what would page you at 3am vs what just emails the team.",
+      "resources": [
+        { "label": "Pino — Documentation", "url": "https://getpino.io/", "note": "official, the fastest Node.js JSON logger" },
+        { "label": "Sentry — Node.js setup", "url": "https://docs.sentry.io/platforms/javascript/guides/node/", "note": "official, the canonical crash reporter" },
+        { "label": "OpenTelemetry — Node.js Getting Started", "url": "https://opentelemetry.io/docs/languages/js/getting-started/nodejs/", "note": "official, the open standard you want to learn even if you use a hosted vendor" },
+        { "label": "Axiom — Documentation", "url": "https://axiom.co/docs", "note": "official, modern log analytics platform with a great free tier" },
+        { "label": "Better Stack — Logs and Uptime", "url": "https://betterstack.com/docs", "note": "official, friendly DX for both logs and uptime monitoring" },
+        { "label": "Charity Majors — Honeycomb's CEO writing on observability", "url": "https://charity.wtf/", "note": "blog, the canonical thinker on modern observability" }
+      ],
+      "questions": [
+        "Your logs explode from 1GB/day to 50GB/day overnight. What changed? How do you find out without paying for a month of storage?",
+        "Your p99 response time is 5 seconds but you can't tell where the time went. What does adding traces show you?",
+        "An on-call alert pages you at 3am for a 30-second blip. Is that the right threshold? What if it was 5 minutes?",
+        "Sentry costs $26/mo for 50k errors. Your app generates 100k errors/day. Where are they coming from? Bug or noise?"
+      ],
+      "exercises": [
+        "Replace all console.log with pino.info; verify logs are JSON in production.",
+        "Add a Sentry context for every request that includes user_id and request_id; verify it appears in error events.",
+        "Add an OpenTelemetry span around your slow database query; verify trace appears in your visualiser.",
+        "Set up an alert that fires when error rate exceeds 5% over a 5-minute window; verify it fires when you deliberately throw."
+      ],
+      "outputs": [
+        "URL shortener with full observability stack: Pino + Sentry + OpenTelemetry + uptime monitoring",
+        "Live dashboards for request rate, error rate, p50/p99 latency",
+        "Status page at status.yourdomain.com",
+        "Alert routing config documented in RUNBOOK.md"
+      ]
+    },
+    {
+      "number": 21,
+      "title": "Security — The Threats You Haven't Thought About",
+      "phase": "Production",
+      "commitment_hours": "25-30",
+      "context": "Most web apps leak data through obvious holes — SQL injection that Prisma prevents, XSS that React mostly prevents, CSRF that SameSite cookies mostly prevent. The non-obvious ones are what get you. This week you audit your URL shortener against the OWASP Top 10 and fix every issue.",
+      "topics": [
+        "OWASP Top 10 — the canonical risk list",
+        "Injection attacks — SQL, NoSQL, command, when ORMs save you",
+        "XSS — stored, reflected, DOM; React's default protections, where it leaks",
+        "CSRF — the same-origin policy, SameSite cookies, anti-CSRF tokens",
+        "Authentication and session attacks — fixation, hijacking, brute force",
+        "Authorisation bugs — IDOR (insecure direct object references), the most common bug class",
+        "Secrets in code — git history scanning, secret rotation",
+        "Dependency vulnerabilities — npm audit, Snyk, Dependabot"
+      ],
+      "tasks": [
+        "Run `npm audit` and `snyk test` on your URL shortener; fix the high/critical issues",
+        "Add an IDOR test: as user A, try to access user B's link via a guessable ID; verify you get 403",
+        "Enable strict Content-Security-Policy headers on your Next.js app; observe what breaks; fix the legitimate breakages",
+        "Add rate limiting at the auth layer: 5 failed logins per IP per 15 minutes",
+        "Scan your git history for secrets with `truffleHog` or `gitleaks`; if any are found, rotate them immediately"
+      ],
+      "project": "Conduct a Security Audit of Your URL Shortener. Write SECURITY.md documenting: 1) every place you handle user input (and how you validate it), 2) every place you make an authorisation decision (and how you enforce it), 3) every secret your app uses (and how it's rotated), 4) your incident response plan if a breach happens. Run owasp ZAP automated scan against your dev environment; fix anything it flags.",
+      "resources": [
+        { "label": "OWASP — Top 10 (2021)", "url": "https://owasp.org/Top10/", "note": "official, the canonical web security risk list" },
+        { "label": "OWASP — Cheat Sheet Series", "url": "https://cheatsheetseries.owasp.org/", "note": "official, one-page-per-topic security cheat sheets; bookmark all of them" },
+        { "label": "PortSwigger — Web Security Academy", "url": "https://portswigger.net/web-security", "note": "free, the most respected hands-on web security training; do at least 10 labs" },
+        { "label": "Troy Hunt — Pluralsight courses + blog", "url": "https://www.troyhunt.com/", "note": "blog, the canonical voice in web security education" },
+        { "label": "Snyk — Vulnerability database", "url": "https://snyk.io/vuln", "note": "official, the canonical npm vulnerability database; better than npm audit alone" },
+        { "label": "OWASP ZAP — Documentation", "url": "https://www.zaproxy.org/docs/", "note": "official, free automated web vulnerability scanner; ship with your CI" }
+      ],
+      "questions": [
+        "Try to access /admin without logging in. What happens? Now log in as a non-admin user. What happens? Where is the check?",
+        "Your CSP allows unsafe-inline. Why is that there? Can you remove it? What breaks?",
+        "Run gitleaks against your git history. Did you ever commit a secret? If yes, even if you removed it later, has it been rotated?",
+        "Sign up two users; as user A, change the URL ID parameter to user B's link. What happens? If anything but 403/404, it's an IDOR vulnerability."
+      ],
+      "exercises": [
+        "Add Helmet (or equivalent Next.js headers) to set Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options.",
+        "Implement rate limiting on the password-reset endpoint to prevent enumeration attacks.",
+        "Configure Dependabot to automatically open PRs for vulnerable dependency updates.",
+        "Write a test that verifies a user cannot read another user's data via API."
+      ],
+      "outputs": [
+        "SECURITY.md committed with full audit results",
+        "All high/critical npm audit issues resolved",
+        "CSP and other security headers properly configured",
+        "OWASP ZAP scan passing in CI"
+      ]
+    },
+    {
+      "number": 22,
+      "title": "Scaling — When 10x More Traffic Hits",
+      "phase": "Production",
+      "commitment_hours": "25-30",
+      "context": "Most apps never need to scale. The ones that do are usually broken by an N+1 query or a missing index, not by needing distributed systems. This week you stress-test your URL shortener and fix the bottlenecks before they exist in production.",
+      "topics": [
+        "Load testing — k6, oha, Locust; designing realistic test scenarios",
+        "Vertical vs horizontal scaling — when each is right",
+        "Caching layers — application cache, Redis, CDN; cache invalidation",
+        "Database scaling — read replicas, connection pooling (PgBouncer), partitioning",
+        "Background jobs — BullMQ, Inngest, Trigger.dev; offloading slow work",
+        "Rate limiting — token bucket, sliding window, Redis-backed implementations",
+        "Stateless servers — why your servers should be cattle, not pets",
+        "Bottleneck order — CPU, memory, network, disk, database — usually database"
+      ],
+      "tasks": [
+        "Use k6 to stress-test your URL shortener at 100, 1000, 5000 RPS; identify the breaking point",
+        "Add Redis for caching the link lookup; measure the RPS improvement",
+        "Add a background job queue (BullMQ or Inngest); offload weekly digest emails to it",
+        "Implement Redis-backed rate limiting on the redirect endpoint",
+        "Add a PgBouncer in front of your Postgres connection pool; verify it helps under load"
+      ],
+      "project": "Make Your URL Shortener Handle 10k RPS. Start with a baseline (your current peak). Identify bottlenecks via profiling. Apply targeted optimisations: cache popular links in Redis, move email sending to background jobs, add a connection pooler, add a CDN in front of the redirect endpoint. Stress test until you can sustain 10000 redirects/second on a single $20/mo VM. Document the full optimisation journey.",
+      "resources": [
+        { "label": "k6 — Documentation", "url": "https://grafana.com/docs/k6/latest/", "note": "official, the modern load testing tool, scripts written in JS" },
+        { "label": "Brendan Gregg — Systems Performance (book + talks)", "url": "https://www.brendangregg.com/", "note": "the canonical voice on systems performance" },
+        { "label": "Redis — Documentation", "url": "https://redis.io/docs/", "note": "official, the standard cache and pub/sub layer" },
+        { "label": "BullMQ — Documentation", "url": "https://docs.bullmq.io/", "note": "official, the modern Redis-backed Node job queue" },
+        { "label": "Inngest — Documentation", "url": "https://www.inngest.com/docs", "note": "official, serverless-friendly background jobs; great DX" },
+        { "label": "Designing Data-Intensive Applications — Martin Kleppmann (chapters 1-5)", "url": "https://dataintensive.net/", "note": "book, the canonical scaling reference; chapters on partitioning and replication" }
+      ],
+      "questions": [
+        "Your stress test reveals 95th percentile latency spiking to 2s at 1000 RPS. Where? Is it database connections exhausted, application CPU, garbage collection?",
+        "Add a Redis cache for link lookups. What's the cache hit rate after warmup? At what hit rate does the cache start really helping?",
+        "Your background queue has 10000 jobs pending. How long until it drains? Is your worker concurrency right? Should you scale workers up?",
+        "Compare an in-process rate limiter (memory) to a Redis-backed one. Why does the Redis-backed one matter as soon as you scale to two app instances?"
+      ],
+      "exercises": [
+        "Write a k6 script that simulates realistic user behaviour: signup, create 5 links, hit them 50 times each over 5 minutes.",
+        "Add cache-aside pattern around your link lookup; verify cache misses populate the cache, cache hits return fast.",
+        "Implement a token-bucket rate limiter in Redis; test that it enforces limits across concurrent requests.",
+        "Add a Bull dashboard or Inngest dashboard; observe job queue depth and processing latency."
+      ],
+      "outputs": [
+        "Stress test reaching 10k RPS sustained on a single VM, documented",
+        "Redis caching layer with measured hit rate",
+        "Background job system handling at least one workload",
+        "Notes/scaling.md — your bottleneck checklist for any future scaling problem"
+      ]
+    },
+    {
+      "number": 23,
+      "title": "Polish — The Last 5% That Takes 50% of the Time",
+      "phase": "Production",
+      "commitment_hours": "20-25",
+      "context": "The difference between an okay product and a great one is the obsession over polish. Empty states. Keyboard shortcuts. Animation timing. Error messages. Accessibility. This week you go through your URL shortener with new eyes and fix everything that's 95% right.",
+      "topics": [
+        "Empty states — what users see before they have data",
+        "Loading states — skeleton screens, optimistic UI, perceived performance",
+        "Error states — what to show when something fails, recovery actions",
+        "Microcopy — every button, every label, every error message",
+        "Accessibility (a11y) — semantic HTML, ARIA, keyboard, screen readers, contrast",
+        "Internationalisation — even if your product is English-only, plan for it",
+        "Mobile UX — touch targets, viewport, safe areas",
+        "Onboarding — the first 5 minutes determine retention"
+      ],
+      "tasks": [
+        "Walk through every page of your app on mobile; fix every layout issue and touch target",
+        "Test every page with keyboard only; fix focus management, focus traps in modals, escape closes",
+        "Run axe DevTools or Lighthouse a11y audit; fix every contrast issue and missing label",
+        "Review every error message in your app; rewrite ones that aren't user-friendly",
+        "Build a first-run onboarding for new users: a 3-step tour of the main features"
+      ],
+      "project": "Polish Pass: All Surfaces of Your URL Shortener. Add: skeleton loaders on every async load, empty states with helpful CTAs, error boundaries with friendly messages, a 3-step new-user onboarding, keyboard shortcuts (cmd+k for actions), mobile-perfect responsive layouts, full keyboard navigability, AA+ contrast everywhere, internationalised date/number formatting. Document each in a POLISH.md checklist.",
+      "resources": [
+        { "label": "Smashing Magazine — UX Articles", "url": "https://www.smashingmagazine.com/category/ux", "note": "the canonical magazine for UX patterns, free to read" },
+        { "label": "Refactoring UI — Adam Wathan, Steve Schoger", "url": "https://www.refactoringui.com/", "note": "paid book, the canonical 'how to design well' for devs" },
+        { "label": "WCAG 2.2 — Understanding", "url": "https://www.w3.org/WAI/WCAG22/Understanding/", "note": "official, accessibility guidelines; read at least the A and AA levels" },
+        { "label": "WebAIM — Contrast Checker", "url": "https://webaim.org/resources/contrastchecker/", "note": "free, the canonical contrast verification tool" },
+        { "label": "Vercel — Geist Design System", "url": "https://vercel.com/geist", "note": "official, an excellent reference for what polished SaaS UI looks like" },
+        { "label": "Linear Method", "url": "https://linear.app/method", "note": "official, Linear's design and product principles; canonical reading for polish-as-philosophy" }
+      ],
+      "questions": [
+        "Sign up as a brand new user. The first 5 minutes — what do you see, what do you do? Where do you get confused?",
+        "Try to use your app on a phone with one hand. What's painful? What's tappable but barely?",
+        "Turn off your screen and try to use the app with just a keyboard and a screen reader (VoiceOver / NVDA). What breaks?",
+        "Open your app in another browser tab while you're already logged in. Does anything behave weirdly with two tabs?"
+      ],
+      "exercises": [
+        "Add a Skeleton component; replace 5 loading spinners with skeleton placeholders.",
+        "Implement a global cmd+k command palette using cmdk; add 5 quick actions.",
+        "Add focus-visible styles to every interactive element; verify keyboard focus is always visible.",
+        "Rewrite 5 error messages — replace 'Error: invalid input' with specific, actionable copy."
+      ],
+      "outputs": [
+        "POLISH.md committed listing every improvement made and screenshots",
+        "Lighthouse a11y score of 100",
+        "First-run onboarding deployed and tested with at least 3 new users",
+        "Keyboard navigation verified across every page"
+      ]
+    },
+    {
+      "number": 24,
+      "title": "Capstone — Ship a SaaS, Real Users, Real Revenue",
+      "phase": "Capstone",
+      "commitment_hours": "30-40",
+      "context": "The final week. You take everything from weeks 1-23 and you ship one SaaS to a public URL with real users and real Stripe revenue. Pick a problem you actually have — a niche tool for your audience, an internal-tool-extracted-to-product, a community resource. By Sunday it's live and someone has paid you.",
+      "topics": [
+        "Picking a sellable problem — boring, niche, painful",
+        "Scoping a v1 — what's the absolute minimum that delivers value?",
+        "Pricing — free trial, freemium, simple per-month tiers",
+        "Landing page that converts — the headline, the demo, the proof",
+        "Launch strategy — Twitter, ProductHunt, HackerNews, your network",
+        "First-week iteration — talking to users, fixing real pain, ignoring fake feedback",
+        "Documentation and support — README, docs site, support email",
+        "Compliance basics — Terms, Privacy, GDPR cookie banner if needed"
+      ],
+      "tasks": [
+        "Pick ONE problem. Write the README first.",
+        "Sketch the entire system on paper before writing code.",
+        "Talk to 3 potential users before writing code; record what they said in USER_RESEARCH.md",
+        "Define success: 10 active users in week 1 is the floor, 100 is the target",
+        "Hard deadline: live URL + Stripe accepting real money by day 7"
+      ],
+      "project": "Ship a real SaaS. Built on your URL shortener stack or built fresh. Must include: real auth, real Stripe billing, real users (at least 10), real revenue (at least one paid customer), full observability, full security headers, polished UI, public landing page, working docs, a privacy policy. Launch publicly on day 7 — Twitter, ProductHunt, your blog, HackerNews. Document the journey. This is the artifact that turns 'I learned full-stack web' into 'I ship products'.",
+      "resources": [
+        { "label": "Tyler Tringas — Bootstrapping a SaaS", "url": "https://tylertringas.com/", "note": "blog, the canonical bootstrapper voice; honest about the work" },
+        { "label": "Indie Hackers — Community + interviews", "url": "https://www.indiehackers.com/", "note": "official, hundreds of revenue-tier-tagged founder interviews" },
+        { "label": "Lee Robinson — Building a SaaS with Next.js", "url": "https://github.com/leerob/next-saas-starter", "note": "GitHub, the canonical reference SaaS starter for Next.js" },
+        { "label": "Pieter Levels — How to make a SaaS in 4 days", "url": "https://levels.io/", "note": "blog, the canonical 'ship fast' voice; many practical writeups" },
+        { "label": "ProductHunt — Launch guide", "url": "https://www.producthunt.com/launch", "note": "official, how to do a successful PH launch" },
+        { "label": "Show HN guidelines", "url": "https://news.ycombinator.com/showhn.html", "note": "official, read first before launching to Hacker News" }
+      ],
+      "questions": [
+        "Read your README to a non-technical friend. Do they understand what your product does and why it matters?",
+        "Day 3: are you on track to launch by day 7? If not, what gets cut?",
+        "Post launch: where did the traffic come from? Which channel converted best?",
+        "Post-mortem: what's the one thing about this product you'd build differently? What did the 23 weeks of practice make easy?"
+      ],
+      "exercises": [
+        "Write a one-sentence value proposition that doesn't use the word 'platform'. If you can't, your product isn't differentiated.",
+        "Build a feedback widget into your product (e.g. featurebase, frill); read every entry on launch day.",
+        "Configure a launch checklist: status page up, Stripe in live mode, terms + privacy live, support email working, repo clean.",
+        "After launch, write a public post-mortem in LAUNCH.md: what worked, what didn't, what's next."
+      ],
+      "outputs": [
+        "Real SaaS deployed to a real custom domain",
+        "Real Stripe revenue from at least 1 paying customer",
+        "Public launch — Twitter, PH, HN — with measurable engagement",
+        "10+ unique active users in the first week",
+        "LAUNCH.md post-mortem committed; this is the artifact that proves you can ship"
+      ]
+    }
+  ]
+}

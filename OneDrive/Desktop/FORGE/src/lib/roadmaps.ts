@@ -47,6 +47,31 @@ const META: Record<string, { tagline: string; outcome: string; gradient: string 
     outcome: "Ship a real AI product to a public URL with auth, evals, observability, and real users",
     gradient: "from-fuchsia-500 via-purple-500 to-violet-600",
   },
+  "ml-engineering": {
+    tagline: "From NumPy to PyTorch to MLOps — train, serve, monitor real models",
+    outcome: "Train, version, deploy and monitor a production model with full eval + drift detection",
+    gradient: "from-violet-500 via-indigo-500 to-blue-600",
+  },
+  "full-stack-web": {
+    tagline: "From HTML first principles to a paid-customer SaaS",
+    outcome: "Ship a real SaaS at a custom domain — auth, Stripe, observability, real revenue",
+    gradient: "from-cyan-500 via-blue-500 to-sky-600",
+  },
+  "mobile-engineering": {
+    tagline: "From React Native fundamentals to App Store + Play Store",
+    outcome: "Ship one mobile app to both stores with real users and real retention data",
+    gradient: "from-rose-500 via-pink-500 to-fuchsia-600",
+  },
+  "devops-cloud": {
+    tagline: "From Linux to Kubernetes to a full production stack on AWS",
+    outcome: "Build the entire production stack for one app — Terraform, K8s, GitOps, observability, SLOs",
+    gradient: "from-orange-500 via-red-500 to-rose-600",
+  },
+  "cybersecurity": {
+    tagline: "From OWASP Top 10 to published CVE or bug bounty",
+    outcome: "Earn a real security artifact — bug bounty, CVE, red team report, or detection contribution",
+    gradient: "from-lime-500 via-emerald-500 to-teal-600",
+  },
   "data-science": {
     tagline: "From Python first principles to a deployed ML model with a portfolio",
     outcome: "Ship a capstone that uses real-world data, statistical reasoning, and a deployed model",

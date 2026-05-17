@@ -1,0 +1,1231 @@
+{
+  "slug": "cybersecurity",
+  "title": "Cybersecurity Engineering",
+  "total_weeks": 24,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "Linux + Networking — The Foundation Every Hacker Needs",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "Security work is built on Linux + networking fluency. This week you set up a hacking-ready environment (Kali or a custom Ubuntu), master the terminal, and learn to read packets with Wireshark + tcpdump.",
+      "topics": [
+        "Linux command line — bash, grep, awk, sed, find — at speed",
+        "Filesystem layout — /etc, /var, /tmp, /proc, /dev — where evidence lives",
+        "Networking primitives — IP, TCP/UDP, ports, the three-way handshake",
+        "DNS — A, AAAA, CNAME, MX, TXT, dig and nslookup",
+        "HTTP request/response anatomy — headers, methods, status codes",
+        "TLS — what's encrypted, what isn't, the handshake itself",
+        "Wireshark and tcpdump — capturing and reading network traffic",
+        "VirtualBox / VMware — isolated lab environments"
+      ],
+      "tasks": [
+        "Install Kali Linux in VirtualBox or VMware (or use a hardened Ubuntu)",
+        "Solve 30 levels of OverTheWire Bandit",
+        "Capture a TLS handshake with Wireshark; identify cipher + cert details",
+        "Use tcpdump to capture HTTP traffic to a non-HTTPS site; read it",
+        "Set up a target VM (Metasploitable 2 or DVWA) on an isolated network"
+      ],
+      "project": "Build Your Hacking Lab. VirtualBox host. Kali Linux attacker VM. Metasploitable 2 + DVWA + a deliberately-vulnerable Windows target. All on an isolated host-only network. Snapshots so you can reset between exercises. Document the setup in LAB.md.",
+      "resources": [
+        { "label": "OverTheWire — Bandit", "url": "https://overthewire.org/wargames/bandit/", "note": "official, the canonical Linux terminal training game; first 30 levels essential" },
+        { "label": "TryHackMe — Pre Security path", "url": "https://tryhackme.com/path/outline/presecurity", "note": "official, free up to a level; the canonical beginner path with hands-on labs" },
+        { "label": "Kali Linux — Documentation", "url": "https://www.kali.org/docs/", "note": "official, install + tools reference" },
+        { "label": "Computer Networking — Top-Down Approach (Kurose & Ross, free PDF)", "url": "https://gaia.cs.umass.edu/kurose_ross/index.php", "note": "the canonical networking textbook" },
+        { "label": "Wireshark — User Guide", "url": "https://www.wireshark.org/docs/wsug_html/", "note": "official, the canonical packet analysis tool" },
+        { "label": "Julia Evans — Networking zines + blog", "url": "https://wizardzines.com/", "note": "the friendliest networking explainers anywhere" }
+      ],
+      "questions": [
+        "Capture HTTP traffic from a non-HTTPS site. What's visible? Now capture HTTPS — what's still visible (hostname via SNI, packet sizes)?",
+        "Why is TLS the only line of defence on a public WiFi network? What's an evil twin AP?",
+        "Your lab VM is NAT'd. Can it reach the host? Can it reach the internet? Can your attacker VM reach it? Verify each.",
+        "Read the TCP three-way handshake in Wireshark. What flag values do you see (SYN, SYN-ACK, ACK)?"
+      ],
+      "exercises": [
+        "Capture and analyse the DNS query for a domain you visit.",
+        "Identify a TLS cert via openssl s_client -connect; parse the issuer and SAN entries.",
+        "Use Wireshark display filters to find all HTTP POST requests in a capture.",
+        "Configure your Kali VM with both NAT (internet) and host-only (lab) adapters."
+      ],
+      "outputs": [
+        "Working hacking lab with attacker + 3 vulnerable targets",
+        "30 Bandit levels solved",
+        "Wireshark capture of a TLS handshake committed to notes",
+        "LAB.md documenting the setup"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Cryptography Essentials — What You Trust and Why",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "Most crypto attacks aren't on the math — they're on the implementation. This week you understand symmetric vs asymmetric, hashing vs encryption, what's strong vs broken in 2026, and how to spot misuse.",
+      "topics": [
+        "Symmetric encryption — AES-GCM, why GCM beats CBC, what nonces mean",
+        "Asymmetric encryption — RSA, ECC; why ECC is preferred for new work",
+        "Hashing — SHA-2, SHA-3, BLAKE3; why MD5 and SHA-1 are dead",
+        "HMAC vs signatures — message authentication vs non-repudiation",
+        "Password hashing — argon2, bcrypt, scrypt — why never SHA-256",
+        "Public key infrastructure — certificates, CAs, trust chains",
+        "Common crypto mistakes — ECB mode, hardcoded keys, weak randomness",
+        "Post-quantum cryptography — the migration timeline, what's coming"
+      ],
+      "tasks": [
+        "Use openssl to encrypt + decrypt a file with AES-GCM; understand every flag",
+        "Generate an RSA keypair; sign + verify a message",
+        "Hash a password with bcrypt + argon2; compare workfactor settings",
+        "Read about the Heartbleed and Equifax breaches; understand the crypto failures",
+        "Run a TLS scan on 3 production sites (yours + 2 banks) with testssl.sh; document weak configs"
+      ],
+      "project": "Build a Crypto Cheat Sheet + Audit Tool. A Python or Go CLI that audits a directory for: hard-coded crypto keys, use of MD5/SHA-1, ECB mode, weak RNG (random.Random vs secrets), short bcrypt rounds. Run it against an open-source codebase you respect; document findings. Commit to GitHub.",
+      "resources": [
+        { "label": "Cryptopals Crypto Challenges", "url": "https://www.cryptopals.com/", "note": "free, the canonical crypto-by-implementation course; do at least Set 1" },
+        { "label": "Serious Cryptography — Jean-Philippe Aumasson (book)", "url": "https://nostarch.com/seriouscrypto", "note": "paid book, the canonical modern crypto reference" },
+        { "label": "OWASP — Cryptographic Storage Cheat Sheet", "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html", "note": "official, what to use in production" },
+        { "label": "Soatok's blog (cryptography for developers)", "url": "https://soatok.blog/", "note": "blog, the most practical modern crypto writing for engineers" },
+        { "label": "testssl.sh", "url": "https://testssl.sh/", "note": "official, the canonical CLI for auditing TLS configurations" },
+        { "label": "NIST — Post-Quantum Cryptography page", "url": "https://csrc.nist.gov/projects/post-quantum-cryptography", "note": "official, the standards body's PQC progress" }
+      ],
+      "questions": [
+        "AES in CBC mode with a static IV — what attack does this enable? What's the right mode?",
+        "bcrypt with 4 rounds vs 12 rounds — how long does each take? At what point is it 'enough'?",
+        "Your app stores user passwords with SHA-256. What's the attack? How do you migrate without forcing every user to reset?",
+        "Quantum computers and RSA — when (and how) does RSA actually break? What's the migration path?"
+      ],
+      "exercises": [
+        "Solve Cryptopals Set 1 (challenges 1-8); commit your solutions.",
+        "Implement HMAC-SHA256 from scratch in Python.",
+        "Demonstrate the ECB-mode attack: encrypt an image with ECB; observe the visible pattern.",
+        "Audit one Python file for hardcoded secrets using gitleaks or trufflehog."
+      ],
+      "outputs": [
+        "Cryptopals Set 1 solved",
+        "Crypto-audit CLI tool committed",
+        "testssl.sh report of 3 production sites",
+        "Notes/crypto.md — your decision tree for picking primitives"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Recon and OSINT — Knowing Your Target Without Touching It",
+      "phase": "Offensive Basics",
+      "commitment_hours": "20-25",
+      "context": "Every attack starts with reconnaissance. This week you learn passive (OSINT) and active recon — domain enumeration, port scanning, employee discovery — and you do it ethically (only against authorised targets).",
+      "topics": [
+        "Passive recon — DNS history, certificate transparency logs, search engines, archive.org",
+        "Subdomain enumeration — Subfinder, Amass, certificate transparency",
+        "Active recon — port scanning with nmap, service version detection",
+        "Web recon — gobuster, ffuf for directory + parameter discovery",
+        "OSINT — Maltego, Shodan, Censys, the surfaces nobody thinks about",
+        "Employee discovery — LinkedIn scraping, hunter.io for emails",
+        "Cloud surface enumeration — exposed S3 buckets, public functions, leaked secrets",
+        "Reporting findings — structured + reproducible"
+      ],
+      "tasks": [
+        "Use Subfinder + Amass to enumerate subdomains for a bug-bounty-eligible site (HackerOne or Bugcrowd)",
+        "Run nmap with `-sV -sC` against your Metasploitable lab; understand every result",
+        "Use ffuf to fuzz directories on your DVWA lab",
+        "Search Shodan for 'apache 2.4' in your country; understand what's exposed",
+        "Use crt.sh to find certificate transparency entries for a domain you own"
+      ],
+      "project": "Build a Bug-Bounty Recon Pipeline. For a single bug-bounty-eligible target (verify scope first!), a script that runs: subdomain enumeration → liveness check → port scan → directory fuzzing → screenshot every web service. Produces a Markdown report with findings. Test on a HackerOne or Bugcrowd target — strictly within scope.",
+      "resources": [
+        { "label": "ProjectDiscovery — Subfinder, nuclei, httpx", "url": "https://docs.projectdiscovery.io/", "note": "official, the modern open-source recon toolkit" },
+        { "label": "OWASP Amass — Documentation", "url": "https://github.com/owasp-amass/amass", "note": "GitHub, the canonical subdomain enumeration tool" },
+        { "label": "Nmap — Network Scanning (book, free)", "url": "https://nmap.org/book/", "note": "free book, the canonical nmap reference by its author" },
+        { "label": "Shodan — Documentation + CLI", "url": "https://help.shodan.io/", "note": "official, the search engine for internet-connected devices" },
+        { "label": "Bug Bounty Hunter resources — HackerOne Hacker101", "url": "https://www.hacker101.com/", "note": "official, free training from HackerOne" },
+        { "label": "PortSwigger — Web Security Academy (Reconnaissance lab)", "url": "https://portswigger.net/web-security/", "note": "free, the canonical hands-on web security training" }
+      ],
+      "questions": [
+        "You enumerated 200 subdomains for a target. How do you prioritise which to test first?",
+        "nmap -sS vs -sT vs -sU — what's the difference? Which is stealthier? Which works without root?",
+        "You found an exposed S3 bucket via your scanner. Now what? What's responsible disclosure look like?",
+        "Bug bounty scope says '*.example.com'. Does that include staging.dev.example.com? When in doubt, do you ask or test?"
+      ],
+      "exercises": [
+        "Write a Python script that takes a domain and returns all subdomains via crt.sh.",
+        "Use nuclei to scan a target for known CVEs (only against authorised targets).",
+        "Use the Shodan CLI to find open Elasticsearch instances in one country.",
+        "Pipe Subfinder → httpx to identify which subdomains have live web services."
+      ],
+      "outputs": [
+        "Working recon pipeline script",
+        "First bug-bounty report draft (whether or not it gets accepted)",
+        "Shodan dork list you've curated",
+        "Notes/recon.md — your methodology"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "OWASP Top 10 — The Bugs That Actually Get Found",
+      "phase": "Offensive Basics",
+      "commitment_hours": "25-30",
+      "context": "Most production vulnerabilities are in the OWASP Top 10. This week you go through every category, exploit each in your lab, then learn the fix. By Friday you can spot any of them in a code review.",
+      "topics": [
+        "Broken Access Control (IDOR) — the most common bug class",
+        "Cryptographic Failures (formerly Sensitive Data Exposure)",
+        "Injection — SQL, NoSQL, OS command, the still-most-impactful",
+        "Insecure Design — when the architecture itself is wrong",
+        "Security Misconfiguration — defaults, leftover dev mode",
+        "Vulnerable + outdated components",
+        "Identification + Authentication Failures",
+        "Software + Data Integrity Failures (supply chain)"
+      ],
+      "tasks": [
+        "Exploit SQL injection on DVWA's SQLi page; then read the fix",
+        "Demonstrate an IDOR: as user A, change /api/orders/123 to /api/orders/124; verify access",
+        "Find a Server-Side Request Forgery (SSRF) in the OWASP Juice Shop",
+        "Use sqlmap against a deliberately-vulnerable target; understand its output",
+        "Exploit a command injection in DVWA"
+      ],
+      "project": "Complete OWASP Juice Shop. The canonical CTF for web vulnerabilities. Solve at least 60 of ~100 challenges across all OWASP Top 10 categories. Each challenge teaches a real vulnerability. Document your solutions in JUICE-SHOP.md. The 'easy' ones take 5 minutes; the 'hard' ones reveal real-world thinking.",
+      "resources": [
+        { "label": "OWASP Top 10 — 2021", "url": "https://owasp.org/Top10/", "note": "official, the canonical risk list" },
+        { "label": "OWASP Juice Shop", "url": "https://owasp.org/www-project-juice-shop/", "note": "official, the canonical CTF training app for web vulns" },
+        { "label": "PortSwigger — Web Security Academy", "url": "https://portswigger.net/web-security", "note": "free, the most-respected hands-on training; do every category" },
+        { "label": "OWASP — Cheat Sheet Series", "url": "https://cheatsheetseries.owasp.org/", "note": "official, one-page-per-topic security guidance" },
+        { "label": "Bug Bounty Bootcamp (book) — Vickie Li", "url": "https://nostarch.com/bug-bounty-bootcamp", "note": "paid book, the most-recommended introduction to bug hunting" },
+        { "label": "sqlmap — Documentation", "url": "https://sqlmap.org/", "note": "official, the canonical SQLi automation tool" }
+      ],
+      "questions": [
+        "Your app uses parameterised queries everywhere. Are you safe from SQLi? What about ORM injection?",
+        "IDOR — what's the simplest fix? Why is 'check ownership on every request' annoying but correct?",
+        "SSRF: your app fetches a URL the user submits. What goes wrong? What's the fix?",
+        "Command injection — what's the difference between exec(cmd_str) and exec(cmd_list)? Why does the list version save you?"
+      ],
+      "exercises": [
+        "Write a parameterised SQL query that's safe; rewrite the same query unsafely; demonstrate the difference.",
+        "Write a Python function that fetches a URL but rejects internal IPs (block SSRF).",
+        "Demonstrate a stored XSS in DVWA; then implement the CSP that blocks it.",
+        "Use Burp Suite Community to intercept and modify a request; verify the IDOR."
+      ],
+      "outputs": [
+        "60+ Juice Shop challenges solved",
+        "Walkthroughs for 5 of them committed",
+        "Comparison: OWASP Top 10 → fix patterns in real code",
+        "Burp Suite Community installed and used"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Burp Suite + ZAP — Your Web Testing Workbench",
+      "phase": "Offensive Basics",
+      "commitment_hours": "20-25",
+      "context": "Burp Suite is the dominant tool for manual web app testing. ZAP is the free alternative. By Friday you can intercept, modify, replay, and fuzz requests — the daily moves of every web pen-tester.",
+      "topics": [
+        "Burp Suite Proxy — intercepting HTTPS, installing the cert",
+        "Repeater — sending the same request 100 times with variations",
+        "Intruder — fuzzing parameters, the four attack types",
+        "Decoder + Comparer — encoding tricks, diff analysis",
+        "Burp Collaborator (Pro) — out-of-band detection of blind vulns",
+        "ZAP — when Pro Burp isn't available; the active scanner",
+        "Burp extensions — Logger++, Active Scan++, Autorize",
+        "Workflow — scope, target tab, repeater discipline"
+      ],
+      "tasks": [
+        "Install Burp Suite Community; configure Firefox/Chrome to proxy through it; install CA cert",
+        "Intercept a real (your own) site's login request in Burp; modify before forwarding",
+        "Use Burp Intruder to brute-force a 4-digit PIN on a deliberate target",
+        "Use Burp Repeater to fuzz a parameter for SQLi manually",
+        "Install Logger++ extension to log every request your browser makes"
+      ],
+      "project": "Build a Burp-Based Workflow on a Target. Pick one bug-bounty-eligible site (in scope). Set up Burp project file. Map the site via spidering. Identify auth flows. Use Repeater to manually probe 10 endpoints for auth bugs, parameter tampering, IDOR. Document one finding per endpoint in BURP-FINDINGS.md (even 'no issue' is a finding).",
+      "resources": [
+        { "label": "PortSwigger — Burp Suite Community documentation", "url": "https://portswigger.net/burp/documentation/desktop/getting-started", "note": "official, work through the Getting Started chapter" },
+        { "label": "PortSwigger — Web Security Academy", "url": "https://portswigger.net/web-security", "note": "free training; Burp is integrated throughout" },
+        { "label": "OWASP ZAP — Documentation", "url": "https://www.zaproxy.org/docs/", "note": "official, the free alternative to Burp" },
+        { "label": "BApp Store — Burp extensions", "url": "https://portswigger.net/bappstore", "note": "official, the canonical extension marketplace" },
+        { "label": "Bug Bounty Hunting Essentials (book) — Carlos A. Lozano", "url": "https://www.packtpub.com/", "note": "paid book, real-world Burp workflows" },
+        { "label": "Hahwul — Web Hacking 101", "url": "https://www.hahwul.com/", "note": "blog, modern web hacking tactics and Burp tips" }
+      ],
+      "questions": [
+        "Burp intercepts your traffic. Are there any requests you do NOT want intercepted (banking, work)? How do you configure scope?",
+        "Intruder vs Repeater — when each? Sniper vs Cluster bomb attacks — what's the use case?",
+        "Burp Collaborator (Pro feature) — what kind of vulnerabilities can only be detected with it?",
+        "Compare Burp Community vs ZAP for one task (active scan). Which felt more polished? Where does Pro Burp earn its $400/yr?"
+      ],
+      "exercises": [
+        "Configure Burp to intercept only requests to a specific scope.",
+        "Use Intruder Cluster Bomb to fuzz both username + password lists.",
+        "Use Decoder to base64-decode a JWT and inspect its claims.",
+        "Configure Logger++ to highlight requests with custom matchers."
+      ],
+      "outputs": [
+        "Burp Suite installed + configured + scope-managed",
+        "BURP-FINDINGS.md for a real (authorised) target",
+        "Notes/burp-workflow.md — your daily moves",
+        "ZAP installed as backup"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Exploitation — Real Bugs in Real Apps",
+      "phase": "Offensive Basics",
+      "commitment_hours": "25-30",
+      "context": "This week you go from understanding vulnerabilities to chaining them into real exploits. SQLi → auth bypass → RCE. The thinking is what matters — the tools just speed it up.",
+      "topics": [
+        "Exploit chaining — combining low-impact bugs into high-impact ones",
+        "Authentication bypass — JWT tampering, session fixation, mass-assignment",
+        "Privilege escalation — vertical (user→admin) vs horizontal (user A → user B)",
+        "File upload vulnerabilities — RCE via uploaded scripts",
+        "XML External Entity (XXE) attacks",
+        "Server-Side Template Injection (SSTI) — Jinja, Twig, ERB",
+        "Insecure deserialisation — Python pickle, PHP unserialize, Java",
+        "Race conditions in web apps"
+      ],
+      "tasks": [
+        "Solve PortSwigger Web Security Academy: 'Authentication' category (all labs)",
+        "Solve PortSwigger Web Security Academy: 'File Upload Vulnerabilities' category",
+        "Chain 3 bugs in OWASP Juice Shop to escalate from anonymous → admin",
+        "Forge a JWT with the alg:none trick; verify it bypasses auth on a vulnerable target",
+        "Exploit a Python pickle deserialisation; demonstrate RCE on your lab"
+      ],
+      "project": "Build a 'Vulnerable App with Chained Exploits' for Demo. A small Flask app with: SQLi in login → leaked admin email → password reset token guessable → admin access → file upload → RCE. Document each step in BUG-DEMO.md. This is both a learning tool and a portfolio piece (showing both the bug AND the fix is what hiring managers want).",
+      "resources": [
+        { "label": "PortSwigger — Web Security Academy (all labs)", "url": "https://portswigger.net/web-security/all-labs", "note": "free, the most respected hands-on training" },
+        { "label": "HackTricks — Methodology", "url": "https://book.hacktricks.xyz/", "note": "free, the canonical pentest knowledge base" },
+        { "label": "PayloadsAllTheThings", "url": "https://github.com/swisskyrepo/PayloadsAllTheThings", "note": "GitHub, the canonical payload reference for every vuln type" },
+        { "label": "HackerOne — Public reports (Hacktivity)", "url": "https://hackerone.com/hacktivity", "note": "official, read 5 published reports per week; the best learning resource" },
+        { "label": "John Hammond — YouTube channel", "url": "https://www.youtube.com/c/JohnHammond010", "note": "YouTube, walkthroughs of CTF challenges and real bugs" },
+        { "label": "TryHackMe + HackTheBox", "url": "https://tryhackme.com/", "note": "official, structured + free-form practice environments" }
+      ],
+      "questions": [
+        "You found an SQLi but it's blind (no visible output). How do you exploit it? What tools help (sqlmap timing attacks)?",
+        "JWT alg:none — what does this mean? Why was it ever a thing? How do modern libraries prevent it?",
+        "File upload — you can upload .jpg. Can you upload .php disguised as .jpg? How does the server validate? What's the secure approach?",
+        "Read a HackerOne public report; trace the bug chain from initial finding to impact. What thinking pattern did the reporter use?"
+      ],
+      "exercises": [
+        "Forge a JWT using jwt_tool with the alg:none trick.",
+        "Use sqlmap on a deliberately vulnerable target with blind boolean technique.",
+        "Demonstrate SSTI in a Flask Jinja template that renders user input.",
+        "Exploit a CSRF on DVWA; then implement the fix (SameSite + CSRF token)."
+      ],
+      "outputs": [
+        "Vulnerable-app-with-chained-exploits committed",
+        "5 PortSwigger labs solved + write-ups",
+        "First HackerOne report (whether accepted or not)",
+        "Notes/exploit-chains.md — your methodology"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Network and Service Pentesting",
+      "phase": "Offensive Basics",
+      "commitment_hours": "25-30",
+      "context": "Most enterprise pentest engagements involve attacking services on a network — SMB, Active Directory, RDP, SSH. This week you move from web to network.",
+      "topics": [
+        "Service enumeration — nmap deeper flags, banner grabbing",
+        "SMB enumeration — enum4linux, smbclient, accessing shares",
+        "SSH — key-based brute force, exploit weak configs",
+        "Active Directory basics — domains, OUs, GPOs, common misconfigs",
+        "Kerberos attacks — ASREPRoasting, Kerberoasting, pass-the-ticket",
+        "Lateral movement — psexec, WMI, PSRemoting",
+        "Privilege escalation on Linux + Windows — kernel exploits, misconfigured sudo",
+        "C2 frameworks — Cobalt Strike (commercial), Sliver (open), Mythic"
+      ],
+      "tasks": [
+        "Set up a TryHackMe AD lab; enumerate users via Kerbrute",
+        "Perform ASREPRoasting against a vulnerable user; crack the hash",
+        "Use linPEAS + winPEAS on lab targets; identify priv-esc paths",
+        "Set up Sliver (open-source C2); generate an implant; deploy on test target",
+        "Use BloodHound to map AD attack paths"
+      ],
+      "project": "Complete the TryHackMe 'Compromise Active Directory' Path. Real AD environment, real attacks: initial access → enumeration → privilege escalation → lateral movement → domain admin. Document each step in AD-PWN.md. This is the bread-and-butter of enterprise pentest engagements.",
+      "resources": [
+        { "label": "TryHackMe — Compromise Active Directory path", "url": "https://tryhackme.com/", "note": "official, free-tier-friendly AD-focused learning path" },
+        { "label": "HackTheBox — Pro Labs (paid)", "url": "https://www.hackthebox.com/hacker/pro-labs", "note": "paid; the canonical real-world enterprise emulation" },
+        { "label": "Rastalabs / Offshore — HTB pro labs", "url": "https://www.hackthebox.com/hacker/pro-labs", "note": "paid, full AD environments emulating real engagements" },
+        { "label": "ired.team — Red Team Notes", "url": "https://www.ired.team/", "note": "free, the canonical reference for offensive AD attacks" },
+        { "label": "Sliver C2 — Documentation", "url": "https://github.com/BishopFox/sliver", "note": "GitHub, the modern open-source C2 framework" },
+        { "label": "BloodHound — Documentation", "url": "https://bloodhound.specterops.io/", "note": "official, the canonical AD attack-path tool" }
+      ],
+      "questions": [
+        "ASREPRoasting requires that a user has 'do not require Kerberos pre-authentication'. Why does anyone configure that? How common is it in real environments?",
+        "BloodHound shows a path from a low-priv user to Domain Admin. Walk through what each node + edge means.",
+        "Sliver vs Cobalt Strike — pros + cons. When would a real engagement pick open-source vs commercial?",
+        "Defender / EDR detected your implant. What changed in your TTPs to evade next time?"
+      ],
+      "exercises": [
+        "Enumerate users on a domain with Kerbrute via a userlist; record valid usernames.",
+        "Crack a Kerberos hash with hashcat; understand the mode you used.",
+        "Run BloodHound's data collector; visualise the graph.",
+        "Deploy a Sliver implant; use it to enumerate the target."
+      ],
+      "outputs": [
+        "Completed TryHackMe AD path with documented write-ups",
+        "BloodHound graph of one lab environment",
+        "Sliver lab successfully implanted and operated",
+        "Notes/ad-pwn.md — your AD attack playbook"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Reporting and Communication — The Skill That Pays",
+      "phase": "Offensive Basics",
+      "commitment_hours": "15-20",
+      "context": "A finding nobody understands is a finding nobody fixes. This week you learn to write reports that get reproduced, prioritised, and patched. The communication skill matters more than the exploit skill in most enterprise contexts.",
+      "topics": [
+        "Bug-bounty report anatomy — title, description, reproduction steps, impact, recommendation",
+        "CVSS 4.0 scoring — what each metric means, how to score consistently",
+        "Severity vs exploitability — what makes a 'critical' really critical",
+        "Reproducer requests — 'works on my machine' isn't enough",
+        "Pentest reports — executive summary, technical findings, retest section",
+        "Customer-facing communication — when to be technical vs when to translate",
+        "Responsible disclosure — timing, escalation, when to go public",
+        "Negotiating bounties — when to push, when to accept"
+      ],
+      "tasks": [
+        "Write a bug-bounty report for one Juice Shop finding from week 4 (even though it's a test app, treat it as production)",
+        "Score 5 sample CVEs using CVSS 4.0; compare to NVD's official scores",
+        "Read 5 highly-rated HackerOne reports; identify what made them clear",
+        "Write a 'pentest executive summary' for your week-7 AD compromise — for a non-technical CISO",
+        "Submit your first real bug bounty report; track the response process"
+      ],
+      "project": "Submit a Real Bug Bounty Report. Pick a target on HackerOne or Bugcrowd that's beginner-friendly. Find a real bug (even informational). Write a report that follows the platform's guidelines. Submit. Track through triage. Document the full experience — including the rejection or acceptance — in BB-EXP.md.",
+      "resources": [
+        { "label": "FIRST — CVSS 4.0 specification", "url": "https://www.first.org/cvss/v4.0/specification-document", "note": "official, the canonical scoring framework" },
+        { "label": "HackerOne — Disclosure guidelines", "url": "https://docs.hackerone.com/", "note": "official, the canonical reporting template" },
+        { "label": "Bugcrowd — Vulnerability rating taxonomy", "url": "https://bugcrowd.com/vulnerability-rating-taxonomy", "note": "official, the alternative severity reference" },
+        { "label": "InsiderPhD — YouTube channel", "url": "https://www.youtube.com/c/InsiderPhD", "note": "YouTube, the most-recommended channel for bug-bounty methodology and reporting" },
+        { "label": "James Kettle — Pen-testing communication talks", "url": "https://skeletonscribe.net/", "note": "blog of the canonical web vuln researcher; how findings get communicated" },
+        { "label": "SANS — Penetration Testing reports examples", "url": "https://www.sans.org/white-papers/", "note": "free white papers; read 3 to see structure" }
+      ],
+      "questions": [
+        "Your bug got triaged but rated lower than you expected. Do you push back? How?",
+        "Your finding is 'informational' but you think it's a stepping stone. How do you communicate the chain potential?",
+        "Pentest executive summary for a non-technical CEO — what 3 things must be on page 1?",
+        "Responsible disclosure timeline — vendor isn't responding after 60 days. What do you do?"
+      ],
+      "exercises": [
+        "Write a CVSS 4.0 score for the Log4Shell vulnerability; justify each metric.",
+        "Rewrite a poor HackerOne report (find one) into a clear one.",
+        "Draft a pentest report template in Markdown.",
+        "Practice giving a 5-minute executive briefing on a technical finding."
+      ],
+      "outputs": [
+        "First real bug-bounty report submitted",
+        "BB-EXP.md tracking the response process",
+        "Pentest report template committed",
+        "Notes/reporting.md — your report patterns"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Defence Basics — Logging, SIEM, Detection",
+      "phase": "Defensive Basics",
+      "commitment_hours": "20-25",
+      "context": "Half of security is offence, half is defence. This week you switch sides — you set up centralised logging, write detection rules, investigate alerts. Most cybersecurity jobs are blue team.",
+      "topics": [
+        "What to log — auth events, sensitive operations, anomalies",
+        "Log centralisation — syslog, Filebeat/Vector, Loki/Elasticsearch",
+        "SIEM concepts — Security Information and Event Management",
+        "Elastic Stack — Elasticsearch + Kibana + Beats",
+        "Splunk — the enterprise SIEM; powerful + expensive",
+        "Wazuh — open-source SIEM + HIDS",
+        "Detection engineering — Sigma rules as detection-as-code",
+        "Alert fatigue — the real failure mode of every SOC"
+      ],
+      "tasks": [
+        "Install Wazuh on a VM; deploy agents on 2 target machines",
+        "Trigger some attacker-like behaviour (failed SSH logins, scan); verify Wazuh detects",
+        "Write 5 Sigma detection rules for common attack patterns",
+        "Set up alert routing to a chat channel (Slack, Discord)",
+        "Build a Kibana dashboard for one alert category"
+      ],
+      "project": "Build a Home SOC. Wazuh + Elastic Stack centralising logs from your lab VMs. 10+ Sigma detection rules covering: failed auth, privilege escalation, suspicious commands, exfiltration patterns. Test by running an attack from week 6 and watching it light up. Document in HOME-SOC.md.",
+      "resources": [
+        { "label": "Wazuh — Documentation", "url": "https://documentation.wazuh.com/", "note": "official, the canonical open-source SIEM + EDR" },
+        { "label": "Elastic Stack — Documentation", "url": "https://www.elastic.co/guide/index.html", "note": "official, the canonical log platform" },
+        { "label": "Sigma — Generic Signature Format", "url": "https://github.com/SigmaHQ/sigma", "note": "GitHub, the cross-platform detection rule format" },
+        { "label": "Florian Roth — DFIR Report blog", "url": "https://thedfirreport.com/", "note": "blog, real intrusion case studies; the canonical defence-side reading" },
+        { "label": "Detection Engineering Weekly", "url": "https://www.detectionengineering.net/", "note": "newsletter, the canonical detection-engineering newsletter" },
+        { "label": "MITRE ATT&CK Framework", "url": "https://attack.mitre.org/", "note": "official, the canonical taxonomy of attacker tactics + techniques" }
+      ],
+      "questions": [
+        "Your Wazuh agent went offline. What's the next event? Is it suspicious or just a network blip?",
+        "10000 logs/sec. What's your ingest cost? When does it become a budgeting concern?",
+        "Sigma rule for 'mass file deletion'. Write it. Test it. Does it false-positive on backup jobs?",
+        "Alert fatigue — your SOC gets 200 alerts/day. How do you reduce false positives without missing real attacks?"
+      ],
+      "exercises": [
+        "Deploy a Wazuh agent to one VM; verify auth-fail events show up.",
+        "Write a Sigma rule for 'powershell with encoded command' (a common attacker pattern).",
+        "Build a Kibana visualisation of failed-login attempts by source IP.",
+        "Route HIGH-severity alerts to Slack via Wazuh integrations."
+      ],
+      "outputs": [
+        "Working Wazuh + Elastic Stack home SOC",
+        "10 Sigma rules committed",
+        "Kibana dashboard for one alert category",
+        "HOME-SOC.md documenting the architecture"
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Incident Response Basics — When Something Real Happens",
+      "phase": "Defensive Basics",
+      "commitment_hours": "20-25",
+      "context": "Most companies handle their first real incident badly. This week you learn the IR lifecycle — preparation, identification, containment, eradication, recovery, lessons learned — and you simulate one end to end.",
+      "topics": [
+        "The SANS IR lifecycle — 6 phases, what each means",
+        "First responder actions — preserve evidence, isolate, document",
+        "Memory forensics with Volatility",
+        "Disk imaging — dd, FTK Imager, chain of custody",
+        "Log timeline analysis — correlating events across systems",
+        "Containment strategies — short-term vs long-term",
+        "Communication during an incident — who needs to know, when",
+        "Post-incident — RCAs, learnings, hardening"
+      ],
+      "tasks": [
+        "Read the SANS IR Handler's Handbook",
+        "Use Volatility to analyse a memory dump from a HackTheBox forensics challenge",
+        "Use dd to image a small disk; verify the hash",
+        "Practice a tabletop incident: 'Suspicious authentication from foreign IP' — walk through your IR playbook",
+        "Write an IR runbook for one realistic scenario"
+      ],
+      "project": "Build an Incident Response Playbook. Cover 5 realistic scenarios for a typical SaaS company: compromised credentials, ransomware in dev, public S3 leak, third-party API breach, insider exfiltration. Each scenario gets a runbook: detection signs, containment steps, comms plan, recovery, retro. Commit as IR-PLAYBOOK.md. This is the artifact every incident commander needs.",
+      "resources": [
+        { "label": "SANS — Incident Handler's Handbook (free)", "url": "https://www.sans.org/white-papers/33901/", "note": "free, the canonical IR reference" },
+        { "label": "Volatility — Documentation", "url": "https://volatility3.readthedocs.io/", "note": "official, the canonical memory forensics tool" },
+        { "label": "The Forager's Handbook to NIST CSF 2.0", "url": "https://www.nist.gov/cyberframework", "note": "official, the canonical cybersecurity framework" },
+        { "label": "DFIR Report — Real intrusion case studies", "url": "https://thedfirreport.com/", "note": "blog, the canonical defence-side reading; one report per week" },
+        { "label": "PagerDuty — Incident Response Guide (free)", "url": "https://response.pagerduty.com/", "note": "free book, how to actually run an incident operationally" },
+        { "label": "Google — SRE Incident Management chapter", "url": "https://sre.google/sre-book/managing-incidents/", "note": "free, the canonical IC + comms model" }
+      ],
+      "questions": [
+        "You detect suspicious admin activity in real-time. Do you immediately revoke the session? What if it's a legitimate admin doing emergency work?",
+        "Memory forensics — what can you find in RAM that you can't find on disk?",
+        "Your CEO demands a status update every 30 minutes during an active incident. How do you balance comms with investigation?",
+        "Post-incident: the cause was a phishing email. Is the fix 'more phishing training'? Or is it deeper?"
+      ],
+      "exercises": [
+        "Analyse a memory dump for running processes; identify suspicious ones.",
+        "Write an evidence-collection script that preserves volatile data first.",
+        "Walk a tabletop scenario with a colleague (or alone, narrating).",
+        "Write a post-mortem in NTSB style (timeline + facts + contributing factors)."
+      ],
+      "outputs": [
+        "IR-PLAYBOOK.md with 5 runbooks",
+        "Memory forensics analysis report",
+        "Tabletop scenario completed + documented",
+        "Notes/ir-discipline.md — your IR principles"
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Endpoint Security — EDR, Hardening, MDM",
+      "phase": "Defensive Basics",
+      "commitment_hours": "20-25",
+      "context": "Endpoints (laptops, phones, servers) are the most-attacked surface. This week you learn to harden them, detect compromise on them (EDR), and manage them at scale (MDM).",
+      "topics": [
+        "OS hardening baselines — CIS Benchmarks for Linux + Windows + macOS",
+        "EDR fundamentals — what it sees that AV doesn't",
+        "Open-source EDR — Wazuh, Velociraptor, Falcon (free agents)",
+        "Application allowlisting — when to use, the operational tax",
+        "Disk encryption — FileVault, BitLocker, LUKS",
+        "MDM — Jamf (Mac), Intune (Windows), Kandji",
+        "BYOD vs corporate-issued — the policy debate",
+        "Mobile device security — iOS vs Android security models"
+      ],
+      "tasks": [
+        "Apply a CIS Benchmark Level 1 to one of your Ubuntu VMs; document deviations",
+        "Install Velociraptor on a test endpoint; run a hunt for a suspicious file",
+        "Configure FileVault (Mac) or BitLocker (Windows); verify encryption is active",
+        "Set up an MDM trial (Jamf Now, Kandji, or InTune); enroll a test device",
+        "Compare what Falcon, SentinelOne, MS Defender for Endpoint report on the same suspicious behaviour"
+      ],
+      "project": "Harden Your Personal Laptop. Apply CIS-level hardening: FileVault, firmware password, firewall on, SSH key-only, automatic updates, password manager, no admin daily-driver. Install an EDR (Falcon free tier or Wazuh agent). Document the baseline in HARDENING.md. This is what every developer should have on day 1.",
+      "resources": [
+        { "label": "CIS Benchmarks", "url": "https://www.cisecurity.org/cis-benchmarks", "note": "official, the canonical OS hardening baselines" },
+        { "label": "Velociraptor — Documentation", "url": "https://docs.velociraptor.app/", "note": "official, open-source DFIR + EDR by Rapid7" },
+        { "label": "CrowdStrike Falcon — Free trial documentation", "url": "https://www.crowdstrike.com/", "note": "official, the dominant commercial EDR; free trial available" },
+        { "label": "Decided Computing — macOS security blog", "url": "https://eclecticlight.co/", "note": "blog, the canonical Mac security explainer" },
+        { "label": "Microsoft — Defender for Endpoint docs", "url": "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/", "note": "official, what most enterprises run" },
+        { "label": "iOS Security Guide (Apple Platform Security)", "url": "https://support.apple.com/guide/security/welcome/web", "note": "official, the canonical reference for iOS security architecture" }
+      ],
+      "questions": [
+        "CIS Benchmark Level 2 is stricter than Level 1. Where does it start hurting daily use?",
+        "EDR vs antivirus — what does EDR detect that AV doesn't? At what cost (CPU, RAM, network)?",
+        "BYOD: your engineer's personal MacBook accesses production. What's the right policy? Full MDM, partial MDM (work container), or refuse?",
+        "FileVault key escrow — should your MDM hold the recovery key? What if the company is acquired?"
+      ],
+      "exercises": [
+        "Run CIS-CAT (free for individual) on a Linux host; review findings.",
+        "Use Velociraptor's hunt feature to look for SUID binaries in /tmp.",
+        "Enable USB write-protection on a workstation (USBGuard on Linux).",
+        "Configure your shell to log every command to a syslog server."
+      ],
+      "outputs": [
+        "Personal laptop hardened to documented baseline",
+        "HARDENING.md committed (your daily-driver hardening checklist)",
+        "EDR running on at least one endpoint",
+        "MDM trial enrollment completed"
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Threat Intelligence and Hunting",
+      "phase": "Defensive Basics",
+      "commitment_hours": "20-25",
+      "context": "You can't defend against attackers you don't understand. Threat intelligence + hunting moves you from reactive (alerts come in) to proactive (you look for attackers nobody else found).",
+      "topics": [
+        "Threat intelligence — strategic, operational, tactical levels",
+        "MITRE ATT&CK — using it for hunt hypotheses",
+        "IOCs (Indicators of Compromise) — hashes, IPs, domains, URLs",
+        "TTPs (Tactics, Techniques, Procedures) — why these beat IOCs",
+        "Threat-intel feeds — MISP, ThreatFox, AlienVault OTX",
+        "Threat hunting methodology — hypothesis-driven",
+        "Sigma + YARA — detection-as-code at different layers",
+        "OSINT for security teams — daily threat news, attribution"
+      ],
+      "tasks": [
+        "Sign up for AlienVault OTX (free); subscribe to 5 pulses",
+        "Pick a MITRE ATT&CK technique (e.g. T1059.001 PowerShell); write a hunt hypothesis + Sigma rule",
+        "Set up MISP locally; import IOCs from one feed",
+        "Hunt for the pattern in your Wazuh logs (from week 9)",
+        "Write a YARA rule for one malware family (use public samples on Malware Bazaar)"
+      ],
+      "project": "Run a Threat Hunt End-to-End. Pick a recent CVE or attacker TTP from threat intel. Form a hypothesis: 'attackers might be using X on our network'. Build the hunt: which logs, which patterns, which queries. Execute against your home SOC. Document the hunt — even if you find nothing, the discipline is the artifact. Commit as HUNT.md.",
+      "resources": [
+        { "label": "MITRE ATT&CK Framework", "url": "https://attack.mitre.org/", "note": "official, the canonical attacker-behaviour taxonomy" },
+        { "label": "ThreatHunting Project", "url": "https://www.threathunting.net/", "note": "free, hypothesis library + methodology" },
+        { "label": "MISP — Documentation", "url": "https://www.misp-project.org/documentation/", "note": "official, the canonical open-source threat-intel platform" },
+        { "label": "AlienVault OTX", "url": "https://otx.alienvault.com/", "note": "official, free threat-intel platform with community pulses" },
+        { "label": "Florian Roth — DFIR Report + Sigma rules", "url": "https://github.com/SigmaHQ/sigma", "note": "GitHub, his rule contributions are a master class" },
+        { "label": "YARA — Documentation", "url": "https://yara.readthedocs.io/", "note": "official, the canonical pattern-matching tool for malware classification" }
+      ],
+      "questions": [
+        "IOC vs TTP — why are IOCs short-lived and TTPs durable? When does an attacker re-use both?",
+        "Your hunt found nothing. Is that a successful hunt? Why might it still be valuable?",
+        "MITRE ATT&CK has 200+ techniques. Which ones are most relevant to YOUR environment? How do you prioritise?",
+        "Threat-intel feed costs $50k/yr. Worth it for a 10-engineer startup? At what stage does it become worth it?"
+      ],
+      "exercises": [
+        "Pick a MITRE technique; write a Sigma rule that would detect it.",
+        "Write a YARA rule that matches a specific string in a malware sample.",
+        "Use MISP to ingest an OTX pulse; explore the IOCs.",
+        "Hunt for 'unusual parent-child process trees' (e.g. winword.exe spawning cmd.exe)."
+      ],
+      "outputs": [
+        "HUNT.md documenting one real threat hunt end-to-end",
+        "5 Sigma + 3 YARA rules contributed",
+        "MISP instance running locally with ingested feeds",
+        "Notes/threat-intel.md — your daily intake routine"
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Cloud Security — AWS, Azure, GCP",
+      "phase": "Cloud + Container Security",
+      "commitment_hours": "25-30",
+      "context": "Most modern breaches happen in the cloud — misconfigured IAM, exposed buckets, leaked secrets. This week you attack + defend a cloud environment.",
+      "topics": [
+        "Shared Responsibility Model — what AWS secures, what you secure",
+        "IAM attack paths — over-permissive policies, instance profile abuse, role chaining",
+        "Public S3 buckets — how they happen, how to detect",
+        "Secrets in code — git, S3, EBS snapshots, AMIs",
+        "Cloud-native scanners — Prowler, ScoutSuite, Steampipe",
+        "AWS-specific attacks — Pacu, CloudGoat",
+        "GCP attack paths — pwning Google Cloud",
+        "Defence — CloudTrail, GuardDuty, AWS Config, IAM Access Analyzer"
+      ],
+      "tasks": [
+        "Set up CloudGoat (a vulnerable AWS environment); complete 2 scenarios",
+        "Run Pacu against your CloudGoat instance; understand the attack modules",
+        "Run Prowler against your real AWS account; fix the top 5 HIGH findings",
+        "Enable GuardDuty + CloudTrail; trigger a finding deliberately; verify alert",
+        "Configure IAM Access Analyzer; resolve every finding"
+      ],
+      "project": "Cloud Security Audit + Hardening for One AWS Account. Run Prowler. Fix every HIGH finding. Document remaining ones with justification. Set up GuardDuty alerts to your phone. Verify every IAM policy is least-privilege via Access Analyzer. Commit as CLOUD-SECURITY.md.",
+      "resources": [
+        { "label": "CloudGoat — Vulnerable AWS environment", "url": "https://github.com/RhinoSecurityLabs/cloudgoat", "note": "GitHub, the canonical AWS pentest training environment" },
+        { "label": "Pacu — AWS exploitation framework", "url": "https://github.com/RhinoSecurityLabs/pacu", "note": "GitHub, the canonical AWS-attack framework" },
+        { "label": "Prowler", "url": "https://github.com/prowler-cloud/prowler", "note": "GitHub, the most-used open-source cloud security scanner" },
+        { "label": "Steampipe — Query cloud security as SQL", "url": "https://steampipe.io/", "note": "official, query 100+ APIs (AWS, Azure, GCP) as if they were Postgres tables" },
+        { "label": "HackTricks Cloud", "url": "https://cloud.hacktricks.xyz/", "note": "free, the canonical cloud-attack knowledge base" },
+        { "label": "AWS Customer Security Incident Response Team blog", "url": "https://aws.amazon.com/blogs/security/", "note": "official, real cloud security incident stories" }
+      ],
+      "questions": [
+        "Your IAM has a user with `iam:PassRole` to a high-priv role. What's the attack path?",
+        "Public S3 buckets — how do you reliably find them across an org? What about across all of AWS?",
+        "CloudTrail in one account vs CloudTrail aggregated to a security account — when is each right?",
+        "GuardDuty fired 'CryptoCurrency:EC2/BitcoinTool.B!DNS'. Is it a real attack? How do you triage?"
+      ],
+      "exercises": [
+        "Complete CloudGoat's 'iam_privesc_by_attachment' scenario.",
+        "Use Steampipe to query 'all S3 buckets with public access' in one SQL.",
+        "Write a custom CloudTrail Lambda filter that alerts on `AssumeRole` from outside your org.",
+        "Configure a service-control policy that prevents disabling CloudTrail."
+      ],
+      "outputs": [
+        "CloudGoat scenarios completed",
+        "Real AWS account hardened with documented before/after",
+        "CLOUD-SECURITY.md committed",
+        "Notes/cloud-attack-defence.md"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Container and Kubernetes Security",
+      "phase": "Cloud + Container Security",
+      "commitment_hours": "20-25",
+      "context": "Containers run everything now — and most of them are misconfigured. This week you attack and defend Docker + Kubernetes environments.",
+      "topics": [
+        "Container escape vulnerabilities — runc CVEs, privileged containers",
+        "Capabilities — what each does, why you should drop most",
+        "AppArmor / SELinux profiles",
+        "Kubernetes RBAC — common mistakes, how attackers escalate",
+        "Pod Security Standards (replaced PSPs)",
+        "Network policies — default-deny, explicit allows",
+        "Image security — scanning, signing, admission control",
+        "Runtime security — Falco, Tetragon for kernel-level detection"
+      ],
+      "tasks": [
+        "Set up KubeGoat (vulnerable K8s); complete 5 scenarios",
+        "Run a privileged container; demonstrate container escape via /proc",
+        "Install Falco on your local K8s; trigger detections by running suspicious commands",
+        "Apply restrictive Pod Security Standards to your namespace",
+        "Configure a default-deny NetworkPolicy; verify pods can't communicate by default"
+      ],
+      "project": "K8s Security Audit + Hardening Pass on Your Cluster. Run kube-bench, kube-hunter, Trivy K8s mode. Fix every HIGH finding. Apply restricted PodSecurity. Default-deny network policies. Install Falco for runtime detection. Document in K8S-SECURITY.md.",
+      "resources": [
+        { "label": "Kubernetes — Security documentation", "url": "https://kubernetes.io/docs/concepts/security/", "note": "official, the canonical reference" },
+        { "label": "KubeGoat — Vulnerable K8s environment", "url": "https://github.com/madhuakula/kubernetes-goat", "note": "GitHub, the canonical K8s pentest training" },
+        { "label": "Aqua kube-bench + kube-hunter", "url": "https://github.com/aquasecurity/kube-bench", "note": "GitHub, the canonical K8s CIS auditing + attack tools" },
+        { "label": "Falco — Documentation", "url": "https://falco.org/docs/", "note": "official, the canonical runtime security tool" },
+        { "label": "Liz Rice — Container Security book", "url": "https://www.lizrice.com/", "note": "the canonical container security book; free chapters online" },
+        { "label": "Datadog — State of Cloud Security report", "url": "https://www.datadoghq.com/resources/", "note": "annual report, real numbers on cloud + container security misconfigurations" }
+      ],
+      "questions": [
+        "Container with `--privileged` — what can it do to the host? Demonstrate one escape.",
+        "Pod Security Standards replaced PSPs. Why? What changed in practice?",
+        "Falco detected `nc` (netcat) running in a pod. False positive or real attack? How do you investigate?",
+        "Image admission control — Cosign signature + ECR-scan-clean. Where do you enforce? Why not just trust your registry?"
+      ],
+      "exercises": [
+        "Drop all capabilities except NET_BIND_SERVICE; verify your app still works.",
+        "Apply restricted PodSecurity policy; observe rejections of non-compliant pods.",
+        "Write a Falco rule for 'shell spawned in a container'.",
+        "Use Trivy operator to continuously scan your cluster's images."
+      ],
+      "outputs": [
+        "K8s-SECURITY.md with hardening documented",
+        "KubeGoat scenarios completed",
+        "Falco running with custom rules",
+        "Network policies enforcing default-deny"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "DevSecOps — Security Throughout the SDLC",
+      "phase": "Cloud + Container Security",
+      "commitment_hours": "20-25",
+      "context": "Security at the end is too late. DevSecOps shifts security left — into IDE, into CI, into PR review. This week you build the security automation that runs on every commit.",
+      "topics": [
+        "Shift-left security — what each stage should catch",
+        "SAST (Static Application Security Testing) — Semgrep, CodeQL, SonarQube",
+        "SCA (Software Composition Analysis) — Snyk, Dependabot, Renovate",
+        "Secret scanning — gitleaks, trufflehog, GitHub's built-in",
+        "IaC scanning — Checkov, tfsec, KICS",
+        "Container scanning — Trivy, Grype, Snyk Container",
+        "DAST (Dynamic) — OWASP ZAP in CI",
+        "PR-time feedback vs nightly scans — when each fits"
+      ],
+      "tasks": [
+        "Add Semgrep to one repo's CI; fix every finding",
+        "Enable Dependabot security updates on a repo with stale deps",
+        "Add gitleaks to your pre-commit hook; verify it blocks a test secret",
+        "Run Checkov against your Terraform; document findings",
+        "Add Trivy container scanning to your CI; fail on HIGH"
+      ],
+      "project": "Build a Full DevSecOps Pipeline. Take one project. Add: pre-commit (gitleaks, format), PR-CI (Semgrep, Trivy IaC, Trivy container, dependency audit), nightly DAST scan against staging. Each finding rated + triaged. Document the pipeline in DEVSECOPS.md. The bar: a contributor can't push insecure code by accident.",
+      "resources": [
+        { "label": "Semgrep — Documentation", "url": "https://semgrep.dev/docs/", "note": "official, the modern SAST tool with great rule coverage" },
+        { "label": "GitHub CodeQL — Documentation", "url": "https://codeql.github.com/docs/", "note": "official, GitHub's deep SAST; free for public repos" },
+        { "label": "Snyk — Free tier docs", "url": "https://docs.snyk.io/", "note": "official, the canonical SCA tool" },
+        { "label": "Bridgecrew Checkov — IaC scanner", "url": "https://www.checkov.io/", "note": "official, the canonical Terraform/CloudFormation scanner" },
+        { "label": "Trivy — Documentation", "url": "https://aquasecurity.github.io/trivy/", "note": "official, the canonical container scanner" },
+        { "label": "OWASP DevSecOps Guideline", "url": "https://owasp.org/www-project-devsecops-guideline/", "note": "official, the canonical reference" }
+      ],
+      "questions": [
+        "Semgrep flags 50 issues on your repo. Triage: how many are real vs false positives? At what FP rate does developers ignore the scanner?",
+        "Dependabot opens 30 PRs per week. Who reviews them? What's the policy for breaking-change updates?",
+        "Your DAST scan takes 1 hour. Run it nightly or per-PR? What's the trade-off?",
+        "Secret scanning caught a token committed 6 months ago. Even if rotated then, what do you do now?"
+      ],
+      "exercises": [
+        "Configure Semgrep with a security-focused ruleset (semgrep-rules/security).",
+        "Set up Renovate or Dependabot config for one repo.",
+        "Add a CI job that runs Trivy on every Docker build; fail on HIGH.",
+        "Schedule a nightly OWASP ZAP scan against your staging environment."
+      ],
+      "outputs": [
+        "Full DevSecOps pipeline on one project",
+        "DEVSECOPS.md committed",
+        "Documented triage policy for findings",
+        "Notes/devsecops.md — your pipeline design"
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Threat Modelling — Designing Security Before Code",
+      "phase": "Cloud + Container Security",
+      "commitment_hours": "15-20",
+      "context": "The most secure architecture is one that's threat-modelled from the start. This week you learn STRIDE, attack trees, and you do a real threat model on one of your projects.",
+      "topics": [
+        "Threat modelling methodologies — STRIDE, PASTA, LINDDUN",
+        "Data flow diagrams (DFDs) as the threat model substrate",
+        "Trust boundaries — where attackers live",
+        "STRIDE categories — Spoofing, Tampering, Repudiation, Info disclosure, DoS, Elevation",
+        "Likelihood + impact rating",
+        "Mitigations as design choices, not afterthoughts",
+        "Lightweight threat modelling for sprint work",
+        "Tools — OWASP Threat Dragon, IriusRisk, hand-drawn"
+      ],
+      "tasks": [
+        "Read 'Threat Modeling: Designing for Security' chapters 1-4",
+        "Draw a DFD for one of your apps (use OWASP Threat Dragon or paper)",
+        "Apply STRIDE to each data flow; identify at least 10 threats",
+        "Rate each threat by likelihood + impact; pick the top 5 to mitigate",
+        "Design mitigations for each; verify in code"
+      ],
+      "project": "Threat-Model One of Your Production Apps. Draw the DFD with trust boundaries. Apply STRIDE per data flow. List 10+ threats with ratings. Design mitigations. Verify implementation in code. Commit as THREAT-MODEL.md. This is the document every security team wants from every product team.",
+      "resources": [
+        { "label": "Threat Modeling: Designing for Security — Adam Shostack (book)", "url": "https://shostack.org/books/threat-modeling-book", "note": "the canonical text; paid book" },
+        { "label": "OWASP Threat Dragon", "url": "https://owasp.org/www-project-threat-dragon/", "note": "official, free open-source threat modelling tool" },
+        { "label": "Microsoft — STRIDE explained", "url": "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats", "note": "official, the canonical STRIDE reference" },
+        { "label": "ThreatMod.io — Threat Modeling Manifesto", "url": "https://www.threatmodelingmanifesto.org/", "note": "official, the canonical philosophical baseline" },
+        { "label": "Adam Shostack — Continuous threat modelling blog", "url": "https://shostack.org/blog/", "note": "blog, the modern lightweight TM patterns" },
+        { "label": "Continuous Threat Modeling — OWASP", "url": "https://github.com/Autodesk/continuous-threat-modeling", "note": "GitHub, Autodesk's open-source program" }
+      ],
+      "questions": [
+        "Your DFD shows data crossing a trust boundary. What's automatically suspect?",
+        "STRIDE per element vs per data flow vs per interaction — which gives the best results for your size?",
+        "Threat modelling takes 3 days. Worth it for a 1-week sprint? When does lightweight TM (15-min in standup) work?",
+        "Compare your TM to the actual implementation. Where did the implementation diverge?"
+      ],
+      "exercises": [
+        "Draw a DFD for your URL shortener with at least 3 trust boundaries.",
+        "Apply STRIDE to one data flow; identify at least 3 threats.",
+        "Rate threats with a simple high/medium/low matrix.",
+        "Implement one mitigation; verify it actually prevents the threat."
+      ],
+      "outputs": [
+        "THREAT-MODEL.md for one production app",
+        "DFD committed (image or threat dragon JSON)",
+        "Top-5 threats with mitigations implemented in code",
+        "Notes/threat-modelling.md — your lightweight process"
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Application Security — SAST, DAST, IAST",
+      "phase": "Application Security",
+      "commitment_hours": "20-25",
+      "context": "Application security is its own discipline within security. This week you go deeper than the DevSecOps pipeline — manual code review, threat-led SAST tuning, custom SAST rules, secure-by-design patterns.",
+      "topics": [
+        "Secure coding patterns — input validation, output encoding, parameterised everything",
+        "Manual code review — what to look for, where bugs hide",
+        "Writing custom Semgrep rules for your codebase's patterns",
+        "OWASP ASVS — application security verification standard",
+        "OWASP SAMM — maturity model for AppSec programs",
+        "SAST tuning — reducing false positives, the noise problem",
+        "Bug bars by feature — what blocks release vs what's tech debt",
+        "Pre-merge vs post-merge security — gates vs feedback"
+      ],
+      "tasks": [
+        "Read OWASP ASVS Level 1 controls; check 5 against your project",
+        "Manually code-review a recent OSS security commit; what would you have caught/missed?",
+        "Write a custom Semgrep rule for one company-specific antipattern",
+        "Build a Bug Bar document for your project — what's a P0 vs P3",
+        "Compare 3 SAST tools (Semgrep + CodeQL + Snyk Code) on the same codebase"
+      ],
+      "project": "Run a Real Application Security Review on Your URL Shortener. Apply OWASP ASVS Level 1. Manual code review with security lens (focus on auth, IDOR, injection). Custom Semgrep rules for your patterns. Document findings + remediations in APPSEC-REVIEW.md. This is the kind of work that pays $200k+ at senior level.",
+      "resources": [
+        { "label": "OWASP ASVS — Application Security Verification Standard", "url": "https://owasp.org/www-project-application-security-verification-standard/", "note": "official, the canonical AppSec requirements" },
+        { "label": "OWASP SAMM — Software Assurance Maturity Model", "url": "https://owaspsamm.org/", "note": "official, the canonical AppSec program maturity model" },
+        { "label": "Semgrep Registry — community rules", "url": "https://semgrep.dev/explore", "note": "official, browse + adapt existing rules" },
+        { "label": "CodeQL — Documentation", "url": "https://codeql.github.com/docs/", "note": "official, write deep semantic queries; free for OSS" },
+        { "label": "Practical Application Security course — Daniel Miessler", "url": "https://danielmiessler.com/study/web-application-security/", "note": "blog, the canonical AppSec primer for engineers" },
+        { "label": "Tanya Janca — We Hack Purple blog", "url": "https://wehackpurple.com/", "note": "blog, the canonical AppSec educator for engineers" }
+      ],
+      "questions": [
+        "Your custom Semgrep rule catches a real bug but also has 30% false positives. Ship it or tune more?",
+        "Manual review vs SAST — which catches the bug class you most worry about? Which is more sustainable for a 50-engineer team?",
+        "Bug bar: P0 = block release. What threshold of severity actually makes that worthwhile? When does it become red tape?",
+        "OWASP ASVS Level 1 vs Level 2 — what changes? When does each pay off?"
+      ],
+      "exercises": [
+        "Write a Semgrep rule for 'eval() of user input'; verify it catches a real pattern.",
+        "Manually review one of your own commits; find at least one thing you'd improve security-wise.",
+        "Apply 10 ASVS Level 1 controls to your URL shortener; document gaps.",
+        "Build a 1-page AppSec Bug Bar for your team."
+      ],
+      "outputs": [
+        "APPSEC-REVIEW.md for one production app",
+        "Custom Semgrep rules for your codebase committed",
+        "ASVS compliance checklist completed",
+        "Notes/appsec.md — your code review checklist"
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Software Supply Chain Security",
+      "phase": "Application Security",
+      "commitment_hours": "20-25",
+      "context": "The XZ backdoor, npm protestware, the SolarWinds attack — supply chain is the most-exploited surface now. This week you learn the defences: SBOMs, signing, provenance, dependency policies.",
+      "topics": [
+        "Supply chain attacks — historical examples (event-stream, log4shell, XZ, SolarWinds)",
+        "SBOMs (Software Bill of Materials) — Syft, CycloneDX, SPDX",
+        "Dependency provenance — what package came from where",
+        "Sigstore — cosign for image signing, free trust",
+        "SLSA — Supply chain Levels for Software Artifacts framework",
+        "Reproducible builds",
+        "Dependency policy — pinning, lock files, dependency review",
+        "Internal package mirrors — preventing dependency confusion"
+      ],
+      "tasks": [
+        "Generate an SBOM for one of your repos using Syft",
+        "Sign a container image with Cosign; verify signature",
+        "Read about the XZ backdoor (March 2024); write a 500-word summary of the attack",
+        "Pin all dependencies in one package.json or requirements.txt to exact versions",
+        "Set up GitHub's Dependency Review action on a PR"
+      ],
+      "project": "Build a Supply Chain Security Pipeline. For one repo: SBOM generated on every release, container image signed with Cosign, attestation of build provenance, dependency-review on every PR, internal mirror for private packages. Document in SUPPLY-CHAIN.md. This is increasingly required for shipping software to government and enterprise.",
+      "resources": [
+        { "label": "SLSA — Supply chain Levels for Software Artifacts", "url": "https://slsa.dev/", "note": "official, the canonical supply chain framework" },
+        { "label": "Sigstore — Documentation", "url": "https://docs.sigstore.dev/", "note": "official, the open-source signing infrastructure" },
+        { "label": "Syft — SBOM generator", "url": "https://github.com/anchore/syft", "note": "GitHub, the canonical open-source SBOM tool" },
+        { "label": "CycloneDX specification", "url": "https://cyclonedx.org/", "note": "official, the dominant SBOM format" },
+        { "label": "Sonatype — State of the Software Supply Chain", "url": "https://www.sonatype.com/state-of-the-software-supply-chain", "note": "annual report, real numbers on dependency risk" },
+        { "label": "Software Supply Chain Security book — Cassie Crossley (paid)", "url": "https://www.oreilly.com/library/view/software-supply-chain/9781098133702/", "note": "the canonical modern reference" }
+      ],
+      "questions": [
+        "XZ — what was the attack? How could SBOMs + reproducible builds have helped (or not)?",
+        "Cosign vs Notary v2 — both sign images. Which is winning in 2026? Why?",
+        "Dependency confusion attack — what is it? Have you protected against it?",
+        "Your SBOM has 1500 dependencies. Most are transitive. How do you triage which to actually worry about?"
+      ],
+      "exercises": [
+        "Generate a CycloneDX SBOM for a Python project.",
+        "Cosign sign + verify a container image.",
+        "Add SLSA-3 provenance generation to your CI using slsa-github-generator.",
+        "Set up Dependabot for SCA + license review."
+      ],
+      "outputs": [
+        "SBOM committed for one repo",
+        "Signed container images verified",
+        "SUPPLY-CHAIN.md documented",
+        "Notes/supply-chain.md — your defence-in-depth design"
+      ]
+    },
+    {
+      "number": 19,
+      "title": "Compliance — SOC2, ISO27001, GDPR",
+      "phase": "Application Security",
+      "commitment_hours": "20-25",
+      "context": "Most security engineers eventually deal with compliance. SOC2 is the default for B2B SaaS, ISO27001 globally, GDPR for any EU data. This week you understand what they actually require — not the FUD.",
+      "topics": [
+        "SOC2 Trust Services Criteria — security, availability, confidentiality, processing integrity, privacy",
+        "SOC2 Type I vs Type II — the difference, what each costs",
+        "ISO27001 — the international standard; Annex A controls",
+        "GDPR — the principles, the big penalties, the consent question",
+        "PCI DSS — if you touch credit cards",
+        "HIPAA — if you touch US health data",
+        "Compliance automation — Vanta, Drata, Secureframe",
+        "Evidence collection — what auditors want; the daily work"
+      ],
+      "tasks": [
+        "Read AICPA's SOC2 description; identify 10 controls that apply to your URL shortener",
+        "Read GDPR articles 5-11; identify your obligations as a controller",
+        "Look at Vanta/Drata's pricing; understand when compliance-automation pays off",
+        "Map 5 SOC2 controls to existing technical controls you already have",
+        "Draft a privacy policy that's actually GDPR-compliant"
+      ],
+      "project": "Build a 'SOC2-Ready' Posture for One App. Identify the SOC2 Common Criteria + Security controls relevant to your URL shortener. For each, document: the requirement, your current state, the evidence you'd produce for an auditor. Commit as SOC2-READINESS.md. This isn't the audit itself but the prep — which is where 80% of the work lives.",
+      "resources": [
+        { "label": "AICPA — SOC2 Description Criteria", "url": "https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-2", "note": "official, the canonical reference" },
+        { "label": "Vanta — Compliance Hub (free articles)", "url": "https://www.vanta.com/", "note": "official, the leading hosted SOC2 automation; their public docs are valuable" },
+        { "label": "ISO/IEC 27001:2022 — the standard", "url": "https://www.iso.org/standard/27001", "note": "official, the international standard for ISMS" },
+        { "label": "GDPR — official text", "url": "https://gdpr.eu/", "note": "official, free + readable" },
+        { "label": "Latacora — Bookkeeper-style security", "url": "https://latacora.micro.blog/", "note": "blog, the canonical 'compliance done sensibly' voice" },
+        { "label": "Drata + Secureframe public learning hubs", "url": "https://drata.com/grc-central", "note": "free learning resources from the leading compliance vendors" }
+      ],
+      "questions": [
+        "SOC2 Type I costs ~$10k + 3 months. Type II costs ~$30k + 6 months (then annually). When does each pay off?",
+        "GDPR Article 17 (Right to be Forgotten) — what does that mean for your URL shortener data?",
+        "Your customer is a healthcare provider but you don't touch PHI. Does HIPAA apply to you?",
+        "Vanta costs $1k/mo. Without it, you'd spend a week monthly on evidence collection. Worth it? At what stage?"
+      ],
+      "exercises": [
+        "Map 10 SOC2 controls to your existing infrastructure controls.",
+        "Draft a Data Processing Agreement (DPA) addendum.",
+        "Build a 'compliance evidence' folder with timestamped screenshots monthly.",
+        "Write a privacy policy that addresses both GDPR + CCPA."
+      ],
+      "outputs": [
+        "SOC2-READINESS.md committed",
+        "Privacy policy GDPR-compliant",
+        "Mapping of controls to technical evidence",
+        "Notes/compliance.md — your decision tree for which frameworks matter when"
+      ]
+    },
+    {
+      "number": 20,
+      "title": "Identity, Access, and Zero Trust",
+      "phase": "Application Security",
+      "commitment_hours": "20-25",
+      "context": "The perimeter is dead. Zero Trust is the modern model — verify every request, regardless of source. This week you implement the foundations: SSO, MFA everywhere, conditional access, just-in-time elevated access.",
+      "topics": [
+        "SSO — SAML vs OAuth vs OIDC, what each fits",
+        "Identity providers — Okta, Google Workspace, Microsoft Entra, Authentik",
+        "Multi-factor — TOTP, push, WebAuthn / passkeys (the gold standard)",
+        "Conditional access — country, device, time-of-day policies",
+        "Just-in-time access — temporary elevation, why daily admin is broken",
+        "Service-to-service auth — mTLS, SPIFFE, workload identity",
+        "Zero Trust Architecture — NIST SP 800-207",
+        "Google BeyondCorp + Cloudflare Zero Trust — real implementations"
+      ],
+      "tasks": [
+        "Set up Authentik (open-source IdP) on a VM; configure SSO for one app",
+        "Enable WebAuthn / passkeys for your personal accounts that support them",
+        "Implement a 'just-in-time access' flow for a privileged action in your URL shortener",
+        "Configure conditional access on your IdP: block logins from countries you've never visited",
+        "Read NIST SP 800-207 (Zero Trust) chapter 3"
+      ],
+      "project": "Build a Zero Trust Posture for Your Personal Setup. SSO via Authentik or Okta free tier. Passkeys everywhere they're supported. Conditional access policies. Just-in-time elevation for AWS root or critical actions. Document everything in ZERO-TRUST.md. This same architecture scales to enterprises.",
+      "resources": [
+        { "label": "NIST SP 800-207 — Zero Trust Architecture", "url": "https://csrc.nist.gov/publications/detail/sp/800-207/final", "note": "official, the canonical Zero Trust reference" },
+        { "label": "Authentik — Open-source IdP", "url": "https://goauthentik.io/docs/", "note": "official, the modern open-source identity provider" },
+        { "label": "Google — BeyondCorp papers", "url": "https://cloud.google.com/beyondcorp", "note": "official, the canonical Zero Trust implementation papers" },
+        { "label": "WebAuthn Guide", "url": "https://webauthn.guide/", "note": "free, the friendliest passkey explanation" },
+        { "label": "Cloudflare — Zero Trust documentation", "url": "https://developers.cloudflare.com/cloudflare-one/", "note": "official, modern Zero Trust as a service" },
+        { "label": "SPIFFE / SPIRE — Documentation", "url": "https://spiffe.io/docs/", "note": "official, the canonical workload-identity standard" }
+      ],
+      "questions": [
+        "SAML vs OIDC — which would you pick for a new B2B SaaS? Why? Where does each shine?",
+        "Passkeys solve phishing. Why don't more sites support them? When will it tip?",
+        "JIT access vs always-on admin — what attack surface does JIT close?",
+        "Your CEO uses 1Password Family. Should they switch to a corporate IdP? When does the trade-off flip?"
+      ],
+      "exercises": [
+        "Set up Authentik on Docker; configure OIDC for one of your apps.",
+        "Enroll a YubiKey or TouchID as a passkey on your accounts.",
+        "Implement a JIT-elevated action in your URL shortener (admin re-auth required).",
+        "Write a conditional access policy: 'No logins from countries other than X, Y, Z'."
+      ],
+      "outputs": [
+        "ZERO-TRUST.md documenting your personal architecture",
+        "Authentik running with at least one app behind SSO",
+        "Passkeys enabled on all supported accounts",
+        "Notes/zero-trust.md — your architectural principles"
+      ]
+    },
+    {
+      "number": 21,
+      "title": "Forensics and Malware Analysis Basics",
+      "phase": "Incident Response & Forensics",
+      "commitment_hours": "20-25",
+      "context": "When you find a breach, you need forensics. This week you analyse a real (safe) malware sample and a compromised disk image. The mindset of 'preserve evidence' is the skill.",
+      "topics": [
+        "Acquisition — disk imaging, memory dumps, network capture",
+        "Chain of custody — what auditors and lawyers care about",
+        "File system forensics — MFT (NTFS), inodes (ext4), timestamps",
+        "Memory forensics — Volatility, process trees, network connections",
+        "Network forensics — Zeek, Suricata, Wireshark analysis",
+        "Malware analysis basics — static (strings, headers), dynamic (sandbox)",
+        "Reverse engineering — Ghidra, IDA, the basics",
+        "Sandboxes — Cuckoo, ANY.RUN, Joe Sandbox"
+      ],
+      "tasks": [
+        "Complete a HackTheBox forensics challenge (Sherlocks tier)",
+        "Use Volatility on a memory dump; list processes, network connections, command history",
+        "Get a safe malware sample from Malware Bazaar; analyse statically (strings, headers)",
+        "Submit a sample to ANY.RUN; observe the behaviour",
+        "Use Ghidra to disassemble a small binary; understand the basic structure"
+      ],
+      "project": "Investigate a Forensic Case. Pick a Sherlocks challenge from HackTheBox or a public DFIR case study. Walk through: initial triage, timeline reconstruction, evidence collection, attribution, scope assessment. Write the investigation report as a real DFIR analyst would. Commit as INVESTIGATION.md.",
+      "resources": [
+        { "label": "Volatility — Documentation", "url": "https://volatility3.readthedocs.io/", "note": "official, the canonical memory forensics framework" },
+        { "label": "Malware Bazaar — Sample database", "url": "https://bazaar.abuse.ch/", "note": "official, safe sample sharing for researchers" },
+        { "label": "ANY.RUN — Interactive malware sandbox", "url": "https://app.any.run/", "note": "official, free tier; the most-loved interactive sandbox" },
+        { "label": "Ghidra — Documentation", "url": "https://ghidra-sre.org/", "note": "official, NSA's free reverse-engineering tool" },
+        { "label": "Practical Malware Analysis (book) — Sikorski + Honig", "url": "https://nostarch.com/practicalmalwareanalysis", "note": "the canonical malware analysis text; paid book" },
+        { "label": "DFIR Report — Real intrusion reports", "url": "https://thedfirreport.com/", "note": "blog, the canonical defence-side case studies" }
+      ],
+      "questions": [
+        "Memory dump shows a process called `svchost.exe` running from C:\\Users\\... — suspicious or normal?",
+        "You imaged a disk and want to verify integrity. What's the right hashing approach (MD5, SHA-256, both)?",
+        "Static analysis vs dynamic analysis — when each? What can a sandbox tell you that strings can't?",
+        "Your attribution is 'likely an APT'. What evidence supports that? What would prove you wrong?"
+      ],
+      "exercises": [
+        "Use Volatility's pstree plugin; identify any suspicious process trees.",
+        "Use strings on a binary; identify URLs, IPs, and embedded paths.",
+        "Submit a sample to ANY.RUN; document the network traffic it generates.",
+        "Use Ghidra to disassemble a simple `hello.exe`; identify the main function."
+      ],
+      "outputs": [
+        "INVESTIGATION.md for one case study",
+        "Memory forensics report from a Sherlocks challenge",
+        "Malware analysis writeup from Malware Bazaar sample",
+        "Notes/forensics.md — your DFIR methodology"
+      ]
+    },
+    {
+      "number": 22,
+      "title": "Tabletop Exercises and Red Teaming",
+      "phase": "Incident Response & Forensics",
+      "commitment_hours": "20-25",
+      "context": "Red teaming isn't just hacking — it's testing whether your defence catches it. This week you design tabletop exercises and run a mini red-team exercise against your home SOC.",
+      "topics": [
+        "Tabletop exercises — discussion-based simulations",
+        "Red team vs pentest vs purple team — the differences",
+        "Atomic Red Team — testable detections per MITRE technique",
+        "Caldera — automated adversary emulation",
+        "Purple team — red + blue collaborating in real-time",
+        "Breach + Attack Simulation (BAS) — automated continuous testing",
+        "Scoring — what does 'success' mean for a red team engagement?",
+        "Communication — preventing the 'security team annoys engineering' problem"
+      ],
+      "tasks": [
+        "Run 5 Atomic Red Team tests against your home SOC; verify each gets detected",
+        "Use Caldera to run an automated adversary emulation",
+        "Design a tabletop exercise for one realistic scenario (ransomware in dev)",
+        "Run the tabletop with a friend playing the IR commander",
+        "Document the gaps it surfaced"
+      ],
+      "project": "Run a Purple Team Exercise. Pick 5 MITRE ATT&CK techniques relevant to your stack. Red side: execute via Atomic Red Team. Blue side: hunt + detect via your Wazuh + Falco. Gap analysis: which techniques were detected, which slipped through, why. Document in PURPLE.md. The output is a prioritised list of detection improvements.",
+      "resources": [
+        { "label": "Atomic Red Team", "url": "https://github.com/redcanaryco/atomic-red-team", "note": "GitHub, the canonical library of testable detections" },
+        { "label": "MITRE Caldera — Documentation", "url": "https://caldera.mitre.org/", "note": "official, the canonical adversary emulation framework" },
+        { "label": "Red Canary — Threat Detection Report", "url": "https://redcanary.com/threat-detection-report/", "note": "annual report, real attacker behaviour data" },
+        { "label": "CISA — Tabletop exercise packages", "url": "https://www.cisa.gov/resources-tools/services/cisa-tabletop-exercise-packages", "note": "official, free scenario kits for tabletops" },
+        { "label": "SANS — Tabletop Exercise Methodology", "url": "https://www.sans.org/white-papers/", "note": "free white papers" },
+        { "label": "Purple Team Field Manual — Tim Bryant", "url": "https://www.amazon.com/Purple-Team-Field-Manual/dp/B07VWFNX97", "note": "paid book, the modern reference for purple team work" }
+      ],
+      "questions": [
+        "Atomic Red Team test ran but your SOC didn't detect. What's missing — the rule, the log source, the correlation?",
+        "Purple team identified 10 gaps. Which do you fix first? What's your prioritisation framework?",
+        "Tabletop exercise — what's the right cadence (monthly, quarterly, yearly)? How long should one take?",
+        "Your CEO asks 'do we have a ransomware response plan?'. How do you find out? Tabletop?"
+      ],
+      "exercises": [
+        "Run Atomic Red Team test T1059.001 (PowerShell); verify detection.",
+        "Use Caldera to run an automated chain; observe SOC alerts.",
+        "Design a tabletop scenario card: situation, injects, expected actions.",
+        "Run a 30-minute tabletop solo, narrating decisions."
+      ],
+      "outputs": [
+        "PURPLE.md with red + blue results",
+        "Tabletop exercise design committed",
+        "Gap analysis with prioritised improvements",
+        "Notes/red-vs-blue.md — your collaboration model"
+      ]
+    },
+    {
+      "number": 23,
+      "title": "Building a Career in Security — Specialisation + Portfolio",
+      "phase": "Incident Response & Forensics",
+      "commitment_hours": "15-20",
+      "context": "Security is a huge field. You can't be expert at all of it. This week you pick a specialisation, build your portfolio, and start contributing to the community.",
+      "topics": [
+        "Specialisations — AppSec, CloudSec, IR, GRC, Red Team, Detection Engineering",
+        "Certifications — OSCP, CISSP, AWS Security Specialty — which matter when",
+        "Bug bounty as career signal",
+        "OSS contributions — Sigma rules, Atomic Red Team tests, scanner plugins",
+        "Writing — blog posts, conference talks, the security Twitter/Mastodon ecosystem",
+        "Career paths — consulting vs in-house, startup vs enterprise",
+        "Salaries — what to expect, how to negotiate",
+        "Mentorship — finding mentors, becoming one"
+      ],
+      "tasks": [
+        "Pick a specialisation; document why in CAREER.md",
+        "Write your first technical security blog post (1500 words)",
+        "Contribute one Sigma rule or Atomic Red Team test",
+        "Audit your LinkedIn / GitHub / portfolio for security-engineer signals",
+        "Reach out to 3 people in your specialisation; ask one short question"
+      ],
+      "project": "Launch Your Security Identity. Pick your specialisation. Write a blog post that demonstrates technical depth. Refresh your portfolio site with security projects from this roadmap. Make 1 OSS contribution. Engage with 5 security people on social. Document the strategy in CAREER.md. The goal: by end of week your name + specialisation are publicly associated.",
+      "resources": [
+        { "label": "Daniel Miessler — Career page", "url": "https://danielmiessler.com/", "note": "the canonical security career-mentor voice" },
+        { "label": "OffSec — OSCP/OSEP/OSWE certs", "url": "https://www.offsec.com/", "note": "official, the most respected offensive certs" },
+        { "label": "SANS GIAC — Defensive certs", "url": "https://www.giac.org/", "note": "official, the most respected defensive certs" },
+        { "label": "AWS Security Specialty cert", "url": "https://aws.amazon.com/certification/certified-security-specialty/", "note": "official, for cloud security roles" },
+        { "label": "TaoSecurity — Richard Bejtlich", "url": "https://taosecurity.blogspot.com/", "note": "blog, decades of career wisdom" },
+        { "label": "Cyber Career Pathways (CyberSeek)", "url": "https://www.cyberseek.org/pathway.html", "note": "official US, interactive map of security career paths + salaries" }
+      ],
+      "questions": [
+        "Bug-bounty profile vs OSCP cert — which signal pays off more for a junior AppSec role?",
+        "Blog post vs conference talk vs CVE — which is most attractive on a security CV?",
+        "Specialisations vary 30%+ in salary. Which is right for you — pure-tech depth vs cross-functional leadership?",
+        "Consulting vs in-house — which fits your life better? When would you switch?"
+      ],
+      "exercises": [
+        "Write a 1500-word technical security blog post.",
+        "Contribute to an open-source security tool.",
+        "Update your portfolio site with security projects.",
+        "Engage with 5 people on security Twitter/Mastodon; comment thoughtfully."
+      ],
+      "outputs": [
+        "CAREER.md committed with specialisation + plan",
+        "Published blog post on dev.to / medium / your blog",
+        "One merged OSS contribution",
+        "Updated portfolio site"
+      ]
+    },
+    {
+      "number": 24,
+      "title": "Capstone — Earn It",
+      "phase": "Capstone",
+      "commitment_hours": "30-40",
+      "context": "The final week. You produce one substantial artifact — bug bounty submission, CVE, full red team report, published research — that proves you operate at security-engineer level.",
+      "topics": [
+        "Picking a capstone — what genuinely demonstrates your skill",
+        "Quality over quantity — one deep thing > five shallow",
+        "Writing for technical audiences",
+        "Responsible disclosure timelines",
+        "When to ship vs when to extend",
+        "Building a body of work, not just one piece",
+        "Continuous improvement after the capstone",
+        "The first 90 days of your next security role"
+      ],
+      "tasks": [
+        "Pick ONE capstone artifact. Don't add scope.",
+        "Write the README first — describe the artifact + its impact",
+        "Sketch the timeline; deadline is day 7",
+        "Talk to one person in the field about the choice",
+        "Hard deadline: published + shared by day 7"
+      ],
+      "project": "Pick one of these tracks and complete it to publishable quality: 1) A real bug-bounty submission that's accepted (at least 'low'); 2) A public CVE researched and disclosed responsibly; 3) A full red-team report against a deliberately-vulnerable environment (HTB Pro Labs, OffSec PG); 4) A novel detection rule contributed to Sigma or Atomic Red Team with a writeup; 5) A 3000-word technical research piece published. Whichever you pick — published, public, your name on it.",
+      "resources": [
+        { "label": "HackerOne — Disclosure guidelines", "url": "https://docs.hackerone.com/", "note": "official, if your capstone is a bug bounty" },
+        { "label": "MITRE — CVE numbering authorities", "url": "https://www.cve.org/", "note": "official, if your capstone is a CVE" },
+        { "label": "HackTheBox Pro Labs", "url": "https://www.hackthebox.com/hacker/pro-labs", "note": "paid, full-scope environments for red team reports" },
+        { "label": "OffSec Proving Grounds", "url": "https://www.offsec.com/labs/individual/", "note": "official, structured offensive practice environments" },
+        { "label": "BlackHat / DEFCON — Conference talk archives", "url": "https://www.youtube.com/c/BlackHatOfficialYT", "note": "YouTube, watch 5 to see what 'novel security work' looks like" },
+        { "label": "Latacora — Doing security right writing", "url": "https://latacora.micro.blog/", "note": "blog, the modern philosophical reference" }
+      ],
+      "questions": [
+        "Is your capstone novel? Genuinely useful? Reproducible?",
+        "Day 3 — are you on track? If not, what's cut?",
+        "Post-publication — who's seen it? How are you going to drive engagement?",
+        "Post-mortem — what would you build differently? What did 23 weeks make easy?"
+      ],
+      "exercises": [
+        "Write a 100-word elevator pitch for your capstone.",
+        "Get one peer review before publication.",
+        "Share on Twitter/Mastodon + one community (r/netsec, infosec.exchange).",
+        "Write a public post-mortem in CAPSTONE.md."
+      ],
+      "outputs": [
+        "Published capstone artifact (bug report, CVE, red team report, rule, research piece)",
+        "Documented and shared publicly",
+        "CAPSTONE.md — the post-mortem",
+        "Updated portfolio + resume linking the capstone — the artifact that proves cybersecurity engineer"
+      ]
+    }
+  ]
+}

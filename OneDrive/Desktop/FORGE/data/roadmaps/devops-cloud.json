@@ -1,0 +1,1232 @@
+{
+  "slug": "devops-cloud",
+  "title": "DevOps & Cloud",
+  "total_weeks": 24,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "Linux — The Operating System Underneath Everything",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "Every server you'll ever manage is Linux. Every Docker container is Linux. Every Kubernetes pod is Linux. This week you get fluent in the command line, processes, filesystems, networking, and the conventions that have been stable since the 1990s.",
+      "topics": [
+        "The shell — bash basics, common aliases, prompt customisation",
+        "Filesystem hierarchy — /etc, /var, /usr, /opt, /home, /tmp, /proc",
+        "File permissions and ownership — chmod, chown, the octal notation",
+        "Process management — ps, top, htop, kill, nohup, &",
+        "Package management — apt (Debian/Ubuntu), dnf (RHEL/Fedora), apk (Alpine)",
+        "systemd — units, services, journalctl, the post-2015 standard",
+        "Networking basics — ip, ss, netstat, tcpdump, ping, traceroute",
+        "SSH — keys, config, port forwarding, jump hosts"
+      ],
+      "tasks": [
+        "Get a free cloud VM (Oracle Cloud Free Tier, or AWS Free Tier, or Hetzner $5/mo)",
+        "SSH in using a key (not a password); disable password auth on the server",
+        "Install nginx as a systemd service; verify it's running; serve a simple HTML page",
+        "Solve 25 OverTheWire Bandit levels (1-25)",
+        "Write a bash script that monitors disk usage and emails (or pushes to ntfy.sh) if any partition is > 80% full"
+      ],
+      "project": "Build Your Personal Server. Provision a cheap VM (Hetzner $5/mo is the sweet spot). Set up: ssh-key-only auth, nginx with HTTPS via Let's Encrypt, an ufw firewall allowing only 22/80/443, fail2ban for brute-force protection, automatic security updates. Document everything in SERVER.md so you can rebuild it from scratch in 30 minutes.",
+      "resources": [
+        { "label": "Missing Semester — MIT", "url": "https://missing.csail.mit.edu/", "note": "free MIT course; lectures 1-6 are essential" },
+        { "label": "Linux Journey", "url": "https://linuxjourney.com/", "note": "free, the most beginner-friendly Linux tutorial" },
+        { "label": "explainshell.com", "url": "https://explainshell.com/", "note": "paste any shell command and get a guided explanation; bookmark forever" },
+        { "label": "DigitalOcean — Linux tutorials archive", "url": "https://www.digitalocean.com/community/tutorials", "note": "free, hundreds of well-written practical tutorials" },
+        { "label": "OverTheWire — Bandit", "url": "https://overthewire.org/wargames/bandit/", "note": "the canonical Linux terminal-skills game; first 25 levels are foundational" },
+        { "label": "ArchWiki", "url": "https://wiki.archlinux.org/", "note": "even on Ubuntu, the ArchWiki is the best Linux reference on the internet" }
+      ],
+      "questions": [
+        "Run `ls -la /etc`. Pick 5 files you've never seen; look up what each does. What's surprising?",
+        "What's the difference between `>` and `>>`? Demonstrate with a file you create.",
+        "Your service won't start. journalctl -u my-service.service shows an error. Walk through the troubleshoot.",
+        "Tail your nginx access log. What's the most common path requested? Are there suspicious requests?"
+      ],
+      "exercises": [
+        "Write a one-liner that finds the 10 largest files in your home directory.",
+        "Configure ssh-agent + keychain so you only enter your key passphrase once per boot.",
+        "Set up a systemd service that runs a Python script on boot; verify journalctl shows logs.",
+        "Use tcpdump to capture and inspect HTTPS handshake traffic to your nginx."
+      ],
+      "outputs": [
+        "Personal server running with nginx + HTTPS at a real domain",
+        "Server hardening script in SERVER.md",
+        "25 Bandit levels solved",
+        "Disk-monitoring bash script + cron entry"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Networking — From OSI Model to Real Production Issues",
+      "phase": "Foundations",
+      "commitment_hours": "20-25",
+      "context": "Most DevOps incidents are networking incidents. This week you build the mental model — OSI layers, TCP vs UDP, DNS resolution, TLS handshake, common HTTP issues — and you debug a real one.",
+      "topics": [
+        "The OSI 7-layer model and the TCP/IP 4-layer reality",
+        "IP addresses (IPv4/IPv6), subnets, CIDR notation",
+        "TCP — three-way handshake, flow control, congestion control",
+        "DNS — A, AAAA, CNAME, MX, TXT records; recursive vs authoritative",
+        "TLS handshake — what happens when you connect to HTTPS",
+        "HTTP/1.1 vs HTTP/2 vs HTTP/3 — what changed and why",
+        "Common debugging tools — curl, dig, tcpdump, mtr, ss",
+        "Firewalls and security groups — defaults, rules, common misconfigurations"
+      ],
+      "tasks": [
+        "Use `dig` to inspect the DNS records for 5 domains; identify which use Cloudflare, AWS, etc.",
+        "Use `curl -v` to see the TLS handshake for any HTTPS site; identify the cipher used",
+        "Use `mtr` to traceroute to 3 different geo-regions; observe the path",
+        "Set up a wildcard DNS record for your domain pointing to your server's IP",
+        "Debug a real connectivity issue: deliberately block a port; document how you find and fix it"
+      ],
+      "project": "Build a DNS + TLS Setup for Your Domain. Buy a cheap domain ($1/yr on Namecheap, or use your existing one). Point it at your server with A + AAAA records via Cloudflare. Configure Cloudflare proxying + caching rules. Set up TLS with Let's Encrypt (certbot) and verify A+ grade on ssllabs.com. Document every step in DNS-TLS.md.",
+      "resources": [
+        { "label": "Computer Networking: A Top-Down Approach (Kurose & Ross)", "url": "https://gaia.cs.umass.edu/kurose_ross/index.php", "note": "free PDF available; the canonical networking textbook" },
+        { "label": "Julia Evans — Networking zines", "url": "https://wizardzines.com/", "note": "paid zines but her free blog has dozens of networking deep-dives" },
+        { "label": "Cloudflare Learning — DNS", "url": "https://www.cloudflare.com/learning/dns/what-is-dns/", "note": "free, the best DNS explainers anywhere" },
+        { "label": "How HTTPS Works — howhttps.works", "url": "https://howhttps.works/", "note": "comic-style explainer of TLS in 10 minutes" },
+        { "label": "Let's Encrypt — Documentation", "url": "https://letsencrypt.org/docs/", "note": "official; how to get free certificates with certbot" },
+        { "label": "Qualys SSL Labs — Server Test", "url": "https://www.ssllabs.com/ssltest/", "note": "free, scan any HTTPS site for cipher quality and config issues" }
+      ],
+      "questions": [
+        "Your domain works in one browser but not another. List 5 hypotheses; demonstrate one debugging tool for each.",
+        "TLS handshake adds ~100ms to first connection. What does HTTP/2 + connection reuse change? What does QUIC change?",
+        "Your DNS change isn't propagating. Why does TTL matter here? How do you check from a third-party resolver?",
+        "Your TLS cert is in 30 days from expiring. Why do you absolutely automate renewal?"
+      ],
+      "exercises": [
+        "Use dig to find the MX records for gmail.com.",
+        "Use curl with --resolve to test a domain pointing at a specific IP before changing DNS.",
+        "Configure HSTS on your nginx; verify in browser dev tools.",
+        "Use tcpdump to capture a DNS query; identify the query type and the response."
+      ],
+      "outputs": [
+        "Your domain serving HTTPS with A+ SSL Labs grade",
+        "Cloudflare DNS + proxying configured",
+        "Documented certificate auto-renewal",
+        "Notes/networking.md — your debugging checklist"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Git, Trunk-Based Development, and Branching at Scale",
+      "phase": "Foundations",
+      "commitment_hours": "15-20",
+      "context": "Git is more important than your cloud provider. This week you learn trunk-based development, the modern enterprise default; rebase vs merge; how teams ship 50 PRs a day without stepping on each other.",
+      "topics": [
+        "Trunk-based development — why short-lived branches beat GitFlow at most companies",
+        "Rebase vs merge — when each is right; the golden rule of rebase (never rebase shared history)",
+        "Interactive rebase — cleaning up commits before PR",
+        "Cherry-pick, reflog, bisect — the tools that save your day",
+        "Conventional Commits — automating changelogs",
+        "GitHub Actions — your CI/CD platform",
+        "Pull request etiquette — small, focused, reviewable",
+        "Code review — what to look for, how to give kind-but-direct feedback"
+      ],
+      "tasks": [
+        "Configure global git: name, email, default branch main, pull.rebase=true",
+        "Practice interactive rebase: take 5 messy commits, squash into 2 logical ones",
+        "Use git bisect to find a regression in a real (or simulated) repo",
+        "Open a real PR to an open-source repo (any size); engage with review feedback",
+        "Write a GitHub Action workflow that runs `bash lint.sh` on every PR"
+      ],
+      "project": "Build a Modern Git Workflow on One of Your Repos. Enforce: branch protection on main (no direct pushes), required CI checks, required reviews, conventional commits via husky + commitlint, automatic changelog generation, semantic-release for tagging. Document the workflow in CONTRIBUTING.md.",
+      "resources": [
+        { "label": "Pro Git book — Scott Chacon", "url": "https://git-scm.com/book/en/v2", "note": "free book, the canonical reference" },
+        { "label": "Atlassian — Git tutorials", "url": "https://www.atlassian.com/git/tutorials", "note": "free, the friendliest visual explanations of branches and merges" },
+        { "label": "Trunk-based development — trunkbaseddevelopment.com", "url": "https://trunkbaseddevelopment.com/", "note": "official site explaining the workflow; concise and opinionated" },
+        { "label": "Conventional Commits Specification", "url": "https://www.conventionalcommits.org/en/v1.0.0/", "note": "official, the standard commit-message format" },
+        { "label": "GitHub Actions — Documentation", "url": "https://docs.github.com/en/actions", "note": "official, your CI/CD platform reference" },
+        { "label": "Semantic Release — Documentation", "url": "https://semantic-release.gitbook.io/semantic-release/", "note": "official, automated versioning + changelog from your commits" }
+      ],
+      "questions": [
+        "Your team has 50 engineers shipping multiple PRs daily. What breaks with long-lived feature branches?",
+        "You force-pushed to a shared branch and erased someone's work. How do you recover? What policy prevents it?",
+        "Look at a merged PR in a popular OSS repo. What made the review go smoothly? What would have made it slower?",
+        "Branch protection on main — required reviews + required CI — is annoying for solo devs. When does it start paying off?"
+      ],
+      "exercises": [
+        "Use git bisect to find the commit that broke a test; write the bisect script.",
+        "Set up husky + commitlint to enforce Conventional Commits.",
+        "Configure GitHub branch protection on main: required PR, required CI, no force push.",
+        "Write a GitHub Actions workflow with a matrix (e.g. Node 20, 22; Postgres 15, 16)."
+      ],
+      "outputs": [
+        "Modern git workflow enforced on one of your repos",
+        "Open PR to an OSS repo with engaged review",
+        "Auto-generated CHANGELOG.md from semantic-release",
+        "Notes/git-workflows.md — your decision tree for branching strategies"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Cloud Foundations — AWS Core in One Week",
+      "phase": "Foundations",
+      "commitment_hours": "25-30",
+      "context": "AWS runs more of the internet than any other cloud. EC2, S3, IAM, VPC, RDS — these five services run 80% of AWS workloads. This week you provision them with the console first, then with the CLI.",
+      "topics": [
+        "The AWS regions and AZ model — why latency + sovereignty matter",
+        "EC2 — instances, AMIs, security groups, key pairs, instance store vs EBS",
+        "S3 — buckets, versioning, lifecycle, IAM policies, presigned URLs",
+        "IAM — users, groups, roles, policies, the principle of least privilege",
+        "VPC — subnets (public + private), route tables, NAT gateway, security groups vs NACLs",
+        "RDS — managed Postgres, backups, read replicas, parameter groups",
+        "Pricing — EC2 spot, reserved, savings plans; S3 storage classes",
+        "AWS CLI — installing, configuring profiles, common patterns"
+      ],
+      "tasks": [
+        "Create an AWS account; enable MFA on root; create an IAM user with admin access for daily work",
+        "Spin up a t2.micro EC2 instance (free tier); SSH in",
+        "Create an S3 bucket; upload a file via console + via CLI; generate a presigned URL",
+        "Create a VPC with one public and one private subnet; provision an RDS Postgres in the private subnet",
+        "Write IAM policy JSON from scratch (don't use the visual editor) for a 'read-only-on-one-bucket' policy"
+      ],
+      "project": "Build a 3-Tier App Stack on AWS Manually. Frontend on S3 + CloudFront, backend on a single EC2 (or App Runner), database on RDS Postgres. Hand-write the IAM policies. Document every console click in INFRA-MANUAL.md. Next week you'll throw this away and do it with Terraform — feeling the pain of manual is the lesson.",
+      "resources": [
+        { "label": "AWS — Documentation", "url": "https://docs.aws.amazon.com/", "note": "official, the canonical reference; use the services' Getting Started guides" },
+        { "label": "Adrian Cantrill — AWS courses (paid)", "url": "https://learn.cantrill.io/", "note": "paid but the most respected AWS instructor; some free YouTube content as well" },
+        { "label": "AWS — Free Tier", "url": "https://aws.amazon.com/free/", "note": "official, what's free for 12 months and what's free forever; budget against this" },
+        { "label": "Last Week in AWS — Corey Quinn", "url": "https://www.lastweekinaws.com/", "note": "newsletter, the canonical AWS commentary; mostly free" },
+        { "label": "AWS Well-Architected Framework", "url": "https://aws.amazon.com/architecture/well-architected/", "note": "official, the canonical 'best practices across pillars' reference" },
+        { "label": "AWS Pricing Calculator", "url": "https://calculator.aws/", "note": "official, estimate before you spend; always run a what-if before clicking" }
+      ],
+      "questions": [
+        "Your EC2 instance can reach the internet but not your RDS. List 5 things to check.",
+        "Your S3 bucket is public — but you didn't intend it. How do you check, and how do you lock it down without breaking anything?",
+        "Compare on-demand, spot, and reserved EC2 pricing for a workload you know. Where's the break-even?",
+        "Your AWS bill arrived $200 more than expected. How do you find the culprit?"
+      ],
+      "exercises": [
+        "Install + configure aws-cli with a named profile; verify with `aws sts get-caller-identity`.",
+        "Write an IAM policy that allows uploading to one specific S3 prefix.",
+        "Create an EC2 instance via CLI (not console); attach to your VPC's public subnet.",
+        "Set up an AWS Budget alert that emails you when monthly spend exceeds $10."
+      ],
+      "outputs": [
+        "3-tier app live on AWS (manually provisioned)",
+        "Documented every console click in INFRA-MANUAL.md",
+        "AWS Budget alert configured",
+        "Notes/aws-foundations.md — your AWS service decision tree"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Docker — Containers from First Principles",
+      "phase": "Containers",
+      "commitment_hours": "20-25",
+      "context": "Docker won the container war. By Friday you can write production-grade Dockerfiles, use multi-stage builds to shrink images, and understand what a container actually is (a process with isolated namespaces, not a tiny VM).",
+      "topics": [
+        "What a container actually is — Linux namespaces, cgroups, what's NOT virtualised",
+        "Images vs containers — layers, the union filesystem",
+        "Dockerfile fundamentals — FROM, RUN, COPY, CMD, ENTRYPOINT, WORKDIR",
+        "Multi-stage builds — small final images even with heavy build tooling",
+        "Image registries — Docker Hub, GitHub Container Registry, AWS ECR",
+        "docker-compose for local dev — multi-service stacks",
+        "Volumes and bind mounts — where data lives",
+        "Image best practices — layer caching, .dockerignore, non-root user"
+      ],
+      "tasks": [
+        "Install Docker Desktop (or Podman on Linux); run `hello-world`",
+        "Write a Dockerfile for one of your projects; iterate to get the final image under 200MB",
+        "Use a multi-stage build to keep the final image small",
+        "Set up docker-compose for a Postgres + Redis + app stack; verify all start with `docker compose up`",
+        "Push an image to GitHub Container Registry; verify pulling on another machine"
+      ],
+      "project": "Containerise One Real App. Take an existing application (your URL shortener from the web roadmap, or any other). Write a production-grade Dockerfile: multi-stage, non-root user, minimal base image, health check, proper signal handling. docker-compose for local dev with all dependencies. Image must be under 200MB and start in under 5 seconds.",
+      "resources": [
+        { "label": "Docker — Official Documentation", "url": "https://docs.docker.com/", "note": "official, work through Get Started + Build" },
+        { "label": "Bret Fisher — Docker Mastery course (Udemy)", "url": "https://www.udemy.com/course/docker-mastery/", "note": "paid but on sale often; the canonical Docker course" },
+        { "label": "Docker — Best practices for writing Dockerfiles", "url": "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/", "note": "official, every Dockerfile should follow these" },
+        { "label": "Liz Rice — What is a Container?", "url": "https://www.youtube.com/watch?v=8fi7uSYlOdc", "note": "YouTube, the canonical talk explaining containers as Linux processes" },
+        { "label": "Julia Evans — How containers work", "url": "https://jvns.ca/blog/2016/10/10/what-even-is-a-container/", "note": "blog, the friendliest deep-dive on what a container actually is" },
+        { "label": "Buildkit — Documentation", "url": "https://docs.docker.com/build/buildkit/", "note": "official, modern Docker build features (cache mounts, secrets, multi-platform)" }
+      ],
+      "questions": [
+        "Your image is 1.5GB. Where are the layers? Use `docker history` to see. Which layer is biggest? Can it be smaller?",
+        "Two builds in a row — second one took the same time as the first. Layer cache isn't working. Why?",
+        "Your container exits immediately. What's the first thing you check? What does `docker logs` show?",
+        "Container runs as root. Why is that bad? How do you fix it without losing functionality?"
+      ],
+      "exercises": [
+        "Write a Dockerfile that uses BuildKit's `--mount=type=cache` for the package manager.",
+        "Add a HEALTHCHECK directive; verify Docker reports the container as healthy.",
+        "Implement graceful shutdown: handle SIGTERM correctly so the container stops in <5s.",
+        "Use a distroless or alpine base image to get the final image under 100MB."
+      ],
+      "outputs": [
+        "Containerised app with image under 200MB, starting in <5s",
+        "docker-compose stack for local dev",
+        "Image pushed to GitHub Container Registry",
+        "Notes/dockerfile-patterns.md — your reusable Dockerfile snippets"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Docker Compose, Local Dev, and the Inner Loop",
+      "phase": "Containers",
+      "commitment_hours": "15-20",
+      "context": "Production-like local development is the difference between 'it works on my machine' and 'it works everywhere'. This week you build local dev environments that match production exactly — same versions, same configs, same networking.",
+      "topics": [
+        "docker-compose v2 — multi-service definitions, depends_on with healthcheck",
+        "Environment variables — .env files, override files, secret management",
+        "Volume mounting for source code — hot reload in dev, none in prod",
+        "Networking — service discovery between containers",
+        "Compose vs Helm vs raw kubectl — when to use what",
+        "DevContainers (VS Code) — fully isolated dev environments",
+        "Tilt + Skaffold + Garden — alternatives for K8s-native local dev",
+        "Database seeding + reset workflows"
+      ],
+      "tasks": [
+        "Define a compose stack with 5 services: app, db, redis, mail (Mailpit), reverse proxy",
+        "Configure healthchecks so app waits for db to be ready before starting",
+        "Set up two docker-compose files: docker-compose.yml + docker-compose.override.yml for dev-only services",
+        "Add a `make dev` target that runs the stack with a single command",
+        "Create a VS Code devcontainer that runs the whole stack inside"
+      ],
+      "project": "Build a Production-Like Local Dev Environment. For your URL shortener (or any project), compose stack with: app, postgres, redis, mailpit (catches outbound emails), nginx as reverse proxy. Hot reload on code changes. Database seeded with realistic test data. Single command (`make dev` or `docker compose up`) brings up everything. Document in DEV.md.",
+      "resources": [
+        { "label": "Docker Compose — Documentation", "url": "https://docs.docker.com/compose/", "note": "official, work through Compose specification and best practices" },
+        { "label": "Mailpit — SMTP testing tool", "url": "https://mailpit.axllent.org/docs/", "note": "official, catches all outgoing email in dev so you can preview" },
+        { "label": "Bret Fisher — Compose v2 walkthroughs", "url": "https://www.youtube.com/c/BretFisherDockerCaptain", "note": "YouTube, the canonical Docker educator" },
+        { "label": "VS Code Dev Containers", "url": "https://code.visualstudio.com/docs/devcontainers/containers", "note": "official, fully reproducible dev environments via Docker" },
+        { "label": "Tilt — Documentation", "url": "https://docs.tilt.dev/", "note": "official, hot reload + K8s-aware local dev" },
+        { "label": "Compose specification (the spec itself)", "url": "https://github.com/compose-spec/compose-spec", "note": "GitHub, the spec that compose implementations follow" }
+      ],
+      "questions": [
+        "Your `docker compose up` takes 90 seconds the first time. What's the slowest service? Can you parallelise its startup?",
+        "Your local dev uses sqlite but production uses Postgres. What kinds of bugs does this mismatch introduce?",
+        "A new contributor clones your repo. How fast can they get a running dev environment? Under 10 minutes?",
+        "Your team uses Macs but production runs on Linux ARM. What container architecture issues might bite?"
+      ],
+      "exercises": [
+        "Configure depends_on with service healthcheck conditions; verify proper start order.",
+        "Add a Makefile with dev/test/prod targets.",
+        "Set up a VS Code devcontainer that includes your tooling.",
+        "Seed Postgres with realistic data on first start; persist via volumes."
+      ],
+      "outputs": [
+        "Single-command dev environment for one project",
+        "Documented in DEV.md with screenshots",
+        "Verified by spinning up on a fresh machine in <10 minutes",
+        "Mailpit catching outbound email in dev"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Image Hardening, Security Scanning, and Supply Chain",
+      "phase": "Containers",
+      "commitment_hours": "20-25",
+      "context": "A vulnerable container in production is the same risk as a vulnerable bare-metal server. This week you scan your images for CVEs, sign them, and learn the supply chain attack surface (SLSA, SBOMs, dependency provenance).",
+      "topics": [
+        "Container image vulnerabilities — base image CVEs, application dependencies",
+        "Scanners — Trivy, Snyk, Grype, Docker Scout",
+        "Image signing — Cosign, Sigstore, why anyone should care",
+        "SBOMs (Software Bill of Materials) — Syft, what's actually inside your image",
+        "Distroless and minimal images — Google distroless, Chainguard images",
+        "Running as non-root — the most basic security win",
+        "Read-only root filesystems",
+        "Supply chain attacks — recent real examples (XZ backdoor, npm protestware)"
+      ],
+      "tasks": [
+        "Run Trivy on one of your images; document every HIGH+ CVE found",
+        "Switch to a distroless or Chainguard base; rerun Trivy; document the reduction",
+        "Generate an SBOM with Syft; explore what's actually in your image",
+        "Sign an image with Cosign; verify the signature",
+        "Configure your container to run as a non-root user with a read-only root filesystem"
+      ],
+      "project": "Harden Your Containerised App. End-state: image built from distroless or Chainguard, non-root user, read-only filesystem, signed with Cosign, SBOM published, automatic vulnerability scan on every CI build. Document the security posture in SECURITY.md. Set up a weekly cron CI that re-scans for new CVEs and alerts you.",
+      "resources": [
+        { "label": "Trivy — Documentation", "url": "https://aquasecurity.github.io/trivy/", "note": "official, the most-popular open-source scanner" },
+        { "label": "Chainguard Images", "url": "https://images.chainguard.dev/", "note": "official, the modern minimal-and-secure container images" },
+        { "label": "Cosign / Sigstore — Documentation", "url": "https://docs.sigstore.dev/", "note": "official, signing and verification standard" },
+        { "label": "Anchore Syft — SBOM generator", "url": "https://github.com/anchore/syft", "note": "GitHub, the most-used open-source SBOM tool" },
+        { "label": "Google distroless images", "url": "https://github.com/GoogleContainerTools/distroless", "note": "GitHub, minimal base images with no shell or package manager" },
+        { "label": "SLSA — Supply chain levels for software artifacts", "url": "https://slsa.dev/", "note": "official, the canonical framework for supply chain security maturity" }
+      ],
+      "questions": [
+        "Your app image has 47 HIGH CVEs from the base. Do they actually affect you? How do you decide what's real?",
+        "You signed your image with Cosign. Who's verifying the signature in production? What happens if verification fails?",
+        "Read about the XZ utils backdoor (March 2024). How would your supply chain have caught it?",
+        "Compare image sizes: alpine, distroless, Chainguard. What runs in each? When would you choose each?"
+      ],
+      "exercises": [
+        "Add Trivy scan to your CI; fail the build on HIGH+ vulnerabilities.",
+        "Generate an SBOM for your image; commit it to the repo.",
+        "Configure your Dockerfile to run as UID 10001 (an arbitrary non-root).",
+        "Mount the root filesystem read-only; write only to /tmp and named volumes."
+      ],
+      "outputs": [
+        "Hardened image with reduced CVE count documented",
+        "CI scanning + signing + SBOM generation working",
+        "SECURITY.md committed with audit trail",
+        "Notes/container-security.md — your hardening checklist"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Container Runtime — Beyond Docker, Towards Production",
+      "phase": "Containers",
+      "commitment_hours": "15-20",
+      "context": "Docker is the dev tool. In production you encounter containerd, runc, CRI-O. This week you understand the runtime stack and run containers without Docker.",
+      "topics": [
+        "Docker vs containerd vs runc — who does what",
+        "The OCI (Open Container Initiative) standards — image spec + runtime spec",
+        "Podman — Docker-compatible CLI, daemonless, rootless",
+        "Kubernetes-native runtimes — containerd, CRI-O",
+        "nerdctl — the containerd CLI",
+        "Rootless containers — security advantages, gotchas",
+        "Container isolation — namespaces (PID, NET, MNT), cgroups (CPU, memory)",
+        "When you might want a microVM (Firecracker, Kata Containers)"
+      ],
+      "tasks": [
+        "Install Podman on a Linux host; run your previous Dockerfile with podman",
+        "Run a rootless container; verify it can't access host root resources",
+        "Use `nsenter` to inspect a running container's namespaces from the host",
+        "Read the OCI image spec; understand what's inside a tarball image",
+        "Run a Firecracker microVM as a comparison; understand the cold-start vs container trade-off"
+      ],
+      "project": "Replace Docker with Podman in Your Local Dev. Take your week-6 compose setup. Convert it to use Podman's `podman compose` or `podman play kube`. Verify everything still works. Document the migration in PODMAN.md and decide whether to keep using Podman.",
+      "resources": [
+        { "label": "Podman — Documentation", "url": "https://podman.io/docs/installation", "note": "official, the daemonless Docker alternative" },
+        { "label": "OCI image specification", "url": "https://github.com/opencontainers/image-spec", "note": "GitHub, the standard image format underneath Docker / Podman / etc." },
+        { "label": "containerd — Documentation", "url": "https://containerd.io/docs/", "note": "official, the runtime that Kubernetes actually uses" },
+        { "label": "Liz Rice — Container Security book chapters (free)", "url": "https://www.lizrice.com/", "note": "blog with free chapters of the canonical container-security book" },
+        { "label": "Firecracker — Documentation", "url": "https://firecracker-microvm.github.io/", "note": "official, the microVM that powers AWS Lambda" },
+        { "label": "nerdctl — containerd CLI", "url": "https://github.com/containerd/nerdctl", "note": "GitHub, the Docker-compatible CLI for containerd" }
+      ],
+      "questions": [
+        "Why does Kubernetes not run Docker anymore (k8s 1.24+)? What does it run instead?",
+        "Rootless Podman vs root Docker — what attack surface changes? What does the application actually see differently?",
+        "Compare container cold start vs Firecracker microVM cold start. What latency are you trading for what isolation?",
+        "Inspect a running container's network namespace from the host. What can you do that you couldn't with Docker's CLI?"
+      ],
+      "exercises": [
+        "Convert one of your Dockerfiles to also build with Podman; verify identical output.",
+        "Run a rootless container; deliberately try to write to /etc; verify failure.",
+        "Use lsns and unshare to explore namespaces.",
+        "Read an OCI image manifest with `skopeo inspect`."
+      ],
+      "outputs": [
+        "Working Podman-based local dev environment",
+        "Demonstrated rootless container with verified isolation",
+        "Notes/container-runtime.md — your understanding of the runtime stack",
+        "Document of when you'd reach for Podman vs Docker"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Kubernetes — The Mental Model",
+      "phase": "Orchestration",
+      "commitment_hours": "30-35",
+      "context": "Kubernetes runs most of the cloud. It's complicated for good reasons. This week you build the mental model — pods, deployments, services, ingress — and you run real workloads on a local cluster (kind, k3d) before touching a cloud one.",
+      "topics": [
+        "The K8s mental model — declarative state, reconciliation loop",
+        "Pods — the smallest unit, why they're rarely deployed directly",
+        "Deployments + ReplicaSets — managing pods with declared replica counts",
+        "Services — ClusterIP, NodePort, LoadBalancer, ExternalName",
+        "Ingress — the right way to expose HTTP",
+        "ConfigMaps + Secrets — externalising config",
+        "Namespaces — multi-tenancy on a cluster",
+        "kubectl — your daily command-line"
+      ],
+      "tasks": [
+        "Install kind or k3d for local Kubernetes; spin up a 3-node cluster",
+        "Deploy your containerised app: write a Deployment YAML + Service YAML; apply with kubectl",
+        "Scale the deployment to 5 replicas; verify with `kubectl get pods`",
+        "Add a ConfigMap with your environment variables; mount it into the pod",
+        "Install ingress-nginx; expose your service at a local hostname"
+      ],
+      "project": "Run Your URL Shortener (or any app) on Local Kubernetes. Use kind. Define: Deployment with 3 replicas, Service, Ingress, ConfigMap, Secret. Test rolling updates. Test pod failures (kill one, watch K8s reschedule). Document in K8S.md. Single command (`make k8s-deploy`) brings everything up.",
+      "resources": [
+        { "label": "Kubernetes — Concepts documentation", "url": "https://kubernetes.io/docs/concepts/", "note": "official, the canonical reference; read top to bottom for an evening" },
+        { "label": "Kubernetes the Hard Way — Kelsey Hightower", "url": "https://github.com/kelseyhightower/kubernetes-the-hard-way", "note": "GitHub, build K8s from scratch; deeply educational" },
+        { "label": "Sandeep Dinesh — Kubernetes by Example", "url": "https://kubernetesbyexample.com/", "note": "free interactive walkthroughs" },
+        { "label": "kind — Documentation", "url": "https://kind.sigs.k8s.io/", "note": "official, the standard way to run K8s locally on Docker" },
+        { "label": "k9s — Terminal UI for Kubernetes", "url": "https://k9scli.io/", "note": "official, the canonical TUI; way better than kubectl for daily use" },
+        { "label": "kubectl Cheat Sheet — Kubernetes", "url": "https://kubernetes.io/docs/reference/kubectl/cheatsheet/", "note": "official, every kubectl command worth knowing" }
+      ],
+      "questions": [
+        "Kill a pod with `kubectl delete pod`. What happens within 5 seconds? Why?",
+        "Scale your deployment from 3 to 0. Then back to 3. What happens to in-flight traffic? Is your app prepared?",
+        "Your pod is in CrashLoopBackOff. Walk through the troubleshoot — `describe`, `logs`, `events`.",
+        "Compare K8s Service types: ClusterIP, NodePort, LoadBalancer, Ingress. Which is right for an internal API? A public web app?"
+      ],
+      "exercises": [
+        "Write a complete Deployment YAML by hand; apply; verify pods come up.",
+        "Implement a readiness probe; verify Service only routes traffic when pod is ready.",
+        "Set resource requests + limits; observe how K8s schedules pods on nodes with limited capacity.",
+        "Use kubectl port-forward to access a service locally without an Ingress."
+      ],
+      "outputs": [
+        "Local kind cluster running your URL shortener",
+        "All YAML manifests committed; Makefile for common operations",
+        "K8S.md documenting the architecture",
+        "k9s installed and used for daily ops"
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Kubernetes in Production — Probes, Resources, HPA, Storage",
+      "phase": "Orchestration",
+      "commitment_hours": "25-30",
+      "context": "Local K8s is a toy. Production K8s requires: liveness vs readiness probes, resource requests + limits, horizontal pod autoscaling, persistent storage, graceful shutdown. This week you make your cluster production-ready.",
+      "topics": [
+        "Liveness, readiness, and startup probes — when each matters",
+        "Resource requests + limits — CPU and memory, what happens at OOMKill",
+        "QoS classes — Guaranteed, Burstable, BestEffort",
+        "Horizontal Pod Autoscaler — scaling on CPU, on custom metrics",
+        "PersistentVolume + PersistentVolumeClaim — stateful workloads",
+        "StatefulSets — for stateful apps that need stable network IDs",
+        "Pod Disruption Budgets — preventing the cluster from killing too many at once",
+        "Graceful shutdown — SIGTERM handling, preStop hooks"
+      ],
+      "tasks": [
+        "Add liveness + readiness probes to your deployment; verify they prevent traffic to a bad pod",
+        "Set resource requests + limits; observe scheduling behaviour with `kubectl describe node`",
+        "Configure HPA to scale based on CPU > 70%; load-test to trigger it",
+        "Mount a PersistentVolume for stateful data; verify data persists across pod restarts",
+        "Implement graceful shutdown: pod handles SIGTERM, finishes in-flight requests, then exits"
+      ],
+      "project": "Production-Harden Your K8s App. Add: probes, resources, HPA (3-10 replicas), PV for stateful data, PodDisruptionBudget allowing only 1 pod down at a time, graceful shutdown handler. Load-test until HPA scales; document the scaling event. PROD-K8S.md captures every decision.",
+      "resources": [
+        { "label": "Kubernetes — Configure liveness, readiness, and startup probes", "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/", "note": "official, the canonical probe reference" },
+        { "label": "Kubernetes — Horizontal Pod Autoscaler walkthrough", "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/", "note": "official, end-to-end HPA tutorial" },
+        { "label": "Bryan Liles — How to size your Kubernetes Pods", "url": "https://www.youtube.com/results?search_query=bryan+liles+kubernetes+sizing", "note": "YouTube talks on resource sizing in K8s" },
+        { "label": "Programming Kubernetes (book) — Heinz, Hausenblas", "url": "https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/", "note": "O'Reilly, deep on controllers and how things actually work" },
+        { "label": "Kubernetes the Cinematic Universe — Honeycomb blog", "url": "https://www.honeycomb.io/blog", "note": "blog, deeply honest production stories" },
+        { "label": "Bobby Tables — kubelet probes deep dive", "url": "https://srcco.de/", "note": "blog, deep technical content on K8s primitives" }
+      ],
+      "questions": [
+        "Your liveness probe is too aggressive (5s timeout). Pods get killed mid-startup. What's the fix?",
+        "OOMKill happens. What's the next event? Does the pod restart? When does it stop restarting?",
+        "HPA scales up but never scales down. Why? What's the cooldown default?",
+        "Your StatefulSet's first pod's PV is corrupted. Walk through the recovery."
+      ],
+      "exercises": [
+        "Write probes with proper paths, intervals, and timeouts for your app.",
+        "Configure HPA with min 2 and max 10 replicas; load-test to scale up.",
+        "Add a preStop hook that sleeps for 5s before container termination.",
+        "Set CPU limits intentionally low; observe throttling in metrics."
+      ],
+      "outputs": [
+        "Production-ready K8s manifests with probes, resources, HPA, PDB",
+        "Verified scaling event via load test",
+        "Stateful data persisting via PV",
+        "PROD-K8S.md with reasoning behind each setting"
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Helm and the K8s Package Ecosystem",
+      "phase": "Orchestration",
+      "commitment_hours": "20-25",
+      "context": "Raw K8s YAML doesn't scale beyond one app. Helm — the K8s package manager — templates your YAML and ships installable charts. This week you write your own chart and install community charts.",
+      "topics": [
+        "Helm fundamentals — charts, templates, values, releases",
+        "Helm template language (Go templates)",
+        "Values files for per-environment config (dev, staging, prod)",
+        "Helm hooks for pre-install, pre-upgrade, post-install jobs",
+        "Helm dependencies — composing charts",
+        "Community charts — Bitnami, ingress-nginx, cert-manager, kube-prometheus-stack",
+        "Helmfile + Helm secrets for managing multiple releases",
+        "Alternatives — Kustomize, raw YAML with kpt, jsonnet"
+      ],
+      "tasks": [
+        "Install Helm; install a community chart (ingress-nginx) on your local cluster",
+        "Convert your week-10 YAML manifests into a Helm chart",
+        "Add a values.yaml with per-environment overrides; install with `-f values.staging.yaml`",
+        "Add a pre-install hook that runs database migrations",
+        "Add a chart dependency (e.g. postgres from Bitnami) to your chart"
+      ],
+      "project": "Package Your App as a Helm Chart. Take your week-10 K8s app. Convert all YAML to a `charts/myapp/` Helm chart. Three values files: dev, staging, prod. Dependencies: postgres + redis charts. Pre-install hook for migrations. Document install and upgrade in CHART.md. Lint with `helm lint` and `helm template` to verify output.",
+      "resources": [
+        { "label": "Helm — Documentation", "url": "https://helm.sh/docs/", "note": "official, work through Getting Started + Charts" },
+        { "label": "Artifact Hub", "url": "https://artifacthub.io/", "note": "official Helm chart discovery (CNCF project)" },
+        { "label": "Bitnami Charts — GitHub", "url": "https://github.com/bitnami/charts", "note": "GitHub, the most-used community chart collection; read one to learn patterns" },
+        { "label": "Kustomize — Documentation", "url": "https://kustomize.io/", "note": "official, the alternative to Helm; built into kubectl" },
+        { "label": "Helmfile — Documentation", "url": "https://github.com/helmfile/helmfile", "note": "GitHub, for managing many Helm releases" },
+        { "label": "Jamie Tanna — Helm patterns and anti-patterns", "url": "https://www.jvt.me/tags/helm/", "note": "blog with multiple practical Helm posts" }
+      ],
+      "questions": [
+        "Your Helm template renders incorrectly. What's the debugging workflow? `helm template`, `helm install --dry-run --debug`?",
+        "Compare Helm vs Kustomize for your simple app. Which felt more natural? Which is more powerful?",
+        "Your chart depends on Postgres. The Postgres chart updates with a breaking change. How do you pin versions?",
+        "Your dev environment uses ephemeral Postgres in-cluster; production uses managed RDS. How does your chart support both?"
+      ],
+      "exercises": [
+        "Write a Helm template with a values override; verify the rendered output.",
+        "Add a NOTES.txt that prints helpful info after install.",
+        "Install kube-prometheus-stack via Helm; explore the resulting Grafana.",
+        "Use `helm test` to add a smoke test to your chart."
+      ],
+      "outputs": [
+        "Your app installable via `helm install`",
+        "Three values files (dev/staging/prod)",
+        "Migrations running as pre-install hook",
+        "Chart published to your GitHub Pages as a Helm repo"
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Service Mesh and Modern Networking — Istio, Linkerd, eBPF",
+      "phase": "Orchestration",
+      "commitment_hours": "20-25",
+      "context": "Beyond a certain scale, microservices need a service mesh — automatic mTLS, observability, traffic splitting. You don't need a mesh for a 5-service app, but you should know what they do and when they fit.",
+      "topics": [
+        "What a service mesh is — sidecar (Istio, Linkerd) vs sidecar-less (Cilium)",
+        "mTLS — encrypting service-to-service traffic automatically",
+        "Traffic splitting and canary deploys at the mesh level",
+        "Observability — automatic per-request metrics, traces, access logs",
+        "Linkerd vs Istio — when each is right; Linkerd's simplicity vs Istio's power",
+        "eBPF — kernel-level networking, observability, security",
+        "Cilium — the modern eBPF-based networking + mesh",
+        "When NOT to use a service mesh"
+      ],
+      "tasks": [
+        "Install Linkerd on your local cluster; verify mTLS is automatic",
+        "Inject Linkerd into your app's deployment; observe the metrics in linkerd-viz",
+        "Deploy two versions of your app; use traffic split to route 90/10",
+        "Read Cilium's CNI documentation; install it on a new test cluster",
+        "Compare your app's observability before and after the mesh"
+      ],
+      "project": "Add Linkerd to Your K8s App. Install Linkerd. Inject it into your deployment. Run a traffic split between v1 and v2 of your app. Observe success rate + latency in linkerd-viz. Document the experience: was the operational overhead worth the observability? Document in MESH.md.",
+      "resources": [
+        { "label": "Linkerd — Documentation", "url": "https://linkerd.io/2.18/overview/", "note": "official, the simplest service mesh; great free Edge release" },
+        { "label": "Istio — Documentation", "url": "https://istio.io/latest/docs/", "note": "official, the most-featured mesh; complex but powerful" },
+        { "label": "Cilium — Documentation", "url": "https://docs.cilium.io/", "note": "official, eBPF-based CNI and mesh; what modern clusters increasingly run" },
+        { "label": "William Morgan — Buoyant blog (creator of Linkerd)", "url": "https://buoyant.io/blog", "note": "blog, the canonical voice on what meshes are for" },
+        { "label": "Liz Rice — Learning eBPF (free chapters)", "url": "https://www.lizrice.com/", "note": "the canonical book on eBPF; free preview chapters" },
+        { "label": "Service Mesh Hub vs Anchor and other comparisons", "url": "https://layer5.io/learn/service-mesh-landscape", "note": "free, comparison resource for the service mesh landscape" }
+      ],
+      "questions": [
+        "Your app handles 100 RPS. The Linkerd sidecar adds ~1ms latency and ~10MB RAM per pod. Is it worth it? What if 10000 RPS?",
+        "mTLS — you got it for free. What attack surface did this close? What did it open (e.g. observability complexity)?",
+        "Compare Linkerd's success-rate dashboard to your manually-built one from the web roadmap. Worth the operational tax?",
+        "Cilium uses eBPF in the kernel instead of sidecars. What latency does that save? What are the trade-offs?"
+      ],
+      "exercises": [
+        "Install Linkerd; verify with `linkerd check`.",
+        "Inject your namespace; verify mTLS via `linkerd viz tap`.",
+        "Configure traffic split via SMI TrafficSplit spec.",
+        "Inspect generated Envoy config (if Istio); understand what's actually happening at the proxy."
+      ],
+      "outputs": [
+        "Linkerd running on your local cluster with mTLS verified",
+        "Traffic split between two versions live",
+        "MESH.md documenting the trade-off analysis",
+        "Notes/service-mesh.md — when (and when not) to use one"
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Terraform — Infrastructure as Code Done Right",
+      "phase": "Cloud",
+      "commitment_hours": "25-30",
+      "context": "Clicking through cloud consoles doesn't scale. Terraform lets you declare your infrastructure in code, version it, code-review it, apply it reproducibly. By Friday your entire week-4 manual AWS stack is reproduced from a Terraform module.",
+      "topics": [
+        "Terraform fundamentals — providers, resources, state, plan, apply",
+        "Remote state — S3 + DynamoDB lock, or Terraform Cloud",
+        "Modules — composing reusable infrastructure",
+        "Variables and outputs — parameterising and exposing",
+        "Data sources — reading existing infrastructure",
+        "Workspaces vs separate state files — multi-environment strategies",
+        "Terraform vs OpenTofu — the recent fork; pick one",
+        "Terragrunt and Atmos — the patterns layered on top"
+      ],
+      "tasks": [
+        "Install OpenTofu (the modern open-source Terraform fork)",
+        "Write a Terraform configuration that creates your week-4 AWS stack",
+        "Move state to remote (S3 + DynamoDB lock)",
+        "Refactor into a reusable module that takes environment as input",
+        "Apply to a dev environment and a staging environment using different workspaces"
+      ],
+      "project": "Reproduce Your Week-4 Stack with Terraform. End-state: `terraform apply` brings up your entire 3-tier app. Modules for: vpc, ec2, rds, s3, iam. Remote state in S3. Two environments (dev and prod) using the same modules. Documented in INFRA-CODE.md. You should be able to `terraform destroy` and `terraform apply` repeatedly to get identical infrastructure.",
+      "resources": [
+        { "label": "Terraform — Documentation", "url": "https://developer.hashicorp.com/terraform/docs", "note": "official, the canonical reference" },
+        { "label": "OpenTofu — Documentation", "url": "https://opentofu.org/docs/", "note": "official, the open-source fork after Terraform's license change" },
+        { "label": "Terraform Best Practices — Anton Babenko", "url": "https://www.terraform-best-practices.com/", "note": "free book by the most-known Terraform community contributor" },
+        { "label": "Terragrunt — Documentation", "url": "https://terragrunt.gruntwork.io/docs/", "note": "official, the wrapper that handles DRY-state patterns" },
+        { "label": "Yevgeniy Brikman — Terraform: Up & Running (book)", "url": "https://www.terraformupandrunning.com/", "note": "paid book, the most-recommended Terraform book" },
+        { "label": "AWS provider documentation", "url": "https://registry.terraform.io/providers/hashicorp/aws/latest/docs", "note": "official, the daily-reference for AWS resources" }
+      ],
+      "questions": [
+        "You ran `terraform apply` and it wants to destroy + recreate an RDS instance. What's the danger? How do you check before clicking yes?",
+        "Two engineers run apply at the same time. Without state locking, what could go wrong?",
+        "Compare modules vs raw config. At what infrastructure size does extracting modules pay off?",
+        "Your state file leaked. What credentials are in it? How would you rotate them?"
+      ],
+      "exercises": [
+        "Write a Terraform module that takes environment, region, instance_count as inputs.",
+        "Configure S3 + DynamoDB for remote state and locking.",
+        "Use `terraform import` to bring an existing resource under management.",
+        "Add a `lifecycle { prevent_destroy = true }` block to a production database."
+      ],
+      "outputs": [
+        "Full AWS stack reproducible via `terraform apply`",
+        "Reusable modules in modules/",
+        "Two environments (dev/prod) sharing modules",
+        "INFRA-CODE.md documenting the architecture"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Managed Kubernetes — EKS, GKE, AKS",
+      "phase": "Cloud",
+      "commitment_hours": "25-30",
+      "context": "Running K8s yourself is masochism. The big three offer managed control planes. This week you provision EKS via Terraform, deploy your app to it, and learn the cloud-specific gotchas.",
+      "topics": [
+        "Managed K8s comparison — EKS vs GKE vs AKS",
+        "Node groups — managed vs self-managed, spot instances",
+        "AWS-specific integrations — ALB Ingress, EBS CSI, IRSA (IAM Roles for Service Accounts)",
+        "GKE-specific advantages — autopilot mode, GCS, the simplicity tax",
+        "Cluster autoscaling — Karpenter vs cluster-autoscaler",
+        "Multi-tenancy — namespaces vs separate clusters",
+        "Cluster upgrades — the version skew policy, blue-green cluster swaps",
+        "Cost — control plane fees, node costs, what to monitor"
+      ],
+      "tasks": [
+        "Provision an EKS cluster via Terraform (use the community terraform-aws-eks module)",
+        "Configure kubectl context; verify access with `kubectl get nodes`",
+        "Deploy your Helm chart (from week 11) to EKS",
+        "Set up an Ingress with the AWS Load Balancer Controller; verify HTTPS via ACM cert",
+        "Set up IRSA so your pods can access S3 without long-lived credentials"
+      ],
+      "project": "Deploy Your App to EKS via Terraform + Helm. End-state: `make infra` → `make deploy` brings up an EKS cluster and deploys your app. Public URL with TLS via ACM. Pods access S3 via IRSA. Cluster autoscaler scales nodes. Document in EKS.md. Cost: budget under $50/mo.",
+      "resources": [
+        { "label": "AWS EKS — Documentation", "url": "https://docs.aws.amazon.com/eks/", "note": "official, the canonical EKS reference" },
+        { "label": "terraform-aws-eks module", "url": "https://github.com/terraform-aws-modules/terraform-aws-eks", "note": "GitHub, the community-standard module" },
+        { "label": "AWS Load Balancer Controller", "url": "https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/", "note": "official, integrates K8s Ingress with AWS ALB" },
+        { "label": "Karpenter — Documentation", "url": "https://karpenter.sh/docs/", "note": "official, AWS's modern node autoscaler" },
+        { "label": "GKE — Documentation", "url": "https://cloud.google.com/kubernetes-engine/docs", "note": "official, often considered the best managed K8s experience" },
+        { "label": "Container roadmap — AWS", "url": "https://github.com/aws/containers-roadmap", "note": "GitHub, what AWS is shipping next for ECS/EKS; useful signal" }
+      ],
+      "questions": [
+        "Your EKS pods can't reach RDS. List 5 things to check (security group, NACL, route table, IAM, DNS).",
+        "Compare EKS control plane fee ($75/mo) + 3 t3.medium nodes vs running K8s yourself. When is managed K8s the right choice?",
+        "Cluster upgrade — version skew matters. Walk through upgrading EKS 1.30 → 1.31 safely.",
+        "IRSA vs node IAM role — which is least privilege? Why does it matter?"
+      ],
+      "exercises": [
+        "Use the terraform-aws-eks module to spin up a 2-node cluster.",
+        "Configure aws-iam-authenticator + kubectl context.",
+        "Install the AWS Load Balancer Controller via Helm.",
+        "Set up an IRSA so a pod can read from one S3 bucket."
+      ],
+      "outputs": [
+        "EKS cluster running your app at a real domain",
+        "Cost dashboard showing infra under $50/mo",
+        "IRSA verified working for pod → S3 access",
+        "EKS.md documenting the architecture"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Multi-Cloud, Vendor Lock-in, and Picking Your Platform",
+      "phase": "Cloud",
+      "commitment_hours": "15-20",
+      "context": "Most companies don't actually need multi-cloud. Most that try it are slowed by lowest-common-denominator architecture. This week you understand the trade-offs honestly and pick your cloud accordingly.",
+      "topics": [
+        "Lock-in inventory — what's portable vs what's not (managed services are the trap)",
+        "Multi-cloud reality — most successful 'multi-cloud' is one primary + one DR",
+        "Cloud-agnostic abstractions (Crossplane, Pulumi) and their cost",
+        "Modern alternatives — Vercel, Render, Fly.io, Railway — when serverless wins",
+        "Cloudflare Workers + Pages — the edge as a platform",
+        "Pricing comparison — AWS vs GCP vs Azure vs alternatives for your typical workload",
+        "Egress fees — the hidden tax of leaving AWS",
+        "Choosing for your stage — solo dev vs startup vs enterprise"
+      ],
+      "tasks": [
+        "Cost out your URL shortener on 5 platforms: Vercel, Render, Fly.io, AWS, GCP",
+        "Read AWS, GCP, Azure pricing pages for: compute, storage, egress; build a comparison table",
+        "Try deploying your app to a Pulumi-based config that targets two clouds",
+        "Try Cloudflare Workers for one edge endpoint",
+        "Read 3 'we moved off AWS' blog posts; identify the real reasons"
+      ],
+      "project": "Build a Cloud-Choice Decision Document. For your URL shortener (and 3 hypothetical apps — a B2B SaaS, a mobile API, a high-traffic media site), document the cost and engineering trade-off of deploying on AWS, GCP, Vercel + Fly, Cloudflare. Pick a primary cloud for each and justify. Commit as CLOUDS.md.",
+      "resources": [
+        { "label": "37signals — Why we left the cloud (blog series)", "url": "https://world.hey.com/dhh", "note": "the canonical contrarian voice; honest cost numbers" },
+        { "label": "Vantage — cloud cost comparison tool", "url": "https://www.vantage.sh/", "note": "free tier, transparent cloud cost data" },
+        { "label": "Bens Bites + Last Week in AWS (Corey Quinn)", "url": "https://www.lastweekinaws.com/", "note": "newsletter, the most-honest AWS pricing commentary" },
+        { "label": "Crossplane — Documentation", "url": "https://docs.crossplane.io/", "note": "official, K8s-style declarative infra across clouds" },
+        { "label": "Pulumi — Documentation", "url": "https://www.pulumi.com/docs/", "note": "official, infrastructure as code in your favourite language" },
+        { "label": "Cloudflare — Workers documentation", "url": "https://developers.cloudflare.com/workers/", "note": "official, the most-loved edge compute platform" }
+      ],
+      "questions": [
+        "Your AWS bill is $200/mo. Render or Fly.io: $80/mo. What might you be losing? What might you be gaining?",
+        "You picked managed K8s. Two years later, you want to leave AWS. What's the realistic cost of migration?",
+        "Cloudflare Workers + R2 — when does this stack genuinely beat AWS for a web product?",
+        "Multi-cloud — you have an org of 50 engineers. What's the operational tax? Is the resilience worth it?"
+      ],
+      "exercises": [
+        "Cost out 1TB egress per month across AWS, GCP, Cloudflare R2.",
+        "Compare cold-start latency: Vercel functions vs AWS Lambda vs Cloudflare Workers.",
+        "Deploy the same simple API to Vercel and Fly.io; compare DX.",
+        "Write a Pulumi program that provisions a bucket on AWS and GCP."
+      ],
+      "outputs": [
+        "CLOUDS.md decision document for 4 app archetypes",
+        "Cost comparison table across 5 platforms",
+        "Deployment to a non-AWS platform (Vercel, Fly, Render)",
+        "Notes/cloud-choice.md — your decision criteria"
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Secrets Management — Where Credentials Actually Live",
+      "phase": "Cloud",
+      "commitment_hours": "15-20",
+      "context": "Secrets in .env files in your repo cost real companies millions. This week you wire up proper secrets management: Vault, AWS Secrets Manager, Doppler, or 1Password CLI. By Friday no secret is in a file in git.",
+      "topics": [
+        "What counts as a secret — API keys, DB passwords, signing keys, OAuth secrets",
+        "Doppler — modern hosted secrets, great DX",
+        "AWS Secrets Manager + Parameter Store — when you're already on AWS",
+        "HashiCorp Vault — when you need self-hosted",
+        "Kubernetes Secrets — the surprise that they're just base64 (encrypt with KMS!)",
+        "External Secrets Operator (ESO) — bridge cloud secrets to K8s",
+        "Sealed Secrets and SOPS — encrypted secrets in git",
+        "Secret rotation — automated rotation, the canary deploy of secrets"
+      ],
+      "tasks": [
+        "Audit one of your repos for any secrets in git history; use gitleaks or trufflehog",
+        "Sign up for Doppler free tier; migrate one app's secrets there",
+        "Set up AWS Secrets Manager; sync secrets to your EKS cluster via External Secrets Operator",
+        "Implement SOPS to encrypt one .env file in git",
+        "Rotate one secret end-to-end (DB password); verify zero downtime"
+      ],
+      "project": "Eliminate Secrets from Your Repo. Take your URL shortener. Audit git history for any committed secrets. Migrate to Doppler (or AWS Secrets Manager + ESO for K8s deployments). Implement automatic secret rotation for at least one secret (DB password). Document in SECRETS.md. Run gitleaks in CI to prevent regression.",
+      "resources": [
+        { "label": "Doppler — Documentation", "url": "https://docs.doppler.com/docs", "note": "official, the most-loved hosted secrets platform" },
+        { "label": "AWS Secrets Manager — Documentation", "url": "https://docs.aws.amazon.com/secretsmanager/", "note": "official, the AWS-native option" },
+        { "label": "HashiCorp Vault — Documentation", "url": "https://developer.hashicorp.com/vault/docs", "note": "official, when you need self-hosted" },
+        { "label": "External Secrets Operator", "url": "https://external-secrets.io/", "note": "official, bridges cloud secrets to K8s" },
+        { "label": "SOPS — Documentation", "url": "https://github.com/getsops/sops", "note": "GitHub, encrypt YAML/JSON secrets in git" },
+        { "label": "gitleaks — Documentation", "url": "https://github.com/gitleaks/gitleaks", "note": "GitHub, the most-used secret-in-git scanner" }
+      ],
+      "questions": [
+        "You committed an AWS access key. Rotate it. How long does the leaked key remain valid? Search engines have already scraped it.",
+        "K8s Secrets are base64-encoded, not encrypted. Why do people think they're secure? How do you actually encrypt them at rest?",
+        "Secret rotation — DB password changes. How do you ensure no app gets the old password mid-rotation?",
+        "Compare Doppler ($10/user/mo) vs AWS Secrets Manager ($0.40/secret/mo). At what scale does each win?"
+      ],
+      "exercises": [
+        "Add gitleaks to your CI; verify it blocks pushes with secrets.",
+        "Migrate one app's .env to Doppler; verify the app reads from Doppler at start.",
+        "Use SOPS to encrypt a values.yaml; commit it; decrypt at deploy time.",
+        "Set up External Secrets Operator on your K8s cluster; sync one secret from AWS."
+      ],
+      "outputs": [
+        "Zero secrets in git history (verified by gitleaks)",
+        "Working secrets management for one production deploy",
+        "Documented secret rotation flow",
+        "SECRETS.md committed"
+      ]
+    },
+    {
+      "number": 17,
+      "title": "CI/CD — From Push to Production in Minutes",
+      "phase": "Pipelines",
+      "commitment_hours": "25-30",
+      "context": "Manual deploys break. Slow CI demotivates. This week you build a real CI/CD pipeline: tests on PR, preview environments per branch, automatic production deploys, blue-green or canary rollouts, instant rollback.",
+      "topics": [
+        "CI vs CD vs CD — the three terms, what each means",
+        "GitHub Actions deep dive — matrix, reusable workflows, composite actions, caching",
+        "GitLab CI — the alternative; how it differs from Actions",
+        "Pipeline as code — never define jobs in the UI",
+        "Build-once, deploy-many — promoting artifacts through environments",
+        "Canary and blue-green deploys at the K8s level (Argo Rollouts, Flagger)",
+        "Rollback — auto on health-check failure, manual via 'git revert + redeploy'",
+        "Approvals + manual gates — for production deploys, when these are useful"
+      ],
+      "tasks": [
+        "Write a complete GitHub Actions workflow for your URL shortener: lint, test, build container, push to GHCR, deploy to staging on merge to main",
+        "Add caching for pnpm-store + Docker layers; measure CI time before and after",
+        "Add a preview-environment workflow: each PR gets a temporary K8s namespace",
+        "Set up auto-deploy to production on tag; require manual approval gate",
+        "Practice rollback: deploy a deliberate bug, then `kubectl rollout undo`; verify <30 seconds"
+      ],
+      "project": "Build a Real CI/CD Pipeline End-to-End. Every PR: tests run + preview env spun up at pr-123.your-domain.com. Every merge to main: auto-deploy to staging.your-domain.com. Every git tag (v*): manual approval, then deploy to production with canary (10% → 100%). Rollback in <60 seconds. Document in PIPELINE.md.",
+      "resources": [
+        { "label": "GitHub Actions — Documentation (full)", "url": "https://docs.github.com/en/actions", "note": "official, the canonical reference" },
+        { "label": "Argo Rollouts — Documentation", "url": "https://argo-rollouts.readthedocs.io/", "note": "official, the leading progressive delivery controller for K8s" },
+        { "label": "Flagger — Documentation", "url": "https://docs.flagger.app/", "note": "official, the alternative to Argo Rollouts; integrates with multiple meshes" },
+        { "label": "Continuous Delivery — Jez Humble (book)", "url": "https://continuousdelivery.com/", "note": "the foundational text; still the canonical CD reference" },
+        { "label": "GitHub Actions Marketplace", "url": "https://github.com/marketplace?type=actions", "note": "official, browse for actions; verify any you adopt" },
+        { "label": "GitLab CI — Documentation", "url": "https://docs.gitlab.com/ee/ci/", "note": "official, the canonical alternative to GitHub Actions" }
+      ],
+      "questions": [
+        "Your CI takes 12 minutes. What's the slowest job? What can be parallelised? What can be cached?",
+        "Your deploy to production rolls out a bug. What's the next 60 seconds? Detect + rollback procedure.",
+        "Canary deploy: 5% of traffic gets v2. After 5 minutes, error rate is 2× baseline. Automatic rollback or human decision?",
+        "Approval gate for production — is that a guard, or a bottleneck? When does it make deploys riskier (because they get larger)?"
+      ],
+      "exercises": [
+        "Set up a matrix workflow that tests against 3 Node versions × 2 OSes.",
+        "Add cache for Docker layer cache between runs (BuildKit's gha cache).",
+        "Implement a preview environment for every PR using K8s namespaces.",
+        "Configure Argo Rollouts for a canary rollout strategy."
+      ],
+      "outputs": [
+        "Full CI/CD pipeline: PR → preview env → main → staging → tag → prod",
+        "Rollback procedure verified",
+        "Canary rollout via Argo Rollouts working",
+        "PIPELINE.md documenting the flow"
+      ]
+    },
+    {
+      "number": 18,
+      "title": "GitOps — Argo CD and Declarative Deploys",
+      "phase": "Pipelines",
+      "commitment_hours": "20-25",
+      "context": "GitOps inverts CD — instead of pushing from CI to the cluster, the cluster pulls from git. Argo CD is the dominant tool. This week you wire it up and feel the difference.",
+      "topics": [
+        "GitOps principles — declarative, versioned, automated, observable",
+        "Argo CD — application of applications, app projects, sync waves",
+        "Flux — the alternative; how it differs from Argo CD",
+        "App-of-apps pattern — managing many applications in one Argo CD",
+        "Auto-sync vs manual sync — when each is right",
+        "Drift detection — when the cluster diverges from git",
+        "Sync hooks — preSync, postSync, pre-delete",
+        "Combining Helm + Kustomize with Argo CD"
+      ],
+      "tasks": [
+        "Install Argo CD on your K8s cluster; access the UI via port-forward",
+        "Create an Application that points to your Helm chart in git; auto-sync",
+        "Make a change to the chart in git; observe Argo CD detect and apply",
+        "Manually change a resource via kubectl; observe Argo CD detect drift",
+        "Set up app-of-apps: a parent Argo Application that manages 3 child applications"
+      ],
+      "project": "Migrate Your CI/CD to GitOps with Argo CD. Take your week-17 pipeline. Refactor so that CI builds + pushes container images, but DEPLOYMENT is done via git commits to an env-specific repo (or branch). Argo CD watches the env repo and reconciles. Document in GITOPS.md. Compare the experience to push-style CD.",
+      "resources": [
+        { "label": "Argo CD — Documentation", "url": "https://argo-cd.readthedocs.io/", "note": "official, the canonical reference" },
+        { "label": "Flux — Documentation", "url": "https://fluxcd.io/flux/", "note": "official, the alternative GitOps tool; CNCF graduated" },
+        { "label": "OpenGitOps — Principles", "url": "https://opengitops.dev/", "note": "official, the CNCF specification of GitOps principles" },
+        { "label": "GitOps Working Group (CNCF)", "url": "https://github.com/cncf/tag-app-delivery/blob/main/gitops-wg/README.md", "note": "GitHub, the canonical thinking on what GitOps means" },
+        { "label": "Codefresh — Argo CD tutorials", "url": "https://codefresh.io/learn/argo-cd/", "note": "free, hands-on Argo CD walkthroughs" },
+        { "label": "Argo CD ApplicationSet", "url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/", "note": "official, scaling many apps with templates" }
+      ],
+      "questions": [
+        "Your prod cluster diverged from git (someone kubectl-edited a Deployment). What does Argo CD do? What should you do?",
+        "Auto-sync on every git change — what could go wrong? When do you want manual sync?",
+        "Compare push-CD (CI deploys to cluster) vs GitOps (cluster pulls). Which is easier to audit? Which is faster to deploy?",
+        "Argo CD became your single point of failure. How do you back it up? How do you bootstrap a new cluster from git?"
+      ],
+      "exercises": [
+        "Bootstrap Argo CD via Helm + the CLI; configure it via a single bootstrap manifest.",
+        "Define an Application with `automated: { prune: true, selfHeal: true }`; observe behaviour on drift.",
+        "Use ApplicationSet to template apps across 3 environments.",
+        "Implement a pre-sync hook that runs DB migrations before the app starts."
+      ],
+      "outputs": [
+        "Argo CD running and managing your app",
+        "Migration from push-CD to GitOps documented",
+        "App-of-apps pattern with at least 3 child apps",
+        "GITOPS.md committed"
+      ]
+    },
+    {
+      "number": 19,
+      "title": "Observability — Prometheus, Grafana, OpenTelemetry",
+      "phase": "Observability & SRE",
+      "commitment_hours": "25-30",
+      "context": "You can't operate what you can't see. This week you install the canonical observability stack — Prometheus + Grafana + Loki + Tempo — and you instrument your application properly with OpenTelemetry.",
+      "topics": [
+        "Metrics vs logs vs traces — the three pillars",
+        "Prometheus — pull-based metrics, PromQL fundamentals",
+        "Grafana — dashboards, alerting, data source connections",
+        "Loki — Prometheus-style logs (label-based, no full-text)",
+        "Tempo — distributed tracing storage",
+        "OpenTelemetry — the open standard for instrumentation",
+        "USE method (Brendan Gregg) — Utilisation, Saturation, Errors",
+        "RED method (Tom Wilkie) — Rate, Errors, Duration"
+      ],
+      "tasks": [
+        "Install kube-prometheus-stack on your local K8s cluster via Helm",
+        "Open Grafana; explore the pre-built dashboards",
+        "Instrument your app with OpenTelemetry; export to Prometheus + Tempo",
+        "Write 5 PromQL queries: error rate, p95 latency, requests per second",
+        "Build a custom Grafana dashboard with the RED metrics for your app"
+      ],
+      "project": "Add Full Observability to Your K8s App. Install Prometheus + Grafana + Loki + Tempo. Instrument your app with OpenTelemetry. Build a Grafana dashboard with: RED metrics, resource usage, error rate, deploy markers. Set up 5 alerts: high error rate, high latency, low success rate, pod crash, disk space. Document in OBSERVABILITY.md.",
+      "resources": [
+        { "label": "Prometheus — Documentation", "url": "https://prometheus.io/docs/introduction/overview/", "note": "official, the canonical reference" },
+        { "label": "Grafana — Documentation", "url": "https://grafana.com/docs/grafana/latest/", "note": "official, dashboards + alerting + data sources" },
+        { "label": "OpenTelemetry — Documentation", "url": "https://opentelemetry.io/docs/", "note": "official, the open instrumentation standard" },
+        { "label": "Brendan Gregg — USE Method", "url": "https://www.brendangregg.com/usemethod.html", "note": "the foundational performance-debugging methodology" },
+        { "label": "Tom Wilkie — RED Method", "url": "https://thenewstack.io/monitoring-microservices-red-method/", "note": "blog, the canonical RED article" },
+        { "label": "kube-prometheus-stack — Helm chart", "url": "https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack", "note": "GitHub, the de-facto K8s monitoring install" }
+      ],
+      "questions": [
+        "Your dashboard shows p95 latency = 1.2s but p99 = 8s. What's happening at the tail? What metrics would help you find out?",
+        "Your app dropped from 99.5% to 97% success rate. PromQL query to find which endpoint regressed?",
+        "Compare Loki (label-based) vs Elasticsearch (full-text) for logs. When does each fit?",
+        "Cost out hosted (Grafana Cloud, Honeycomb, Datadog) vs self-hosted. At what scale does each win?"
+      ],
+      "exercises": [
+        "Write a PromQL query for error rate per route: sum(rate(http_requests_total{status=~\"5..\"}[5m])) by (route).",
+        "Instrument an HTTP handler with OpenTelemetry; verify a trace appears in Tempo.",
+        "Create a Grafana alert that fires on >5% error rate for 5 minutes.",
+        "Build a 'recent deploys' panel in Grafana using the kube_pod_created metric."
+      ],
+      "outputs": [
+        "Full observability stack running on K8s",
+        "Custom Grafana dashboard for your app",
+        "5 working alerts routed to a channel (Slack, email)",
+        "OBSERVABILITY.md committed"
+      ]
+    },
+    {
+      "number": 20,
+      "title": "SRE — SLOs, Error Budgets, On-Call",
+      "phase": "Observability & SRE",
+      "commitment_hours": "20-25",
+      "context": "SRE is the discipline of operating software at scale. The core ideas: SLOs (service level objectives), error budgets (you're allowed to fail this much), and on-call (with proper rotation, escalation, post-mortems). This week you adopt them.",
+      "topics": [
+        "SLIs, SLOs, SLAs — definitions, common confusions",
+        "Error budgets — how they enable velocity",
+        "Burn-rate alerts — multi-window, multi-burn-rate",
+        "Toil — what it is, how to track and eliminate it",
+        "Blameless post-mortems — the structure, why blame is counterproductive",
+        "On-call rotations — sustainability, paging policies",
+        "Runbooks — when an alert fires, what do you do?",
+        "Capacity planning — predicting when you'll need more resources"
+      ],
+      "tasks": [
+        "Define 3 SLIs for your URL shortener: availability, latency, success rate",
+        "Define corresponding SLOs (e.g. 99.5% availability, p95 < 500ms)",
+        "Configure burn-rate alerts based on those SLOs",
+        "Write a runbook for one alert: 'high error rate'; document the diagnosis + fix steps",
+        "Conduct a mock post-mortem for a real incident (or simulated outage) using the template"
+      ],
+      "project": "Define and Implement SLOs for Your URL Shortener. Pick realistic SLOs (don't go 99.99%). Configure burn-rate alerts in Prometheus/Grafana. Write runbooks for the top 5 alert types. Set up PagerDuty (or BetterStack) for on-call paging. Document everything in SLOS.md + RUNBOOKS.md. Simulate one incident and run a post-mortem.",
+      "resources": [
+        { "label": "Site Reliability Engineering (the Google book, free online)", "url": "https://sre.google/sre-book/table-of-contents/", "note": "free, the foundational text; read chapters 1-4 + 12-13" },
+        { "label": "The Site Reliability Workbook (Google, free)", "url": "https://sre.google/workbook/table-of-contents/", "note": "free, the practical companion volume" },
+        { "label": "Charity Majors — observability + on-call writing", "url": "https://charity.wtf/", "note": "blog, the canonical voice on modern SRE" },
+        { "label": "Sloth — SLO generator", "url": "https://sloth.dev/", "note": "official, generates Prometheus rules from simple SLO definitions" },
+        { "label": "PagerDuty — Incident Response", "url": "https://response.pagerduty.com/", "note": "official, free book on incident response procedures" },
+        { "label": "BetterStack — On-call documentation", "url": "https://betterstack.com/docs/uptime/", "note": "official, modern affordable alternative to PagerDuty" }
+      ],
+      "questions": [
+        "Your SLO is 99.5% availability. Over a 30-day window, how much downtime is allowed? Did you blow your budget this month?",
+        "Burn-rate alert: error rate at 5% means you'll burn the monthly budget in 8 hours. Is that a wake-you-at-3am alert?",
+        "Your post-mortem identified human error. How do you write the post-mortem WITHOUT blaming the person?",
+        "On-call is exhausting. What's the difference between a 1-week vs 4-week rotation for a 5-person team?"
+      ],
+      "exercises": [
+        "Use sloth to generate Prometheus SLO rules from an SLO YAML.",
+        "Write a runbook in markdown: alert → diagnosis steps → mitigation → rollback.",
+        "Configure PagerDuty (or BetterStack) escalation policy: primary 15min → secondary.",
+        "Conduct a post-mortem for a real incident; write it in 5-Whys structure."
+      ],
+      "outputs": [
+        "Documented SLOs + SLIs for your app",
+        "Burn-rate alerts wired up",
+        "5 runbooks committed",
+        "1 post-mortem committed; readable and blameless"
+      ]
+    },
+    {
+      "number": 21,
+      "title": "Cost Optimisation — FinOps and the AWS Bill",
+      "phase": "Observability & SRE",
+      "commitment_hours": "15-20",
+      "context": "Cloud bills surprise everyone. FinOps — the discipline of cloud cost management — is now a real specialisation. This week you tag everything, build cost dashboards, and apply the patterns that cut bills by 30-50%.",
+      "topics": [
+        "AWS Cost Explorer + budgets — built-in tools",
+        "Tagging strategy — every resource gets cost-attribution tags",
+        "Right-sizing — instances that are 5% utilised",
+        "Spot instances — the 70-90% discount on interruption-tolerant workloads",
+        "Savings plans + reserved instances — committing to save",
+        "S3 storage classes — IA, Glacier, deletion lifecycle",
+        "Egress fees — why the same data costs differently per cloud",
+        "Tools — Vantage, CloudHealth, Kubecost for K8s"
+      ],
+      "tasks": [
+        "Audit your AWS bill via Cost Explorer; identify the top 5 line items",
+        "Tag all your resources with `environment`, `project`, `owner`",
+        "Right-size one over-provisioned EC2 / EBS volume",
+        "Move an interruption-tolerant workload to Spot instances",
+        "Install Kubecost on your K8s cluster; observe per-pod cost"
+      ],
+      "project": "Cut Your AWS Bill by 30%. Apply: right-sizing, Spot for non-prod, S3 lifecycle policies (IA after 30d, Glacier after 90d), Reserved Instances or Savings Plans for steady workloads. Document the journey in FINOPS.md with before/after numbers. Set up a monthly review process.",
+      "resources": [
+        { "label": "AWS Well-Architected Framework — Cost Optimization pillar", "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html", "note": "official, the canonical reference" },
+        { "label": "Vantage — Cloud Cost Handbook", "url": "https://www.vantage.sh/cloud-cost-handbook", "note": "free, the canonical FinOps reference" },
+        { "label": "Last Week in AWS — Corey Quinn", "url": "https://www.lastweekinaws.com/", "note": "newsletter, the most-honest AWS pricing commentary" },
+        { "label": "Kubecost — Documentation", "url": "https://docs.kubecost.com/", "note": "official, the canonical K8s cost-attribution tool" },
+        { "label": "FinOps Foundation", "url": "https://www.finops.org/", "note": "official, the industry standards body for FinOps" },
+        { "label": "AWS Compute Optimizer", "url": "https://docs.aws.amazon.com/compute-optimizer/", "note": "official, free service that recommends right-sizing" }
+      ],
+      "questions": [
+        "Your top AWS cost is NAT Gateway. Why? What's the typical cause? How do you cut it?",
+        "Reserved Instances vs Savings Plans — which gives more flexibility? Which gives more discount?",
+        "S3 storage class lifecycle — when does Glacier Deep Archive actually pay off? At what access frequency?",
+        "Your dev environment costs 30% of your prod environment. Should it? What can be turned off out-of-hours?"
+      ],
+      "exercises": [
+        "Tag 10 resources with cost-attribution tags; verify they appear in Cost Explorer.",
+        "Right-size one EC2 instance using Compute Optimizer's recommendation.",
+        "Set up an S3 lifecycle rule that transitions to IA after 30 days.",
+        "Install Kubecost on your local K8s; observe per-namespace cost."
+      ],
+      "outputs": [
+        "30% cost reduction documented",
+        "All resources tagged",
+        "FINOPS.md with monthly review process",
+        "Kubecost dashboards live for K8s workloads"
+      ]
+    },
+    {
+      "number": 22,
+      "title": "Disaster Recovery — Backups, Multi-Region, and Tested Restores",
+      "phase": "Observability & SRE",
+      "commitment_hours": "20-25",
+      "context": "Untested backups don't exist. This week you set up proper backups, multi-region replication, and — critically — you actually restore from backup, end-to-end. Most teams discover their backups are broken only during a real disaster.",
+      "topics": [
+        "RTO (Recovery Time Objective) vs RPO (Recovery Point Objective)",
+        "Backup strategies — full, incremental, differential",
+        "Database backups — pg_dump vs WAL archiving, point-in-time recovery",
+        "Cross-region replication — S3 CRR, RDS read replicas across regions",
+        "Application-level backup tools — Velero for K8s",
+        "Tested restores — quarterly fire drills",
+        "Disaster scenarios — region outage, accidental delete, ransomware",
+        "Runbook for region failover"
+      ],
+      "tasks": [
+        "Enable automated daily backups on your RDS instance",
+        "Configure point-in-time recovery; restore to a 6-hour-ago state in a test environment",
+        "Enable S3 cross-region replication for one bucket",
+        "Install Velero on your K8s cluster; back up + restore a namespace",
+        "Write a disaster recovery runbook for one realistic scenario (RDS region down)"
+      ],
+      "project": "Build a Tested Disaster Recovery Plan. For your URL shortener: automated daily backups (RDS, S3), 30-day retention, point-in-time recovery, cross-region S3 replication for static assets, Velero for K8s state. Perform a full restore drill: spin up a new region from backups, verify functionality. Document in DR.md.",
+      "resources": [
+        { "label": "AWS — Disaster Recovery whitepaper", "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html", "note": "official, the canonical reference" },
+        { "label": "Velero — Documentation", "url": "https://velero.io/docs/", "note": "official, the leading K8s backup tool" },
+        { "label": "PostgreSQL — Continuous archiving and PITR", "url": "https://www.postgresql.org/docs/current/continuous-archiving.html", "note": "official, the canonical PostgreSQL backup reference" },
+        { "label": "GitLab — How we tested our backups", "url": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/", "note": "blog, the canonical 'we lost data' post-mortem worth reading" },
+        { "label": "Charity Majors — Why I test in production", "url": "https://charity.wtf/", "note": "blog, the philosophy that backups are belief, restores are knowledge" },
+        { "label": "AWS — Backup service documentation", "url": "https://docs.aws.amazon.com/aws-backup/", "note": "official, the centralised backup service across AWS services" }
+      ],
+      "questions": [
+        "Your DR runbook says 'restore RDS from snapshot'. How long does it actually take? Have you measured?",
+        "Cross-region replication — what's the lag? If region A dies, how much data have you lost?",
+        "Velero backed up your K8s namespace. Test the restore on a different cluster. Did it actually work? What broke?",
+        "RTO = 1 hour, RPO = 5 minutes — what does your architecture need to support both? At what cost?"
+      ],
+      "exercises": [
+        "Configure RDS automated backups with 7-day retention.",
+        "Perform a point-in-time recovery to a state 1 hour ago in a test environment.",
+        "Use Velero to back up + restore a K8s namespace.",
+        "Practice 'restore my prod from a fresh AWS account' as a fire drill."
+      ],
+      "outputs": [
+        "Automated backup strategy live and verified",
+        "One full restore drill completed (with timing data)",
+        "DR.md with runbooks for 3 scenarios",
+        "Cross-region replication verified"
+      ]
+    },
+    {
+      "number": 23,
+      "title": "Cloud Security Posture — IAM, Network, Audit",
+      "phase": "Observability & SRE",
+      "commitment_hours": "20-25",
+      "context": "Cloud breaches happen via misconfigured IAM (the most common), public S3 buckets (the second most common), and unauthorised access (the third). This week you scan your cloud for vulnerabilities and fix them.",
+      "topics": [
+        "IAM least privilege — the principle, the daily struggle",
+        "AWS Organizations + Control Tower — multi-account isolation",
+        "Network segmentation — public vs private subnets, security groups, NACLs",
+        "CloudTrail + AWS Config — auditing what happened",
+        "GuardDuty + Security Hub — threat detection",
+        "Open-source scanners — Prowler, ScoutSuite, Cloudsplaining",
+        "Compliance frameworks — SOC2, ISO27001 as engineering targets",
+        "Incident response — when your cloud is breached"
+      ],
+      "tasks": [
+        "Enable CloudTrail, AWS Config, GuardDuty in your AWS account",
+        "Run Prowler against your AWS account; document every finding above LOW",
+        "Audit IAM: any user with admin access? Any unused access keys? Rotate or remove",
+        "Verify no S3 bucket is public unintentionally",
+        "Set up an alert when a new IAM user is created"
+      ],
+      "project": "Cloud Security Audit + Hardening Pass. Run Prowler on your AWS account. Fix every HIGH finding. Document the remaining ones with justification in CLOUD-SECURITY.md. Set up GuardDuty alerts. Verify every IAM policy is least-privilege. Generate a one-page security posture report.",
+      "resources": [
+        { "label": "AWS Well-Architected — Security pillar", "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html", "note": "official, the canonical reference" },
+        { "label": "Prowler — Documentation", "url": "https://github.com/prowler-cloud/prowler", "note": "GitHub, the most-used open-source cloud security scanner" },
+        { "label": "ScoutSuite", "url": "https://github.com/nccgroup/ScoutSuite", "note": "GitHub, alternative multi-cloud security scanner from NCC Group" },
+        { "label": "AWS Security Maturity Model", "url": "https://maturitymodel.security.aws.dev/en/model/", "note": "official, the canonical maturity framework" },
+        { "label": "Last Week in AWS Security", "url": "https://www.lastweekinaws.com/podcast/", "note": "podcast + newsletter, what's actually happening in AWS security" },
+        { "label": "Cloud Security Alliance — Guidance", "url": "https://cloudsecurityalliance.org/research/cloud-controls-matrix/", "note": "official, the industry-standard controls matrix" }
+      ],
+      "questions": [
+        "Your IAM has a user with AdministratorAccess. Justify it or remove it. What's the alternative for daily work?",
+        "Prowler found 47 HIGH findings. Triage: which are real risk vs noise? Document each decision.",
+        "Cost: GuardDuty + Security Hub + Config is non-trivial at scale. Worth it? When does it become required?",
+        "Your cloud got breached. Walk through the first 60 minutes — detection, containment, evidence preservation, comms."
+      ],
+      "exercises": [
+        "Run Prowler against your AWS account; fix the top 3 HIGH findings.",
+        "Set up a CloudTrail trail that logs to a separate, locked-down account.",
+        "Enable IAM Access Analyzer; resolve every finding.",
+        "Configure GuardDuty findings to email or PagerDuty when above HIGH."
+      ],
+      "outputs": [
+        "Documented cloud security audit with fixes",
+        "CLOUD-SECURITY.md committed",
+        "GuardDuty + alerting wired up",
+        "Notes/cloud-security.md — your audit checklist"
+      ]
+    },
+    {
+      "number": 24,
+      "title": "Capstone — Build and Operate Real Infrastructure",
+      "phase": "Capstone",
+      "commitment_hours": "30-40",
+      "context": "The final week. You take everything from weeks 1-23 and you build the full production stack for one real application. Reproducible from a single `make all` command. Documented for the team you don't yet have. This is the artifact.",
+      "topics": [
+        "Picking a scope — what's actually deployable in 7 days?",
+        "Documentation discipline — README + ARCHITECTURE + RUNBOOKS",
+        "Cost reality — what does $50/mo get you in 2026?",
+        "Operating discipline — what would page you at 3am?",
+        "Handover quality — could someone else run this?",
+        "Continuous improvement — what's the post-launch roadmap?",
+        "Showing your work — demo videos, blog posts, public repos",
+        "Building a portfolio that gets jobs"
+      ],
+      "tasks": [
+        "Pick ONE app to host (yours or a real OSS app you fork)",
+        "Write ARCHITECTURE.md before code",
+        "Build the entire stack: Terraform + Helm + Argo CD + observability + backups",
+        "Hard deadline: working stack reproducible from git on day 7",
+        "Document for handover: anyone could deploy + operate this"
+      ],
+      "project": "Build a Full Production Stack for One Real App. End-state: an app of your choice (your URL shortener works, or fork something popular) running on EKS via Terraform via Argo CD with: HTTPS at a real domain, full observability (Prometheus + Grafana + Loki + Tempo), backups + tested restore, secrets in Doppler/Secrets Manager, CI/CD on every PR. Public GitHub repo. Documented blog post about the stack. This is what 'I can operate cloud infrastructure' actually looks like.",
+      "resources": [
+        { "label": "Site Reliability Engineering (Google book)", "url": "https://sre.google/sre-book/table-of-contents/", "note": "free, your capstone reference; focus on chapters 4, 12, 13" },
+        { "label": "CNCF Landscape", "url": "https://landscape.cncf.io/", "note": "official, the canonical map of the cloud-native ecosystem" },
+        { "label": "Made with ML — MLOps course (free)", "url": "https://madewithml.com/courses/mlops/", "note": "even if non-ML, the deployment + monitoring chapters are gold" },
+        { "label": "Honeycomb — Observability Engineering book chapters (free)", "url": "https://www.honeycomb.io/", "note": "free chapters of the canonical observability book" },
+        { "label": "Charity Majors — production patterns talks", "url": "https://charity.wtf/", "note": "the philosophy of modern operations" },
+        { "label": "DevOps Topologies — Matthew Skelton", "url": "https://web.devopstopologies.com/", "note": "free, the canonical reference for org structures around DevOps" }
+      ],
+      "questions": [
+        "Anyone clones your capstone repo. Can they deploy it in <60 minutes? Test by giving it to a friend.",
+        "Cost — what does your stack cost monthly? Is it sustainable on the free tier? At 10× traffic?",
+        "Post-mortem: if this stack went down at 3am, would you know? Could you fix it? What runbook would help you?",
+        "What's the one thing about this capstone you'd build differently? What did 23 weeks make easy?"
+      ],
+      "exercises": [
+        "Write a one-page architecture summary that a non-engineer could understand.",
+        "Record a 5-minute video walkthrough of your stack.",
+        "Run a 'cold restore' drill: tear down everything, rebuild from git, verify functionality.",
+        "Write a 1500-word blog post about your stack; publish on dev.to / your blog."
+      ],
+      "outputs": [
+        "Full production stack live at a real domain",
+        "Public GitHub repo with ARCHITECTURE.md + RUNBOOKS.md + README.md",
+        "Blog post published with screenshots",
+        "Cold-restore drill completed in <60 minutes",
+        "Stack costing under $50/mo — the portfolio centrepiece for DevOps / Platform / SRE roles"
+      ]
+    }
+  ]
+}

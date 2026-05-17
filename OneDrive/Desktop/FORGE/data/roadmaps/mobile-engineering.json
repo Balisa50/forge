@@ -1,0 +1,1231 @@
+{
+  "slug": "mobile-engineering",
+  "title": "Mobile Engineering",
+  "total_weeks": 24,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "Mobile First Principles — How Phones Are Different",
+      "phase": "Foundations",
+      "commitment_hours": "15-20",
+      "context": "Mobile is not 'web but smaller'. Constraints — battery, network, screen, touch, lifecycle — shape every decision. This week you learn the platform realities (iOS + Android) and set up your dev environment to build native apps even before you write your first line of mobile code.",
+      "topics": [
+        "iOS vs Android — UX conventions, navigation patterns, Human Interface Guidelines vs Material Design",
+        "App lifecycle — foreground, background, suspended, killed; what triggers each",
+        "Permissions — request at point-of-use, not upfront; iOS vs Android model",
+        "Network on mobile — flaky connections, the offline-first mindset",
+        "Battery and CPU — why mobile is more frugal than web",
+        "App stores — App Store vs Play Store rules; review processes",
+        "Cross-platform vs native — when to pick React Native, Flutter, or Swift/Kotlin",
+        "Dev environment — Xcode (Mac required for iOS), Android Studio, the simulators"
+      ],
+      "tasks": [
+        "Install Node 22 + Xcode (Mac) or Android Studio + the React Native CLI",
+        "Run `npx react-native init HelloMobile` and run on iOS simulator + Android emulator",
+        "Install the App Store apps Linear, Notion, and a banking app; analyse what's native, what's web, what's hybrid",
+        "Read the Apple Human Interface Guidelines (HIG) overview + Google Material Design overview",
+        "Sign up for an Apple Developer account ($99/yr) and a Google Play Developer account ($25 once); you'll need both to ship"
+      ],
+      "project": "Build a Hello World app that opens on both iOS and Android. Use React Native or Expo. Add a button that triggers a native alert. Verify it runs on a real device (not just the simulator). Commit the project as `hello-mobile`. This becomes your scaffold for everything that follows.",
+      "resources": [
+        { "label": "Apple — Human Interface Guidelines", "url": "https://developer.apple.com/design/human-interface-guidelines/", "note": "official, the canonical iOS design rules" },
+        { "label": "Google — Material Design 3", "url": "https://m3.material.io/", "note": "official, the canonical Android design rules" },
+        { "label": "Expo — Documentation (Get Started)", "url": "https://docs.expo.dev/get-started/introduction/", "note": "official, the easiest way to start with React Native; the recommended path in 2025" },
+        { "label": "React Native — Documentation", "url": "https://reactnative.dev/docs/getting-started", "note": "official, the canonical RN reference" },
+        { "label": "Apple — App Store Review Guidelines", "url": "https://developer.apple.com/app-store/review/guidelines/", "note": "official, read before you ship — the rules that govern App Store approval" },
+        { "label": "Google — Play Console policy", "url": "https://play.google.com/about/developer-content-policy/", "note": "official, the Android equivalent of Apple's review rules" }
+      ],
+      "questions": [
+        "Open the same app on iOS and Android. What's different in the navigation? In the typography? In the tab bar position? What does each platform's HIG say about it?",
+        "Force-quit a backgrounded app on iOS vs Android. What happens to its state? What should your app remember vs recompute?",
+        "Why is camera permission asked at the moment you tap 'Take Photo' rather than at app launch? What does denial mean for your UX?",
+        "Native (Swift / Kotlin) vs React Native vs Flutter — pick a real app idea. Which would you choose and why? What's the cost of cross-platform?"
+      ],
+      "exercises": [
+        "Wire up a button in your Hello Mobile app that uses NativeModules to show an iOS UIAlert (or Android Toast).",
+        "Configure your Expo app to show different splash screens on iOS and Android.",
+        "Make your app handle being backgrounded — change the title to 'Welcome back' when it returns to foreground.",
+        "Identify 5 differences between iOS and Android UX in any popular app (Spotify, Twitter, YouTube)."
+      ],
+      "outputs": [
+        "Hello Mobile app running on real iOS and Android devices",
+        "Apple Developer + Google Play Developer accounts active",
+        "Notes/platform-conventions.md — your observations about iOS vs Android",
+        "Both simulators / emulators configured and runnable"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "React Native and Expo — The Productive Path",
+      "phase": "Foundations",
+      "commitment_hours": "25-30",
+      "context": "Expo turns React Native from a frustrating native build chain into a one-command development loop. Most cross-platform mobile shipping in 2025 happens on Expo. This week you build fluency with the core components, layout, and the EAS build/submit pipeline.",
+      "topics": [
+        "Expo Router — file-based routing, layouts, deep links",
+        "Core components — View, Text, ScrollView, FlatList, Image, Pressable",
+        "Layout — Flexbox in React Native (defaults differ from web)",
+        "Styling — StyleSheet, inline styles, the case for nativewind (Tailwind for RN)",
+        "TouchableOpacity vs Pressable — why Pressable wins",
+        "FlatList performance — keyExtractor, getItemLayout, why ScrollView fails at scale",
+        "Expo modules — Camera, Location, Notifications, FileSystem, ImagePicker",
+        "EAS Build + Submit — building production binaries and submitting to stores"
+      ],
+      "tasks": [
+        "Start a new Expo project with `npx create-expo-app -t default-typescript`; explore the file-based routing",
+        "Build a tab navigation with 3 tabs: Home, Search, Profile",
+        "Build a FlatList of 1000 items; verify smooth scrolling on a real device",
+        "Install nativewind and configure Tailwind classes; verify they compile",
+        "Use EAS Build to produce an iOS development build; install it on your phone"
+      ],
+      "project": "Build a Recipes App scaffold. 3 tabs: Recipes (list view), Favourites (filtered list), Profile (your settings). Use Expo Router for navigation. FlatList for the recipes (use a public API like TheMealDB). Pull-to-refresh, infinite scroll, swipe-to-favourite. Test on real iOS and Android devices. This becomes the base you'll extend in weeks 3-8.",
+      "resources": [
+        { "label": "Expo — Documentation (full)", "url": "https://docs.expo.dev/", "note": "official, work through Get Started + Develop + Distribute" },
+        { "label": "Expo Router — Documentation", "url": "https://docs.expo.dev/router/introduction/", "note": "official, file-based routing for React Native (like Next.js for mobile)" },
+        { "label": "React Native — Components and APIs reference", "url": "https://reactnative.dev/docs/components-and-apis", "note": "official, your daily reference" },
+        { "label": "NativeWind — Documentation", "url": "https://www.nativewind.dev/", "note": "official, Tailwind classes that compile to React Native StyleSheet" },
+        { "label": "Catalin Miron — React Native YouTube channel", "url": "https://www.youtube.com/c/CatalinMironDev", "note": "YouTube, the most beautiful RN animation tutorials" },
+        { "label": "William Candillon — Can it be done in React Native?", "url": "https://www.youtube.com/c/wcandillon", "note": "YouTube, the canonical channel for advanced React Native + Reanimated" }
+      ],
+      "questions": [
+        "FlatList of 10000 items vs ScrollView with 10000 items — how does memory and scrolling feel different? Why?",
+        "Compare the same UI built with StyleSheet vs nativewind. Which felt natural? Which produced less code?",
+        "Test your app on a low-end Android (Moto G or a 3-year-old phone). Where does it lag? What's the bottleneck — JS, rendering, network?",
+        "Tap a Pressable button repeatedly very fast. Does it have visual feedback per tap, or does it lag? What's the right debounce?"
+      ],
+      "exercises": [
+        "Build a custom Header component that renders title left, action right with proper safe-area handling.",
+        "Implement pull-to-refresh on your FlatList using RefreshControl.",
+        "Implement infinite scroll using FlatList's onEndReached.",
+        "Build a search input that filters the FlatList; debounce the filter."
+      ],
+      "outputs": [
+        "Recipes app running on iOS and Android devices",
+        "EAS Build producing an installable iOS dev build + Android APK",
+        "FlatList with 1000+ items scrolling smoothly",
+        "Notes/expo.md — your decision tree for Expo modules"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Navigation, Tabs, and Modals — The Patterns That Define the App",
+      "phase": "Building Screens",
+      "commitment_hours": "20-25",
+      "context": "Mobile navigation is a richer language than web routing. Stacks, tabs, drawers, modals, gestures — each has its conventions and quirks across iOS and Android. This week you go deep on Expo Router + React Navigation.",
+      "topics": [
+        "Navigation patterns — stack, tab, drawer, modal, when each is right",
+        "React Navigation under the hood (Expo Router uses it) — what's happening on push/pop",
+        "Header customisation per route — title, back button, right action",
+        "Modals — full screen, half sheet, transparent modal",
+        "Deep links — universal links on iOS, app links on Android",
+        "Tab bar customisation — icons, badges, hide-on-scroll",
+        "Navigation state persistence — restoring on app relaunch",
+        "Type-safe navigation — Expo Router's typed routes"
+      ],
+      "tasks": [
+        "Add a stack navigator with at least 3 levels deep; verify back gestures work on iOS",
+        "Add a modal that slides up from the bottom; dismiss with swipe-down gesture",
+        "Configure deep links: opening your-app://recipe/123 navigates to the recipe page",
+        "Add a custom header with a search field and a right action button",
+        "Add a badge to a tab bar icon (e.g. notification count)"
+      ],
+      "project": "Extend Recipes App with Full Navigation. Add: a detail screen for each recipe (push), a half-sheet modal for filters, a settings screen accessible from Profile tab (push), a 'Recipe of the Day' modal that appears on first launch. Configure deep links so a recipe URL opens directly to its detail. Test all of this on both platforms — gestures, transitions, animations.",
+      "resources": [
+        { "label": "Expo Router — Documentation (full)", "url": "https://docs.expo.dev/router/introduction/", "note": "official, every navigation pattern covered" },
+        { "label": "React Navigation — Documentation", "url": "https://reactnavigation.org/docs/getting-started", "note": "official, what Expo Router builds on; deeper reference" },
+        { "label": "Expo — Deep linking guide", "url": "https://docs.expo.dev/guides/linking/", "note": "official, how to wire universal links and app links" },
+        { "label": "Apple — Designing iOS navigation", "url": "https://developer.apple.com/design/human-interface-guidelines/navigation-bars", "note": "official HIG section, what 'native' iOS navigation feels like" },
+        { "label": "Material 3 — Navigation patterns", "url": "https://m3.material.io/components/navigation-bar", "note": "official, Android's navigation conventions" },
+        { "label": "React Native Bottom Sheet (gorhom)", "url": "https://gorhom.dev/react-native-bottom-sheet/", "note": "official, the modern bottom sheet library; iOS-quality on both platforms" }
+      ],
+      "questions": [
+        "Push 5 screens deep on iOS. Use the back gesture vs the back button. Compare feel and animation. Now do it on Android — what's different?",
+        "Your modal slides up. Can you dismiss it via swipe down? Via back button on Android? Both should work.",
+        "Open your app via a deep link from another app. What if the user isn't logged in? What's the right flow?",
+        "Navigation typed via Expo Router — verify you get a compile error when you typo a route name."
+      ],
+      "exercises": [
+        "Add a custom header with a search bar (UISearchBar style on iOS, SearchView on Android).",
+        "Implement a half-sheet modal using @gorhom/bottom-sheet with snap points.",
+        "Wire deep links so a notification tap opens directly to the relevant screen.",
+        "Add tab bar icon badges that update from app state."
+      ],
+      "outputs": [
+        "Recipes app with full navigation: stacks, tabs, modals, half-sheets",
+        "Deep links working from Safari (iOS) and Chrome (Android)",
+        "Custom headers with platform-appropriate styling",
+        "Notes/navigation.md — your decision tree for navigation patterns"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Lists, Performance, and the FlatList Mindset",
+      "phase": "Building Screens",
+      "commitment_hours": "20-25",
+      "context": "90% of mobile UI is lists. Slow lists ruin apps. This week you master FlatList, SectionList, FlashList — the libraries and patterns that keep scrolling at 60fps even with thousands of items.",
+      "topics": [
+        "Virtualised lists — only rendering what's visible",
+        "FlatList vs FlashList (Shopify) — when each wins",
+        "keyExtractor — why this matters for performance",
+        "getItemLayout — skipping layout calculations for fixed-height rows",
+        "windowSize and maxToRenderPerBatch — tuning for memory vs smoothness",
+        "Pull-to-refresh + infinite scroll patterns",
+        "Empty states, error states, loading skeletons in lists",
+        "Profiling — Flipper, React DevTools profiler, Hermes Debugger"
+      ],
+      "tasks": [
+        "Replace your FlatList with FlashList (from Shopify); measure scrolling smoothness on a low-end device",
+        "Add getItemLayout to a fixed-height row list; verify scroll-to-index becomes instant",
+        "Add a SectionList grouped by date or category",
+        "Profile a janky list with React DevTools profiler; identify the wasted re-renders",
+        "Add skeleton loading + empty state + error state to a real list screen"
+      ],
+      "project": "Build a Feed Screen with 10000+ items. Use FlashList. Each item is a card with an image, title, and metadata. Pull-to-refresh at the top, infinite scroll at the bottom. Profile on a real low-end Android. Ship 60fps scrolling. Document the optimisations you made.",
+      "resources": [
+        { "label": "FlashList by Shopify — Documentation", "url": "https://shopify.github.io/flash-list/", "note": "official, the canonical fast list library for React Native" },
+        { "label": "React Native — Optimising FlatList performance", "url": "https://reactnative.dev/docs/optimizing-flatlist-configuration", "note": "official, the canonical FlatList tuning guide" },
+        { "label": "Mark Erikson — A (Mostly) Complete Guide to React Rendering Behavior", "url": "https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/", "note": "blog, fundamental to optimising any React list" },
+        { "label": "Shopify — Achieving 60fps with FlashList", "url": "https://shopify.engineering/a-better-list-view-for-react-native", "note": "engineering blog, the original FlashList announcement and reasoning" },
+        { "label": "Krzysztof Magiera — React Native at scale", "url": "https://www.youtube.com/results?search_query=krzysztof+magiera+react+native", "note": "YouTube, the author of Reanimated speaks at conferences about performance" },
+        { "label": "React Native — Profiler tools", "url": "https://reactnative.dev/docs/profiling", "note": "official, what tools to use for what kind of issue" }
+      ],
+      "questions": [
+        "Compare scroll smoothness of FlatList vs FlashList on the same 5000-item list. Measure FPS on a low-end Android.",
+        "Memoize a list row with React.memo. Does it stop the row from re-rendering when its data doesn't change? Verify in profiler.",
+        "Add getItemLayout. Scroll to index 5000 instantly — does it work? Now remove getItemLayout — what happens?",
+        "Your list has images. What's the cost of image loading? Use the expo-image library for caching; measure scroll while images load."
+      ],
+      "exercises": [
+        "Implement a SectionList grouped by date with sticky headers.",
+        "Build a swipe-to-delete with react-native-gesture-handler + Reanimated.",
+        "Add a 'jump to today' button that scrollToIndex's to a known position.",
+        "Replace standard Image with expo-image; measure cold-load and scrolling-while-images-load."
+      ],
+      "outputs": [
+        "Feed screen with 10000 items at 60fps on a low-end Android",
+        "FlashList integrated and benchmarked vs FlatList",
+        "Documented optimisations and their measured impact",
+        "Notes/list-performance.md — your performance tuning checklist"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Forms, Inputs, and Keyboard Handling",
+      "phase": "Building Screens",
+      "commitment_hours": "20-25",
+      "context": "Mobile keyboards are the most painful UI element. This week you learn keyboard avoidance, input validation, secure text entry, and form patterns that don't make users want to throw their phones.",
+      "topics": [
+        "TextInput — every prop that matters; keyboardType, returnKeyType, autoComplete",
+        "Keyboard avoidance — KeyboardAvoidingView, behavior='padding' vs 'height' vs 'position'",
+        "Form state — react-hook-form on mobile",
+        "Validation with Zod — the same schema on client and server",
+        "Secure text — passwords, OTP autofill, autoComplete='one-time-code'",
+        "Focus management — focus next field on submit, dismiss keyboard on outside tap",
+        "Multi-step forms — wizard pattern, progress indicators",
+        "Native input alternatives — date pickers, time pickers, pickers"
+      ],
+      "tasks": [
+        "Build a sign-up form with email, password, confirm password; validate with Zod",
+        "Add KeyboardAvoidingView; verify the input doesn't get covered by the keyboard on iOS",
+        "Implement focus-next-on-return: tap return on email, focus jumps to password",
+        "Add autoComplete='one-time-code' to an OTP input; test SMS-autofill on iOS",
+        "Implement a date picker using @react-native-community/datetimepicker"
+      ],
+      "project": "Build a Multi-Step Onboarding Flow. 4 screens: welcome, account details (email, password), profile (name, photo via camera), preferences (toggles). Progress indicator at top. Each step validates before advancing. Persists progress so user can leave and resume. Test on both platforms — especially the keyboard handling on iOS notch devices.",
+      "resources": [
+        { "label": "React Native — TextInput documentation", "url": "https://reactnative.dev/docs/textinput", "note": "official, every TextInput prop explained" },
+        { "label": "React Native — KeyboardAvoidingView", "url": "https://reactnative.dev/docs/keyboardavoidingview", "note": "official, the canonical keyboard avoidance reference" },
+        { "label": "React Hook Form — Documentation", "url": "https://react-hook-form.com/", "note": "official, works as well on RN as on web" },
+        { "label": "Zod — Documentation", "url": "https://zod.dev/", "note": "official, the validation library you'll share with your backend" },
+        { "label": "@react-native-community/datetimepicker", "url": "https://github.com/react-native-datetimepicker/datetimepicker", "note": "GitHub, the canonical date/time picker for RN" },
+        { "label": "React Native Keyboard Controller", "url": "https://kirillzyusko.github.io/react-native-keyboard-controller/", "note": "official, modern keyboard handling library — replaces KeyboardAvoidingView pain" }
+      ],
+      "questions": [
+        "Your sign-up form on iPhone SE — does the password input get covered when keyboard appears? Fix it.",
+        "Tap outside an input field. Does the keyboard dismiss? Should it always, or depend on context?",
+        "Compare native iOS UIDatePicker vs the cross-platform community library on iOS. Which feels more native?",
+        "Your form has 6 fields. User submits with one empty. How do you indicate which? Should you scroll to it?"
+      ],
+      "exercises": [
+        "Build a phone number input with country code picker; format as the user types.",
+        "Implement OTP autofill — verify SMS code appears in the QuickType bar on iOS.",
+        "Implement a multi-line bio input with character counter and max length.",
+        "Build a custom Switch component styled to your app's design system."
+      ],
+      "outputs": [
+        "Multi-step onboarding flow with proper keyboard handling",
+        "Forms validating via shared Zod schemas",
+        "OTP input verified working with SMS autofill",
+        "Notes/forms.md — your keyboard avoidance patterns"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Animations and Gestures — Where Mobile Feels Native",
+      "phase": "Building Screens",
+      "commitment_hours": "25-30",
+      "context": "Animations and gestures are where mobile apps separate themselves from web apps. Reanimated 3 + Gesture Handler let you build 60fps native animations driven from JS. By Friday your app should feel native.",
+      "topics": [
+        "Reanimated 3 — shared values, useAnimatedStyle, the UI thread",
+        "Gesture Handler — pan, pinch, tap, swipe, simultaneous gestures",
+        "Layout animations — adding/removing list items smoothly",
+        "Skia for advanced graphics — when you need real custom rendering",
+        "Native driver — useNativeDriver: true, what runs on the UI thread",
+        "Common patterns — swipe to delete, pull to refresh, parallax header, bottom sheet",
+        "Performance — keep work on the UI thread; never run gesture math on JS",
+        "Lottie — pre-made animations from After Effects"
+      ],
+      "tasks": [
+        "Install reanimated and react-native-gesture-handler; verify Reanimated's babel plugin is set up",
+        "Build a draggable card using useAnimatedStyle + pan gesture",
+        "Build a pinch-to-zoom image viewer",
+        "Add a parallax header to a scroll view: image grows as user pulls down",
+        "Add a Lottie animation for an empty state"
+      ],
+      "project": "Build a Photo Detail Screen. Tap a photo in the grid; it animates open to full screen. Pinch to zoom, pan to move. Swipe down to dismiss with the photo following the gesture. Tap once to toggle UI overlay. Use Reanimated 3 for everything. This single screen demonstrates 80% of advanced gesture work.",
+      "resources": [
+        { "label": "Reanimated 3 — Documentation", "url": "https://docs.swmansion.com/react-native-reanimated/", "note": "official, the canonical reference for the dominant animation library" },
+        { "label": "React Native Gesture Handler — Documentation", "url": "https://docs.swmansion.com/react-native-gesture-handler/", "note": "official, the gesture system you'll use" },
+        { "label": "William Candillon — Can it be done in React Native?", "url": "https://www.youtube.com/c/wcandillon", "note": "YouTube, the canonical channel for Reanimated + Skia, hundreds of tutorials" },
+        { "label": "Catalin Miron — React Native animations", "url": "https://www.youtube.com/c/CatalinMironDev", "note": "YouTube, beautiful production-quality animation tutorials" },
+        { "label": "React Native Skia — Documentation", "url": "https://shopify.github.io/react-native-skia/", "note": "official, when you need custom rendering (charts, masks, advanced effects)" },
+        { "label": "Lottie Files", "url": "https://lottiefiles.com/", "note": "official, library of free animations you can drop into your app" }
+      ],
+      "questions": [
+        "Build the same draggable card with Animated (legacy) vs Reanimated 3. Which is smoother? Why does Reanimated keep gestures on the UI thread?",
+        "Pinch to zoom your image — does the image scale around the pinch centre point, or the centre of the image? Fix the math.",
+        "Add a layout animation to your list. Add/remove items. Does the layout shift smoothly, or does it jump? When you remove all items, does the empty state appear with animation?",
+        "Test your gestures on a low-end Android. Is the animation still 60fps? If not, where's the lag?"
+      ],
+      "exercises": [
+        "Implement swipe-to-delete on a list row with red 'Delete' revealing behind.",
+        "Build a bottom sheet from scratch using PanGesture + Reanimated (don't use a library).",
+        "Build a parallax header: image scales up as you pull down, blurs as you scroll up.",
+        "Animate a tab bar to hide on scroll-down, reveal on scroll-up."
+      ],
+      "outputs": [
+        "Photo detail screen with pinch, pan, dismiss-on-swipe",
+        "5 reusable animation patterns in components/",
+        "All animations verified 60fps on a low-end Android",
+        "Notes/animations.md — when to reach for Reanimated vs Animated"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Theming, Dark Mode, and Design Systems",
+      "phase": "Building Screens",
+      "commitment_hours": "15-20",
+      "context": "Consistent design across screens makes an app feel professional. Dark mode is non-negotiable. This week you build a real design system, theme provider, and dark mode that respects system preferences.",
+      "topics": [
+        "Design tokens — colour, spacing, type, radius, shadows",
+        "Theme provider patterns in React Native",
+        "useColorScheme — detecting system dark mode",
+        "Persisting user theme preference",
+        "Custom fonts — expo-font, system fonts vs custom",
+        "Icons — react-native-vector-icons, expo/vector-icons, custom SVGs",
+        "Spacing scale — 4px / 8px grids, why constraint helps",
+        "Type scale — Modular Scale, what makes a good one"
+      ],
+      "tasks": [
+        "Define a complete design token set: 12 colours (light + dark), 8 spacing values, 5 type sizes, 4 radii",
+        "Build a ThemeProvider with dark mode toggle; persist preference",
+        "Load 2 custom fonts via expo-font; use them in your text components",
+        "Build a Typography component with variants (h1, h2, body, caption)",
+        "Refactor 5 existing screens to use your design system tokens"
+      ],
+      "project": "Build a Design System Showcase. A dedicated screen in your Recipes app that shows: your colour palette (light + dark side by side), your type scale, spacing scale, all your button variants, all your icons. This is your living design system — refer to it constantly. Use it in every other screen.",
+      "resources": [
+        { "label": "Refactoring UI — Adam Wathan + Steve Schoger (book)", "url": "https://www.refactoringui.com/", "note": "paid book, the canonical book on visual design for engineers" },
+        { "label": "Material 3 — Color system", "url": "https://m3.material.io/styles/color/system", "note": "official, the most-considered colour-system guide" },
+        { "label": "Apple — Color (HIG)", "url": "https://developer.apple.com/design/human-interface-guidelines/color", "note": "official, iOS colour conventions" },
+        { "label": "Tailwind CSS — Configuration", "url": "https://tailwindcss.com/docs/configuration", "note": "even if you don't use Tailwind, the config schema is a great design tokens reference" },
+        { "label": "expo-font — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/font/", "note": "official, custom font loading on RN" },
+        { "label": "Geist (Vercel design system)", "url": "https://vercel.com/geist", "note": "official, an excellent reference for SaaS dark mode" }
+      ],
+      "questions": [
+        "Toggle dark mode in iOS Settings; does your app switch automatically? Does it flash white briefly during transition?",
+        "Compare your dark colour palette against your light. Is the contrast ratio of body text ≥ 4.5:1 in both? Verify with a contrast checker.",
+        "Custom font fails to load — what does your text look like? Should you show a loading state, or fall back to system fonts?",
+        "Run an a11y audit of your app; what contrast issues come up?"
+      ],
+      "exercises": [
+        "Build a useTheme hook that returns the current colour palette + helpers.",
+        "Add a Theme Settings screen: System / Light / Dark with persisted choice.",
+        "Implement a typography component with semantic variants; refactor a screen.",
+        "Animate the colour transition when switching themes (subtle fade)."
+      ],
+      "outputs": [
+        "Complete design token set committed",
+        "Theme provider + dark mode toggle in app",
+        "Design system showcase screen",
+        "All app text using semantic Typography component"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Local Storage — AsyncStorage, MMKV, SQLite",
+      "phase": "Building Screens",
+      "commitment_hours": "20-25",
+      "context": "Mobile apps need to work offline-first. This week you learn the three storage layers: AsyncStorage (simple KV), MMKV (10x faster KV), SQLite (real relational), and you build offline-capable features.",
+      "topics": [
+        "AsyncStorage — the default, when it's enough, why it's slow",
+        "MMKV — the modern KV store, 10x faster, synchronous reads",
+        "SQLite via expo-sqlite — when you need real queries on device",
+        "WatermelonDB / OP-SQLite / Drizzle — modern ORMs for RN",
+        "Migrations — schema changes between app versions",
+        "Encryption — at-rest encryption with iOS Keychain / Android Keystore",
+        "Storage limits — what each platform actually allows",
+        "Backup considerations — iCloud, Google Drive backup, what to opt out of"
+      ],
+      "tasks": [
+        "Replace your theme persistence (week 7) from AsyncStorage to MMKV; benchmark the read speed",
+        "Set up expo-sqlite; create a `recipes_offline` table; implement save-for-later",
+        "Implement a saved-recipes screen that queries your SQLite",
+        "Add an encrypted secure-storage layer for sensitive data using expo-secure-store",
+        "Implement a schema migration when the table changes"
+      ],
+      "project": "Add Offline Recipe Caching. Browsing recipes online saves them to a local SQLite DB. Offline tab shows saved recipes. Each saved recipe has its image cached via expo-image. Persist user notes per recipe in SQLite. Verify the app works completely offline after at least one online session.",
+      "resources": [
+        { "label": "MMKV — Documentation", "url": "https://github.com/mrousavy/react-native-mmkv", "note": "GitHub, the de-facto fast KV store for RN" },
+        { "label": "expo-sqlite — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/sqlite/", "note": "official, the canonical SQLite reference for RN" },
+        { "label": "expo-secure-store — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/securestore/", "note": "official, for storing API tokens and secrets" },
+        { "label": "Drizzle ORM — React Native", "url": "https://orm.drizzle.team/docs/connect-overview", "note": "official, the modern TypeScript ORM with expo-sqlite support" },
+        { "label": "WatermelonDB — Documentation", "url": "https://watermelondb.dev/", "note": "official, reactive ORM designed for offline-first mobile" },
+        { "label": "expo-image — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/image/", "note": "official, with built-in caching; superior to React Native's Image" }
+      ],
+      "questions": [
+        "AsyncStorage read of a 1KB value vs MMKV read of same. Time both 1000 times. What's the speedup? Why is MMKV faster?",
+        "Your app's SQLite DB grows to 100MB. Is that a problem? On what device? What does the OS do when storage is low?",
+        "Sensitive data — API token, auth refresh token — stored where? Why not AsyncStorage? Why expo-secure-store?",
+        "Your schema changes between app versions. How do you migrate users with v1 data to v2? What if migration fails?"
+      ],
+      "exercises": [
+        "Replace AsyncStorage with MMKV in 3 places; verify no behaviour change.",
+        "Define a Drizzle schema for recipes + ingredients; generate the migration.",
+        "Build a save-and-restore flow: type in a comment, kill the app, reopen, verify the comment persisted.",
+        "Encrypt + store an OAuth refresh token; verify it can't be read from regular AsyncStorage."
+      ],
+      "outputs": [
+        "Recipes app with full offline support via SQLite + cached images",
+        "MMKV used for all simple KV storage, with benchmarked speedup",
+        "Secure-store used for auth tokens",
+        "Schema migration verified"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Camera, Photos, and Media Capture",
+      "phase": "Native Integration",
+      "commitment_hours": "20-25",
+      "context": "Cameras, photo libraries, video — every modern app uses them. iOS and Android have different permission models, different APIs for selection vs capture, and a hundred edge cases for HEIC vs JPEG.",
+      "topics": [
+        "Camera vs photo library — when each is appropriate",
+        "Permissions — runtime permission requests, denial handling",
+        "expo-camera vs react-native-vision-camera — when each is right",
+        "Image picker — expo-image-picker for multi-select",
+        "File formats — HEIC on iOS, JPG on Android, the conversion problem",
+        "Image resizing and compression — manipulator libraries",
+        "Video capture and playback",
+        "EXIF data — what you get, what to strip for privacy"
+      ],
+      "tasks": [
+        "Add a 'Take Photo' button to your recipe-create screen using expo-camera",
+        "Add a 'Pick from Library' option using expo-image-picker (with multi-select)",
+        "Resize selected images to max 1024px before upload using expo-image-manipulator",
+        "Handle the permission-denied case: show a 'Go to Settings' modal",
+        "Strip EXIF GPS data before uploading photos"
+      ],
+      "project": "Build a Recipe Photo Feature. Add a 'photo gallery' to each recipe — user can take photos with the camera or pick from library, multi-select up to 5, reorder them, delete. Resize and compress before upload. Store paths in SQLite. View gallery in the detail screen with pinch-to-zoom (from week 6).",
+      "resources": [
+        { "label": "expo-camera — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/camera/", "note": "official, the standard camera library" },
+        { "label": "expo-image-picker — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/imagepicker/", "note": "official, library and camera in one" },
+        { "label": "expo-image-manipulator — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/imagemanipulator/", "note": "official, resize and crop on device" },
+        { "label": "react-native-vision-camera — Documentation", "url": "https://react-native-vision-camera.com/docs/guides", "note": "official, the more powerful alternative for advanced camera work" },
+        { "label": "Apple — Photos framework HIG", "url": "https://developer.apple.com/design/human-interface-guidelines/system-experiences/accessing-user-data/", "note": "official, what 'good' permission UX looks like on iOS" },
+        { "label": "Google — Photo Picker (Android)", "url": "https://developer.android.com/guide/topics/providers/photopicker", "note": "official, the modern Android photo picker (no permission required)" }
+      ],
+      "questions": [
+        "First time you open your camera, what permission does iOS ask for? What if user denies? What's the UX recovery path?",
+        "User picks a 12-megapixel photo. Without resize, what's the upload size? With resize to 1024px? Why is this critical for mobile data?",
+        "iOS user has a HEIC photo. You upload it to a server expecting JPEG. What happens? How do you handle conversion?",
+        "Your camera screen — does it lock orientation? Should it? What happens when the user rotates?"
+      ],
+      "exercises": [
+        "Wire a camera screen with a take-photo button that returns to the previous screen with the photo.",
+        "Implement a multi-select photo picker with a counter.",
+        "Resize an image to 1024px max-dimension, JPEG quality 80; measure the size reduction.",
+        "Strip EXIF data and verify with a tool that the GPS coordinates are gone."
+      ],
+      "outputs": [
+        "Recipe photo feature live in the app",
+        "Permission flows handled properly on both platforms",
+        "Documented size reduction from your compression pipeline",
+        "Multi-select picker with reorder and delete"
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Location, Maps, and Geofencing",
+      "phase": "Native Integration",
+      "commitment_hours": "20-25",
+      "context": "Maps and location are foundational to many apps. iOS and Android have different APIs, different permission models, different map providers. This week you integrate maps that work everywhere.",
+      "topics": [
+        "Location permissions — when in use vs always, foreground vs background",
+        "expo-location — getting current position, watching position, reverse geocoding",
+        "Maps — react-native-maps (uses Apple Maps on iOS, Google Maps on Android)",
+        "Custom markers, callouts, polylines",
+        "Map performance — clustering markers, limiting renders",
+        "Geofencing — entering/exiting a region triggers a callback",
+        "Background location — what you can and can't do, App Store review concerns",
+        "Privacy first — minimum-precision location, blur location to nearest km"
+      ],
+      "tasks": [
+        "Install expo-location; request 'when in use' permission; get current position",
+        "Display a map with a marker at the user's location",
+        "Add a search bar that geocodes addresses and centres the map",
+        "Add custom markers for each recipe (assume they have location)",
+        "Implement marker clustering for performance at zoom-out levels"
+      ],
+      "project": "Add a 'Recipes Near Me' Feature. User opens map tab; sees pins for each recipe within 50km. Tap pin shows a recipe preview card. Long-press shows directions in Apple Maps or Google Maps. Save offline maps for a region. Handle the case where location permission is denied — fall back to default city.",
+      "resources": [
+        { "label": "expo-location — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/location/", "note": "official, the canonical location library" },
+        { "label": "react-native-maps — Documentation", "url": "https://github.com/react-native-maps/react-native-maps", "note": "GitHub, the standard maps library for RN" },
+        { "label": "@rnmapbox/maps — Documentation", "url": "https://github.com/rnmapbox/maps", "note": "GitHub, if you need Mapbox features (offline, custom styles)" },
+        { "label": "Apple — Privacy and your apps (location)", "url": "https://developer.apple.com/app-store/user-privacy-and-data-use/", "note": "official, the rules around location use" },
+        { "label": "Google Maps Platform pricing", "url": "https://mapsplatform.google.com/pricing/", "note": "official, costs are real; understand before scaling" },
+        { "label": "Mapbox pricing", "url": "https://www.mapbox.com/pricing", "note": "official, alternative pricing model" }
+      ],
+      "questions": [
+        "Compare iOS Apple Maps vs Android Google Maps for the same map. Which looks better? Which performs better?",
+        "Display 1000 markers without clustering. Is it smooth? Cluster them. Is it now smooth?",
+        "Background location use — what does the App Store require you to demonstrate? Will your use case pass review?",
+        "User denies location. Default to which fallback — Cupertino? Your nearest city? Show 'Enable location' prompt?"
+      ],
+      "exercises": [
+        "Geocode an address to coordinates using expo-location's geocodeAsync.",
+        "Reverse-geocode coordinates to a city name.",
+        "Implement a 'Show on Apple Maps / Google Maps' deep link.",
+        "Cluster markers using react-native-map-clustering."
+      ],
+      "outputs": [
+        "Maps feature with markers, clustering, search, directions",
+        "Permission denial handled with sensible fallback",
+        "Verified working on both iOS and Android",
+        "Notes/maps.md — comparing react-native-maps vs Mapbox"
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Push Notifications — The Right Way",
+      "phase": "Native Integration",
+      "commitment_hours": "20-25",
+      "context": "Push notifications make or break engagement. Bad notification spam gets your app uninstalled. This week you set up push correctly: tokens, server-side sending, deep links from notifications, the right permission moment.",
+      "topics": [
+        "APNs (Apple Push Notification service) — how it works, certificates vs token-based",
+        "FCM (Firebase Cloud Messaging) — the Android channel",
+        "expo-notifications — the unified RN abstraction",
+        "Getting device tokens; sending them to your server",
+        "Server-side sending — Expo Push API vs direct APNs/FCM",
+        "Payload structure — alert, badge, sound, custom data",
+        "Deep linking from a notification tap",
+        "iOS vs Android notification UX — categories, actions, channels"
+      ],
+      "tasks": [
+        "Configure your Expo project for push notifications (Apple Developer certs, FCM setup)",
+        "Request push permission at the right moment (not on launch); store the token on your server",
+        "Send a push from your laptop using Expo Push API curl command",
+        "Add a deep link: tapping a recipe notification opens that recipe",
+        "Add badge count for unread notifications"
+      ],
+      "project": "Add Push Notifications to Your Recipes App. Use case: 'recipe of the day' push at 9am, plus a notification when a friend (mock) likes one of your recipes. Backend (your Node server from web roadmap, or Expo Push directly) sends notifications. Tap deep-links into the right screen. Test on real device — simulators don't always work for push.",
+      "resources": [
+        { "label": "expo-notifications — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/notifications/", "note": "official, the canonical notification library for RN" },
+        { "label": "Expo Push API documentation", "url": "https://docs.expo.dev/push-notifications/sending-notifications/", "note": "official, the easiest server-side path" },
+        { "label": "Apple — APNs Documentation", "url": "https://developer.apple.com/documentation/usernotifications", "note": "official, if you ever need to bypass Expo and go direct to APNs" },
+        { "label": "Firebase Cloud Messaging — Documentation", "url": "https://firebase.google.com/docs/cloud-messaging", "note": "official, the Android push channel" },
+        { "label": "OneSignal — Documentation", "url": "https://documentation.onesignal.com/", "note": "official, hosted push service with great segmentation; popular for marketing pushes" },
+        { "label": "Apple — Asking permission to use notifications (HIG)", "url": "https://developer.apple.com/design/human-interface-guidelines/notifications", "note": "official, when to request push permission" }
+      ],
+      "questions": [
+        "Ask for push permission on app launch vs after first save. Which has higher acceptance rate? Why does the moment matter?",
+        "Send a notification while the app is in the background vs foreground. What's the difference in behaviour?",
+        "Your push is silent (no alert). What can you still do? When is silent push useful?",
+        "User has been ignoring your pushes for 30 days. Should you keep sending? Should you reduce frequency? How do you measure this?"
+      ],
+      "exercises": [
+        "Implement push permission request at a contextual moment, not on launch.",
+        "Send a push from a curl command using Expo Push API.",
+        "Add deep linking from notification tap to a specific screen.",
+        "Implement notification categories with action buttons (e.g. 'Like', 'Comment')."
+      ],
+      "outputs": [
+        "Push notifications working end-to-end on iOS and Android real devices",
+        "Server endpoint that sends notifications based on events",
+        "Deep linking from notifications working",
+        "Notes/notifications.md — your design rules for not spamming users"
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Native Modules — When JavaScript Isn't Enough",
+      "phase": "Native Integration",
+      "commitment_hours": "25-30",
+      "context": "Sometimes a library you need doesn't exist for React Native. This week you write your first native module in Swift (iOS) and Kotlin (Android) and bridge it to JavaScript. After this week, no library limitation can stop you.",
+      "topics": [
+        "Why native modules — performance, OS-specific APIs, third-party SDKs",
+        "Expo Modules API — the modern way to write native modules",
+        "Old-style React Native modules — when you'll still meet them",
+        "iOS: Swift fundamentals — classes, protocols, extensions",
+        "Android: Kotlin fundamentals — classes, coroutines, the JVM",
+        "Bridge architecture (old) vs JSI / TurboModules / Fabric (new)",
+        "Calling JS → native, native → JS, callbacks vs promises",
+        "Publishing a native module as an npm package"
+      ],
+      "tasks": [
+        "Use `npx create-expo-module my-native-module` to scaffold a native module",
+        "Implement a `getBatteryLevel()` function on iOS (Swift) and Android (Kotlin); call it from JS",
+        "Add an event listener for battery state changes",
+        "Write tests on both platforms",
+        "Publish the module to your own GitHub (not npm yet — npm is week 13)"
+      ],
+      "project": "Build a Native Module for a Real Need. Pick something — battery monitoring, screen brightness, system fonts, NFC reading, biometric prompt. Implement on both platforms. Type the JS surface in TypeScript. Use it in your Recipes app. The Expo Modules guide walks you through everything.",
+      "resources": [
+        { "label": "Expo Modules — Documentation", "url": "https://docs.expo.dev/modules/overview/", "note": "official, the modern (recommended) way to write native modules" },
+        { "label": "Expo — Create a new module", "url": "https://docs.expo.dev/modules/get-started/", "note": "official, the canonical walkthrough" },
+        { "label": "React Native — Native Modules (legacy)", "url": "https://reactnative.dev/docs/native-modules-intro", "note": "official, the older approach you'll still meet" },
+        { "label": "Swift — A Swift Tour (Apple)", "url": "https://docs.swift.org/swift-book/documentation/the-swift-programming-language/guidedtour/", "note": "official, a one-evening intro to Swift" },
+        { "label": "Kotlin — Documentation (Tour)", "url": "https://kotlinlang.org/docs/kotlin-tour-welcome.html", "note": "official, the canonical Kotlin tour" },
+        { "label": "Marc Rousavy — react-native-vision-camera (case study)", "url": "https://github.com/mrousavy/react-native-vision-camera", "note": "GitHub, the most-active maintainer of a major native module; great codebase to learn from" }
+      ],
+      "questions": [
+        "Compare time to call a native function from JS vs running the equivalent in pure JS. When is the bridge worth it?",
+        "Your module crashes on iOS but works on Android. Where's the divergence?",
+        "JSI vs the old Bridge — what's the performance difference for a hot path?",
+        "Reverse engineer how a popular module (vision-camera, react-native-mmkv) is structured. What can you copy?"
+      ],
+      "exercises": [
+        "Implement a sync function that returns the device model name on both iOS and Android.",
+        "Implement an async function that returns a promise; call it from JS with await.",
+        "Implement an event emitter native module that fires events; subscribe from JS.",
+        "Write a unit test for the iOS side using XCTest; for Android using JUnit."
+      ],
+      "outputs": [
+        "Expo native module working on both platforms",
+        "Module published to your GitHub",
+        "Module used in your Recipes app",
+        "Notes/native-modules.md — your decision tree for when to write one"
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Networking — APIs, Offline, Sync",
+      "phase": "Backend Integration",
+      "commitment_hours": "20-25",
+      "context": "Mobile networks are unreliable. Your app must handle slow networks, no networks, and flaky transitions between them. This week you build proper API integration — TanStack Query for caching, queues for retries, optimistic updates.",
+      "topics": [
+        "TanStack Query on RN — server cache, refetch on focus, mutations",
+        "Offline-first patterns — read from cache, write to queue, sync when online",
+        "Detecting network state — @react-native-community/netinfo",
+        "Optimistic updates — UI updates immediately, rolls back on failure",
+        "Background sync — fetching in background, BackgroundFetch APIs",
+        "Authentication — refreshing tokens, handling 401",
+        "Retry policies — exponential backoff, when to give up",
+        "API versioning — handling breaking changes in your backend"
+      ],
+      "tasks": [
+        "Install TanStack Query for RN; wrap your app with QueryClientProvider",
+        "Refactor recipe loading to use useQuery; verify cache survives navigation",
+        "Add NetInfo to detect online/offline; show a banner when offline",
+        "Implement optimistic 'favourite' mutation: heart fills immediately, rolls back on error",
+        "Implement a write queue: actions taken offline are queued, replayed when online"
+      ],
+      "project": "Build a Fully Offline-Capable Recipes App. The user can browse cached recipes offline, favourite/unfavourite (queued), add notes (queued). When they come back online, the queue syncs to the server. The UI shows: sync status (synced / syncing / pending), and conflict resolution if needed. Test by airplane-moding through the flow.",
+      "resources": [
+        { "label": "TanStack Query — React Native usage", "url": "https://tanstack.com/query/latest/docs/framework/react/react-native", "note": "official, the canonical server-state library, works perfectly on RN" },
+        { "label": "@react-native-community/netinfo", "url": "https://github.com/react-native-netinfo/react-native-netinfo", "note": "GitHub, the canonical network state library" },
+        { "label": "Offline-first design — Google", "url": "https://web.dev/articles/offline-cookbook", "note": "blog, the canonical offline architecture patterns" },
+        { "label": "WatermelonDB sync protocol", "url": "https://watermelondb.dev/docs/Sync/Intro", "note": "official, the most-considered sync architecture for mobile" },
+        { "label": "PowerSync — sync architecture docs", "url": "https://docs.powersync.com/", "note": "official, modern hosted sync service for mobile apps" },
+        { "label": "MSW — mock service worker for RN", "url": "https://mswjs.io/docs/integrations/react-native", "note": "official, mock your backend in tests" }
+      ],
+      "questions": [
+        "Toggle airplane mode while a request is in flight. What does your code do? Does it show an error, retry, queue?",
+        "User favourites 10 recipes offline. Comes back online. What order do the writes go? What if one fails — does the rest succeed?",
+        "TanStack Query refetches on focus by default — is that the right behaviour for mobile? When does it spam your API?",
+        "Two devices favourite the same recipe at the same time (offline). Both come online. How do you reconcile?"
+      ],
+      "exercises": [
+        "Implement useQuery for your recipe list with staleTime: 5 minutes.",
+        "Implement an offline banner using NetInfo subscription.",
+        "Build an optimistic favourite mutation with onMutate + onError rollback.",
+        "Build a queued-action store using Zustand + MMKV that replays on reconnect."
+      ],
+      "outputs": [
+        "Recipes app fully offline-capable end to end",
+        "Sync status indicator in UI",
+        "Tested via airplane mode in 5 distinct scenarios",
+        "Notes/offline.md — your offline architecture decisions"
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Authentication on Mobile — OAuth, Biometrics, Sessions",
+      "phase": "Backend Integration",
+      "commitment_hours": "20-25",
+      "context": "Mobile auth has more constraints than web auth — secure token storage, biometric unlock, OAuth via in-app browsers, deep links from email confirmation. This week you implement real, secure auth.",
+      "topics": [
+        "Auth flows on mobile — email/password, magic link, social OAuth, passkeys",
+        "Token storage — never AsyncStorage for tokens, always secure-store / Keychain / Keystore",
+        "Refresh tokens — the secure rotation pattern",
+        "Biometric authentication — TouchID, FaceID, Android fingerprint",
+        "In-app browser for OAuth — expo-auth-session, why webviews are wrong",
+        "Deep linking from email confirmation",
+        "Logout — clearing tokens, clearing query cache, clearing local DB",
+        "Auth providers on mobile — Clerk, Supabase Auth, Firebase Auth, Auth0"
+      ],
+      "tasks": [
+        "Install expo-secure-store; implement a TokenStore class that gets/sets tokens securely",
+        "Implement email + password sign in against your Node backend",
+        "Add Google OAuth via expo-auth-session",
+        "Add biometric unlock with expo-local-authentication; require it before showing settings",
+        "Implement deep link handling for password reset email confirmation"
+      ],
+      "project": "Wire Auth Into Your Recipes App. Sign up / sign in / sign out / password reset / Google OAuth / biometric quick-unlock. Token stored in secure-store. Refresh token rotation on 401. Logout clears everything. Test the full flow end-to-end on both platforms.",
+      "resources": [
+        { "label": "expo-secure-store — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/securestore/", "note": "official, the canonical secure storage for tokens" },
+        { "label": "expo-auth-session — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/auth-session/", "note": "official, OAuth via in-app browser" },
+        { "label": "expo-local-authentication — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/local-authentication/", "note": "official, biometric auth library" },
+        { "label": "Clerk Expo — Documentation", "url": "https://clerk.com/docs/quickstarts/expo", "note": "official, modern hosted auth that's painless on RN" },
+        { "label": "Apple — Passkeys (WebAuthn)", "url": "https://developer.apple.com/documentation/authenticationservices/public-private_key_authentication", "note": "official, the passwordless future on iOS" },
+        { "label": "OAuth 2.0 for Native Apps — RFC 8252", "url": "https://datatracker.ietf.org/doc/html/rfc8252", "note": "official RFC, why you must use the system browser and not a webview" }
+      ],
+      "questions": [
+        "Store an auth token in AsyncStorage. Now in expo-secure-store. What's the security difference?",
+        "OAuth via webview — why is it forbidden by Google's OAuth policies? What can go wrong?",
+        "Biometric unlock failed three times. Now what? Lock the app? Fall back to PIN? Logout?",
+        "User reinstalled the app. Is their old token still valid? Should it be? What's your session-lifecycle policy?"
+      ],
+      "exercises": [
+        "Implement a useAuth hook that exposes user, signIn, signOut, isLoading.",
+        "Implement automatic token refresh on 401 with one retry.",
+        "Wire up Google OAuth with expo-auth-session.",
+        "Add biometric lock to the Settings screen; require it on every entry."
+      ],
+      "outputs": [
+        "Full auth flow working on both platforms",
+        "Secure token storage verified",
+        "Biometric lock working on real devices",
+        "Notes/mobile-auth.md — your auth architecture decisions"
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Background Tasks and Local Notifications",
+      "phase": "Backend Integration",
+      "commitment_hours": "15-20",
+      "context": "Some work needs to happen even when your app isn't open. Background sync, scheduled notifications, location updates. The platforms restrict this heavily — this week you learn what's possible and what isn't.",
+      "topics": [
+        "iOS background modes — what you can actually do in the background",
+        "Android background services — Doze mode, app standby, the JobScheduler",
+        "expo-background-fetch — periodic background work, the iOS restrictions",
+        "Local notifications — scheduling, repeating, cancelling",
+        "Notification categories and actions on iOS",
+        "Background location — possible but very restricted post-iOS 13",
+        "Battery and the system killing your task",
+        "Workmanager on Android (the modern background scheduler)"
+      ],
+      "tasks": [
+        "Install expo-background-fetch; register a task that runs every 15 minutes (the iOS minimum)",
+        "Implement a local notification scheduled for tomorrow at 9am",
+        "Implement a repeating daily local notification (recipe of the day)",
+        "Cancel a scheduled notification by ID",
+        "Handle the case where the system kills your background task before completion"
+      ],
+      "project": "Add a 'Daily Recipe Suggestion' Feature. Background-fetch runs daily, picks a recipe based on user preferences, schedules a local notification at user's chosen time (default 9am). User can opt out per notification or per type. Test that it fires reliably across both platforms over 3 days.",
+      "resources": [
+        { "label": "expo-background-fetch — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/background-fetch/", "note": "official, the canonical background task library" },
+        { "label": "expo-notifications — Local notifications", "url": "https://docs.expo.dev/versions/latest/sdk/notifications/", "note": "official, includes scheduling and cancelling" },
+        { "label": "Apple — Background tasks framework", "url": "https://developer.apple.com/documentation/backgroundtasks", "note": "official, what iOS allows in the background" },
+        { "label": "Android — WorkManager", "url": "https://developer.android.com/topic/libraries/architecture/workmanager", "note": "official, the modern Android background-work API" },
+        { "label": "Apple — Background execution (HIG)", "url": "https://developer.apple.com/design/human-interface-guidelines/", "note": "official, the design principles for background work" },
+        { "label": "expo-task-manager — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/task-manager/", "note": "official, the lower-level task manager" }
+      ],
+      "questions": [
+        "Your background-fetch task is scheduled but doesn't run for 24 hours. Why? When does iOS decide to run background tasks?",
+        "User force-quits your app. Do your local notifications still fire? Do your background tasks still run? Verify.",
+        "Compare iOS and Android background work restrictions. Which platform is more restrictive in 2025?",
+        "Battery percentage drops 5% overnight with your background fetch running. Is that you? How would you measure?"
+      ],
+      "exercises": [
+        "Schedule a local notification for 1 minute from now; verify it fires.",
+        "Schedule a repeating notification daily at 9am; verify it fires multiple days.",
+        "Cancel a scheduled notification by ID before it fires.",
+        "Test background-fetch on Android (open developer options to force-trigger)."
+      ],
+      "outputs": [
+        "Daily recipe notification working on both platforms across 3 days",
+        "Verified background-fetch task running",
+        "User-controllable notification settings",
+        "Notes/background.md — what's possible per platform"
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Analytics, Crash Reporting, and Observability",
+      "phase": "Backend Integration",
+      "commitment_hours": "15-20",
+      "context": "You cannot improve a mobile app without observability. This week you wire up analytics (PostHog or Mixpanel), crash reporting (Sentry), and performance monitoring. Real apps live or die by these metrics.",
+      "topics": [
+        "Analytics platforms — PostHog, Mixpanel, Amplitude, Plausible",
+        "Crash reporting — Sentry, Bugsnag, Firebase Crashlytics",
+        "Performance monitoring — frame drops, slow renders, ANRs (Android)",
+        "Privacy — IDFA on iOS, no GAID on iOS, what to track and what not to",
+        "App tracking transparency prompt — when to show, what it actually permits",
+        "Funnels and cohorts — measuring what matters, not vanity metrics",
+        "Feature flags — PostHog, LaunchDarkly, hand-rolled",
+        "Session recording on mobile (use sparingly)"
+      ],
+      "tasks": [
+        "Install Sentry; trigger a deliberate crash; verify it shows up in dashboard with stack trace",
+        "Install PostHog (or Mixpanel) free tier; instrument 10 key events: sign-up, sign-in, recipe-view, recipe-favourite, etc.",
+        "Implement Apple's App Tracking Transparency prompt; handle the user's response",
+        "Set up a feature flag with PostHog; enable a feature for 10% of users",
+        "Build a funnel: install → sign-up → first-recipe-view; report drop-off"
+      ],
+      "project": "Wire Observability Into Your Recipes App. Sentry for crashes (with source maps uploaded so you get real stack traces). PostHog for analytics with the 10 key events. Feature flag for an experimental recipe-recommendation algorithm. Build a 1-page report showing the funnel from install to first-favourite. This data drives every subsequent product decision.",
+      "resources": [
+        { "label": "Sentry — React Native documentation", "url": "https://docs.sentry.io/platforms/react-native/", "note": "official, the canonical crash reporter for RN" },
+        { "label": "PostHog — React Native SDK", "url": "https://posthog.com/docs/libraries/react-native", "note": "official, modern open-source analytics with feature flags + session recording" },
+        { "label": "Apple — App Tracking Transparency", "url": "https://developer.apple.com/documentation/apptrackingtransparency", "note": "official, the post-iOS 14.5 privacy framework" },
+        { "label": "Lenny Rachitsky — Mobile metrics newsletter posts", "url": "https://www.lennysnewsletter.com/", "note": "newsletter, what to actually measure for product growth" },
+        { "label": "Mixpanel — Mobile analytics", "url": "https://mixpanel.com/docs/quickstart/", "note": "official, the alternative to PostHog with strong cohort tools" },
+        { "label": "Amplitude — Documentation", "url": "https://www.docs.developers.amplitude.com/", "note": "official, the third major analytics platform" }
+      ],
+      "questions": [
+        "Your crash report comes from a release build. The stack trace shows minified function names. Why? How do you fix it?",
+        "Your analytics show 50% of users sign up but only 10% favourite anything. Where's the drop-off? What would you change?",
+        "ATT prompt — what's your acceptance rate? If it's low, what data are you losing? What can you still measure without it?",
+        "Feature flag is on for 10% of users. Bug appears for some of them. Can you flip it off without a release?"
+      ],
+      "exercises": [
+        "Wire Sentry; upload source maps via EAS Build; verify a crash gets a real stack trace.",
+        "Build a custom event for 'recipe-favourite' with properties (recipe_id, source).",
+        "Implement a funnel in PostHog: install → sign-up → first-recipe-view.",
+        "Add a feature flag check around a new feature; verify it can be toggled remotely."
+      ],
+      "outputs": [
+        "Sentry + PostHog wired into the Recipes app with verified source maps",
+        "10 key analytics events instrumented",
+        "Feature flag controlling at least one feature",
+        "Notes/observability.md — your mobile observability stack and rationale"
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Building for Performance — Bundles, Frames, Memory",
+      "phase": "Polish",
+      "commitment_hours": "20-25",
+      "context": "Smooth 60fps everywhere. Small bundle. Low memory. This week you measure the things that ship and you fix the things that don't.",
+      "topics": [
+        "Bundle size — Hermes bytecode, RAM bundles, what to drop",
+        "Frame drops — Perf Monitor, Hermes profiler, when to investigate",
+        "Memory leaks — common patterns (unsubscribed listeners, retained closures)",
+        "Image performance — expo-image with caching",
+        "Re-render audit — React DevTools profiler",
+        "Native vs JS performance — when to push work to native",
+        "Startup time — what runs before first interactive paint",
+        "Hermes — the modern JS engine, why it's the default"
+      ],
+      "tasks": [
+        "Enable the Perf Monitor in dev; identify any screen below 60fps; fix it",
+        "Run Hermes profiler on app launch; identify the slowest function; profile it",
+        "Audit your bundle with `react-native-bundle-visualizer`; identify the 3 largest dependencies",
+        "Replace `react-native` Image with expo-image everywhere; measure scrolling improvement",
+        "Find one component that re-renders excessively; add React.memo + verify"
+      ],
+      "project": "Performance Audit Pass on Recipes App. Measure baselines: bundle size, cold launch time, p95 frame time on a low-end Android, memory usage after 10 minutes of use. Apply targeted fixes. Document the before/after numbers. Don't add React.memo() everywhere — measure first.",
+      "resources": [
+        { "label": "React Native — Performance overview", "url": "https://reactnative.dev/docs/performance", "note": "official, the canonical performance reference" },
+        { "label": "Hermes — Documentation", "url": "https://hermesengine.dev/", "note": "official, the JS engine; understanding it helps you write faster code" },
+        { "label": "Software Mansion — Performance posts", "url": "https://blog.swmansion.com/", "note": "blog from the Reanimated authors; deep RN performance content" },
+        { "label": "Marc Rousavy — RN performance YouTube talks", "url": "https://www.youtube.com/results?search_query=marc+rousavy+react+native+performance", "note": "YouTube, the author of vision-camera and MMKV speaks about RN perf" },
+        { "label": "expo-image — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/image/", "note": "official, much faster than React Native's Image" },
+        { "label": "React DevTools — Profiler", "url": "https://react.dev/learn/react-developer-tools", "note": "official, learn to read the profiler — applies to RN too" }
+      ],
+      "questions": [
+        "Your app cold-start is 2.5s. What's running before first paint? Can any of it be deferred?",
+        "Scrolling the list drops to 30fps. Profile — is it images, layout, gestures, or JS?",
+        "Memory leak: after 10 minutes of use, RAM has doubled. What's not being released? Subscriptions? Closures? Cached images?",
+        "Bundle is 8MB. What's the single biggest dependency? Can you remove or lazy-load it?"
+      ],
+      "exercises": [
+        "Enable Hermes (default in modern Expo) and benchmark startup vs JSC.",
+        "Audit a slow list with React DevTools profiler; remove one unnecessary re-render.",
+        "Replace one large dependency with a smaller equivalent (moment → date-fns, lodash → individual functions).",
+        "Use the InteractionManager to defer non-critical work until after animations."
+      ],
+      "outputs": [
+        "Performance audit with documented before/after numbers",
+        "Bundle reduced by at least 20%",
+        "60fps everywhere on a low-end Android",
+        "Notes/performance.md — your audit checklist"
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Accessibility — Building for Everyone",
+      "phase": "Polish",
+      "commitment_hours": "15-20",
+      "context": "VoiceOver, TalkBack, Dynamic Type, switch control — millions of users depend on these. Most apps fail them. This week you make your app accessible — and you'll find it's better for everyone.",
+      "topics": [
+        "Screen readers — VoiceOver on iOS, TalkBack on Android",
+        "accessibilityLabel, accessibilityHint, accessibilityRole",
+        "Dynamic Type / Font Scale — text that respects user font preferences",
+        "Reduce Motion / Reduce Transparency — respecting accessibility prefs",
+        "Touch target size — 44pt iOS, 48dp Android minimum",
+        "Colour contrast — WCAG AA minimum",
+        "Focus management for keyboard / switch control users",
+        "Testing tools — Accessibility Inspector (Xcode), Accessibility Scanner (Android)"
+      ],
+      "tasks": [
+        "Turn on VoiceOver on iOS; navigate through your entire app; document every place it fails",
+        "Turn on TalkBack on Android; do the same",
+        "Add accessibilityLabel to every Image, IconButton, and Pressable",
+        "Verify all text scales properly with maximum Dynamic Type setting",
+        "Use Accessibility Inspector to find contrast issues"
+      ],
+      "project": "Accessibility Pass on Recipes App. End-state: every screen is fully navigable with VoiceOver and TalkBack. Every interactive element has a label. Touch targets meet minimums. Text scales properly. Reduce Motion is respected. Run through with a real screen reader user if you can. This is the kind of polish that separates products.",
+      "resources": [
+        { "label": "Apple — Accessibility (HIG)", "url": "https://developer.apple.com/design/human-interface-guidelines/accessibility", "note": "official, the canonical iOS accessibility guidelines" },
+        { "label": "Android — Accessibility documentation", "url": "https://developer.android.com/guide/topics/ui/accessibility", "note": "official, the Android equivalent" },
+        { "label": "React Native — Accessibility documentation", "url": "https://reactnative.dev/docs/accessibility", "note": "official, the API reference" },
+        { "label": "Apple — Accessibility Inspector", "url": "https://developer.apple.com/documentation/accessibility/accessibility-inspector", "note": "official, Xcode tool for auditing accessibility" },
+        { "label": "Google — Accessibility Scanner", "url": "https://support.google.com/accessibility/android/answer/6376570", "note": "official, install on your Android device; scans your app for issues" },
+        { "label": "Sara Soueidan — Accessibility content", "url": "https://www.sarasoueidan.com/blog/", "note": "blog, the canonical voice in accessibility design and engineering" }
+      ],
+      "questions": [
+        "Use VoiceOver to favourite a recipe. How many gestures does it take? Could you reduce it?",
+        "Bump iOS Dynamic Type to Accessibility 5. Does any text get clipped? Any layout break?",
+        "A user with a colour vision deficiency uses your app. What does your status badge (red/green) look like in deuteranopia? Use a simulator.",
+        "Your animations make some users dizzy. Does Reduce Motion turn them off? Verify."
+      ],
+      "exercises": [
+        "Add accessibilityRole='button' to all Pressable elements that act as buttons.",
+        "Implement a custom accessibility action: 'Double-tap to favourite, swipe up for more options'.",
+        "Verify touch targets meet 44pt on iOS, 48dp on Android using design tools.",
+        "Implement reduce-motion-aware animations."
+      ],
+      "outputs": [
+        "All screens passing both Accessibility Inspector and Accessibility Scanner",
+        "Full VoiceOver and TalkBack walkthrough video committed",
+        "Documented accessibility patterns used",
+        "Notes/accessibility.md — your checklist for any future screen"
+      ]
+    },
+    {
+      "number": 19,
+      "title": "Internationalisation — Multiple Languages, Currencies, Dates",
+      "phase": "Polish",
+      "commitment_hours": "15-20",
+      "context": "Even if you only ship in English, you should i18n from day one. Adding it later is painful. This week you wire i18next, externalise every string, and verify the app works in at least 2 languages including an RTL one.",
+      "topics": [
+        "i18next + react-i18next — the standard stack",
+        "Externalising strings — no hard-coded text anywhere",
+        "Plurals — different rules per language (English, Russian, Arabic)",
+        "Number, date, currency formatting — Intl APIs",
+        "RTL (right-to-left) — Arabic, Hebrew; how RN handles it",
+        "Locale detection — expo-localization",
+        "Lazy-loading translations — don't ship 50 languages in the bundle",
+        "Crowdin / Phrase / Lokalise — translation management"
+      ],
+      "tasks": [
+        "Install i18next + react-i18next + expo-localization",
+        "Externalise every string in your app into a translation file",
+        "Add a Spanish translation (use AI to bootstrap, then manually verify)",
+        "Add an Arabic translation for RTL testing; verify layout flips correctly",
+        "Format dates and numbers using the user's locale"
+      ],
+      "project": "Make Recipes App Trilingual. English, Spanish, Arabic. All strings externalised. All dates and numbers locale-formatted. Layout works in RTL. Language switcher in settings. Verify nothing is hard-coded by switching to Arabic and walking the whole app.",
+      "resources": [
+        { "label": "i18next — Documentation", "url": "https://www.i18next.com/", "note": "official, the canonical i18n library" },
+        { "label": "react-i18next — Documentation", "url": "https://react.i18next.com/", "note": "official, the React + RN bindings" },
+        { "label": "expo-localization — Documentation", "url": "https://docs.expo.dev/versions/latest/sdk/localization/", "note": "official, locale detection on RN" },
+        { "label": "MDN — Intl API", "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl", "note": "official, browser standard, available in RN" },
+        { "label": "Apple — Internationalization (HIG)", "url": "https://developer.apple.com/design/human-interface-guidelines/inclusion", "note": "official, i18n design considerations" },
+        { "label": "React Native — RTL support", "url": "https://reactnative.dev/blog/2016/08/19/right-to-left-support-for-react-native-apps", "note": "official, the canonical RTL guide" }
+      ],
+      "questions": [
+        "Switch to Arabic. Does the back button move to the right? Do icons mirror appropriately?",
+        "'5 minutes' in English plural is straightforward. What about Russian or Arabic? Did your i18n handle it?",
+        "Your number 1,234.56 — what does it look like in German (1.234,56) and in French (1 234,56)? Verify.",
+        "Compare bundle size with one language vs three. Are you lazy-loading? Should you be?"
+      ],
+      "exercises": [
+        "Replace 10 hard-coded strings with i18n calls; verify they update on language switch.",
+        "Format dates with toLocaleString in your current language.",
+        "Test plural translation: '1 recipe' vs '5 recipes' in Russian (3 plural forms).",
+        "Verify RTL layout flip on a screen with images and buttons."
+      ],
+      "outputs": [
+        "Recipes app trilingual (English, Spanish, Arabic)",
+        "Language switcher working with persistence",
+        "All strings externalised, no hard-coded text",
+        "Notes/i18n.md — your i18n architecture"
+      ]
+    },
+    {
+      "number": 20,
+      "title": "Testing — Unit, Component, E2E on Mobile",
+      "phase": "Polish",
+      "commitment_hours": "20-25",
+      "context": "Mobile tests are harder than web tests — slower simulators, more state, gesture interactions. But the discipline pays off. This week: Jest unit tests, React Native Testing Library component tests, Maestro for E2E.",
+      "topics": [
+        "Jest with React Native preset",
+        "React Native Testing Library — testing what users see",
+        "Mocking native modules in tests",
+        "Snapshot testing — when it helps, when it's noise",
+        "Maestro — the canonical mobile E2E tool",
+        "Detox — the older, more complex alternative",
+        "Visual regression — using Maestro or third-party services",
+        "CI for mobile tests — running E2E on cloud emulators"
+      ],
+      "tasks": [
+        "Configure Jest in your Expo project; verify a basic test runs",
+        "Write 10 unit tests for utility functions in your app",
+        "Write 5 React Native Testing Library tests for components",
+        "Install Maestro; write an E2E flow: open app → sign in → favourite a recipe → log out",
+        "Set up GitHub Actions to run Jest tests on every push"
+      ],
+      "project": "Test-Bulletproof the Recipes App. 70% Jest coverage on business logic, 5 Maestro E2E flows for the critical paths (sign-up, browse, favourite, settings, logout). CI runs unit tests on every PR. Maestro runs nightly. Document the test strategy in TESTING.md.",
+      "resources": [
+        { "label": "Maestro — Documentation", "url": "https://maestro.mobile.dev/", "note": "official, the modern mobile E2E framework; YAML-defined flows" },
+        { "label": "React Native Testing Library — Documentation", "url": "https://callstack.github.io/react-native-testing-library/", "note": "official, the canonical RN component testing library" },
+        { "label": "Jest — React Native preset documentation", "url": "https://jestjs.io/docs/tutorial-react-native", "note": "official, the canonical Jest setup for RN" },
+        { "label": "Detox — Documentation", "url": "https://wix.github.io/Detox/docs/introduction/getting-started", "note": "official, the older E2E alternative; more powerful, more work" },
+        { "label": "EAS — Build minutes and CI integration", "url": "https://docs.expo.dev/eas/build-and-test/", "note": "official, run mobile builds + tests in CI" },
+        { "label": "Test Lab (Google) and BrowserStack", "url": "https://firebase.google.com/docs/test-lab", "note": "official, run mobile tests on real cloud devices" }
+      ],
+      "questions": [
+        "Your component test passes locally, fails in CI. List 5 things to check.",
+        "Snapshot test for a complex component — it breaks on every styling change. Useful or noise?",
+        "Maestro flow takes 90 seconds to run. Can you parallelise it? Can you reduce flakiness?",
+        "Unit tests pass 100% but production crashes. What test category is missing?"
+      ],
+      "exercises": [
+        "Write a Jest test for a utility function with at least 5 edge cases.",
+        "Write a React Native Testing Library test that verifies a button onPress fires.",
+        "Write a Maestro flow for sign-in.",
+        "Configure GitHub Actions to run Jest tests on every push."
+      ],
+      "outputs": [
+        "70% Jest unit coverage on business logic",
+        "5 Maestro E2E flows covering critical paths",
+        "CI workflow running tests on every PR",
+        "Notes/mobile-testing.md — your testing pyramid for mobile"
+      ]
+    },
+    {
+      "number": 21,
+      "title": "EAS Build and Submit — Shipping to Stores",
+      "phase": "Distribution",
+      "commitment_hours": "20-25",
+      "context": "Building a release-quality binary for both App Store and Play Store is its own discipline. Code signing, provisioning profiles, app icons, splash screens, metadata, screenshots. This week you ship.",
+      "topics": [
+        "EAS Build — the modern way to build iOS and Android binaries",
+        "Code signing on iOS — provisioning profiles, certificates, the dance",
+        "Android signing — keystore, upload key, App Signing by Google Play",
+        "App icons — generating the matrix of sizes; tools",
+        "Splash screens — Expo splash plugin",
+        "App Store Connect — bundle ID, version, build, metadata, screenshots",
+        "Play Console — package name, version code, internal/closed/open testing tracks",
+        "TestFlight and Play Console internal testing — beta-testing your app"
+      ],
+      "tasks": [
+        "Set up EAS Build for iOS production; build a release .ipa",
+        "Set up EAS Build for Android production; build a release .aab",
+        "Generate app icon matrix for both platforms; verify in builds",
+        "Configure splash screens; verify they look right on all sizes",
+        "Submit to TestFlight (iOS); invite at least 3 testers"
+      ],
+      "project": "Get Recipes App into TestFlight and Play Console Internal Testing. Real distribution channels with real beta testers. Full metadata: title, subtitle, description, keywords, screenshots in correct sizes for every device, app preview video if you can. Document the entire submission process. Get 3 real testers to install via TestFlight and Play Console.",
+      "resources": [
+        { "label": "EAS — Build documentation", "url": "https://docs.expo.dev/build/introduction/", "note": "official, the canonical cloud-build service" },
+        { "label": "EAS Submit — Documentation", "url": "https://docs.expo.dev/submit/introduction/", "note": "official, automate submission to App Store and Play Store" },
+        { "label": "Apple — App Store Connect Help", "url": "https://developer.apple.com/help/app-store-connect/", "note": "official, the canonical reference for App Store submissions" },
+        { "label": "Google — Play Console Help", "url": "https://support.google.com/googleplay/android-developer/", "note": "official, the equivalent for Android" },
+        { "label": "Apple — Marketing assets requirements", "url": "https://developer.apple.com/app-store/marketing/guidelines/", "note": "official, screenshot sizes and rules" },
+        { "label": "App store screenshot generators (Screenshots Pro, Previewed)", "url": "https://previewed.app/", "note": "free tools for generating polished store screenshots" }
+      ],
+      "questions": [
+        "Your iOS build fails with a code signing error. List the first 5 things to check.",
+        "Your Android build succeeded but the bundle ID doesn't match production. What's the fix?",
+        "Your screenshot doesn't pass App Store review — what rules might you have violated?",
+        "TestFlight build went live but testers can't install. What's the typical cause?"
+      ],
+      "exercises": [
+        "Run `eas build --platform all` successfully for both platforms.",
+        "Upload an iOS build to TestFlight via EAS Submit.",
+        "Configure version number + build number to auto-increment.",
+        "Generate proper-size app icons from a single 1024x1024 source."
+      ],
+      "outputs": [
+        "Recipes app in TestFlight; 3 real testers installed",
+        "Recipes app in Play Console Internal Testing; 3 testers installed",
+        "Complete store metadata + screenshots committed in the repo",
+        "Notes/eas-build.md — your submission playbook"
+      ]
+    },
+    {
+      "number": 22,
+      "title": "Updates, Versioning, and OTA",
+      "phase": "Distribution",
+      "commitment_hours": "15-20",
+      "context": "App Store reviews take days. Sometimes you need to ship a fix right now. EAS Update + Expo Updates let you push JS-only changes over-the-air, instantly. This week you wire it up — and learn what's safe to push that way.",
+      "topics": [
+        "EAS Update — pushing JS bundles without going through the store",
+        "Versioning strategy — semantic version, build number, JS bundle version",
+        "What's safe to OTA — JS changes only; never native",
+        "Channels and branches — staging vs production updates",
+        "Rollback — how to revert a bad OTA in minutes",
+        "Force update prompts — for breaking native changes",
+        "App Store review rules around hot updates",
+        "Update download UX — silent vs prompted"
+      ],
+      "tasks": [
+        "Enable EAS Update in your project; configure channels: staging and production",
+        "Push a JS-only update to staging; verify it lands on testers' devices",
+        "Promote a tested update from staging to production",
+        "Implement a 'check for updates' UI that prompts users to restart on critical fixes",
+        "Practice a rollback: ship a bad update, roll back, verify users get the previous version"
+      ],
+      "project": "Set Up OTA Updates for Recipes App. Staging channel for testers, production channel for everyone. Implement a 'force update' modal for changes that require a native rebuild. Document the update strategy: what's safe to OTA, what needs a store release. Push 3 updates across a week to verify the loop.",
+      "resources": [
+        { "label": "EAS Update — Documentation", "url": "https://docs.expo.dev/eas-update/introduction/", "note": "official, the canonical OTA system" },
+        { "label": "Apple — Guideline 4.6 (in-app updates)", "url": "https://developer.apple.com/app-store/review/guidelines/#minimum-functionality", "note": "official, the rules around updating your app outside the store" },
+        { "label": "Google — Play in-app updates", "url": "https://developer.android.com/guide/playcore/in-app-updates", "note": "official, the Android equivalent" },
+        { "label": "Expo — Migrating to EAS Update", "url": "https://docs.expo.dev/eas-update/migrate-to-eas-update/", "note": "official, if you have a CodePush legacy setup" },
+        { "label": "Semantic Versioning — Specification", "url": "https://semver.org/", "note": "the canonical versioning spec; apply rigorously" },
+        { "label": "Expo — Runtime versions", "url": "https://docs.expo.dev/eas-update/runtime-versions/", "note": "official, controls which JS bundles match which native versions" }
+      ],
+      "questions": [
+        "Your OTA update includes a change to a native module. What happens? How do you prevent shipping it?",
+        "Update rollout — 1% → 10% → 50% → 100%. At what point would you halt and roll back if you see crashes spike?",
+        "Apple's review rules — what kinds of OTA changes are allowed? What kinds are forbidden?",
+        "Your runtime versions get out of sync between iOS and Android. What breaks?"
+      ],
+      "exercises": [
+        "Push an OTA update that changes a button colour; verify users see it on next app launch.",
+        "Set up channels: staging gets builds first, then promoted to production.",
+        "Roll back an OTA update via the EAS dashboard.",
+        "Implement a banner that prompts users to update when a force-update flag is set."
+      ],
+      "outputs": [
+        "OTA update working on TestFlight + Play Internal builds",
+        "Documented OTA strategy + force-update flow",
+        "Verified rollback procedure",
+        "Notes/ota-updates.md — your update playbook"
+      ]
+    },
+    {
+      "number": 23,
+      "title": "App Store Optimisation — Getting Found and Installed",
+      "phase": "Distribution",
+      "commitment_hours": "15-20",
+      "context": "A great app no one downloads is no app at all. App Store Optimisation (ASO) — keywords, screenshots, ratings, conversion rate — is the difference between obscurity and growth. This week you treat your store listing as a product.",
+      "topics": [
+        "Keyword research — App Store + Play Store search algorithms",
+        "Title, subtitle, keyword field — the prioritisation",
+        "Screenshots — the first three are everything",
+        "App preview video — when it converts, when it doesn't",
+        "Ratings and reviews — soliciting, responding to, lifting average",
+        "Localised store listings — different by country",
+        "Featured opportunities — what Apple and Google look for",
+        "ASO tools — Sensor Tower, AppFollow, App Annie (data.ai)"
+      ],
+      "tasks": [
+        "Pick 5 candidate keywords for your app; check competition with AppFollow's free tier",
+        "Rewrite your app title, subtitle, keyword field around your top 5 keywords",
+        "Redesign your first 3 screenshots — feature the value, not the UI",
+        "Implement in-app rating prompt at a positive moment (after a successful recipe save)",
+        "Write a localised store listing in Spanish"
+      ],
+      "project": "Optimise Your Recipes App's Store Listings. Research keywords with intent, restructure title/subtitle/keywords, redesign first 3 screenshots with text overlays selling the value, write a value-led description, set up in-app rating prompts. Get 5 real ratings. Document the ASO decisions in ASO.md.",
+      "resources": [
+        { "label": "Apple — App Store Search Optimization", "url": "https://developer.apple.com/app-store/search/", "note": "official, what Apple's algorithm rewards" },
+        { "label": "Google — How Play Store search works", "url": "https://developer.android.com/distribute/best-practices/launch/store-listing", "note": "official, the equivalent for Android" },
+        { "label": "AppFollow — ASO Guide", "url": "https://appfollow.io/aso-glossary", "note": "official, free guides and tools for ASO" },
+        { "label": "App Store Optimization 101 — Sensor Tower", "url": "https://sensortower.com/blog/app-store-optimization", "note": "blog, the canonical ASO blog from the leading data provider" },
+        { "label": "Apple — In-App ratings + reviews", "url": "https://developer.apple.com/app-store/ratings-and-reviews/", "note": "official, the rules around rating prompts" },
+        { "label": "ASO World — keyword tools and free trials", "url": "https://www.asoworld.com/", "note": "official, useful tool for keyword research" }
+      ],
+      "questions": [
+        "Your top competitor ranks #1 for your target keyword. What keywords do they own? Where are the gaps?",
+        "Look at your install funnel: impressions → page view → install. Which step has the biggest drop-off? Where do you intervene?",
+        "Your average rating is 4.1. What would 4.6 do for conversion? How would you raise it?",
+        "User reviews mention a missing feature you don't plan to build. Do you respond? What do you say?"
+      ],
+      "exercises": [
+        "Use a free ASO tool to research 10 keywords for your app's category.",
+        "Redesign 3 screenshots with text overlays and bold value props.",
+        "Implement the iOS SKStoreReviewController at the right moment.",
+        "Respond to 3 real user reviews (positive and negative)."
+      ],
+      "outputs": [
+        "Refreshed store listing with measured-keyword title + 3 redesigned screenshots",
+        "In-app rating prompt firing at the right moment",
+        "5 real user ratings collected",
+        "ASO.md documenting decisions and target keywords"
+      ]
+    },
+    {
+      "number": 24,
+      "title": "Capstone — Ship to Both Stores, Real Users",
+      "phase": "Capstone",
+      "commitment_hours": "30-40",
+      "context": "The final week. You take everything from weeks 1-23 and you push a real app to the App Store and Play Store with real users. By Sunday it's live, downloadable by anyone, in TestFlight or external testing. This is the artifact.",
+      "topics": [
+        "Scoping for store submission — what passes review on first try",
+        "Final asset polish — icon, screenshots, video",
+        "Privacy nutrition labels — what data you collect, what you share",
+        "Required legal — privacy policy, terms of use, COPPA if relevant",
+        "Pre-launch checklist — every box, ticked",
+        "Submission strategy — first-time review takes 1-3 days, plan for re-submission",
+        "Launch day — how to push the first install spike",
+        "First week of feedback — triage, respond, iterate"
+      ],
+      "tasks": [
+        "Pick ONE app to ship. Either Recipes or something new.",
+        "Write a public-launch checklist before any code",
+        "Talk to 5 potential users before final code; record what they said",
+        "Hard deadline: app live in the App Store AND Play Store (or in external test track) by Sunday",
+        "Plan the launch — what channels, what message"
+      ],
+      "project": "Ship one app, real distribution. Either Recipes (your roadmap project) or something else you actually want to use. Must include: real users, real reviews, real install funnel data, full observability, real metadata, real privacy policy, accessibility tested, internationalised. Launch publicly — Twitter, your audience, ProductHunt mobile category, r/sideproject. Get at least 50 installs in the first week. Document the entire journey in LAUNCH.md.",
+      "resources": [
+        { "label": "Apple — App Store Review Guidelines", "url": "https://developer.apple.com/app-store/review/guidelines/", "note": "official, re-read end-to-end before submission" },
+        { "label": "Google — Developer Policy Center", "url": "https://play.google.com/about/developer-content-policy/", "note": "official, the Play Store equivalent" },
+        { "label": "Apple — App privacy nutrition labels", "url": "https://developer.apple.com/app-store/app-privacy-details/", "note": "official, mandatory privacy disclosures" },
+        { "label": "Google — Data safety section", "url": "https://support.google.com/googleplay/android-developer/answer/10787469", "note": "official, the Play Store equivalent" },
+        { "label": "Iconscout / Iconmonstr / TheNounProject", "url": "https://www.iconscout.com/", "note": "free + paid icon libraries for app icons" },
+        { "label": "Termly — Free privacy policy generator", "url": "https://termly.io/products/privacy-policy-generator/", "note": "free tier, generates a privacy policy that meets store requirements" }
+      ],
+      "questions": [
+        "Read your store description. Would you download this app based on it alone?",
+        "First-time review failed. What was the rejection reason? How fast can you fix?",
+        "Day 3 post-launch: how many installs? How many active users on day 1, day 2, day 3? What's the retention curve telling you?",
+        "Post-mortem: what would you build differently? What did 23 weeks make easy?"
+      ],
+      "exercises": [
+        "Write a 100-word app description that sells the value, not the feature list.",
+        "Configure privacy nutrition labels accurately.",
+        "Set up an in-app feedback form that emails you on submission.",
+        "After launch, write a public post-mortem with install + retention numbers."
+      ],
+      "outputs": [
+        "App live in App Store and Play Store (or external test track)",
+        "Real install funnel and retention data after one week",
+        "Public launch — Twitter, PH, your audience — with documented results",
+        "LAUNCH.md committed — the artifact that proves mobile engineering"
+      ]
+    }
+  ]
+}
