@@ -9,13 +9,32 @@ export async function POST(req: NextRequest) {
 
   const userId = session.user.id;
 
-  const formData = await req.formData();
-  const roadmapId = formData.get("roadmapId") as string;
-  const trackId = formData.get("trackId") as string;
-  const taskId = formData.get("taskId") as string;
-  const description = formData.get("description") as string;
-  const projectUrl = (formData.get("projectUrl") as string | null)?.trim() || null;
-  const screenshotFile = formData.get("screenshot") as File | null;
+  // Accept either JSON (current CheckinForm) or multipart formData (legacy /
+  // future screenshot upload path). Whichever the client sends, parse it.
+  const contentType = req.headers.get("content-type") ?? "";
+  let roadmapId: string | undefined;
+  let trackId: string | undefined;
+  let taskId: string | undefined;
+  let description: string | undefined;
+  let projectUrl: string | null = null;
+  let screenshotFile: File | null = null;
+
+  if (contentType.includes("application/json")) {
+    const body = await req.json().catch(() => ({} as Record<string, string>));
+    roadmapId = body.roadmapId;
+    trackId = body.trackId;
+    taskId = body.taskId;
+    description = body.description;
+    projectUrl = (body.projectUrl ?? "").trim() || null;
+  } else {
+    const formData = await req.formData();
+    roadmapId = formData.get("roadmapId") as string | undefined;
+    trackId = formData.get("trackId") as string | undefined;
+    taskId = formData.get("taskId") as string | undefined;
+    description = formData.get("description") as string | undefined;
+    projectUrl = ((formData.get("projectUrl") as string | null) ?? "").trim() || null;
+    screenshotFile = formData.get("screenshot") as File | null;
+  }
 
   if (!roadmapId || !trackId || !taskId || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -25,9 +44,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Description too short (min 50 characters)" }, { status: 400 });
   }
 
-  // The contract requires proof: either a verifiable URL (live repo / deploy)
-  // OR a screenshot. If a URL is supplied, we verify it before allowing the
-  // check-in to start. This is what "Submit Real Proof" promises.
+  // The contract requires proof: a verifiable URL (live repo / deploy) OR a
+  // screenshot file. URL gets a quick reachability check; screenshot just
+  // needs to be present.
   if (!projectUrl && !screenshotFile) {
     return NextResponse.json({ error: "Submit proof: a GitHub repo, a deployed URL, or a screenshot." }, { status: 400 });
   }
