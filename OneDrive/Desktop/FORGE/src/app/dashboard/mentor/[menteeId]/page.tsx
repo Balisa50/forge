@@ -470,7 +470,7 @@ export default function MenteeDrilldownPage() {
                                 ))}
                               </ul>
                             )}
-                            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr auto", gap: "0.375rem" }}>
+                            <div className="responsive-form-row" style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr auto", gap: "0.375rem" }}>
                               <input
                                 value={resDraft[task.id]?.title ?? ""}
                                 onChange={(e) => setResDraft({ ...resDraft, [task.id]: { ...(resDraft[task.id] ?? { title: "", url: "", note: "" }), title: e.target.value } })}
@@ -591,7 +591,7 @@ export default function MenteeDrilldownPage() {
                           </div>
 
                           {/* New comment */}
-                          <div style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+                          <div className="flex-col-on-mobile" style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
                             <textarea
                               value={draft[task.id] ?? ""}
                               onChange={(e) => setDraft({ ...draft, [task.id]: e.target.value })}

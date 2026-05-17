@@ -95,7 +95,7 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
                 const edit = edits[q.id];
                 return (
                   <li key={q.id} style={{ padding: "0.625rem 0.75rem", borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", marginBottom: "0.375rem" }}>
+                    <div className="flex-col-on-mobile" style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", marginBottom: "0.375rem", flexWrap: "wrap" }}>
                       <span style={{ width: 22, height: 22, borderRadius: 6, background: "rgba(245,158,11,0.15)", color: "var(--accent)", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", display: "grid", placeItems: "center", flexShrink: 0 }}>Q{i + 1}</span>
                       <textarea
                         value={edit?.prompt ?? q.prompt}
@@ -151,12 +151,12 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
               placeholder="Rubric (optional, only you see this)"
               style={{ width: "100%", padding: "0.375rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.75rem", marginBottom: "0.375rem" }}
             />
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div className="flex-col-on-mobile" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               <input
                 value={draft.idealAnswer}
                 onChange={(e) => setDraft({ ...draft, idealAnswer: e.target.value })}
                 placeholder="Ideal answer notes (optional)"
-                style={{ flex: 1, padding: "0.375rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.75rem" }}
+                style={{ flex: 1, minWidth: 0, padding: "0.375rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.75rem" }}
               />
               <button onClick={add} disabled={!draft.prompt.trim() || saving} className="forge-btn forge-btn-primary" style={{ padding: "0.375rem 0.75rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}>
                 {saving ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />} Add

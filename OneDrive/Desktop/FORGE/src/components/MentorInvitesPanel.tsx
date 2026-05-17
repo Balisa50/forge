@@ -97,6 +97,7 @@ export default function MentorInvitesPanel() {
 
       {/* New invite form */}
       <div
+        className="responsive-form-row"
         style={{
           display: "grid",
           gridTemplateColumns: "1.5fr 1.5fr 0.7fr 0.7fr auto",
@@ -166,13 +167,14 @@ export default function MentorInvitesPanel() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "0.75rem",
+                  gap: "0.5rem",
                   padding: "0.75rem 0.875rem",
                   background: dead ? "var(--bg-card)" : "rgba(245,158,11,0.05)",
                   border: dead ? "1px solid var(--border)" : "1px solid rgba(245,158,11,0.25)",
                   borderRadius: 8,
                   opacity: dead ? 0.55 : 1,
                   flexWrap: "wrap",
+                  rowGap: "0.5rem",
                 }}
               >
                 <code style={{ fontFamily: "var(--font-mono)", fontSize: "1rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--text-primary)" }}>{i.code}</code>

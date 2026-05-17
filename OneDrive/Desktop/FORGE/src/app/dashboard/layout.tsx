@@ -37,8 +37,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex" }}>
       {dbUser.isGuest && <GuestBanner />}
-      {/* Push layout down when guest banner is visible (banner is 28px high) */}
-      <div style={{ display: "flex", flex: 1, paddingTop: dbUser.isGuest ? "28px" : 0, width: "100%" }}>
+      {/* Push layout down only on desktop — mobile shows a floating chip instead */}
+      <div className={dbUser.isGuest ? "with-guest-banner" : ""} style={{ display: "flex", flex: 1, width: "100%" }}>
         <DashboardNav
           user={session.user}
           userRole={dbUser.role}

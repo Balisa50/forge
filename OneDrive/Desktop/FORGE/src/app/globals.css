@@ -236,6 +236,26 @@
     margin-right: auto;
     width: 100%;
   }
+
+  /* Desktop only: push content down by the 28px guest banner. Mobile
+     uses a floating chip so no push needed there. */
+  .with-guest-banner {
+    padding-top: 28px;
+  }
+}
+@media (max-width: 768px) {
+  /* Stack any "responsive-form-row" grid vertically on mobile */
+  .responsive-form-row {
+    grid-template-columns: 1fr !important;
+  }
+  /* Stack flex rows that should be a column on mobile */
+  .flex-col-on-mobile {
+    flex-direction: column !important;
+  }
+  .flex-col-on-mobile > textarea,
+  .flex-col-on-mobile > input {
+    width: 100% !important;
+  }
 }
 
 /* ─── Skeleton / Shimmer ───────────────────────────────────── */
