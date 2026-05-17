@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye } from "lucide-react";
+import Link from "next/link";
+import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare } from "lucide-react";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -163,7 +164,12 @@ export default async function MentorDashboardPage() {
 
       <div className="flex flex-col gap-6">
         {mentees.map((m) => (
-          <div key={m.user.id} className="forge-panel" style={{ padding: "1.5rem" }}>
+          <Link
+            key={m.user.id}
+            href={`/dashboard/mentor/${m.user.id}`}
+            className="forge-panel"
+            style={{ padding: "1.5rem", display: "block", textDecoration: "none", color: "inherit", transition: "border-color 0.15s" }}
+          >
             {/* Mentee header */}
             <div className="flex items-center justify-between mb-4" style={{ flexWrap: "wrap", gap: "1rem" }}>
               <div className="flex items-center gap-3">
@@ -243,7 +249,13 @@ export default async function MentorDashboardPage() {
                 </div>
               </div>
             )}
-          </div>
+            <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                Click to open roadmap · leave per-week notes
+              </span>
+              <ArrowRight size={14} style={{ color: "var(--text-dim)" }} />
+            </div>
+          </Link>
         ))}
       </div>
     </div>

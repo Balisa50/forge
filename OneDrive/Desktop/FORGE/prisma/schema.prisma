@@ -91,6 +91,8 @@ model User {
   orgMemberships    OrgMembership[]
   mentoring         MentorLink[]     @relation("MentorUser")
   mentees           MentorLink[]     @relation("MenteeUser")
+  commentsAsMentor  MentorComment[]  @relation("MentorCommentMentor")
+  commentsAsMentee  MentorComment[]  @relation("MentorCommentMentee")
   certificates      Certificate[]
   cohortEnrollments CohortEnrollment[]
   podMemberships    PodMember[]
@@ -195,8 +197,9 @@ model Task {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
-  phase     Phase     @relation(fields: [phaseId], references: [id], onDelete: Cascade)
-  checkins  Checkin[]
+  phase            Phase           @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  checkins         Checkin[]
+  mentorComments   MentorComment[]
 }
 
 model Checkin {
@@ -364,6 +367,27 @@ model MentorLink {
   org       Organization? @relation(fields: [orgId], references: [id])
 
   @@unique([mentorId, menteeId])
+}
+
+/// A note left by a mentor on a specific mentee's task (one week of curriculum).
+/// Mentee sees these inline on their roadmap. Mentor sees their own notes
+/// back when revisiting the mentee's task. `readAt` lets us show "new" badges.
+model MentorComment {
+  id        String    @id @default(cuid())
+  taskId    String
+  mentorId  String
+  menteeId  String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  task      Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  mentor    User @relation("MentorCommentMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee    User @relation("MentorCommentMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@index([menteeId, taskId])
+  @@index([mentorId, menteeId])
 }
 
 model OrgResource {
