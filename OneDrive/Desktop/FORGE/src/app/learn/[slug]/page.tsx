@@ -16,9 +16,9 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
 
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
-      {/* Banner */}
+      {/* Compact banner */}
       <section className="border-b border-[color:var(--border)]">
-        <div className="mx-auto max-w-6xl px-6 pt-12 pb-10">
+        <div className="mx-auto max-w-5xl px-6 pt-8 pb-6">
           <Link
             href="/learn"
             className="inline-flex items-center gap-1.5 text-xs"
@@ -27,25 +27,28 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
             <ArrowLeft size={12} /> all roadmaps
           </Link>
           <div
-            style={{ height: 4, borderRadius: 4 }}
-            className={`mt-6 w-24 bg-gradient-to-r ${meta?.gradient ?? "from-cyan-500 to-blue-500"}`}
+            style={{ height: 3, borderRadius: 3 }}
+            className={`mt-4 w-16 bg-gradient-to-r ${meta?.gradient ?? "from-cyan-500 to-blue-500"}`}
           />
-          <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 700, lineHeight: 1.05, marginTop: "1.25rem" }}>
+          <h1
+            className="mt-3"
+            style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(1.5rem, 4vw, 2.25rem)", fontWeight: 700, lineHeight: 1.15 }}
+          >
             {roadmap.title}
           </h1>
-          {meta && (
-            <p style={{ color: "var(--text-secondary)", marginTop: "0.75rem", maxWidth: 720, fontSize: "1.0625rem", lineHeight: 1.6 }}>
+          {meta?.tagline && (
+            <p className="mt-1.5" style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 640, lineHeight: 1.55 }}>
               {meta.tagline}
             </p>
           )}
-          <div className="mt-6 flex flex-wrap gap-5" style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-dim)" }}>
-            <span className="inline-flex items-center gap-1.5"><Clock size={14} /> {roadmap.total_weeks} weeks</span>
-            <span className="inline-flex items-center gap-1.5"><Layers size={14} /> {groups.length} phases</span>
+          <div className="mt-3 flex flex-wrap gap-4" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
+            <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {roadmap.total_weeks} weeks</span>
+            <span className="inline-flex items-center gap-1.5"><Layers size={12} /> {groups.length} phases</span>
           </div>
           {meta?.outcome && (
-            <div className="mt-6 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-4">
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", color: "var(--accent)", textTransform: "uppercase" }}>Outcome</p>
-              <p style={{ color: "var(--text-primary)", marginTop: "0.375rem", fontSize: "0.9375rem", lineHeight: 1.5 }}>{meta.outcome}</p>
+            <div className="mt-4 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-3">
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>What you'll have at the end</p>
+              <p className="mt-1" style={{ color: "var(--text-primary)", fontSize: "0.875rem", lineHeight: 1.5 }}>{meta.outcome}</p>
             </div>
           )}
         </div>

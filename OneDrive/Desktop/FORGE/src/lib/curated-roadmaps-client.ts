@@ -8,6 +8,8 @@
  * When you add a new roadmap JSON, add a matching entry here too.
  */
 
+import { Bot, BrainCircuit, Globe, Smartphone, Cloud, Shield, FlaskConical, TrendingUp, PieChart, type LucideIcon } from "lucide-react";
+
 export interface CuratedRoadmapPickerEntry {
   slug: string;
   title: string;
@@ -15,99 +17,109 @@ export interface CuratedRoadmapPickerEntry {
   outcome: string;
   weeks: number;
   phases: number;
-  emoji: string;
+  Icon: LucideIcon;
   gradient: string;
+  accent: string;  // colour matches the gradient end, used for icon tint
 }
 
 export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
   {
     slug: "ai-engineering",
     title: "AI Engineering",
-    tagline: "Zero to shipping AI products — LLMs, RAG, agents, evals, deployment",
-    outcome: "Ship a real AI product to a public URL with auth, evals, observability, real users",
+    tagline: "Build and ship real AI products people use",
+    outcome: "Ship a working AI product to a public URL — with real users, real evals, real costs you understand",
     weeks: 24,
     phases: 7,
-    emoji: "🤖",
+    Icon: Bot,
+    accent: "#c084fc",
     gradient: "from-fuchsia-500 via-purple-500 to-violet-600",
   },
   {
     slug: "ml-engineering",
     title: "ML Engineering",
-    tagline: "From NumPy to PyTorch to MLOps — train, serve, monitor real models",
-    outcome: "Train, version, deploy and monitor a production model with full eval + drift detection",
+    tagline: "Train models from scratch and run them in production",
+    outcome: "Train, version, deploy and monitor a real model — with drift detection and proper evaluation",
     weeks: 24,
     phases: 7,
-    emoji: "📊",
+    Icon: BrainCircuit,
+    accent: "#818cf8",
     gradient: "from-violet-500 via-indigo-500 to-blue-600",
   },
   {
     slug: "full-stack-web",
     title: "Full Stack Web",
-    tagline: "From HTML first principles to a paid-customer SaaS",
-    outcome: "Ship a real SaaS at a custom domain — auth, Stripe, observability, real revenue",
+    tagline: "Build the kind of websites and apps people pay for",
+    outcome: "Ship a real SaaS at a custom domain — login, payments, customers paying you monthly",
     weeks: 24,
     phases: 7,
-    emoji: "🌐",
+    Icon: Globe,
+    accent: "#38bdf8",
     gradient: "from-cyan-500 via-blue-500 to-sky-600",
   },
   {
     slug: "mobile-engineering",
     title: "Mobile Engineering",
-    tagline: "From React Native fundamentals to App Store + Play Store",
-    outcome: "Ship one mobile app to both stores with real users and real retention data",
+    tagline: "Build apps that live on real phones",
+    outcome: "Ship one app to both the App Store and Play Store with real users",
     weeks: 24,
     phases: 7,
-    emoji: "📱",
+    Icon: Smartphone,
+    accent: "#f472b6",
     gradient: "from-rose-500 via-pink-500 to-fuchsia-600",
   },
   {
     slug: "devops-cloud",
-    title: "DevOps & Cloud",
-    tagline: "From Linux to Kubernetes to a full production stack on AWS",
-    outcome: "Build the entire production stack for one app — Terraform, K8s, GitOps, observability",
+    title: "DevOps and Cloud",
+    tagline: "Build the infrastructure software runs on",
+    outcome: "Build a full production stack from scratch — servers, deploys, monitoring, all on auto-pilot",
     weeks: 24,
     phases: 7,
-    emoji: "☁️",
+    Icon: Cloud,
+    accent: "#fb923c",
     gradient: "from-orange-500 via-red-500 to-rose-600",
   },
   {
     slug: "cybersecurity",
-    title: "Cybersecurity Engineering",
-    tagline: "From OWASP Top 10 to published CVE or bug bounty",
-    outcome: "Earn a real security artifact — bug bounty, CVE, red team report, detection contribution",
+    title: "Cybersecurity",
+    tagline: "Find and fix the holes attackers actually exploit",
+    outcome: "Earn one real security credit — a bug bounty payout, a published CVE, or a major OSS contribution",
     weeks: 24,
     phases: 7,
-    emoji: "🛡️",
+    Icon: Shield,
+    accent: "#34d399",
     gradient: "from-lime-500 via-emerald-500 to-teal-600",
   },
   {
     slug: "data-science",
     title: "Data Science",
-    tagline: "From Python first principles to a deployed ML model with a portfolio",
-    outcome: "Ship a capstone that uses real-world data, statistical reasoning, and a deployed model",
+    tagline: "Find the story hidden in data and prove it",
+    outcome: "Ship a real data project — from raw data to deployed model people can actually use",
     weeks: 20,
     phases: 7,
-    emoji: "🧪",
+    Icon: FlaskConical,
+    accent: "#60a5fa",
     gradient: "from-sky-500 via-blue-500 to-indigo-600",
   },
   {
     slug: "data-analysis",
     title: "Data Analysis",
-    tagline: "From spreadsheets to SQL to dashboards that decision-makers act on",
-    outcome: "Become the person whose analysis the team trusts to call shipping decisions",
+    tagline: "Turn raw numbers into decisions teams actually act on",
+    outcome: "Become the person whose dashboards drive real business decisions",
     weeks: 18,
     phases: 5,
-    emoji: "📈",
+    Icon: TrendingUp,
+    accent: "#2dd4bf",
     gradient: "from-emerald-500 via-teal-500 to-cyan-600",
   },
   {
     slug: "bi-analytics",
-    title: "BI Analytics",
-    tagline: "From clean data models to BI dashboards that drive million-dollar decisions",
-    outcome: "Own the analytics layer for a whole business unit — Power BI, modelling, automation",
+    title: "Business Intelligence",
+    tagline: "Build the analytics layer a whole company depends on",
+    outcome: "Own the analytics for a whole team or business — Power BI, modelling, automation",
     weeks: 17,
     phases: 7,
-    emoji: "📋",
+    Icon: PieChart,
+    accent: "#fb923c",
     gradient: "from-amber-500 via-orange-500 to-rose-600",
   },
 ];

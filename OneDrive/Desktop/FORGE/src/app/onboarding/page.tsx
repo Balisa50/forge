@@ -854,49 +854,60 @@ function RoadmapBrowser({
         Start with a mastery roadmap — or pick a roadmap.sh path, or describe your own.
       </p>
 
-      {/* ─── Curated mastery roadmaps (the featured option) ───────── */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles size={14} style={{ color: "var(--accent)" }} />
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--accent)" }}>
-            Mastery roadmaps · hand-curated, zero to expert
-          </span>
-        </div>
-
+      {/* ─── Curated mastery roadmaps (the only roadmap-list option) ─── */}
+      <div style={{ marginBottom: "1.25rem" }}>
         {selectedCurated ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "1rem 1.125rem", marginBottom: "0.75rem", background: "rgba(245,158,11,0.08)", border: "1px solid var(--accent)", borderRadius: "10px" }}>
-            <span style={{ fontSize: "1.75rem" }}>{selectedCurated.emoji}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", padding: "1rem 1.125rem", background: "rgba(245,158,11,0.08)", border: "1px solid var(--accent)", borderRadius: "10px" }}>
+            <div
+              style={{
+                width: 44, height: 44, borderRadius: 10,
+                background: `${selectedCurated.accent}1a`,
+                color: selectedCurated.accent,
+                display: "grid", placeItems: "center", flexShrink: 0,
+              }}
+            >
+              <selectedCurated.Icon size={22} strokeWidth={1.75} />
+            </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem" }}>{selectedCurated.title}</div>
-              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: "0.125rem" }}>{selectedCurated.tagline}</div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: "0.125rem", lineHeight: 1.4 }}>{selectedCurated.tagline}</div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginTop: "0.375rem" }}>
-                {selectedCurated.weeks} weeks · {selectedCurated.phases} phases · every week with topics, project, deep questions, resources, exercises
+                {selectedCurated.weeks} weeks · {selectedCurated.phases} phases
               </div>
             </div>
-            <button onClick={() => setSelectedCurated(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "1.25rem", padding: "0.25rem" }}>×</button>
+            <button onClick={() => setSelectedCurated(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "1.5rem", padding: "0.25rem", lineHeight: 1 }}>×</button>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", maxHeight: "320px", overflowY: "auto", paddingRight: "4px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.625rem" }}>
             {CURATED_ROADMAPS.map((c) => (
               <button
                 key={c.slug}
                 type="button"
                 onClick={() => setSelectedCurated(c)}
                 style={{
-                  padding: "0.875rem", borderRadius: "10px", textAlign: "left", cursor: "pointer",
+                  padding: "1rem", borderRadius: "10px", textAlign: "left", cursor: "pointer",
                   border: "1px solid var(--border)",
                   background: "var(--bg-card)",
                   transition: "all 0.12s",
-                  display: "flex", alignItems: "flex-start", gap: "0.625rem",
+                  display: "flex", alignItems: "flex-start", gap: "0.75rem",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = c.accent; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
               >
-                <span style={{ fontSize: "1.5rem", flexShrink: 0, lineHeight: 1 }}>{c.emoji}</span>
+                <div
+                  style={{
+                    width: 36, height: 36, borderRadius: 8,
+                    background: `${c.accent}1a`,
+                    color: c.accent,
+                    display: "grid", placeItems: "center", flexShrink: 0,
+                  }}
+                >
+                  <c.Icon size={18} strokeWidth={1.75} />
+                </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.9375rem", marginBottom: "0.125rem" }}>{c.title}</div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{c.tagline}</div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.375rem" }}>{c.weeks}w · {c.phases} phases</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.45, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{c.tagline}</div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.375rem" }}>{c.weeks} weeks · {c.phases} phases</div>
                 </div>
               </button>
             ))}
@@ -904,102 +915,17 @@ function RoadmapBrowser({
         )}
       </div>
 
-      {/* ─── Divider ─────────────────────────────────────────────── */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
-        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>or roadmap.sh path</span>
-        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-      </div>
-
-      {/* Selected path badge */}
-      {selectedPath && (
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.875rem 1.125rem", marginBottom: "1rem", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: "10px" }}>
-          <span style={{ fontSize: "1.5rem" }}>{selectedPath.emoji}</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "var(--font-headline)", fontSize: "1rem" }}>{selectedPath.title}</div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>roadmap.sh/{selectedPath.slug} · ~{selectedPath.estimatedWeeks} weeks</div>
-          </div>
-          <a href={`https://roadmap.sh/${selectedPath.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-dim)", padding: "0.25rem" }}>
-            <ExternalLink size={14} />
-          </a>
-          <button onClick={() => setSelectedPath(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "1.125rem", padding: "0.25rem" }}>×</button>
+      {/* Divider before "build your own" fallback */}
+      {!selectedCurated && (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
+          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>or describe your own goal</span>
+          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
         </div>
       )}
 
-      {/* Search + category filter */}
-      <div style={{ position: "relative", marginBottom: "0.75rem" }}>
-        <Search size={15} style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-dim)" }} />
-        <input
-          type="text"
-          value={pathSearch}
-          onChange={(e) => setPathSearch(e.target.value)}
-          className="forge-input"
-          placeholder="Search paths..."
-          style={{ paddingLeft: "2.5rem" }}
-        />
-      </div>
-
-      <div className="flex gap-2 flex-wrap mb-3">
-        {["all", ...ROADMAPSH_CATEGORIES].map((cat) => (
-          <button
-            key={cat}
-            type="button"
-            onClick={() => setActiveCategory(cat)}
-            style={{
-              padding: "0.25rem 0.75rem", borderRadius: "20px", cursor: "pointer", fontSize: "0.75rem",
-              fontFamily: "var(--font-mono)", letterSpacing: "0.05em", textTransform: "uppercase",
-              border: activeCategory === cat ? "1px solid var(--accent)" : "1px solid var(--border)",
-              background: activeCategory === cat ? "rgba(245,158,11,0.1)" : "transparent",
-              color: activeCategory === cat ? "var(--accent)" : "var(--text-dim)",
-              transition: "all 0.15s",
-            }}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Path grid */}
-      <div style={{ maxHeight: "260px", overflowY: "auto", marginBottom: "1.25rem", paddingRight: "4px" }}>
-        {filtered.length === 0 ? (
-          <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-dim)", fontSize: "0.875rem" }}>
-            No paths match &ldquo;{pathSearch}&rdquo;
-          </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-            {filtered.map((path) => (
-              <button
-                key={path.id}
-                type="button"
-                onClick={() => setSelectedPath(selectedPath?.id === path.id ? null : path)}
-                style={{
-                  padding: "0.75rem", borderRadius: "8px", textAlign: "left", cursor: "pointer",
-                  border: selectedPath?.id === path.id ? "1px solid var(--accent)" : "1px solid var(--border)",
-                  background: selectedPath?.id === path.id ? "rgba(245,158,11,0.07)" : "var(--bg-card)",
-                  transition: "all 0.12s",
-                  display: "flex", alignItems: "flex-start", gap: "0.5rem",
-                }}
-              >
-                <span style={{ fontSize: "1.25rem", flexShrink: 0, lineHeight: 1 }}>{path.emoji}</span>
-                <div>
-                  <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.875rem", marginBottom: "0.125rem", color: selectedPath?.id === path.id ? "var(--accent)" : "var(--text-primary)" }}>{path.title}</div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)" }}>~{path.estimatedWeeks}w</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Divider */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
-        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>or build your own</span>
-        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-      </div>
-
-      {/* Type toggle (only visible for custom) */}
-      {!selectedPath && (
+      {/* Custom learn-vs-ship toggle, only when no curated path is picked */}
+      {!selectedCurated && (
         <div className="flex gap-3 mb-4">
           {([["learn", GraduationCap, "Learn a Skill"], ["project", Swords, "Ship a Project"]] as const).map(([t, Icon, label]) => (
             <button
@@ -1020,15 +946,16 @@ function RoadmapBrowser({
         </div>
       )}
 
-      <input
-        type="text"
-        value={roadmapTitle}
-        onChange={(e) => setRoadmapTitle(e.target.value)}
-        className="forge-input"
-        placeholder={journeyType === "project" ? "e.g. Build a SaaS MVP, Portfolio Website..." : "e.g. Machine Learning, Blockchain, Game Dev..."}
-        style={{ marginBottom: "1.25rem" }}
-        disabled={!!selectedPath}
-      />
+      {!selectedCurated && (
+        <input
+          type="text"
+          value={roadmapTitle}
+          onChange={(e) => setRoadmapTitle(e.target.value)}
+          className="forge-input"
+          placeholder={journeyType === "project" ? "e.g. Build a SaaS MVP, Portfolio Website..." : "e.g. Game Dev, Blockchain, Robotics..."}
+          style={{ marginBottom: "1.25rem" }}
+        />
+      )}
 
       <div className="flex gap-3">
         <button onClick={onBack} className="forge-btn forge-btn-ghost" style={{ flex: 1 }}>Back</button>
