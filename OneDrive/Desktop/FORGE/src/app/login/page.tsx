@@ -66,8 +66,11 @@ export default function LoginPage() {
       }
 
       if (res?.ok) {
-        router.push("/dashboard");
-        router.refresh();
+        // Full page reload — router.push/refresh is unreliable on mobile
+        // browsers and can leave the user stuck on a blank screen after
+        // session cookies are set. window.location forces a fresh request
+        // so the proxy middleware re-reads the session.
+        window.location.href = "/dashboard";
       } else {
         setError("Sign-in did not complete. Please try again.");
         setLoading(false);
