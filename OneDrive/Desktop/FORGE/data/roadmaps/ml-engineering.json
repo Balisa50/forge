@@ -35,188 +35,198 @@
           "note": "Official, beginner-friendly"
         }
       ],
-      "context": "You're building FlightWise — a model that predicts whether a US domestic flight will be delayed > 15 min. Dataset: a specific cleaned BTS On-Time slice from 2023 (we point you to the exact file). Why this? It's real (millions of flights), it's imbalanced (most flights are on time — like real fraud/churn data), and it has rich features (carrier, origin, dest, scheduled time, day of week). By Week 6 you'll have a deployable model with a Flask API. Then Week 7 starts Project 2.",
+      "context": "This week you are going to build FlightWise — a small machine learning model that predicts whether a US flight will be delayed by more than 15 minutes. By Sunday you will have a working Jupyter notebook and a saved model file you can show to anyone. If you have never trained a model before, that is fine — every step is given to you exactly.",
       "days": [
         {
           "number": 1,
-          "title": "ML is function approximation. That's it.",
-          "summary": "Strip the mystery. Build the mental model.",
+          "title": "What does ML actually do?",
+          "summary": "Watch and think. No coding today.",
           "items": [
             {
               "kind": "video",
-              "title": "But what is a neural network — 3Blue1Brown",
+              "title": "But what is a neural network? — 3Blue1Brown (19 min)",
               "url": "https://www.youtube.com/watch?v=aircAruvnKk",
               "duration_min": 19,
               "creator": "3Blue1Brown",
-              "why": "The clearest visual primer. Worth every minute."
+              "why": "The clearest visual primer on what a model 'learns'."
             },
             {
               "kind": "video",
-              "title": "Machine Learning explained — Fireship",
-              "url": "https://www.youtube.com/results?search_query=machine+learning+100+seconds+fireship",
+              "title": "Machine Learning in 100 Seconds — Fireship",
+              "url": "https://www.youtube.com/results?search_query=fireship+machine+learning+100+seconds",
               "duration_min": 3,
               "creator": "Fireship",
               "why": ""
             },
             {
               "kind": "reflection",
-              "title": "Predict the delay",
-              "body": "If you had ONE feature to predict if a flight is delayed > 15min, what would you pick — carrier, departure hour, origin airport, day of week? Write down your guess. We'll find out on Day 5 if you were right."
+              "title": "One feature, one guess",
+              "body": "By Sunday you will train a model to predict if a flight will be DELAYED (more than 15 min late). Before you see any data — what ONE feature do you think would predict delays best? Examples: the airline? the time of day? the departure airport? the day of the week? Write your guess in notes.txt. You will find out on Friday if you were right."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Python data stack setup",
-          "summary": "Anaconda or uv. Either works. Pick one and stop deliberating.",
+          "title": "Install Python and Anaconda",
+          "summary": "Set up the tools today. Boring but essential.",
           "items": [
             {
+              "kind": "reading",
+              "title": "Anaconda download (official)",
+              "url": "https://www.anaconda.com/download",
+              "why": "Click 'Open' to go download Anaconda. Pick the version for your computer."
+            },
+            {
               "kind": "video",
-              "title": "Anaconda install + first notebook",
-              "url": "https://www.youtube.com/results?search_query=anaconda+install+jupyter+notebook+beginner+2024",
+              "title": "How to install Anaconda on Windows / Mac",
+              "url": "https://www.youtube.com/results?search_query=install+anaconda+windows+mac+beginner+2024",
               "duration_min": 15,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "FlightWise repo + first notebook",
-              "body": "Create folder `flightwise/`. Run `conda create -n flightwise python=3.11 pandas numpy scikit-learn matplotlib seaborn jupyter` (or use venv + pip). Activate. Open Jupyter. Create `01_setup.ipynb`. Cell 1: `import pandas as pd, numpy as np, sklearn; print(pd.__version__, np.__version__, sklearn.__version__)`. Push to a GitHub repo named `flightwise`."
+              "title": "Install + first notebook",
+              "body": "STEP 1 — Open the Anaconda card. Download. Install (click Next on every screen).\n\nSTEP 2 — Open the terminal.\n  WINDOWS: Start menu → 'Anaconda Prompt' → press Enter.\n  MAC: Cmd+Space → 'Terminal' → press Enter.\n\nSTEP 3 — Make the project folder.\n      cd Desktop\n      mkdir flightwise\n      cd flightwise\n\nSTEP 4 — Start Jupyter Notebook.\n      jupyter notebook\n  YOU SHOULD SEE: your browser opens to localhost:8888 showing the flightwise folder.\n\nSTEP 5 — Make a test notebook.\n  In the browser, click 'New' (top right) → 'Python 3'. Rename to '01-setup'.\n  In the first cell, type:\n      import pandas, sklearn, matplotlib\n      print('All good:', pandas.__version__, sklearn.__version__)\n  Press Shift+Enter.\n  YOU SHOULD SEE: 'All good: 2.x.x 1.x.x'.\n  Save the notebook (Ctrl+S)."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Get the FlightWise dataset",
-          "summary": "Specific dataset. No 'pick your own'. Real BTS data, ~5M rows.",
+          "title": "Download the flight data",
+          "summary": "Today you get the real dataset. A specific file from Kaggle.",
           "items": [
             {
               "kind": "reading",
-              "title": "BTS On-Time Performance — Kaggle 2023 mirror",
+              "title": "Kaggle — Flight Delay and Cancellation Dataset 2019-2023",
               "url": "https://www.kaggle.com/datasets/patrickzel/flight-delay-and-cancellation-dataset-2019-2023",
-              "why": "Download `flights_sample_3m.csv` (3M rows, ~250MB). If Kaggle gives you trouble, search 'BTS on time 2023 flight delay sample CSV' and grab any mirror."
+              "why": "Click 'Open' to go to the dataset. You will need to sign up for Kaggle (free)."
+            },
+            {
+              "kind": "reading",
+              "title": "Kaggle — sign up",
+              "url": "https://www.kaggle.com/account/login",
+              "why": "If you do not have a Kaggle account yet, sign up here first."
             },
             {
               "kind": "exercise",
-              "title": "Load it",
-              "body": "Place the CSV in `flightwise/data/raw.csv` (gitignore the data/ folder — too big to commit). In `02_load.ipynb`: `df = pd.read_csv('data/raw.csv')`. Run `df.shape`, `df.head()`, `df.info()`. Add a markdown cell answering: How many rows? How many columns? Which columns look most useful for predicting delay?"
+              "title": "Download and load the data",
+              "body": "STEP 1 — Sign up for Kaggle (free).\n  Open the 'Kaggle sign up' card. Make an account with your email or Google.\n\nSTEP 2 — Download the dataset.\n  Open the 'Flight Delay' card. Click the big 'Download' button on the right.\n  You get a .zip file. Unzip it. Inside, find a file called 'flights_sample_3m.csv' (or similar — it is about 250MB).\n\nSTEP 3 — Put the file in your project.\n  In the flightwise folder, make a sub-folder called 'data'.\n  Move the CSV into flightwise/data/ and rename it to flights.csv\n\nSTEP 4 — Load it in Jupyter.\n  In Jupyter, make a new notebook '02-load'. In the first cell:\n      import pandas as pd\n      df = pd.read_csv('data/flights.csv')\n      print('Rows:', len(df))\n      print('Columns:', list(df.columns))\n      df.head()\n  Press Shift+Enter.\n  YOU SHOULD SEE: about 3 million rows, columns like AIRLINE, ORIGIN, DEST, CRS_DEP_TIME, ARR_DELAY.\n\n  IF YOU SEE 'FileNotFoundError': the CSV is not in flightwise/data/. Check the path."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Define the target + clean the columns",
-          "summary": "Modelling is 80% data prep. Today is the prep day.",
+          "title": "Clean the data and create the target",
+          "summary": "Today we pick the columns we need and make a 'delayed yes/no' column.",
           "items": [
             {
-              "kind": "video",
-              "title": "pandas data cleaning crash course",
-              "url": "https://www.youtube.com/results?search_query=pandas+data+cleaning+tutorial+python+2024",
-              "duration_min": 25,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Create the target column",
-              "body": "In `03_clean.ipynb`:\n  1. Create binary target: `df['delayed'] = (df['ARR_DELAY'] > 15).astype(int)`\n  2. Drop rows where ARR_DELAY is null (cancelled flights — exclude for now)\n  3. Pick these features only: `CARRIER`, `ORIGIN`, `DEST`, `CRS_DEP_TIME`,      `DAY_OF_WEEK`, `MONTH`, `DISTANCE`. Plus target `delayed`.\n  4. Save the clean subset as `data/clean.parquet` (gitignored).\n  5. Print: how many rows are delayed vs on time? What % is delayed?      (This is your class imbalance.)"
+              "title": "Clean the data",
+              "body": "Make a new notebook '03-clean'. In each cell, type the code and press Shift+Enter.\n\nCELL 1 — Load the data.\n      import pandas as pd\n      df = pd.read_csv('data/flights.csv')\n      print('Starting rows:', len(df))\n\nCELL 2 — Drop rows where the delay is missing (cancelled flights).\n      df = df.dropna(subset=['ARR_DELAY'])\n      print('After dropping missing delays:', len(df))\n\nCELL 3 — Make the target column.\n      df['delayed'] = (df['ARR_DELAY'] > 15).astype(int)\n      print('Delayed:', df['delayed'].sum(), '/', len(df))\n      print('Percent delayed:', round(df['delayed'].mean() * 100, 1), '%')\n  YOU SHOULD SEE: about 15-20% delayed.\n\nCELL 4 — Keep only the columns we need.\n      keep = ['AIRLINE', 'ORIGIN', 'DEST', 'CRS_DEP_TIME', 'DAY_OF_WEEK', 'MONTH', 'DISTANCE', 'delayed']\n      df = df[keep]\n      print('Shape now:', df.shape)\n\nCELL 5 — Add a 'hour of departure' column. CRS_DEP_TIME is like 1430 meaning 14:30.\n      df['dep_hour'] = df['CRS_DEP_TIME'] // 100\n\nCELL 6 — Save the clean data.\n      df.to_csv('data/clean.csv', index=False)\n      print('Saved data/clean.csv —', len(df), 'rows')"
             }
           ]
         },
         {
           "number": 5,
-          "title": "EDA — find what predicts delay",
-          "summary": "Before you model, you look. Three plots.",
+          "title": "Look at the data — find what predicts delay",
+          "summary": "Today you make 3 charts to see what features matter.",
           "items": [
             {
-              "kind": "video",
-              "title": "Seaborn for EDA — beginner",
-              "url": "https://www.youtube.com/results?search_query=seaborn+data+visualization+tutorial+python",
-              "duration_min": 20,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "3 plots, 3 findings",
-              "body": "In `04_eda.ipynb`, produce:\n  Plot 1: Delay rate by HOUR of scheduled departure (bar chart, x=hour,     y=% delayed). Use `CRS_DEP_TIME // 100` to extract the hour.\n  Plot 2: Delay rate by carrier (horizontal bar, sorted)\n  Plot 3: Delay rate by day of week\nUnder each plot, write 1 sentence: what's the strongest signal you see? Compare to your Day 1 guess — were you right?"
+              "title": "EDA — three charts",
+              "body": "Make a new notebook '04-eda'.\n\nCELL 1 — Load + setup.\n      import pandas as pd\n      import matplotlib.pyplot as plt\n      df = pd.read_csv('data/clean.csv')\n\nCELL 2 — Delay rate by hour of day.\n      by_hour = df.groupby('dep_hour')['delayed'].mean() * 100\n      by_hour.plot(kind='bar', figsize=(12, 5), title='% Delayed by hour of day')\n      plt.ylabel('% delayed')\n      plt.tight_layout()\n      plt.savefig('delays_by_hour.png')\n      plt.show()\n  Write under the chart (markdown cell): which hour has the most delays?\n\nCELL 3 — Delay rate by airline (top 10).\n      by_airline = df.groupby('AIRLINE')['delayed'].mean().sort_values(ascending=False) * 100\n      by_airline.head(10).plot(kind='barh', figsize=(10, 6), title='% Delayed by airline (worst 10)')\n      plt.xlabel('% delayed')\n      plt.tight_layout()\n      plt.savefig('delays_by_airline.png')\n      plt.show()\n\nCELL 4 — Delay rate by day of week.\n      by_dow = df.groupby('DAY_OF_WEEK')['delayed'].mean() * 100\n      by_dow.plot(kind='bar', figsize=(8, 5), title='% Delayed by day of week (1=Mon, 7=Sun)')\n      plt.ylabel('% delayed')\n      plt.tight_layout()\n      plt.savefig('delays_by_dow.png')\n      plt.show()\n\nCompare your guess from Day 1 to what you see. Were you right?"
             }
           ]
         },
         {
           "number": 6,
           "title": "Train your first model",
-          "summary": "Logistic regression baseline. Don't tune yet. Just get a number.",
+          "summary": "Today you train a model. Two lines of code. It is shockingly simple.",
           "items": [
             {
               "kind": "video",
-              "title": "scikit-learn beginner tutorial",
-              "url": "https://www.youtube.com/results?search_query=scikit-learn+tutorial+beginner+logistic+regression",
-              "duration_min": 25,
+              "title": "Logistic Regression for beginners (15 min)",
+              "url": "https://www.youtube.com/results?search_query=logistic+regression+scikit-learn+beginner+tutorial",
+              "duration_min": 15,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Baseline model",
-              "body": "In `05_model.ipynb`:\n  1. Load `data/clean.parquet`\n  2. One-hot encode CARRIER, ORIGIN, DEST (use `pd.get_dummies` — TOP 20      airports + carriers only, group the rest as 'OTHER' to keep dimensionality      sane)\n  3. `train_test_split(X, y, test_size=0.2, random_state=42)`\n  4. Train `LogisticRegression(max_iter=1000, class_weight='balanced')`\n  5. Evaluate: `classification_report(y_test, model.predict(X_test))`\n  6. Print the confusion matrix\nSave the model: `joblib.dump(model, 'model.pkl')`. Commit `model.pkl` (it should be < 5MB)."
+              "title": "Train and evaluate",
+              "body": "Make a new notebook '05-model'.\n\nCELL 1 — Load.\n      import pandas as pd\n      from sklearn.model_selection import train_test_split\n      from sklearn.linear_model import LogisticRegression\n      from sklearn.metrics import classification_report\n      import joblib\n      df = pd.read_csv('data/clean.csv')\n\nCELL 2 — One-hot encode the text columns.\n      # Keep top 20 airlines and airports so the model isn't huge\n      top_airlines = df['AIRLINE'].value_counts().head(20).index\n      df['AIRLINE'] = df['AIRLINE'].where(df['AIRLINE'].isin(top_airlines), 'OTHER')\n      top_origins = df['ORIGIN'].value_counts().head(20).index\n      df['ORIGIN'] = df['ORIGIN'].where(df['ORIGIN'].isin(top_origins), 'OTHER')\n      top_dests = df['DEST'].value_counts().head(20).index\n      df['DEST'] = df['DEST'].where(df['DEST'].isin(top_dests), 'OTHER')\n      X = pd.get_dummies(df.drop(columns=['delayed', 'CRS_DEP_TIME']), drop_first=True)\n      y = df['delayed']\n\nCELL 3 — Split into train and test.\n      X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n      print('Train rows:', len(X_train), 'Test rows:', len(X_test))\n\nCELL 4 — Train.\n      model = LogisticRegression(max_iter=1000, class_weight='balanced')\n      model.fit(X_train, y_train)\n      print('Trained!')\n  This takes about 30 seconds.\n\nCELL 5 — Test it.\n      preds = model.predict(X_test)\n      print(classification_report(y_test, preds))\n  YOU SHOULD SEE: a table with precision, recall, f1 for class 0 and class 1.\n  Recall for class 1 (delayed) should be around 0.50-0.60.\n\nCELL 6 — Save the model.\n      joblib.dump(model, 'model.pkl')\n      joblib.dump(X.columns.tolist(), 'features.pkl')\n      print('Saved model.pkl and features.pkl')"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship FlightWise v0.1 + README",
-          "summary": "A notebook nobody can run is a sketch. Make it runnable.",
+          "title": "Ship FlightWise v0.1 to GitHub",
+          "summary": "Today you push the whole project online.",
           "items": [
             {
+              "kind": "reading",
+              "title": "GitHub — sign up (free)",
+              "url": "https://github.com/signup",
+              "why": "Click 'Open' if you don't have an account."
+            },
+            {
+              "kind": "reading",
+              "title": "GitHub — create new repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: flightwise. Public."
+            },
+            {
               "kind": "exercise",
-              "title": "Final acceptance — FlightWise v0.1",
-              "body": "Pass criteria:\n  □ 5 notebooks: 01_setup, 02_load, 03_clean, 04_eda, 05_model — all run     top to bottom without errors\n  □ Recall on the 'delayed' class is ≥ 50% (use `class_weight='balanced'` to     get there — naive accuracy is misleading)\n  □ `model.pkl` committed\n  □ README has: project description, dataset source link, how to download     data, how to run notebooks in order, your test set performance, a     'What's next' section listing Weeks 2-6 plans\n  □ `requirements.txt` committed (use `pip freeze > requirements.txt`)\n  □ A 1-paragraph 'Honest verdict' in the README: would you trust this model     to make a real decision? Why or why not?\n\nTag the release v0.1."
+              "title": "Push and document",
+              "body": "STEP 1 — Write a README.md in the flightwise folder.\n  Use VS Code or any text editor:\n\n      # FlightWise v0.1\n      A binary classifier predicting whether a US flight will be delayed by 15+ minutes.\n      Trained on Kaggle's Flight Delay 2019-2023 dataset.\n      \n      ## Notebooks\n      1. 01-setup — verify environment\n      2. 02-load — load the raw CSV\n      3. 03-clean — pick columns, create target, save clean.csv\n      4. 04-eda — three charts of what predicts delay\n      5. 05-model — train a logistic regression baseline\n      \n      ## Result\n      Recall on delayed flights: ~55%\n      Model size: ~50KB (model.pkl)\n      \n      ## Honest verdict\n      Good enough to be useful (better than 50/50 guess). Not good enough to deploy.\n      Next week: feature engineering, tree models, hyperparameter tuning.\n\nSTEP 2 — Save a requirements.txt.\n  In the terminal:\n      pip freeze > requirements.txt\n\nSTEP 3 — Make .gitignore.\n  New file. Two lines:\n      data/\n      .ipynb_checkpoints/\n\nSTEP 4 — Make the repo and push.\n  Open the 'create new repository' card, name it flightwise, public, click Create.\n  In your terminal:\n      git init\n      git add .\n      git commit -m \"FlightWise v0.1 — baseline flight delay classifier\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/flightwise.git\n      git push -u origin main\n\nPASS CRITERIA — FlightWise v0.1 ships when:\n  ☐ 5 notebooks run top to bottom without errors\n  ☐ Recall for class 1 (delayed) is at least 50% in the classification_report\n  ☐ model.pkl is committed (it should be under 5MB)\n  ☐ README explains what the project does and how it scored\n  ☐ requirements.txt is committed\n  ☐ The data/ folder is in .gitignore (CSV is too big for git)"
             },
             {
               "kind": "reflection",
-              "title": "The 6-week arc",
-              "body": "Week 1: baseline. Week 2: feature engineering + cross-validation. Week 3: XGBoost + LightGBM. Week 4: hyperparameter tuning with Optuna. Week 5: Flask API + Docker. Week 6: deployed to Render or Fly.io with a public URL. Project 1 done."
+              "title": "What surprised you?",
+              "body": "Write 2 sentences in notes.txt:\n1. What was the strongest predictor of delay you saw?\n2. Did your model do better or worse than you expected?"
             }
           ]
         }
       ],
       "topics": [
-        "Anaconda / venv + jupyter workflow",
-        "pandas — read_csv, dropna, get_dummies, parquet",
-        "Defining binary classification targets",
-        "Class imbalance — class_weight='balanced'",
-        "train_test_split with random_state",
-        "Logistic regression baselines",
-        "classification_report (precision, recall, F1) — why accuracy lies"
+        "Anaconda + Jupyter setup",
+        "Loading CSV data with pandas",
+        "Binary classification targets",
+        "Dropping nulls + selecting columns",
+        "EDA: groupby + bar charts",
+        "One-hot encoding (pd.get_dummies)",
+        "Train/test split",
+        "Logistic regression with class_weight='balanced'",
+        "Evaluating with classification_report"
       ],
       "tasks": [
-        "Set up Python data stack + create `flightwise` repo",
-        "Download BTS On-Time 2023 CSV from Kaggle",
-        "Clean: define target (ARR_DELAY > 15), pick 7 features, save clean parquet",
-        "Run EDA — plot delay rate by hour, carrier, day-of-week",
-        "Train a LogisticRegression baseline with class_weight='balanced'",
-        "Evaluate with classification_report — recall on 'delayed' ≥ 50%",
-        "Polish 5 notebooks + README + requirements.txt, tag v0.1"
+        "Install Anaconda + open Jupyter",
+        "Sign up for Kaggle + download the flight delay CSV",
+        "Clean: drop missing, make target, pick 7 features",
+        "EDA: 3 bar charts of delay rate by hour, airline, day-of-week",
+        "Train a LogisticRegression baseline",
+        "Get recall ≥ 50% on the 'delayed' class",
+        "Push everything to GitHub with README"
       ],
-      "project": "FlightWise v0.1 — a binary classifier predicting if a US domestic flight will be delayed > 15 min. Specific dataset: BTS On-Time 2023 (Kaggle mirror). Specific features: carrier, origin, dest, scheduled departure hour, day of week, month, distance. Specific model: balanced LogisticRegression baseline. Specific target: recall ≥ 50% on the 'delayed' class. Repo: `flightwise` on GitHub. 5 numbered notebooks + model.pkl + README. Tagged v0.1.",
+      "project": "FlightWise v0.1 — a logistic-regression model that predicts if a US flight will be 15+ minutes late. Trained on Kaggle's 2019-2023 flight delay dataset (~3M rows). 5 notebooks + saved model + README. Recall on delayed flights ≥ 50%. Public GitHub repo named flightwise.",
       "exercises": [
-        "Plot a baseline 'always predict on-time' classifier — what's its accuracy? Its recall?",
-        "Re-train without `class_weight='balanced'` — what changes? Why is balanced fairer here?",
-        "Drop CARRIER from features. Does accuracy fall? Why or why not?",
-        "Save your X_test predictions to CSV. Open in Excel. Hunt for patterns in the misclassifications."
+        "Train without class_weight='balanced' — what happens to recall?",
+        "Drop AIRLINE from features and retrain. Does accuracy fall? Why?",
+        "Predict on a single hand-crafted flight: 7am, Monday, AA, JFK → LAX",
+        "Find one test row where the model was very wrong and look at why"
       ],
       "questions": [
-        "Why is accuracy a misleading metric for this problem?",
-        "If your model predicts 'delayed' for every flight, what's its recall? Its precision?",
-        "Which feature do you suspect leaks information (data leakage risk)?",
-        "If American Airlines uses your model to decide which flights to overbook, what could go wrong?"
+        "Why is accuracy a bad metric for this problem?",
+        "What's the difference between precision and recall?",
+        "Why do we one-hot encode AIRLINE instead of using the text directly?",
+        "If American Airlines used your model to overbook flights, what could go wrong?"
       ],
       "outputs": [
-        "`flightwise` GitHub repo with 5 notebooks + model.pkl + README + requirements.txt",
-        "Recall on 'delayed' class ≥ 50% (documented in README)",
-        "EDA plots committed in `figures/`",
-        "v0.1 git tag"
+        "Public GitHub repo named flightwise",
+        "5 notebooks committed",
+        "model.pkl + features.pkl",
+        "README with the result and honest verdict"
       ]
     },
     {

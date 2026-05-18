@@ -35,64 +35,12 @@
           "note": "Free SSL certificates"
         }
       ],
-      "context": "You're building Edge Portfolio — a 1-page personal portfolio served from AWS S3 + CloudFront, provisioned ENTIRELY with Terraform. No console clicks for the infra. Why this? It's the smallest piece of real production cloud infra: storage + a CDN + IAM. Total cost: under $1/month. Tagged v0.1 by Sunday. Weeks 2-5 add HTTPS via ACM + a custom domain + GitHub Actions CI/CD.",
+      "context": "This week you are going to deploy your own personal portfolio page to AWS — Amazon's cloud — using a tool called Terraform. By Sunday it will be live at a real URL, served from data centers around the world, costing less than $1/month. If you have never touched the cloud before, that is fine. Every command is given.",
       "days": [
         {
           "number": 1,
-          "title": "The shell — every cloud server is a Linux box",
-          "summary": "Get comfortable in terminal. Today is just shell.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Linux for hackers — NetworkChuck Ep 1",
-              "url": "https://www.youtube.com/results?search_query=networkchuck+linux+for+hackers+ep+1",
-              "duration_min": 30,
-              "creator": "NetworkChuck",
-              "why": ""
-            },
-            {
-              "kind": "exercise",
-              "title": "Set up your shell",
-              "body": "Windows → install WSL2 + Ubuntu (Microsoft has a guide). Mac → just open Terminal. Linux → you're set.\nRun and verify: `uname -a`, `whoami`, `pwd`, `ls -la`, `cat /etc/os-release`. Take a screenshot, save as `screenshots/01-shell.png` for your README."
-            }
-          ]
-        },
-        {
-          "number": 2,
-          "title": "Git the right way (branches, PRs)",
-          "summary": "Not a backup tool. The team's shipping protocol.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Git + GitHub for beginners — freeCodeCamp",
-              "url": "https://www.youtube.com/results?search_query=git+github+crash+course+freecodecamp",
-              "duration_min": 45,
-              "creator": "freeCodeCamp",
-              "why": ""
-            },
-            {
-              "kind": "exercise",
-              "title": "PR workflow",
-              "body": "Create GitHub repo `edge-portfolio`. Clone locally. On main, create README.md. Create branch `feature/index-html`. Create `index.html` (we'll write it tomorrow). Push the branch. Open a Pull Request on GitHub. Merge it yourself after reviewing. This is the workflow you'll use forever."
-            }
-          ]
-        },
-        {
-          "number": 3,
-          "title": "Write the portfolio HTML",
-          "summary": "The actual content you'll be serving — write it now.",
-          "items": [
-            {
-              "kind": "exercise",
-              "title": "Build index.html",
-              "body": "Single-file HTML. Sections required:\n  - Hero: 'Your Name — DevOps Engineer in training'\n  - About: 2-paragraph blurb about why you're learning DevOps\n  - Projects: empty `<ul>` (you'll fill this over 24 weeks)\n  - Contact: GitHub link + email link\nInline CSS (no separate file yet — this isn't web week). Make it readable and not ugly. Commit `index.html` on the feature branch, merge PR."
-            }
-          ]
-        },
-        {
-          "number": 4,
-          "title": "AWS account safety net",
-          "summary": "Before you spin up resources, set the bill alarm.",
+          "title": "What is the cloud?",
+          "summary": "Watch and write today.",
           "items": [
             {
               "kind": "video",
@@ -104,121 +52,168 @@
             },
             {
               "kind": "video",
-              "title": "AWS Free Tier — set up safely with MFA + billing alerts",
-              "url": "https://www.youtube.com/results?search_query=aws+free+tier+mfa+billing+alarm+2024",
-              "duration_min": 20,
-              "creator": "various",
-              "why": ""
-            },
-            {
-              "kind": "exercise",
-              "title": "AWS account hygiene",
-              "body": "1. Create AWS account at aws.amazon.com (real credit card needed; Free Tier costs $0)\n2. Enable MFA on the root user (Authenticator app)\n3. Set CloudWatch billing alarm at $5 — if your bill ever hits $5, you get an email\n4. Create an IAM user `forge-dev` with `AdministratorAccess`. Generate access keys for it. Save the keys in a password manager.\n5. Run `aws configure` locally — use the IAM user keys, region `us-east-1`. Test: `aws sts get-caller-identity` should return your IAM user ARN.\nFrom here on you NEVER log in as root."
-            }
-          ]
-        },
-        {
-          "number": 5,
-          "title": "Terraform — the IaC language",
-          "summary": "Click-ops dies on day 30. Code it.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Terraform in 100 Seconds — Fireship",
+              "title": "What is Terraform? — 100 seconds",
               "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
               "duration_min": 2,
               "creator": "Fireship",
               "why": ""
             },
             {
+              "kind": "reflection",
+              "title": "Why infrastructure-as-code?",
+              "body": "In notes.txt write 2 sentences:\n1. What does 'infrastructure as code' mean in your own words?\n2. Why is clicking around the AWS website a bad way to manage real infrastructure?"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Set up a working shell + write your portfolio HTML",
+          "summary": "Today we get the terminal ready and write the page we will host.",
+          "items": [
+            {
               "kind": "video",
-              "title": "Terraform AWS beginner project",
-              "url": "https://www.youtube.com/results?search_query=terraform+aws+first+project+beginner+2024",
-              "duration_min": 30,
+              "title": "Linux terminal for beginners",
+              "url": "https://www.youtube.com/results?search_query=linux+terminal+beginner+crash+course",
+              "duration_min": 20,
               "creator": "various",
-              "why": ""
+              "why": "Pick the one for your OS."
             },
             {
               "kind": "exercise",
-              "title": "First .tf file",
-              "body": "Install Terraform (terraform.io/downloads). Verify: `terraform version`.\nIn `edge-portfolio/infra/main.tf`:\n\n  terraform {\n    required_providers {\n      aws = { source = \"hashicorp/aws\", version = \"~> 5.0\" }\n    }\n  }\n  provider \"aws\" { region = \"us-east-1\" }\n  resource \"aws_s3_bucket\" \"portfolio\" {\n    bucket = \"yourname-edge-portfolio-2026\"  # must be globally unique\n  }\n\nRun `terraform init`, then `terraform plan`, then `terraform apply`. Verify in AWS console that the bucket exists. Commit `main.tf` (NOT .terraform/, NOT .tfstate — gitignore both)."
+              "title": "Shell + HTML",
+              "body": "STEP 1 — Make sure you have a working terminal.\n  WINDOWS: install WSL2 (Microsoft has an official guide at learn.microsoft.com/wsl).\n  MAC: open Terminal.app.\n  LINUX: you're set.\n\nSTEP 2 — Practice basic commands.\n      pwd       (where am I?)\n      ls        (what's here?)\n      cd Desktop\n      mkdir edge-portfolio\n      cd edge-portfolio\n\nSTEP 3 — Write index.html.\n  In VS Code, File → Open Folder → edge-portfolio.\n  New file: index.html. Type:\n\n      <!DOCTYPE html>\n      <html lang='en'>\n      <head>\n        <meta charset='utf-8'>\n        <title>YOUR NAME — DevOps Engineer</title>\n        <style>\n          body { font-family: system-ui; max-width: 700px; margin: 4rem auto; padding: 0 1.5rem; color: #1a1a1a; }\n          h1 { font-size: 2.5rem; }\n          .tag { color: #b87333; font-family: monospace; }\n          ul { list-style: none; padding: 0; }\n          li { padding: 0.5rem 0; border-bottom: 1px dashed #ccc; }\n          a { color: #b87333; }\n        </style>\n      </head>\n      <body>\n        <h1>YOUR NAME</h1>\n        <p class='tag'>DevOps engineer in training</p>\n        <p>I'm learning to ship real production infrastructure on AWS.</p>\n        <h2>Projects</h2>\n        <ul><li>Edge Portfolio (this page)</li></ul>\n        <h2>Contact</h2>\n        <p><a href='mailto:you@example.com'>you@example.com</a></p>\n      </body>\n      </html>\n\n  Replace YOUR NAME with your real name. Save."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Sign up for AWS (safely)",
+          "summary": "Today we get an AWS account ready. Important: do this carefully so you don't get billed.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "AWS — sign up (free tier)",
+              "url": "https://portal.aws.amazon.com/billing/signup",
+              "why": "Click 'Open'. You'll need a credit card BUT we will only use the free tier — total cost this month is under $1."
+            },
+            {
+              "kind": "video",
+              "title": "How to set up AWS Free Tier safely (15 min)",
+              "url": "https://www.youtube.com/results?search_query=aws+free+tier+setup+billing+alarm+mfa+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": "Watch the WHOLE video before signing up. Important."
+            },
+            {
+              "kind": "exercise",
+              "title": "Safe AWS setup",
+              "body": "STEP 1 — Sign up.\n  Open the AWS signup card. Use a real email + real card. Pick 'Basic Support — Free'.\n\nSTEP 2 — Turn on MFA (multi-factor auth) on the root user.\n  In AWS console, click your name (top right) → Security credentials → MFA → Add.\n  Use an authenticator app (Google Authenticator or Authy).\n\nSTEP 3 — Set a billing alarm at $5.\n  In console search bar, type 'CloudWatch' → Alarms → Create alarm → Billing → Total Estimated Charge → set threshold $5 → notify your email.\n  Now if your bill ever hits $5 you get an email.\n\nSTEP 4 — Create an IAM user for daily use (NEVER use root again).\n  In console search bar: 'IAM' → Users → Create user.\n  Username: forge-dev. Attach policy: AdministratorAccess.\n  After creating, click the user → Security credentials → Create access key → 'Command line interface' → save the Access Key ID + Secret Access Key in a password manager.\n\nSTEP 5 — Install AWS CLI.\n  Mac: brew install awscli\n  Win: download from https://aws.amazon.com/cli/\n  Linux: sudo apt install awscli\n  Then: aws configure\n  Paste your Access Key + Secret. Region: us-east-1. Output: json.\n\nSTEP 6 — Verify.\n      aws sts get-caller-identity\n  YOU SHOULD SEE: your IAM user ARN (not root)."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Install Terraform",
+          "summary": "Today we install Terraform and write our first .tf file.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Terraform download (official)",
+              "url": "https://developer.hashicorp.com/terraform/install",
+              "why": "Click 'Open' to download. Pick your OS."
+            },
+            {
+              "kind": "exercise",
+              "title": "First Terraform resource",
+              "body": "STEP 1 — Install Terraform.\n  Mac: brew install terraform\n  Win: download zip, unzip, add to PATH (or use Chocolatey)\n  Linux: follow the official Linux instructions\n  Verify: terraform version → should print 1.x.x.\n\nSTEP 2 — Make an infra folder.\n      cd Desktop/edge-portfolio\n      mkdir infra\n      cd infra\n\nSTEP 3 — Write your first main.tf.\n  In VS Code, new file: edge-portfolio/infra/main.tf. Type:\n\n      terraform {\n        required_providers {\n          aws = { source = \"hashicorp/aws\", version = \"~> 5.0\" }\n        }\n      }\n      provider \"aws\" {\n        region = \"us-east-1\"\n      }\n      resource \"aws_s3_bucket\" \"portfolio\" {\n        bucket = \"YOUR-NAME-edge-portfolio-2026\"\n      }\n\n  Replace YOUR-NAME with your real name (lowercase, no spaces). S3 bucket names are GLOBALLY unique — yours must not exist anywhere.\n\nSTEP 4 — Run Terraform.\n      terraform init\n  YOU SHOULD SEE: 'Terraform has been successfully initialized!'\n      terraform plan\n  YOU SHOULD SEE: 'Plan: 1 to add, 0 to change, 0 to destroy.'\n      terraform apply\n  Type 'yes' when asked.\n  YOU SHOULD SEE: 'Apply complete! Resources: 1 added'\n\nSTEP 5 — Verify in AWS.\n  In the AWS console, search 'S3'. You see your bucket. Your first cloud resource."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Add CloudFront in front of S3",
+          "summary": "Today we add a CDN so your site loads fast from anywhere in the world.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Full Terraform: S3 + CloudFront",
+              "body": "STEP 1 — Open main.tf. Replace the entire file with this:\n\n      terraform {\n        required_providers { aws = { source = \"hashicorp/aws\", version = \"~> 5.0\" } }\n      }\n      provider \"aws\" { region = \"us-east-1\" }\n\n      resource \"aws_s3_bucket\" \"portfolio\" {\n        bucket = \"YOUR-NAME-edge-portfolio-2026\"\n      }\n\n      resource \"aws_cloudfront_origin_access_identity\" \"oai\" {\n        comment = \"OAI for edge-portfolio\"\n      }\n\n      data \"aws_iam_policy_document\" \"s3_policy\" {\n        statement {\n          actions   = [\"s3:GetObject\"]\n          resources = [\"${aws_s3_bucket.portfolio.arn}/*\"]\n          principals {\n            type        = \"AWS\"\n            identifiers = [aws_cloudfront_origin_access_identity.oai.iam_arn]\n          }\n        }\n      }\n\n      resource \"aws_s3_bucket_policy\" \"portfolio\" {\n        bucket = aws_s3_bucket.portfolio.id\n        policy = data.aws_iam_policy_document.s3_policy.json\n      }\n\n      resource \"aws_cloudfront_distribution\" \"portfolio\" {\n        enabled             = true\n        default_root_object = \"index.html\"\n        origin {\n          domain_name = aws_s3_bucket.portfolio.bucket_regional_domain_name\n          origin_id   = \"s3-portfolio\"\n          s3_origin_config {\n            origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path\n          }\n        }\n        default_cache_behavior {\n          target_origin_id       = \"s3-portfolio\"\n          viewer_protocol_policy = \"redirect-to-https\"\n          allowed_methods        = [\"GET\", \"HEAD\"]\n          cached_methods         = [\"GET\", \"HEAD\"]\n          forwarded_values { query_string = false; cookies { forward = \"none\" } }\n        }\n        restrictions { geo_restriction { restriction_type = \"none\" } }\n        viewer_certificate { cloudfront_default_certificate = true }\n      }\n\n      output \"cloudfront_url\" {\n        value = \"https://${aws_cloudfront_distribution.portfolio.domain_name}\"\n      }\n\n  Replace YOUR-NAME with your name (same as before).\n\nSTEP 2 — Apply.\n      terraform apply\n  Type 'yes'. CloudFront takes 5-10 minutes to deploy globally.\n  YOU SHOULD SEE at the end: cloudfront_url = \"https://xxxxxxxx.cloudfront.net\"\n\nSTEP 3 — Upload index.html.\n      aws s3 cp ../index.html s3://YOUR-NAME-edge-portfolio-2026/\n  YOU SHOULD SEE: 'upload: ../index.html to s3://...'\n\nSTEP 4 — Visit your CloudFront URL.\n  Wait 5 minutes for CloudFront to fully deploy. Then open the URL.\n  YOU SHOULD SEE: your portfolio page, served over HTTPS, from a global CDN."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Static hosting + CloudFront via Terraform",
-          "summary": "Now wire S3 + CloudFront together as code.",
+          "title": "Push to GitHub",
+          "summary": "Today the .tf code itself becomes the portfolio piece.",
           "items": [
             {
-              "kind": "video",
-              "title": "S3 + CloudFront static hosting — Terraform",
-              "url": "https://www.youtube.com/results?search_query=terraform+s3+cloudfront+static+website+tutorial",
-              "duration_min": 35,
-              "creator": "various",
-              "why": ""
+              "kind": "reading",
+              "title": "GitHub — create new repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: edge-portfolio. Public."
             },
             {
               "kind": "exercise",
-              "title": "Full stack as code",
-              "body": "Extend `infra/main.tf` to add:\n  - `aws_s3_bucket_website_configuration` pointing to index.html\n  - `aws_s3_bucket_public_access_block` (configured properly — see ref tutorial)\n  - `aws_cloudfront_origin_access_identity` and bucket policy granting it read\n  - `aws_cloudfront_distribution` with the S3 bucket as origin, default root     object = index.html, viewer protocol = redirect-to-https\n  - `output \"url\"` printing the CloudFront domain name\nRun `terraform apply` again. Wait ~5 min for CloudFront to deploy globally.\nUpload `index.html` to the bucket manually for now: `aws s3 cp index.html s3://yourname-edge-portfolio-2026/`\nVisit the `xxx.cloudfront.net` URL — your portfolio is live, globally."
+              "title": "Push the IaC",
+              "body": "STEP 1 — Make a .gitignore in edge-portfolio/.\n  New file: .gitignore. Type:\n      .terraform/\n      *.tfstate\n      *.tfstate.backup\n      .terraform.lock.hcl\n\nSTEP 2 — Write a README.md.\n      # Edge Portfolio\n      My personal portfolio, deployed on AWS S3 + CloudFront, provisioned with Terraform.\n      \n      ## Live URL\n      https://xxxxxxxx.cloudfront.net  (paste yours)\n      \n      ## Cost\n      < $1 / month at free-tier S3 + CloudFront usage.\n      \n      ## How to deploy (someone forking this repo)\n      1. Install AWS CLI + Terraform.\n      2. Configure AWS: aws configure\n      3. Edit infra/main.tf — change the bucket name to something unique.\n      4. cd infra && terraform init && terraform apply\n      5. aws s3 cp ../index.html s3://YOUR-BUCKET/\n      6. Wait 5 min for CloudFront. Visit the URL from terraform output.\n\nSTEP 3 — Push.\n  Open the 'create new repository' card. Name: edge-portfolio. Public. Create.\n  In your terminal:\n      cd Desktop/edge-portfolio\n      git init\n      git add .\n      git commit -m \"Edge Portfolio v0.1 — IaC for S3 + CloudFront\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/edge-portfolio.git\n      git push -u origin main"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship Edge Portfolio v0.1",
-          "summary": "Documented, reproducible, under $1/month.",
+          "title": "Test the destroy + redeploy",
+          "summary": "Today you test what real engineers test: can you wipe and rebuild from scratch?",
           "items": [
             {
               "kind": "exercise",
-              "title": "Final acceptance",
-              "body": "□ `infra/main.tf` provisions S3 + CloudFront + OAI + bucket policy from scratch\n□ `terraform apply` works on a clean clone (someone could fork your repo and     deploy a copy of your portfolio)\n□ Your CloudFront URL serves your portfolio over HTTPS\n□ `terraform destroy` cleanly removes everything (test it — then re-apply)\n□ README contains: live URL, architecture diagram (use draw.io or excalidraw     — even a hand sketch photo works), Terraform install + apply instructions,     monthly cost estimate (it should say < $1), 'Weeks 2-5 roadmap'\n□ `.gitignore` excludes .terraform/, *.tfstate, *.tfvars\n□ Tag v0.1 + push"
+              "title": "Destroy and redeploy",
+              "body": "STEP 1 — Take down everything.\n      cd Desktop/edge-portfolio/infra\n      terraform destroy\n  Type 'yes'. All AWS resources are deleted.\n\nSTEP 2 — Verify the site is GONE.\n  Visit your CloudFront URL — it should now error.\n\nSTEP 3 — Rebuild from scratch.\n      terraform apply\n  Type 'yes'. Wait 10 minutes for CloudFront.\n  Re-upload index.html: aws s3 cp ../index.html s3://YOUR-BUCKET/\n\nSTEP 4 — Site is BACK.\n  Open the new CloudFront URL (it changed!). Update your README with the new URL.\n  Push the README update:\n      git add README.md && git commit -m \"Update CloudFront URL after redeploy\" && git push\n\nPASS CRITERIA — Edge Portfolio v0.1 ships when:\n  ☐ main.tf creates S3 + CloudFront + OAI + bucket policy\n  ☐ Live CloudFront URL serves your portfolio over HTTPS\n  ☐ terraform destroy + terraform apply works clean (reproducible)\n  ☐ Public GitHub repo named edge-portfolio\n  ☐ README has the live URL + how-to-fork instructions\n  ☐ .gitignore excludes .terraform/ and *.tfstate"
             },
             {
               "kind": "reflection",
               "title": "What you skipped",
-              "body": "Your site doesn't yet have: HTTPS on a custom domain, automated deploy via CI, monitoring, backups. List 3 of those as Week 2 work. They're all 1-day each."
+              "body": "List 3 things a real production portfolio needs that yours doesn't yet:\n1. ...\n2. ...\n3. ...\nThese become next week's work."
             }
           ]
         }
       ],
       "topics": [
-        "Linux shell basics — file ops, processes, env vars",
-        "Git branches + Pull Requests",
+        "Linux shell basics",
+        "Git PR workflow",
         "AWS account hygiene — MFA, IAM, billing alarms",
-        "AWS CLI install + configuration",
-        "Terraform syntax: provider, resource, output, variable",
+        "AWS CLI installation + configuration",
+        "Terraform: provider, resource, output",
         "S3 buckets + bucket policies",
-        "CloudFront + Origin Access Identity"
+        "CloudFront + Origin Access Identity",
+        "terraform destroy + reproducibility"
       ],
       "tasks": [
-        "Set up a working Linux shell (WSL on Win, Terminal on Mac, native on Linux)",
-        "Practice the git PR workflow on your own repo",
-        "Write a 4-section portfolio index.html (you'll grow it over 24 weeks)",
-        "Create AWS account with MFA + $5 billing alarm + IAM dev user",
-        "Write Terraform that creates an S3 bucket",
-        "Extend Terraform to also create CloudFront + bucket policy + OAI",
-        "Verify the CloudFront URL serves your portfolio over HTTPS"
+        "Get a working terminal (WSL on Win, Terminal on Mac)",
+        "Write a portfolio index.html",
+        "Sign up for AWS + set MFA + billing alarm + create IAM user",
+        "Install Terraform + create your first .tf file",
+        "Write S3 + CloudFront + OAI + bucket policy in Terraform",
+        "Deploy + upload index.html + verify it loads",
+        "Push to GitHub + test destroy/redeploy cycle"
       ],
-      "project": "Edge Portfolio v0.1 — your personal portfolio page (HTML) deployed to AWS S3 + CloudFront, provisioned end-to-end with Terraform. The .tf code IS the deliverable. `terraform apply` from a clean clone of your repo deploys a working portfolio. Monthly cost < $1. Repo: `edge-portfolio` on GitHub, tagged v0.1.",
+      "project": "Edge Portfolio v0.1 — your personal portfolio served from AWS S3 + CloudFront, provisioned entirely by Terraform. Live HTTPS URL. Public GitHub repo named edge-portfolio with the .tf code. Cost under $1/month. Verified reproducible by destroying + reapplying from a clean checkout.",
       "exercises": [
-        "Run `terraform plan` after manually changing a CloudFront setting in the console — what diff appears?",
-        "Add a Terraform variable `bucket_name` so the name isn't hardcoded",
-        "Add an S3 versioning resource — upload a new index.html, then roll back to the old one",
-        "Compare cost: S3+CloudFront vs Netlify free tier vs Vercel free tier — when does each win?"
+        "Add a Terraform variable bucket_name so it's not hardcoded",
+        "Add S3 versioning. Upload index.html twice. Roll back to v1.",
+        "Add an aws_cloudfront_function for a 301 redirect from / to /index.html",
+        "Compare S3+CloudFront cost vs Netlify free tier — write 2 sentences in README"
       ],
       "questions": [
         "Why put CloudFront in front of S3 — why not just S3?",
-        "What does Origin Access Identity prevent that public bucket access doesn't?",
-        "What's the difference between `terraform apply` and `terraform import`?",
-        "If you accidentally `terraform destroy` in production, what's the recovery plan?"
+        "What does Origin Access Identity prevent?",
+        "What's the difference between terraform apply and terraform import?",
+        "If terraform destroy ran in production tomorrow, what's your recovery plan?"
       ],
       "outputs": [
         "Live CloudFront URL serving your portfolio",
-        "`edge-portfolio` GitHub repo tagged v0.1",
-        "Architecture diagram + README + cost estimate",
-        "`terraform apply` output committed as `apply-log.txt`"
+        "Public GitHub repo named edge-portfolio",
+        "main.tf in infra/ folder",
+        "README with live URL + fork instructions"
       ]
     },
     {

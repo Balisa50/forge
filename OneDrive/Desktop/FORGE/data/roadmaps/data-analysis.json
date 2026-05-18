@@ -35,16 +35,16 @@
           "note": "Reference"
         }
       ],
-      "context": "You're analyzing Sample Superstore — the canonical dataset every BI analyst learns on. It's a fictional retailer's 4 years of orders across 3 segments and 17 sub-categories. By Sunday you ship a 1-page Excel/Sheets dashboard + a 1-page PDF memo answering 3 specific assigned questions. Why Superstore? Because it's universal — every analyst interview uses something like this. Tableau, Power BI, Excel, and Sheets all have it as a sample. Master it and the rest is variations.",
+      "context": "This week you are going to analyze Sample Superstore — the classic dataset every analyst learns on. It's 4 years of sales for a fictional retailer. By Sunday you'll have a 1-page Excel/Sheets dashboard plus a 1-page PDF memo answering 3 specific questions. If you have never used Excel formulas or pivot tables before, that is fine. Every step is shown.",
       "days": [
         {
           "number": 1,
-          "title": "What does an analyst actually do all day?",
-          "summary": "Pull numbers. Answer questions. Slay bad assumptions.",
+          "title": "What does a data analyst do?",
+          "summary": "Watch and think. No spreadsheet today.",
           "items": [
             {
               "kind": "video",
-              "title": "Day in the life of a Data Analyst",
+              "title": "Day in the life of a Data Analyst (12 min)",
               "url": "https://www.youtube.com/results?search_query=day+in+the+life+data+analyst+real+2024",
               "duration_min": 12,
               "creator": "various",
@@ -52,53 +52,53 @@
             },
             {
               "kind": "reflection",
-              "title": "The questions",
-              "body": "By Sunday you'll answer (with Sample Superstore data):\n  Q1. Which sub-category has the highest profit margin? Lowest?\n  Q2. Which region had the strongest year-over-year sales growth in the latest year?\n  Q3. Is the Furniture segment profitable overall? Where does its profit come from?"
+              "title": "The 3 questions",
+              "body": "By Sunday you'll answer these about Sample Superstore (a fake retailer):\n\nQ1. Which sub-category (Phones? Chairs? Tables?) has the highest profit MARGIN? Which has the lowest?\nQ2. Which region (West? East? Central? South?) grew sales the most year-over-year in the latest year?\nQ3. Is Furniture overall a profitable category? Where does its profit come from?\n\nWrite your guess for each in guesses.txt. Check on Day 6."
             }
           ]
         },
         {
           "number": 2,
           "title": "Get the Superstore data",
-          "summary": "Specific file. Specific URL. No hunting.",
+          "summary": "Today you download the file.",
           "items": [
             {
               "kind": "reading",
-              "title": "Sample Superstore — Excel download",
+              "title": "Sample Superstore — Tableau (free download)",
               "url": "https://community.tableau.com/s/question/0D54T00000CWeX8SAL/sample-superstore-sales-excelxls",
-              "why": "Or just search 'Sample Superstore xlsx' — it's everywhere."
+              "why": "Click 'Open' to download. If the page asks for a Tableau login, sign up — free. The file is 'Sample - Superstore.xls'."
             },
             {
               "kind": "exercise",
-              "title": "Open it up",
-              "body": "Download `Sample - Superstore.xls` (or .xlsx). Open in Excel or Google Sheets. Verify there are 3 sheets: Orders, Returns, People. Look at Orders — ~10,000 rows, columns like Order Date, Region, Segment, Category, Sub-Category, Sales, Profit, Discount."
+              "title": "Open and explore",
+              "body": "STEP 1 — Make the project folder.\n  Make a folder on your Desktop called 'superstore-analysis'.\n\nSTEP 2 — Download the file from the card above. Move it into the folder.\n\nSTEP 3 — Open it.\n  Right-click → Open with → Excel (or Google Sheets — upload via drive.google.com).\n\nSTEP 4 — Look at the sheets.\n  YOU SHOULD SEE 3 sheets at the bottom: Orders, Returns, People.\n  Click Orders. Scroll through. You see ~10,000 rows. Look at the columns: Order Date, Region, Segment, Category, Sub-Category, Sales, Quantity, Discount, Profit.\n\nSTEP 5 — Take a quick total.\n  In a new cell anywhere: =SUM(Orders!N:N)\n  (N is the Sales column — adjust the letter if yours is different.)\n  YOU SHOULD SEE: about $2.3 million in total Sales. That's the size of the dataset.\n\nSave the file. Done for today."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Excel/Sheets fundamentals — the 7 formulas",
-          "summary": "SUMIFS, COUNTIFS, AVERAGEIFS, XLOOKUP, IF, IFS, ROUND.",
+          "title": "Practice the 7 essential formulas",
+          "summary": "Today you learn the formulas every analyst uses daily.",
           "items": [
             {
               "kind": "video",
-              "title": "Excel essentials — Leila Gharani",
+              "title": "Excel essentials — Leila Gharani (45 min)",
               "url": "https://www.youtube.com/results?search_query=leila+gharani+excel+beginner+tutorial+2024",
               "duration_min": 45,
               "creator": "Leila Gharani",
-              "why": ""
+              "why": "The best Excel teacher on YouTube."
             },
             {
               "kind": "exercise",
-              "title": "Practice the 7",
-              "body": "On a fresh sheet next to Orders, compute:\n  - Total Sales of 2023: `=SUMIFS(Orders!Sales, Orders!OrderDate, \">=2023-01-01\", Orders!OrderDate, \"<=2023-12-31\")`\n  - Count of orders in 'West' region\n  - Average Discount given\n  - XLOOKUP a customer ID → customer name\nAdd 1 IF formula categorizing margin as 'Healthy' (>20%), 'Thin' (5-20%), 'Loss' (<5%) for each row."
+              "title": "Drill the formulas",
+              "body": "Make a new sheet in the same workbook called 'Drills'.\n\nSTEP 1 — In A1 type 'Total sales 2023:', in B1 type:\n      =SUMIFS(Orders!N:N, Orders!C:C, \">=2023-01-01\", Orders!C:C, \"<=2023-12-31\")\n  (Adjust column letters if yours are different. N=Sales, C=Order Date.)\n  YOU SHOULD SEE: ~$700k.\n\nSTEP 2 — In A2 type 'Orders in West:', in B2 type:\n      =COUNTIFS(Orders!I:I, \"West\")\n  (I = Region column)\n  YOU SHOULD SEE: ~3,000 orders.\n\nSTEP 3 — In A3 type 'Average discount:', in B3 type:\n      =AVERAGE(Orders!O:O)\n  (O = Discount)\n\nSTEP 4 — In A4 type 'XLOOKUP for customer CG-12520:', in B4 type:\n      =XLOOKUP(\"CG-12520\", Orders!E:E, Orders!F:F)\n  YOU SHOULD SEE: that customer's name.\n\nSTEP 5 — In A5 type 'High-margin orders:', in B5 type a header. Then in row 6+ for the first 100 rows, add a new column 'Margin Bucket' next to Profit. Use:\n      =IF(R2/N2 > 0.2, \"Healthy\", IF(R2/N2 > 0.05, \"Thin\", \"Loss\"))\n  (R = Profit, N = Sales)\n\nSave."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Pivot tables — the superpower",
-          "summary": "10000 rows → 1 insight in 30 seconds.",
+          "title": "Pivot table for Q1 (margin leaders)",
+          "summary": "Pivot tables — the most useful tool an analyst has.",
           "items": [
             {
               "kind": "video",
@@ -110,97 +110,94 @@
             },
             {
               "kind": "exercise",
-              "title": "Pivot for Q1",
-              "body": "Q1: Which sub-category has the highest / lowest profit MARGIN?\nBuild pivot:\n  Rows: Sub-Category\n  Values: SUM of Sales, SUM of Profit\n  Calculated field: Margin = Profit / Sales\n  Sort by Margin descending.\nHighest = ? Lowest = ? Document the answer in a notes file."
+              "title": "Build the margin pivot",
+              "body": "STEP 1 — Click anywhere in the Orders sheet.\n  Insert → PivotTable → New worksheet → OK.\n\nSTEP 2 — Build the pivot.\n  ROWS area: drag Sub-Category\n  VALUES area: drag Sales (Sum), drag Profit (Sum)\n  You should now see ~17 sub-categories with their Sales and Profit totals.\n\nSTEP 3 — Add Margin as a calculated field.\n  PivotTable Analyze tab → Fields, Items, & Sets → Calculated Field.\n  Name: Margin. Formula: = Profit / Sales\n  Click OK.\n\nSTEP 4 — Format Margin as a percentage.\n  Right-click any Margin number → Number Format → Percentage → 1 decimal → OK.\n\nSTEP 5 — Sort by Margin descending.\n  Click the dropdown next to 'Sub-Category' → More Sort Options → Sort by Margin → Largest to Smallest.\n\nSTEP 6 — Write the answer to Q1.\n  In a new cell: highest margin sub-category = ?\n  Lowest margin sub-category = ?\n  Save."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Answer Q2 — Region YoY growth",
-          "summary": "Compare years. Find the leader.",
+          "title": "Pivot for Q2 (regional growth)",
+          "summary": "Today: year-over-year growth by region.",
           "items": [
             {
               "kind": "exercise",
               "title": "Region YoY pivot",
-              "body": "Build pivot:\n  Rows: Region\n  Columns: YEAR(Order Date)  — group by year\n  Values: SUM of Sales\n  Add a column: latest year ÷ previous year - 1 (growth %)\nWhich region has highest growth in latest year? Document."
+              "body": "STEP 1 — New pivot from Orders → new sheet.\n\nSTEP 2 — Build it.\n  ROWS: Region\n  COLUMNS: Order Date — Excel will offer to group by Year. Accept.\n  VALUES: Sum of Sales\n  You see a 4x4 table: each region's sales for each year.\n\nSTEP 3 — Add a YoY growth column.\n  Outside the pivot (next column), for the latest year:\n      = (Sales latest year - Sales previous year) / Sales previous year\n  Format as percentage.\n\nSTEP 4 — Which region grew most? Write the answer to Q2 in a cell."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Answer Q3 — Furniture profitability deep-dive",
-          "summary": "Sometimes the answer is 'yes but barely, because of X'.",
+          "title": "Pivot for Q3 (Furniture profitability)",
+          "summary": "Is Furniture profitable? Drill in.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Furniture investigation",
-              "body": "Q3: Is Furniture profitable overall? Where does its profit come from?\nFilter to Category = Furniture. Pivot:\n  Rows: Sub-Category\n  Values: SUM of Profit\nYou'll see Tables loses money, Bookcases breaks even, Chairs makes profit, Furnishings is the heroine. Document with numbers. Now slice by Region — is Furniture more profitable in some regions?"
+              "title": "Furniture deep-dive",
+              "body": "STEP 1 — New pivot from Orders.\n  Filter: Category = Furniture\n  ROWS: Sub-Category\n  VALUES: Sum of Profit\n\nSTEP 2 — Look at the result.\n  YOU SHOULD SEE: Tables loses big money. Bookcases barely break even. Chairs make decent profit. Furnishings make the most.\n\nSTEP 3 — Add Region.\n  Drag Region to COLUMNS.\n  Now you see Furniture profit broken down by region AND sub-category.\n  Which region is best for Furniture? Worst?\n\nSTEP 4 — Write the answer to Q3.\n  Is Furniture overall profitable? (Add all the numbers — what's the total?)\n  Where does the profit come from?"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship — the 1-page dashboard + PDF memo",
-          "summary": "The deliverable that lands you the job.",
+          "title": "Build the dashboard + write the memo",
+          "summary": "Today you ship.",
           "items": [
             {
-              "kind": "video",
-              "title": "Build a 1-page dashboard in Excel/Sheets",
-              "url": "https://www.youtube.com/results?search_query=google+sheets+dashboard+one+page+tutorial",
-              "duration_min": 30,
-              "creator": "various",
-              "why": ""
+              "kind": "reading",
+              "title": "GitHub — create new repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: superstore-analysis. Public."
             },
             {
               "kind": "exercise",
-              "title": "Final acceptance — Superstore v0.1",
-              "body": "Build a single sheet called `Dashboard`:\n  - Title row\n  - 4 KPI cards: Total Sales (all years), Total Profit, Profit Margin,     Year-over-Year Sales Growth\n  - 1 chart: monthly sales trend (line chart)\n  - 1 chart: sales by region (bar chart)\n  - 1 table: top 5 / bottom 5 sub-categories by profit margin\n  - A date filter at top (works via slicer or named range)\nThen write a 1-page memo (Word/Google Doc), `Superstore-Memo.pdf`:\n  # Sample Superstore — What the data tells leadership\n  ## Headline\n  One sentence answer.\n  ## Q1: Margin leaders & laggards\n  Names + numbers + 1 recommendation.\n  ## Q2: Regional growth\n  Numbers + 1 recommendation.\n  ## Q3: Furniture profitability\n  Honest answer + 1 recommendation.\n  ## What I'd do next\n  3 bullets.\n\nPass criteria:\n  □ Dashboard sheet built with 4 KPIs + 3 charts + filter\n  □ Q1, Q2, Q3 all answered with specific numbers\n  □ PDF memo exported, formatted as 1-page\n  □ GitHub repo `superstore-analysis` with .xlsx + .pdf + screenshots of dashboard\n  □ README links the PDF + screenshots the dashboard\n  □ Tag v0.1"
+              "title": "Dashboard + Memo + Push",
+              "body": "STEP 1 — Make a new sheet called 'Dashboard'.\n\nSTEP 2 — Top row: 4 KPI cells.\n  Total Sales: =SUM(Orders!N:N)\n  Total Profit: =SUM(Orders!R:R)\n  Profit Margin: =SUM(Orders!R:R) / SUM(Orders!N:N) (format as %)\n  YoY Growth (latest year): use the formula from Day 5\n  Style: make each cell big — font 20, bold, with a colored border.\n\nSTEP 3 — Middle: 2 charts.\n  Chart 1: monthly sales trend (line). Source: a small pivot of Sales by month.\n  Chart 2: sales by region (bar). Source: pivot of Sales by Region.\n\nSTEP 4 — Bottom: top 5 / bottom 5 sub-categories by margin (paste from Day 4 pivot).\n\nSTEP 5 — Write the memo.\n  Open Word or Google Docs. Make a 1-page document. Use this exact structure:\n\n      # Sample Superstore — Memo to leadership\n      \n      ## Headline\n      (one sentence summarising everything)\n      \n      ## Q1. Margin leaders & laggards\n      Highest margin: [name] at [%]\n      Lowest margin: [name] at [%]\n      Recommendation: [1 sentence — drop the laggard? double down on the leader?]\n      \n      ## Q2. Regional growth\n      Fastest-growing region: [name] at [%] YoY\n      Recommendation: [1 sentence]\n      \n      ## Q3. Furniture profitability\n      Furniture total profit: $[X]\n      Where the profit comes from: [Furnishings + Chairs mostly; Tables loses money]\n      Recommendation: [1 sentence — discontinue Tables?]\n      \n      ## What I'd do next\n      - [bullet 1]\n      - [bullet 2]\n      - [bullet 3]\n\n  Export as PDF. Save as superstore-memo.pdf in the project folder.\n\nSTEP 6 — Push to GitHub.\n  Open the 'create new repository' card. Name: superstore-analysis. Public.\n  In your terminal:\n      cd Desktop/superstore-analysis\n      git init\n      git add .\n      git commit -m \"Sample Superstore analysis v0.1\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/superstore-analysis.git\n      git push -u origin main\n\nSTEP 7 — Take a screenshot of the dashboard and add to README.\n\nPASS CRITERIA — Superstore v0.1 ships when:\n  ☐ Dashboard sheet with 4 KPIs + 2 charts + 1 table\n  ☐ All 3 questions answered with specific numbers\n  ☐ 1-page memo exported as PDF\n  ☐ Public GitHub repo named superstore-analysis\n  ☐ README has dashboard screenshot + link to memo PDF"
             },
             {
               "kind": "reflection",
-              "title": "What would your boss do tomorrow?",
-              "body": "If your VP read the memo over breakfast, what's the ONE action they'd take? If they'd take none — your recommendations aren't sharp enough. Why?"
+              "title": "Would your boss act on this?",
+              "body": "Read your memo as if you were the VP receiving it. Would you take any action tomorrow? If yes, what? If no, your recommendations need to be sharper."
             }
           ]
         }
       ],
       "topics": [
-        "Excel/Sheets formulas — SUMIFS, COUNTIFS, AVERAGEIFS, XLOOKUP, IF, IFS",
-        "Pivot tables and calculated fields",
-        "Computing margin = profit / sales",
-        "Year-over-year growth calculation",
-        "Multi-dimensional pivots (rows + cols)",
-        "Filtering and slicing within categories",
-        "1-page dashboard design — KPIs, charts, filter",
+        "Excel/Sheets essentials — SUMIFS, COUNTIFS, AVERAGEIFS, XLOOKUP, IF",
+        "Pivot tables + calculated fields",
+        "Computing profit margin",
+        "Year-over-year growth math",
+        "Multi-dimensional pivots (rows + columns)",
+        "1-page dashboard layout",
         "Writing 1-page analyst memos"
       ],
       "tasks": [
-        "Download Sample Superstore .xls",
-        "Build a working sheet with the 7 essential formulas",
-        "Build a pivot answering Q1 (margin leaders/laggards by sub-category)",
-        "Build a pivot answering Q2 (regional YoY growth)",
-        "Build a pivot answering Q3 (Furniture profitability breakdown)",
-        "Build a 1-page Dashboard sheet (4 KPIs, 3 charts, filter)",
-        "Export a 1-page PDF memo with all 3 answers + recommendations"
+        "Download Sample Superstore Excel file",
+        "Build a Drills sheet practicing 5+ essential formulas",
+        "Pivot for Q1 (sub-category margin)",
+        "Pivot for Q2 (regional YoY growth)",
+        "Pivot for Q3 (Furniture by sub-category and region)",
+        "Build a 1-page Dashboard sheet",
+        "Write + export a 1-page memo PDF + push to GitHub"
       ],
-      "project": "Sample Superstore Analysis v0.1 — a 1-page Excel/Sheets dashboard + a 1-page PDF memo answering 3 assigned questions: profit margin leaders/laggards by sub-category, regional YoY sales growth, Furniture segment profitability. Repo: `superstore-analysis` on GitHub. Tagged v0.1.",
+      "project": "Sample Superstore Analysis v0.1 — a 1-page Excel/Sheets dashboard plus a 1-page PDF memo answering 3 specific questions about a fictional retailer. Public GitHub repo named superstore-analysis.",
       "exercises": [
         "Add a 'Discount vs Profit' scatter plot — does discount eat profit?",
-        "Build a pivot of repeat-buyer % by Segment — who comes back?",
-        "Compute customer lifetime value (sum of Sales per Customer ID, top 10)",
-        "Reformat your memo as a 5-slide PowerPoint deck — same content, exec-friendly"
+        "Compute customer lifetime value: sum of Sales per Customer ID. Top 10.",
+        "Build a pivot of repeat-buyer % by Segment. Who comes back?",
+        "Reformat your memo as a 5-slide deck — same content, exec-friendly"
       ],
       "questions": [
-        "Why is profit MARGIN more useful than raw profit for spotting problem sub-categories?",
-        "What's the unit you're measuring growth in — orders, sales, or customers? Why?",
-        "Where did you make a 'reasonable' choice that another analyst might question?",
-        "If Sample Superstore is fake — what real datasets would have the same shape?"
+        "Why use profit MARGIN instead of raw profit to spot problems?",
+        "What's the unit of 'growth' — orders, revenue, or customers?",
+        "Where did you make a judgment call another analyst might disagree with?",
+        "If Sample Superstore is fake, what real datasets have the same shape?"
       ],
       "outputs": [
-        "`superstore-analysis` GitHub repo tagged v0.1",
-        ".xlsx with Orders, Pivots, Dashboard sheets",
-        "Superstore-Memo.pdf (1 page)",
+        "Public GitHub repo named superstore-analysis",
+        "Excel/Sheets file with Drills, Pivots, Dashboard sheets",
+        "superstore-memo.pdf (1 page)",
         "Dashboard screenshot in README"
       ]
     },

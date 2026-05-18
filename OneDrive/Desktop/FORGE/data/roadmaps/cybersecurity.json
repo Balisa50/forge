@@ -35,188 +35,186 @@
           "note": "More advanced than TryHackMe"
         }
       ],
-      "context": "You're attacking OWASP Juice Shop — the canonical deliberately-vulnerable web app that EVERY pentester practices on. Your job by Sunday: solve 5 SPECIFIC challenges and write a HackerOne-style report for each. Why these 5? They cover the most common bug classes in real-world bug bounties: XSS, broken auth, IDOR, injection, misconfiguration. Weeks 2-4 expand to 20 more challenges + your first TryHackMe rooms. Project 2 (W5+) moves to HackTheBox real boxes.",
+      "context": "This week you are going to find 5 real security bugs in a practice website called OWASP Juice Shop, and write up each bug as a professional report (the same format real hackers use to earn bug bounties). By Sunday you'll have a GitHub repo called vuln-reports with 5 polished writeups — the seed of your security portfolio. Important: we ONLY attack the practice site running on YOUR computer.",
       "days": [
         {
           "number": 1,
           "title": "The ethics contract — non-negotiable",
-          "summary": "You only attack what you own or have permission to attack. Sign it today.",
+          "summary": "Today you sign a contract. You only attack what you own.",
           "items": [
             {
               "kind": "video",
-              "title": "Cybersecurity ethics 101 — John Hammond",
-              "url": "https://www.youtube.com/results?search_query=john+hammond+cybersecurity+ethics+beginner",
+              "title": "Cybersecurity ethics for beginners",
+              "url": "https://www.youtube.com/results?search_query=cybersecurity+ethics+beginner+john+hammond",
               "duration_min": 15,
               "creator": "John Hammond",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Sign and commit your contract",
-              "body": "Create repo `vuln-reports`. Create `ETHICS.md` containing:\n\n  # Ethics Contract\n  I, [your full name], commit to:\n  1. Only test systems I own or have explicit written permission to test.\n  2. Report any vulnerabilities I find through responsible disclosure channels.\n  3. Never exfiltrate or modify user data beyond minimal proof-of-concept.\n  4. Document every test for transparency.\n\n  Signed: [your name]\n  Date: [today]\n\nCommit it. Push it. This is the contract you'll uphold for life."
+              "title": "Sign and commit your ethics contract",
+              "body": "STEP 1 — Make the folder.\n      cd Desktop\n      mkdir vuln-reports\n      cd vuln-reports\n\nSTEP 2 — Create ETHICS.md.\n  In VS Code, new file ETHICS.md. Type:\n\n      # Ethics Contract\n      I, [YOUR FULL NAME], commit to:\n      1. Only test systems I own or have explicit written permission to test.\n      2. Report any vulnerabilities I find through responsible disclosure channels.\n      3. Never exfiltrate or modify user data beyond minimal proof-of-concept.\n      4. Document every test for transparency.\n      \n      Signed: [YOUR NAME]\n      Date: [TODAY'S DATE]\n\n  Replace [YOUR FULL NAME] and [TODAY'S DATE]. Save.\n\nSTEP 3 — In notes.txt write 3 sentences:\n  Why does ethical hacking matter? Why do real security companies require this contract?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Set up Kali Linux in a VM",
-          "summary": "Kali in a VM, not bare metal. The right way.",
+          "title": "Install Docker and run Juice Shop",
+          "summary": "Today we run the practice target on your computer.",
           "items": [
             {
+              "kind": "reading",
+              "title": "Docker Desktop (free)",
+              "url": "https://www.docker.com/products/docker-desktop/",
+              "why": "Click 'Open' to download. Pick your OS."
+            },
+            {
               "kind": "video",
-              "title": "Install Kali in VirtualBox — 2024 walkthrough",
-              "url": "https://www.youtube.com/results?search_query=install+kali+linux+virtualbox+2024",
-              "duration_min": 30,
+              "title": "Install Docker on Windows / Mac",
+              "url": "https://www.youtube.com/results?search_query=install+docker+desktop+beginner+windows+mac+2024",
+              "duration_min": 12,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Boot Kali",
-              "body": "Install VirtualBox (free). Download Kali Linux ISO (kali.org/get-kali/). Create a VM with 4GB RAM, 30GB disk. Install. Boot. Open a terminal. Run `nmap --version`, `sqlmap --version`, `curl --version` — all should work. Take a screenshot of Kali running."
+              "title": "Run OWASP Juice Shop locally",
+              "body": "STEP 1 — Install Docker Desktop from the card. Open it after install.\n  Verify: open a terminal and type:\n      docker --version\n  YOU SHOULD SEE: 'Docker version 27.x.x' or similar.\n\nSTEP 2 — Run Juice Shop.\n      docker run --rm -p 3000:3000 bkimminich/juice-shop\n  First time this downloads ~200MB. Takes 2-3 minutes.\n  YOU SHOULD SEE: lots of logs ending with 'Server listening on port 3000'.\n\nSTEP 3 — Open it.\n  In your browser: http://localhost:3000\n  YOU SHOULD SEE: a fake fruit-juice e-commerce site. This is your practice target for the week."
             }
           ]
         },
         {
           "number": 3,
-          "title": "OWASP Top 10 — the syllabus of web hacking",
-          "summary": "10 vuln categories cover 90% of real-world breaches.",
+          "title": "Find the Score Board (challenge 1)",
+          "summary": "Juice Shop has a hidden scoreboard that tracks which bugs you've found. Day 1 challenge: find it.",
           "items": [
-            {
-              "kind": "video",
-              "title": "OWASP Top 10 explained 2024",
-              "url": "https://www.youtube.com/results?search_query=owasp+top+10+2024+explained",
-              "duration_min": 25,
-              "creator": "various",
-              "why": ""
-            },
             {
               "kind": "reading",
               "title": "OWASP Top 10 — official",
               "url": "https://owasp.org/www-project-top-ten/",
-              "why": "Bookmark for life."
+              "why": "Click 'Open' to bookmark. The big 10 vulnerability categories."
             },
             {
               "kind": "exercise",
-              "title": "One-liner per category",
-              "body": "In `vuln-reports/owasp-notes.md`, write 1 sentence per category explaining what it means in plain English. Example for A03:Injection — 'When user input is treated as code (SQL, OS commands, etc.) instead of as data.'"
+              "title": "Score Board challenge",
+              "body": "Your first 'bug': finding the hidden score board page that Juice Shop hides on purpose.\n\nSTEP 1 — In the browser at localhost:3000, right-click anywhere → 'View Page Source'.\n  Or press Ctrl+U (Cmd+U on Mac).\n\nSTEP 2 — Read the HTML. Scroll. Look for anything mentioning 'score-board'.\n  HINT: there's a comment near the top.\n\nSTEP 3 — Found a hint? Try the URL: http://localhost:3000/#/score-board\n  YOU SHOULD SEE: a big page with hundreds of challenge cards. One of them (Score Board) is now lit up green.\n\nSTEP 4 — Screenshot.\n  Take a screenshot of the green 'Score Board' card.\n  Save it in vuln-reports/screenshots/01-scoreboard.png\n  (Make the screenshots folder if you don't have it.)"
             }
           ]
         },
         {
           "number": 4,
-          "title": "Spin up Juice Shop locally",
-          "summary": "Your target for the week. Sandboxed. Safe.",
+          "title": "Find a DOM XSS bug (challenge 2)",
+          "summary": "Cross-site scripting — injecting code into a web page.",
           "items": [
             {
               "kind": "video",
-              "title": "Run OWASP Juice Shop with Docker",
-              "url": "https://www.youtube.com/results?search_query=run+juice+shop+docker+tutorial",
-              "duration_min": 8,
+              "title": "DOM XSS explained simply",
+              "url": "https://www.youtube.com/results?search_query=dom+xss+explained+beginner+tutorial",
+              "duration_min": 10,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Get Juice Shop running",
-              "body": "Install Docker. Run:\n  `docker run --rm -p 3000:3000 bkimminich/juice-shop`\nOpen http://localhost:3000 in your browser. You should see a fake e-commerce site. Browse it. Open the score board: click the little anchor in the page source HTML (`<a href='#/score-board'>`) — that itself is the first challenge."
+              "title": "DOM XSS in the search bar",
+              "body": "Juice Shop's search bar reflects whatever you type into the page WITHOUT properly cleaning it. We exploit that.\n\nSTEP 1 — Go to the home page (click the Juice Shop logo).\n\nSTEP 2 — In the search bar at the top, type this exactly:\n      <iframe src=\"javascript:alert(`xss`)\">\n  Press Enter.\n\nSTEP 3 — YOU SHOULD SEE: a browser popup that says 'xss'. That's you successfully running JavaScript on the page — XSS achieved.\n\nSTEP 4 — Check the score-board page. The 'DOM XSS' challenge is now green.\n\nSTEP 5 — Take a screenshot of the alert popup.\n  Save as vuln-reports/screenshots/02-domxss.png"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Solve challenges 1, 2, 3",
-          "summary": "XSS + broken auth + score board access.",
+          "title": "Find broken auth and IDOR (challenges 3 + 4)",
+          "summary": "Two more bugs today: logging in as admin without a password, and viewing someone else's basket.",
           "items": [
             {
-              "kind": "video",
-              "title": "Juice Shop walkthrough — first 5 challenges",
-              "url": "https://www.youtube.com/results?search_query=juice+shop+walkthrough+beginner+challenges",
-              "duration_min": 30,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Knock out 3",
-              "body": "Solve these 3 (consult walkthroughs ONLY when fully stuck):\n  1. Score Board (find the hidden score-board page)\n  2. DOM XSS (perform an XSS via the search box — payload:      `<iframe src=\"javascript:alert('xss')\">` — see what gets reflected)\n  3. Login Admin (broken auth — try classic SQLi: `' OR 1=1--`)\nScreenshot each success. Save screenshots as `screenshots/01.png`, `02.png`, `03.png`."
+              "title": "Login Admin via SQL injection",
+              "body": "STEP 1 — Open the login page (top right account icon).\n\nSTEP 2 — In the email field, type:\n      ' OR 1=1--\n  In the password field, type anything (e.g. 'abc').\n  Click Log in.\n\nSTEP 3 — YOU SHOULD SEE: you are logged in as admin@juice-sh.op.\n  Check the top right corner — your account icon shows the admin email.\n  The 'Login Admin' challenge is green on the score board.\n\nSTEP 4 — Screenshot showing the admin email at top right.\n  Save as 03-loginadmin.png\n\nNow challenge 4: View someone else's basket.\n\nSTEP 5 — Log out. Register a new normal account (email: test@test.com, any password).\n  Add 1 item to your basket. Go to your basket.\n\nSTEP 6 — In Chrome DevTools (F12), Network tab. Reload the basket page.\n  Find the request to /rest/basket/N (where N is a number, your basket ID).\n  Look at the response — that's your basket data.\n\nSTEP 7 — Change N. In the URL bar, go to:\n  http://localhost:3000/rest/basket/1\n  YOU SHOULD SEE: a different user's basket (admin's, in this case). That's IDOR — Insecure Direct Object Reference.\n\nSTEP 8 — Screenshot the raw JSON of someone else's basket.\n  Save as 04-idor.png"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Solve challenges 4 + 5",
-          "summary": "IDOR + sensitive data exposure.",
+          "title": "Find a confidential document (challenge 5)",
+          "summary": "Today: find leaked files the site forgot to protect.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Two more",
-              "body": "Solve:\n  4. View Basket (IDOR — change the userId in the basket request from your      own to another user's; use browser DevTools network tab + replay)\n  5. Confidential Document (find a hidden /ftp/ path with leaked docs —      try directory enumeration via gobuster or just guess common paths)\nScreenshot success. You now have 5 wins."
+              "title": "Hidden /ftp/ path",
+              "body": "STEP 1 — Try this URL in your browser:\n      http://localhost:3000/ftp\n  YOU SHOULD SEE: a file listing — Juice Shop accidentally exposes an FTP-style folder.\n\nSTEP 2 — Look for a file ending in .md (markdown). Open it.\n  You're reading internal company documents that shouldn't be public.\n  Find one specifically called 'acquisitions.md' — that's the target file.\n\nSTEP 3 — Score Board: 'Confidential Document' challenge is now green.\n\nSTEP 4 — Screenshot.\n  Save as 05-confidential.png"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Write the 5 reports — your passport",
-          "summary": "Every report is a HackerOne-style submission. This is what real bounty hunters do.",
+          "title": "Write the 5 reports + push to GitHub",
+          "summary": "Today you turn your 5 wins into professional vulnerability reports.",
           "items": [
             {
               "kind": "reading",
-              "title": "How to write a great vulnerability report — HackerOne",
+              "title": "HackerOne — quality reports guide",
               "url": "https://docs.hackerone.com/hackers/quality-reports.html",
-              "why": "The bar to aim for."
+              "why": "Click 'Open' to read what real bounty submissions look like."
+            },
+            {
+              "kind": "reading",
+              "title": "GitHub — create new repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: vuln-reports. Public."
             },
             {
               "kind": "exercise",
-              "title": "Five CVE-style reports",
-              "body": "In `vuln-reports/reports/`, create 5 markdown files, one per challenge. Format:\n\n  # [Vulnerability name] — Juice Shop\n  **Severity:** Low/Medium/High/Critical (with justification)\n  **Affected component:** URL + parameter + HTTP method\n  **Steps to reproduce:**\n    1. ...\n    2. ...\n  **Impact:** What can an attacker do? (be concrete)\n  **Suggested fix:** Specific code or config change\n  **Screenshots:** ![POC](../screenshots/01.png)\n\nUpdate the repo README to list all 5 reports with severity badges.\nTag v0.1.\n\nPass criteria:\n  □ ETHICS.md signed and committed\n  □ 5 challenges solved with screenshots\n  □ 5 reports written in HackerOne format\n  □ README links each report\n  □ owasp-notes.md committed"
+              "title": "Write reports and push",
+              "body": "STEP 1 — Make a reports/ folder.\n      cd Desktop/vuln-reports\n      mkdir reports\n\nSTEP 2 — Write reports/01-scoreboard.md.\n  Use this template for ALL 5 reports:\n\n      # Score Board access via hidden route\n      \n      **Severity:** Low — informational, but reveals the developer's intent\n      **Affected component:** Front-end SPA route `/#/score-board`\n      \n      ## Steps to reproduce\n      1. Navigate to http://localhost:3000\n      2. View page source (Ctrl+U)\n      3. Find the comment hinting at the route\n      4. Navigate to /#/score-board\n      \n      ## Impact\n      Hidden admin/dev pages can leak sensitive information.\n      \n      ## Suggested fix\n      Don't ship hints in comments. Gate the route behind an admin role.\n      \n      ## Proof\n      ![scoreboard](../screenshots/01-scoreboard.png)\n\nSTEP 3 — Write the other 4 the same way:\n  02-domxss.md (Medium severity — code execution in browser)\n  03-loginadmin.md (Critical — full admin compromise via SQLi)\n  04-idor.md (High — viewing other users' data)\n  05-confidential.md (Medium — leaked internal docs)\n\nSTEP 4 — Write README.md.\n      # vuln-reports\n      My security writeups. Practice begins with OWASP Juice Shop.\n      \n      ## Ethics\n      See ETHICS.md — I only test systems I own or have permission to.\n      \n      ## Reports\n      1. [Score Board access](reports/01-scoreboard.md) — Low\n      2. [DOM XSS in search](reports/02-domxss.md) — Medium\n      3. [Login Admin via SQLi](reports/03-loginadmin.md) — Critical\n      4. [IDOR in /rest/basket](reports/04-idor.md) — High\n      5. [Leaked acquisitions doc](reports/05-confidential.md) — Medium\n\nSTEP 5 — Push.\n  Open the 'create new repository' card. Name: vuln-reports. Public. Create.\n      git init\n      git add .\n      git commit -m \"vuln-reports v0.1 — 5 Juice Shop writeups\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/vuln-reports.git\n      git push -u origin main\n\nPASS CRITERIA — Vuln Reports v0.1 ships when:\n  ☐ ETHICS.md signed and committed\n  ☐ 5 challenges solved with screenshots\n  ☐ 5 reports written in the HackerOne template\n  ☐ README links each report with severity\n  ☐ Public GitHub repo named vuln-reports"
             },
             {
               "kind": "reflection",
-              "title": "Could you submit this for real?",
-              "body": "If Juice Shop were a real company on HackerOne, would your XSS report earn a bounty? Your IDOR? What's missing — proof of impact?"
+              "title": "Would they pay?",
+              "body": "If Juice Shop was a real company on HackerOne, which of your 5 reports would earn the biggest bounty? Why? Write 2 sentences."
             }
           ]
         }
       ],
       "topics": [
-        "Security ethics — written permission required",
-        "Kali Linux in VirtualBox",
-        "OWASP Top 10 categories explained",
-        "OWASP Juice Shop — running locally via Docker",
-        "Reflected & DOM XSS basics",
+        "Security ethics — written consent only",
+        "Docker basics — running containerized apps",
+        "OWASP Top 10 vulnerability categories",
+        "OWASP Juice Shop practice range",
+        "DOM XSS (cross-site scripting)",
         "SQL injection in login forms",
-        "IDOR (Insecure Direct Object Reference)",
-        "Writing HackerOne-style vulnerability reports"
+        "IDOR — viewing other users' data",
+        "Information disclosure via exposed paths",
+        "Writing HackerOne-style reports"
       ],
       "tasks": [
-        "Sign and commit ETHICS.md to the `vuln-reports` repo",
-        "Install Kali in VirtualBox; verify nmap + sqlmap work",
-        "Write 1-line summaries of each OWASP Top 10 category",
-        "Run Juice Shop via Docker locally",
-        "Solve 5 specific Juice Shop challenges with screenshots",
-        "Write 5 HackerOne-style vulnerability reports",
-        "Push the report repo with README + linked reports, tagged v0.1"
+        "Sign and commit ETHICS.md",
+        "Install Docker, run Juice Shop locally",
+        "Find the hidden Score Board",
+        "Exploit DOM XSS in the search bar",
+        "Log in as admin via SQL injection",
+        "View another user's basket via IDOR",
+        "Find leaked /ftp/ documents",
+        "Write 5 reports + push to GitHub"
       ],
-      "project": "Vuln Reports v0.1 — your security portfolio repo, seeded with 5 polished HackerOne-style reports for 5 specific Juice Shop challenges (Score Board, DOM XSS, Login Admin, View Basket IDOR, Confidential Document). Plus signed ETHICS.md. Repo: `vuln-reports` on GitHub. This same repo grows for the next 24 weeks — real boxes, real bounties go in `reports/` over time.",
+      "project": "Vuln Reports v0.1 — your security portfolio. 5 specific Juice Shop bugs (Score Board, DOM XSS, Login Admin SQLi, IDOR basket, FTP leak) each written up as a HackerOne-style report with screenshots. Signed ETHICS.md. Public GitHub repo named vuln-reports.",
       "exercises": [
-        "Read 3 public HackerOne reports (h1.com/hacktivity) — note the structure",
-        "Set up Burp Suite Community + intercept a Juice Shop login request",
-        "Try the same SQL injection from challenge 3 against your own (local!) Postgres — does it fire?",
-        "Look up the latest CVEs for any tool on your laptop — patch if you find anything"
+        "Set up Burp Suite Community and intercept one Juice Shop request",
+        "Read 3 real reports on hackerone.com/hacktivity",
+        "Find one more Juice Shop challenge (Easy difficulty) and add a 6th report",
+        "Try the same SQLi against a local Postgres of your own — does it work? Why or why not?"
       ],
       "questions": [
-        "Why is XSS in /search worse than XSS in an admin-only page?",
-        "What's a Proof of Concept? Why is it required in any real report?",
-        "What's the difference between a black-box test and a white-box test?",
+        "Why is the IDOR bug rated higher severity than the FTP one?",
+        "What's a proof-of-concept (POC) and why is it required?",
+        "What's the difference between black-box and white-box testing?",
         "If you found a real CVE in production software today, who do you tell first?"
       ],
       "outputs": [
-        "`vuln-reports` GitHub repo with v0.1 tag",
-        "Signed ETHICS.md",
-        "5 reports in `reports/` (markdown)",
-        "5 screenshots in `screenshots/`",
-        "OWASP Top 10 notes in `owasp-notes.md`"
+        "Public GitHub repo named vuln-reports",
+        "ETHICS.md signed",
+        "5 reports in reports/",
+        "5 screenshots in screenshots/",
+        "README linking each report"
       ]
     },
     {

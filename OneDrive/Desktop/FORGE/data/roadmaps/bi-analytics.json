@@ -35,16 +35,16 @@
           "note": "Reference"
         }
       ],
-      "context": "You're building the Superstore Sales Dashboard in Power BI — the industry standard. Same data as Data Analysis Week 1 (Sample Superstore) but you'll model it properly with a star schema, write real DAX measures, and PUBLISH the dashboard to Power BI Service with a shareable URL. Recruiters click that URL. The .pbix is your portfolio. By Sunday it's live.",
+      "context": "This week you are going to build the same Sample Superstore analysis as Data Analysis Week 1 — but in Power BI, the tool BI analysts use at real companies. By Sunday it will be PUBLISHED online at a shareable URL anyone can open in their browser. Power BI Desktop is free and Windows-only. (Mac users: use Power BI Service in browser, or run Windows in a free VM via VirtualBox.)",
       "days": [
         {
           "number": 1,
-          "title": "What is BI — and what's Power BI?",
-          "summary": "Live, multi-source, self-serve dashboards. The lingua franca of enterprise.",
+          "title": "What is Power BI?",
+          "summary": "Watch + plan today.",
           "items": [
             {
               "kind": "video",
-              "title": "What is Power BI? — beginner explainer",
+              "title": "What is Power BI? (10 min beginner)",
               "url": "https://www.youtube.com/results?search_query=what+is+power+bi+beginner+explained+2024",
               "duration_min": 10,
               "creator": "various",
@@ -52,35 +52,41 @@
             },
             {
               "kind": "reflection",
-              "title": "Who would use this dashboard?",
-              "body": "Imagine the Sample Superstore is a real retailer. Who opens this dashboard every Monday morning — the CEO, the regional VPs, the category managers? Write down 3 KPIs each persona would care about."
+              "title": "Who reads this dashboard?",
+              "body": "Imagine the Sample Superstore is a real retailer. Three people open this dashboard every Monday: the CEO, the regional VP, the category manager. Write 3 KPIs each persona would care about most. 9 KPIs total. We'll use this to pick the right 4 for the dashboard."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Install Power BI Desktop + import data",
-          "summary": "Free, Windows only. Mac users: use Power BI in browser, or a Windows VM.",
+          "title": "Install Power BI Desktop",
+          "summary": "Get the tool.",
           "items": [
             {
+              "kind": "reading",
+              "title": "Power BI Desktop (free)",
+              "url": "https://www.microsoft.com/store/productid/9NTXR16HNW1T",
+              "why": "Click 'Open' to install from Microsoft Store. Windows only. If you don't have Windows, see the Mac note in this week's intro."
+            },
+            {
               "kind": "video",
-              "title": "Power BI Desktop install + first import",
-              "url": "https://www.youtube.com/results?search_query=power+bi+desktop+install+tutorial+2024",
+              "title": "Power BI Desktop install + interface tour (15 min)",
+              "url": "https://www.youtube.com/results?search_query=power+bi+desktop+install+tour+2024",
               "duration_min": 15,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Get the data in",
-              "body": "Install Power BI Desktop (free at powerbi.microsoft.com). Download `Sample - Superstore.xls` (same as Data Analysis Week 1). In Power BI: Home → Get Data → Excel → select the Orders + Returns + People sheets. Click Transform Data — Power Query opens."
+              "title": "Install + open",
+              "body": "STEP 1 — Install Power BI Desktop from the card above (Microsoft Store, free).\n  Mac users: install Windows in a VirtualBox VM (free) or use app.powerbi.com directly with reduced features.\n\nSTEP 2 — Open Power BI Desktop.\n  YOU SHOULD SEE: a welcome page. Click 'Get data' → 'Excel workbook'.\n\nSTEP 3 — Download Sample Superstore (same file as Data Analysis Week 1) from this URL:\n  https://community.tableau.com/s/question/0D54T00000CWeX8SAL/sample-superstore-sales-excelxls\n  Save it to your Desktop in a folder called superstore-bi.\n\nSTEP 4 — Import.\n  In Power BI Desktop, point Get Data to your Sample - Superstore.xls.\n  Check Orders, Returns, People. Click Transform Data → Power Query opens."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Power Query — the data prep layer",
-          "summary": "All BI sins are forgiven if Power Query is clean.",
+          "title": "Clean in Power Query",
+          "summary": "Today we clean the data BEFORE we model.",
           "items": [
             {
               "kind": "video",
@@ -92,35 +98,35 @@
             },
             {
               "kind": "exercise",
-              "title": "Clean in Power Query",
-              "body": "Open the Orders query. In Power Query:\n  - Change Order Date and Ship Date to Date type\n  - Remove the Row ID column\n  - Add a custom column: Profit Margin = [Profit] / [Sales]\n  - Rename Sub-Category to Subcategory (consistency)\nClick Close & Apply. Save the .pbix as `superstore.pbix` in a fresh repo."
+              "title": "Power Query clean",
+              "body": "Power Query is open from yesterday. You see 3 tables on the left.\n\nSTEP 1 — Click the Orders table.\n\nSTEP 2 — Set column types.\n  Click Order Date column → change type to Date.\n  Click Ship Date column → Date.\n  Click Sales, Profit, Discount → Decimal Number.\n\nSTEP 3 — Remove Row ID.\n  Right-click Row ID column → Remove.\n\nSTEP 4 — Add Profit Margin column.\n  Add Column tab → Custom Column.\n  Name: Margin\n  Formula: = [Profit] / [Sales]\n  OK. Set the new column type to Percentage.\n\nSTEP 5 — Rename Sub-Category to Subcategory (consistency).\n  Right-click → Rename.\n\nSTEP 6 — Click 'Close & Apply' (top left).\n  Power BI Desktop reopens with your data loaded.\n\nSTEP 7 — Save the file.\n  File → Save As → superstore.pbix → in your superstore-bi folder."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Build the star schema — fact + dimension tables",
-          "summary": "This is what separates a BI analyst from a spreadsheet jockey.",
+          "title": "Build a date dimension table",
+          "summary": "BI works best with a separate calendar table. Today we make one.",
           "items": [
             {
               "kind": "video",
-              "title": "Star schema in Power BI — clear primer",
-              "url": "https://www.youtube.com/results?search_query=power+bi+star+schema+fact+dimension+tutorial",
+              "title": "Star schema in Power BI",
+              "url": "https://www.youtube.com/results?search_query=power+bi+star+schema+beginner",
               "duration_min": 20,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Date dimension",
-              "body": "In Modeling → New Table:\n  ```DAX\n  DimDate = CALENDAR(DATE(2020,1,1), DATE(2024,12,31))\n  ```\nAdd calculated columns on DimDate: Year, Month, MonthName, Weekday, Quarter.\nIn Model view, drag Orders[Order Date] to DimDate[Date]. Cardinality: Many-to-One. Single-direction filter.\nNow you can slice everything by DimDate fields without depending on raw dates."
+              "title": "Create DimDate",
+              "body": "STEP 1 — In Power BI Desktop, Modeling tab → New table.\n\nSTEP 2 — In the formula bar, type:\n      DimDate = CALENDAR(DATE(2020,1,1), DATE(2024,12,31))\n  Press Enter.\n  YOU SHOULD SEE: a new table called DimDate with one column 'Date'.\n\nSTEP 3 — Add columns. With DimDate selected, Modeling tab → New column.\n      Year = YEAR(DimDate[Date])\n  New column again:\n      Month = FORMAT(DimDate[Date], \"MMM\")\n  New column:\n      Quarter = \"Q\" & QUARTER(DimDate[Date])\n\nSTEP 4 — Connect to Orders.\n  Click the Model view (middle icon on the left sidebar).\n  Drag DimDate[Date] onto Orders[Order Date].\n  YOU SHOULD SEE: a line connecting them. Cardinality should be One-to-Many.\n\nSTEP 5 — Save."
             }
           ]
         },
         {
           "number": 5,
-          "title": "DAX — the language of measures",
-          "summary": "5 functions cover the basics. Today: SUM, CALCULATE, DIVIDE, TOTALYTD, SAMEPERIODLASTYEAR.",
+          "title": "Write 6 DAX measures",
+          "summary": "DAX = the formula language of Power BI. Today: 6 measures.",
           "items": [
             {
               "kind": "video",
@@ -132,52 +138,48 @@
             },
             {
               "kind": "exercise",
-              "title": "4 essential measures",
-              "body": "In Orders table → New Measure, create:\n  Total Sales = SUM(Orders[Sales])\n  Total Profit = SUM(Orders[Profit])\n  Profit Margin = DIVIDE([Total Profit], [Total Sales])\n  Sales YTD = TOTALYTD([Total Sales], DimDate[Date])\n  Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(DimDate[Date]))\n  YoY Growth = DIVIDE([Total Sales] - [Sales LY], [Sales LY])\nTest each in a card visual."
+              "title": "DAX measures",
+              "body": "STEP 1 — In Power BI Desktop, click the Orders table on the right.\n  Modeling tab → New measure.\n\nSTEP 2 — Type these one at a time. After each, press Enter and Modeling → New measure again:\n\n      Total Sales = SUM(Orders[Sales])\n\n      Total Profit = SUM(Orders[Profit])\n\n      Profit Margin = DIVIDE([Total Profit], [Total Sales])\n\n      Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(DimDate[Date]))\n\n      YoY Growth = DIVIDE([Total Sales] - [Sales LY], [Sales LY])\n\n      Sales YTD = TOTALYTD([Total Sales], DimDate[Date])\n\nSTEP 3 — Test in a card.\n  Click the Report view (top icon on left sidebar).\n  In the Visualizations pane, click the 'Card' icon.\n  Drag [Total Sales] into Fields.\n  YOU SHOULD SEE: $2,297,200 (or similar) in a big card. Your first DAX measure rendered."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Design the 1-page dashboard",
-          "summary": "Layout: cards on top, charts middle, table bottom, slicer on side.",
+          "title": "Build the dashboard page",
+          "summary": "Today you arrange everything into a 1-page dashboard.",
           "items": [
             {
-              "kind": "video",
-              "title": "Power BI dashboard design — best practices",
-              "url": "https://www.youtube.com/results?search_query=power+bi+dashboard+design+2024+best+practices",
-              "duration_min": 25,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Build the page",
-              "body": "1 page. Layout (think in grid):\n  TOP ROW (4 KPI cards): Total Sales, Total Profit, Profit Margin, YoY Growth %\n  MID ROW (2 charts):\n    Left: Line chart — Total Sales over time (x: Year-Month, y: Total Sales)\n    Right: Bar chart — Total Sales by Region\n  BOTTOM (1 table):\n    Matrix: Subcategory rows × Profit Margin column, sorted descending,     color-coded (green > 20%, red < 5%)\n  LEFT SIDE (slicer):\n    Date slicer with relative date filter (this year / last year / all)\nUse a consistent color palette (Superstore is blue/orange/grey traditionally). Save."
+              "title": "Lay it out",
+              "body": "STEP 1 — In Report view, you have a blank canvas. Plan the layout:\n  TOP (4 cards): Total Sales | Total Profit | Profit Margin | YoY Growth\n  MIDDLE LEFT: line chart of Sales over time\n  MIDDLE RIGHT: bar chart of Sales by Region\n  BOTTOM: matrix of Subcategory + Margin\n  LEFT SIDE: date slicer\n\nSTEP 2 — 4 KPI cards.\n  Click Card visual. Drag Total Sales. Resize to ~200x100. Place top-left.\n  Repeat for Total Profit, Profit Margin, YoY Growth — 4 cards in a row.\n\nSTEP 3 — Line chart.\n  Click Line chart. Axis = DimDate[Year-Month] (or just Date). Values = Total Sales.\n  Place in middle-left, sized ~500x300.\n\nSTEP 4 — Bar chart.\n  Click Clustered bar chart. Axis = Region. Values = Total Sales.\n  Middle-right, ~400x300.\n\nSTEP 5 — Matrix.\n  Click Matrix. Rows = Subcategory. Values = Profit Margin.\n  Click the dropdown next to Margin → Conditional Formatting → Background → set up:\n    > 20% green, 5-20% yellow, < 5% red.\n  Place at the bottom.\n\nSTEP 6 — Date slicer.\n  Click Slicer. Drag DimDate[Date]. Change type to 'Between' or 'Relative date'.\n  Place on the left side.\n\nSTEP 7 — Use colors consistently. Format the canvas. Add a title at the top.\n  Save."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Publish to Power BI Service",
-          "summary": "A .pbix on your laptop is invisible. Publish or perish.",
+          "title": "Publish + share + GitHub",
+          "summary": "Today the dashboard goes ONLINE with a real URL.",
           "items": [
             {
-              "kind": "video",
-              "title": "Publish to Power BI Service + share URL",
-              "url": "https://www.youtube.com/results?search_query=publish+power+bi+service+share+dashboard+2024",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "reading",
+              "title": "Power BI Service — sign up (free)",
+              "url": "https://app.powerbi.com/signupredirect?pbi_source=web",
+              "why": "Click 'Open' to sign up. Use a work or school email if you have one. Otherwise: see Step 1 below for free Microsoft account."
+            },
+            {
+              "kind": "reading",
+              "title": "GitHub — create new repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: superstore-bi. Public."
             },
             {
               "kind": "exercise",
-              "title": "Final acceptance — Superstore BI v0.1",
-              "body": "□ Sign up for Power BI Service (free) at app.powerbi.com (needs a work or     school email — use a free Microsoft 365 trial if needed, or a personal     Outlook account)\n□ In Desktop: Home → Publish → choose 'My Workspace'\n□ In Service: open the report. Get the URL.\n□ Make it shareable: File → Embed report → Publish to web (if allowed) OR\n    just share the URL with view permissions to your test email\n□ GitHub repo `superstore-bi` contains:\n    - `superstore.pbix` (use Git LFS or zip if > 100MB; usually fine)\n    - README with: dashboard URL, screenshot of the published dashboard,       list of measures, list of relationships, 'How to open' instructions\n    - `screenshots/` folder with the dashboard image\n□ Tag v0.1"
+              "title": "Publish + push",
+              "body": "STEP 1 — Sign up for Power BI Service.\n  Open the Power BI signup card. If it complains about your email — get a free Microsoft 365 Developer account: developer.microsoft.com/microsoft-365/dev-program. Use the email it gives you.\n\nSTEP 2 — Publish from Desktop.\n  In Power BI Desktop: Home tab → Publish → My workspace.\n  Wait 30-60 seconds. YOU SHOULD SEE: 'Success!' with a link.\n\nSTEP 3 — Open the published report.\n  Click the link. Power BI Service opens in your browser. Your report is live.\n  Copy the URL.\n\nSTEP 4 — Make it shareable (optional — requires Pro/free trial).\n  In Service, click your report → Share → choose 'People with the link'.\n  Or: File → Embed report → Publish to web (only if your account allows it).\n\nSTEP 5 — Push to GitHub.\n  Open the 'create new repository' card. Name: superstore-bi. Public.\n  In your terminal:\n      cd Desktop/superstore-bi\n      git init\n      git add .\n      git commit -m \"Superstore Power BI v0.1\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/superstore-bi.git\n      git push -u origin main\n\nSTEP 6 — README.\n  Add README.md:\n      # Superstore Power BI v0.1\n      Sample Superstore in Power BI with a date dimension, 6 DAX measures, 1-page dashboard.\n      \n      ## Live\n      [Open in Power BI Service](paste-your-url-here)\n      \n      ## Measures\n      - Total Sales\n      - Total Profit\n      - Profit Margin\n      - Sales LY\n      - YoY Growth\n      - Sales YTD\n      \n      ## Screenshot\n      ![Dashboard](dashboard.png)\n  Take a screenshot of your dashboard, save as dashboard.png in the repo.\n  Push again.\n\nPASS CRITERIA — Superstore BI v0.1 ships when:\n  ☐ superstore.pbix saved locally\n  ☐ DimDate table connected to Orders[Order Date]\n  ☐ 6 DAX measures created and working\n  ☐ 1-page dashboard with 4 cards + 2 charts + matrix + slicer\n  ☐ Published to Power BI Service\n  ☐ Public GitHub repo named superstore-bi with .pbix + screenshot + README"
             },
             {
               "kind": "reflection",
-              "title": "Would your imagined CEO open this Monday morning?",
+              "title": "Would the CEO open this Monday morning?",
               "body": "If yes — what's the ONE follow-up they'd ask for? If no — what's missing?"
             }
           ]
@@ -186,41 +188,42 @@
       "topics": [
         "Power BI Desktop installation + interface",
         "Power Query — type changes, custom columns, renames",
-        "Star schema — fact tables + dimension tables",
-        "CALENDAR() function for date dimensions",
-        "DAX basics — SUM, DIVIDE, CALCULATE, TOTALYTD, SAMEPERIODLASTYEAR",
-        "Relationships, cardinality, cross-filter direction",
-        "Dashboard layout — cards, charts, slicers, matrices, conditional formatting",
-        "Publishing to Power BI Service + sharing URLs"
+        "Star schema — fact + dimension tables",
+        "CALENDAR for date dimensions",
+        "DAX — SUM, DIVIDE, CALCULATE, TOTALYTD, SAMEPERIODLASTYEAR",
+        "Relationships in Model view",
+        "Dashboard layout: cards, charts, slicers, matrices",
+        "Conditional formatting in matrices",
+        "Publishing to Power BI Service"
       ],
       "tasks": [
         "Install Power BI Desktop",
-        "Import Sample Superstore into Power Query",
-        "Clean + type-correct + add Profit Margin column in Power Query",
-        "Build a DimDate table with CALENDAR + calculated columns",
-        "Create the relationship Orders[Order Date] → DimDate[Date]",
-        "Write 6 DAX measures (Total Sales, Profit, Margin, YTD, LY, YoY)",
-        "Design a 1-page dashboard with 4 KPI cards + 2 charts + 1 matrix + 1 slicer",
-        "Publish to Power BI Service + share URL + commit .pbix"
+        "Import Sample Superstore via Power Query",
+        "Clean data + add Margin column in Power Query",
+        "Create DimDate calendar table",
+        "Connect DimDate to Orders",
+        "Write 6 DAX measures",
+        "Build a 1-page dashboard with 4 cards + 2 charts + matrix + slicer",
+        "Publish to Power BI Service + push to GitHub"
       ],
-      "project": "Superstore Power BI v0.1 — a published Power BI dashboard for the Sample Superstore dataset, modelled with a proper star schema and a Date dimension, with 6 DAX measures and a 1-page dashboard live on Power BI Service. Repo: `superstore-bi` on GitHub with the .pbix + README + screenshots. Tagged v0.1.",
+      "project": "Superstore Power BI v0.1 — published Power BI dashboard with a star schema (DimDate + Orders), 6 DAX measures, and a 1-page report live on Power BI Service. Public GitHub repo named superstore-bi with the .pbix and a screenshot.",
       "exercises": [
-        "Add a What-If parameter so the user can simulate +/- 10% discount and see profit impact",
-        "Add a drill-through page from any region in the bar chart → that region's detail",
-        "Switch the line chart to a multi-line by Category — does the story change?",
-        "Add row-level security: a fake 'Manager' role that only sees their region"
+        "Add a What-If parameter so users can simulate +/- 10% discount and see profit impact",
+        "Add a drill-through page from any region in the bar chart → that region detail",
+        "Switch the line chart to multi-line by Category — does the story change?",
+        "Add a simple row-level security role 'WestVP' that only sees West data"
       ],
       "questions": [
         "Why is a star schema faster than a flat table at scale?",
-        "What's an implicit measure vs an explicit measure? Why prefer explicit?",
-        "If the Orders table grew to 100M rows, where would your dashboard slow first?",
+        "What's an implicit measure vs explicit measure?",
+        "If Orders had 100M rows, where would your dashboard slow first?",
         "What's the difference between a calculated column and a measure?"
       ],
       "outputs": [
-        "Published Power BI dashboard URL (in the README)",
-        "`superstore-bi` GitHub repo tagged v0.1",
-        ".pbix file committed (Git LFS or zipped if large)",
-        "Dashboard screenshot in README + measures + relationships documented"
+        "Published Power BI URL in README",
+        "Public GitHub repo named superstore-bi",
+        ".pbix file committed",
+        "Dashboard screenshot in README"
       ]
     },
     {

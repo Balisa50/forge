@@ -30,12 +30,12 @@
           "note": "Reference"
         }
       ],
-      "context": "You're building Hydra — a water-intake tracker. Tap a glass icon, it fills. 8 glasses = day complete. Saves to local storage. Runs on YOUR phone by Sunday. Why a water tracker? Because it's small enough to ship in 1 week, useful enough that YOU'LL use it, and it teaches every Expo + React Native fundamental. Weeks 2-5 add reminders, history, streaks. Then Project 2 starts.",
+      "context": "This week you are going to build Hydra — a small water-tracking app. 8 glass icons on the screen. Tap one to mark it filled. By Sunday it will run on YOUR phone as a real installed app, not just a preview. If you have never built an app before, that is fine. Every step is given.",
       "days": [
         {
           "number": 1,
-          "title": "Why React Native + Expo (not Swift / Kotlin)",
-          "summary": "One codebase, two stores. Save your weekends.",
+          "title": "Why Expo + React Native?",
+          "summary": "Today is mostly watching. Get the picture.",
           "items": [
             {
               "kind": "video",
@@ -47,43 +47,47 @@
             },
             {
               "kind": "video",
-              "title": "Expo vs bare React Native — which to use",
-              "url": "https://www.youtube.com/results?search_query=expo+vs+react+native+cli+2024",
+              "title": "What is Expo? — 8 min",
+              "url": "https://www.youtube.com/results?search_query=what+is+expo+react+native+beginner+2024",
               "duration_min": 8,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "reflection",
-              "title": "Your daily flow",
-              "body": "How many glasses of water do you drink a day? Open your phone. Imagine an app with 8 glass icons. You tap one when you drink. That's Hydra. Sketch the screen on paper. 3 mins. Take a photo. You'll attach it to your README later."
+              "title": "Sketch Hydra",
+              "body": "Hydra is a water tracker. 8 glass icons on screen. Tap a glass — it fills. Tap again — it empties. There's a counter saying 'X / 8 glasses today'. When you hit 8, a small '✨ You hit 8' message appears.\n\nOn a piece of paper or in a notes app, sketch what this looks like. 1 minute. Just so you have the picture in mind."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Install Node, Expo CLI, Expo Go on your phone",
-          "summary": "If it's not running on your phone tonight, this week is wasted.",
+          "title": "Install Node.js and Expo Go",
+          "summary": "Today we install the tools and get a Hello World running on your actual phone.",
           "items": [
             {
-              "kind": "video",
-              "title": "Expo Go quickstart 2024",
-              "url": "https://www.youtube.com/results?search_query=expo+go+quickstart+react+native+2024",
-              "duration_min": 20,
-              "creator": "various",
-              "why": ""
+              "kind": "reading",
+              "title": "Node.js — download (official)",
+              "url": "https://nodejs.org/en/download",
+              "why": "Click 'Open' to download Node.js. Pick the LTS version for your computer."
+            },
+            {
+              "kind": "reading",
+              "title": "Expo Go (your phone)",
+              "url": "https://expo.dev/client",
+              "why": "Click 'Open' to learn about Expo Go. Then install it from the App Store (iPhone) or Play Store (Android) — search for 'Expo Go'."
             },
             {
               "kind": "exercise",
-              "title": "Hello phone",
-              "body": "1. Install Node.js 20+ from nodejs.org\n2. Install Expo Go on your phone (Play Store or App Store)\n3. In your terminal: `npx create-expo-app@latest hydra --template blank`\n4. `cd hydra && npx expo start`\n5. Scan the QR code with Expo Go (Android) or the camera app (iOS)\n6. See 'Open up App.js to start working on your app!' on your phone\nPush the `hydra` folder to GitHub."
+              "title": "Hello, phone",
+              "body": "STEP 1 — Install Node.js. Open the Node.js card, download LTS, install (click Next on every screen).\n\nSTEP 2 — Install Expo Go on your phone (App Store or Play Store).\n\nSTEP 3 — Open a terminal (Anaconda Prompt on Win, Terminal on Mac).\n      cd Desktop\n      npx create-expo-app@latest hydra --template blank\n  This downloads about 100MB. Takes 2-3 minutes. When done you have a 'hydra' folder.\n\nSTEP 4 — Start the app.\n      cd hydra\n      npx expo start\n  YOU SHOULD SEE: a big QR code in your terminal.\n\nSTEP 5 — Scan the QR code.\n  ANDROID: open Expo Go on your phone, tap 'Scan QR code', point at the terminal.\n  IPHONE: open the Camera app, point at the QR code, tap the notification.\n  YOU SHOULD SEE on your phone: 'Open up App.js to start working on your app!'\n  Your computer and your phone must be on the same WiFi for this to work."
             }
           ]
         },
         {
           "number": 3,
-          "title": "React fundamentals (just enough)",
-          "summary": "Components, props, JSX. You don't need everything yet.",
+          "title": "React basics — make a Glass component",
+          "summary": "Today you write your first piece of UI code.",
           "items": [
             {
               "kind": "video",
@@ -94,142 +98,123 @@
               "why": ""
             },
             {
-              "kind": "video",
-              "title": "React Native components + props",
-              "url": "https://www.youtube.com/results?search_query=react+native+components+props+tutorial+2024",
-              "duration_min": 25,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Build a Glass component",
-              "body": "Create `components/Glass.js`. It's a `<TouchableOpacity>` showing a glass icon. Takes 2 props: `filled` (bool) and `onPress` (function). When filled is true, show a blue droplet emoji 💧. When false, show an empty circle ⚪. Use it 8 times in App.js with hard-coded `filled={false}` for all 8. Save. Your phone hot-reloads — you should see 8 empty circles in a row."
+              "title": "Glass component",
+              "body": "STEP 1 — Open VS Code on the 'hydra' folder.\n\nSTEP 2 — Open App.js. Replace EVERYTHING in it with this:\n\n      import { StatusBar } from 'expo-status-bar';\n      import { StyleSheet, Text, View } from 'react-native';\n\n      function Glass({ filled }) {\n        return (\n          <View style={styles.glass}>\n            <Text style={styles.glassEmoji}>{filled ? '💧' : '⚪'}</Text>\n          </View>\n        );\n      }\n\n      export default function App() {\n        return (\n          <View style={styles.container}>\n            <Text style={styles.title}>Hydra</Text>\n            <View style={styles.row}>\n              <Glass filled={true} />\n              <Glass filled={false} />\n              <Glass filled={false} />\n              <Glass filled={false} />\n            </View>\n            <StatusBar style='auto' />\n          </View>\n        );\n      }\n\n      const styles = StyleSheet.create({\n        container: { flex: 1, backgroundColor: '#e0f2fe', alignItems: 'center', justifyContent: 'center' },\n        title: { fontSize: 36, fontWeight: 'bold', color: '#0c4a6e', marginBottom: 40 },\n        row: { flexDirection: 'row', gap: 10 },\n        glass: { width: 60, height: 80, borderWidth: 2, borderColor: '#0284c7', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },\n        glassEmoji: { fontSize: 28 },\n      });\n\nSTEP 3 — Save.\n  Your phone should AUTOMATICALLY reload (Expo hot-reload).\n  YOU SHOULD SEE: 'Hydra' title + 4 small boxes, first one with a 💧, rest with ⚪."
             }
           ]
         },
         {
           "number": 4,
-          "title": "useState — making things change",
-          "summary": "State is the heartbeat of an app. Tap → fill.",
+          "title": "Tap to fill — useState",
+          "summary": "Today you make the glasses tappable.",
           "items": [
             {
               "kind": "video",
-              "title": "useState — Web Dev Simplified",
-              "url": "https://www.youtube.com/results?search_query=usestate+react+hook+explained+beginner",
-              "duration_min": 12,
-              "creator": "Web Dev Simplified",
+              "title": "useState in 10 minutes",
+              "url": "https://www.youtube.com/results?search_query=usestate+react+hook+beginner+10+minutes",
+              "duration_min": 10,
+              "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Tap to fill",
-              "body": "In App.js: `const [glasses, setGlasses] = useState([false, false, false, false, false, false, false, false])`. Render 8 Glass components, each passing `filled={glasses[i]}` and `onPress={() => { const next = [...glasses]; next[i] = !next[i]; setGlasses(next); }}`. Test: tap a glass → it fills. Tap again → it empties."
+              "title": "Tappable glasses",
+              "body": "STEP 1 — Open App.js. Replace the entire file with this:\n\n      import { useState } from 'react';\n      import { StatusBar } from 'expo-status-bar';\n      import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';\n\n      function Glass({ filled, onPress }) {\n        return (\n          <TouchableOpacity style={styles.glass} onPress={onPress}>\n            <Text style={styles.glassEmoji}>{filled ? '💧' : '⚪'}</Text>\n          </TouchableOpacity>\n        );\n      }\n\n      export default function App() {\n        const [glasses, setGlasses] = useState([false, false, false, false, false, false, false, false]);\n        const count = glasses.filter(g => g).length;\n\n        const toggle = (i) => {\n          const next = [...glasses];\n          next[i] = !next[i];\n          setGlasses(next);\n        };\n\n        return (\n          <View style={styles.container}>\n            <Text style={styles.title}>Hydra</Text>\n            <Text style={styles.counter}>{count} / 8 glasses today</Text>\n            <View style={styles.grid}>\n              {glasses.map((filled, i) => (\n                <Glass key={i} filled={filled} onPress={() => toggle(i)} />\n              ))}\n            </View>\n            {count === 8 && <Text style={styles.celebrate}>✨ You hit 8 today.</Text>}\n            <StatusBar style='auto' />\n          </View>\n        );\n      }\n\n      const styles = StyleSheet.create({\n        container: { flex: 1, backgroundColor: '#e0f2fe', alignItems: 'center', justifyContent: 'center', padding: 20 },\n        title: { fontSize: 36, fontWeight: 'bold', color: '#0c4a6e', marginBottom: 10 },\n        counter: { fontSize: 18, color: '#075985', marginBottom: 30 },\n        grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 320 },\n        glass: { width: 60, height: 80, borderWidth: 2, borderColor: '#0284c7', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },\n        glassEmoji: { fontSize: 28 },\n        celebrate: { marginTop: 30, fontSize: 18, color: '#16a34a', fontWeight: 'bold' },\n      });\n\nSTEP 2 — Save. Phone auto-reloads.\n  Test on your phone — tap each glass. They fill and empty.\n  Tap all 8 — '✨ You hit 8 today.' appears."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Style it — feels like a real app",
-          "summary": "Padding, colors, fonts. The 'design' difference.",
+          "title": "Save progress — AsyncStorage",
+          "summary": "Right now if you close the app, progress is lost. Today we fix that.",
           "items": [
             {
-              "kind": "video",
-              "title": "React Native styling — flexbox + StyleSheet",
-              "url": "https://www.youtube.com/results?search_query=react+native+styling+stylesheet+flexbox+2024",
-              "duration_min": 20,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Polish",
-              "body": "Add real styling:\n  - SafeAreaView wrapper\n  - Big title: 'Hydra' (font size 36, bold)\n  - Subtitle: 'X / 8 glasses today' that updates with state\n  - Glasses arranged as a 4x2 grid (flexWrap: 'wrap')\n  - Soft blue background (#e0f2fe)\n  - When all 8 are filled, show: '✨ You hit 8 today.'\n  - A reset button at the bottom that empties all glasses"
+              "title": "Persist with AsyncStorage",
+              "body": "STEP 1 — Install AsyncStorage.\n  In your terminal (in the hydra folder):\n      npx expo install @react-native-async-storage/async-storage\n\nSTEP 2 — Open App.js. Add at the top with the other imports:\n      import { useEffect } from 'react';\n      import AsyncStorage from '@react-native-async-storage/async-storage';\n\nSTEP 3 — Inside the App() function, right after the useState line, add:\n\n      // Load saved state when the app opens\n      useEffect(() => {\n        AsyncStorage.getItem('hydra-glasses').then(saved => {\n          if (saved) setGlasses(JSON.parse(saved));\n        });\n      }, []);\n\nSTEP 4 — Update the toggle function to also save:\n\n      const toggle = (i) => {\n        const next = [...glasses];\n        next[i] = !next[i];\n        setGlasses(next);\n        AsyncStorage.setItem('hydra-glasses', JSON.stringify(next));\n      };\n\nSTEP 5 — Test on your phone.\n  Tap 3 glasses. Close Expo Go FULLY (swipe up).\n  Reopen Expo Go, scan the QR again.\n  YOU SHOULD SEE: the 3 glasses are STILL filled. State survived the close."
             }
           ]
         },
         {
           "number": 6,
-          "title": "AsyncStorage — survive the restart",
-          "summary": "An app that forgets is useless.",
+          "title": "Polish the look",
+          "summary": "Today we make it feel like a real app.",
           "items": [
             {
-              "kind": "video",
-              "title": "AsyncStorage in Expo — save state to device",
-              "url": "https://www.youtube.com/results?search_query=async+storage+expo+tutorial+save+state",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Persist Hydra",
-              "body": "`npx expo install @react-native-async-storage/async-storage`\nOn app load (useEffect with empty deps array): read 'hydra-glasses' from AsyncStorage. If found, parse JSON and setGlasses. If not, do nothing.\nEvery time setGlasses runs: write the new array back as JSON to 'hydra-glasses'.\nTest: tap 3 glasses → close Expo Go app fully → reopen → glasses are still filled. That's persistence."
+              "title": "Make it pretty",
+              "body": "STEP 1 — Add SafeAreaView so content doesn't go under the iPhone notch.\n  At the top of App.js, change the react-native import to:\n      import { StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';\n\nSTEP 2 — In the JSX, replace the OUTER <View style={styles.container}> with <SafeAreaView style={styles.container}>. Match the closing tag too.\n\nSTEP 3 — Add a reset button. After the celebrate Text, before </SafeAreaView>, add:\n\n      <TouchableOpacity style={styles.resetBtn} onPress={() => { setGlasses([false,false,false,false,false,false,false,false]); AsyncStorage.removeItem('hydra-glasses'); }}>\n        <Text style={styles.resetText}>Reset</Text>\n      </TouchableOpacity>\n\nSTEP 4 — Add styles for the reset button. Add to StyleSheet.create:\n\n      resetBtn: { marginTop: 40, paddingHorizontal: 30, paddingVertical: 12, borderWidth: 1, borderColor: '#0284c7', borderRadius: 8 },\n      resetText: { color: '#0284c7', fontSize: 14, fontWeight: '600' },\n\nSTEP 5 — Test the reset button. Fill some glasses, tap Reset, all empty."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship Hydra v0.1 + APK",
-          "summary": "Build a real APK, install it on your phone, send to a friend.",
+          "title": "Build the APK and ship",
+          "summary": "Today you make a real installable app file and push to GitHub.",
           "items": [
             {
-              "kind": "video",
-              "title": "EAS Build — first APK from Expo",
-              "url": "https://www.youtube.com/results?search_query=expo+eas+build+apk+android+2024",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "kind": "reading",
+              "title": "Expo account — sign up (free)",
+              "url": "https://expo.dev/signup",
+              "why": "Click 'Open' to sign up. Needed to build an APK."
+            },
+            {
+              "kind": "reading",
+              "title": "GitHub — create new repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: hydra. Public."
             },
             {
               "kind": "exercise",
-              "title": "Final acceptance — Hydra v0.1",
-              "body": "□ App runs in Expo Go on your phone — 8 glasses, tap to fill\n□ State persists across app closes (AsyncStorage works)\n□ 'X / 8 glasses today' counter updates live\n□ Reset button works\n□ All-filled celebration message appears\n□ Run `eas build --platform android --profile preview` — get a free APK URL\n    (you'll need to sign up for an Expo account; free tier is fine)\n□ Download the APK to your phone, install it (you'll need 'unknown sources'     enabled), open it — it should run standalone (no Expo Go needed)\n□ README has: app screenshot, APK download link, install instructions,     'Weeks 2-5 roadmap' section\n□ Tag v0.1, push to GitHub"
+              "title": "Build APK and push",
+              "body": "STEP 1 — Sign up for Expo (free).\n  Open the Expo signup card. Make an account.\n\nSTEP 2 — Log in from the terminal.\n      npx expo login\n  Enter your Expo email + password.\n\nSTEP 3 — Build an APK (Android installable file).\n      npx eas build --platform android --profile preview\n  It asks a few questions — accept the defaults.\n  It takes 10-15 minutes (build runs in the cloud — free tier).\n  When done, you get a URL ending in .apk\n\nSTEP 4 — Install the APK on your phone.\n  Open the build URL on your phone. Download the .apk.\n  Android: tap to install. You may need to allow 'unknown sources' in Settings.\n  Open the app — it runs standalone, no Expo Go needed.\n\nSTEP 5 — Push to GitHub.\n  Open the 'create new repository' card. Name: hydra. Public.\n  In your terminal (in hydra folder):\n      git init\n      git add .\n      git commit -m \"Hydra v0.1 — water tracker\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/hydra.git\n      git push -u origin main\n\nSTEP 6 — README.\n  Add a README.md to the repo with:\n    - The APK download URL\n    - A screenshot of the app on your phone (take one!)\n    - 'Install instructions'\n  Push again.\n\nPASS CRITERIA — Hydra v0.1 ships when:\n  ☐ App runs on your phone, 8 glasses tap to fill\n  ☐ Reset button works\n  ☐ State survives app close (AsyncStorage)\n  ☐ '✨ You hit 8 today.' appears at 8\n  ☐ Real APK file exists from EAS build\n  ☐ GitHub repo has the code + README + screenshot"
             },
             {
               "kind": "reflection",
-              "title": "Did it survive your day?",
-              "body": "Did you actually use Hydra to track your water today? If yes — what's annoying? If no — why not?"
+              "title": "Try using it",
+              "body": "Tomorrow, try to actually use Hydra to track your water. Did you remember? At what time of day did you forget? Write 2 sentences."
             }
           ]
         }
       ],
       "topics": [
-        "Expo + React Native workflow with Expo Go",
-        "JSX, components, props",
-        "useState for local component state",
-        "TouchableOpacity, View, Text, SafeAreaView",
-        "Flexbox in React Native (it's slightly different from web)",
+        "Node.js + Expo + Expo Go setup",
+        "React components and props (JSX)",
+        "useState for component state",
+        "TouchableOpacity for tappable items",
+        "Flexbox in React Native",
         "AsyncStorage for persistence",
-        "EAS Build basics — Android APK"
+        "SafeAreaView for iPhone notch",
+        "EAS Build — making a real APK"
       ],
       "tasks": [
-        "Install Node, Expo CLI, Expo Go on phone",
-        "Create the `hydra` Expo project, run on your phone",
-        "Build a Glass component with filled prop + onPress",
-        "Wire 8 glasses to a state array with tap-to-fill",
-        "Style with SafeAreaView, title, counter, grid, reset",
-        "Persist state to AsyncStorage so restart survives",
-        "Build an APK with EAS, install on your phone"
+        "Install Node.js + Expo Go on phone",
+        "Create the hydra Expo project + run on your phone",
+        "Build a Glass component with filled prop",
+        "Wire 8 glasses with useState + tap to fill",
+        "Persist state with AsyncStorage",
+        "Add SafeAreaView + reset button",
+        "Build an APK with EAS + push to GitHub"
       ],
-      "project": "Hydra v0.1 — a single-screen water tracker. 8 glass icons, tap to fill, reset button, '✨ You hit 8' message at full, persists via AsyncStorage. Runs on your phone as a real installed APK (not just Expo Go). Repo: `hydra` on GitHub. Tagged v0.1.",
+      "project": "Hydra v0.1 — a water tracker app. One screen, 8 glasses, tap to fill, AsyncStorage persistence, reset button, celebration at 8. Built with Expo and React Native. Real APK installed on your phone. Public GitHub repo named hydra.",
       "exercises": [
-        "Add haptic feedback on glass tap (`expo-haptics`)",
-        "Show today's date at the top, formatted nicely",
-        "Make the glass icon a custom SVG instead of an emoji",
-        "Replace 8 hard-coded glasses with a configurable goal (4-12)"
+        "Add haptic vibration on tap (npx expo install expo-haptics)",
+        "Show today's date at the top of the screen",
+        "Change goal from 8 glasses to a configurable number (4-12)",
+        "Use a real water-drop SVG instead of the emoji"
       ],
       "questions": [
-        "What happens to your state if AsyncStorage fails to read?",
-        "Why use SafeAreaView and not a plain View at the root?",
-        "What's the difference between an Expo Go preview and an EAS-built APK?",
-        "If you released Hydra to the Play Store tomorrow, what's the first thing reviewers would reject?"
+        "What's the difference between TouchableOpacity and Pressable?",
+        "Why does flexbox work slightly differently in React Native than the web?",
+        "What happens if AsyncStorage.getItem returns null?",
+        "What's the difference between running in Expo Go vs an EAS-built APK?"
       ],
       "outputs": [
-        "`hydra` GitHub repo tagged v0.1",
-        "Working APK link from EAS Build",
-        "App screenshot in README",
-        "Screen recording (10-15 sec) of you tapping glasses — embed link in README"
+        "Public GitHub repo named hydra",
+        "Working APK from EAS Build",
+        "App screenshot in the README",
+        "AsyncStorage state survives app close"
       ]
     },
     {
