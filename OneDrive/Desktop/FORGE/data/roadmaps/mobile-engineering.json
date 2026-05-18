@@ -219,227 +219,389 @@
     },
     {
       "number": 2,
-      "title": "React Native and Expo — The Productive Path",
-      "phase": "Foundations",
-      "commitment_hours": "25-30",
-      "context": "Expo turns React Native from a frustrating native build chain into a one-command development loop. Most cross-platform mobile shipping in 2025 happens on Expo. This week you build fluency with the core components, layout, and the EAS build/submit pipeline.",
-      "topics": [
-        "Expo Router — file-based routing, layouts, deep links",
-        "Core components — View, Text, ScrollView, FlatList, Image, Pressable",
-        "Layout — Flexbox in React Native (defaults differ from web)",
-        "Styling — StyleSheet, inline styles, the case for nativewind (Tailwind for RN)",
-        "TouchableOpacity vs Pressable — why Pressable wins",
-        "FlatList performance — keyExtractor, getItemLayout, why ScrollView fails at scale",
-        "Expo modules — Camera, Location, Notifications, FileSystem, ImagePicker",
-        "EAS Build + Submit — building production binaries and submitting to stores"
-      ],
-      "tasks": [
-        "Start a new Expo project with `npx create-expo-app -t default-typescript`; explore the file-based routing",
-        "Build a tab navigation with 3 tabs: Home, Search, Profile",
-        "Build a FlatList of 1000 items; verify smooth scrolling on a real device",
-        "Install nativewind and configure Tailwind classes; verify they compile",
-        "Use EAS Build to produce an iOS development build; install it on your phone"
-      ],
-      "project": "Build a Recipes App scaffold. 3 tabs: Recipes (list view), Favourites (filtered list), Profile (your settings). Use Expo Router for navigation. FlatList for the recipes (use a public API like TheMealDB). Pull-to-refresh, infinite scroll, swipe-to-favourite. Test on real iOS and Android devices. This becomes the base you'll extend in weeks 3-8.",
-      "resources": [
+      "title": "Hydra v0.2: Daily reset + reminder notification",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Last week's app keeps state forever. This week we reset at midnight and remind you to drink water at noon.",
+      "days": [
         {
-          "label": "Expo — Documentation (full)",
-          "url": "https://docs.expo.dev/",
-          "note": "official, work through Get Started + Develop + Distribute"
+          "number": 1,
+          "title": "What we're adding",
+          "summary": "Plan the daily reset logic.",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Edge cases",
+              "body": "If the user opens Hydra at 11:55pm and again at 12:05am — what should happen? Write your answer."
+            }
+          ]
         },
         {
-          "label": "Expo Router — Documentation",
-          "url": "https://docs.expo.dev/router/introduction/",
-          "note": "official, file-based routing for React Native (like Next.js for mobile)"
+          "number": 2,
+          "title": "Store today's date with the state",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Date-keyed state",
+              "body": "Update App.js so AsyncStorage stores {date, glasses}:\n      useEffect(() => {\n          AsyncStorage.getItem('hydra-state').then(saved => {\n              if (!saved) return;\n              const { date, glasses: g } = JSON.parse(saved);\n              const today = new Date().toDateString();\n              if (date === today) setGlasses(g);\n              // else: state was from yesterday, ignore — start fresh\n          });\n      }, []);\n\n      const toggle = (i) => {\n          const next = [...glasses]; next[i] = !next[i]; setGlasses(next);\n          AsyncStorage.setItem('hydra-state', JSON.stringify({ date: new Date().toDateString(), glasses: next }));\n      };\n\nTest: tap glasses today, change device date forward 1 day, reopen — should be empty."
+            }
+          ]
         },
         {
-          "label": "React Native — Components and APIs reference",
-          "url": "https://reactnative.dev/docs/components-and-apis",
-          "note": "official, your daily reference"
+          "number": 3,
+          "title": "Install expo-notifications",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Notification permission",
+              "body": "      npx expo install expo-notifications\n\nAdd at top of App.js:\n      import * as Notifications from 'expo-notifications';\n\nOn app load, request permission:\n      useEffect(() => {\n          Notifications.requestPermissionsAsync();\n      }, []);"
+            }
+          ]
         },
         {
-          "label": "NativeWind — Documentation",
-          "url": "https://www.nativewind.dev/",
-          "note": "official, Tailwind classes that compile to React Native StyleSheet"
+          "number": 4,
+          "title": "Schedule a 12pm reminder",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Reminder",
+              "body": "Add a function:\n      const scheduleReminder = async () => {\n          await Notifications.cancelAllScheduledNotificationsAsync();\n          const trigger = new Date();\n          trigger.setHours(12, 0, 0, 0);\n          if (trigger < new Date()) trigger.setDate(trigger.getDate() + 1);\n          await Notifications.scheduleNotificationAsync({\n              content: { title: 'Hydra', body: 'Have you had your glasses today?' },\n              trigger: { date: trigger, repeats: false },\n          });\n      };\n\nCall it from a useEffect that runs once on app load."
+            }
+          ]
         },
         {
-          "label": "Catalin Miron — React Native YouTube channel",
-          "url": "https://www.youtube.com/c/CatalinMironDev",
-          "note": "YouTube, the most beautiful RN animation tutorials"
+          "number": 5,
+          "title": "Add a settings screen",
+          "summary": "Let the user pick their own reminder time.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Settings",
+              "body": "Add a button on the main screen: 'Settings'. When tapped, show a modal with a time picker (use expo's DateTimePicker).\n      npx expo install @react-native-community/datetimepicker\n\nStore the chosen time in AsyncStorage. Reschedule the reminder when changed."
+            }
+          ]
         },
         {
-          "label": "William Candillon — Can it be done in React Native?",
-          "url": "https://www.youtube.com/c/wcandillon",
-          "note": "YouTube, the canonical channel for advanced React Native + Reanimated"
+          "number": 6,
+          "title": "Test the reminder",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Verify it fires",
+              "body": "Set a reminder for 2 minutes from now. Close Expo Go fully. Wait. You should get a notification.\n\nOn the simulator, notifications might not fire — test on a real device."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2 + new APK",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      npx eas build --platform android --profile preview\n      git add . && git commit -m 'v0.2: daily reset + reminder'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ State resets next day\n  ☐ Permission prompt shows once\n  ☐ Reminder fires at the set time\n  ☐ Settings can change the time\n  ☐ v0.2 APK works on phone"
+            }
+          ]
         }
       ],
-      "questions": [
-        "FlatList of 10000 items vs ScrollView with 10000 items — how does memory and scrolling feel different? Why?",
-        "Compare the same UI built with StyleSheet vs nativewind. Which felt natural? Which produced less code?",
-        "Test your app on a low-end Android (Moto G or a 3-year-old phone). Where does it lag? What's the bottleneck — JS, rendering, network?",
-        "Tap a Pressable button repeatedly very fast. Does it have visual feedback per tap, or does it lag? What's the right debounce?"
+      "topics": [
+        "AsyncStorage with date-keyed state",
+        "expo-notifications setup",
+        "Permission handling",
+        "Scheduled local notifications",
+        "DateTimePicker"
       ],
+      "tasks": [
+        "Store date alongside glasses state",
+        "Reset state when date changes",
+        "Install expo-notifications + request permission",
+        "Schedule a daily noon reminder",
+        "Add settings screen to change reminder time"
+      ],
+      "project": "Hydra v0.2 — water tracker with daily reset (state clears at midnight) and a local push notification reminding the user at their chosen time.",
+      "resources": [],
       "exercises": [
-        "Build a custom Header component that renders title left, action right with proper safe-area handling.",
-        "Implement pull-to-refresh on your FlatList using RefreshControl.",
-        "Implement infinite scroll using FlatList's onEndReached.",
-        "Build a search input that filters the FlatList; debounce the filter."
+        "Show the previous day's count when you reset (like a 'yesterday: 6/8' badge)",
+        "Add a streak counter (consecutive days hit 8)",
+        "Use haptic feedback when scheduling a reminder",
+        "Test what happens when notification permission is denied"
+      ],
+      "questions": [
+        "Why store state as {date, glasses} not just glasses?",
+        "What's the difference between local and push notifications?",
+        "What happens if your phone is off when the notification was scheduled?",
+        "Why does Android need a foreground service for some notifications?"
       ],
       "outputs": [
-        "Recipes app running on iOS and Android devices",
-        "EAS Build producing an installable iOS dev build + Android APK",
-        "FlatList with 1000+ items scrolling smoothly",
-        "Notes/expo.md — your decision tree for Expo modules"
+        "v0.2 APK installable on phone",
+        "Reminder fires at set time",
+        "Daily reset works",
+        "v0.2 tag"
       ]
     },
     {
       "number": 3,
-      "title": "Navigation, Tabs, and Modals — The Patterns That Define the App",
-      "phase": "Building Screens",
-      "commitment_hours": "20-25",
-      "context": "Mobile navigation is a richer language than web routing. Stacks, tabs, drawers, modals, gestures — each has its conventions and quirks across iOS and Android. This week you go deep on Expo Router + React Navigation.",
-      "topics": [
-        "Navigation patterns — stack, tab, drawer, modal, when each is right",
-        "React Navigation under the hood (Expo Router uses it) — what's happening on push/pop",
-        "Header customisation per route — title, back button, right action",
-        "Modals — full screen, half sheet, transparent modal",
-        "Deep links — universal links on iOS, app links on Android",
-        "Tab bar customisation — icons, badges, hide-on-scroll",
-        "Navigation state persistence — restoring on app relaunch",
-        "Type-safe navigation — Expo Router's typed routes"
-      ],
-      "tasks": [
-        "Add a stack navigator with at least 3 levels deep; verify back gestures work on iOS",
-        "Add a modal that slides up from the bottom; dismiss with swipe-down gesture",
-        "Configure deep links: opening your-app://recipe/123 navigates to the recipe page",
-        "Add a custom header with a search field and a right action button",
-        "Add a badge to a tab bar icon (e.g. notification count)"
-      ],
-      "project": "Extend Recipes App with Full Navigation. Add: a detail screen for each recipe (push), a half-sheet modal for filters, a settings screen accessible from Profile tab (push), a 'Recipe of the Day' modal that appears on first launch. Configure deep links so a recipe URL opens directly to its detail. Test all of this on both platforms — gestures, transitions, animations.",
-      "resources": [
+      "title": "Hydra v0.3: History + streaks",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Today we keep history. See your last 7 days. Track streaks. Make the user feel progress.",
+      "days": [
         {
-          "label": "Expo Router — Documentation (full)",
-          "url": "https://docs.expo.dev/router/introduction/",
-          "note": "official, every navigation pattern covered"
+          "number": 1,
+          "title": "Plan the history view",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "UI sketch",
+              "body": "Sketch a History screen. Last 7 days as 7 horizontal cards. Each shows date + glass count + a check if you hit 8."
+            }
+          ]
         },
         {
-          "label": "React Navigation — Documentation",
-          "url": "https://reactnavigation.org/docs/getting-started",
-          "note": "official, what Expo Router builds on; deeper reference"
+          "number": 2,
+          "title": "Store history",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Save daily total",
+              "body": "When the date changes (in the useEffect that loads state), if the saved date isn't today, push it to a history array:\n      AsyncStorage.getItem('hydra-history').then(h => {\n          const history = h ? JSON.parse(h) : [];\n          if (saved && JSON.parse(saved).date !== new Date().toDateString()) {\n              const yest = JSON.parse(saved);\n              history.unshift({ date: yest.date, count: yest.glasses.filter(g=>g).length });\n              if (history.length > 30) history.length = 30;\n              AsyncStorage.setItem('hydra-history', JSON.stringify(history));\n          }\n      });"
+            }
+          ]
         },
         {
-          "label": "Expo — Deep linking guide",
-          "url": "https://docs.expo.dev/guides/linking/",
-          "note": "official, how to wire universal links and app links"
+          "number": 3,
+          "title": "Build the History screen",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Use React Navigation",
+              "body": "      npm install @react-navigation/native @react-navigation/native-stack\n      npx expo install react-native-screens react-native-safe-area-context\n\nSet up a stack navigator. Add a HistoryScreen that reads hydra-history and renders a FlatList of cards."
+            }
+          ]
         },
         {
-          "label": "Apple — Designing iOS navigation",
-          "url": "https://developer.apple.com/design/human-interface-guidelines/navigation-bars",
-          "note": "official HIG section, what 'native' iOS navigation feels like"
+          "number": 4,
+          "title": "Compute streaks",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Streak calc",
+              "body": "Function:\n      function currentStreak(history) {\n          let streak = 0;\n          for (const day of history) {\n              if (day.count >= 8) streak++;\n              else break;\n          }\n          return streak;\n      }\n\nDisplay on main screen: '🔥 5 day streak'"
+            }
+          ]
         },
         {
-          "label": "Material 3 — Navigation patterns",
-          "url": "https://m3.material.io/components/navigation-bar",
-          "note": "official, Android's navigation conventions"
+          "number": 5,
+          "title": "Stats screen",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Numbers",
+              "body": "Add stats: total days hit 8, average per day, best streak ever (save max streak to AsyncStorage)."
+            }
+          ]
         },
         {
-          "label": "React Native Bottom Sheet (gorhom)",
-          "url": "https://gorhom.dev/react-native-bottom-sheet/",
-          "note": "official, the modern bottom sheet library; iOS-quality on both platforms"
+          "number": 6,
+          "title": "Polish + animations",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Pretty",
+              "body": "Add fade-in when each glass fills (Animated.timing). Add confetti effect when you hit 8 (use react-native-confetti-cannon)."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      npx eas build --platform android --profile preview\n      git add . && git commit -m 'v0.3: history + streaks'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ History screen shows last N days\n  ☐ Current streak displays on main\n  ☐ Stats screen shows totals\n  ☐ Confetti at 8 glasses\n  ☐ v0.3 APK works"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Push 5 screens deep on iOS. Use the back gesture vs the back button. Compare feel and animation. Now do it on Android — what's different?",
-        "Your modal slides up. Can you dismiss it via swipe down? Via back button on Android? Both should work.",
-        "Open your app via a deep link from another app. What if the user isn't logged in? What's the right flow?",
-        "Navigation typed via Expo Router — verify you get a compile error when you typo a route name."
+      "topics": [
+        "React Navigation stack",
+        "AsyncStorage for history arrays",
+        "Streak calculation",
+        "FlatList rendering",
+        "Animated API + confetti"
       ],
+      "tasks": [
+        "Save daily totals to history array",
+        "Add HistoryScreen with FlatList",
+        "Compute and display current streak",
+        "Add stats screen",
+        "Add confetti animation at 8"
+      ],
+      "project": "Hydra v0.3 — water tracker now keeps 30-day history, computes streaks, shows stats, animates when you hit 8.",
+      "resources": [],
       "exercises": [
-        "Add a custom header with a search bar (UISearchBar style on iOS, SearchView on Android).",
-        "Implement a half-sheet modal using @gorhom/bottom-sheet with snap points.",
-        "Wire deep links so a notification tap opens directly to the relevant screen.",
-        "Add tab bar icon badges that update from app state."
+        "Add a sharable badge image (canvas-rendered) for streak milestones",
+        "Add weekly average chart with victory-native",
+        "Add a settings option to clear history"
+      ],
+      "questions": [
+        "What's React Navigation's job?",
+        "Why use FlatList instead of mapping in JSX?",
+        "How does Animated differ from CSS animations?",
+        "Where does AsyncStorage have size limits?"
       ],
       "outputs": [
-        "Recipes app with full navigation: stacks, tabs, modals, half-sheets",
-        "Deep links working from Safari (iOS) and Chrome (Android)",
-        "Custom headers with platform-appropriate styling",
-        "Notes/navigation.md — your decision tree for navigation patterns"
+        "v0.3 APK",
+        "History screen works",
+        "Streak counter on main",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "Lists, Performance, and the FlatList Mindset",
-      "phase": "Building Screens",
-      "commitment_hours": "20-25",
-      "context": "90% of mobile UI is lists. Slow lists ruin apps. This week you master FlatList, SectionList, FlashList — the libraries and patterns that keep scrolling at 60fps even with thousands of items.",
-      "topics": [
-        "Virtualised lists — only rendering what's visible",
-        "FlatList vs FlashList (Shopify) — when each wins",
-        "keyExtractor — why this matters for performance",
-        "getItemLayout — skipping layout calculations for fixed-height rows",
-        "windowSize and maxToRenderPerBatch — tuning for memory vs smoothness",
-        "Pull-to-refresh + infinite scroll patterns",
-        "Empty states, error states, loading skeletons in lists",
-        "Profiling — Flipper, React DevTools profiler, Hermes Debugger"
-      ],
-      "tasks": [
-        "Replace your FlatList with FlashList (from Shopify); measure scrolling smoothness on a low-end device",
-        "Add getItemLayout to a fixed-height row list; verify scroll-to-index becomes instant",
-        "Add a SectionList grouped by date or category",
-        "Profile a janky list with React DevTools profiler; identify the wasted re-renders",
-        "Add skeleton loading + empty state + error state to a real list screen"
-      ],
-      "project": "Build a Feed Screen with 10000+ items. Use FlashList. Each item is a card with an image, title, and metadata. Pull-to-refresh at the top, infinite scroll at the bottom. Profile on a real low-end Android. Ship 60fps scrolling. Document the optimisations you made.",
-      "resources": [
+      "title": "Hydra v0.4: TypeScript + cleanup",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Migrate Hydra to TypeScript for catching bugs at write time. Clean up. Add tests.",
+      "days": [
         {
-          "label": "FlashList by Shopify — Documentation",
-          "url": "https://shopify.github.io/flash-list/",
-          "note": "official, the canonical fast list library for React Native"
+          "number": 1,
+          "title": "Why TypeScript",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "TypeScript in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/watch?v=zQnBQ4tB3ZA",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Costs and benefits",
+              "body": "TypeScript is more typing for fewer bugs. Worth it? Write your honest opinion."
+            }
+          ]
         },
         {
-          "label": "React Native — Optimising FlatList performance",
-          "url": "https://reactnative.dev/docs/optimizing-flatlist-configuration",
-          "note": "official, the canonical FlatList tuning guide"
+          "number": 2,
+          "title": "Migrate App.js to App.tsx",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Rename + type",
+              "body": "Rename App.js to App.tsx. Add types:\n      type GlassesState = boolean[];\n      const [glasses, setGlasses] = useState<GlassesState>(Array(8).fill(false));\n\n      type HistoryEntry = { date: string; count: number };\n      const [history, setHistory] = useState<HistoryEntry[]>([]);\n\nAdd tsconfig.json (Expo generates one if you run npx expo customize tsconfig.json).\n\nRun: npx tsc --noEmit. Fix the errors it shows."
+            }
+          ]
         },
         {
-          "label": "Mark Erikson — A (Mostly) Complete Guide to React Rendering Behavior",
-          "url": "https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/",
-          "note": "blog, fundamental to optimising any React list"
+          "number": 3,
+          "title": "Migrate components",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Glass.tsx",
+              "body": "Rename Glass.js → Glass.tsx. Define props type:\n      type GlassProps = { filled: boolean; onPress: () => void; }\n      export default function Glass({ filled, onPress }: GlassProps) { ... }"
+            }
+          ]
         },
         {
-          "label": "Shopify — Achieving 60fps with FlashList",
-          "url": "https://shopify.engineering/a-better-list-view-for-react-native",
-          "note": "engineering blog, the original FlashList announcement and reasoning"
+          "number": 4,
+          "title": "Add Jest tests",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First test",
+              "body": "      npx expo install jest-expo @types/jest\n      npm install --save-dev jest @testing-library/react-native\n\nCreate __tests__/streak.test.ts with a function test:\n      import { currentStreak } from '../utils/streak';\n      test('counts streak from front', () => {\n          expect(currentStreak([{date:'a',count:8},{date:'b',count:5}])).toBe(1);\n      });\n\nExtract currentStreak to utils/streak.ts. Run: npx jest"
+            }
+          ]
         },
         {
-          "label": "Krzysztof Magiera — React Native at scale",
-          "url": "https://www.youtube.com/results?search_query=krzysztof+magiera+react+native",
-          "note": "YouTube, the author of Reanimated speaks at conferences about performance"
+          "number": 5,
+          "title": "Lint + format",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "ESLint + Prettier",
+              "body": "      npx expo install eslint-config-expo\n      npm install --save-dev prettier\n\nCreate .prettierrc: { \"singleQuote\": true, \"trailingComma\": \"all\" }\nRun: npx prettier --write 'src/**/*.{ts,tsx}'\n      npx eslint . --fix"
+            }
+          ]
         },
         {
-          "label": "React Native — Profiler tools",
-          "url": "https://reactnative.dev/docs/profiling",
-          "note": "official, what tools to use for what kind of issue"
+          "number": 6,
+          "title": "Clean repo + add CHANGELOG",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CHANGELOG.md",
+              "body": "      # Hydra Changelog\n      \n      ## v0.4 (2026-02-XX)\n      - Migrated to TypeScript\n      - Added Jest tests\n      - Added ESLint + Prettier\n      \n      ## v0.3 (2026-02-XX)\n      - Added history + streaks + confetti\n      \n      ## v0.2 (2026-02-XX)\n      - Daily reset + notification reminder\n      \n      ## v0.1 (2026-02-XX)\n      - Initial release: 8 glasses, AsyncStorage"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      npx eas build --platform android --profile preview\n      git add . && git commit -m 'v0.4: TypeScript + tests'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ App.tsx + Glass.tsx + utils/streak.ts compile\n  ☐ npx tsc --noEmit passes\n  ☐ At least 3 Jest tests pass\n  ☐ npx eslint . passes\n  ☐ CHANGELOG.md committed\n  ☐ APK installs"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Compare scroll smoothness of FlatList vs FlashList on the same 5000-item list. Measure FPS on a low-end Android.",
-        "Memoize a list row with React.memo. Does it stop the row from re-rendering when its data doesn't change? Verify in profiler.",
-        "Add getItemLayout. Scroll to index 5000 instantly — does it work? Now remove getItemLayout — what happens?",
-        "Your list has images. What's the cost of image loading? Use the expo-image library for caching; measure scroll while images load."
+      "topics": [
+        "TypeScript basics for React Native",
+        "Jest unit testing in Expo",
+        "ESLint + Prettier setup",
+        "tsconfig.json for Expo",
+        "Maintaining a CHANGELOG"
       ],
+      "tasks": [
+        "Migrate App and Glass to TypeScript",
+        "Extract reusable functions to utils/",
+        "Write Jest tests for streak logic",
+        "Add ESLint + Prettier",
+        "Write a CHANGELOG.md"
+      ],
+      "project": "Hydra v0.4 — same app, TypeScript, tested, linted, formatted. A real codebase.",
+      "resources": [],
       "exercises": [
-        "Implement a SectionList grouped by date with sticky headers.",
-        "Build a swipe-to-delete with react-native-gesture-handler + Reanimated.",
-        "Add a 'jump to today' button that scrollToIndex's to a known position.",
-        "Replace standard Image with expo-image; measure cold-load and scrolling-while-images-load."
+        "Add type guards for AsyncStorage loads (parsing untrusted JSON)",
+        "Write a snapshot test for the Glass component",
+        "Configure tsc to fail on unused locals"
+      ],
+      "questions": [
+        "What's structural typing in TypeScript?",
+        "Why does TypeScript run as a check, not as a runtime?",
+        "What's the difference between unit tests and snapshot tests?",
+        "When is `any` legitimately useful?"
       ],
       "outputs": [
-        "Feed screen with 10000 items at 60fps on a low-end Android",
-        "FlashList integrated and benchmarked vs FlatList",
-        "Documented optimisations and their measured impact",
-        "Notes/list-performance.md — your performance tuning checklist"
+        "TypeScript compiles clean",
+        "3+ Jest tests pass",
+        "ESLint clean",
+        "v0.4 APK + tag"
       ]
     },
     {

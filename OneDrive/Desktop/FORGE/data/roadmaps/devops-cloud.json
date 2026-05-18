@@ -218,227 +218,427 @@
     },
     {
       "number": 2,
-      "title": "Networking — From OSI Model to Real Production Issues",
-      "phase": "Foundations",
-      "commitment_hours": "20-25",
-      "context": "Most DevOps incidents are networking incidents. This week you build the mental model — OSI layers, TCP vs UDP, DNS resolution, TLS handshake, common HTTP issues — and you debug a real one.",
-      "topics": [
-        "The OSI 7-layer model and the TCP/IP 4-layer reality",
-        "IP addresses (IPv4/IPv6), subnets, CIDR notation",
-        "TCP — three-way handshake, flow control, congestion control",
-        "DNS — A, AAAA, CNAME, MX, TXT records; recursive vs authoritative",
-        "TLS handshake — what happens when you connect to HTTPS",
-        "HTTP/1.1 vs HTTP/2 vs HTTP/3 — what changed and why",
-        "Common debugging tools — curl, dig, tcpdump, mtr, ss",
-        "Firewalls and security groups — defaults, rules, common misconfigurations"
-      ],
-      "tasks": [
-        "Use `dig` to inspect the DNS records for 5 domains; identify which use Cloudflare, AWS, etc.",
-        "Use `curl -v` to see the TLS handshake for any HTTPS site; identify the cipher used",
-        "Use `mtr` to traceroute to 3 different geo-regions; observe the path",
-        "Set up a wildcard DNS record for your domain pointing to your server's IP",
-        "Debug a real connectivity issue: deliberately block a port; document how you find and fix it"
-      ],
-      "project": "Build a DNS + TLS Setup for Your Domain. Buy a cheap domain ($1/yr on Namecheap, or use your existing one). Point it at your server with A + AAAA records via Cloudflare. Configure Cloudflare proxying + caching rules. Set up TLS with Let's Encrypt (certbot) and verify A+ grade on ssllabs.com. Document every step in DNS-TLS.md.",
-      "resources": [
+      "title": "Edge Portfolio v0.2: Custom domain + HTTPS",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Last week was *.cloudfront.net. This week you point a real domain (e.g. yourname.dev) and get an automatic HTTPS cert via AWS ACM.",
+      "days": [
         {
-          "label": "Computer Networking: A Top-Down Approach (Kurose & Ross)",
-          "url": "https://gaia.cs.umass.edu/kurose_ross/index.php",
-          "note": "free PDF available; the canonical networking textbook"
+          "number": 1,
+          "title": "Buy a domain",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Namecheap (cheap domain registrar)",
+              "url": "https://www.namecheap.com",
+              "why": "Click 'Open' to buy your domain. .com ~$10/yr, .dev ~$15/yr, .me ~$15/yr."
+            },
+            {
+              "kind": "reflection",
+              "title": "Pick your domain",
+              "body": "Brainstorm 5 candidates. Check availability. Buy one. Total budget: ~$15/yr."
+            }
+          ]
         },
         {
-          "label": "Julia Evans — Networking zines",
-          "url": "https://wizardzines.com/",
-          "note": "paid zines but her free blog has dozens of networking deep-dives"
+          "number": 2,
+          "title": "Move DNS to Route 53",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "AWS Route 53 from namecheap (15 min)",
+              "url": "https://www.youtube.com/results?search_query=route+53+namecheap+dns+nameservers+tutorial",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Route 53 hosted zone",
+              "body": "In AWS console → Route 53 → Hosted zones → Create hosted zone for yourdomain.com.\nNote the 4 NS records.\nBack in Namecheap → Domain List → Manage → Nameservers → 'Custom DNS' → paste the 4 NS records. Save.\n\nPropagation takes 5-60 min. Check with: dig NS yourdomain.com"
+            }
+          ]
         },
         {
-          "label": "Cloudflare Learning — DNS",
-          "url": "https://www.cloudflare.com/learning/dns/what-is-dns/",
-          "note": "free, the best DNS explainers anywhere"
+          "number": 3,
+          "title": "Request ACM cert",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Free SSL via ACM",
+              "body": "In AWS console → Certificate Manager (us-east-1!) → Request → Public certificate.\n  Domain: yourdomain.com\n  Add: www.yourdomain.com\n  Validation: DNS\n  Click 'Create records in Route 53' → it auto-adds the validation records.\n\nWait 5-15 min for status to go to 'Issued'."
+            }
+          ]
         },
         {
-          "label": "How HTTPS Works — howhttps.works",
-          "url": "https://howhttps.works/",
-          "note": "comic-style explainer of TLS in 10 minutes"
+          "number": 4,
+          "title": "Update Terraform to use cert + custom domain",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Update main.tf",
+              "body": "Add (use your real cert ARN):\n      resource \"aws_cloudfront_distribution\" \"portfolio\" {\n        # ... existing config ...\n        aliases = [\"yourdomain.com\", \"www.yourdomain.com\"]\n        viewer_certificate {\n          acm_certificate_arn      = \"arn:aws:acm:us-east-1:...:certificate/...\"\n          ssl_support_method       = \"sni-only\"\n          minimum_protocol_version = \"TLSv1.2_2021\"\n        }\n      }\n\nAlso add Route 53 records pointing to CloudFront:\n      resource \"aws_route53_record\" \"apex\" {\n        zone_id = \"YOUR-HOSTED-ZONE-ID\"\n        name    = \"yourdomain.com\"\n        type    = \"A\"\n        alias {\n          name                   = aws_cloudfront_distribution.portfolio.domain_name\n          zone_id                = aws_cloudfront_distribution.portfolio.hosted_zone_id\n          evaluate_target_health = false\n        }\n      }\n\nterraform apply"
+            }
+          ]
         },
         {
-          "label": "Let's Encrypt — Documentation",
-          "url": "https://letsencrypt.org/docs/",
-          "note": "official; how to get free certificates with certbot"
+          "number": 5,
+          "title": "Verify HTTPS works",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Visit your domain",
+              "body": "Wait 10-15 min for DNS + CloudFront. Then visit https://yourdomain.com\nBrowser shows the padlock. Check the cert details — issued by Amazon Trust Services."
+            }
+          ]
         },
         {
-          "label": "Qualys SSL Labs — Server Test",
-          "url": "https://www.ssllabs.com/ssltest/",
-          "note": "free, scan any HTTPS site for cipher quality and config issues"
+          "number": 6,
+          "title": "Add HSTS + security headers",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Response headers policy",
+              "body": "Add a CloudFront response headers policy in Terraform that sets:\n  Strict-Transport-Security: max-age=31536000\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n\nVerify with securityheaders.com — aim for grade A."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git add infra/\n      git commit -m 'v0.2: custom domain + HTTPS + security headers'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ https://yourdomain.com loads\n  ☐ www → apex redirects (or both work)\n  ☐ ACM cert valid\n  ☐ securityheaders.com grade A or better\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Your domain works in one browser but not another. List 5 hypotheses; demonstrate one debugging tool for each.",
-        "TLS handshake adds ~100ms to first connection. What does HTTP/2 + connection reuse change? What does QUIC change?",
-        "Your DNS change isn't propagating. Why does TTL matter here? How do you check from a third-party resolver?",
-        "Your TLS cert is in 30 days from expiring. Why do you absolutely automate renewal?"
+      "topics": [
+        "Domain registration basics",
+        "Route 53 hosted zones",
+        "AWS Certificate Manager (ACM) DNS validation",
+        "CloudFront aliases + ACM hookup",
+        "HSTS and other security headers",
+        "Terraform alias records"
       ],
+      "tasks": [
+        "Buy a domain at Namecheap",
+        "Create Route 53 hosted zone + change nameservers",
+        "Request ACM certificate (us-east-1)",
+        "Wire ACM + aliases into Terraform",
+        "Add HSTS + security headers via CloudFront response policy"
+      ],
+      "project": "Edge Portfolio v0.2 — live on YOUR domain with HTTPS, HSTS, and grade-A security headers, all in Terraform.",
+      "resources": [],
       "exercises": [
-        "Use dig to find the MX records for gmail.com.",
-        "Use curl with --resolve to test a domain pointing at a specific IP before changing DNS.",
-        "Configure HSTS on your nginx; verify in browser dev tools.",
-        "Use tcpdump to capture a DNS query; identify the query type and the response."
+        "Add a wildcard cert (*.yourdomain.com) and create a sub-domain (blog.yourdomain.com)",
+        "Add IPv6 support to CloudFront",
+        "Add a 301 redirect rule from non-www to www (or vice versa)"
+      ],
+      "questions": [
+        "Why must ACM certs for CloudFront live in us-east-1 specifically?",
+        "What's an apex/zone-apex record?",
+        "What does HSTS preload mean?",
+        "What happens if your domain expires?"
       ],
       "outputs": [
-        "Your domain serving HTTPS with A+ SSL Labs grade",
-        "Cloudflare DNS + proxying configured",
-        "Documented certificate auto-renewal",
-        "Notes/networking.md — your debugging checklist"
+        "Live HTTPS site at yourdomain.com",
+        "Security headers grade ≥ A",
+        "v0.2 tag",
+        "Updated Terraform"
       ]
     },
     {
       "number": 3,
-      "title": "Git, Trunk-Based Development, and Branching at Scale",
-      "phase": "Foundations",
-      "commitment_hours": "15-20",
-      "context": "Git is more important than your cloud provider. This week you learn trunk-based development, the modern enterprise default; rebase vs merge; how teams ship 50 PRs a day without stepping on each other.",
-      "topics": [
-        "Trunk-based development — why short-lived branches beat GitFlow at most companies",
-        "Rebase vs merge — when each is right; the golden rule of rebase (never rebase shared history)",
-        "Interactive rebase — cleaning up commits before PR",
-        "Cherry-pick, reflog, bisect — the tools that save your day",
-        "Conventional Commits — automating changelogs",
-        "GitHub Actions — your CI/CD platform",
-        "Pull request etiquette — small, focused, reviewable",
-        "Code review — what to look for, how to give kind-but-direct feedback"
-      ],
-      "tasks": [
-        "Configure global git: name, email, default branch main, pull.rebase=true",
-        "Practice interactive rebase: take 5 messy commits, squash into 2 logical ones",
-        "Use git bisect to find a regression in a real (or simulated) repo",
-        "Open a real PR to an open-source repo (any size); engage with review feedback",
-        "Write a GitHub Action workflow that runs `bash lint.sh` on every PR"
-      ],
-      "project": "Build a Modern Git Workflow on One of Your Repos. Enforce: branch protection on main (no direct pushes), required CI checks, required reviews, conventional commits via husky + commitlint, automatic changelog generation, semantic-release for tagging. Document the workflow in CONTRIBUTING.md.",
-      "resources": [
+      "title": "Edge Portfolio v0.3: GitHub Actions CI/CD",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Right now you manually upload index.html. This week you automate it — push to main, the site auto-deploys.",
+      "days": [
         {
-          "label": "Pro Git book — Scott Chacon",
-          "url": "https://git-scm.com/book/en/v2",
-          "note": "free book, the canonical reference"
+          "number": 1,
+          "title": "What is CI/CD?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "CI/CD explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=ci+cd+explained+beginner+2024",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "video",
+              "title": "GitHub Actions in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/results?search_query=github+actions+100+seconds+fireship",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Pipeline plan",
+              "body": "What should the pipeline do on every push to main?\n  1. Run html-validator (catch broken HTML)\n  2. Sync the file to S3\n  3. Invalidate CloudFront cache"
+            }
+          ]
         },
         {
-          "label": "Atlassian — Git tutorials",
-          "url": "https://www.atlassian.com/git/tutorials",
-          "note": "free, the friendliest visual explanations of branches and merges"
+          "number": 2,
+          "title": "AWS IAM user for CI",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Least-privilege CI user",
+              "body": "In AWS Console → IAM → Users → Create user → name: github-actions-ci\nDon't give AdminAccess. Create a custom policy with ONLY:\n  s3:PutObject, s3:DeleteObject on your portfolio bucket\n  cloudfront:CreateInvalidation on your distribution\n\nSave the Access Key ID + Secret."
+            }
+          ]
         },
         {
-          "label": "Trunk-based development — trunkbaseddevelopment.com",
-          "url": "https://trunkbaseddevelopment.com/",
-          "note": "official site explaining the workflow; concise and opinionated"
+          "number": 3,
+          "title": "Add secrets to GitHub",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Repository secrets",
+              "body": "In GitHub → your repo → Settings → Secrets and variables → Actions → New repository secret.\nAdd:\n  AWS_ACCESS_KEY_ID = (the new CI user key)\n  AWS_SECRET_ACCESS_KEY = (the secret)\n  AWS_S3_BUCKET = your bucket name\n  AWS_CLOUDFRONT_ID = your CloudFront distribution ID"
+            }
+          ]
         },
         {
-          "label": "Conventional Commits Specification",
-          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
-          "note": "official, the standard commit-message format"
+          "number": 4,
+          "title": "Write the workflow",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": ".github/workflows/deploy.yml",
+              "body": "Create .github/workflows/deploy.yml:\n\n      name: Deploy\n      on:\n        push:\n          branches: [main]\n          paths: ['index.html']\n      jobs:\n        deploy:\n          runs-on: ubuntu-latest\n          steps:\n            - uses: actions/checkout@v4\n            - name: Configure AWS credentials\n              uses: aws-actions/configure-aws-credentials@v4\n              with:\n                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}\n                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}\n                aws-region: us-east-1\n            - name: Sync to S3\n              run: aws s3 cp index.html s3://${{ secrets.AWS_S3_BUCKET }}/\n            - name: Invalidate CloudFront\n              run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths '/index.html' '/'"
+            }
+          ]
         },
         {
-          "label": "GitHub Actions — Documentation",
-          "url": "https://docs.github.com/en/actions",
-          "note": "official, your CI/CD platform reference"
+          "number": 5,
+          "title": "Test the pipeline",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Push a change",
+              "body": "Make a small edit to index.html (e.g. update your tagline). Commit + push to main.\nGo to GitHub → your repo → Actions tab. Watch the workflow run.\nAfter ~1 min, refresh your live site — the change should be live."
+            }
+          ]
         },
         {
-          "label": "Semantic Release — Documentation",
-          "url": "https://semantic-release.gitbook.io/semantic-release/",
-          "note": "official, automated versioning + changelog from your commits"
+          "number": 6,
+          "title": "Add an HTML validation step",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Quality gate",
+              "body": "Before the S3 sync step, add:\n            - name: Validate HTML\n              uses: Cyb3r-Jak3/html5validator-action@v7\n              with:\n                root: '.'\n\nNow if you write broken HTML, the workflow fails BEFORE deploying."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git add .github/\n      git commit -m 'v0.3: GitHub Actions CI/CD'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ deploy.yml workflow runs on push\n  ☐ HTML validator runs first\n  ☐ CI user has minimum permissions\n  ☐ Push to main triggers a live update within 60s\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Your team has 50 engineers shipping multiple PRs daily. What breaks with long-lived feature branches?",
-        "You force-pushed to a shared branch and erased someone's work. How do you recover? What policy prevents it?",
-        "Look at a merged PR in a popular OSS repo. What made the review go smoothly? What would have made it slower?",
-        "Branch protection on main — required reviews + required CI — is annoying for solo devs. When does it start paying off?"
+      "topics": [
+        "CI/CD fundamentals",
+        "GitHub Actions workflow YAML",
+        "AWS IAM least-privilege",
+        "GitHub repository secrets",
+        "Cache invalidation with CloudFront",
+        "Quality gates in pipelines"
       ],
+      "tasks": [
+        "Create a CI-only IAM user with least privilege",
+        "Add AWS secrets to GitHub repo",
+        "Write deploy.yml that syncs S3 + invalidates CloudFront",
+        "Add HTML validation as a quality gate"
+      ],
+      "project": "Edge Portfolio v0.3 — push to main, site updates within 60 seconds. HTML validation runs first. Zero manual deploys.",
+      "resources": [],
       "exercises": [
-        "Use git bisect to find the commit that broke a test; write the bisect script.",
-        "Set up husky + commitlint to enforce Conventional Commits.",
-        "Configure GitHub branch protection on main: required PR, required CI, no force push.",
-        "Write a GitHub Actions workflow with a matrix (e.g. Node 20, 22; Postgres 15, 16)."
+        "Add a manual_dispatch trigger so you can deploy without a code change",
+        "Add a staging environment (separate bucket) and require approval to promote to prod",
+        "Add Lighthouse CI as a quality gate"
+      ],
+      "questions": [
+        "What's the difference between CI and CD?",
+        "Why use a separate IAM user for CI vs your own?",
+        "Why invalidate CloudFront — why not just rely on TTL?",
+        "What's the cost of CloudFront invalidations?"
       ],
       "outputs": [
-        "Modern git workflow enforced on one of your repos",
-        "Open PR to an OSS repo with engaged review",
-        "Auto-generated CHANGELOG.md from semantic-release",
-        "Notes/git-workflows.md — your decision tree for branching strategies"
+        "Working CI on every push",
+        "Live site auto-updates",
+        "deploy.yml in .github/workflows/",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "Cloud Foundations — AWS Core in One Week",
-      "phase": "Foundations",
-      "commitment_hours": "25-30",
-      "context": "AWS runs more of the internet than any other cloud. EC2, S3, IAM, VPC, RDS — these five services run 80% of AWS workloads. This week you provision them with the console first, then with the CLI.",
-      "topics": [
-        "The AWS regions and AZ model — why latency + sovereignty matter",
-        "EC2 — instances, AMIs, security groups, key pairs, instance store vs EBS",
-        "S3 — buckets, versioning, lifecycle, IAM policies, presigned URLs",
-        "IAM — users, groups, roles, policies, the principle of least privilege",
-        "VPC — subnets (public + private), route tables, NAT gateway, security groups vs NACLs",
-        "RDS — managed Postgres, backups, read replicas, parameter groups",
-        "Pricing — EC2 spot, reserved, savings plans; S3 storage classes",
-        "AWS CLI — installing, configuring profiles, common patterns"
-      ],
-      "tasks": [
-        "Create an AWS account; enable MFA on root; create an IAM user with admin access for daily work",
-        "Spin up a t2.micro EC2 instance (free tier); SSH in",
-        "Create an S3 bucket; upload a file via console + via CLI; generate a presigned URL",
-        "Create a VPC with one public and one private subnet; provision an RDS Postgres in the private subnet",
-        "Write IAM policy JSON from scratch (don't use the visual editor) for a 'read-only-on-one-bucket' policy"
-      ],
-      "project": "Build a 3-Tier App Stack on AWS Manually. Frontend on S3 + CloudFront, backend on a single EC2 (or App Runner), database on RDS Postgres. Hand-write the IAM policies. Document every console click in INFRA-MANUAL.md. Next week you'll throw this away and do it with Terraform — feeling the pain of manual is the lesson.",
-      "resources": [
+      "title": "Edge Portfolio v0.4: Monitoring + logs",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Right now if your site went down, you'd never know. This week we add CloudWatch alarms + access logs.",
+      "days": [
         {
-          "label": "AWS — Documentation",
-          "url": "https://docs.aws.amazon.com/",
-          "note": "official, the canonical reference; use the services' Getting Started guides"
+          "number": 1,
+          "title": "Why monitor",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "AWS CloudWatch basics (15 min)",
+              "url": "https://www.youtube.com/results?search_query=cloudwatch+basics+tutorial+aws",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three alarms",
+              "body": "What 3 things would you want an email for?\n  1. Site returning 5xx errors\n  2. Bill over $5\n  3. CloudFront origin (S3) becoming unreachable"
+            }
+          ]
         },
         {
-          "label": "Adrian Cantrill — AWS courses (paid)",
-          "url": "https://learn.cantrill.io/",
-          "note": "paid but the most respected AWS instructor; some free YouTube content as well"
+          "number": 2,
+          "title": "CloudFront access logs",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Enable logging",
+              "body": "Add to Terraform:\n      resource \"aws_s3_bucket\" \"logs\" {\n        bucket = \"YOUR-NAME-edge-portfolio-logs\"\n      }\n      # And in the CloudFront resource:\n      logging_config {\n        bucket = aws_s3_bucket.logs.bucket_domain_name\n        prefix = \"cf-logs/\"\n      }\n\nterraform apply. Visit your site a few times. Wait 10 min. Look in the logs bucket — see access logs."
+            }
+          ]
         },
         {
-          "label": "AWS — Free Tier",
-          "url": "https://aws.amazon.com/free/",
-          "note": "official, what's free for 12 months and what's free forever; budget against this"
+          "number": 3,
+          "title": "Bill alarm in Terraform",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Bill alarm",
+              "body": "Add to main.tf:\n      resource \"aws_cloudwatch_metric_alarm\" \"bill\" {\n        alarm_name          = \"edge-portfolio-bill\"\n        comparison_operator = \"GreaterThanThreshold\"\n        evaluation_periods  = 1\n        metric_name         = \"EstimatedCharges\"\n        namespace           = \"AWS/Billing\"\n        period              = 21600  # 6h\n        statistic           = \"Maximum\"\n        threshold           = 5\n        dimensions = { Currency = \"USD\" }\n        alarm_actions = [aws_sns_topic.alerts.arn]\n      }\n      resource \"aws_sns_topic\" \"alerts\" { name = \"edge-portfolio-alerts\" }\n      resource \"aws_sns_topic_subscription\" \"email\" {\n        topic_arn = aws_sns_topic.alerts.arn\n        protocol  = \"email\"\n        endpoint  = \"you@example.com\"\n      }\n\nterraform apply. Confirm the email subscription."
+            }
+          ]
         },
         {
-          "label": "Last Week in AWS — Corey Quinn",
-          "url": "https://www.lastweekinaws.com/",
-          "note": "newsletter, the canonical AWS commentary; mostly free"
+          "number": 4,
+          "title": "5xx error alarm",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CloudFront 5xx",
+              "body": "Add CloudWatch alarm on CloudFront's 5xxErrorRate metric. Threshold: 1% over 5 min."
+            }
+          ]
         },
         {
-          "label": "AWS Well-Architected Framework",
-          "url": "https://aws.amazon.com/architecture/well-architected/",
-          "note": "official, the canonical 'best practices across pillars' reference"
+          "number": 5,
+          "title": "Build a tiny status dashboard",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CloudWatch dashboard",
+              "body": "Add a CloudWatch dashboard via Terraform that shows: Requests/min, 4xx rate, 5xx rate, cache hit ratio, origin latency."
+            }
+          ]
         },
         {
-          "label": "AWS Pricing Calculator",
-          "url": "https://calculator.aws/",
-          "note": "official, estimate before you spend; always run a what-if before clicking"
+          "number": 6,
+          "title": "Synthetic monitor (uptime check)",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "UptimeRobot — free uptime monitoring",
+              "url": "https://uptimerobot.com",
+              "why": "Free for 50 monitors at 5min intervals."
+            },
+            {
+              "kind": "exercise",
+              "title": "Add uptime check",
+              "body": "Sign up at UptimeRobot. Add HTTP(S) monitor for https://yourdomain.com. Email notifications on down. Optional: integrate with email."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git add . && git commit -m 'v0.4: monitoring + alarms'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ CloudFront access logs flowing to S3\n  ☐ Bill alarm at $5 (email subscription confirmed)\n  ☐ 5xx rate alarm\n  ☐ CloudWatch dashboard visible\n  ☐ UptimeRobot monitor active\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Your EC2 instance can reach the internet but not your RDS. List 5 things to check.",
-        "Your S3 bucket is public — but you didn't intend it. How do you check, and how do you lock it down without breaking anything?",
-        "Compare on-demand, spot, and reserved EC2 pricing for a workload you know. Where's the break-even?",
-        "Your AWS bill arrived $200 more than expected. How do you find the culprit?"
+      "topics": [
+        "CloudFront access logs",
+        "S3 bucket for logs",
+        "CloudWatch metrics and alarms",
+        "SNS topic + email subscription",
+        "Synthetic monitoring via UptimeRobot",
+        "CloudWatch dashboards"
       ],
+      "tasks": [
+        "Enable CloudFront access logs to S3",
+        "Add bill alarm at $5",
+        "Add 5xx error rate alarm",
+        "Build a CloudWatch dashboard",
+        "Add UptimeRobot synthetic monitor"
+      ],
+      "project": "Edge Portfolio v0.4 — observed. Logs in S3, alarms email you on cost or errors, a dashboard for at-a-glance status, external uptime monitoring.",
+      "resources": [],
       "exercises": [
-        "Install + configure aws-cli with a named profile; verify with `aws sts get-caller-identity`.",
-        "Write an IAM policy that allows uploading to one specific S3 prefix.",
-        "Create an EC2 instance via CLI (not console); attach to your VPC's public subnet.",
-        "Set up an AWS Budget alert that emails you when monthly spend exceeds $10."
+        "Add a request latency alarm",
+        "Process access logs daily with Athena (SQL on S3 files)",
+        "Add a 'health endpoint' /up.html for UptimeRobot to ping instead of /"
+      ],
+      "questions": [
+        "What's the difference between a metric and a log?",
+        "Why send alarms through SNS instead of email directly?",
+        "What does the 5xx error rate measure — origin or edge?",
+        "When do CloudWatch alarms cost money?"
       ],
       "outputs": [
-        "3-tier app live on AWS (manually provisioned)",
-        "Documented every console click in INFRA-MANUAL.md",
-        "AWS Budget alert configured",
-        "Notes/aws-foundations.md — your AWS service decision tree"
+        "Logs in S3 bucket",
+        "All alarms in Terraform",
+        "CloudWatch dashboard",
+        "UptimeRobot monitor",
+        "v0.4 tag"
       ]
     },
     {

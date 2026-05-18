@@ -228,200 +228,400 @@
     },
     {
       "number": 2,
-      "title": "SQL for Data Retrieval",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "Learn SQL as the primary language of data access in BI. Write queries that retrieve, filter, aggregate, and join data — the skills used in 100\\% of BI analyst job descriptions.",
-      "topics": [
-        "SELECT, WHERE, ORDER BY, LIMIT — basic retrieval",
-        "Aggregate functions: COUNT, SUM, AVG, MIN, MAX with GROUP BY and HAVING",
-        "JOINs: INNER, LEFT, RIGHT, FULL OUTER — when and why to use each",
-        "Subqueries and Common Table Expressions (CTEs)",
-        "String and date functions: CONCAT, SUBSTRING, DATEDIFF, DATE_TRUNC"
-      ],
-      "tasks": [
-        "Set up a local PostgreSQL or SQLite database; load the Northwind dataset",
-        "Write 10 queries covering all basic operations (SELECT, filter, GROUP BY, JOIN)",
-        "Answer 5 business questions using SQL (top customers, slowest-moving products, etc.)",
-        "Write a CTE that calculates monthly revenue growth rate",
-        "Export query results to CSV and import into Excel for a combined workflow"
-      ],
-      "project": "Customer Analysis with SQL: Query the Northwind database to answer: Who are the top 10 customers by lifetime value? Which product categories have declining sales? What is the average time between order and delivery by region? Write a brief report summarising your findings.",
-      "resources": [
+      "title": "Superstore BI v0.2: Drillthrough + tooltips",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Last week's dashboard is static. This week we make it interactive — click a region, drill into its details. Hover for rich tooltips.",
+      "days": [
         {
-          "label": "YouTube: Programming with Mosh — SQL Tutorial for Beginners (full video)",
-          "url": "",
-          "note": ""
+          "number": 1,
+          "title": "What's drillthrough?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI drillthrough explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=power+bi+drillthrough+beginner+tutorial",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Plan the detail page",
+              "body": "When a user right-clicks a region on the bar chart and chooses 'Drillthrough', what should the detail page show? List 5 visuals."
+            }
+          ]
         },
         {
-          "label": "Dataset: Northwind database — github.com/pthom/northwind_psql",
-          "url": "",
-          "note": ""
+          "number": 2,
+          "title": "Build the Region Detail page",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "New page",
+              "body": "In Power BI Desktop, click + to add a new page. Rename it 'Region Detail'.\nAdd visuals:\n  - Card: Total Sales\n  - Card: Total Profit\n  - Line chart: Sales trend\n  - Bar chart: Subcategory profit\n  - Table: Top customers in this region\n\nThese are filtered by NOTHING yet."
+            }
+          ]
         },
         {
-          "label": "Interactive practice: sqlzoo.net (complete SELECT and JOIN sections)",
-          "url": "",
-          "note": ""
+          "number": 3,
+          "title": "Enable drillthrough",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Drillthrough field",
+              "body": "On the Region Detail page, in the Visualizations pane, scroll to 'Drillthrough' section.\nDrag Orders[Region] into 'Drill through filters'.\nAn arrow appears at top-left of the page (back button) — keep it.\n\nGo to the main page. Right-click on a Region bar → Drill through → Region Detail.\nYOU SHOULD SEE: the detail page filtered to that region."
+            }
+          ]
         },
         {
-          "label": "Mode SQL Tutorial: mode.com/sql-tutorial (CTE and subquery sections)",
-          "url": "",
-          "note": ""
+          "number": 4,
+          "title": "Custom tooltips",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Tooltip page",
+              "body": "Add a new page. Rename 'Tooltip — Subcategory'. In Page Settings, set Type = Tooltip, Size = Tooltip (320 x 240).\nAdd: Card with Total Sales, Card with Total Profit, small bar of monthly trend.\n\nOn the main page's bar chart of Subcategory, in Format → Tooltip → set 'Tooltip page' = 'Tooltip — Subcategory'.\nHover over a bar — you see your custom tooltip."
+            }
+          ]
         },
         {
-          "label": "YouTube: Alex the Analyst — SQL for Data Analysts playlist",
-          "url": "",
-          "note": ""
+          "number": 5,
+          "title": "Bookmarks for views",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Filter bookmark",
+              "body": "View tab → Bookmarks pane. Apply some filters (e.g. only Furniture, only 2023). Click 'Add' bookmark → name it 'Furniture 2023'.\nAdd another button on the main page that triggers this bookmark."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Republish",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Update Power BI Service",
+              "body": "Save the .pbix. Home → Publish → My workspace → Replace.\nOpen the published report. Verify drillthrough + tooltips work."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git add . && git commit -m 'v0.2: drillthrough + tooltips'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Region Detail page exists with 5 visuals\n  ☐ Drillthrough from main → Region Detail works\n  ☐ Custom tooltip on Subcategory bars\n  ☐ 1 bookmark with a button trigger\n  ☐ Republished to Service\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "What is the difference between WHERE and HAVING? Give an example where HAVING is required.",
-        "Explain a scenario where a LEFT JOIN gives different results from an INNER JOIN.",
-        "Why are CTEs preferred over nested subqueries for readability?",
-        "What does GROUP BY do, and what error occurs if you forget it?"
+      "topics": [
+        "Drillthrough pages in Power BI",
+        "Custom tooltip pages",
+        "Bookmarks",
+        "Page configuration (Type = Tooltip)",
+        "Republishing to Power BI Service"
       ],
+      "tasks": [
+        "Build a Region Detail page",
+        "Enable drillthrough on Region",
+        "Add a custom Subcategory tooltip",
+        "Add a Furniture 2023 bookmark with a button",
+        "Republish"
+      ],
+      "project": "Superstore BI v0.2 — interactive dashboard. Right-click drills into region detail. Hover shows rich tooltips. Bookmarks for saved views.",
+      "resources": [],
       "exercises": [
-        "Find all customers who placed more than 5 orders and their total spend",
-        "Write a query using a CTE to rank products by revenue within each category",
-        "Calculate the month-over-month revenue change using a self-join or LAG() function",
-        "Join Orders, Order Details, and Products to get a full line-item sales report"
+        "Add a second drillthrough for Subcategory",
+        "Use a tooltip to show top 3 customers for the hovered region",
+        "Add 3 more bookmarks (Q1, Q2, Q3, Q4)"
+      ],
+      "questions": [
+        "What's the difference between filter and drillthrough?",
+        "Why use a tooltip page instead of the default tooltip?",
+        "When do bookmarks become unmanageable?",
+        "What's the performance cost of many drillthrough pages?"
       ],
       "outputs": [
-        "SQL query file (.sql) with 15+ queries solving real business questions",
-        "CSV export of top-customer analysis",
-        "GitHub folder /week-02-sql with README describing each query's business purpose"
+        "3 pages in the .pbix",
+        "Live URL still works",
+        "v0.2 tag"
       ]
     },
     {
       "number": 3,
-      "title": "Introduction to Tableau",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "Get productive in Tableau Public within one week. Learn to connect data, build visualisations, and think in Tableau's visual grammar of marks, dimensions, and measures.",
-      "topics": [
-        "Tableau interface: shelves, cards, marks panel, Show Me",
-        "Dimensions vs Measures vs Discrete vs Continuous — Tableau's core model",
-        "Bar charts, line charts, scatter plots, maps, treemaps in Tableau",
-        "Filters: quick filters, context filters, top N filters",
-        "Calculated fields basics: IF, CASE, date calculations, string functions"
-      ],
-      "tasks": [
-        "Install Tableau Public (free) and connect to the Superstore CSV",
-        "Build 5 chart types: bar, line, scatter, filled map, treemap",
-        "Create a calculated field: profit ratio = SUM(Profit) / SUM(Sales)",
-        "Add interactive filters (category, year, region) to a dashboard",
-        "Publish your first dashboard to Tableau Public"
-      ],
-      "project": "Regional Performance Dashboard: Build a 3-view Tableau dashboard showing: (1) sales map by state, (2) category performance bar chart, (3) monthly profit trend line. Add a region filter that updates all views simultaneously. Publish to Tableau Public.",
-      "resources": [
+      "title": "Superstore BI v0.3: Row-level security",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "This week we add RLS — Regional VPs only see their region's data when they open the dashboard.",
+      "days": [
         {
-          "label": "Tableau eLearning: training.tableau.com (free Tableau Desktop Specialist prep)",
-          "url": "",
-          "note": ""
+          "number": 1,
+          "title": "What is RLS?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI Row-Level Security (15 min)",
+              "url": "https://www.youtube.com/results?search_query=power+bi+row+level+security+tutorial+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Model the roles",
+              "body": "How many roles do you need?\n  - CEO: sees everything\n  - WestVP: only West\n  - EastVP: only East\n  - CentralVP: only Central\n  - SouthVP: only South"
+            }
+          ]
         },
         {
-          "label": "YouTube: Andy Kriebel — Tableau Fundamentals playlist (Workout Wednesday creator)",
-          "url": "",
-          "note": ""
+          "number": 2,
+          "title": "Create roles",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Modeling tab",
+              "body": "Modeling tab → Manage roles → Create.\nRole: WestVP. Table: Orders. Filter: [Region] = \"West\"\nSave. Repeat for East, Central, South."
+            }
+          ]
         },
         {
-          "label": "YouTube: Tableau Tim — Getting Started with Tableau 2024",
-          "url": "",
-          "note": ""
+          "number": 3,
+          "title": "Test as a role",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "View as role",
+              "body": "Modeling tab → View as → WestVP. The whole dashboard filters to West-only.\nVerify the bar chart only shows West.\nClear → return to admin view."
+            }
+          ]
         },
         {
-          "label": "Dataset: Sample Superstore (built into Tableau)",
-          "url": "",
-          "note": ""
+          "number": 4,
+          "title": "Add an 'All Regions' role for CEO",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CEO role",
+              "body": "Create role 'CEO' with NO filter — it sees everything. (Power BI's default for unrestricted is no filter clause.)"
+            }
+          ]
         },
         {
-          "label": "Tableau community: community.tableau.com (Viz of the Day for inspiration)",
-          "url": "",
-          "note": ""
+          "number": 5,
+          "title": "Republish + assign",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Service-side role assignment",
+              "body": "Publish to Power BI Service.\nIn Service → your dataset → Security → assign emails to roles. Add your own email to WestVP.\nOpen the report — you only see West."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Document",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "ROLES.md",
+              "body": "Create ROLES.md in your repo:\n      # Superstore BI Roles\n      | Role | Filter | Who |\n      |------|--------|-----|\n      | CEO | None | Full access |\n      | WestVP | Region = West | VP for West region |\n      | EastVP | Region = East | VP for East |\n      | CentralVP | Region = Central | VP for Central |\n      | SouthVP | Region = South | VP for South |"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git add . && git commit -m 'v0.3: row-level security'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ 5 roles defined in the .pbix\n  ☐ View as WestVP shows only West data\n  ☐ Service-side role assignment tested\n  ☐ ROLES.md committed\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "What is the difference between a dimension and a measure in Tableau?",
-        "Explain why context filters must be set before other filters in Tableau.",
-        "What does the FIXED level of detail (LOD) expression do?",
-        "How does Tableau handle NULL values in aggregated measures?"
+      "topics": [
+        "RLS fundamentals",
+        "DAX filter expressions for roles",
+        "View as role in Desktop",
+        "Service-side role assignment",
+        "Documenting RBAC"
       ],
+      "tasks": [
+        "Create 5 roles in Manage Roles",
+        "Test each role with View As",
+        "Publish + assign emails in Service",
+        "Document roles in ROLES.md"
+      ],
+      "project": "Superstore BI v0.3 — proper RLS. Each VP sees only their region. CEO sees everything.",
+      "resources": [],
       "exercises": [
-        "Build a scatter plot of Sales vs Profit coloured by Category with a trend line",
-        "Create a calculated field that classifies orders as High/Medium/Low profit",
-        "Build a dual-axis chart showing Sales bars and Profit Ratio line",
-        "Use a Top N filter to show only the top 10 customers by sales"
+        "Add a Country/Segment combined role",
+        "Build a dynamic RLS via USERPRINCIPALNAME() so users are mapped to regions in a table",
+        "Test what happens when a user has 2 roles assigned"
+      ],
+      "questions": [
+        "What's the difference between static and dynamic RLS?",
+        "Why is RLS enforced at the data model level, not the visual level?",
+        "What's the auditability story when a user views a report?",
+        "What's the gotcha with relationships and RLS?"
       ],
       "outputs": [
-        "Tableau Public dashboard (published, shareable URL)",
-        "GitHub /week-03-tableau folder with screenshot and link",
-        "One-paragraph business summary of the dashboard insights"
+        "5 roles in .pbix",
+        "ROLES.md",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "Advanced Tableau",
-      "phase": "Advanced Visualisation",
-      "commitment_hours": "25--35",
-      "context": "Move beyond basic charts to build production-quality Tableau dashboards with LOD expressions, table calculations, parameters, and polished design principles.",
-      "topics": [
-        "Level of Detail (LOD) expressions: FIXED, INCLUDE, EXCLUDE — use cases",
-        "Table calculations: WINDOW_SUM, RUNNING_TOTAL, RANK, PERCENTILE",
-        "Parameters: dynamic reference lines, top-N controls, scenario analysis",
-        "Dashboard design principles: layout containers, floating vs tiled, colour theory",
-        "Sets and set actions for custom interactivity"
-      ],
-      "tasks": [
-        "Write 3 LOD expressions: customer first order date, cohort revenue, category share",
-        "Build a cohort retention heatmap using table calculations",
-        "Add a parameter to dynamically switch between Sales, Profit, and Quantity metrics",
-        "Design a dashboard following a professional colour palette (max 3 colours)",
-        "Add set actions so clicking a region filters all other charts"
-      ],
-      "project": "Executive Sales Dashboard: Build a C-suite-ready Tableau dashboard with: KPI scorecard using LOD (YTD vs prior year), cohort analysis heatmap, dynamic metric selector via parameter, and clean branding. Suitable for a portfolio showcase.",
-      "resources": [
+      "title": "Superstore BI v0.4: Refresh + data gateway",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "The Sample Superstore is static. This week we simulate a real refresh scenario — auto-refreshing data from a live source.",
+      "days": [
         {
-          "label": "YouTube: Tableau Tim — LOD Expressions explained (search: 'Tableau LOD 2024')",
-          "url": "",
-          "note": ""
+          "number": 1,
+          "title": "Why automatic refresh",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI scheduled refresh (10 min)",
+              "url": "https://www.youtube.com/results?search_query=power+bi+scheduled+refresh+tutorial+2024",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Source options",
+              "body": "What's a realistic LIVE data source for Superstore?\n  - A SharePoint Excel that finance updates monthly?\n  - An Azure SQL DB?\n  - A flat file in OneDrive?"
+            }
+          ]
         },
         {
-          "label": "Book: Storytelling with Data by Cole Nussbaumer Knaflic (Chapters 1-5)",
-          "url": "",
-          "note": ""
+          "number": 2,
+          "title": "Move the file to OneDrive",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Put data online",
+              "body": "Sign in to onedrive.com (free).\nUpload Sample - Superstore.xls to a folder called 'BI Datasets'.\nRight-click → Copy link → make sure 'Anyone with the link can view'."
+            }
+          ]
         },
         {
-          "label": "Workout Wednesday: workout-wednesday.com (download weekly challenges)",
-          "url": "",
-          "note": ""
+          "number": 3,
+          "title": "Re-point Power BI to OneDrive",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Replace source",
+              "body": "In Power BI Desktop, open superstore.pbix.\nTransform Data → Data source settings → Change source.\nPoint to the OneDrive URL.\nRe-apply the cleaning steps. Save."
+            }
+          ]
         },
         {
-          "label": "YouTube: DataPlusScience — Table Calculations playlist",
-          "url": "",
-          "note": ""
+          "number": 4,
+          "title": "Publish + set scheduled refresh",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Daily refresh",
+              "body": "Publish to Service.\nIn Service → your dataset → Settings → Scheduled refresh.\nSet: refresh daily at 6am. Save your OneDrive credentials when prompted.\nTrigger a manual refresh to verify it works."
+            }
+          ]
         },
         {
-          "label": "Tableau Help: help.tableau.com (Parameters and Set Actions docs)",
-          "url": "",
-          "note": ""
+          "number": 5,
+          "title": "Simulate an update",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Test the pipeline",
+              "body": "Edit Sample - Superstore.xls (add a fake row with today's date, big sale, weird customer name).\nSave. Wait for the next scheduled refresh OR trigger manual.\nOpen the dashboard — your fake row should appear in totals."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Add a 'Last refreshed' indicator",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Refresh timestamp card",
+              "body": "In Power Query, add a step:\n      = #table({\"LastRefreshed\"}, {{DateTime.LocalNow()}})\nOr create a calculated table in DAX:\n      LastRefresh = ROW(\"Refreshed at\", NOW())\nAdd a card to the dashboard showing the value. Users now see when data is current."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git add . && git commit -m 'v0.4: auto-refresh from OneDrive'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ Data source pointing to OneDrive\n  ☐ Scheduled refresh configured (daily 6am)\n  ☐ Manual refresh tested\n  ☐ Fake-row test proves end-to-end refresh\n  ☐ 'Last refreshed' card on dashboard\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Explain with an example when you would use FIXED LOD vs INCLUDE LOD.",
-        "What is the difference between RUNNING_TOTAL and WINDOW_SUM table calculations?",
-        "How do parameters differ from filters in Tableau?",
-        "What principle from Storytelling with Data most changed how you design charts?"
+      "topics": [
+        "Power BI data sources from OneDrive/SharePoint",
+        "Scheduled refresh",
+        "Replacing data sources without breaking reports",
+        "Calculated tables for metadata",
+        "End-to-end refresh testing"
       ],
+      "tasks": [
+        "Upload data file to OneDrive",
+        "Re-point Power BI dataset",
+        "Configure daily scheduled refresh",
+        "Test by editing source + verifying dashboard updates",
+        "Add a 'Last refreshed' indicator card"
+      ],
+      "project": "Superstore BI v0.4 — data refreshes daily from OneDrive. Edit-and-see-update pipeline works end to end. Last-refresh timestamp visible.",
+      "resources": [],
       "exercises": [
-        "Calculate customer lifetime value using a FIXED LOD expression",
-        "Build a running total area chart showing cumulative revenue by month",
-        "Create a dynamic title that updates when a parameter value changes",
-        "Rebuild an existing chart removing all chart junk (gridlines, borders, legends where redundant)"
+        "Add refresh failure email notifications in Service",
+        "Set up incremental refresh (only fetch new rows)",
+        "Add a flat fact for 'data lag' alerts (last_refresh > 36h)"
+      ],
+      "questions": [
+        "Why does scheduled refresh need a Personal Gateway for on-prem sources?",
+        "What's the cost difference between Pro and PPU for refresh?",
+        "Why does Power BI fail when column types change?",
+        "What's the difference between Import mode and DirectQuery?"
       ],
       "outputs": [
-        "Executive-quality Tableau dashboard published to Tableau Public",
-        "2 Workout Wednesday solutions",
-        "Design notes: what you changed after peer feedback"
+        "Working refresh pipeline",
+        "Last-refresh card on dashboard",
+        "v0.4 tag"
       ]
     },
     {

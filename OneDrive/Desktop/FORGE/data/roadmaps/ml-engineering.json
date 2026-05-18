@@ -231,227 +231,446 @@
     },
     {
       "number": 2,
-      "title": "The Math Behind the Models — Statistics, Probability, and Linear Algebra",
-      "phase": "Foundations",
-      "commitment_hours": "25-30",
-      "context": "Most ML failures are statistical failures dressed up as engineering ones. This week you anchor the math — distributions, expectation, variance, central limit, Bayes, eigenvectors — to the actual things you'll see in train loops and eval reports. If you skip this week you'll spend 23 weeks pattern-matching without understanding.",
-      "topics": [
-        "Distributions you actually meet — Normal, Bernoulli, Categorical, Beta, Poisson",
-        "Sampling and the Central Limit Theorem — why averaging fixes things",
-        "Bias and variance — bias-variance decomposition, why both matter",
-        "Probability vs likelihood — the deepest source of beginner confusion",
-        "Bayes rule — prior, likelihood, posterior, why ML is mostly applied Bayes",
-        "Linear algebra essentials — matrix-vector multiplication as composition of linear maps",
-        "Eigenvectors and eigenvalues — what PCA is actually doing",
-        "Information theory primer — entropy, cross-entropy, KL divergence"
-      ],
-      "tasks": [
-        "Generate samples from 5 distributions in NumPy; plot histograms; verify mean and variance match the analytical values",
-        "Implement the bias-variance decomposition on a simple problem (e.g. polynomial regression of degree 1-15 on a noisy sine wave); plot bias², variance, total error",
-        "Implement PCA from scratch using SVD; apply to MNIST 784-dim vectors; reconstruct images from top-50 components",
-        "Implement cross-entropy loss in NumPy; verify against PyTorch's nn.CrossEntropyLoss on 10 random inputs",
-        "Pick a simple Bayesian problem (the disease-test problem) and compute the posterior by hand AND in code; convince yourself the answer is right"
-      ],
-      "project": "Build a Statistical EDA tool. Given any CSV, produce: per-column distribution plot (with best-fit reference distribution), correlation heatmap, mutual information matrix, missing-data pattern visualisation, outlier detection (IQR + isolation forest), and a 1-page automated report. Use SciPy for the statistics, Plotly for interactivity. Run it on 3 different real datasets. This becomes your first move on every new ML problem.",
-      "resources": [
+      "title": "FlightWise v0.2: Feature engineering",
+      "phase": "Foundation",
+      "commitment_hours": "15-20",
+      "context": "Last week's baseline got 50% recall. This week you double-down on features — add weather-style derived columns, encode time properly, and crack 65%.",
+      "days": [
         {
-          "label": "3Blue1Brown — Essence of Linear Algebra",
-          "url": "https://www.3blue1brown.com/topics/linear-algebra",
-          "note": "YouTube series, watch all 15 episodes — the single best linear algebra resource ever made"
+          "number": 1,
+          "title": "What is feature engineering?",
+          "summary": "Watch + plan.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Feature engineering explained (15 min)",
+              "url": "https://www.youtube.com/results?search_query=feature+engineering+machine+learning+beginner",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Five new features",
+              "body": "List 5 NEW features you could create from existing data (not weather — we don't have weather):\n  - 'is_weekend' (1 if Sat/Sun else 0)\n  - 'morning_rush' (1 if 6am-9am)\n  - 'evening_rush' (1 if 4pm-7pm)\n  - 'long_haul' (1 if distance > 1500 miles)\n  - 'red_eye' (1 if departure hour ≥ 22 or ≤ 5)"
+            }
+          ]
         },
         {
-          "label": "3Blue1Brown — Essence of Calculus",
-          "url": "https://www.3blue1brown.com/topics/calculus",
-          "note": "YouTube series, watch the first 8 episodes"
+          "number": 2,
+          "title": "Add the 5 features",
+          "summary": "Modify your clean notebook to engineer features.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Feature builder",
+              "body": "Open 03-clean.ipynb. After the dep_hour line, add:\n\n      df['is_weekend'] = df['DAY_OF_WEEK'].isin([6, 7]).astype(int)\n      df['morning_rush'] = ((df['dep_hour'] >= 6) & (df['dep_hour'] <= 9)).astype(int)\n      df['evening_rush'] = ((df['dep_hour'] >= 16) & (df['dep_hour'] <= 19)).astype(int)\n      df['long_haul'] = (df['DISTANCE'] > 1500).astype(int)\n      df['red_eye'] = ((df['dep_hour'] >= 22) | (df['dep_hour'] <= 5)).astype(int)\n\nSave clean.csv with the new columns."
+            }
+          ]
         },
         {
-          "label": "StatQuest with Josh Starmer",
-          "url": "https://www.youtube.com/c/joshstarmer",
-          "note": "YouTube channel, the friendliest stats explainer; watch his bias-variance and PCA videos"
+          "number": 3,
+          "title": "Retrain and compare",
+          "summary": "Same logistic regression, but with the new features.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Retrain",
+              "body": "Open 05-model.ipynb. Update X to include the 5 new features. Re-run. What's the new recall on class 1?\n\nWrite the result in a new markdown cell: 'Baseline recall: XX%. With engineered features: XX%. Improvement: +X%.'"
+            }
+          ]
         },
         {
-          "label": "Mathematics for Machine Learning — Deisenroth, Faisal, Ong",
-          "url": "https://mml-book.github.io/",
-          "note": "free PDF book, the canonical intermediate textbook"
+          "number": 4,
+          "title": "Try XGBoost",
+          "summary": "A tree model might beat logistic regression.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "XGBoost in 5 minutes",
+              "url": "https://www.youtube.com/results?search_query=xgboost+beginner+tutorial+python",
+              "duration_min": 8,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "XGBoost baseline",
+              "body": "Install: pip install xgboost\n\nIn a new notebook 06-xgboost.ipynb:\n      from xgboost import XGBClassifier\n      from sklearn.model_selection import train_test_split\n      from sklearn.metrics import classification_report\n      import pandas as pd\n      df = pd.read_csv('data/clean.csv')\n      # ...one-hot encoding as before...\n      model = XGBClassifier(n_estimators=100, max_depth=6, scale_pos_weight=4)\n      model.fit(X_train, y_train)\n      print(classification_report(y_test, model.predict(X_test)))\n\nCompare with logistic regression. Which won?"
+            }
+          ]
         },
         {
-          "label": "Seeing Theory — Brown University",
-          "url": "https://seeing-theory.brown.edu/",
-          "note": "interactive visualisations of probability concepts"
+          "number": 5,
+          "title": "Feature importance",
+          "summary": "Which features matter most?",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Plot importances",
+              "body": "After fitting xgb model:\n      import matplotlib.pyplot as plt\n      importances = pd.Series(model.feature_importances_, index=X.columns).sort_values(ascending=False)\n      importances.head(15).plot(kind='barh', figsize=(8,6), title='Top 15 features')\n      plt.savefig('feature_importance.png')\n\nWhich 3 features matter most? Surprising?"
+            }
+          ]
         },
         {
-          "label": "Information Theory, Inference, and Learning Algorithms — David MacKay",
-          "url": "https://www.inference.org.uk/itila/",
-          "note": "free PDF, the canonical info theory book — read chapters 1-5"
+          "number": 6,
+          "title": "Cross-validation",
+          "summary": "Don't trust one train/test split.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "5-fold CV",
+              "body": "Use cross_val_score:\n      from sklearn.model_selection import cross_val_score\n      scores = cross_val_score(model, X, y, cv=5, scoring='recall')\n      print(f'Recall across 5 folds: {scores.mean():.3f} +/- {scores.std():.3f}')\n\nIf the std is more than ~0.05, your model is unstable."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "Ship the better model.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "Update README with new recall. Save model:\n      joblib.dump(model, 'model_xgb.pkl')\n\n      git add .\n      git commit -m \"v0.2: feature engineering + XGBoost (recall XX%)\"\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ 5 engineered features added\n  ☐ XGBoost trained\n  ☐ Recall ≥ 60% (better than baseline)\n  ☐ Feature importance plot saved\n  ☐ 5-fold CV results in README\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Plot bias and variance for polynomial regression at degrees 1, 3, 5, 10, 15. Where's the sweet spot? What does this tell you about the meaning of capacity in any model?",
-        "Reconstruct an MNIST digit from 1, 5, 10, 50, 200 PCA components. At what point does it become recognisable? What does this say about effective dimensionality?",
-        "Run the same disease-test Bayes problem with prior 1% vs 50%. Same test specs. How wildly does the posterior swing? What's the engineering implication for fraud detection or rare-disease classifiers?",
-        "Compute cross-entropy between two distributions that differ only slightly. Then between two that differ a lot. What's the order of magnitude? Why is cross-entropy a better loss than MSE for classification?"
+      "topics": [
+        "Feature engineering from time features",
+        "Boolean derived features",
+        "XGBoost vs Logistic Regression",
+        "Feature importance from tree models",
+        "k-fold cross-validation"
       ],
+      "tasks": [
+        "Add 5 boolean derived features to clean.csv",
+        "Retrain logistic regression with new features",
+        "Train XGBoost classifier",
+        "Plot top-15 feature importance",
+        "Run 5-fold cross-validation",
+        "Compare baseline and XGBoost in README"
+      ],
+      "project": "FlightWise v0.2 — 5 new engineered features (is_weekend, morning_rush, evening_rush, long_haul, red_eye) + XGBoost model. Recall on delayed flights ≥ 60%.",
+      "resources": [],
       "exercises": [
-        "Implement PCA two ways: via eigendecomposition of the covariance matrix and via SVD of the data matrix. Verify they give the same projections.",
-        "Implement KL divergence between two Gaussians using the closed-form formula. Verify against the Monte Carlo estimate (sample 10k times, average log-ratio).",
-        "Write a function that samples from a 2D Gaussian with given mean and covariance using the Cholesky trick. Compare with np.random.multivariate_normal.",
-        "Take a real dataset and compute the mutual information between each feature and the target using sklearn.feature_selection.mutual_info_classif. Which features are most informative? Compare to a correlation-only ranking."
+        "Add interaction features (is_weekend * morning_rush)",
+        "Try LightGBM and compare",
+        "Drop ORIGIN/DEST one-hot and see what happens",
+        "Save predicted probabilities and find the most-confident wrong predictions"
+      ],
+      "questions": [
+        "Why does scale_pos_weight matter for imbalanced data?",
+        "What's the trade-off between deeper trees and more trees?",
+        "Why is feature importance from XGBoost different from coefficient size in logistic regression?",
+        "When does k-fold CV give a misleading estimate?"
       ],
       "outputs": [
-        "Notebook with bias-variance plot, PCA reconstruction images, cross-entropy verification",
-        "Repo statistical-eda-tool with the automated EDA producing reports on 3 datasets",
-        "Hand-derived solution + code for one Bayes problem, committed as notes/bayes.md",
-        "All exercises in exercises/week-02/"
+        "v0.2 git tag",
+        "model_xgb.pkl committed",
+        "feature_importance.png in repo",
+        "README documents recall improvement"
       ]
     },
     {
       "number": 3,
-      "title": "scikit-learn — The Library That Started It All",
-      "phase": "Foundations",
-      "commitment_hours": "20-25",
-      "context": "Before PyTorch, before deep learning, there was scikit-learn. It's still the right tool for 80% of tabular problems. This week you learn its API deeply — Pipeline, ColumnTransformer, cross_val_score, GridSearchCV — because once you know it, every ML library makes sense.",
-      "topics": [
-        "The estimator API — .fit(), .predict(), .transform(), why every model looks the same",
-        "Pipeline and ColumnTransformer — composing preprocessing + model in one object",
-        "Train/validation/test splits — why three, when one is enough",
-        "Cross-validation — k-fold, stratified, time-series-split, group k-fold",
-        "Hyperparameter search — GridSearchCV, RandomizedSearchCV, Optuna",
-        "Categorical encoding — OneHot, Target, Ordinal, when each is right",
-        "Imputation strategies — mean, median, mode, KNN, iterative",
-        "Class imbalance — class_weight, SMOTE, when to bother"
-      ],
-      "tasks": [
-        "Build a Pipeline for the Titanic dataset: ColumnTransformer (numeric standardise, categorical one-hot, missing imputation) + a model. Fit, evaluate on test.",
-        "Run 5-fold cross-validation on three model families (Logistic Regression, Random Forest, Gradient Boosting). Report mean and std of accuracy.",
-        "Run hyperparameter search with both GridSearchCV and Optuna; compare time-to-best-score",
-        "Take a tabular dataset and try 5 different categorical encoding strategies; report effect on a downstream model",
-        "Implement learning curves: plot training and validation score as a function of training set size"
-      ],
-      "project": "Build a Tabular Benchmark. Given any CSV with a target column, your tool: detects column types, builds an appropriate preprocessing pipeline, runs 5 model families (Logistic/Linear Regression, Random Forest, XGBoost, LightGBM, CatBoost) with default + tuned hyperparameters, produces a leaderboard with metrics, time to fit, time to predict. Test on 3 different datasets — Titanic, California Housing, Adult Income. This is the rapid-prototyping tool you'll reuse forever.",
-      "resources": [
+      "title": "FlightWise v0.3: Hyperparameter tuning",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "You have a good model. This week you make it great by tuning. Use Optuna for smart search instead of guessing.",
+      "days": [
         {
-          "label": "scikit-learn — User Guide",
-          "url": "https://scikit-learn.org/stable/user_guide.html",
-          "note": "official, work through chapters 1-6 over the week"
+          "number": 1,
+          "title": "What are hyperparameters?",
+          "summary": "Watch + plan.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Hyperparameter tuning explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=hyperparameter+tuning+machine+learning+explained",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Pick 4 to tune",
+              "body": "For XGBoost, the key hyperparameters are: n_estimators (number of trees), max_depth, learning_rate, scale_pos_weight, min_child_weight. Pick 4 and write down a reasonable range for each."
+            }
+          ]
         },
         {
-          "label": "Andreas Müller — Applied ML in Python",
-          "url": "https://github.com/amueller/ml-workshop-4-of-4",
-          "note": "GitHub, sklearn core developer's workshop materials"
+          "number": 2,
+          "title": "Install Optuna",
+          "summary": "Smart search beats grid search.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Optuna docs",
+              "url": "https://optuna.org/",
+              "why": "Bookmark."
+            },
+            {
+              "kind": "exercise",
+              "title": "First Optuna study",
+              "body": "pip install optuna\n\nIn a new notebook 07-tune.ipynb:\n      import optuna\n      from xgboost import XGBClassifier\n      from sklearn.model_selection import cross_val_score\n\n      def objective(trial):\n          params = {\n              'n_estimators': trial.suggest_int('n_estimators', 50, 500),\n              'max_depth': trial.suggest_int('max_depth', 3, 10),\n              'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),\n              'scale_pos_weight': trial.suggest_float('scale_pos_weight', 2, 8),\n          }\n          model = XGBClassifier(**params)\n          score = cross_val_score(model, X_train, y_train, cv=3, scoring='recall').mean()\n          return score\n\n      study = optuna.create_study(direction='maximize')\n      study.optimize(objective, n_trials=30)\n      print('Best:', study.best_params)\n      print('Best score:', study.best_value)\n\n30 trials takes ~20-30 minutes. Let it run."
+            }
+          ]
         },
         {
-          "label": "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow — Aurélien Géron",
-          "url": "https://github.com/ageron/handson-ml3",
-          "note": "GitHub, code from the canonical book; buy the book if you can"
+          "number": 3,
+          "title": "Retrain with best params",
+          "summary": "Apply the winning hyperparameters.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Final model",
+              "body": "      best = XGBClassifier(**study.best_params)\n      best.fit(X_train, y_train)\n      print(classification_report(y_test, best.predict(X_test)))\n      joblib.dump(best, 'model_final.pkl')"
+            }
+          ]
         },
         {
-          "label": "Optuna — Documentation",
-          "url": "https://optuna.org/",
-          "note": "official, the most-used hyperparameter optimisation library"
+          "number": 4,
+          "title": "Inspect the search results",
+          "summary": "Optuna shows you what worked.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Plots",
+              "body": "      import optuna.visualization as ov\n      fig = ov.plot_optimization_history(study)\n      fig.write_image('opt_history.png')\n      fig = ov.plot_param_importances(study)\n      fig.write_image('opt_importances.png')\n\nWhich hyperparameter matters most?"
+            }
+          ]
         },
         {
-          "label": "Kaggle Learn — Intermediate ML",
-          "url": "https://www.kaggle.com/learn/intermediate-machine-learning",
-          "note": "official short course, very practical"
+          "number": 5,
+          "title": "Threshold tuning",
+          "summary": "Most models predict probability — you choose the cutoff.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Find the right threshold",
+              "body": "      from sklearn.metrics import precision_recall_curve\n      probs = best.predict_proba(X_test)[:, 1]\n      prec, rec, thresh = precision_recall_curve(y_test, probs)\n      # Find threshold giving recall ≥ 0.65 with highest precision\n      for p, r, t in zip(prec, rec, thresh):\n          if r >= 0.65:\n              print(f'Threshold {t:.3f}: precision {p:.3f}, recall {r:.3f}')\n              break"
+            }
+          ]
         },
         {
-          "label": "imbalanced-learn — Documentation",
-          "url": "https://imbalanced-learn.org/stable/",
-          "note": "official, the standard library for class-imbalance handling"
+          "number": 6,
+          "title": "Final evaluation",
+          "summary": "Run the FULL evaluation: classification report + ROC.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Full report",
+              "body": "      from sklearn.metrics import roc_auc_score, confusion_matrix\n      print('ROC AUC:', roc_auc_score(y_test, probs))\n      print('Confusion matrix:', confusion_matrix(y_test, best.predict(X_test)))\n      print(classification_report(y_test, best.predict(X_test)))"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git add .\n      git commit -m \"v0.3: hyperparameter tuning with Optuna\"\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ 30+ Optuna trials run\n  ☐ Best params saved in README\n  ☐ Recall ≥ 65%\n  ☐ ROC AUC ≥ 0.70\n  ☐ Optimization plots saved\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "On your tabular benchmark, which model wins on each dataset? Is the winner consistent? When do tree-based models beat linear models, and why?",
-        "Compare default hyperparameters to tuned hyperparameters across your 5 models. Which model benefits most from tuning? Which is most robust to defaults?",
-        "GridSearchCV vs Optuna on the same hyperparameter space (10 params, 20 evals). Which finds a better score? Which is faster?",
-        "On a class-imbalanced dataset, compare class_weight='balanced' to SMOTE oversampling. Which improves recall on the minority class more? Which damages overall accuracy less?"
+      "topics": [
+        "Hyperparameter tuning fundamentals",
+        "Optuna's Bayesian search",
+        "Cross-validation in the objective function",
+        "Threshold selection from precision-recall curve",
+        "ROC AUC and confusion matrix"
       ],
+      "tasks": [
+        "Pick 4 XGBoost hyperparameters to tune",
+        "Install Optuna and write an objective function",
+        "Run 30+ trials",
+        "Retrain with best params",
+        "Plot optimization history and importances",
+        "Tune the decision threshold for recall ≥ 65%"
+      ],
+      "project": "FlightWise v0.3 — hyperparameter-tuned XGBoost via Optuna with 30+ trials. Recall ≥ 65%, ROC AUC ≥ 0.70, documented threshold choice.",
+      "resources": [],
       "exercises": [
-        "Write a Pipeline that handles a dataset with mixed types: 5 numeric (some missing), 3 categorical, 1 text. Verify it can fit on the dataset.",
-        "Implement custom cross-validation: 80/10/10 train/val/test with a fixed seed, repeated 5 times with different seeds. Report mean and std.",
-        "Build a learning curve plot: for training set sizes 100, 500, 1000, 5000, 10000, plot train and val score. What does the gap tell you about overfitting?",
-        "Use SHAP to explain predictions of your best tree-based model on 5 held-out examples. Document one prediction where the explanation surprised you."
+        "Run 100 trials and compare to 30 — diminishing returns?",
+        "Tune the model just for precision instead of recall — what changes?",
+        "Add early stopping to xgb.fit()",
+        "Use TPESampler vs RandomSampler in Optuna"
+      ],
+      "questions": [
+        "What's Bayesian optimization vs grid search?",
+        "Why tune on cross-val and evaluate on a held-out test?",
+        "When does a higher threshold hurt you?",
+        "Why is ROC AUC sometimes a better metric than recall?"
       ],
       "outputs": [
-        "Repo tabular-benchmark with the benchmarking tool running on 3 datasets, leaderboard committed as RESULTS.md",
-        "Cross-validation report comparing model families with mean ± std metrics",
-        "SHAP explanation notebook for 5 predictions",
-        "Optuna study persisted as a SQLite DB you can re-load and visualise"
+        "model_final.pkl committed",
+        "Optimization plots saved",
+        "v0.3 git tag",
+        "README with best params + final metrics"
       ]
     },
     {
       "number": 4,
-      "title": "Feature Engineering — Where Models Are Won or Lost",
-      "phase": "Foundations",
-      "commitment_hours": "20-25",
-      "context": "A well-engineered feature beats a fancier model 80% of the time. This week you learn the canonical feature-engineering patterns — interactions, encodings, time features, target encoding done safely — and you learn how to build a Feature Store-like discipline even if you never use a real Feature Store.",
-      "topics": [
-        "Numeric transformations — log, Box-Cox, Yeo-Johnson, when each helps",
-        "Interaction features — multiplicative, polynomial, why most are ignored by tree models",
-        "Time features — hour-of-day, day-of-week, time-since-event, lagged features",
-        "Target encoding — the right way (k-fold), the wrong way (leakage city)",
-        "Frequency and count encoding for high-cardinality categoricals",
-        "Aggregation features — group statistics from history",
-        "Text features for tabular pipelines — TF-IDF, sentence embeddings as features",
-        "Feature selection — filter, wrapper, embedded; when to bother"
-      ],
-      "tasks": [
-        "Take the Bike Sharing dataset and build at least 15 engineered features (time features, lags, rolling stats, interactions); measure lift",
-        "Implement k-fold target encoding from scratch; verify zero leakage by checking that out-of-fold predictions never use their own target",
-        "Use feature importance from a tree model to drop the bottom 50% of features; verify the score doesn't degrade",
-        "Build a Pipeline that includes a custom transformer that adds time features; integrate it into a model",
-        "On a high-cardinality categorical (say, a column with 10000+ unique values) try frequency, target, and embedding encodings; compare downstream metric"
-      ],
-      "project": "Build a Feature Store Lite. A small library where each feature is a typed Python function with a name, version, and decorator that registers it. Given a dataframe and a list of feature names, your tool computes them in order, caching intermediate dataframes to disk (Parquet). Track lineage — which features depend on which. Versioning — feature v2 doesn't overwrite v1. Test on the Bike Sharing dataset with 20 features; show that adding a new feature doesn't trigger recomputation of unchanged features.",
-      "resources": [
+      "title": "FlightWise v0.4: Flask API",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Today's models live behind APIs. This week you wrap your model in a Flask server so anyone can hit it with a HTTP request.",
+      "days": [
         {
-          "label": "Feature Engineering for Machine Learning — Alice Zheng",
-          "url": "https://www.oreilly.com/library/view/feature-engineering-for/9781491953235/",
-          "note": "O'Reilly book, the canonical reference, summary available free as a Kaggle notebook"
+          "number": 1,
+          "title": "What is a REST API?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "REST APIs explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=rest+api+explained+beginner",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "video",
+              "title": "Flask in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/results?search_query=flask+100+seconds+fireship+python",
+              "duration_min": 3,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Plan the API",
+              "body": "Sketch what your API looks like:\n  POST /predict\n  Body: { airline, origin, dest, dep_hour, day_of_week, ... }\n  Response: { delayed_probability: 0.34, prediction: 0 }"
+            }
+          ]
         },
         {
-          "label": "Kaggle — Feature Engineering course",
-          "url": "https://www.kaggle.com/learn/feature-engineering",
-          "note": "official short course with exercises"
+          "number": 2,
+          "title": "Install Flask",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Hello Flask",
+              "body": "pip install flask\n\nCreate app.py:\n      from flask import Flask, jsonify\n      app = Flask(__name__)\n      @app.route('/')\n      def home():\n          return jsonify({'message': 'FlightWise API alive'})\n      if __name__ == '__main__':\n          app.run(debug=True, port=5000)\n\nRun: python app.py\nVisit http://localhost:5000 — you should see your JSON."
+            }
+          ]
         },
         {
-          "label": "Featuretools — Documentation",
-          "url": "https://featuretools.alteryx.com/",
-          "note": "official, automated feature engineering library, worth knowing the patterns"
+          "number": 3,
+          "title": "Load the model + write /predict",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Real prediction endpoint",
+              "body": "Update app.py:\n      import joblib\n      import pandas as pd\n      from flask import Flask, request, jsonify\n\n      app = Flask(__name__)\n      model = joblib.load('model_final.pkl')\n      feature_cols = joblib.load('features.pkl')\n\n      @app.route('/predict', methods=['POST'])\n      def predict():\n          data = request.get_json()\n          # Build a DataFrame row with the same columns the model expects\n          row = pd.DataFrame([data])\n          row = pd.get_dummies(row).reindex(columns=feature_cols, fill_value=0)\n          prob = float(model.predict_proba(row)[0, 1])\n          return jsonify({'delayed_probability': prob, 'prediction': int(prob > 0.5)})\n\nTest with curl:\n      curl -X POST http://localhost:5000/predict -H 'Content-Type: application/json' \\\n        -d '{\"AIRLINE\":\"AA\",\"ORIGIN\":\"JFK\",\"DEST\":\"LAX\",\"dep_hour\":7,\"DAY_OF_WEEK\":1}'"
+            }
+          ]
         },
         {
-          "label": "Category Encoders library",
-          "url": "https://contrib.scikit-learn.org/category_encoders/",
-          "note": "scikit-learn-contrib package with 15+ categorical encoders"
+          "number": 4,
+          "title": "Input validation",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Defensive endpoint",
+              "body": "Add validation:\n      REQUIRED = ['AIRLINE', 'ORIGIN', 'DEST', 'dep_hour', 'DAY_OF_WEEK']\n\n      @app.route('/predict', methods=['POST'])\n      def predict():\n          data = request.get_json()\n          if not data:\n              return jsonify({'error':'No JSON body'}), 400\n          missing = [f for f in REQUIRED if f not in data]\n          if missing:\n              return jsonify({'error': f'Missing fields: {missing}'}), 400\n          try:\n              row = pd.DataFrame([data])\n              row = pd.get_dummies(row).reindex(columns=feature_cols, fill_value=0)\n              prob = float(model.predict_proba(row)[0, 1])\n              return jsonify({'delayed_probability': round(prob,4), 'prediction': int(prob > 0.5)})\n          except Exception as e:\n              return jsonify({'error': str(e)}), 500"
+            }
+          ]
         },
         {
-          "label": "How to Win a Data Science Competition — Coursera (free audit)",
-          "url": "https://www.coursera.org/learn/competitive-data-science",
-          "note": "Coursera, free audit, week 3 on feature engineering is gold"
+          "number": 5,
+          "title": "Dockerize",
+          "summary": "Pack your app into a portable container.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Docker in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Dockerfile",
+              "body": "Create Dockerfile:\n      FROM python:3.11-slim\n      WORKDIR /app\n      COPY requirements.txt .\n      RUN pip install -r requirements.txt\n      COPY app.py model_final.pkl features.pkl ./\n      EXPOSE 5000\n      CMD [\"python\", \"app.py\"]\n\nBuild + run:\n      docker build -t flightwise .\n      docker run -p 5000:5000 flightwise"
+            }
+          ]
         },
         {
-          "label": "Feast — open-source Feature Store",
-          "url": "https://docs.feast.dev/",
-          "note": "official, the production Feature Store; even just reading the design teaches you the discipline"
+          "number": 6,
+          "title": "Deploy to Render or Fly.io",
+          "summary": "Free public hosting.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Render — sign up",
+              "url": "https://render.com",
+              "why": "Free tier hosting."
+            },
+            {
+              "kind": "exercise",
+              "title": "Deploy",
+              "body": "Sign up for Render. New Web Service → connect your GitHub flightwise repo → set:\n  Build command: pip install -r requirements.txt\n  Start command: python app.py\nDeploy. Get a URL like flightwise-xxxx.onrender.com\n\nTest:\n      curl -X POST https://flightwise-xxxx.onrender.com/predict -H 'Content-Type: application/json' -d '{...}'"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git add .\n      git commit -m \"v0.4: Flask API + Docker + Render deploy\"\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ Flask /predict endpoint works locally\n  ☐ Input validation handles missing/bad fields\n  ☐ Dockerfile builds + runs\n  ☐ Live Render URL responds to POST /predict\n  ☐ README documents the API"
+            }
+          ]
         }
       ],
-      "questions": [
-        "On Bike Sharing, what's the single highest-impact engineered feature? What was the score before and after adding it?",
-        "Compare a model trained on raw features vs a model trained on raw + engineered features. What's the lift? How does it change as you go from 100 to 10000 training examples?",
-        "Run target encoding with and without k-fold isolation; measure validation score. Why does naive target encoding give an artificially high train score?",
-        "On a categorical with 10000 unique values, which encoding wins downstream? Why does one-hot fail at this scale?"
+      "topics": [
+        "REST API basics",
+        "Flask app structure",
+        "Loading sklearn/xgboost models in production",
+        "Input validation + error handling",
+        "Dockerfile basics",
+        "Deploying to Render"
       ],
+      "tasks": [
+        "Install Flask + Hello world endpoint",
+        "Load model + write /predict",
+        "Add input validation",
+        "Write a Dockerfile",
+        "Deploy to Render with the live URL"
+      ],
+      "project": "FlightWise v0.4 — model wrapped in a Flask API, Dockerized, deployed to Render at a live public URL. POST /predict accepts flight features, returns delayed probability.",
+      "resources": [],
       "exercises": [
-        "Write a custom sklearn-compatible transformer that adds time-based features (hour, day-of-week, is-weekend, is-holiday) from a datetime column.",
-        "Implement target encoding with k-fold isolation as a sklearn Transformer. Test that out-of-fold predictions match expected mean.",
-        "Use Featuretools to auto-generate features on a real dataset; manually inspect the top 20 features it created — which would you have invented by hand?",
-        "Build a Feature Selection function that uses mutual information to rank features and returns the top-k. Compare downstream metric vs using all features."
+        "Add /health endpoint that returns 200 if model loaded",
+        "Add logging — log every prediction with timestamp",
+        "Add API key auth so it's not totally open",
+        "Write a /batch endpoint that takes a list of flights"
+      ],
+      "questions": [
+        "What's the difference between Flask and FastAPI?",
+        "Why dockerize before deploying?",
+        "What's the cold-start latency on Render's free tier?",
+        "If 1000 people hit your API at once, what fails first?"
       ],
       "outputs": [
-        "Repo bike-sharing-features with 15+ engineered features and ablation analysis",
-        "Repo feature-store-lite with caching, versioning, lineage tracking",
-        "Notebook comparing categorical encodings on a high-cardinality column",
-        "Notes/feature-engineering.md — your decision tree for engineering features by problem type"
+        "app.py + Dockerfile committed",
+        "Live Render URL in README",
+        "v0.4 git tag",
+        "Working curl example in README"
       ]
     },
     {

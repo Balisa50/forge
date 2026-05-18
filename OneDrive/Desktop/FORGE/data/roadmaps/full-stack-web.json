@@ -224,227 +224,420 @@
     },
     {
       "number": 2,
-      "title": "JavaScript and TypeScript — The Language of the Web",
-      "phase": "Foundations",
-      "commitment_hours": "25-30",
-      "context": "JavaScript is the language. TypeScript is the language with the safety net. This week you become fluent in modern JS (ES2024+) and then add the type layer that turns chaos into code that scales.",
-      "topics": [
-        "Modern JavaScript — const/let, destructuring, spread, optional chaining, nullish coalescing",
-        "Functions — arrow vs regular, this binding, closures",
-        "Asynchrony — Promises, async/await, why callback hell is dead",
-        "Modules — import/export, dynamic imports, why CommonJS is legacy",
-        "Iterables and generators — for...of, yield, async generators",
-        "TypeScript fundamentals — primitives, unions, intersections, type vs interface",
-        "Generics — when they help, when they hurt",
-        "Utility types — Partial, Pick, Omit, Record, ReturnType"
-      ],
-      "tasks": [
-        "Install Node.js 22+ (LTS) and pnpm (or use bun); set up a TypeScript project from scratch with tsconfig.json",
-        "Convert a 200-line JavaScript file (your or a tutorial's) to fully-typed TypeScript with no `any`",
-        "Build a fetch wrapper with typed responses using generics — `api<User>('/users/1')` returns Promise<User>",
-        "Solve 20 problems on JavaScript-only sites (HackerRank, Codewars, LeetCode easy) using modern syntax — no var, no callbacks",
-        "Write a generator function that yields Fibonacci numbers lazily; consume it with take(10)"
-      ],
-      "project": "Build a CLI Tool in TypeScript. Pick a real personal need — a markdown linter for your blog posts, a duplicate-file finder, a 'time spent in folders' tracker. Use commander.js for arg parsing, zod for input validation, strict TypeScript throughout. Publish to npm or install via `npx`. The CLI should be useful enough that you actually use it weekly.",
-      "resources": [
+      "title": "Bean Forge v0.2: JavaScript interactivity",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Last week was pure HTML+CSS. This week you add JavaScript — make the menu filterable, add a 'today's special' that changes daily, animate the hero.",
+      "days": [
         {
-          "label": "TypeScript Handbook",
-          "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
-          "note": "official, work through The Basics + Everyday Types + Narrowing"
+          "number": 1,
+          "title": "JavaScript in 100 seconds",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "JavaScript in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/watch?v=DHjqpvDnNGE",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "video",
+              "title": "JavaScript for absolute beginners (30 min)",
+              "url": "https://www.youtube.com/results?search_query=javascript+for+beginners+2024+30+minutes",
+              "duration_min": 30,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "What to make interactive",
+              "body": "Look at your Bean Forge site. List 3 things you'd love to be interactive:\n  - Filter menu by drink/food?\n  - 'Today's special' that changes by day of week?\n  - Smooth scroll nav?\n  - Dark mode toggle?"
+            }
+          ]
         },
         {
-          "label": "Matt Pocock — Total TypeScript Beginner's Tutorial",
-          "url": "https://www.totaltypescript.com/tutorials/beginners-typescript",
-          "note": "free interactive course, the best TS introduction in 2025"
+          "number": 2,
+          "title": "Hello JavaScript",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First script",
+              "body": "In index.html before </body>, add:\n      <script src='script.js'></script>\n\nCreate script.js:\n      console.log('Bean Forge loaded');\n      document.querySelector('h1').addEventListener('click', () => {\n          alert('Welcome to Bean Forge!');\n      });\n\nOpen the page. Click the title. You should see an alert."
+            }
+          ]
         },
         {
-          "label": "You Don't Know JS Yet — Kyle Simpson (2nd ed)",
-          "url": "https://github.com/getify/You-Dont-Know-JS",
-          "note": "GitHub book, free, the canonical deep-dive on JavaScript itself"
+          "number": 3,
+          "title": "Today's special",
+          "summary": "Change the page based on day of week.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Daily special",
+              "body": "Add a new section in index.html:\n      <section id='special'>\n        <h2>Today's Special</h2>\n        <p id='special-text'>Loading...</p>\n      </section>\n\nIn script.js, add:\n      const specials = {\n          0: 'Sunday: 2-for-1 croissants ☕',\n          1: 'Monday blues? Free cortado upgrade.',\n          2: 'Tuesday: free cold brew with any pour over.',\n          3: 'Wednesday: midweek espresso flight $7.',\n          4: 'Thursday: bring a friend, get 10% off.',\n          5: 'Friday: cold brew happy hour 3-5pm.',\n          6: 'Saturday: weekend pour over tasting.',\n      };\n      const today = new Date().getDay();\n      document.getElementById('special-text').textContent = specials[today];\n\nRefresh — you should see today's special."
+            }
+          ]
         },
         {
-          "label": "Lydia Hallie — JavaScript questions",
-          "url": "https://github.com/lydiahallie/javascript-questions",
-          "note": "GitHub, 100+ tricky JS questions with explanations; test your knowledge"
+          "number": 4,
+          "title": "Menu filter",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Filter buttons",
+              "body": "Update the menu in index.html. Add a data-type to each item:\n      <li data-type='drink'>Espresso — $3</li>\n      <li data-type='drink'>Cortado — $4</li>\n      <li data-type='drink'>Pour Over — $5</li>\n      <li data-type='drink'>Cold Brew — $5</li>\n      <li data-type='food'>Croissant — $4</li>\n\nAbove the menu add filter buttons:\n      <div class='filters'>\n        <button data-filter='all'>All</button>\n        <button data-filter='drink'>Drinks</button>\n        <button data-filter='food'>Food</button>\n      </div>\n\nIn script.js:\n      document.querySelectorAll('.filters button').forEach(btn => {\n          btn.addEventListener('click', () => {\n              const f = btn.dataset.filter;\n              document.querySelectorAll('#menu li').forEach(li => {\n                  li.style.display = (f === 'all' || li.dataset.type === f) ? 'block' : 'none';\n              });\n          });\n      });"
+            }
+          ]
         },
         {
-          "label": "Axel Rauschmayer — Deep JavaScript book",
-          "url": "https://exploringjs.com/deep-js/",
-          "note": "free book, the canonical reference for ES2024+"
+          "number": 5,
+          "title": "Dark mode toggle",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Dark mode",
+              "body": "In header add:\n      <button id='theme-toggle' style='float:right'>🌙</button>\n\nIn style.css at top:\n      body.dark { background: #1a0e08; color: #f5ead7; }\n      body.dark header { background: #f5ead7; color: #3b2418; }\n\nIn script.js:\n      document.getElementById('theme-toggle').addEventListener('click', () => {\n          document.body.classList.toggle('dark');\n          localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');\n      });\n      if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');"
+            }
+          ]
         },
         {
-          "label": "TypeScript Deep Dive — Basarat Ali Syed",
-          "url": "https://basarat.gitbook.io/typescript",
-          "note": "free book, the depth that the official handbook doesn't have"
+          "number": 6,
+          "title": "Smooth scroll + animation",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Polish",
+              "body": "In style.css add:\n      html { scroll-behavior: smooth; }\n      header { animation: fadeIn 1.2s ease-out; }\n      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }\n\nAdd anchor links to nav (if you have nav) and verify smooth scroll."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "git add . && git commit -m 'v0.2: JS interactivity'\ngit tag v0.2 && git push --tags\n\nNetlify auto-redeploys. Test on phone:\n  ☐ Today's special shows correct day\n  ☐ Filter buttons work\n  ☐ Dark mode toggles and persists\n  ☐ Fade-in animation on load"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Take a function with three optional parameters using ?: ... how does that differ from accepting an options object with optional keys? Which API would you prefer to use and why?",
-        "Run a fetch call without await — what does it return? Now await it — what does it return? When would you want the un-awaited version?",
-        "Refactor a function that uses `any` for the input — try to use generics, then unknown + narrowing, then a discriminated union. Which feels best for callers?",
-        "Convert a Promise.all of 5 fetch calls to Promise.allSettled — when is each the right choice?"
+      "topics": [
+        "JavaScript basics — variables, functions, events",
+        "DOM manipulation — querySelector, addEventListener",
+        "Date object",
+        "localStorage for client-side persistence",
+        "CSS animations and transitions"
       ],
+      "tasks": [
+        "Add today's-special section that updates by weekday",
+        "Add menu filter buttons (All / Drinks / Food)",
+        "Add dark mode toggle with localStorage",
+        "Add smooth scroll + fade-in animation"
+      ],
+      "project": "Bean Forge v0.2 — interactive site. JS-powered: daily special, menu filters, dark mode (persistent), smooth scroll, fade-in animation. Still on Netlify.",
+      "resources": [],
       "exercises": [
-        "Write a typed debounce function. The returned function should preserve the original function's argument types and return type.",
-        "Use a discriminated union to model an API response: `{ status: 'success', data: T } | { status: 'error', error: string }`. Write code that handles both.",
-        "Implement a typed event emitter: `on('user-login', (user: User) => ...)`, `emit('user-login', user)` should be type-checked.",
-        "Build a typed environment-variable loader: a function that reads process.env and returns a strictly-typed config object; throws clearly when a variable is missing."
+        "Make the filter buttons have an 'active' state styling",
+        "Show a count next to each filter (e.g. Drinks (4))",
+        "Auto-detect prefers-color-scheme on first load",
+        "Add a typewriter animation to the tagline"
+      ],
+      "questions": [
+        "Why is JavaScript at the END of body, not in head?",
+        "What does dataset attribute do (data-*)?",
+        "Why localStorage and not just a global variable?",
+        "When does animation hurt accessibility?"
       ],
       "outputs": [
-        "TypeScript CLI tool published to npm or installable via npx",
-        "Converted JavaScript-to-TypeScript file with zero `any`",
-        "20 solved JS problems committed under exercises/",
-        "Notes/typescript.md — your TypeScript cheat sheet of patterns you keep reaching for"
+        "Live site with all 4 interactions working",
+        "v0.2 git tag",
+        "Updated README with interactions list"
       ]
     },
     {
       "number": 3,
-      "title": "Git, GitHub, and the Daily Development Loop",
-      "phase": "Foundations",
-      "commitment_hours": "15-20",
-      "context": "Git is more important than your framework. By Friday you can branch, merge, rebase, resolve conflicts, write good commit messages, open clean pull requests, and review someone else's PR thoughtfully — the daily work of every software engineer.",
-      "topics": [
-        "Git mental model — commits as snapshots, branches as pointers, HEAD as a pointer to a pointer",
-        "The daily commands — clone, status, add, commit, push, pull, branch, checkout, merge, rebase",
-        "Conflict resolution — what a conflict actually is, how to read the markers, how to abort",
-        "Rewriting history — interactive rebase, squash, fixup, amend, when each is safe",
-        "Remotes — origin vs upstream, fetch vs pull, force-with-lease",
-        "Git workflows — trunk-based, GitFlow, GitHub Flow — what real teams use",
-        "Good commit messages — Conventional Commits, the imperative form, why it matters",
-        "Pull requests — small, atomic, reviewable; how to write a description"
-      ],
-      "tasks": [
-        "Configure global git: name, email, default branch main, pull rebase true, useful aliases",
-        "On one of your earlier projects, write commit messages that follow Conventional Commits (feat:, fix:, chore:); rewrite history with interactive rebase to clean up",
-        "Open a pull request on your own repo from a feature branch to main; merge with squash",
-        "Find an open-source project; fork it, fix a typo or improve a docstring, open a real PR upstream",
-        "Practice the rebase-on-stale-main workflow: rebase your feature branch onto an updated main, resolve any conflicts cleanly"
-      ],
-      "project": "Make a Real Open-Source Contribution. Pick a project you use (one of your dependencies — Next.js, FastAPI, requests, axios). Find a 'good first issue' or a typo in docs. Read CONTRIBUTING.md. Fork, branch, fix, commit conventionally, open a PR with a clear description. Engage with feedback. Get the PR merged (or closed with a clear reason). This is more valuable than any tutorial.",
-      "resources": [
+      "title": "Bean Forge v0.3: Contact form with Netlify Forms",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "This week we add a real working contact form that emails the cafe. No backend needed — Netlify Forms handles it for free.",
+      "days": [
         {
-          "label": "Pro Git book",
-          "url": "https://git-scm.com/book/en/v2",
-          "note": "free book, the canonical reference; read chapters 2, 3, 5, 7"
+          "number": 1,
+          "title": "Why HTML forms",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "HTML forms in 15 min",
+              "url": "https://www.youtube.com/results?search_query=html+forms+beginner+tutorial+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Form fields",
+              "body": "What should the contact form ask?\n  - Name\n  - Email\n  - Message\n  - Maybe: 'topic' (catering / job / general)"
+            }
+          ]
         },
         {
-          "label": "Atlassian — Git tutorials",
-          "url": "https://www.atlassian.com/git/tutorials",
-          "note": "the friendliest start; visual explanations for branches and merging"
+          "number": 2,
+          "title": "Add the form",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "HTML form",
+              "body": "In index.html, add a Contact section:\n      <section id='contact'>\n        <h2>Contact Us</h2>\n        <form name='contact' method='POST' data-netlify='true'>\n          <input type='hidden' name='form-name' value='contact'>\n          <label>Name<input type='text' name='name' required></label>\n          <label>Email<input type='email' name='email' required></label>\n          <label>Topic\n            <select name='topic'>\n              <option>General</option>\n              <option>Catering</option>\n              <option>Career</option>\n            </select>\n          </label>\n          <label>Message<textarea name='message' rows='4' required></textarea></label>\n          <button type='submit'>Send</button>\n        </form>\n      </section>"
+            }
+          ]
         },
         {
-          "label": "Oh My Git — interactive game",
-          "url": "https://ohmygit.org/",
-          "note": "free downloadable game; teaches Git through puzzles"
+          "number": 3,
+          "title": "Style the form",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Form CSS",
+              "body": "Add to style.css:\n      form { display: grid; gap: 1rem; max-width: 500px; }\n      form label { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 600; }\n      form input, form select, form textarea {\n          padding: 0.75rem; border: 1px solid var(--coffee); border-radius: 4px;\n          font-family: inherit; font-size: 1rem;\n      }\n      form button {\n          padding: 0.875rem 2rem; background: var(--coffee); color: var(--cream);\n          border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;\n      }\n      form button:hover { background: var(--copper); }"
+            }
+          ]
         },
         {
-          "label": "Conventional Commits — Specification",
-          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
-          "note": "the canonical commit message format"
+          "number": 4,
+          "title": "Push to Netlify and enable Forms",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Activate Netlify Forms",
+              "body": "git push\n\nOn Netlify dashboard → your site → Forms tab. Netlify auto-detects the form. Go to Settings → Forms → enable Notifications → 'Email notification' → enter your real email.\n\nSubmit the form on the live site. Check your email — you should get a real notification."
+            }
+          ]
         },
         {
-          "label": "GitHub Docs — Contributing to open source",
-          "url": "https://opensource.guide/how-to-contribute/",
-          "note": "official guide to making a first OSS contribution"
+          "number": 5,
+          "title": "Spam protection",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Honeypot + reCAPTCHA",
+              "body": "Add honeypot to the form:\n      <p style='display:none'><label>Don't fill this: <input name='bot-field'></label></p>\n\nAnd update form tag:\n      <form name='contact' method='POST' data-netlify='true' data-netlify-honeypot='bot-field'>\n\n(Optional, more friction: data-netlify-recaptcha='true' for Google reCAPTCHA)"
+            }
+          ]
         },
         {
-          "label": "git-scm — gitworkflows man page",
-          "url": "https://git-scm.com/docs/gitworkflows",
-          "note": "official, surprisingly readable overview of common workflows"
+          "number": 6,
+          "title": "Success page",
+          "summary": "After submit, where do users go?",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Thanks page",
+              "body": "Create thanks.html in your project root:\n      <!DOCTYPE html><html><head><link rel='stylesheet' href='style.css'><title>Thanks!</title></head>\n      <body><header><h1>Thanks!</h1><p>We'll get back to you within 24 hours.</p>\n      <p><a href='/'>← back to home</a></p></header></body></html>\n\nUpdate the form tag:\n      <form name='contact' method='POST' data-netlify='true' action='/thanks.html'>"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "git add . && git commit -m 'v0.3: contact form'\ngit tag v0.3 && git push --tags\n\nPASS:\n  ☐ Form on live site\n  ☐ Submit redirects to /thanks.html\n  ☐ Email arrives in your inbox\n  ☐ Honeypot in place\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Run `git log --oneline --graph --all` on one of your repos. Is the history clean and linear, or a tangled mess? What would you change about your commit habits?",
-        "Find a merged PR in any major open-source repo (Next.js, React, FastAPI). Read the discussion. What did the author do right? What would you do differently?",
-        "Force-push deleted a commit. How would you recover it? (Hint: reflog.)",
-        "A teammate's force-push erased your work in progress. What's the policy you'd establish to prevent it?"
+      "topics": [
+        "HTML form elements + required attributes",
+        "Netlify Forms data-netlify auto-detection",
+        "Honeypot anti-spam",
+        "Form CSS layout with grid",
+        "Custom success/thanks page"
       ],
+      "tasks": [
+        "Add a contact form with name/email/topic/message",
+        "Style the form with grid",
+        "Push and verify Netlify auto-detects the form",
+        "Enable email notifications",
+        "Add honeypot anti-spam",
+        "Create a /thanks.html success page"
+      ],
+      "project": "Bean Forge v0.3 — working contact form. Real emails to the cafe's inbox via Netlify Forms (free). Anti-spam + custom thanks page.",
+      "resources": [],
       "exercises": [
-        "Create a feature branch, make 5 commits, then squash them down to 2 logical commits via interactive rebase.",
-        "Deliberately create a merge conflict between two branches; resolve it manually; verify both intentions are preserved.",
-        "Create a `.gitignore` for a Node + Python + Mac dev environment. Verify it ignores node_modules, __pycache__, .DS_Store, .env.",
-        "Set up a Git hook that runs lint + format on pre-commit using husky + lint-staged."
+        "Add a file upload field (allowed by Netlify Forms)",
+        "Replace the topic dropdown with radio buttons",
+        "Add inline validation messages with JS",
+        "Use AJAX submission (fetch) and show inline success"
+      ],
+      "questions": [
+        "Why does form-name hidden input matter for Netlify?",
+        "What's the trade-off between honeypot and reCAPTCHA?",
+        "If 100 spam submissions hit you, what does Netlify do?",
+        "When should a form use GET vs POST?"
       ],
       "outputs": [
-        "Merged (or seriously-reviewed) PR on an upstream open-source repo",
-        "Clean commit history on one of your projects, demonstrating Conventional Commits",
-        "Configured global .gitconfig with aliases and useful defaults",
-        "Pre-commit hook running lint + format on a project"
+        "Working form on live site",
+        "Email notification configured",
+        "/thanks.html committed",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "Bash, the Terminal, and Linux Survival",
-      "phase": "Foundations",
-      "commitment_hours": "15-20",
-      "context": "Every server you deploy to is Linux. Every CI pipeline runs in a shell. By Friday you live in the terminal — pipes, redirection, ssh, jq, grep, find — instead of clicking through GUIs that slow you down.",
-      "topics": [
-        "The shell — what bash actually is, what zsh adds, why fish is delightful",
-        "Pipes and redirection — stdout, stderr, /dev/null, > vs >>",
-        "Core tools — grep, sed, awk, cut, sort, uniq, xargs",
-        "File operations — ls flags, find, du -sh, df -h",
-        "Process management — ps, kill, top, htop, lsof",
-        "Networking from CLI — curl, dig, traceroute, nc, ssh",
-        "JSON on the CLI — jq, the most underrated tool",
-        "Shell scripting basics — when bash is right, when reach for Python instead"
-      ],
-      "tasks": [
-        "Install a modern terminal (iTerm2 / Wezterm / Warp) and configure a prompt (Starship, p10k)",
-        "Solve 10 terminal challenges on commandlinechallenge.com or overthewire.org bandit (first 15 levels)",
-        "Write a bash one-liner that finds the 10 largest files in your home directory",
-        "Use curl + jq to call any JSON API and extract a specific field; format output",
-        "Set up SSH keys for GitHub (Ed25519); ssh into a free cloud VM (Oracle Cloud Free Tier)"
-      ],
-      "project": "Build a Daily Server Health Script. A 100-line bash (or Python) script that you can run on any Linux server and get a one-page report: uptime, load, disk usage, memory, top 5 CPU processes, top 5 memory processes, recent SSH logins, recent failed logins, disk I/O. Run it via cron at 8am daily on a free cloud VM you set up.",
-      "resources": [
+      "title": "Bean Forge v0.4: Refactor to Astro + add /blog",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "This week you migrate from raw HTML to Astro — a modern static site framework. You get components, a blog, and faster builds. Same site, better foundations.",
+      "days": [
         {
-          "label": "missing-semester — MIT",
-          "url": "https://missing.csail.mit.edu/",
-          "note": "free MIT course on the tools they don't teach you in CS class, lectures 1-6"
+          "number": 1,
+          "title": "What is Astro?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Astro in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/results?search_query=astro+100+seconds+fireship",
+              "duration_min": 3,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "reading",
+              "title": "Astro docs",
+              "url": "https://docs.astro.build/",
+              "why": "Bookmark."
+            },
+            {
+              "kind": "reflection",
+              "title": "Why a framework?",
+              "body": "1 paragraph in notes.txt: why move from raw HTML to Astro? What problems does it solve?"
+            }
+          ]
         },
         {
-          "label": "explainshell.com",
-          "url": "https://explainshell.com/",
-          "note": "paste any shell command and get a guided explanation; bookmark forever"
+          "number": 2,
+          "title": "Set up Astro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "New Astro project",
+              "body": "In your terminal:\n      cd Desktop\n      npm create astro@latest beanforge-astro -- --template minimal --yes --no-install --no-git\n      cd beanforge-astro\n      npm install\n      npm run dev\n\nOpen localhost:4321. Default Astro page."
+            }
+          ]
         },
         {
-          "label": "Julia Evans — zines",
-          "url": "https://wizardzines.com/",
-          "note": "paid zines on bash, networking, debugging; some free comics on her blog"
+          "number": 3,
+          "title": "Port Bean Forge to Astro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Migrate index",
+              "body": "Open src/pages/index.astro. Replace its contents with your Bean Forge HTML (copy from old project, place between --- and ---).\n\nCopy style.css into src/styles/global.css.\nReference it in src/layouts/Layout.astro (create if missing) or directly in index.astro:\n      <style is:global>@import '../styles/global.css';</style>\n\nnpm run dev. Should look identical to v0.3."
+            }
+          ]
         },
         {
-          "label": "jq — Tutorial",
-          "url": "https://jqlang.github.io/jq/tutorial/",
-          "note": "official, every JSON manipulation pattern you'll ever need"
+          "number": 4,
+          "title": "Component extraction",
+          "summary": "Pull menu and contact into components.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Components",
+              "body": "Create src/components/Menu.astro:\n      ---\n      const items = [\n          { name: 'Espresso', price: 3, type: 'drink' },\n          { name: 'Cortado', price: 4, type: 'drink' },\n          { name: 'Pour Over', price: 5, type: 'drink' },\n          { name: 'Cold Brew', price: 5, type: 'drink' },\n          { name: 'Croissant', price: 4, type: 'food' },\n      ];\n      ---\n      <section id='menu'>\n        <h2>Menu</h2>\n        <ul>\n          {items.map(i => <li data-type={i.type}>{i.name} — ${i.price}</li>)}\n        </ul>\n      </section>\n\nIn index.astro:\n      ---\n      import Menu from '../components/Menu.astro';\n      ---\n      <html>...<body>...<Menu />...</body></html>"
+            }
+          ]
         },
         {
-          "label": "OverTheWire — Bandit",
-          "url": "https://overthewire.org/wargames/bandit/",
-          "note": "official, the canonical Linux terminal training game; first 25 levels are foundational"
+          "number": 5,
+          "title": "Add a /blog page",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First post",
+              "body": "Create src/pages/blog/index.astro:\n      ---\n      const posts = await Astro.glob('./posts/*.md');\n      ---\n      <html><head><title>Blog</title></head><body>\n      <h1>Bean Forge Blog</h1>\n      <ul>{posts.map(p => <li><a href={p.url}>{p.frontmatter.title}</a></li>)}</ul>\n      </body></html>\n\nCreate src/pages/blog/posts/01-our-roastery.md:\n      ---\n      title: 'Inside our roastery'\n      pubDate: '2026-01-12'\n      ---\n      # Inside our roastery\n      We roast Monday mornings. Drop by between 7-9am to smell it.\n\nVisit /blog — you should see the post listed."
+            }
+          ]
         },
         {
-          "label": "Linux Journey",
-          "url": "https://linuxjourney.com/",
-          "note": "free, the most beginner-friendly Linux tutorial"
+          "number": 6,
+          "title": "Build + deploy on Netlify",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Push astro version",
+              "body": "Update package.json scripts if needed.\n\n      git init\n      git add .\n      git commit -m 'v0.4: migrated to Astro + /blog page'\n      git remote add origin https://github.com/YOUR-USERNAME/beanforge.git\n      git push -u origin main --force  (or to a new branch if you want to keep old)\n\nOn Netlify, update build settings: Build command: npm run build, Publish directory: dist\nRedeploy."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4 + write a 2nd blog post",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "Write a 2nd blog post (your choice — a 'season is here' post, a 'meet the team' post).\n      git add . && git commit -m 'v0.4: Astro migration'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ Astro version builds and deploys\n  ☐ Site looks identical to v0.3\n  ☐ Menu component renders from data\n  ☐ /blog page lists posts\n  ☐ 2 markdown posts visible\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Your script runs at 8am but produces no email. How would you debug — what's the standard logging location for cron failures?",
-        "You have a 10GB log file. Find every line containing 'ERROR' that doesn't also contain 'expected'. Write the one-liner.",
-        "ssh into your server fails with 'Permission denied (publickey)'. List 5 things you'd check.",
-        "A process is hung. ps tells you its PID. Kill it gently first, then forcefully. What's the difference?"
+      "topics": [
+        "Astro fundamentals — frontmatter, components",
+        ".astro file structure",
+        "Astro.glob for collections",
+        "Markdown content + frontmatter",
+        "Updating Netlify build settings"
       ],
+      "tasks": [
+        "Install Astro + create a new project",
+        "Port existing HTML/CSS to index.astro",
+        "Extract Menu into a reusable component",
+        "Add /blog page with markdown posts",
+        "Deploy the Astro version on Netlify"
+      ],
+      "project": "Bean Forge v0.4 — same site rebuilt with Astro. Reusable Menu component. /blog page with 2 markdown posts. Faster builds, real architecture.",
+      "resources": [],
       "exercises": [
-        "Write a one-liner that counts unique IP addresses in an nginx access log.",
-        "Use awk to compute the average response time from a server log column.",
-        "Write a bash function called `gcom` that does `git add -A && git commit -m \"$1\"`. Add it to your shell rc file.",
-        "Use jq to extract names of all users who have more than 100 followers from a JSON array of GitHub user data."
+        "Add a /menu page that lists the full menu in detail with photos",
+        "Add pagination to /blog if you write 6+ posts",
+        "Add OG image generation per blog post",
+        "Add a sitemap.xml"
+      ],
+      "questions": [
+        "What's the difference between Astro and Next.js?",
+        "Why is 'island architecture' useful?",
+        "What does Astro.glob return?",
+        "When does Astro ship JS to the client vs not?"
       ],
       "outputs": [
-        "Daily-running server-health script on a real cloud VM",
-        "Configured terminal + prompt + dotfiles repo (init for the rest of your life)",
-        "Solved at least 15 OverTheWire Bandit levels",
-        "Notes/bash-cheatsheet.md — the 30 commands you'll use forever"
+        "Astro version on Netlify",
+        "Menu component renders from data",
+        "/blog with 2 posts",
+        "v0.4 tag"
       ]
     },
     {

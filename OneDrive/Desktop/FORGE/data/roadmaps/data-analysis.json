@@ -203,226 +203,398 @@
     },
     {
       "number": 2,
-      "title": "SQL Fundamentals",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "SQL is the universal language for working with structured data. This week you learn to query, filter, group, and join data in relational databases — skills required in nearly every data analyst job.",
-      "topics": [
-        "What is a relational database? Tables, rows, columns, primary and foreign keys",
-        "SELECT, FROM, WHERE, ORDER BY, LIMIT, DISTINCT",
-        "Aggregate functions: COUNT, SUM, AVG, MIN, MAX",
-        "GROUP BY and HAVING clauses",
-        "INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN",
-        "Aliasing tables and columns",
-        "NULL handling: IS NULL, IS NOT NULL, COALESCE"
-      ],
-      "tasks": [
-        "Set up SQLiteOnline.com (no install needed) or install DB Browser for SQLite",
-        "Import the Northwind database and spend 30 minutes exploring all tables",
-        "Complete SQLZoo sections 1 through 5 (all exercises)",
-        "Write 15 original SQL queries on the Northwind database (see exercises)",
-        "Document every query with a comment explaining what business question it answers"
-      ],
-      "project": "Northwind Business Analysis — Write SQL queries to answer: (1) Which 5 customers placed the most orders? (2) What is total revenue by product category? (3) Which employee has the highest total sales value? (4) What are the top 3 countries by number of customers? (5) Which products have never been ordered? Export results and write a brief business report.",
-      "resources": [
+      "title": "Superstore v0.2: Discount-vs-Profit deep dive",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Last week you answered 3 broad questions. This week dig into ONE: does discounting actually grow profit, or eat it? Build a real scatter + segment table.",
+      "days": [
         {
-          "label": "SQLiteOnline.com",
-          "url": "https://sqliteonline.com",
-          "note": "(run SQL in your browser — no installation needed)"
+          "number": 1,
+          "title": "What's the discount-profit relationship?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Hypothesis",
+              "body": "Before you look — do you think more discount = more profit, or less? Think: discount drives sales, but it cuts margins. Write your guess."
+            }
+          ]
         },
         {
-          "label": "Northwind SQLite Database on GitHub",
-          "url": "https://github.com/jpwhite3/northwind-SQLite3",
-          "note": "(download the .db file from here)"
+          "number": 2,
+          "title": "Scatter plot — Discount vs Profit",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Excel/Sheets scatter",
+              "body": "On the Orders sheet, with all rows visible:\n  Select two columns: Discount and Profit.\n  Insert → Chart → Scatter (X-Y).\n  YOU SHOULD SEE: a cloud of points. Most are clustered around 0% discount with small profits.\n  Save as chart in a sheet called Scatter."
+            }
+          ]
         },
         {
-          "label": "SQL Tutorial for Beginners — Programming with Mosh",
-          "url": "https://www.youtube.com/results?search_query=programming+with+mosh+sql+tutorial+beginners+full+course",
-          "note": "(YouTube, watch first 90 min)"
+          "number": 3,
+          "title": "Bin discount into buckets",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Discount buckets",
+              "body": "In a helper column on Orders, add 'Discount Bucket':\n      =IF(O2=0, \"0%\", IF(O2<=0.1, \"0-10%\", IF(O2<=0.2, \"10-20%\", IF(O2<=0.4, \"20-40%\", \"40%+\"))))\n\nPivot: Rows = Discount Bucket. Values = SUM Profit, COUNT, AVG Discount, AVG Profit.\nWhat pattern do you see? Where does profit go negative?"
+            }
+          ]
         },
         {
-          "label": "SQL Joins Explained Visually — Inner Left Right Full",
-          "url": "https://www.youtube.com/results?search_query=sql+joins+inner+left+right+full+outer+explained+visually",
-          "note": "(YouTube, ~15 min)"
+          "number": 4,
+          "title": "Break down by Category",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Cross-section",
+              "body": "New pivot. Rows = Category, Columns = Discount Bucket, Values = SUM Profit.\nColor-code red where the value is negative.\nWhich category tolerates discounts? Which is destroyed by them?"
+            }
+          ]
         },
         {
-          "label": "SQLZoo Interactive Practice",
-          "url": "https://sqlzoo.net/wiki/SELECT_basics",
-          "note": "(complete sections 1 through 6)"
+          "number": 5,
+          "title": "Find the 'tipping point' discount",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Sweet spot",
+              "body": "Plot a line chart: x = Discount Bucket (in order), y = AVG Profit. Where does the line cross zero? That's the danger zone."
+            }
+          ]
         },
         {
-          "label": "W3Schools SQL Reference",
-          "url": "https://www.w3schools.com/sql/",
-          "note": "(look up any SQL keyword or function)"
+          "number": 6,
+          "title": "Update the memo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Memo v2",
+              "body": "Add a 4th section to your Superstore Memo PDF:\n      ## Discount strategy\n      Headline: Discounts above XX% destroy profit in [Category Y].\n      Recommendation: Cap discounts at XX% for Category Y.\nRe-export PDF."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git add . && git commit -m 'v0.2: discount-profit deep dive'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Scatter plot saved\n  ☐ Discount bucket pivot built\n  ☐ Category × Bucket cross-pivot built\n  ☐ Memo PDF v2 includes discount strategy section\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Which product category generates the most total revenue in Northwind? Which category has the most individual order line items? Write two separate queries to find out — do the answers match? If not, what does that tell you about pricing across categories?",
-        "Which employee closed the most orders by count? Is that the same employee who generated the highest total revenue? Run both queries and explain what drives the difference between 'most orders' and 'most revenue'.",
-        "Find all products where the total units ordered across all time is below 50. Are these slow-moving products concentrated in one category, or spread evenly? What would a business do with this information?",
-        "Calculate the average number of days between OrderDate and ShippedDate for each order. Group by the Shipper (ShipVia). Which shipping company is slowest on average? Does late shipping correlate with larger or smaller order values?"
+      "topics": [
+        "Scatter plots for correlation",
+        "Bucketing continuous variables with nested IF",
+        "Cross-tabulation pivots",
+        "Conditional formatting for sign (red/green)",
+        "Identifying tipping points in line charts",
+        "Iterating analyst memos"
       ],
+      "tasks": [
+        "Build Discount-vs-Profit scatter plot",
+        "Bucket Discount into 5 ranges",
+        "Cross-tab Category × Discount Bucket",
+        "Find the discount tipping point",
+        "Update memo PDF with the discount section"
+      ],
+      "project": "Superstore v0.2 — Discount-vs-Profit analysis. Specific finding: which category dies at what discount level. Updated 2-page memo.",
+      "resources": [],
       "exercises": [
-        "List all products with a unit price above the average unit price.",
-        "Find the total value of orders placed by each customer, sorted from highest to lowest.",
-        "Show all employees and how many orders they processed (include employees with zero orders using LEFT JOIN).",
-        "Find products that have been ordered more than 50 times in total across all orders."
+        "Re-run the analysis for just the latest year — has the relationship changed?",
+        "Plot a 3D scatter: Discount × Profit × Quantity",
+        "Identify the worst single order by Profit — what happened?"
+      ],
+      "questions": [
+        "What's the difference between correlation and causation here?",
+        "Why bucket discount instead of using raw %?",
+        "Which test would prove a tipping point statistically?",
+        "Where could your memo be wrong?"
       ],
       "outputs": [
-        ".sql file with all 15 queries, each with a comment",
-        "Screenshot or exported CSV of each query result",
-        "1-page written business report based on your Northwind findings",
-        "README note explaining what the Northwind database represents"
+        "Memo v2 PDF",
+        "New pivots + scatter",
+        "v0.2 tag"
       ]
     },
     {
       "number": 3,
-      "title": "Python Foundations for Data",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "Python is the most in-demand tool for data analysts in 2026. This week you install the tools and learn the Python patterns used specifically in data work — not general programming theory.",
-      "topics": [
-        "Installing Python 3.12+, Anaconda, and Jupyter Notebook / VS Code",
-        "Variables, data types: int, float, str, bool, NoneType",
-        "Lists, tuples, dictionaries, and sets",
-        "Control flow: if/elif/else, for loops, while loops",
-        "Functions: defining, calling, parameters, return values",
-        "List comprehensions and conditional expressions",
-        "File I/O: reading and writing CSV and text files",
-        "f-strings and string formatting"
-      ],
-      "tasks": [
-        "Install Anaconda and launch Jupyter Notebook — verify everything works",
-        "Create a virtual environment specifically for this roadmap",
-        "Solve 20 Python exercises on HackerRank (Easy/Medium difficulty)",
-        "Write a Python script that reads a CSV, calculates descriptive statistics manually, and prints results",
-        "Build a simple data cleaning function that strips whitespace and normalises text",
-        "Submit a well-commented Jupyter Notebook with all solutions"
-      ],
-      "project": "Student Grade Analyser — Write a Python script that: reads a CSV of student names and test scores, calculates the class average/highest/lowest score, identifies students below the passing grade (60), and outputs a formatted summary report as a text file. The script must be re-runnable from scratch.",
-      "resources": [
+      "title": "Superstore v0.3: Customer lifetime value",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Today: who are your most valuable customers and what do they have in common?",
+      "days": [
         {
-          "label": "How to Install Anaconda and Jupyter Notebook — beginners",
-          "url": "https://www.youtube.com/results?search_query=how+to+install+anaconda+python+2024+beginners+windows",
-          "note": "(YouTube, ~8 min — do this before anything else)"
+          "number": 1,
+          "title": "What is CLV",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Customer lifetime value explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=customer+lifetime+value+explained+beginner",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Why does it matter?",
+              "body": "If 10% of customers drive 60% of revenue, what should marketing focus on?"
+            }
+          ]
         },
         {
-          "label": "Python Beginner Tutorial Series — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+python+beginner+tutorial+series",
-          "note": "(YouTube, watch parts 1-5 (~2 hrs total))"
+          "number": 2,
+          "title": "Compute CLV per customer",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CLV pivot",
+              "body": "New pivot from Orders:\n  Rows: Customer ID\n  Values: SUM Sales, COUNT Orders, AVG Profit, SUM Profit\n  Filter: Top 100 by SUM Sales\nSort by SUM Sales descending.\nWho's #1? What do they buy?"
+            }
+          ]
         },
         {
-          "label": "Jupyter Notebook Tutorial — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+jupyter+notebook+tutorial+beginners",
-          "note": "(YouTube, ~25 min)"
+          "number": 3,
+          "title": "Segment by spend",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CLV buckets",
+              "body": "Add a 'CLV Bucket' column for each customer:\n  >$5000 = VIP\n  $1000-$5000 = Regular\n  <$1000 = Casual\nPivot: Rows = CLV Bucket. Values = COUNT customers, SUM Sales, SUM Profit, AVG Profit Margin.\nPareto check: VIPs are X% of customers but Y% of sales?"
+            }
+          ]
         },
         {
-          "label": "Reading CSV Files in Python for Beginners",
-          "url": "https://www.youtube.com/results?search_query=python+reading+csv+files+beginners+tutorial",
-          "note": "(YouTube, ~12 min)"
+          "number": 4,
+          "title": "What do VIPs buy?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Category by segment",
+              "body": "New pivot. Filter to VIPs only. Rows = Sub-Category. Values = SUM Sales.\nSort. Compare to the same pivot for Casuals — what's different?"
+            }
+          ]
         },
         {
-          "label": "HackerRank Python Practice",
-          "url": "https://www.hackerrank.com/domains/python",
-          "note": "(complete at least 20 Easy problems)"
+          "number": 5,
+          "title": "Retention",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Repeat-buyer rate",
+              "body": "Add a helper column on Orders: 'Customer Order #' using COUNTIFS on the rows ABOVE (this counts how many prior orders this customer has).\nPivot: Rows = Customer Order # (1, 2, 3, ...). Values = COUNT of customer IDs.\nPlot the decay — what % of buyers come back for a 2nd order? 5th?"
+            }
+          ]
         },
         {
-          "label": "Python Cheatsheet",
-          "url": "https://www.pythoncheatsheet.org/",
-          "note": "(keep this open while coding)"
+          "number": 6,
+          "title": "Update the memo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Memo v3",
+              "body": "Add a 5th section to your memo PDF:\n      ## Customer analysis\n      - VIPs are X% of customers but drive Y% of revenue\n      - Top VIP buys mostly [categories]\n      - Repeat-buyer rate from 1st to 2nd order is Z%\n      Recommendation: VIP loyalty program at $5k threshold."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git add . && git commit -m 'v0.3: customer lifetime value'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ CLV pivot top 100 built\n  ☐ CLV bucket segmentation done\n  ☐ Repeat-buyer chart\n  ☐ Memo v3 with customer analysis section\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After reading the student grades CSV in Python, how many students scored below 60 (failing)? What percentage of the class is that? If you had a real school of 200 students with this same distribution, how many would fail?",
-        "Calculate both the mean and median score for the class. If they are significantly different from each other, what does that tell you about the shape of the score distribution — are most students near the average, or is there a long tail?",
-        "If the passing threshold were raised from 60 to 70, how many additional students would fail? Write the calculation using a loop or list comprehension. What percentage increase is that in the failing count?",
-        "Find the top 5 and bottom 5 students by score. What is the score gap between rank 1 and rank 5? Calculate the standard deviation of the class scores manually — is the class closely bunched or widely spread?"
+      "topics": [
+        "Customer lifetime value basics",
+        "Pareto principle (80/20)",
+        "Segmentation by spend bucket",
+        "Cohort-style retention analysis",
+        "Cross-segment behaviour comparison"
       ],
+      "tasks": [
+        "Compute CLV per customer (top 100)",
+        "Segment customers into VIP / Regular / Casual",
+        "Compare what each segment buys",
+        "Compute repeat-buyer rate",
+        "Update memo with customer section"
+      ],
+      "project": "Superstore v0.3 — full customer segmentation. Specific finding: who the VIPs are and what they buy.",
+      "resources": [],
       "exercises": [
-        "Write a function that takes a list of numbers and returns the mean, median, and mode.",
-        "Write a script that reads a CSV row by row and counts how many rows have a missing value in column 3.",
-        "Create a dictionary from a list of tuples (name, score) and sort it by score descending.",
-        "Write a function that classifies a temperature as Cold, Warm, or Hot based on defined thresholds."
+        "Build a churn definition: customers with no order in 6+ months",
+        "Find the 5 customers who lost you the most money",
+        "Plot order count distribution — is it heavily skewed?"
+      ],
+      "questions": [
+        "Why is CLV not the same as 'lifetime sales'?",
+        "What's a cohort analysis?",
+        "Why does retention drop sharply from 1st to 2nd order in most businesses?",
+        "How would you use this analysis for a marketing budget?"
       ],
       "outputs": [
-        "Jupyter Notebook (.ipynb) with all exercises completed and explained",
-        "Python script (.py) for the Student Grade Analyser",
-        "Output .txt report generated by your script",
-        "HackerRank profile link showing solved problems"
+        "CLV pivot",
+        "Segment pivots",
+        "Memo v3 PDF",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "NumPy",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "NumPy and Pandas are the backbone of Python data analysis. This week you master DataFrames — the primary data structure you will use in every project for the rest of this roadmap.",
-      "topics": [
-        "NumPy arrays: creation, indexing, slicing, math operations, broadcasting",
-        "Why NumPy is faster than pure Python loops (vectorisation)",
-        "Pandas Series and DataFrame: creating, reading from CSV and Excel",
-        "Indexing: .loc, .iloc, boolean filtering",
-        "Selecting, renaming, and dropping columns",
-        "Core DataFrame operations: head, tail, info, describe, shape, dtypes",
-        "Sorting values, resetting index, and value_counts()"
-      ],
-      "tasks": [
-        "Complete the NumPy Quickstart Tutorial on numpy.org",
-        "Read the World Happiness Report dataset into a Pandas DataFrame",
-        "Perform at least 10 different DataFrame operations on the dataset",
-        "Write a written comparison: when to use NumPy arrays vs Pandas DataFrames",
-        "Build a reusable data_profile() function that loads any CSV and prints a structured summary"
-      ],
-      "project": "Dataset Explorer — Write a Jupyter Notebook that: loads the World Happiness Report dataset, displays shape and data types, shows the first and last 5 rows, identifies all numeric columns, calculates descriptive statistics, and prints a formatted summary report. No charts yet — pure DataFrame manipulation only.",
-      "resources": [
+      "title": "Superstore v0.4: SQL version",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Everything you did in pivots can also be done in SQL — the language of every real database. Today you redo the same analysis in SQL.",
+      "days": [
         {
-          "label": "World Happiness Report Dataset on Kaggle",
-          "url": "https://www.kaggle.com/datasets/unsdsn/world-happiness",
-          "note": "(download the CSV from here)"
+          "number": 1,
+          "title": "SQL in 1 hour",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "SQL crash course — 1 hour",
+              "url": "https://www.youtube.com/results?search_query=sql+crash+course+beginner+1+hour",
+              "duration_min": 60,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reading",
+              "title": "SQLite Online — free in-browser SQL",
+              "url": "https://sqliteonline.com/",
+              "why": "Click 'Open' to use SQL right in your browser, no install."
+            }
+          ]
         },
         {
-          "label": "How to download from Kaggle (if you haven't done it before)",
-          "url": "https://www.youtube.com/results?search_query=how+to+download+kaggle+dataset+beginners+step+by+step",
-          "note": "(YouTube, ~5 min)"
+          "number": 2,
+          "title": "Import the CSV",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Get Superstore into SQL",
+              "body": "Export the Orders sheet from Excel as 'orders.csv'.\nIn sqliteonline.com: Import → CSV → upload orders.csv → create table 'orders'.\nRun: SELECT COUNT(*) FROM orders;\nYOU SHOULD SEE: about 10,000 rows."
+            }
+          ]
         },
         {
-          "label": "NumPy Tutorial for Beginners — Keith Galli",
-          "url": "https://www.youtube.com/results?search_query=keith+galli+numpy+tutorial+beginners+full",
-          "note": "(YouTube, ~1 hr)"
+          "number": 3,
+          "title": "Rewrite Q1 in SQL",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Margin leaders in SQL",
+              "body": "      SELECT \n        \"Sub-Category\",\n        SUM(Sales) AS total_sales,\n        SUM(Profit) AS total_profit,\n        SUM(Profit) * 1.0 / SUM(Sales) AS margin\n      FROM orders\n      GROUP BY \"Sub-Category\"\n      ORDER BY margin DESC;\n\nSave this query in queries.sql. Compare to your pivot — same answer?"
+            }
+          ]
         },
         {
-          "label": "Pandas Tutorial Part 1 — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+pandas+tutorial+part+1+getting+started",
-          "note": "(YouTube, ~30 min)"
+          "number": 4,
+          "title": "Rewrite Q2 (YoY) in SQL",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Year-over-year in SQL",
+              "body": "      SELECT \n        Region,\n        strftime('%Y', \"Order Date\") AS year,\n        SUM(Sales) AS total_sales\n      FROM orders\n      GROUP BY Region, year\n      ORDER BY Region, year;\n\nCompute YoY growth with a CTE:\n      WITH yearly AS (\n        SELECT Region, strftime('%Y', \"Order Date\") AS year, SUM(Sales) AS sales\n        FROM orders GROUP BY Region, year\n      )\n      SELECT a.Region, a.year, a.sales,\n             (a.sales - b.sales) * 1.0 / b.sales AS yoy_growth\n      FROM yearly a\n      LEFT JOIN yearly b ON a.Region = b.Region AND a.year = CAST(b.year AS INT) + 1\n      ORDER BY a.Region, a.year;"
+            }
+          ]
         },
         {
-          "label": "Pandas Tutorial Part 2 — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+pandas+tutorial+part+2+dataframe+indexing",
-          "note": "(YouTube, ~30 min)"
+          "number": 5,
+          "title": "CLV in SQL",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Top 10 customers",
+              "body": "      SELECT \n        \"Customer ID\", \"Customer Name\",\n        SUM(Sales) AS lifetime_sales,\n        SUM(Profit) AS lifetime_profit,\n        COUNT(DISTINCT \"Order ID\") AS order_count\n      FROM orders\n      GROUP BY \"Customer ID\", \"Customer Name\"\n      ORDER BY lifetime_sales DESC\n      LIMIT 10;"
+            }
+          ]
         },
         {
-          "label": "Official Pandas Cheat Sheet (PDF)",
-          "url": "https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf",
-          "note": "(print this and keep it next to you)"
+          "number": 6,
+          "title": "Save all queries",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "queries.sql",
+              "body": "Save at least 10 queries in queries.sql, each with a comment explaining what it answers:\n  - Total Sales 2023\n  - Margin by sub-category\n  - YoY growth by region\n  - Top 10 customers\n  - Discount bucket vs avg profit\n  - Furniture profit by sub-category\n  - Repeat-buyer rate\n  - VIP segmentation\n  - Worst single order\n  - Average days from order to ship"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git add queries.sql\n      git commit -m 'v0.4: SQL versions of all queries'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ orders.csv imported into a SQLite DB\n  ☐ queries.sql has 10+ commented queries\n  ☐ Each query result matches the pivot table answer\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Which world region has the highest average happiness score? Now calculate which region has the lowest standard deviation (most consistent scores among its countries). Are they the same region? What is the difference between being happy on average and being consistently happy?",
-        "Filter the DataFrame to only African countries. Rank them by happiness score. What is the gap in the Happiness Score between the highest and lowest ranking African nation? Now check their GDP per capita — does higher GDP always translate to higher happiness within this subset?",
-        "Use df.corr() to find which column is most strongly correlated with the happiness score. Is it Freedom, Social Support, or GDP per Capita? Does this match your intuition? Find the weakest correlate too.",
-        "What percentage of all countries in the dataset score above 6.0 on the happiness scale? What percentage score below 4.0? Which region has the most countries below 4.0? Write the code using boolean filtering."
+      "topics": [
+        "SQL basics — SELECT, WHERE, GROUP BY, JOIN, ORDER BY, LIMIT",
+        "Aggregates — SUM, COUNT, AVG",
+        "CTEs (WITH ...)",
+        "Self-joins on year-over-year",
+        "Date functions (strftime)",
+        "Validating SQL results against spreadsheet pivots"
       ],
+      "tasks": [
+        "Sign up for sqliteonline.com (free)",
+        "Import Orders CSV",
+        "Rewrite Q1 (margin) in SQL",
+        "Rewrite Q2 (YoY) using CTE + self-join",
+        "Rewrite CLV in SQL",
+        "Save 10 commented queries to queries.sql"
+      ],
+      "project": "Superstore v0.4 — every spreadsheet pivot translated to SQL queries. queries.sql committed.",
+      "resources": [],
       "exercises": [
-        "Create a NumPy array of 100 random integers and calculate mean, std, and the count of values above the mean.",
-        "Load the Happiness dataset, filter to show only Sub-Saharan African countries, sorted by happiness score.",
-        "Select only numeric columns and compute pairwise correlations using df.corr().",
-        "Write a reusable data_profile(df) function: prints shape, dtypes, null counts, and describe output."
+        "Compute the median (use a window function)",
+        "Find customers who bought in every quarter of a year",
+        "Write a query that returns the running total of sales by date"
+      ],
+      "questions": [
+        "What's the difference between WHERE and HAVING?",
+        "Why GROUP BY is sometimes slower than people expect",
+        "What's a CTE — how is it different from a subquery?",
+        "When do you reach for SQL vs pandas?"
       ],
       "outputs": [
-        "Jupyter Notebook with NumPy exercises (clearly labelled)",
-        "Jupyter Notebook with Dataset Explorer project",
-        "Written comparison (Markdown cell) of NumPy vs Pandas with examples",
-        "Reusable data_profile() function saved as a .py utility file"
+        "queries.sql committed",
+        "v0.4 tag",
+        "Validation that SQL results match pivots"
       ]
     },
     {

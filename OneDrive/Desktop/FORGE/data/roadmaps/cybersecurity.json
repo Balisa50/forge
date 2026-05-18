@@ -219,227 +219,426 @@
     },
     {
       "number": 2,
-      "title": "Cryptography Essentials — What You Trust and Why",
-      "phase": "Foundations",
-      "commitment_hours": "20-25",
-      "context": "Most crypto attacks aren't on the math — they're on the implementation. This week you understand symmetric vs asymmetric, hashing vs encryption, what's strong vs broken in 2026, and how to spot misuse.",
-      "topics": [
-        "Symmetric encryption — AES-GCM, why GCM beats CBC, what nonces mean",
-        "Asymmetric encryption — RSA, ECC; why ECC is preferred for new work",
-        "Hashing — SHA-2, SHA-3, BLAKE3; why MD5 and SHA-1 are dead",
-        "HMAC vs signatures — message authentication vs non-repudiation",
-        "Password hashing — argon2, bcrypt, scrypt — why never SHA-256",
-        "Public key infrastructure — certificates, CAs, trust chains",
-        "Common crypto mistakes — ECB mode, hardcoded keys, weak randomness",
-        "Post-quantum cryptography — the migration timeline, what's coming"
-      ],
-      "tasks": [
-        "Use openssl to encrypt + decrypt a file with AES-GCM; understand every flag",
-        "Generate an RSA keypair; sign + verify a message",
-        "Hash a password with bcrypt + argon2; compare workfactor settings",
-        "Read about the Heartbleed and Equifax breaches; understand the crypto failures",
-        "Run a TLS scan on 3 production sites (yours + 2 banks) with testssl.sh; document weak configs"
-      ],
-      "project": "Build a Crypto Cheat Sheet + Audit Tool. A Python or Go CLI that audits a directory for: hard-coded crypto keys, use of MD5/SHA-1, ECB mode, weak RNG (random.Random vs secrets), short bcrypt rounds. Run it against an open-source codebase you respect; document findings. Commit to GitHub.",
-      "resources": [
+      "title": "Vuln Reports v0.2: 5 more Juice Shop bugs",
+      "phase": "Foundation",
+      "commitment_hours": "15-20",
+      "context": "5 more Juice Shop challenges this week. Harder ones. Same report format.",
+      "days": [
         {
-          "label": "Cryptopals Crypto Challenges",
-          "url": "https://www.cryptopals.com/",
-          "note": "free, the canonical crypto-by-implementation course; do at least Set 1"
+          "number": 1,
+          "title": "What you'll attack",
+          "summary": "Five new categories.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Juice Shop challenges list",
+              "url": "https://pwning.owasp-juice.shop/companion-guide/latest/appendix/challenges.html",
+              "why": "Click 'Open' to see all challenges with difficulty stars."
+            },
+            {
+              "kind": "reflection",
+              "title": "Pick 5 from these",
+              "body": "This week: Login Jim (auth bypass), Login Bender (auth bypass), Reset Bender Password (broken password recovery), CAPTCHA Bypass (rate limit bypass), Forgotten Sales Channel (admin section discovery)."
+            }
+          ]
         },
         {
-          "label": "Serious Cryptography — Jean-Philippe Aumasson (book)",
-          "url": "https://nostarch.com/seriouscrypto",
-          "note": "paid book, the canonical modern crypto reference"
+          "number": 2,
+          "title": "Login Jim — known credentials",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Open guidance",
+              "body": "Try Login Jim — he's mentioned in the About page (look at the reviews). The hint is his email is jim@juice-sh.op.\nTry common passwords (Jim from Star Trek). Document what worked.\nSave screenshot 06-jim.png + write reports/06-jim.md"
+            }
+          ]
         },
         {
-          "label": "OWASP — Cryptographic Storage Cheat Sheet",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html",
-          "note": "official, what to use in production"
+          "number": 3,
+          "title": "Login Bender — different attack",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Try SQLi",
+              "body": "Bender's email: bender@juice-sh.op. Same SQLi as Login Admin works for many. Try ' OR 1=1--. Document.\nSave report 07-bender.md."
+            }
+          ]
         },
         {
-          "label": "Soatok's blog (cryptography for developers)",
-          "url": "https://soatok.blog/",
-          "note": "blog, the most practical modern crypto writing for engineers"
+          "number": 4,
+          "title": "CAPTCHA bypass",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Rate limit gap",
+              "body": "The contact form has a CAPTCHA. Open DevTools network tab and intercept a submit. The CAPTCHA answer is sent client-side — modify the request to send the right answer without the CAPTCHA form check. Document.\nSave report 08-captcha.md."
+            }
+          ]
         },
         {
-          "label": "testssl.sh",
-          "url": "https://testssl.sh/",
-          "note": "official, the canonical CLI for auditing TLS configurations"
+          "number": 5,
+          "title": "Reset password discovery",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Security question weakness",
+              "body": "Some users have weak security questions. Look up Bender's password reset question — find his answer publicly (Wikipedia, fandom wikis). Document in report 09-reset.md."
+            }
+          ]
         },
         {
-          "label": "NIST — Post-Quantum Cryptography page",
-          "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
-          "note": "official, the standards body's PQC progress"
+          "number": 6,
+          "title": "Forgotten admin section",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Find /administration",
+              "body": "Try /administration/. Or look in main JS bundle for admin routes. Document discovery in report 10-admin.md."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git add reports/ screenshots/\n      git commit -m 'v0.2: 5 more reports'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ 10 total reports in reports/\n  ☐ README updated with all 10 links + severities\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "AES in CBC mode with a static IV — what attack does this enable? What's the right mode?",
-        "bcrypt with 4 rounds vs 12 rounds — how long does each take? At what point is it 'enough'?",
-        "Your app stores user passwords with SHA-256. What's the attack? How do you migrate without forcing every user to reset?",
-        "Quantum computers and RSA — when (and how) does RSA actually break? What's the migration path?"
+      "topics": [
+        "Juice Shop authentication challenges",
+        "OSINT for finding user credentials",
+        "CAPTCHA bypass via client-side trust",
+        "Security question weaknesses",
+        "Hidden admin route discovery"
       ],
+      "tasks": [
+        "Solve Login Jim",
+        "Solve Login Bender",
+        "Bypass the CAPTCHA on contact form",
+        "Reset Bender's password via security question",
+        "Find the admin section",
+        "Write 5 reports + push v0.2"
+      ],
+      "project": "Vuln Reports v0.2 — 5 more Juice Shop reports added (now 10 total). Auth bypass, CAPTCHA bypass, password reset, admin discovery.",
+      "resources": [],
       "exercises": [
-        "Solve Cryptopals Set 1 (challenges 1-8); commit your solutions.",
-        "Implement HMAC-SHA256 from scratch in Python.",
-        "Demonstrate the ECB-mode attack: encrypt an image with ECB; observe the visible pattern.",
-        "Audit one Python file for hardcoded secrets using gitleaks or trufflehog."
+        "Try Juice Shop's 2-star challenges next",
+        "Read OWASP's PrintScreen Pwning guide for ideas",
+        "Find 1 challenge nobody has documented well online and write the best writeup"
+      ],
+      "questions": [
+        "Why are security questions weaker than passwords?",
+        "What's CSRF vs CAPTCHA?",
+        "What's a 'security through obscurity' fallacy and how does the admin section illustrate it?",
+        "Why don't real sites use email-as-username + ' OR 1=1--?"
       ],
       "outputs": [
-        "Cryptopals Set 1 solved",
-        "Crypto-audit CLI tool committed",
-        "testssl.sh report of 3 production sites",
-        "Notes/crypto.md — your decision tree for picking primitives"
+        "10 reports total in reports/",
+        "10 screenshots in screenshots/",
+        "Updated README",
+        "v0.2 tag"
       ]
     },
     {
       "number": 3,
-      "title": "Recon and OSINT — Knowing Your Target Without Touching It",
-      "phase": "Offensive Basics",
-      "commitment_hours": "20-25",
-      "context": "Every attack starts with reconnaissance. This week you learn passive (OSINT) and active recon — domain enumeration, port scanning, employee discovery — and you do it ethically (only against authorised targets).",
-      "topics": [
-        "Passive recon — DNS history, certificate transparency logs, search engines, archive.org",
-        "Subdomain enumeration — Subfinder, Amass, certificate transparency",
-        "Active recon — port scanning with nmap, service version detection",
-        "Web recon — gobuster, ffuf for directory + parameter discovery",
-        "OSINT — Maltego, Shodan, Censys, the surfaces nobody thinks about",
-        "Employee discovery — LinkedIn scraping, hunter.io for emails",
-        "Cloud surface enumeration — exposed S3 buckets, public functions, leaked secrets",
-        "Reporting findings — structured + reproducible"
-      ],
-      "tasks": [
-        "Use Subfinder + Amass to enumerate subdomains for a bug-bounty-eligible site (HackerOne or Bugcrowd)",
-        "Run nmap with `-sV -sC` against your Metasploitable lab; understand every result",
-        "Use ffuf to fuzz directories on your DVWA lab",
-        "Search Shodan for 'apache 2.4' in your country; understand what's exposed",
-        "Use crt.sh to find certificate transparency entries for a domain you own"
-      ],
-      "project": "Build a Bug-Bounty Recon Pipeline. For a single bug-bounty-eligible target (verify scope first!), a script that runs: subdomain enumeration → liveness check → port scan → directory fuzzing → screenshot every web service. Produces a Markdown report with findings. Test on a HackerOne or Bugcrowd target — strictly within scope.",
-      "resources": [
+      "title": "Vuln Reports v0.3: TryHackMe — first room",
+      "phase": "Foundation",
+      "commitment_hours": "15-20",
+      "context": "Move from Juice Shop to TryHackMe — a guided platform where you attack real boxes.",
+      "days": [
         {
-          "label": "ProjectDiscovery — Subfinder, nuclei, httpx",
-          "url": "https://docs.projectdiscovery.io/",
-          "note": "official, the modern open-source recon toolkit"
+          "number": 1,
+          "title": "Sign up + 'Tutorial' room",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "TryHackMe — sign up",
+              "url": "https://tryhackme.com",
+              "why": "Free tier is plenty. Sign up."
+            },
+            {
+              "kind": "reading",
+              "title": "THM — Tutorial Room",
+              "url": "https://tryhackme.com/r/room/tutorial",
+              "why": "Start here — teaches the platform."
+            },
+            {
+              "kind": "exercise",
+              "title": "First room",
+              "body": "Complete the Tutorial room. Screenshot the badge on your THM profile."
+            }
+          ]
         },
         {
-          "label": "OWASP Amass — Documentation",
-          "url": "https://github.com/owasp-amass/amass",
-          "note": "GitHub, the canonical subdomain enumeration tool"
+          "number": 2,
+          "title": "OpenVPN setup",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Connect to THM via VPN",
+              "body": "Download your OpenVPN config from THM dashboard.\nRun: sudo openvpn your-config.ovpn (Linux/Mac/Kali) — keep this terminal open.\n\nVerify: ifconfig — you should see a tun0 interface."
+            }
+          ]
         },
         {
-          "label": "Nmap — Network Scanning (book, free)",
-          "url": "https://nmap.org/book/",
-          "note": "free book, the canonical nmap reference by its author"
+          "number": 3,
+          "title": "Basic Pentesting room",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Basic Pentesting room",
+              "url": "https://tryhackme.com/r/room/basicpentestingjt",
+              "why": "Free, beginner-friendly."
+            },
+            {
+              "kind": "exercise",
+              "title": "Start the room",
+              "body": "Deploy the machine. Take notes as you go (this becomes your writeup later). Use:\n  - nmap to find open ports\n  - gobuster for hidden directories\n  - hydra for password cracking"
+            }
+          ]
         },
         {
-          "label": "Shodan — Documentation + CLI",
-          "url": "https://help.shodan.io/",
-          "note": "official, the search engine for internet-connected devices"
+          "number": 4,
+          "title": "Finish Basic Pentesting",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Get all flags",
+              "body": "Work through every task. If stuck for 30 min, peek at the THM hint. Don't peek at the walkthrough."
+            }
+          ]
         },
         {
-          "label": "Bug Bounty Hunter resources — HackerOne Hacker101",
-          "url": "https://www.hacker101.com/",
-          "note": "official, free training from HackerOne"
+          "number": 5,
+          "title": "Write the walkthrough",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "reports/11-thm-basic-pentesting.md",
+              "body": "Structure:\n      # Basic Pentesting — Walkthrough\n      Room: https://tryhackme.com/r/room/basicpentestingjt\n      \n      ## Reconnaissance\n      nmap output, gobuster output\n      \n      ## Foothold\n      How you got initial access\n      \n      ## Privilege escalation\n      How you became root\n      \n      ## Lessons\n      What this box teaches"
+            }
+          ]
         },
         {
-          "label": "PortSwigger — Web Security Academy (Reconnaissance lab)",
-          "url": "https://portswigger.net/web-security/",
-          "note": "free, the canonical hands-on web security training"
+          "number": 6,
+          "title": "Another room: Pickle Rick",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Pickle Rick",
+              "url": "https://tryhackme.com/r/room/picklerick",
+              "why": "Famous beginner room."
+            },
+            {
+              "kind": "exercise",
+              "title": "Complete Pickle Rick",
+              "body": "Same approach. Write reports/12-pickle-rick.md."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git add reports/\n      git commit -m 'v0.3: TryHackMe Basic Pentesting + Pickle Rick'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ THM profile shows both rooms complete\n  ☐ 2 walkthroughs added\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "You enumerated 200 subdomains for a target. How do you prioritise which to test first?",
-        "nmap -sS vs -sT vs -sU — what's the difference? Which is stealthier? Which works without root?",
-        "You found an exposed S3 bucket via your scanner. Now what? What's responsible disclosure look like?",
-        "Bug bounty scope says '*.example.com'. Does that include staging.dev.example.com? When in doubt, do you ask or test?"
+      "topics": [
+        "TryHackMe platform basics",
+        "OpenVPN client setup for pentest labs",
+        "nmap port discovery",
+        "Gobuster directory enumeration",
+        "Hydra password cracking",
+        "Linux privilege escalation patterns"
       ],
+      "tasks": [
+        "Sign up + finish THM Tutorial",
+        "Set up OpenVPN to the THM network",
+        "Complete Basic Pentesting room",
+        "Write walkthrough",
+        "Complete Pickle Rick room",
+        "Write walkthrough"
+      ],
+      "project": "Vuln Reports v0.3 — first 2 TryHackMe walkthroughs added. Real Linux box exploitation.",
+      "resources": [],
       "exercises": [
-        "Write a Python script that takes a domain and returns all subdomains via crt.sh.",
-        "Use nuclei to scan a target for known CVEs (only against authorised targets).",
-        "Use the Shodan CLI to find open Elasticsearch instances in one country.",
-        "Pipe Subfinder → httpx to identify which subdomains have live web services."
+        "Try the Lookup or Vulnversity rooms next",
+        "Document one privilege-escalation technique in depth",
+        "Build your own scripts folder of recon one-liners"
+      ],
+      "questions": [
+        "Why use a VPN to attack lab boxes?",
+        "What's the difference between TCP scan and SYN scan in nmap?",
+        "Why is gobuster sometimes blocked by WAFs?",
+        "What's the most common Linux priv-esc technique?"
       ],
       "outputs": [
-        "Working recon pipeline script",
-        "First bug-bounty report draft (whether or not it gets accepted)",
-        "Shodan dork list you've curated",
-        "Notes/recon.md — your methodology"
+        "2 THM walkthroughs in reports/",
+        "THM profile public link",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "OWASP Top 10 — The Bugs That Actually Get Found",
-      "phase": "Offensive Basics",
-      "commitment_hours": "25-30",
-      "context": "Most production vulnerabilities are in the OWASP Top 10. This week you go through every category, exploit each in your lab, then learn the fix. By Friday you can spot any of them in a code review.",
-      "topics": [
-        "Broken Access Control (IDOR) — the most common bug class",
-        "Cryptographic Failures (formerly Sensitive Data Exposure)",
-        "Injection — SQL, NoSQL, OS command, the still-most-impactful",
-        "Insecure Design — when the architecture itself is wrong",
-        "Security Misconfiguration — defaults, leftover dev mode",
-        "Vulnerable + outdated components",
-        "Identification + Authentication Failures",
-        "Software + Data Integrity Failures (supply chain)"
-      ],
-      "tasks": [
-        "Exploit SQL injection on DVWA's SQLi page; then read the fix",
-        "Demonstrate an IDOR: as user A, change /api/orders/123 to /api/orders/124; verify access",
-        "Find a Server-Side Request Forgery (SSRF) in the OWASP Juice Shop",
-        "Use sqlmap against a deliberately-vulnerable target; understand its output",
-        "Exploit a command injection in DVWA"
-      ],
-      "project": "Complete OWASP Juice Shop. The canonical CTF for web vulnerabilities. Solve at least 60 of ~100 challenges across all OWASP Top 10 categories. Each challenge teaches a real vulnerability. Document your solutions in JUICE-SHOP.md. The 'easy' ones take 5 minutes; the 'hard' ones reveal real-world thinking.",
-      "resources": [
+      "title": "Vuln Reports v0.4: Burp Suite + intercepting requests",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Burp Suite is THE tool of web hackers. This week you learn it.",
+      "days": [
         {
-          "label": "OWASP Top 10 — 2021",
-          "url": "https://owasp.org/Top10/",
-          "note": "official, the canonical risk list"
+          "number": 1,
+          "title": "What is Burp Suite",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Burp Suite for beginners (20 min)",
+              "url": "https://www.youtube.com/results?search_query=burp+suite+community+beginner+tutorial+2024",
+              "duration_min": 20,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reading",
+              "title": "Burp Suite Community — free download",
+              "url": "https://portswigger.net/burp/communitydownload",
+              "why": "Free version is enough for this week."
+            },
+            {
+              "kind": "reflection",
+              "title": "Why a proxy?",
+              "body": "Write 2 sentences: what does Burp do that DevTools doesn't?"
+            }
+          ]
         },
         {
-          "label": "OWASP Juice Shop",
-          "url": "https://owasp.org/www-project-juice-shop/",
-          "note": "official, the canonical CTF training app for web vulns"
+          "number": 2,
+          "title": "Install + configure",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Burp + Firefox",
+              "body": "Install Burp Suite Community.\nSet up Firefox to proxy through Burp:\n  In Firefox Settings → Network Settings → Manual proxy → 127.0.0.1:8080 (both HTTP and HTTPS).\nInstall Burp's CA cert in Firefox (go to http://burp in your browser, download the cert, install in Firefox).\n\nNow every Firefox request goes through Burp."
+            }
+          ]
         },
         {
-          "label": "PortSwigger — Web Security Academy",
-          "url": "https://portswigger.net/web-security",
-          "note": "free, the most-respected hands-on training; do every category"
+          "number": 3,
+          "title": "Intercept a Juice Shop login",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First intercept",
+              "body": "Start Juice Shop locally (docker run...). In Firefox visit localhost:3000.\nIn Burp → Proxy tab → 'Intercept is on'.\nTry to log in with any credentials. Burp pauses the request. See the JSON body. Modify the email field. Forward.\nWatch the response. Document."
+            }
+          ]
         },
         {
-          "label": "OWASP — Cheat Sheet Series",
-          "url": "https://cheatsheetseries.owasp.org/",
-          "note": "official, one-page-per-topic security guidance"
+          "number": 4,
+          "title": "Burp Repeater",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Replay attack",
+              "body": "Right-click any captured request → Send to Repeater.\nIn Repeater, modify the request and re-send 10 times. Look at responses.\nTry password spraying: modify just the password field, send.\nSave reports/13-burp-repeater.md describing the workflow."
+            }
+          ]
         },
         {
-          "label": "Bug Bounty Bootcamp (book) — Vickie Li",
-          "url": "https://nostarch.com/bug-bounty-bootcamp",
-          "note": "paid book, the most-recommended introduction to bug hunting"
+          "number": 5,
+          "title": "Burp Intruder (Community has rate limit)",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Brute force attempt",
+              "body": "Send a login request to Intruder. Mark the password field as the position. Use a small wordlist (top 100 passwords). Run.\nNote: Community is slow on purpose. You'll see ~1 req/sec. Document why this matters in reports/14-brute.md."
+            }
+          ]
         },
         {
-          "label": "sqlmap — Documentation",
-          "url": "https://sqlmap.org/",
-          "note": "official, the canonical SQLi automation tool"
+          "number": 6,
+          "title": "Find a real bug with Burp",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Web Tokens challenge",
+              "body": "Try the Juice Shop 'Forged Coupon' or 'JWT Forge' challenge using Burp to inspect JWTs.\nSave report 15-jwt-forge.md."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git add reports/\n      git commit -m 'v0.4: Burp Suite + Repeater + 1 JWT bug'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ Burp configured with Firefox\n  ☐ 3 new reports added (Repeater workflow, brute attempt, JWT bug)\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Your app uses parameterised queries everywhere. Are you safe from SQLi? What about ORM injection?",
-        "IDOR — what's the simplest fix? Why is 'check ownership on every request' annoying but correct?",
-        "SSRF: your app fetches a URL the user submits. What goes wrong? What's the fix?",
-        "Command injection — what's the difference between exec(cmd_str) and exec(cmd_list)? Why does the list version save you?"
+      "topics": [
+        "Burp Suite Community install + setup",
+        "Proxy + Firefox + CA cert",
+        "Burp Intercept",
+        "Burp Repeater",
+        "Burp Intruder (Community rate limit)",
+        "JWT inspection in Burp"
       ],
+      "tasks": [
+        "Install Burp + configure Firefox proxy",
+        "Intercept and modify a login request",
+        "Use Repeater to replay/modify requests",
+        "Try Intruder for password spraying",
+        "Find one Juice Shop JWT-related bug"
+      ],
+      "project": "Vuln Reports v0.4 — 3 new reports demonstrating Burp Suite workflow. Real proxy/intercept skills.",
+      "resources": [],
       "exercises": [
-        "Write a parameterised SQL query that's safe; rewrite the same query unsafely; demonstrate the difference.",
-        "Write a Python function that fetches a URL but rejects internal IPs (block SSRF).",
-        "Demonstrate a stored XSS in DVWA; then implement the CSP that blocks it.",
-        "Use Burp Suite Community to intercept and modify a request; verify the IDOR."
+        "Try the BurpSuite ProAcademy free intro labs",
+        "Build a small password wordlist of common passwords",
+        "Use Burp's match-and-replace to auto-rewrite a header on every request"
+      ],
+      "questions": [
+        "What's the threat model of running Burp's CA cert in your browser?",
+        "Why is Burp Community Intruder rate-limited?",
+        "Why can't you Burp HTTPS traffic without a cert?",
+        "What's Burp Macros and when do you use them?"
       ],
       "outputs": [
-        "60+ Juice Shop challenges solved",
-        "Walkthroughs for 5 of them committed",
-        "Comparison: OWASP Top 10 → fix patterns in real code",
-        "Burp Suite Community installed and used"
+        "3 new reports",
+        "Working Burp setup",
+        "v0.4 tag"
       ]
     },
     {

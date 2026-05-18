@@ -238,227 +238,424 @@
     },
     {
       "number": 2,
-      "title": "Mathematics for Data Science — Statistics",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "Data science is applied mathematics. This week you build the statistical foundation that makes machine learning understandable — the specific concepts that appear in every ML algorithm.",
-      "topics": [
-        "Descriptive statistics: mean, median, mode, variance, standard deviation",
-        "Probability fundamentals: events, independence, conditional probability",
-        "Probability distributions: normal, binomial, Poisson, uniform",
-        "Central Limit Theorem and sampling distributions",
-        "Correlation vs causation",
-        "Bayes' Theorem (conceptual and applied)",
-        "Random variables and expected value",
-        "Using Python scipy and numpy to compute statistical measures"
-      ],
-      "tasks": [
-        "Watch all StatQuest statistics videos in the resource list before writing any code",
-        "Implement descriptive statistics for your synthetic dataset from Week 1",
-        "Simulate the Central Limit Theorem in Python and plot the results",
-        "Apply Bayes' Theorem to a spam filtering problem by hand, then in Python",
-        "Write plain-language explanations of each concept in your own words"
-      ],
-      "project": "Statistical Profiler — Write a Python class StatProfiler that takes a Pandas DataFrame and for each numeric column computes mean, median, std, variance, skewness, and kurtosis, plots the distribution, and states whether the distribution is approximately normal based on a Shapiro-Wilk test. Output a formatted statistical report.",
-      "resources": [
+      "title": "TaxiPulse v0.2: Borough breakdown + multi-month",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Last week was October only. This week add 2 more months of data and break results down by borough — see how patterns differ across the city.",
+      "days": [
         {
-          "label": "StatQuest with Josh Starmer — YouTube Channel",
-          "url": "https://www.youtube.com/@statquest",
-          "note": "(subscribe and watch the entire Statistics Fundamentals playlist this week)"
+          "number": 1,
+          "title": "What's a borough?",
+          "summary": "NYC has 5: Manhattan, Brooklyn, Queens, Bronx, Staten Island. The taxi data uses pickup location IDs.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "NYC TLC Taxi Zone Lookup",
+              "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv",
+              "why": "Click 'Open' to download a small CSV that maps LocationID to Borough + Zone."
+            },
+            {
+              "kind": "reflection",
+              "title": "Hypotheses",
+              "body": "Which borough do you think:\n  1. Has the busiest hour LATEST in the day?\n  2. Has the highest average fare?\n  3. Tips the most?\nWrite your guesses."
+            }
+          ]
         },
         {
-          "label": "Central Limit Theorem — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+central+limit+theorem+clearly+explained",
-          "note": "(YouTube, ~10 min — watch before simulating it in code)"
+          "number": 2,
+          "title": "Load the lookup",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Join zone data",
+              "body": "Save taxi_zone_lookup.csv into your taxipulse/data/ folder.\n\nIn a new notebook 06-borough.ipynb:\n      import pandas as pd\n      df = pd.read_parquet('data/clean.parquet')\n      zones = pd.read_csv('data/taxi_zone_lookup.csv')\n      df = df.merge(zones[['LocationID','Borough']], left_on='PULocationID', right_on='LocationID')\n      df = df.rename(columns={'Borough':'pickup_borough'})\n      print(df['pickup_borough'].value_counts())"
+            }
+          ]
         },
         {
-          "label": "Bayes' Theorem — 3Blue1Brown",
-          "url": "https://www.youtube.com/results?search_query=3blue1brown+bayes+theorem+simplest+case",
-          "note": "(YouTube, ~15 min — the clearest visual explanation)"
+          "number": 3,
+          "title": "Plot busy hour by borough",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Multi-borough chart",
+              "body": "      import matplotlib.pyplot as plt\n      for b in ['Manhattan','Brooklyn','Queens','Bronx','Staten Island']:\n          sub = df[df['pickup_borough'] == b]\n          by_hour = sub.groupby('pickup_hour').size()\n          by_hour.plot(label=b)\n      plt.title('Trips by hour, by borough')\n      plt.legend(); plt.savefig('hour_by_borough.png'); plt.show()"
+            }
+          ]
         },
         {
-          "label": "Probability Distributions Explained — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+probability+distributions+clearly+explained",
-          "note": "(YouTube, ~12 min)"
+          "number": 4,
+          "title": "Download Sept + Nov data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Sept 2023 Yellow Taxi",
+              "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-09.parquet",
+              "why": "Click 'Open' to download."
+            },
+            {
+              "kind": "reading",
+              "title": "Nov 2023 Yellow Taxi",
+              "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-11.parquet",
+              "why": "Click 'Open' to download."
+            },
+            {
+              "kind": "exercise",
+              "title": "Concat 3 months",
+              "body": "Save both to data/. In a new notebook:\n      sept = pd.read_parquet('data/yellow_tripdata_2023-09.parquet')\n      oct = pd.read_parquet('data/taxi.parquet')\n      nov = pd.read_parquet('data/yellow_tripdata_2023-11.parquet')\n      df3 = pd.concat([sept, oct, nov])\n      print(len(df3))  # about 10M rows\n\nRun the same cleaning steps. Save as data/q4_2023.parquet."
+            }
+          ]
         },
         {
-          "label": "scipy.stats Documentation",
-          "url": "https://docs.scipy.org/doc/scipy/reference/stats.html",
-          "note": "(reference for all statistical tests in Python)"
+          "number": 5,
+          "title": "Trip count over 3 months",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Daily series",
+              "body": "      df3['date'] = df3['tpep_pickup_datetime'].dt.date\n      daily = df3.groupby('date').size()\n      daily.plot(figsize=(12,4), title='NYC Yellow Taxi trips per day, Q4 2023')\n      plt.savefig('daily_q4.png')\nLook for the dip on Thanksgiving + Halloween."
+            }
+          ]
         },
         {
-          "label": "Khan Academy Statistics \\& Probability",
-          "url": "https://www.khanacademy.org/math/statistics-probability",
-          "note": "(free interactive exercises to reinforce the concepts)"
+          "number": 6,
+          "title": "Add to final report",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Update TaxiPulse-Final",
+              "body": "Add a new section '## Borough breakdown' with the hour-by-borough chart. Add '## Q4 trend' with the daily chart. Update TL;DR to mention any cross-month finding."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git add . && git commit -m 'v0.2: borough breakdown + 3 months'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Borough lookup joined\n  ☐ Hour-by-borough chart saved\n  ☐ Q4 daily series chart saved\n  ☐ Final notebook updated\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "For each numeric column in your synthetic dataset (quantity, unit_price): calculate mean, median, and std. Are any distributions notably skewed? Compare mean vs median — when they differ significantly, what does that tell you about the shape of the distribution?",
-        "Simulate 10,000 samples of size 30 from your unit_price column and plot the distribution of sample means. Does the distribution of sample means look approximately normal even if unit_price itself is skewed? This is the Central Limit Theorem — describe in your own words what you just proved.",
-        "Apply Bayes' Theorem to your data: if you know a transaction is from the 'West' region, what is the conditional probability it is in the 'Electronics' category? Calculate it from the raw counts in your DataFrame and verify using the Bayes formula manually.",
-        "Calculate the probability that a randomly selected order in your dataset has quantity above 5 AND unit price above the median. Calculate it two ways: (1) directly from the data by filtering the DataFrame, (2) by assuming independence and multiplying probabilities. Do the two answers match? Why or why not?"
+      "topics": [
+        "Merging on foreign keys (LocationID → Borough)",
+        "Multi-borough comparison plots",
+        "Concatenating multiple parquet files",
+        "Daily time series visualization",
+        "Updating a publishable notebook iteratively"
       ],
+      "tasks": [
+        "Download the TLC zone lookup CSV",
+        "Merge zone data into your trips dataframe",
+        "Plot trips-by-hour for each borough",
+        "Download Sept and Nov 2023 parquets and concat",
+        "Plot daily trip volume across Q4",
+        "Update TaxiPulse-Final.ipynb"
+      ],
+      "project": "TaxiPulse v0.2 — same analysis extended to 3 months (Q4 2023) and broken down by borough. Updated publishable notebook.",
+      "resources": [],
       "exercises": [
-        "Given a dataset of heights, calculate what percentage of values fall within 1, 2, and 3 standard deviations.",
-        "Simulate rolling 2 dice 10,000 times and plot the distribution of sums. What shape does it form?",
-        "Implement Bayes' Theorem in Python: P(disease | positive test), given sensitivity and prevalence.",
-        "Use scipy to test whether two groups have significantly different means."
+        "Plot tip% by borough",
+        "Find the single day in Q4 with the fewest trips — what happened?",
+        "Build a heatmap of trips by hour × day-of-week",
+        "Compare weekday vs weekend traffic by borough"
+      ],
+      "questions": [
+        "What's a foreign key in a merge?",
+        "Why concat 3 files instead of redownloading one big file?",
+        "How big is the .parquet vs the equivalent CSV?",
+        "When is more data NOT better?"
       ],
       "outputs": [
-        "StatProfiler class (well-documented .py file)",
-        "Jupyter Notebook demonstrating CLT simulation with charts",
-        "Written plain-language explanations of each statistical concept",
-        "Bayes' Theorem worked example (by hand and in Python)"
+        "Updated TaxiPulse-Final.ipynb with borough section",
+        "data/q4_2023.parquet (gitignored)",
+        "2 new figures committed",
+        "v0.2 tag"
       ]
     },
     {
       "number": 3,
-      "title": "NumPy, Linear Algebra",
-      "phase": "Foundations",
-      "commitment_hours": "25--35",
-      "context": "Linear algebra is the language of machine learning. Every model from linear regression to neural networks uses matrices and vectors. This week you build the mathematical intuition and NumPy skills that underpin all ML.",
-      "topics": [
-        "NumPy arrays: creation, indexing, slicing, reshaping",
-        "Matrix operations: addition, multiplication, transpose, inverse",
-        "Dot products and their geometric meaning",
-        "Eigenvalues and eigenvectors (conceptual — used in PCA)",
-        "Gradient intuition: what is a derivative in the context of model training?",
-        "The chain rule (conceptual — used in backpropagation)",
-        "NumPy broadcasting and vectorisation",
-        "Using NumPy for matrix-based data operations"
-      ],
-      "tasks": [
-        "Complete the NumPy official beginner tutorial from numpy.org",
-        "Implement matrix multiplication from scratch without np.dot, then compare with NumPy",
-        "Visualise 2D vectors and their transformations with Matplotlib",
-        "Watch the 3Blue1Brown 'Essence of Linear Algebra' series (all 15 videos — required)",
-        "Implement a simple gradient descent algorithm on a 1D function"
-      ],
-      "project": "Manual Linear Regression — Without using any ML library, implement linear regression using matrix algebra (Normal Equation: theta = (X'X)\\\\textasciicircum{}{}(-1) X'y). Use only NumPy matrix operations. Test it on a housing price dataset. Plot actual vs predicted values and calculate RMSE. This proves you understand what 'fitting a model' means mathematically.",
-      "resources": [
+      "title": "TaxiPulse v0.3: Predict the fare",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "You've described the data. Now predict from it. This week you train your first regression model to predict trip fare from distance + duration.",
+      "days": [
         {
-          "label": "Essence of Linear Algebra — 3Blue1Brown (Full Playlist)",
-          "url": "https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab",
-          "note": "(YouTube, 15 videos — REQUIRED this week, watch all of them)"
+          "number": 1,
+          "title": "Regression vs classification",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Linear regression in 15 minutes",
+              "url": "https://www.youtube.com/results?search_query=linear+regression+beginner+15+minutes",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Pick predictors",
+              "body": "To predict fare_amount, which features do you think matter most?\n  - trip_distance (obviously)\n  - trip_minutes (yes — time-based pricing)\n  - pickup_hour (peak hours?)\n  - pickup_borough\n  - passenger_count?"
+            }
+          ]
         },
         {
-          "label": "Gradient Descent — How Neural Networks Learn — 3Blue1Brown",
-          "url": "https://www.youtube.com/results?search_query=3blue1brown+gradient+descent+neural+networks+learn",
-          "note": "(YouTube, ~20 min)"
+          "number": 2,
+          "title": "Build training data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Prep X and y",
+              "body": "In new notebook 07-fare-model.ipynb:\n      import pandas as pd\n      from sklearn.model_selection import train_test_split\n      df = pd.read_parquet('data/clean.parquet')\n      # Drop obvious leakers\n      df = df.dropna(subset=['fare_amount','trip_distance','trip_minutes'])\n      y = df['fare_amount']\n      X = df[['trip_distance','trip_minutes','pickup_hour']]\n      X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)"
+            }
+          ]
         },
         {
-          "label": "NumPy Tutorial for Machine Learning — Keith Galli",
-          "url": "https://www.youtube.com/results?search_query=keith+galli+numpy+tutorial+machine+learning",
-          "note": "(YouTube, ~1 hr)"
+          "number": 3,
+          "title": "Train linear regression",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First model",
+              "body": "      from sklearn.linear_model import LinearRegression\n      from sklearn.metrics import mean_absolute_error, r2_score\n      m = LinearRegression()\n      m.fit(X_train, y_train)\n      pred = m.predict(X_test)\n      print('MAE:', mean_absolute_error(y_test, pred))\n      print('R2:', r2_score(y_test, pred))\n      print('Coefficients:')\n      for c, v in zip(X.columns, m.coef_):\n          print(f'  {c}: {v:.3f}')"
+            }
+          ]
         },
         {
-          "label": "NumPy Official Documentation — Fundamentals",
-          "url": "https://numpy.org/doc/stable/user/basics.html",
-          "note": "(reference for all array operations)"
+          "number": 4,
+          "title": "Interpret coefficients",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "What do the numbers say?",
+              "body": "In a markdown cell write:\n  - The model says each mile adds $X to the fare.\n  - Each minute adds $Y.\n  - Hour-of-day adds/subtracts $Z (probably ~0 — linear regression sees this as continuous).\n\nIs this consistent with the real NYC taxi rate? (Look up the official base + per-mile rates.)"
+            }
+          ]
         },
         {
-          "label": "Khan Academy Linear Algebra",
-          "url": "https://www.khanacademy.org/math/linear-algebra",
-          "note": "(interactive exercises on vectors and matrices)"
+          "number": 5,
+          "title": "Try gradient boosting",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "XGBoost regression",
+              "body": "      from xgboost import XGBRegressor\n      m2 = XGBRegressor(n_estimators=100, max_depth=5)\n      m2.fit(X_train, y_train)\n      print('XGB MAE:', mean_absolute_error(y_test, m2.predict(X_test)))\nWhich is better — linear or XGBoost?"
+            }
+          ]
         },
         {
-          "label": "House Sales in King County Dataset on Kaggle",
-          "url": "https://www.kaggle.com/datasets/harlfoxem/housesalesprediction",
-          "note": "(use this for the Normal Equation project)"
+          "number": 6,
+          "title": "Plot residuals",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Where is the model wrong?",
+              "body": "      import matplotlib.pyplot as plt\n      resid = y_test - m.predict(X_test)\n      plt.scatter(y_test, resid, alpha=0.05)\n      plt.axhline(0, color='red')\n      plt.xlabel('Actual fare'); plt.ylabel('Residual')\n      plt.title('Residuals — linear model'); plt.savefig('residuals.png')\nAre residuals symmetric around 0? Heteroscedastic (variance grows with fare)?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "Add a '## Fare model' section to the final notebook. Save the better model.\n      git add . && git commit -m 'v0.3: fare regression model'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Linear + XGBoost both trained\n  ☐ MAE < $5 on test\n  ☐ Coefficients interpreted\n  ☐ Residual plot saved\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After implementing the Normal Equation on the housing dataset: which feature has the largest coefficient? Does that match your intuition about what drives house prices? Now deliberately include a column of all ones (the bias term) in X — what happens to your equation if you forget it?",
-        "Calculate the RMSE of your manual linear regression. Now scale all features by multiplying by 10 and re-run the Normal Equation. Does RMSE change? Do the coefficients change? Explain why the predictions are identical even though the coefficients are different.",
-        "In the gradient descent exercise on f(x) = x\\\\textasciicircum{}{}2 - 4x + 4: what is the true minimum? Set a learning rate of 0.01 and 0.9 and run gradient descent for both. What happens at 0.9? Describe the difference in convergence behaviour.",
-        "When you run np.dot(A, B) on two matrices, verify the result manually for the top-left cell by computing the dot product by hand. Then verify that np.linalg.inv(A) multiplied by A gives the identity matrix (with np.allclose due to floating point)."
+      "topics": [
+        "Regression vs classification",
+        "Linear regression with sklearn",
+        "Mean Absolute Error + R²",
+        "Interpreting linear coefficients",
+        "XGBoost regressor",
+        "Residual analysis"
       ],
+      "tasks": [
+        "Pick features for fare prediction",
+        "Train LinearRegression baseline",
+        "Interpret coefficients against real NYC rates",
+        "Train XGBoost regressor for comparison",
+        "Plot residuals to spot where the model fails"
+      ],
+      "project": "TaxiPulse v0.3 — predicts trip fare from distance + duration + hour. Linear and XGBoost compared. MAE < $5 on test set.",
+      "resources": [],
       "exercises": [
-        "Create a 4x4 matrix, compute its transpose and inverse, and verify that A times A-inverse equals the identity matrix.",
-        "Implement matrix multiplication for two 3x3 matrices using only Python loops. Then verify with np.dot.",
-        "Implement gradient descent on f(x) = x squared minus 4x plus 4. Plot the path it takes to the minimum.",
-        "Given a feature matrix X and labels y, compute linear regression coefficients using the Normal Equation."
+        "Add passenger_count as a feature — does it help?",
+        "Build a model just for trips inside Manhattan",
+        "Try predicting tip_amount instead of fare_amount",
+        "Find 5 test rows the model is hugely wrong on and inspect why"
+      ],
+      "questions": [
+        "Why is fare easier to predict than delay?",
+        "What does R² of 0.85 mean?",
+        "Why are residuals heteroscedastic for fares?",
+        "How would a regulator misuse a fare model?"
       ],
       "outputs": [
-        "NumPy exercises notebook showing all matrix operations",
-        "Manual Linear Regression implementation (no sklearn allowed)",
-        "Gradient descent visualisation with convergence plot",
-        "Written explanation of matrix multiplication and its role in ML"
+        "Two models trained + compared",
+        "Residual plot in figures/",
+        "Fare model section in the publishable notebook",
+        "v0.3 tag"
       ]
     },
     {
       "number": 4,
-      "title": "Data Collection — APIs, Scraping",
-      "phase": "Data Engineering",
-      "commitment_hours": "25--35",
-      "context": "Real data science starts with acquiring data. This week you learn to collect data from APIs, web pages, and open data portals — skills that let you build unique datasets no one else has.",
-      "topics": [
-        "Public APIs: REST architecture, HTTP methods (GET, POST), JSON responses",
-        "Making API requests with the requests library",
-        "Authentication: API keys and OAuth basics",
-        "Parsing JSON and converting to DataFrames",
-        "Web scraping with BeautifulSoup: HTML parsing and CSS selectors",
-        "Responsible scraping: robots.txt, rate limiting, and ethics",
-        "Open data portals: Kaggle, World Bank, UN Data, Our World in Data",
-        "Saving raw data and maintaining data provenance"
-      ],
-      "tasks": [
-        "Collect data from 2 different public APIs (see resources for options)",
-        "Scrape a table from a website using BeautifulSoup",
-        "Download and explore 2 datasets from Kaggle",
-        "Build a data collection pipeline that saves raw data with timestamps",
-        "Document all data sources with URL, access date, and license information"
-      ],
-      "project": "Multi-Source Dataset — Build a dataset combining: (1) exchange rate data from a currency API, (2) country indicators from the World Bank API, (3) one scraped table from a public website. Join the three sources on a common key such as country code. Save raw and joined datasets. Document everything. This will be used in next week's EDA project.",
-      "resources": [
+      "title": "TaxiPulse v0.4: Deploy a fare-predictor API",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Last week's model lives in a notebook. This week wrap it in a tiny Flask API and deploy on Render. Anyone can hit POST /predict.",
+      "days": [
         {
-          "label": "Python API Tutorial with requests Library — Beginners",
-          "url": "https://www.youtube.com/results?search_query=python+api+tutorial+requests+library+beginners+json",
-          "note": "(YouTube, ~20 min)"
+          "number": 1,
+          "title": "Why deploy",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Flask in 100 seconds — Fireship",
+              "url": "https://www.youtube.com/results?search_query=flask+100+seconds+fireship",
+              "duration_min": 3,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "API contract",
+              "body": "What does POST /predict look like?\n  Body: { distance, duration_min, hour }\n  Response: { predicted_fare: 24.50 }"
+            }
+          ]
         },
         {
-          "label": "Web Scraping with BeautifulSoup — Full Tutorial",
-          "url": "https://www.youtube.com/results?search_query=python+web+scraping+beautifulsoup+tutorial+beginners+2024",
-          "note": "(YouTube, ~30 min)"
+          "number": 2,
+          "title": "Save the model",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Persist with joblib",
+              "body": "In your notebook:\n      import joblib\n      joblib.dump(m2, 'fare_model.pkl')  # save XGBoost\n\n      # Quick test loading it:\n      loaded = joblib.load('fare_model.pkl')\n      print(loaded.predict([[5.2, 18, 14]]))  # 5.2 miles, 18 min, 2pm"
+            }
+          ]
         },
         {
-          "label": "Download Kaggle Datasets Programmatically with the API",
-          "url": "https://www.youtube.com/results?search_query=kaggle+api+download+datasets+programmatically+python",
-          "note": "(YouTube, ~10 min)"
+          "number": 3,
+          "title": "Flask app",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "app.py",
+              "body": "Create app.py in your project root:\n      from flask import Flask, request, jsonify\n      import joblib\n      app = Flask(__name__)\n      m = joblib.load('fare_model.pkl')\n\n      @app.route('/predict', methods=['POST'])\n      def predict():\n          d = request.get_json()\n          try:\n              pred = float(m.predict([[d['distance'], d['duration_min'], d['hour']]])[0])\n              return jsonify({'predicted_fare': round(pred, 2)})\n          except Exception as e:\n              return jsonify({'error': str(e)}), 400\n\n      if __name__ == '__main__':\n          app.run(debug=True, port=5000)\n\nRun: python app.py. Test:\n      curl -X POST localhost:5000/predict -H 'Content-Type: application/json' \\\n        -d '{\"distance\":5.2,\"duration_min\":18,\"hour\":14}'"
+            }
+          ]
         },
         {
-          "label": "requests Library Documentation",
-          "url": "https://docs.python-requests.org/en/latest/",
-          "note": "(reference for HTTP requests)"
+          "number": 4,
+          "title": "Add /health endpoint",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Health check",
+              "body": "      @app.route('/health')\n      def health():\n          return jsonify({'status':'ok'})\n\nTest: curl localhost:5000/health"
+            }
+          ]
         },
         {
-          "label": "World Bank Data API Documentation",
-          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889386",
-          "note": "(free API for economic indicators for every country)"
+          "number": 5,
+          "title": "Requirements + gunicorn",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Production-ready",
+              "body": "      pip freeze | grep -E 'flask|xgboost|scikit|joblib|gunicorn' > requirements.txt\n      pip install gunicorn\n      # Test gunicorn:\n      gunicorn app:app --bind 0.0.0.0:5000\n      curl localhost:5000/health"
+            }
+          ]
         },
         {
-          "label": "Open Exchange Rates API",
-          "url": "https://openexchangerates.org",
-          "note": "(free tier gives current and historical FX rates — get your API key here)"
+          "number": 6,
+          "title": "Deploy on Render",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Render — sign up",
+              "url": "https://render.com",
+              "why": "Free tier hosting."
+            },
+            {
+              "kind": "exercise",
+              "title": "Deploy",
+              "body": "Push the project to a NEW GitHub repo `taxipulse-api`. Include app.py, fare_model.pkl, requirements.txt.\n\nOn Render → New Web Service → connect repo. Build: pip install -r requirements.txt. Start: gunicorn app:app.\n\nDeploy. You get a URL. Test:\n      curl -X POST https://taxipulse-xxx.onrender.com/predict -H 'Content-Type: application/json' -d '{\"distance\":5,\"duration_min\":15,\"hour\":12}'"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git add . && git commit -m 'v0.4: fare API on Render'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ Flask API works locally\n  ☐ Live Render URL responds to POST /predict\n  ☐ /health returns 200\n  ☐ README of the new repo documents the API\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After calling the World Bank API for two different country indicators: how many countries have data for both indicators? How many are missing one or both? Calculate the percentage of countries with complete data. What might explain why some countries have missing data?",
-        "From your currency API: what is the current exchange rate of USD to GMD (Gambian Dalasi)? If the exchange rate 1 year ago was different, calculate the percentage change. How would a 10\\% depreciation of GMD against USD affect a business that imports goods priced in USD?",
-        "After scraping a Wikipedia table and cleaning it: how many rows were in the raw scraped HTML vs how many are in your clean DataFrame? What types of cleaning were required (missing values, format fixes, type conversion)? Write a data quality log.",
-        "Look at your data provenance document: which of your three sources was most recently updated? Which is oldest? For the question your multi-source dataset is designed to answer, does data staleness matter? Write two sentences explaining your reasoning."
+      "topics": [
+        "Saving sklearn/xgboost models with joblib",
+        "Flask app structure",
+        "JSON request handling",
+        "Health check endpoints",
+        "Gunicorn production server",
+        "Deploying to Render"
       ],
+      "tasks": [
+        "Save fare model with joblib",
+        "Write Flask app with /predict and /health",
+        "Add gunicorn + requirements.txt",
+        "Deploy to Render with a live URL"
+      ],
+      "project": "TaxiPulse v0.4 — fare-predictor wrapped in a Flask API, gunicorn-served, deployed to Render. Live POST /predict endpoint.",
+      "resources": [],
       "exercises": [
-        "Write a function that calls a public API, handles errors (404, rate limit), and returns a clean DataFrame.",
-        "Scrape the Wikipedia table for 'List of countries by GDP' and convert it to a clean Pandas DataFrame.",
-        "Download a dataset from Kaggle using the Kaggle CLI (programmatic access).",
-        "Write a data collection pipeline that checks if a file already exists before re-downloading it."
+        "Add input validation: distance must be positive, hour must be 0-23",
+        "Add a /batch endpoint that takes a list of trips",
+        "Log every prediction with timestamp",
+        "Add API key auth"
+      ],
+      "questions": [
+        "Why use gunicorn instead of just flask run?",
+        "Why does Render spin down free apps?",
+        "What happens if the model file is missing on startup?",
+        "Why is JSON better than form-data for this API?"
       ],
       "outputs": [
-        "API collection script with error handling (.py file)",
-        "BeautifulSoup scraping script (.py file)",
-        "Multi-source joined dataset (.csv)",
-        "Data provenance document listing all sources, URLs, and access dates"
+        "Live Render URL",
+        "taxipulse-api repo public",
+        "v0.4 tag"
       ]
     },
     {
