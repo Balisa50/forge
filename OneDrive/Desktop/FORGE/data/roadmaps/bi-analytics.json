@@ -35,52 +35,52 @@
           "note": "Reference"
         }
       ],
-      "context": "BI (Business Intelligence) is the discipline of building dashboards leadership lives in. Week 1 you set up Power BI (the industry standard), connect to real data, and build your first executive-grade dashboard. By Sunday you'll publish a real interactive dashboard to Power BI Service.",
+      "context": "You're building the Superstore Sales Dashboard in Power BI — the industry standard. Same data as Data Analysis Week 1 (Sample Superstore) but you'll model it properly with a star schema, write real DAX measures, and PUBLISH the dashboard to Power BI Service with a shareable URL. Recruiters click that URL. The .pbix is your portfolio. By Sunday it's live.",
       "days": [
         {
           "number": 1,
-          "title": "What is BI — really?",
-          "summary": "Spreadsheets for execs. Live. Multi-source. Self-serve.",
+          "title": "What is BI — and what's Power BI?",
+          "summary": "Live, multi-source, self-serve dashboards. The lingua franca of enterprise.",
           "items": [
             {
               "kind": "video",
-              "title": "What is Power BI? — Microsoft Learn",
-              "url": "https://www.youtube.com/results?search_query=what+is+power+bi+microsoft+beginner",
+              "title": "What is Power BI? — beginner explainer",
+              "url": "https://www.youtube.com/results?search_query=what+is+power+bi+beginner+explained+2024",
               "duration_min": 10,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "reflection",
-              "title": "Pick a business",
-              "body": "Pretend you've just been hired as the BI analyst for a hypothetical SMB — a chain of cafes, a delivery service, an online store, a clinic. Pick ONE. Note: 3-5 KPIs that owner would care about every Monday."
+              "title": "Who would use this dashboard?",
+              "body": "Imagine the Sample Superstore is a real retailer. Who opens this dashboard every Monday morning — the CEO, the regional VPs, the category managers? Write down 3 KPIs each persona would care about."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Install Power BI Desktop + connect",
-          "summary": "Free on Windows. (Mac users: use Power BI Service in browser, or a Windows VM.)",
+          "title": "Install Power BI Desktop + import data",
+          "summary": "Free, Windows only. Mac users: use Power BI in browser, or a Windows VM.",
           "items": [
             {
               "kind": "video",
               "title": "Power BI Desktop install + first import",
-              "url": "https://www.youtube.com/results?search_query=install+power+bi+desktop+tutorial+2024",
+              "url": "https://www.youtube.com/results?search_query=power+bi+desktop+install+tutorial+2024",
               "duration_min": 15,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Connect to data",
-              "body": "Open Power BI Desktop. Import a CSV (e.g. AdventureWorks sample, or your own). Click Transform Data — get into Power Query."
+              "title": "Get the data in",
+              "body": "Install Power BI Desktop (free at powerbi.microsoft.com). Download `Sample - Superstore.xls` (same as Data Analysis Week 1). In Power BI: Home → Get Data → Excel → select the Orders + Returns + People sheets. Click Transform Data — Power Query opens."
             }
           ]
         },
         {
           "number": 3,
           "title": "Power Query — the data prep layer",
-          "summary": "BI lives or dies in Power Query. Get fluent.",
+          "summary": "All BI sins are forgiven if Power Query is clean.",
           "items": [
             {
               "kind": "video",
@@ -92,133 +92,135 @@
             },
             {
               "kind": "exercise",
-              "title": "Clean it",
-              "body": "Use Power Query to: change a column type, split a column, remove duplicates, filter rows, add a calculated column. Save the .pbix file. Commit to GitHub via Git LFS or zipped."
+              "title": "Clean in Power Query",
+              "body": "Open the Orders query. In Power Query:\n  - Change Order Date and Ship Date to Date type\n  - Remove the Row ID column\n  - Add a custom column: Profit Margin = [Profit] / [Sales]\n  - Rename Sub-Category to Subcategory (consistency)\nClick Close & Apply. Save the .pbix as `superstore.pbix` in a fresh repo."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Data modelling — the relationships",
-          "summary": "Star schemas are the difference between fast and broken dashboards.",
+          "title": "Build the star schema — fact + dimension tables",
+          "summary": "This is what separates a BI analyst from a spreadsheet jockey.",
           "items": [
             {
               "kind": "video",
-              "title": "Star schema explained — Power BI",
-              "url": "https://www.youtube.com/results?search_query=power+bi+star+schema+fact+dimension",
+              "title": "Star schema in Power BI — clear primer",
+              "url": "https://www.youtube.com/results?search_query=power+bi+star+schema+fact+dimension+tutorial",
               "duration_min": 20,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Two tables, one relationship",
-              "body": "Get a sample sales-and-customers dataset (or split your data). Create a relationship between Customer.id and Sales.customer_id. Verify it works by dragging fields from both into a single visual."
+              "title": "Date dimension",
+              "body": "In Modeling → New Table:\n  ```DAX\n  DimDate = CALENDAR(DATE(2020,1,1), DATE(2024,12,31))\n  ```\nAdd calculated columns on DimDate: Year, Month, MonthName, Weekday, Quarter.\nIn Model view, drag Orders[Order Date] to DimDate[Date]. Cardinality: Many-to-One. Single-direction filter.\nNow you can slice everything by DimDate fields without depending on raw dates."
             }
           ]
         },
         {
           "number": 5,
           "title": "DAX — the language of measures",
-          "summary": "DAX = the formula language. 5 functions cover the basics.",
+          "summary": "5 functions cover the basics. Today: SUM, CALCULATE, DIVIDE, TOTALYTD, SAMEPERIODLASTYEAR.",
           "items": [
             {
               "kind": "video",
               "title": "DAX in 30 minutes — SQLBI",
-              "url": "https://www.youtube.com/results?search_query=sqlbi+dax+beginner+tutorial",
+              "url": "https://www.youtube.com/results?search_query=sqlbi+dax+beginner+30+minutes",
               "duration_min": 30,
               "creator": "SQLBI",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "First measures",
-              "body": "Write these DAX measures: Total Sales = SUM(Sales[Amount]); Sales YTD = TOTALYTD(...); Sales vs LY = [Total Sales] - CALCULATE([Total Sales], DATEADD(...)). Test each in a card visual."
+              "title": "4 essential measures",
+              "body": "In Orders table → New Measure, create:\n  Total Sales = SUM(Orders[Sales])\n  Total Profit = SUM(Orders[Profit])\n  Profit Margin = DIVIDE([Total Profit], [Total Sales])\n  Sales YTD = TOTALYTD([Total Sales], DimDate[Date])\n  Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(DimDate[Date]))\n  YoY Growth = DIVIDE([Total Sales] - [Sales LY], [Sales LY])\nTest each in a card visual."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Design the dashboard",
-          "summary": "Less is more. Executives skim, they don't read.",
+          "title": "Design the 1-page dashboard",
+          "summary": "Layout: cards on top, charts middle, table bottom, slicer on side.",
           "items": [
             {
               "kind": "video",
               "title": "Power BI dashboard design — best practices",
-              "url": "https://www.youtube.com/results?search_query=power+bi+dashboard+design+best+practices",
-              "duration_min": 20,
+              "url": "https://www.youtube.com/results?search_query=power+bi+dashboard+design+2024+best+practices",
+              "duration_min": 25,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Layout",
-              "body": "Build one page. Top row: 4 KPI cards (Revenue, Customers, AOV, Growth%). Middle: 1 trend line over time. Bottom: 1 table broken down by category. Add a date slicer. Use brand colors of your imagined business."
+              "title": "Build the page",
+              "body": "1 page. Layout (think in grid):\n  TOP ROW (4 KPI cards): Total Sales, Total Profit, Profit Margin, YoY Growth %\n  MID ROW (2 charts):\n    Left: Line chart — Total Sales over time (x: Year-Month, y: Total Sales)\n    Right: Bar chart — Total Sales by Region\n  BOTTOM (1 table):\n    Matrix: Subcategory rows × Profit Margin column, sorted descending,     color-coded (green > 20%, red < 5%)\n  LEFT SIDE (slicer):\n    Date slicer with relative date filter (this year / last year / all)\nUse a consistent color palette (Superstore is blue/orange/grey traditionally). Save."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Publish — the passport",
-          "summary": "A dashboard nobody can open is a static slide.",
+          "title": "Publish to Power BI Service",
+          "summary": "A .pbix on your laptop is invisible. Publish or perish.",
           "items": [
             {
               "kind": "video",
-              "title": "Publish to Power BI Service",
-              "url": "https://www.youtube.com/results?search_query=publish+power+bi+service+share+dashboard",
+              "title": "Publish to Power BI Service + share URL",
+              "url": "https://www.youtube.com/results?search_query=publish+power+bi+service+share+dashboard+2024",
               "duration_min": 10,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Go live",
-              "body": "Sign up for Power BI Service (free Microsoft account). Publish your .pbix. Set up auto-refresh if your source supports it. Get a shareable URL. Copy the URL into your GitHub README — this is the link recruiters will click."
+              "title": "Final acceptance — Superstore BI v0.1",
+              "body": "□ Sign up for Power BI Service (free) at app.powerbi.com (needs a work or     school email — use a free Microsoft 365 trial if needed, or a personal     Outlook account)\n□ In Desktop: Home → Publish → choose 'My Workspace'\n□ In Service: open the report. Get the URL.\n□ Make it shareable: File → Embed report → Publish to web (if allowed) OR\n    just share the URL with view permissions to your test email\n□ GitHub repo `superstore-bi` contains:\n    - `superstore.pbix` (use Git LFS or zip if > 100MB; usually fine)\n    - README with: dashboard URL, screenshot of the published dashboard,       list of measures, list of relationships, 'How to open' instructions\n    - `screenshots/` folder with the dashboard image\n□ Tag v0.1"
             },
             {
               "kind": "reflection",
-              "title": "Would the owner pay for this?",
-              "body": "If you showed the owner of your imagined business this dashboard for $200/month, would they sign? What feature would make it a $1000/month dashboard?"
+              "title": "Would your imagined CEO open this Monday morning?",
+              "body": "If yes — what's the ONE follow-up they'd ask for? If no — what's missing?"
             }
           ]
         }
       ],
       "topics": [
-        "Power BI Desktop installation + workspace",
-        "Power Query — load, clean, type, filter, merge",
-        "Data modelling — fact vs dimension, star schema",
+        "Power BI Desktop installation + interface",
+        "Power Query — type changes, custom columns, renames",
+        "Star schema — fact tables + dimension tables",
+        "CALENDAR() function for date dimensions",
+        "DAX basics — SUM, DIVIDE, CALCULATE, TOTALYTD, SAMEPERIODLASTYEAR",
         "Relationships, cardinality, cross-filter direction",
-        "DAX basics — SUM, CALCULATE, TOTALYTD, DATEADD",
-        "Dashboard design — KPI cards, trends, slicers, colour, hierarchy",
-        "Publishing to Power BI Service + sharing"
+        "Dashboard layout — cards, charts, slicers, matrices, conditional formatting",
+        "Publishing to Power BI Service + sharing URLs"
       ],
       "tasks": [
-        "Install Power BI Desktop (or set up Service in browser)",
-        "Import a real CSV via Power Query",
-        "Clean + type-correct your data in Power Query",
-        "Create one relationship between 2 tables",
-        "Write 3+ DAX measures",
-        "Build a 1-page executive dashboard",
-        "Publish to Power BI Service and get a shareable URL"
+        "Install Power BI Desktop",
+        "Import Sample Superstore into Power Query",
+        "Clean + type-correct + add Profit Margin column in Power Query",
+        "Build a DimDate table with CALENDAR + calculated columns",
+        "Create the relationship Orders[Order Date] → DimDate[Date]",
+        "Write 6 DAX measures (Total Sales, Profit, Margin, YTD, LY, YoY)",
+        "Design a 1-page dashboard with 4 KPI cards + 2 charts + 1 matrix + 1 slicer",
+        "Publish to Power BI Service + share URL + commit .pbix"
       ],
-      "project": "Pretend you're the new BI hire at a hypothetical SMB (a cafe chain, a delivery service, a clinic — your pick). Build a 1-page Power BI dashboard with 4 KPI cards, 1 trend chart, 1 breakdown table, and a date slicer. Publish it to Power BI Service. Put the public URL in your GitHub README. This is exactly the take-home you'll get in BI job interviews.",
+      "project": "Superstore Power BI v0.1 — a published Power BI dashboard for the Sample Superstore dataset, modelled with a proper star schema and a Date dimension, with 6 DAX measures and a 1-page dashboard live on Power BI Service. Repo: `superstore-bi` on GitHub with the .pbix + README + screenshots. Tagged v0.1.",
       "exercises": [
-        "Add a What-If parameter so the user can simulate a 10% price change",
-        "Create a drill-through page from the breakdown table to a single category",
-        "Add conditional formatting on the KPI cards (green if above target)",
-        "Make 2 versions of the same dashboard — one for the CEO, one for ops manager"
+        "Add a What-If parameter so the user can simulate +/- 10% discount and see profit impact",
+        "Add a drill-through page from any region in the bar chart → that region's detail",
+        "Switch the line chart to a multi-line by Category — does the story change?",
+        "Add row-level security: a fake 'Manager' role that only sees their region"
       ],
       "questions": [
-        "Which 4 KPIs would the owner check FIRST every Monday?",
-        "What's the difference between an implicit and explicit DAX measure?",
-        "Why is your data model a star schema and not a flat table?",
-        "If the data refresh fails at 6am, who sees it and who fixes it?"
+        "Why is a star schema faster than a flat table at scale?",
+        "What's an implicit measure vs an explicit measure? Why prefer explicit?",
+        "If the Orders table grew to 100M rows, where would your dashboard slow first?",
+        "What's the difference between a calculated column and a measure?"
       ],
       "outputs": [
-        "Published Power BI dashboard URL",
-        ".pbix file in a GitHub repo (zipped if needed)",
-        "Screenshot of the dashboard in the README",
-        "1-paragraph explanation of which business this is for and which KPIs you chose"
+        "Published Power BI dashboard URL (in the README)",
+        "`superstore-bi` GitHub repo tagged v0.1",
+        ".pbix file committed (Git LFS or zipped if large)",
+        "Dashboard screenshot in README + measures + relationships documented"
       ]
     },
     {

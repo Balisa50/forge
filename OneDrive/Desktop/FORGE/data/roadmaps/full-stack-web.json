@@ -35,113 +35,114 @@
           "note": "Reference"
         }
       ],
-      "context": "Full-stack means: you can ship a real, live website by yourself. Week 1 is HTML, CSS, and one deploy. By Sunday you'll have a public URL for a real small business — a friend's shop, your cousin's tutoring service, anything real. Real prices, real contact, mobile-first. No Lorem Ipsum.",
+      "context": "You're building beanforge.cafe — a 1-page website for a fictional specialty coffee shop named Bean Forge. We give you the menu, prices, hours, address, photos. Your job: ship it as a live HTML+CSS site on Netlify by Sunday. Why fictional? Because you finish in 1 week, not 6 — no waiting for a real owner to email back specs. Weeks 5-12 turn into a real SaaS clone. By Week 24 you have 4 named, live projects.",
       "days": [
         {
           "number": 1,
-          "title": "How the web actually works",
-          "summary": "Browser ↔ DNS ↔ server. Understand the picture before the syntax.",
+          "title": "How the web works — 8-minute mental model",
+          "summary": "Browser ↔ DNS ↔ server. Get the picture before the syntax.",
           "items": [
             {
               "kind": "video",
-              "title": "How the web works in 8 minutes — Fireship",
-              "url": "https://www.youtube.com/results?search_query=fireship+how+does+the+internet+work",
+              "title": "How the internet works — Fireship",
+              "url": "https://www.youtube.com/results?search_query=fireship+how+internet+works+100+seconds",
               "duration_min": 8,
               "creator": "Fireship",
               "why": ""
             },
             {
               "kind": "video",
-              "title": "HTML in 100 seconds — Fireship",
+              "title": "HTML in 100 Seconds — Fireship",
               "url": "https://www.youtube.com/watch?v=ok-plXXHlWw",
               "duration_min": 2,
               "creator": "Fireship",
               "why": ""
             },
             {
-              "kind": "reflection",
-              "title": "Pick the business",
-              "body": "Pick ONE real small business you'll build for: your friend's bakery, a tailor, a tutor, a beauty salon, anything. Get permission. Note their actual: name, services, prices, phone, location."
+              "kind": "reading",
+              "title": "Bean Forge spec — copy into your repo",
+              "url": "https://raw.githubusercontent.com/forge-ab/forge-specs/main/beanforge.md",
+              "why": "If this URL 404s, just use the spec below: Name: Bean Forge. Tagline: 'Coffee, sharpened.' Menu: Espresso $3, Cortado $4, Pour Over $5, Cold Brew $5, Croissant $4. Hours: Mon-Fri 7am-6pm, Sat-Sun 8am-4pm. Address: 42 Anvil Street. Phone: +1 555-0142. Use Unsplash for photos."
             }
           ]
         },
         {
           "number": 2,
-          "title": "HTML — the structure",
-          "summary": "Forget div soup. Use real semantic tags.",
+          "title": "HTML — the structure (semantic, not div soup)",
+          "summary": "Real tags: header, main, section, footer. Not 50 divs.",
           "items": [
             {
               "kind": "video",
-              "title": "HTML full course for beginners",
-              "url": "https://www.youtube.com/results?search_query=html+crash+course+beginner+web+dev+simplified",
-              "duration_min": 45,
+              "title": "HTML crash course — Web Dev Simplified",
+              "url": "https://www.youtube.com/results?search_query=html+crash+course+web+dev+simplified+beginner",
+              "duration_min": 35,
               "creator": "Web Dev Simplified",
-              "why": "Pick a 30-60min one."
+              "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Skeleton",
-              "body": "Create `index.html`. Use `<header>`, `<main>`, `<section>`, `<footer>`. Sections: Hero, Services, Pricing, About, Contact. Fill with the real info you collected. NO styling yet."
+              "title": "Build the skeleton",
+              "body": "Create folder `beanforge/`. Create `index.html`. Build these sections with semantic tags (NO css yet):\n  - `<header>` with nav links (Menu, Hours, Visit)\n  - `<section id='hero'>` with the name + tagline + a Visit button\n  - `<section id='menu'>` with the 5 menu items + prices as a `<ul>`\n  - `<section id='hours'>` with the hours table (use `<table>`)\n  - `<section id='visit'>` with address + phone + a map link\n  - `<footer>` with © Bean Forge 2026\nView in browser — should render readable text with no styling. Push to GitHub as repo `beanforge`."
             }
           ]
         },
         {
           "number": 3,
-          "title": "CSS — the look",
-          "summary": "Modern CSS is good. You don't need a framework.",
+          "title": "CSS — the look (no framework)",
+          "summary": "Modern CSS is good. Custom properties + flexbox cover 90%.",
           "items": [
             {
               "kind": "video",
               "title": "Modern CSS — Kevin Powell",
-              "url": "https://www.youtube.com/results?search_query=kevin+powell+modern+css+2024+beginner",
-              "duration_min": 45,
+              "url": "https://www.youtube.com/results?search_query=kevin+powell+modern+css+beginner+2024",
+              "duration_min": 40,
               "creator": "Kevin Powell",
-              "why": "The best CSS teacher alive."
+              "why": "Best CSS teacher on YouTube."
             },
             {
               "kind": "exercise",
-              "title": "Style it",
-              "body": "Add `style.css`. Use a 2-color palette + 1 accent. Flexbox or grid for the layout. Real photos of the business (or stock that fits). Mobile-first — start at 360px wide."
+              "title": "Style Bean Forge",
+              "body": "Create `style.css`. Required:\n  - Custom properties at :root: `--coffee: #3b2418; --cream: #f5ead7;     --copper: #b87333;`\n  - System font stack (no Google Fonts yet)\n  - Hero: full-viewport, centered text, cream background, espresso photo as     a CSS background-image with overlay\n  - Menu: 2-column grid on desktop, 1-column on mobile\n  - Hours table: striped rows, centered\n  - Buttons: copper background, cream text, hover lifts 2px\nUse real Unsplash coffee photos (https://unsplash.com/s/photos/coffee — pick any). Inspect each image's hosted URL and hotlink (Unsplash allows this for free)."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Responsive design",
-          "summary": "Most users are on phones. Build for them first.",
+          "title": "Responsive — mobile FIRST",
+          "summary": "70% of traffic is on phones. Don't make it an afterthought.",
           "items": [
             {
               "kind": "video",
-              "title": "Responsive design — media queries + clamp()",
-              "url": "https://www.youtube.com/results?search_query=responsive+web+design+2024+mobile+first",
-              "duration_min": 30,
+              "title": "Responsive design — mobile first",
+              "url": "https://www.youtube.com/results?search_query=responsive+web+design+mobile+first+2024",
+              "duration_min": 25,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Phone → tablet → desktop",
-              "body": "Open Chrome DevTools, toggle device mode. Make sure your site looks great at 360px, 768px, 1280px. Use `clamp()` for font sizes."
+              "title": "Test at 3 widths",
+              "body": "Add media queries:\n  - Base styles (≤ 600px): single column, full-width buttons\n  - `@media (min-width: 600px)`: 2-column menu, max-width: 1100px on main\n  - `@media (min-width: 1024px)`: hero with 2-column (text + image)\nOpen Chrome DevTools → toggle device mode. Test at iPhone 13 (390px), iPad (768px), Desktop (1280px). Each should look intentional, not broken."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Forms + WhatsApp/email contact",
-          "summary": "A small business site is useless without a way to contact.",
+          "title": "Click-to-call + Maps + favicon",
+          "summary": "Real customers tap, they don't type.",
           "items": [
             {
               "kind": "video",
-              "title": "HTML forms in 10 minutes",
-              "url": "https://www.youtube.com/results?search_query=html+forms+tutorial+beginner",
-              "duration_min": 10,
+              "title": "HTML forms + tel/mailto links",
+              "url": "https://www.youtube.com/results?search_query=html+tel+mailto+links+tutorial",
+              "duration_min": 8,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Click-to-contact",
-              "body": "Add a contact section with: tel: link (clickable on phones), mailto: link, and a `wa.me/<number>` WhatsApp link. No backend needed yet. Add a small contact form (action=mailto: works for now)."
+              "title": "Make Bean Forge contactable",
+              "body": "In the Visit section:\n  - Phone is a clickable `<a href='tel:+15550142'>+1 555-0142</a>`\n  - Email `<a href='mailto:hello@beanforge.cafe'>hello@beanforge.cafe</a>`\n  - 'Get Directions' button opens Google Maps:     `<a href='https://www.google.com/maps/search/?api=1&query=42+Anvil+Street'     target='_blank'>Get Directions</a>`\nAdd a favicon: a coffee bean emoji as a 32×32 PNG. Use favicon.io to generate from text. Drop it in the repo root, link in `<head>`."
             }
           ]
         },
@@ -152,16 +153,16 @@
           "items": [
             {
               "kind": "video",
-              "title": "Git and GitHub for beginners — freeCodeCamp",
-              "url": "https://www.youtube.com/results?search_query=git+and+github+for+beginners+freecodecamp",
-              "duration_min": 30,
+              "title": "Git + GitHub for beginners — freeCodeCamp",
+              "url": "https://www.youtube.com/results?search_query=git+github+crash+course+freecodecamp",
+              "duration_min": 40,
               "creator": "freeCodeCamp",
               "why": ""
             },
             {
               "kind": "video",
-              "title": "Deploy a static site to Netlify",
-              "url": "https://www.youtube.com/results?search_query=deploy+static+site+netlify+drag+and+drop+2024",
+              "title": "Deploy static site to Netlify in 5 min",
+              "url": "https://www.youtube.com/results?search_query=deploy+static+site+netlify+2024",
               "duration_min": 8,
               "creator": "various",
               "why": ""
@@ -169,64 +170,64 @@
             {
               "kind": "exercise",
               "title": "Go live",
-              "body": "`git init`, push to a new GitHub repo, drag-and-drop the folder into Netlify, get a *.netlify.app URL. Share it in your notes."
+              "body": "Push the latest to GitHub. Go to netlify.com → New site from Git → connect GitHub → pick `beanforge` repo → Deploy. You get a *.netlify.app URL. Custom subdomain: in Netlify site settings → Domain → change to `yourname-beanforge.netlify.app`. Open the live URL on your phone. Tap the phone link — it should open the dialer."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship + polish",
-          "summary": "Real polish: favicon, meta tags, performance.",
+          "title": "Performance + SEO + ship",
+          "summary": "Lighthouse ≥ 90 on Performance. That's the job.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Final polish",
-              "body": "Add: (1) a favicon, (2) `<meta name='description'>` so Google can index it, (3) Open Graph tags so it looks good shared on WhatsApp, (4) a Lighthouse score (Chrome DevTools → Lighthouse) of 90+ on Performance. Push. Show the live URL to the business owner. Get their feedback."
+              "title": "Final polish — pass criteria",
+              "body": "□ Add meta description and Open Graph tags to `<head>`:\n    <meta name='description' content='Bean Forge — specialty coffee, sharpened.'>\n    <meta property='og:title' content='Bean Forge'>\n    <meta property='og:image' content='[hero photo URL]'>\n□ All images have `loading='lazy'` and width/height attrs (prevents layout shift)\n□ Run Chrome DevTools → Lighthouse → Mobile → Performance ≥ 90, Accessibility ≥ 90,\n    Best Practices ≥ 90, SEO ≥ 90. Screenshot the score.\n□ README has: live URL at the top, Lighthouse screenshot, screenshot of the site\n    on a phone, your name, 'Built for Bean Forge — Week 1 of FORGE Full-Stack Web'\n□ Tag git release v0.1\n□ Paste the live URL into a WhatsApp message to yourself — verify the OG preview\n    shows the coffee photo + 'Bean Forge'"
             },
             {
               "kind": "reflection",
-              "title": "What would they pay for?",
-              "body": "If you charged them $50 for this site, what feature would make them say yes immediately? Online booking? Photo gallery? Reviews?"
+              "title": "The 4-week arc",
+              "body": "Week 2: JavaScript fundamentals + add an interactive menu filter. Week 3: add a contact form (Netlify Forms). Week 4: refactor into Astro for components + a /blog page. Project 1 ships at end of W4. Then Project 2 (W5-12) is a Next.js + Stripe SaaS."
             }
           ]
         }
       ],
       "topics": [
-        "Semantic HTML5",
-        "Modern CSS — flexbox, grid, clamp(), custom properties",
+        "Semantic HTML5 (header, main, section, footer, table)",
+        "Modern CSS — custom properties, flexbox, grid, media queries",
         "Mobile-first responsive design",
-        "Forms and contact patterns (tel:, mailto:, wa.me)",
+        "Click-to-call (tel:), email (mailto:), Maps deeplinks",
+        "Favicons + Open Graph tags",
         "Git basics — init, add, commit, push",
-        "GitHub + Netlify static deploy",
-        "Meta tags, OG tags, favicons, Lighthouse"
+        "Netlify deploy + Lighthouse performance"
       ],
       "tasks": [
-        "Pick a real small business and get their info",
-        "Build a 5-section semantic HTML page with their real data",
-        "Style with mobile-first CSS, 2-color palette",
-        "Make it responsive at 360 / 768 / 1280px",
-        "Add tel/mailto/WhatsApp click-to-contact",
-        "Deploy to Netlify with a public URL",
-        "Score 90+ on Lighthouse Performance"
+        "Build the semantic HTML skeleton with all 5 Bean Forge sections",
+        "Style with custom properties, no framework, coffee-shop palette",
+        "Make responsive at 390px / 768px / 1280px",
+        "Add tel:, mailto:, Maps directions, favicon",
+        "Push to GitHub repo `beanforge`",
+        "Deploy to Netlify with a custom subdomain",
+        "Score ≥ 90 on all 4 Lighthouse categories"
       ],
-      "project": "Build a live 1-page site for a real small business in your area — a friend's tailor shop, a tutor, a bakery, anyone. Real name, real prices, real contact. Mobile-first. Click-to-WhatsApp. Public URL. The owner sees it before Sunday night. This is your first real client work — even if they don't pay.",
+      "project": "Bean Forge Café — a live 1-page website for the fictional Bean Forge coffee shop. Spec is provided (name, tagline, menu, prices, hours, address, phone). Tech: vanilla HTML + CSS, no JS yet, no framework. Live on a `yourname-beanforge.netlify.app` URL. Lighthouse ≥ 90 on all four categories. Repo: `beanforge` on GitHub, tagged v0.1.",
       "exercises": [
-        "Add a dark-mode toggle using `prefers-color-scheme`",
-        "Make the hero image lazy-loaded with `loading=\"lazy\"`",
-        "Add a 'Get directions' button that opens Google Maps to their address",
-        "Write `<meta>` tags so the site preview on WhatsApp shows a photo + name"
+        "Add a `prefers-color-scheme: dark` rule — site goes dark at night",
+        "Replace one image with a Unsplash photo you actually like better",
+        "Add a small SVG coffee-bean icon next to each menu item",
+        "Run `npx pa11y https://yoursite.netlify.app` — fix any reported a11y issues"
       ],
       "questions": [
-        "Whose site is this? What's their actual problem? (Be specific.)",
-        "What 1 thing on the page would make a customer DM them?",
-        "Why did you choose flexbox vs grid for each section?",
-        "What would break if a customer used a 5-year-old Android phone?"
+        "Why is mobile-first easier than desktop-first in CSS?",
+        "What's the trade-off of hotlinking Unsplash vs hosting images yourself?",
+        "What does `loading='lazy'` do and why does Lighthouse reward it?",
+        "If Bean Forge added 50 menu items, what would break first?"
       ],
       "outputs": [
-        "Public live URL on Netlify",
-        "GitHub repo with the source",
-        "Lighthouse Performance score ≥ 90",
-        "Screenshot of the owner's reaction or feedback in your README"
+        "Live Netlify URL (yourname-beanforge.netlify.app)",
+        "`beanforge` GitHub repo tagged v0.1",
+        "Lighthouse screenshot ≥ 90 on all 4 categories in README",
+        "Phone-screen screenshot in README"
       ]
     },
     {

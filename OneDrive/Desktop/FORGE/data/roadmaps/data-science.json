@@ -35,16 +35,16 @@
           "note": "Official reference"
         }
       ],
-      "context": "Data Science is statistics + storytelling. Week 1 you set up Python + Jupyter and do your first real analysis on a dataset YOU pick — something specific to a place or industry you care about. By Sunday you'll have a polished notebook that answers a real question with a real chart.",
+      "context": "You're building TaxiPulse NYC — a polished analysis of NYC Yellow Taxi trips in October 2023. Specific dataset URL provided. Specific questions to answer (we tell you which). By Sunday you'll have a publishable Jupyter notebook that a journalist could read top-to-bottom and learn something real. Why this dataset? It's real, large (3M trips), clean enough to focus on analysis (not janitorial work), and everyone in NYC has an opinion about taxis.",
       "days": [
         {
           "number": 1,
-          "title": "What is data science vs ML vs analytics?",
-          "summary": "These overlap but they're different jobs. Know the difference.",
+          "title": "What data science actually is",
+          "summary": "Statistics + storytelling. Today, the mental model.",
           "items": [
             {
               "kind": "video",
-              "title": "Data Science in 100 seconds — Fireship",
+              "title": "Data Science in 100 Seconds — Fireship",
               "url": "https://www.youtube.com/watch?v=X3paOmcrTjQ",
               "duration_min": 2,
               "creator": "Fireship",
@@ -60,171 +60,156 @@
             },
             {
               "kind": "reflection",
-              "title": "Pick your question",
-              "body": "What's a question YOU want to answer with data? 'Are flights from my city getting more delayed?' 'Is rainfall in my region trending up?' 'Are women's wages catching up to men's in my country?' Pick one. Specific. Answerable."
+              "title": "The questions",
+              "body": "By Sunday you'll answer these about NYC Yellow Taxis in October 2023:\n  Q1. What's the busiest hour of day?\n  Q2. Does tip percentage rise with trip distance? With trip duration?\n  Q3. Which day of week has the highest average fare?\nWrite your hypothesis for each. We'll see if you were right by Day 6."
             }
           ]
         },
         {
           "number": 2,
           "title": "Python + Jupyter setup",
-          "summary": "If your tools aren't smooth, your analysis won't be either.",
+          "summary": "Smooth tools, smooth analysis.",
           "items": [
             {
               "kind": "video",
-              "title": "Install Anaconda + Jupyter for data science",
-              "url": "https://www.youtube.com/results?search_query=install+anaconda+jupyter+data+science+2024",
+              "title": "Install Anaconda + Jupyter",
+              "url": "https://www.youtube.com/results?search_query=install+anaconda+jupyter+beginner+2024",
               "duration_min": 15,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Sanity check notebook",
-              "body": "Open Jupyter. Create `forge-ds-week1.ipynb`. Import pandas, numpy, matplotlib, seaborn. Print versions. Commit to a fresh GitHub repo."
+              "title": "TaxiPulse repo",
+              "body": "Create folder `taxipulse/`. `conda create -n taxipulse python=3.11 pandas pyarrow matplotlib seaborn jupyter` (or venv equivalent). Activate. Push to GitHub repo `taxipulse-nyc`."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Find a real dataset (not Titanic, not Iris)",
-          "summary": "Half the job is finding good data.",
+          "title": "Download the dataset (this exact file)",
+          "summary": "No 'pick your own'. We tell you the file.",
           "items": [
             {
-              "kind": "video",
-              "title": "Where to find real datasets — open data sources",
-              "url": "https://www.youtube.com/results?search_query=best+open+data+sources+data+science+2024",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "reading",
-              "title": "Awesome Public Datasets — GitHub",
-              "url": "https://github.com/awesomedata/awesome-public-datasets",
-              "why": "Bookmark it forever."
+              "title": "NYC TLC Yellow Taxi data — official page",
+              "url": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
+              "why": "Official source, government-published."
             },
             {
               "kind": "exercise",
-              "title": "Get your data",
-              "body": "Find a CSV (or scrape one) that lets you answer your Day 1 question. Options: your country's stats office, World Bank Open Data, Kaggle Datasets, data.gov, UN data. Save it to `data/raw.csv` and commit."
+              "title": "Get yellow_tripdata_2023-10.parquet",
+              "body": "Download:\n  https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\nSave to `taxipulse/data/yellow_2023_10.parquet` (gitignored, ~50MB). In `01_load.ipynb`:\n  ```python\n  import pandas as pd\n  df = pd.read_parquet('data/yellow_2023_10.parquet')\n  print(df.shape)\n  print(df.dtypes)\n  df.head()\n  ```\nDocument: how many rows? What columns? Add a markdown cell."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Clean it — most of the job",
-          "summary": "Real data is messy. Cleaning is the work.",
+          "title": "Clean — get rid of impossible trips",
+          "summary": "Real data has impossible rows (negative fares, etc.). Filter them.",
           "items": [
             {
               "kind": "video",
-              "title": "Pandas data cleaning crash course",
-              "url": "https://www.youtube.com/results?search_query=pandas+data+cleaning+tutorial+2024",
-              "duration_min": 30,
+              "title": "pandas filtering + datetime",
+              "url": "https://www.youtube.com/results?search_query=pandas+filtering+datetime+operations+tutorial",
+              "duration_min": 25,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Clean it up",
-              "body": "Load `data/raw.csv`. Handle missing values (dropna or fillna — justify your choice). Fix column types (strings to dates, strings to numbers). Drop duplicates. Save the clean version as `data/clean.csv`. Add a 'Cleaning' markdown section to your notebook explaining EVERY decision."
+              "title": "Clean to a sane subset",
+              "body": "In `02_clean.ipynb`:\n  1. Drop rows where `trip_distance <= 0` or `fare_amount <= 0`\n  2. Drop rows where `trip_distance > 100` (very long, likely glitches)\n  3. Drop rows where `tpep_pickup_datetime` is outside October 2023\n  4. Add column `trip_duration_min = (tpep_dropoff_datetime - tpep_pickup_datetime).dt.total_seconds() / 60`\n  5. Drop rows where `trip_duration_min < 1` or `> 180`\n  6. Add column `tip_pct = (tip_amount / fare_amount) * 100` (only for fare_amount > 0; dropna)\n  7. Save as `data/clean.parquet`. Print: how many rows did you drop, and why?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Explore — find the story",
-          "summary": "EDA is detective work.",
+          "title": "Answer Q1: busiest hour of day",
+          "summary": "Plot it. Eyeball it. Be honest.",
           "items": [
             {
               "kind": "video",
-              "title": "Exploratory Data Analysis — full walkthrough",
-              "url": "https://www.youtube.com/results?search_query=exploratory+data+analysis+python+tutorial",
-              "duration_min": 30,
+              "title": "Matplotlib + Seaborn for plots",
+              "url": "https://www.youtube.com/results?search_query=matplotlib+seaborn+plotting+tutorial+2024",
+              "duration_min": 25,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "3 plots, 3 surprises",
-              "body": "Plot 3 things about your cleaned data. For each, write 1 sentence: what surprised you? What did you expect that wasn't true?"
+              "title": "The hour plot",
+              "body": "In `03_hour.ipynb`:\n  ```python\n  df['hour'] = df['tpep_pickup_datetime'].dt.hour\n  by_hour = df.groupby('hour').size()\n  by_hour.plot(kind='bar', figsize=(10,5), title='NYC Yellow Taxi trips by hour, Oct 2023')\n  ```\nSave the figure as `figures/by_hour.png`. Below the plot, write 2 sentences: which hour is busiest? What does the shape look like — single peak, double peak? Compare to your Day 1 hypothesis."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Stats — the minimum you must know",
-          "summary": "Mean, median, distribution, correlation. That's the floor.",
+          "title": "Answer Q2 + Q3",
+          "summary": "Tip % vs distance, fare by weekday.",
           "items": [
             {
-              "kind": "video",
-              "title": "Statistics for data science — crash course",
-              "url": "https://www.youtube.com/results?search_query=statistics+data+science+crash+course",
-              "duration_min": 45,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Stats on your data",
-              "body": "Compute: mean, median, std, range of your KEY variable. Compute the correlation between 2 variables you think are related. Was the correlation what you expected?"
+              "title": "Two more plots",
+              "body": "Q2 — tip_pct vs trip_distance:\n  Bin trip_distance into [0-1, 1-3, 3-5, 5-10, 10+] miles. Compute mean tip_pct per bin. Bar chart it. Same for trip_duration_min in similar bins. Save as `figures/tip_vs_distance.png` and `figures/tip_vs_duration.png`.\n\nQ3 — average fare by day of week:\n  `df['dow'] = df['tpep_pickup_datetime'].dt.day_name()`. Group by dow, take mean of fare_amount. Bar chart sorted Mon-Sun. Save as `figures/fare_by_dow.png`.\n\nBelow each: 1 sentence finding. Compare to your Day 1 hypotheses."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Polish the passport notebook",
-          "summary": "A notebook nobody reads is wasted work.",
+          "title": "Ship TaxiPulse v0.1 — the publishable notebook",
+          "summary": "A notebook nobody reads is wasted work. Format like an article.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Write it like a story",
-              "body": "Restructure your notebook into a publishable piece:\n  1. **Title + 1-line summary** ('Are flights from Lagos getting more delayed? Yes — 18% more in 2024 than 2020.')\n  2. **The question** — why does it matter?\n  3. **The data** — source link, date, what's in it\n  4. **The cleaning** — what you fixed, what assumptions you made\n  5. **3 charts that tell the story** — each with a caption\n  6. **The answer** — direct, honest, qualified\n  7. **What I'd do next** — 3 follow-ups\nRender to HTML. Link in the README. Push."
+              "title": "Final acceptance — publishable notebook",
+              "body": "Create `TaxiPulse-NYC-October-2023.ipynb` — the polished version. Structure:\n\n  # TaxiPulse NYC — What 3 Million Trips Tell Us About October 2023\n  [Your name] · [Date]\n\n  ## TL;DR\n  3 bullets — your 3 findings, one sentence each, with specific numbers.\n\n  ## The data\n  Source URL, download date, row count, what's a 'trip' here.\n\n  ## Cleaning decisions\n  What you dropped + why. Be honest about edge cases.\n\n  ## Finding 1: Busiest hour\n  Plot + 2-paragraph narrative + 1 caveat.\n\n  ## Finding 2: Tip % vs distance\n  Same.\n\n  ## Finding 3: Fares by day of week\n  Same.\n\n  ## What I'd do next\n  3 bullets — borough breakdown, weather correlation, fare prediction model.\n\nRender to HTML: `jupyter nbconvert --to html TaxiPulse-NYC-October-2023.ipynb`. Commit the .html in `docs/`. Add a `README.md` linking the rendered HTML.\n\nPass criteria:\n  □ All 3 hypotheses answered with plots + numbers\n  □ 4 notebooks committed (01-load, 02-clean, 03-hour, 04-tip-fare)\n  □ 1 polished publishable notebook + rendered HTML\n  □ README with TL;DR, link to rendered HTML, dataset source\n  □ All 4 figures committed in `figures/`\n  □ Tag v0.1"
             },
             {
               "kind": "reflection",
-              "title": "Who should read this?",
-              "body": "If you sent this notebook to 1 specific journalist, policy maker, or business owner, who would it be — and why would they care?"
+              "title": "Who reads this?",
+              "body": "Imagine you tweeted the rendered HTML link. Who retweets it — journalists? Other data scientists? NYC commuters? If nobody — your TL;DR isn't strong enough. Why?"
             }
           ]
         }
       ],
       "topics": [
-        "Anaconda + Jupyter workflow",
-        "pandas — load, clean, transform",
-        "Handling missing data — dropna, fillna, when to use each",
-        "Type coercion + date parsing",
-        "EDA — distributions, scatter, correlation",
-        "Basic stats — mean, median, std, correlation, percentiles",
-        "Storytelling in a notebook — captions, narration, structure"
+        "Anaconda + Jupyter setup",
+        "pandas + pyarrow for parquet loading",
+        "Date/time operations: pd.to_datetime, .dt accessor, hour extraction",
+        "Data cleaning: dropping impossible rows + computing derived columns",
+        "groupby + aggregations (size, mean)",
+        "matplotlib + seaborn for bar charts",
+        "Storytelling: TL;DR-first notebook structure"
       ],
       "tasks": [
-        "Pick a specific, answerable question you care about",
-        "Find a non-generic dataset that lets you answer it",
-        "Clean the data with documented decisions",
-        "Explore visually with 3+ charts",
-        "Compute basic statistics on key variables",
-        "Polish notebook into a story-shaped artifact",
-        "Push everything to GitHub with a rendered HTML link"
+        "Set up Python + Jupyter + the right libraries",
+        "Download yellow_tripdata_2023-10.parquet from NYC TLC",
+        "Clean impossible rows + add derived columns (trip_duration_min, tip_pct, hour, dow)",
+        "Answer Q1 with a bar chart of trips by hour",
+        "Answer Q2 with binned plots of tip_pct vs distance/duration",
+        "Answer Q3 with bar chart of fare by day-of-week",
+        "Polish into 1 publishable notebook + rendered HTML"
       ],
-      "project": "Pick a question that matters to you — about your city, your industry, your country, your family — anything specific. Find data nobody else's portfolio uses. Clean it, plot it, answer it. The notebook is the deliverable: a publishable piece of analysis that a stranger could read and understand the answer.",
+      "project": "TaxiPulse NYC v0.1 — a published analysis of NYC Yellow Taxi trips in October 2023. Answers 3 specific assigned questions (busiest hour, tip% vs distance, fare by day of week). Polished notebook + rendered HTML + 4 figures + dataset cleaning decisions documented. Repo: `taxipulse-nyc` on GitHub, tagged v0.1.",
       "exercises": [
-        "Add a 5-year vs 1-year comparison chart for your KEY metric",
-        "Compute a simple linear trend line and report its slope",
-        "Find an outlier in your data and explain WHY it's an outlier",
-        "Plot the same data 3 different ways — which conveys the story best?"
+        "Add a 4th finding YOU spot in the data — anything interesting beyond Q1/Q2/Q3",
+        "Recompute Q1 grouped by pickup borough — does the busy hour vary by location?",
+        "Plot the distribution of trip_duration_min — log-scale the y-axis. What jumps out?",
+        "Compare your tip_pct binned plot to the same plot without log-scale — which tells the story?"
       ],
       "questions": [
-        "What's the source's incentive to publish this data — and what might they hide?",
-        "What would change the answer to your question if you had 10x more data?",
-        "Where does correlation NOT imply causation in your finding?",
-        "Who could (mis)use your analysis to support a wrong conclusion?"
+        "Why did you drop trips with fare_amount <= 0? What might have caused them?",
+        "What's the difference between mean tip_pct and median tip_pct here — and which is more honest?",
+        "Where did you make a judgment call that another analyst might disagree with?",
+        "What other dataset would amplify your TaxiPulse story — weather? events?"
       ],
       "outputs": [
-        "Jupyter notebook on GitHub with cells run",
-        "Cleaned CSV committed under `data/clean.csv`",
-        "Rendered HTML or nbviewer link in the README",
-        "1-paragraph 'What I found' summary in the README"
+        "`taxipulse-nyc` GitHub repo tagged v0.1",
+        "5 notebooks (4 working + 1 polished publishable)",
+        "Rendered HTML of the polished notebook in `docs/`",
+        "4 figures in `figures/`",
+        "README with TL;DR + link to rendered HTML"
       ]
     },
     {

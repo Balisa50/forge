@@ -35,189 +35,188 @@
           "note": "Official, beginner-friendly"
         }
       ],
-      "context": "Machine Learning Engineering is half stats, half plumbing. Week 1 you set up the stack (Python + NumPy + pandas + scikit-learn + Jupyter) and train your first real model on a dataset YOU pick — not the Titanic. By Sunday you'll have a notebook that predicts something you actually care about.",
+      "context": "You're building FlightWise — a model that predicts whether a US domestic flight will be delayed > 15 min. Dataset: a specific cleaned BTS On-Time slice from 2023 (we point you to the exact file). Why this? It's real (millions of flights), it's imbalanced (most flights are on time — like real fraud/churn data), and it has rich features (carrier, origin, dest, scheduled time, day of week). By Week 6 you'll have a deployable model with a Flask API. Then Week 7 starts Project 2.",
       "days": [
         {
           "number": 1,
-          "title": "What ML actually is (no hype)",
-          "summary": "Function approximation. That's it. Now build intuition.",
+          "title": "ML is function approximation. That's it.",
+          "summary": "Strip the mystery. Build the mental model.",
           "items": [
             {
               "kind": "video",
-              "title": "But what is a neural network? — 3Blue1Brown",
+              "title": "But what is a neural network — 3Blue1Brown",
               "url": "https://www.youtube.com/watch?v=aircAruvnKk",
               "duration_min": 19,
               "creator": "3Blue1Brown",
-              "why": "The clearest visual explanation of what a model 'learns'."
+              "why": "The clearest visual primer. Worth every minute."
             },
             {
               "kind": "video",
-              "title": "How machine learning works (no math) — Fireship",
-              "url": "https://www.youtube.com/results?search_query=fireship+machine+learning+100+seconds",
-              "duration_min": 4,
+              "title": "Machine Learning explained — Fireship",
+              "url": "https://www.youtube.com/results?search_query=machine+learning+100+seconds+fireship",
+              "duration_min": 3,
               "creator": "Fireship",
-              "why": "Fast big-picture refresh."
+              "why": ""
             },
             {
               "kind": "reflection",
-              "title": "What problem do YOU want to predict?",
-              "body": "Brainstorm 3 questions you'd answer with ML. Examples: 'Will my flight be delayed?' 'Will this email be a scam?' 'What's the price of this used phone worth?' Pick one. This is your passport project."
+              "title": "Predict the delay",
+              "body": "If you had ONE feature to predict if a flight is delayed > 15min, what would you pick — carrier, departure hour, origin airport, day of week? Write down your guess. We'll find out on Day 5 if you were right."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Set up the data science stack",
-          "summary": "Conda or uv — pick one and live with it. Then Jupyter.",
+          "title": "Python data stack setup",
+          "summary": "Anaconda or uv. Either works. Pick one and stop deliberating.",
           "items": [
             {
               "kind": "video",
-              "title": "Anaconda install + Jupyter — beginner",
-              "url": "https://www.youtube.com/results?search_query=install+anaconda+jupyter+notebook+2025+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": "Or use uv/pip if you already know Python."
-            },
-            {
-              "kind": "exercise",
-              "title": "First notebook",
-              "body": "Create `forge-ml-week1.ipynb`. In cell 1: `import numpy as np, pandas as pd, matplotlib.pyplot as plt`. In cell 2: `print(np.__version__, pd.__version__)`. Push to GitHub."
-            }
-          ]
-        },
-        {
-          "number": 3,
-          "title": "Pandas — the only tool you'll use every day",
-          "summary": "Forget SQL, forget Excel. Pandas is where data lives.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Pandas in 10 minutes — Corey Schafer",
-              "url": "https://www.youtube.com/results?search_query=corey+schafer+pandas+tutorial+introduction",
-              "duration_min": 30,
-              "creator": "Corey Schafer",
-              "why": "Best pandas intro on YouTube."
-            },
-            {
-              "kind": "exercise",
-              "title": "Load + describe",
-              "body": "Find a CSV related to YOUR chosen problem (Kaggle, data.gov, your country's stats office, GitHub awesome-public-datasets). Load it with `pd.read_csv`. Call `.head()`, `.info()`, `.describe()`. Commit the notebook with output cells saved."
-            }
-          ]
-        },
-        {
-          "number": 4,
-          "title": "Visualize before you model",
-          "summary": "Never trust a model on data you haven't plotted.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Matplotlib + Seaborn crash course",
-              "url": "https://www.youtube.com/results?search_query=matplotlib+seaborn+crash+course+python",
-              "duration_min": 25,
-              "creator": "various",
-              "why": "Histograms, scatter, heatmap."
-            },
-            {
-              "kind": "exercise",
-              "title": "3 plots, 3 insights",
-              "body": "Plot 3 things from your dataset: (1) the distribution of your target variable, (2) a scatter of two features you think matter, (3) a correlation heatmap. Write a sentence under each saying what you see."
-            }
-          ]
-        },
-        {
-          "number": 5,
-          "title": "scikit-learn — train your first model",
-          "summary": "Two lines: fit, predict. Then we add nuance.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "scikit-learn for beginners",
-              "url": "https://www.youtube.com/results?search_query=scikit-learn+tutorial+beginner+python+2024",
-              "duration_min": 30,
-              "creator": "various",
-              "why": "Pick one that uses train_test_split + a linear model."
-            },
-            {
-              "kind": "exercise",
-              "title": "Baseline model",
-              "body": "Split your data 80/20. Train a `LinearRegression` or `LogisticRegression` (depending on regression vs classification). Print accuracy or R² on the test set. Don't tune anything yet. This is your baseline."
-            }
-          ]
-        },
-        {
-          "number": 6,
-          "title": "Did it actually learn? — evaluation",
-          "summary": "Accuracy lies. Use the right metric for your problem.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Evaluating ML models — precision, recall, F1",
-              "url": "https://www.youtube.com/results?search_query=precision+recall+f1+explained+machine+learning",
+              "title": "Anaconda install + first notebook",
+              "url": "https://www.youtube.com/results?search_query=anaconda+install+jupyter+notebook+beginner+2024",
               "duration_min": 15,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Confusion matrix or residuals",
-              "body": "If classification → confusion matrix + classification_report. If regression → plot predicted vs actual + compute MAE. Write 2 sentences: where does the model fail? On what kind of inputs?"
+              "title": "FlightWise repo + first notebook",
+              "body": "Create folder `flightwise/`. Run `conda create -n flightwise python=3.11 pandas numpy scikit-learn matplotlib seaborn jupyter` (or use venv + pip). Activate. Open Jupyter. Create `01_setup.ipynb`. Cell 1: `import pandas as pd, numpy as np, sklearn; print(pd.__version__, np.__version__, sklearn.__version__)`. Push to a GitHub repo named `flightwise`."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Get the FlightWise dataset",
+          "summary": "Specific dataset. No 'pick your own'. Real BTS data, ~5M rows.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "BTS On-Time Performance — Kaggle 2023 mirror",
+              "url": "https://www.kaggle.com/datasets/patrickzel/flight-delay-and-cancellation-dataset-2019-2023",
+              "why": "Download `flights_sample_3m.csv` (3M rows, ~250MB). If Kaggle gives you trouble, search 'BTS on time 2023 flight delay sample CSV' and grab any mirror."
+            },
+            {
+              "kind": "exercise",
+              "title": "Load it",
+              "body": "Place the CSV in `flightwise/data/raw.csv` (gitignore the data/ folder — too big to commit). In `02_load.ipynb`: `df = pd.read_csv('data/raw.csv')`. Run `df.shape`, `df.head()`, `df.info()`. Add a markdown cell answering: How many rows? How many columns? Which columns look most useful for predicting delay?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Define the target + clean the columns",
+          "summary": "Modelling is 80% data prep. Today is the prep day.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "pandas data cleaning crash course",
+              "url": "https://www.youtube.com/results?search_query=pandas+data+cleaning+tutorial+python+2024",
+              "duration_min": 25,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Create the target column",
+              "body": "In `03_clean.ipynb`:\n  1. Create binary target: `df['delayed'] = (df['ARR_DELAY'] > 15).astype(int)`\n  2. Drop rows where ARR_DELAY is null (cancelled flights — exclude for now)\n  3. Pick these features only: `CARRIER`, `ORIGIN`, `DEST`, `CRS_DEP_TIME`,      `DAY_OF_WEEK`, `MONTH`, `DISTANCE`. Plus target `delayed`.\n  4. Save the clean subset as `data/clean.parquet` (gitignored).\n  5. Print: how many rows are delayed vs on time? What % is delayed?      (This is your class imbalance.)"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "EDA — find what predicts delay",
+          "summary": "Before you model, you look. Three plots.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Seaborn for EDA — beginner",
+              "url": "https://www.youtube.com/results?search_query=seaborn+data+visualization+tutorial+python",
+              "duration_min": 20,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "3 plots, 3 findings",
+              "body": "In `04_eda.ipynb`, produce:\n  Plot 1: Delay rate by HOUR of scheduled departure (bar chart, x=hour,     y=% delayed). Use `CRS_DEP_TIME // 100` to extract the hour.\n  Plot 2: Delay rate by carrier (horizontal bar, sorted)\n  Plot 3: Delay rate by day of week\nUnder each plot, write 1 sentence: what's the strongest signal you see? Compare to your Day 1 guess — were you right?"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Train your first model",
+          "summary": "Logistic regression baseline. Don't tune yet. Just get a number.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "scikit-learn beginner tutorial",
+              "url": "https://www.youtube.com/results?search_query=scikit-learn+tutorial+beginner+logistic+regression",
+              "duration_min": 25,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Baseline model",
+              "body": "In `05_model.ipynb`:\n  1. Load `data/clean.parquet`\n  2. One-hot encode CARRIER, ORIGIN, DEST (use `pd.get_dummies` — TOP 20      airports + carriers only, group the rest as 'OTHER' to keep dimensionality      sane)\n  3. `train_test_split(X, y, test_size=0.2, random_state=42)`\n  4. Train `LogisticRegression(max_iter=1000, class_weight='balanced')`\n  5. Evaluate: `classification_report(y_test, model.predict(X_test))`\n  6. Print the confusion matrix\nSave the model: `joblib.dump(model, 'model.pkl')`. Commit `model.pkl` (it should be < 5MB)."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship your notebook",
-          "summary": "A notebook is a portfolio piece — if you treat it like one.",
+          "title": "Ship FlightWise v0.1 + README",
+          "summary": "A notebook nobody can run is a sketch. Make it runnable.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Build the passport notebook",
-              "body": "Polish your notebook into a portfolio-grade artifact:\n  1. A clear markdown title + 1-paragraph intro explaining what you're predicting and WHY\n  2. Data source link + date downloaded\n  3. EDA section with 3 plots\n  4. Model section with train/test split + baseline + 1 alternative\n  5. Results section with metric + 2-sentence honest verdict\n  6. 'What I'd do next' section (3 bullets)\nPush to GitHub. Render to HTML and link in README."
+              "title": "Final acceptance — FlightWise v0.1",
+              "body": "Pass criteria:\n  □ 5 notebooks: 01_setup, 02_load, 03_clean, 04_eda, 05_model — all run     top to bottom without errors\n  □ Recall on the 'delayed' class is ≥ 50% (use `class_weight='balanced'` to     get there — naive accuracy is misleading)\n  □ `model.pkl` committed\n  □ README has: project description, dataset source link, how to download     data, how to run notebooks in order, your test set performance, a     'What's next' section listing Weeks 2-6 plans\n  □ `requirements.txt` committed (use `pip freeze > requirements.txt`)\n  □ A 1-paragraph 'Honest verdict' in the README: would you trust this model     to make a real decision? Why or why not?\n\nTag the release v0.1."
             },
             {
               "kind": "reflection",
-              "title": "Honesty check",
-              "body": "Would you trust this model to make a real decision? Why or why not?"
+              "title": "The 6-week arc",
+              "body": "Week 1: baseline. Week 2: feature engineering + cross-validation. Week 3: XGBoost + LightGBM. Week 4: hyperparameter tuning with Optuna. Week 5: Flask API + Docker. Week 6: deployed to Render or Fly.io with a public URL. Project 1 done."
             }
           ]
         }
       ],
       "topics": [
-        "NumPy arrays and pandas DataFrames",
-        "Jupyter workflow and `%matplotlib inline`",
-        "train_test_split + reproducibility (random_state)",
-        "Linear / logistic regression as baselines",
-        "Train vs test metrics — accuracy, MAE, R², F1",
-        "Confusion matrices and residual plots",
-        "Honest narration in a notebook (no overfit storytelling)"
+        "Anaconda / venv + jupyter workflow",
+        "pandas — read_csv, dropna, get_dummies, parquet",
+        "Defining binary classification targets",
+        "Class imbalance — class_weight='balanced'",
+        "train_test_split with random_state",
+        "Logistic regression baselines",
+        "classification_report (precision, recall, F1) — why accuracy lies"
       ],
       "tasks": [
-        "Install Anaconda or uv + Jupyter",
-        "Pick a real dataset relevant to a question YOU care about",
-        "Run EDA — describe, plot distribution + correlations",
-        "Train a baseline model with train_test_split",
-        "Evaluate honestly with appropriate metric",
-        "Polish notebook into a portfolio piece"
+        "Set up Python data stack + create `flightwise` repo",
+        "Download BTS On-Time 2023 CSV from Kaggle",
+        "Clean: define target (ARR_DELAY > 15), pick 7 features, save clean parquet",
+        "Run EDA — plot delay rate by hour, carrier, day-of-week",
+        "Train a LogisticRegression baseline with class_weight='balanced'",
+        "Evaluate with classification_report — recall on 'delayed' ≥ 50%",
+        "Polish 5 notebooks + README + requirements.txt, tag v0.1"
       ],
-      "project": "Pick a prediction problem you actually care about — flight delays in your country, rainfall, used-phone resale value, your salary by year of experience, anything. Find the dataset (Kaggle, your gov't stats office, scrape it yourself). Build a notebook that does EDA + baseline model + honest evaluation. The notebook IS the portfolio piece. Recruiters will read it. Write it like an article, not a homework.",
+      "project": "FlightWise v0.1 — a binary classifier predicting if a US domestic flight will be delayed > 15 min. Specific dataset: BTS On-Time 2023 (Kaggle mirror). Specific features: carrier, origin, dest, scheduled departure hour, day of week, month, distance. Specific model: balanced LogisticRegression baseline. Specific target: recall ≥ 50% on the 'delayed' class. Repo: `flightwise` on GitHub. 5 numbered notebooks + model.pkl + README. Tagged v0.1.",
       "exercises": [
-        "Drop your top-feature column — does the model still work? Why?",
-        "Train the same model with random_state=1 then random_state=42 — what changes?",
-        "Try a DecisionTreeClassifier alongside the linear baseline — which wins?",
-        "Compute training accuracy too — gap to test = overfit signal"
+        "Plot a baseline 'always predict on-time' classifier — what's its accuracy? Its recall?",
+        "Re-train without `class_weight='balanced'` — what changes? Why is balanced fairer here?",
+        "Drop CARRIER from features. Does accuracy fall? Why or why not?",
+        "Save your X_test predictions to CSV. Open in Excel. Hunt for patterns in the misclassifications."
       ],
       "questions": [
-        "What's your dataset's 'unfair advantage'? Why is it interesting?",
-        "What does it mean if your model predicts the same thing for everyone?",
-        "Where could this model do harm if deployed naively?",
-        "If you got 10x more data, which feature would suddenly matter?"
+        "Why is accuracy a misleading metric for this problem?",
+        "If your model predicts 'delayed' for every flight, what's its recall? Its precision?",
+        "Which feature do you suspect leaks information (data leakage risk)?",
+        "If American Airlines uses your model to decide which flights to overbook, what could go wrong?"
       ],
       "outputs": [
-        "Jupyter notebook on GitHub with all cells run + output preserved",
-        "README explaining the prediction question + data source",
-        "Rendered HTML or nbviewer link",
-        "A 'What I learned' paragraph at the bottom"
+        "`flightwise` GitHub repo with 5 notebooks + model.pkl + README + requirements.txt",
+        "Recall on 'delayed' class ≥ 50% (documented in README)",
+        "EDA plots committed in `figures/`",
+        "v0.1 git tag"
       ]
     },
     {

@@ -35,78 +35,50 @@
           "note": "More advanced than TryHackMe"
         }
       ],
-      "context": "Cybersecurity is offence and defence on real systems. Week 1 you set up Kali + TryHackMe + your first vuln lab. By Sunday you'll have completed a real OWASP Top 10 walkthrough against an intentionally vulnerable site (NOT a live one!) and written a CVE-style report. The report IS your passport.",
+      "context": "You're attacking OWASP Juice Shop — the canonical deliberately-vulnerable web app that EVERY pentester practices on. Your job by Sunday: solve 5 SPECIFIC challenges and write a HackerOne-style report for each. Why these 5? They cover the most common bug classes in real-world bug bounties: XSS, broken auth, IDOR, injection, misconfiguration. Weeks 2-4 expand to 20 more challenges + your first TryHackMe rooms. Project 2 (W5+) moves to HackTheBox real boxes.",
       "days": [
         {
           "number": 1,
-          "title": "What hacking actually is (ethics first)",
-          "summary": "If you're going to learn this, you sign the contract: you only attack what you own or have permission to attack.",
+          "title": "The ethics contract — non-negotiable",
+          "summary": "You only attack what you own or have permission to attack. Sign it today.",
           "items": [
             {
               "kind": "video",
-              "title": "Cybersecurity in 100 seconds — Fireship",
-              "url": "https://www.youtube.com/results?search_query=fireship+cybersecurity+100+seconds",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": ""
-            },
-            {
-              "kind": "video",
-              "title": "How hackers think — John Hammond",
-              "url": "https://www.youtube.com/results?search_query=john+hammond+how+to+think+like+a+hacker",
-              "duration_min": 20,
+              "title": "Cybersecurity ethics 101 — John Hammond",
+              "url": "https://www.youtube.com/results?search_query=john+hammond+cybersecurity+ethics+beginner",
+              "duration_min": 15,
               "creator": "John Hammond",
               "why": ""
             },
             {
-              "kind": "reflection",
-              "title": "Sign the ethics contract",
-              "body": "Write in your README: 'I will only attack systems I own or have explicit written permission to test. I will report vulnerabilities responsibly.' Date it. Sign it (digitally). This is non-negotiable."
+              "kind": "exercise",
+              "title": "Sign and commit your contract",
+              "body": "Create repo `vuln-reports`. Create `ETHICS.md` containing:\n\n  # Ethics Contract\n  I, [your full name], commit to:\n  1. Only test systems I own or have explicit written permission to test.\n  2. Report any vulnerabilities I find through responsible disclosure channels.\n  3. Never exfiltrate or modify user data beyond minimal proof-of-concept.\n  4. Document every test for transparency.\n\n  Signed: [your name]\n  Date: [today]\n\nCommit it. Push it. This is the contract you'll uphold for life."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Set up Kali Linux (in a VM, not bare metal)",
-          "summary": "Kali is the practitioner's OS. Run it in a sandbox.",
+          "title": "Set up Kali Linux in a VM",
+          "summary": "Kali in a VM, not bare metal. The right way.",
           "items": [
             {
               "kind": "video",
-              "title": "Install Kali in VirtualBox — step by step",
-              "url": "https://www.youtube.com/results?search_query=install+kali+linux+virtualbox+2024+tutorial",
+              "title": "Install Kali in VirtualBox — 2024 walkthrough",
+              "url": "https://www.youtube.com/results?search_query=install+kali+linux+virtualbox+2024",
               "duration_min": 30,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Bring up Kali",
-              "body": "Install VirtualBox, download Kali, boot it in a VM. Open a terminal in Kali. Run `nmap --version` and `sqlmap --version`. You're ready."
+              "title": "Boot Kali",
+              "body": "Install VirtualBox (free). Download Kali Linux ISO (kali.org/get-kali/). Create a VM with 4GB RAM, 30GB disk. Install. Boot. Open a terminal. Run `nmap --version`, `sqlmap --version`, `curl --version` — all should work. Take a screenshot of Kali running."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Networking fundamentals you actually need",
-          "summary": "If you can't read a TCP handshake you can't read an exploit.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "Networking for hackers — NetworkChuck",
-              "url": "https://www.youtube.com/results?search_query=networkchuck+networking+basics+tcpip",
-              "duration_min": 45,
-              "creator": "NetworkChuck",
-              "why": ""
-            },
-            {
-              "kind": "exercise",
-              "title": "nmap your own laptop",
-              "body": "From Kali, run `nmap -sV 127.0.0.1`. What ports are open on YOUR machine? Why is each one open? Don't scan anyone else."
-            }
-          ]
-        },
-        {
-          "number": 4,
           "title": "OWASP Top 10 — the syllabus of web hacking",
           "summary": "10 vuln categories cover 90% of real-world breaches.",
           "items": [
@@ -114,7 +86,7 @@
               "kind": "video",
               "title": "OWASP Top 10 explained 2024",
               "url": "https://www.youtube.com/results?search_query=owasp+top+10+2024+explained",
-              "duration_min": 20,
+              "duration_min": 25,
               "creator": "various",
               "why": ""
             },
@@ -126,105 +98,125 @@
             },
             {
               "kind": "exercise",
-              "title": "Pick your favourite",
-              "body": "Read the 10. Write 1 sentence per item explaining it in plain English. Pick the one that scares you most — that's the one you'll exploit tomorrow."
+              "title": "One-liner per category",
+              "body": "In `vuln-reports/owasp-notes.md`, write 1 sentence per category explaining what it means in plain English. Example for A03:Injection — 'When user input is treated as code (SQL, OS commands, etc.) instead of as data.'"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Spin up Juice Shop locally",
+          "summary": "Your target for the week. Sandboxed. Safe.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Run OWASP Juice Shop with Docker",
+              "url": "https://www.youtube.com/results?search_query=run+juice+shop+docker+tutorial",
+              "duration_min": 8,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Get Juice Shop running",
+              "body": "Install Docker. Run:\n  `docker run --rm -p 3000:3000 bkimminich/juice-shop`\nOpen http://localhost:3000 in your browser. You should see a fake e-commerce site. Browse it. Open the score board: click the little anchor in the page source HTML (`<a href='#/score-board'>`) — that itself is the first challenge."
             }
           ]
         },
         {
           "number": 5,
-          "title": "TryHackMe — your first room",
-          "summary": "Real targets in a sandboxed playground.",
+          "title": "Solve challenges 1, 2, 3",
+          "summary": "XSS + broken auth + score board access.",
           "items": [
             {
               "kind": "video",
-              "title": "TryHackMe walkthrough — Introduction to OWASP Top 10",
-              "url": "https://www.youtube.com/results?search_query=tryhackme+owasp+top+10+walkthrough",
+              "title": "Juice Shop walkthrough — first 5 challenges",
+              "url": "https://www.youtube.com/results?search_query=juice+shop+walkthrough+beginner+challenges",
               "duration_min": 30,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Complete the OWASP Top 10 room",
-              "body": "Sign up on tryhackme.com (free tier). Complete the 'OWASP Top 10' room. Take screenshots of each step. Don't skip — even if you've seen it before."
+              "title": "Knock out 3",
+              "body": "Solve these 3 (consult walkthroughs ONLY when fully stuck):\n  1. Score Board (find the hidden score-board page)\n  2. DOM XSS (perform an XSS via the search box — payload:      `<iframe src=\"javascript:alert('xss')\">` — see what gets reflected)\n  3. Login Admin (broken auth — try classic SQLi: `' OR 1=1--`)\nScreenshot each success. Save screenshots as `screenshots/01.png`, `02.png`, `03.png`."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Find an actual bug in a deliberately vulnerable app",
-          "summary": "DVWA / Juice Shop are practice ranges. Use them.",
+          "title": "Solve challenges 4 + 5",
+          "summary": "IDOR + sensitive data exposure.",
           "items": [
             {
-              "kind": "video",
-              "title": "OWASP Juice Shop — 5 challenges",
-              "url": "https://www.youtube.com/results?search_query=juice+shop+owasp+tutorial+challenges+beginner",
-              "duration_min": 30,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "Solve 3 Juice Shop challenges",
-              "body": "Spin up OWASP Juice Shop (Docker `docker run --rm -p 3000:3000 bkimminich/juice-shop`). Solve the 3 easiest challenges (look in the score board for the green ones). Screenshot each."
+              "title": "Two more",
+              "body": "Solve:\n  4. View Basket (IDOR — change the userId in the basket request from your      own to another user's; use browser DevTools network tab + replay)\n  5. Confidential Document (find a hidden /ftp/ path with leaked docs —      try directory enumeration via gobuster or just guess common paths)\nScreenshot success. You now have 5 wins."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Write the CVE-style report",
-          "summary": "Finding a bug is half. Writing it up is the other half.",
+          "title": "Write the 5 reports — your passport",
+          "summary": "Every report is a HackerOne-style submission. This is what real bounty hunters do.",
           "items": [
             {
+              "kind": "reading",
+              "title": "How to write a great vulnerability report — HackerOne",
+              "url": "https://docs.hackerone.com/hackers/quality-reports.html",
+              "why": "The bar to aim for."
+            },
+            {
               "kind": "exercise",
-              "title": "Passport — vulnerability report",
-              "body": "Pick ONE bug you found this week (in Juice Shop, DVWA, or a THM room). Write a report in this exact format:\n  1. **Title** (e.g. 'Reflected XSS in /search query parameter')\n  2. **Severity** (Low / Medium / High / Critical) — justify it\n  3. **Affected component** (the URL + parameter)\n  4. **Steps to reproduce** — numbered, exact, copy-pasteable\n  5. **Impact** — what could an attacker do?\n  6. **Suggested fix** — concrete code or config change\n  7. **Screenshots** — proof\nPush to GitHub. Format like a real CVE — this is what every bug bounty submission looks like."
+              "title": "Five CVE-style reports",
+              "body": "In `vuln-reports/reports/`, create 5 markdown files, one per challenge. Format:\n\n  # [Vulnerability name] — Juice Shop\n  **Severity:** Low/Medium/High/Critical (with justification)\n  **Affected component:** URL + parameter + HTTP method\n  **Steps to reproduce:**\n    1. ...\n    2. ...\n  **Impact:** What can an attacker do? (be concrete)\n  **Suggested fix:** Specific code or config change\n  **Screenshots:** ![POC](../screenshots/01.png)\n\nUpdate the repo README to list all 5 reports with severity badges.\nTag v0.1.\n\nPass criteria:\n  □ ETHICS.md signed and committed\n  □ 5 challenges solved with screenshots\n  □ 5 reports written in HackerOne format\n  □ README links each report\n  □ owasp-notes.md committed"
             },
             {
               "kind": "reflection",
-              "title": "Could you submit this?",
-              "body": "If Juice Shop was a real company on HackerOne, would this report earn a bounty? Why or why not?"
+              "title": "Could you submit this for real?",
+              "body": "If Juice Shop were a real company on HackerOne, would your XSS report earn a bounty? Your IDOR? What's missing — proof of impact?"
             }
           ]
         }
       ],
       "topics": [
-        "Ethics of security testing — written consent only",
-        "VM-based hacking lab setup with Kali + VirtualBox",
-        "Networking basics — TCP/IP, ports, services",
-        "nmap basic usage",
-        "OWASP Top 10 vulnerability categories",
-        "TryHackMe + Juice Shop practice ranges",
-        "Writing a CVE-style report"
+        "Security ethics — written permission required",
+        "Kali Linux in VirtualBox",
+        "OWASP Top 10 categories explained",
+        "OWASP Juice Shop — running locally via Docker",
+        "Reflected & DOM XSS basics",
+        "SQL injection in login forms",
+        "IDOR (Insecure Direct Object Reference)",
+        "Writing HackerOne-style vulnerability reports"
       ],
       "tasks": [
-        "Set up Kali in a VM",
-        "Sign and commit your ethics contract to GitHub",
-        "Run nmap against your own machine — understand the output",
-        "Read OWASP Top 10 and summarize each item",
-        "Complete the TryHackMe OWASP Top 10 room",
-        "Solve 3 Juice Shop challenges",
-        "Write 1 polished CVE-style vulnerability report"
+        "Sign and commit ETHICS.md to the `vuln-reports` repo",
+        "Install Kali in VirtualBox; verify nmap + sqlmap work",
+        "Write 1-line summaries of each OWASP Top 10 category",
+        "Run Juice Shop via Docker locally",
+        "Solve 5 specific Juice Shop challenges with screenshots",
+        "Write 5 HackerOne-style vulnerability reports",
+        "Push the report repo with README + linked reports, tagged v0.1"
       ],
-      "project": "Write your first vulnerability report. Pick one bug from a deliberately vulnerable app (Juice Shop, DVWA, or a TryHackMe room). Format it like a real HackerOne submission — title, severity, repro, impact, fix, screenshots. Push to a GitHub repo titled `vuln-reports`. This becomes the spine of your security portfolio. Future real reports go in the same repo.",
+      "project": "Vuln Reports v0.1 — your security portfolio repo, seeded with 5 polished HackerOne-style reports for 5 specific Juice Shop challenges (Score Board, DOM XSS, Login Admin, View Basket IDOR, Confidential Document). Plus signed ETHICS.md. Repo: `vuln-reports` on GitHub. This same repo grows for the next 24 weeks — real boxes, real bounties go in `reports/` over time.",
       "exercises": [
-        "nmap a docker container you spun up — what ports show?",
-        "Read 3 public HackerOne reports and note the pattern in their writeups",
-        "Set up Burp Suite Community and intercept one request from Juice Shop",
-        "Look up a recent CVE (cvedetails.com) and read the technical detail"
+        "Read 3 public HackerOne reports (h1.com/hacktivity) — note the structure",
+        "Set up Burp Suite Community + intercept a Juice Shop login request",
+        "Try the same SQL injection from challenge 3 against your own (local!) Postgres — does it fire?",
+        "Look up the latest CVEs for any tool on your laptop — patch if you find anything"
       ],
       "questions": [
-        "What's the difference between a black-box and a white-box test?",
-        "Why is XSS in /search worse than XSS in /admin-only-page?",
-        "What's a 'proof of concept' and why is it required in any report?",
-        "Who legally owns the bugs you find on a CTF? On a bug bounty? On your employer's app?"
+        "Why is XSS in /search worse than XSS in an admin-only page?",
+        "What's a Proof of Concept? Why is it required in any real report?",
+        "What's the difference between a black-box test and a white-box test?",
+        "If you found a real CVE in production software today, who do you tell first?"
       ],
       "outputs": [
-        "Working Kali VM",
-        "Signed ethics contract in your repo",
-        "TryHackMe profile showing OWASP Top 10 room complete",
-        "GitHub repo with a polished CVE-style report"
+        "`vuln-reports` GitHub repo with v0.1 tag",
+        "Signed ETHICS.md",
+        "5 reports in `reports/` (markdown)",
+        "5 screenshots in `screenshots/`",
+        "OWASP Top 10 notes in `owasp-notes.md`"
       ]
     },
     {

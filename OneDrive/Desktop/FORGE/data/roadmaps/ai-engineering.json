@@ -35,12 +35,12 @@
           "note": "Talk to an AI before you write any code"
         }
       ],
-      "context": "AI Engineering is the craft of shipping products that use LLMs. Week 1 isn't about math — it's about getting Python ready, getting an OpenAI key working, and making your first real API call. By Sunday you'll ship a translator for a language YOU pick — your mother tongue, a regional dialect, anything underserved. Something nobody else's portfolio has.",
+      "context": "You're building Polyglot — an English ↔ Spanish translator that ships with cost tracking, structured JSON output, and an evaluation suite. This week you take it from zero to v0.1 (working CLI). Why Spanish? Because you can verify quality easily (Google Translate as a sanity check), and the model is excellent at it — you'll learn the API, not fight the linguistics. Weeks 2-6 add a web UI, eval suite, and more languages. By Week 24 you'll have shipped 4 named portfolio projects: Polyglot → Lexica (RAG) → Agent → a deployed SaaS.",
       "days": [
         {
           "number": 1,
-          "title": "What is an AI Engineer, really?",
-          "summary": "Less hype. More mental model. You're a software engineer who happens to call an API that thinks.",
+          "title": "What an AI Engineer actually does",
+          "summary": "You're a software engineer who calls an API that thinks. Get the mental model.",
           "items": [
             {
               "kind": "video",
@@ -48,19 +48,19 @@
               "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
               "duration_min": 60,
               "creator": "Andrej Karpathy",
-              "why": "The single best explanation of what an LLM actually is. Worth every minute."
+              "why": "The single clearest explanation of what an LLM is. Required."
             },
             {
               "kind": "reflection",
-              "title": "Write 3 sentences",
-              "body": "In your own words: (1) What is an LLM? (2) What can it NOT do? (3) Name 3 problems you'd want to solve with one. No googling."
+              "title": "Three sentences, no googling",
+              "body": "(1) What is an LLM in your own words? (2) What can it NOT do reliably? (3) Why is 'temperature 0' useful for a translator?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Set up Python the right way",
-          "summary": "If your Python is broken, nothing else this week will work. Get it solid.",
+          "title": "Python + venv setup (production-shaped)",
+          "summary": "If your environment is sloppy, every bug after this is harder.",
           "items": [
             {
               "kind": "video",
@@ -68,167 +68,163 @@
               "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "60-second mental refresh on what Python is and isn't."
+              "why": ""
             },
             {
               "kind": "video",
-              "title": "Install Python + VSCode + venv (any OS)",
-              "url": "https://www.youtube.com/results?search_query=install+python+3.12+vscode+venv+windows+mac+linux+2025",
-              "duration_min": 15,
+              "title": "Python venv + pip in 10 minutes",
+              "url": "https://www.youtube.com/results?search_query=python+venv+pip+tutorial+2024+windows+mac+linux",
+              "duration_min": 10,
               "creator": "various",
-              "why": "Pick a video that matches your OS."
+              "why": "Pick the one matching your OS."
             },
             {
               "kind": "exercise",
-              "title": "Create your project folder",
-              "body": "Make a folder called `forge-ai-week1/`. Inside, run `python -m venv .venv`, activate it, and `pip install openai python-dotenv`. Commit a README.md to GitHub with one sentence: what you plan to build."
+              "title": "Project skeleton",
+              "body": "Create folder `polyglot/`. Inside: `python -m venv .venv` + activate. `pip install openai python-dotenv`. Create files: `main.py`, `.env.example` (with `OPENAI_API_KEY=`), `.gitignore` (with `.venv/` and `.env`), `README.md`. Push the repo named `polyglot` to GitHub."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Your first API call",
-          "summary": "The moment AI stops being magic and becomes a function call.",
+          "title": "Get an OpenAI key and make your first call",
+          "summary": "Magic becomes plumbing. This is the moment.",
           "items": [
             {
-              "kind": "video",
-              "title": "OpenAI API: Quickstart in 10 minutes",
-              "url": "https://www.youtube.com/results?search_query=openai+api+python+quickstart+2025",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Pick a 2024 or 2025 video — the SDK changed."
+              "kind": "reading",
+              "title": "OpenAI quickstart — official",
+              "url": "https://platform.openai.com/docs/quickstart",
+              "why": "Bookmark this. You'll come back 50 times."
             },
             {
-              "kind": "reading",
-              "title": "OpenAI Quickstart — official docs",
-              "url": "https://platform.openai.com/docs/quickstart",
-              "why": "Bookmark this. You'll come back to it 50 times."
+              "kind": "video",
+              "title": "OpenAI Python SDK — first request (2024+)",
+              "url": "https://www.youtube.com/results?search_query=openai+python+sdk+quickstart+2024+chat+completion",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Hello, AI",
-              "body": "Get an OpenAI API key (free tier is fine). Store it in a `.env` file. Write `hello.py` that asks GPT-4o-mini 'What is 2+2 in haiku form?' and prints the answer. Commit it."
+              "title": "hello.py",
+              "body": "Get an OpenAI API key from platform.openai.com (Free $5 credits are plenty). Put it in `.env`. Write `hello.py` that loads the key with `python-dotenv`, calls `gpt-4o-mini` with the prompt 'Translate \"Hello, how are you?\" to Spanish. Reply with ONLY the translation.', and prints the result. Expected output: `Hola, ¿cómo estás?`. Commit `hello.py`."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Prompting — the only skill that compounds",
-          "summary": "A bad prompt with GPT-5 is worse than a great prompt with GPT-3.5. Learn the shape.",
+          "title": "System prompts — the only prompting skill you need today",
+          "summary": "System prompt = the model's job description. Make it specific.",
           "items": [
             {
               "kind": "video",
-              "title": "Prompt Engineering for Devs (full course)",
-              "url": "https://www.youtube.com/results?search_query=prompt+engineering+for+developers+deeplearning.ai",
-              "duration_min": 60,
-              "creator": "DeepLearning.AI",
-              "why": "Free official course. Skim, don't binge."
+              "title": "System vs user prompts explained",
+              "url": "https://www.youtube.com/results?search_query=openai+system+prompt+vs+user+prompt+explained",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
             },
             {
               "kind": "exercise",
-              "title": "System prompt vs user prompt",
-              "body": "Write a script that takes a sentence in English and translates it to a language YOU pick (Spanish, Wolof, Tagalog, Yoruba, anything). Use a system prompt that says 'You are a professional translator for [language]. Reply with ONLY the translation, no explanation.' Test with 5 sentences."
-            },
-            {
-              "kind": "reflection",
-              "title": "What broke?",
-              "body": "Where did the translation get weird? Slang? Idioms? Tone? Write 3 specific examples in your README."
+              "title": "Polyglot v0.1 — translate.py",
+              "body": "Create `translate.py`. Define a constant `SYSTEM_PROMPT` (a Python string):\n\n  'You are a professional English-to-Spanish translator. Translate the user'\n  'input from English to Spanish. Reply with ONLY the Spanish translation —'\n  'no preamble, no explanation, no English. Preserve tone (formal stays formal).'\n\nThen `translate.py` should:\n  1. Read the English sentence from `sys.argv[1]`\n  2. Call gpt-4o-mini with temperature=0 (deterministic)\n  3. Print only the Spanish result\n\nTest: `python translate.py \"The meeting is at 3pm tomorrow.\"` should print something like `La reunión es mañana a las 3 de la tarde.`"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Structured output — making the LLM speak JSON",
-          "summary": "Real apps don't read paragraphs. They read JSON. This is the unlock.",
+          "title": "Structured output — making it speak JSON",
+          "summary": "Real apps consume JSON, not paragraphs. This is the unlock.",
           "items": [
             {
               "kind": "video",
-              "title": "Structured outputs with OpenAI",
-              "url": "https://www.youtube.com/results?search_query=openai+structured+outputs+json+mode+tutorial",
-              "duration_min": 15,
+              "title": "OpenAI structured outputs / JSON mode",
+              "url": "https://www.youtube.com/results?search_query=openai+structured+outputs+json+mode+2024+python",
+              "duration_min": 12,
               "creator": "various",
-              "why": "Look for a video from late 2024 or 2025."
+              "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Translator v2 — return JSON",
-              "body": "Modify your translator so the output is `{\"translation\": \"...\", \"confidence\": \"high|medium|low\", \"notes\": \"...\"}`. Print only the JSON. Parse it with `json.loads` and access fields."
+              "title": "Polyglot v0.2 — structured JSON",
+              "body": "Modify `translate.py`. Instead of plain text, make the model return JSON of shape:\n  { \"translation\": \"...\", \"confidence\": \"high|medium|low\", \"notes\": \"...\" }\n\nUse `response_format={'type': 'json_object'}` and tell the model in the system prompt to reply with that exact JSON. Parse with `json.loads`. Print each field on its own line. Test with: 'I want to break a leg.' (idiom — should set confidence to medium/low and explain in notes)."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Error handling, costs, and rate limits",
-          "summary": "What separates a toy from a product: it doesn't crash, doesn't bankrupt you.",
+          "title": "Cost tracking + error handling",
+          "summary": "A toy crashes. A product handles failure and tells you what it costs.",
           "items": [
             {
               "kind": "video",
-              "title": "OpenAI rate limits + cost optimization",
-              "url": "https://www.youtube.com/results?search_query=openai+api+rate+limits+cost+tutorial+python",
-              "duration_min": 12,
+              "title": "OpenAI API cost optimization for beginners",
+              "url": "https://www.youtube.com/results?search_query=openai+api+cost+tracking+python+tutorial",
+              "duration_min": 10,
               "creator": "various",
-              "why": "Real engineering, not hype."
+              "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Make it production-shaped",
-              "body": "Wrap your translator in try/except. Print the cost per call (use `response.usage`). If the user enters >500 chars, refuse. Commit."
+              "title": "Polyglot v0.3 — production-shaped",
+              "body": "Wrap the API call in `try/except openai.APIError`. On error, print a clear message and exit 1. After every successful call, read `response.usage` and print: `→ cost: $0.000089 (input: 42 tok, output: 18 tok)`. Use the prices at platform.openai.com/docs/pricing for gpt-4o-mini (currently ~$0.15/1M input tokens, ~$0.60/1M output). Refuse inputs longer than 500 characters with a clear error."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship your passport project",
-          "summary": "Today you build the thing you'll show in interviews.",
+          "title": "Ship Polyglot v0.1 + write the README",
+          "summary": "Half the project is the README. Recruiters read it first.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Build the translator app",
-              "body": "Pick ONE language you actually care about. Build a command-line translator that:\n  1. Loads a language list from a JSON file (English, your language, optionally 1-2 more)\n  2. Lets the user paste a sentence\n  3. Returns a structured JSON response with translation + confidence + cultural notes\n  4. Has a `--help` flag\n  5. Has a 1-paragraph README explaining WHY you chose this language\nCommit to GitHub. Tag the release v1.0. The README is half the project — explain who you're building for."
+              "title": "Final acceptance — Polyglot v0.1",
+              "body": "Polyglot v0.1 is done when ALL of these pass:\n  □ `python translate.py \"<English sentence>\"` returns valid Spanish JSON\n  □ Cost line printed after every call\n  □ Error caught and printed cleanly if API key is missing or invalid\n  □ Inputs > 500 chars are refused\n  □ README has: 1-paragraph intro, install steps, usage example, screenshot     of a successful run, 'Roadmap' section listing v0.2-v1.0 features\n  □ Repo pushed to GitHub with a v0.1 tag (`git tag v0.1 && git push --tags`)\n  □ 10 sample English sentences in `tests/samples.txt` (committed)\n\nTest all 10 sentences and paste the output as a code block in the README."
             },
             {
               "kind": "reflection",
-              "title": "What would you charge for this?",
-              "body": "If you sold this as a $5/month app, who would buy it? What feature would they pay $20 for?"
+              "title": "The arc ahead",
+              "body": "Polyglot v0.1 is your first AI Engineering artifact. Weeks 2-6 will turn it into a web app (Streamlit), add an eval suite that grades 100 translations against a ground truth, add 4 more languages, and add prompt-injection defences. By Week 6 you'll have a deployable v1.0."
             }
           ]
         }
       ],
       "topics": [
-        "Python venvs and dotenv",
-        "OpenAI Python SDK 1.x",
-        "System prompts, user prompts, few-shot examples",
-        "Structured outputs (JSON mode)",
-        "Cost tracking with response.usage",
-        "Error handling for API failures and rate limits",
-        "Choosing the right model (4o-mini vs 4o vs other vendors)"
+        "Python venv + python-dotenv + pip",
+        "OpenAI Python SDK 1.x (chat.completions.create)",
+        "System prompt vs user prompt — when each one matters",
+        "Temperature, model selection (gpt-4o-mini for cost-sensitive)",
+        "Structured outputs / JSON mode + json.loads parsing",
+        "Cost tracking via response.usage",
+        "Defensive error handling with try/except"
       ],
       "tasks": [
-        "Install Python 3.12+ and create a clean venv with openai + python-dotenv installed",
-        "Get an OpenAI API key, store it in .env, and verify it works with a hello.py",
-        "Build a translator script that takes English and outputs your chosen target language",
-        "Refactor v1 to return structured JSON (translation + confidence + notes)",
-        "Add error handling, length limits, and per-call cost printing",
-        "Write a README that explains who the app is for and why this language"
+        "Create the `polyglot/` repo with venv + .env + .gitignore",
+        "Get an OpenAI key and successfully run hello.py returning Spanish text",
+        "Write translate.py that takes argv[1] and prints Spanish translation",
+        "Upgrade to structured JSON output with confidence + notes",
+        "Add cost printing + error handling + 500-char input limit",
+        "Write a production-grade README with usage example + roadmap",
+        "Tag the release v0.1 and push to GitHub"
       ],
-      "project": "Build a CLI translator for a language YOU care about — your mother tongue, a regional dialect, a creole, anything underserved by Google Translate. Spec: JSON config of supported languages, structured JSON output (translation + confidence + cultural notes), error handling, cost-per-call printed, README that explains the WHY behind your language choice. This is your portfolio piece — if you pick a language with 50M speakers and no good translator, this app is a real product, not a toy.",
+      "project": "Polyglot v0.1 — an English-to-Spanish CLI translator. Specific deliverables: a `translate.py` that reads `sys.argv[1]`, calls gpt-4o-mini with temperature 0, returns JSON `{translation, confidence, notes}`, prints the per-call cost, errors out cleanly on missing key / too-long input, and a README documenting all of it. Repo: `polyglot` on your GitHub, tagged v0.1. This is the foundation of a 6-week build that turns into your first AI portfolio piece.",
       "exercises": [
-        "Translate the same English sentence 5 times — what's identical, what drifts?",
-        "Add a 'tone' parameter — formal / casual / poetic — and test the difference",
-        "Compare GPT-4o-mini vs GPT-4o cost and quality on 10 sentences",
-        "Add a fallback: if confidence is 'low', also return the original English"
+        "Add `--language es|fr|de|ja` flag to translate to one of 4 languages (only es is required this week)",
+        "Run the same sentence 5x at temperature=1.0 — does the output drift?",
+        "Try the same sentence with `gpt-4o-mini` vs `gpt-4o` — compare cost and quality",
+        "Add a `--explain` flag that returns the English-back-translation alongside, for verification"
       ],
       "questions": [
-        "Why did you pick this language? Who specifically would use this?",
-        "Where does the model fail — slang, idioms, profanity, technical terms?",
-        "What does it cost per 1000 translations at GPT-4o-mini prices?",
-        "If you had 1 hour to make this app 10x more useful, what would you add?"
+        "Why temperature=0 for a translator? When would you raise it?",
+        "What's the cost per 1000 translations at gpt-4o-mini prices? Show your math.",
+        "Where does the model still fail — slang, idioms, profanity, regional words?",
+        "What's the smallest paid SaaS Polyglot could become at v1.0?"
       ],
       "outputs": [
-        "GitHub repo with the translator script + JSON config + README",
-        "Working `.env.example` so others can clone-and-run",
-        "10 example translations committed as test fixtures",
-        "A README paragraph explaining WHY this language"
+        "GitHub repo `polyglot` with v0.1 tag",
+        "Working `translate.py` + `hello.py`",
+        "README with screenshot + 10 tested sentences",
+        "`.env.example` so others can clone-and-run"
       ]
     },
     {

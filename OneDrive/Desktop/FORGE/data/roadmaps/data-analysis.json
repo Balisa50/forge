@@ -35,182 +35,173 @@
           "note": "Reference"
         }
       ],
-      "context": "Data Analysis is the daily-driver job: SQL, Excel/Sheets, dashboards. Week 1 you get fluent in spreadsheets, learn the SQL that covers 80% of real queries, and produce one polished one-page dashboard. The skill: turning a table into a decision.",
+      "context": "You're analyzing Sample Superstore — the canonical dataset every BI analyst learns on. It's a fictional retailer's 4 years of orders across 3 segments and 17 sub-categories. By Sunday you ship a 1-page Excel/Sheets dashboard + a 1-page PDF memo answering 3 specific assigned questions. Why Superstore? Because it's universal — every analyst interview uses something like this. Tableau, Power BI, Excel, and Sheets all have it as a sample. Master it and the rest is variations.",
       "days": [
         {
           "number": 1,
           "title": "What does an analyst actually do all day?",
-          "summary": "Pulling numbers, answering questions, fighting bad assumptions.",
+          "summary": "Pull numbers. Answer questions. Slay bad assumptions.",
           "items": [
             {
               "kind": "video",
-              "title": "Day in the life — Data Analyst",
-              "url": "https://www.youtube.com/results?search_query=day+in+the+life+data+analyst+real",
+              "title": "Day in the life of a Data Analyst",
+              "url": "https://www.youtube.com/results?search_query=day+in+the+life+data+analyst+real+2024",
               "duration_min": 12,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "reflection",
-              "title": "Pick your domain",
-              "body": "What domain do you want to analyze? E-commerce sales, healthcare, sports, finance, education, climate, music? Pick one. Stick with it Week 1."
+              "title": "The questions",
+              "body": "By Sunday you'll answer (with Sample Superstore data):\n  Q1. Which sub-category has the highest profit margin? Lowest?\n  Q2. Which region had the strongest year-over-year sales growth in the latest year?\n  Q3. Is the Furniture segment profitable overall? Where does its profit come from?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Excel / Google Sheets like a pro",
-          "summary": "Spreadsheets are the universal language of business.",
+          "title": "Get the Superstore data",
+          "summary": "Specific file. Specific URL. No hunting.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Sample Superstore — Excel download",
+              "url": "https://community.tableau.com/s/question/0D54T00000CWeX8SAL/sample-superstore-sales-excelxls",
+              "why": "Or just search 'Sample Superstore xlsx' — it's everywhere."
+            },
+            {
+              "kind": "exercise",
+              "title": "Open it up",
+              "body": "Download `Sample - Superstore.xls` (or .xlsx). Open in Excel or Google Sheets. Verify there are 3 sheets: Orders, Returns, People. Look at Orders — ~10,000 rows, columns like Order Date, Region, Segment, Category, Sub-Category, Sales, Profit, Discount."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Excel/Sheets fundamentals — the 7 formulas",
+          "summary": "SUMIFS, COUNTIFS, AVERAGEIFS, XLOOKUP, IF, IFS, ROUND.",
           "items": [
             {
               "kind": "video",
               "title": "Excel essentials — Leila Gharani",
-              "url": "https://www.youtube.com/results?search_query=leila+gharani+excel+beginner+tutorial",
+              "url": "https://www.youtube.com/results?search_query=leila+gharani+excel+beginner+tutorial+2024",
               "duration_min": 45,
               "creator": "Leila Gharani",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "The big formulas",
-              "body": "Practice: SUMIF, COUNTIF, AVERAGEIF, VLOOKUP (or XLOOKUP), INDEX/MATCH, IF, IFS. Build a tiny tracker for something you do this week (workouts, expenses, hours studied)."
+              "title": "Practice the 7",
+              "body": "On a fresh sheet next to Orders, compute:\n  - Total Sales of 2023: `=SUMIFS(Orders!Sales, Orders!OrderDate, \">=2023-01-01\", Orders!OrderDate, \"<=2023-12-31\")`\n  - Count of orders in 'West' region\n  - Average Discount given\n  - XLOOKUP a customer ID → customer name\nAdd 1 IF formula categorizing margin as 'Healthy' (>20%), 'Thin' (5-20%), 'Loss' (<5%) for each row."
             }
           ]
         },
         {
-          "number": 3,
-          "title": "Pivot tables — the analyst's superpower",
-          "summary": "1000 rows → 1 actionable insight in 30 seconds.",
+          "number": 4,
+          "title": "Pivot tables — the superpower",
+          "summary": "10000 rows → 1 insight in 30 seconds.",
           "items": [
             {
               "kind": "video",
               "title": "Pivot tables in 20 minutes — Leila Gharani",
-              "url": "https://www.youtube.com/results?search_query=leila+gharani+pivot+tables",
+              "url": "https://www.youtube.com/results?search_query=leila+gharani+pivot+tables+tutorial",
               "duration_min": 20,
               "creator": "Leila Gharani",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Pivot on your data",
-              "body": "Find a CSV in your chosen domain (Kaggle, your gov't stats office). Load into Sheets/Excel. Build 3 different pivot tables answering 3 different questions."
-            }
-          ]
-        },
-        {
-          "number": 4,
-          "title": "SQL — the language of data",
-          "summary": "If you can write 10 SQL queries you can do 90% of analyst work.",
-          "items": [
-            {
-              "kind": "video",
-              "title": "SQL crash course — 1 hour",
-              "url": "https://www.youtube.com/results?search_query=sql+crash+course+beginner+full",
-              "duration_min": 60,
-              "creator": "various",
-              "why": ""
-            },
-            {
-              "kind": "exercise",
-              "title": "SQL on real data",
-              "body": "Use sqlite-online.com or DB Browser for SQLite. Import your dataset. Write: SELECT, WHERE, GROUP BY, JOIN, ORDER BY, LIMIT, AVG, SUM. Save 10 queries to `queries.sql` and commit."
+              "title": "Pivot for Q1",
+              "body": "Q1: Which sub-category has the highest / lowest profit MARGIN?\nBuild pivot:\n  Rows: Sub-Category\n  Values: SUM of Sales, SUM of Profit\n  Calculated field: Margin = Profit / Sales\n  Sort by Margin descending.\nHighest = ? Lowest = ? Document the answer in a notes file."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Visualize for non-technical people",
-          "summary": "Beautiful chart < clear chart. Clear chart < truthful chart.",
+          "title": "Answer Q2 — Region YoY growth",
+          "summary": "Compare years. Find the leader.",
           "items": [
             {
-              "kind": "video",
-              "title": "Data viz principles — Storytelling with Data",
-              "url": "https://www.youtube.com/results?search_query=storytelling+with+data+viz+tutorial",
-              "duration_min": 30,
-              "creator": "various",
-              "why": ""
-            },
-            {
               "kind": "exercise",
-              "title": "3 charts that don't lie",
-              "body": "Make 3 charts answering 3 questions from your data. For each, force yourself to write a 1-sentence caption explaining what a non-analyst should take away."
+              "title": "Region YoY pivot",
+              "body": "Build pivot:\n  Rows: Region\n  Columns: YEAR(Order Date)  — group by year\n  Values: SUM of Sales\n  Add a column: latest year ÷ previous year - 1 (growth %)\nWhich region has highest growth in latest year? Document."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Dashboards — the deliverable",
-          "summary": "Slack messages get lost. Dashboards live forever.",
+          "title": "Answer Q3 — Furniture profitability deep-dive",
+          "summary": "Sometimes the answer is 'yes but barely, because of X'.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Furniture investigation",
+              "body": "Q3: Is Furniture profitable overall? Where does its profit come from?\nFilter to Category = Furniture. Pivot:\n  Rows: Sub-Category\n  Values: SUM of Profit\nYou'll see Tables loses money, Bookcases breaks even, Chairs makes profit, Furnishings is the heroine. Document with numbers. Now slice by Region — is Furniture more profitable in some regions?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship — the 1-page dashboard + PDF memo",
+          "summary": "The deliverable that lands you the job.",
           "items": [
             {
               "kind": "video",
-              "title": "Build a Sheets dashboard from scratch",
-              "url": "https://www.youtube.com/results?search_query=google+sheets+dashboard+tutorial+2024",
+              "title": "Build a 1-page dashboard in Excel/Sheets",
+              "url": "https://www.youtube.com/results?search_query=google+sheets+dashboard+one+page+tutorial",
               "duration_min": 30,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "Dashboard v1",
-              "body": "Build a one-page dashboard in Sheets or Excel. 4 KPIs at the top (big numbers). 3 charts below. 1 data table at the bottom. Period filter (this month / last month) using a dropdown. Lock the layout."
-            }
-          ]
-        },
-        {
-          "number": 7,
-          "title": "Ship the passport report",
-          "summary": "An analyst's portfolio piece is a single page that drives a decision.",
-          "items": [
-            {
-              "kind": "exercise",
-              "title": "The one-pager",
-              "body": "Take your dashboard and write a 1-page memo above it. Title: 'What I found in [your dataset]'. Format:\n  - **The question** (1 sentence)\n  - **The answer** (1 sentence, direct)\n  - **3 key numbers** with brief context\n  - **3 charts** with captions\n  - **Recommendation** (what should somebody DO based on this?)\nExport as PDF. Commit the source + the PDF to GitHub. This is a real analyst deliverable."
+              "title": "Final acceptance — Superstore v0.1",
+              "body": "Build a single sheet called `Dashboard`:\n  - Title row\n  - 4 KPI cards: Total Sales (all years), Total Profit, Profit Margin,     Year-over-Year Sales Growth\n  - 1 chart: monthly sales trend (line chart)\n  - 1 chart: sales by region (bar chart)\n  - 1 table: top 5 / bottom 5 sub-categories by profit margin\n  - A date filter at top (works via slicer or named range)\nThen write a 1-page memo (Word/Google Doc), `Superstore-Memo.pdf`:\n  # Sample Superstore — What the data tells leadership\n  ## Headline\n  One sentence answer.\n  ## Q1: Margin leaders & laggards\n  Names + numbers + 1 recommendation.\n  ## Q2: Regional growth\n  Numbers + 1 recommendation.\n  ## Q3: Furniture profitability\n  Honest answer + 1 recommendation.\n  ## What I'd do next\n  3 bullets.\n\nPass criteria:\n  □ Dashboard sheet built with 4 KPIs + 3 charts + filter\n  □ Q1, Q2, Q3 all answered with specific numbers\n  □ PDF memo exported, formatted as 1-page\n  □ GitHub repo `superstore-analysis` with .xlsx + .pdf + screenshots of dashboard\n  □ README links the PDF + screenshots the dashboard\n  □ Tag v0.1"
             },
             {
               "kind": "reflection",
-              "title": "Would your boss act on this?",
-              "body": "Pretend you're a manager who just got this PDF. Would you change anything tomorrow? If no — your insight isn't strong enough. Why?"
+              "title": "What would your boss do tomorrow?",
+              "body": "If your VP read the memo over breakfast, what's the ONE action they'd take? If they'd take none — your recommendations aren't sharp enough. Why?"
             }
           ]
         }
       ],
       "topics": [
-        "Excel/Sheets essentials — SUMIF, VLOOKUP/XLOOKUP, IF, INDEX/MATCH",
-        "Pivot tables and slicers",
-        "SQL — SELECT, WHERE, GROUP BY, JOIN, aggregates",
-        "Visualization principles — clarity over decoration",
-        "Building dashboards in Sheets/Excel",
-        "Writing 1-page analyst memos",
-        "Choosing the right chart for the question"
+        "Excel/Sheets formulas — SUMIFS, COUNTIFS, AVERAGEIFS, XLOOKUP, IF, IFS",
+        "Pivot tables and calculated fields",
+        "Computing margin = profit / sales",
+        "Year-over-year growth calculation",
+        "Multi-dimensional pivots (rows + cols)",
+        "Filtering and slicing within categories",
+        "1-page dashboard design — KPIs, charts, filter",
+        "Writing 1-page analyst memos"
       ],
       "tasks": [
-        "Practice 7+ essential Excel/Sheets formulas",
-        "Build 3 pivot tables on a real dataset",
-        "Set up a SQL playground (SQLite browser or sqlite-online)",
-        "Write 10 SQL queries against your dataset",
-        "Produce 3 clear charts with captions",
-        "Build a one-page dashboard",
-        "Write + export a 1-page PDF analyst memo"
+        "Download Sample Superstore .xls",
+        "Build a working sheet with the 7 essential formulas",
+        "Build a pivot answering Q1 (margin leaders/laggards by sub-category)",
+        "Build a pivot answering Q2 (regional YoY growth)",
+        "Build a pivot answering Q3 (Furniture profitability breakdown)",
+        "Build a 1-page Dashboard sheet (4 KPIs, 3 charts, filter)",
+        "Export a 1-page PDF memo with all 3 answers + recommendations"
       ],
-      "project": "Pick a domain you care about (sports, e-commerce, climate, education). Find a real dataset. Build a 1-page dashboard + 1-page memo that someone could USE to make a decision. The PDF is the portfolio piece — name it well, format it well, commit it to GitHub. This is exactly what an interviewer will ask you to do.",
+      "project": "Sample Superstore Analysis v0.1 — a 1-page Excel/Sheets dashboard + a 1-page PDF memo answering 3 assigned questions: profit margin leaders/laggards by sub-category, regional YoY sales growth, Furniture segment profitability. Repo: `superstore-analysis` on GitHub. Tagged v0.1.",
       "exercises": [
-        "Add a year-over-year comparison row to your dashboard",
-        "Find one number that contradicts your headline finding — explain it",
-        "Rewrite your headline 5 different ways — which is the most honest?",
-        "Pretend the dataset is missing 30% of rows — would your answer change?"
+        "Add a 'Discount vs Profit' scatter plot — does discount eat profit?",
+        "Build a pivot of repeat-buyer % by Segment — who comes back?",
+        "Compute customer lifetime value (sum of Sales per Customer ID, top 10)",
+        "Reformat your memo as a 5-slide PowerPoint deck — same content, exec-friendly"
       ],
       "questions": [
-        "Who's the decision-maker reading this memo?",
-        "What's the one action they could take after reading it?",
-        "Where did you cherry-pick? Be honest with yourself.",
-        "What would a skeptical analyst ask you to defend?"
+        "Why is profit MARGIN more useful than raw profit for spotting problem sub-categories?",
+        "What's the unit you're measuring growth in — orders, sales, or customers? Why?",
+        "Where did you make a 'reasonable' choice that another analyst might question?",
+        "If Sample Superstore is fake — what real datasets would have the same shape?"
       ],
       "outputs": [
-        "GitHub repo with the dataset + queries + dashboard file",
-        "1-page PDF memo committed",
-        "10 SQL queries in `queries.sql`",
-        "Screenshot of the dashboard in the README"
+        "`superstore-analysis` GitHub repo tagged v0.1",
+        ".xlsx with Orders, Pivots, Dashboard sheets",
+        "Superstore-Memo.pdf (1 page)",
+        "Dashboard screenshot in README"
       ]
     },
     {
