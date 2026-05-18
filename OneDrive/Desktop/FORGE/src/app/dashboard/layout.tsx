@@ -32,6 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!dbUser.onboardingDone) redirect("/onboarding");
 
   const visibility = effectiveVisibility(mentorLinks.map((l) => l.visibility));
+  const hasMentor = mentorLinks.length > 0;
 
   return (
     <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex" }}>
@@ -42,6 +43,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           orgRole={membership?.role ?? null}
           isAlsoLearning={dbUser.isAlsoLearning}
           visibility={visibility}
+          hasMentor={hasMentor}
         />
         <main className="dashboard-main">
           {children}

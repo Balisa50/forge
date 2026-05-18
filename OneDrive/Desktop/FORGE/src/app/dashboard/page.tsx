@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame } from "lucide-react";
+import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass } from "lucide-react";
 
 function getDaysRemaining(targetDate: Date | null | undefined): number | null {
   if (!targetDate) return null;
@@ -87,10 +87,56 @@ export default async function DashboardPage() {
     : null;
   const isReturning = daysSinceLastCheckin !== null && daysSinceLastCheckin >= 3;
 
+  // ── Mentor-controlled mode ────────────────────────────────────────────
+  // If user has any active MentorLink, the dashboard becomes "mentor releases
+  // your weeks". Auto-close any task whose deadline has passed since last load.
+  const mentorLinks = await prisma.mentorLink.findMany({
+    where: { menteeId: userId, isActive: true },
+    include: { mentor: { select: { id: true, name: true } } },
+  });
+  const hasMentor = mentorLinks.length > 0;
+  const primaryMentor = mentorLinks[0]?.mentor ?? null;
+
+  if (hasMentor && activeRoadmap) {
+    const now = new Date();
+    const expired = activeRoadmap.tracks
+      .flatMap((t) => t.phases.flatMap((p) => p.tasks))
+      .filter((t) => t.deadline && t.deadline < now && !t.closedAt && t.status !== "verified")
+      .map((t) => t.id);
+    if (expired.length > 0) {
+      await prisma.task.updateMany({
+        where: { id: { in: expired } },
+        data: { closedAt: now },
+      });
+      // Refresh in-memory copy so the UI reflects the change
+      for (const track of activeRoadmap.tracks) {
+        for (const phase of track.phases) {
+          for (const task of phase.tasks) {
+            if (expired.includes(task.id)) task.closedAt = now;
+          }
+        }
+      }
+    }
+  }
+
   // Find the current task (first non-verified, non-locked task)
   const currentTask = activeRoadmap?.tracks
     .flatMap((t) => t.phases.flatMap((p) => p.tasks.map((task) => ({ ...task, trackTitle: t.title, trackColor: t.color, phaseTitle: p.title }))))
-    .find((t) => t.status === "in_progress" || t.status === "available");
+    .find((t) => (t.status === "in_progress" || t.status === "available") && !t.closedAt);
+
+  // Mentee-specific: the released week (any task that has been released by mentor)
+  const releasedWeek = hasMentor
+    ? activeRoadmap?.tracks
+        .flatMap((t) => t.phases.flatMap((p) => p.tasks.map((task) => ({ ...task, trackTitle: t.title, trackColor: t.color }))))
+        .find((t) => t.releasedAt && t.status !== "verified" && !t.closedAt)
+    : null;
+  // Most-recently-closed task (so we can show a "closed — ask mentor to extend" card)
+  const lastClosed = hasMentor
+    ? activeRoadmap?.tracks
+        .flatMap((t) => t.phases.flatMap((p) => p.tasks.map((task) => ({ ...task, trackTitle: t.title, trackColor: t.color }))))
+        .filter((t) => t.closedAt && t.status !== "verified")
+        .sort((a, b) => (b.closedAt!.getTime() - a.closedAt!.getTime()))[0]
+    : null;
 
   // Compute overall roadmap progress
   const allTasks = activeRoadmap?.tracks.flatMap((t) => t.phases.flatMap((p) => p.tasks)) ?? [];
@@ -99,6 +145,105 @@ export default async function DashboardPage() {
   const overallPct = totalTasks > 0 ? Math.round((verifiedTasks / totalTasks) * 100) : 0;
 
   // Not used — analytics page handles detailed scores
+
+  // ── MENTEE MODE: mentor controls every week release ────────────────
+  if (hasMentor) {
+    return (
+      <div>
+        <div style={{ marginBottom: "2rem" }}>
+          <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
+            Welcome, {user?.name?.split(" ")[0]}
+          </h1>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem" }}>
+            Mentored by <span style={{ color: "var(--accent)" }}>{primaryMentor?.name ?? "your mentor"}</span>
+          </p>
+        </div>
+
+        {/* Current released week */}
+        {releasedWeek && (() => {
+          const deadlineDate = releasedWeek.deadline ? new Date(releasedWeek.deadline) : null;
+          const msLeft = deadlineDate ? deadlineDate.getTime() - Date.now() : null;
+          const daysLeft = msLeft !== null ? Math.floor(msLeft / 86_400_000) : null;
+          const hoursLeft = msLeft !== null ? Math.floor((msLeft / 3_600_000) % 24) : null;
+          const urgent = daysLeft !== null && daysLeft <= 1;
+          return (
+            <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: urgent ? "var(--red)" : "var(--accent)", background: urgent ? "rgba(239,68,68,0.05)" : "rgba(245,158,11,0.05)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                <Zap size={18} color={urgent ? "var(--red)" : "var(--accent)"} />
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.15em", color: urgent ? "var(--red)" : "var(--accent)" }}>
+                  Released by your mentor
+                </span>
+              </div>
+              <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>{releasedWeek.title}</h2>
+              {releasedWeek.detail && (
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1rem", maxWidth: 700 }}>
+                  {releasedWeek.detail.slice(0, 240)}{releasedWeek.detail.length > 240 ? "…" : ""}
+                </p>
+              )}
+              {deadlineDate && (
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.875rem", borderRadius: 8, background: urgent ? "rgba(239,68,68,0.1)" : "rgba(245,158,11,0.1)", border: `1px solid ${urgent ? "rgba(239,68,68,0.3)" : "rgba(245,158,11,0.3)"}`, marginBottom: "1rem" }}>
+                  <Hourglass size={14} color={urgent ? "var(--red)" : "var(--accent)"} />
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: urgent ? "var(--red)" : "var(--accent)", fontWeight: 600 }}>
+                    {daysLeft !== null && daysLeft >= 0
+                      ? <>Closes in <strong>{daysLeft}d {hoursLeft}h</strong> · {deadlineDate.toLocaleDateString()}</>
+                      : "Deadline passed"}
+                  </span>
+                </div>
+              )}
+              <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                  <ArrowRight size={14} /> Open this week
+                </Link>
+                <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                  Message mentor
+                </Link>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Closed-week card */}
+        {!releasedWeek && lastClosed && (
+          <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: "var(--red)", background: "rgba(239,68,68,0.05)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+              <Lock size={18} color="var(--red)" />
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--red)" }}>
+                Closed by deadline
+              </span>
+            </div>
+            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.25rem", marginBottom: "0.5rem" }}>{lastClosed.title}</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", marginBottom: "1rem" }}>
+              This week closed on {lastClosed.closedAt && new Date(lastClosed.closedAt).toLocaleDateString()}. You can't access the content until your mentor extends the deadline or reopens it.
+            </p>
+            <Link href="/dashboard/notes" className="forge-btn forge-btn-primary">Ask {primaryMentor?.name?.split(" ")[0] ?? "your mentor"} to extend</Link>
+          </div>
+        )}
+
+        {/* Waiting state */}
+        {!releasedWeek && !lastClosed && (
+          <div className="forge-panel" style={{ padding: "3rem 1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
+            <Hourglass size={40} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
+            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Waiting for your first week</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 440, margin: "0 auto 1.5rem" }}>
+              {primaryMentor?.name ?? "Your mentor"} hasn&apos;t released any weeks yet. You&apos;ll see the work here the moment they do.
+            </p>
+            <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost">Message your mentor</Link>
+          </div>
+        )}
+
+        {/* Quick stats: weeks complete */}
+        {totalTasks > 0 && verifiedTasks > 0 && (
+          <div className="forge-panel" style={{ padding: "1.25rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+            <CheckCircle2 size={20} color="var(--green)" />
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Verified weeks</div>
+              <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.25rem", color: "var(--green)" }}>{verifiedTasks} / {totalTasks}</div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>

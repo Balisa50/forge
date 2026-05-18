@@ -55,6 +55,13 @@ export async function POST(req: NextRequest) {
   const groups = getPhaseGroups(curriculum.weeks);
   const trackColor = TRACK_COLOR_BY_SLUG[slug] ?? "#00c8ff";
 
+  // Mentee detection: if user has any active MentorLink as mentee, EVERY week
+  // starts locked — the mentor controls every release. Solo learners get the
+  // legacy chain (W1 available, rest locked).
+  const isMentee = !!(await prisma.mentorLink.findFirst({
+    where: { menteeId: session.user.id, isActive: true },
+  }));
+
   // Build the entire tree in one nested create so we get atomic insertion.
   const roadmap = await prisma.roadmap.create({
     data: {
@@ -80,9 +87,9 @@ export async function POST(req: NextRequest) {
                     resources: weekToTaskResources(week),
                     estimatedHours: parseCommitmentHours(week.commitment_hours),
                     sortOrder: weekIdx,
-                    // First task of first phase is immediately available, the rest
-                    // stay locked until the previous one passes verification.
-                    status: phaseIdx === 0 && weekIdx === 0 ? "available" : "locked",
+                    // For solo learners: W1 starts available. For mentees: EVERY
+                    // week is locked until the mentor releases it.
+                    status: !isMentee && phaseIdx === 0 && weekIdx === 0 ? "available" : "locked",
                   })),
                 },
               })),

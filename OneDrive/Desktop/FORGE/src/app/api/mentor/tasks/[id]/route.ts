@@ -1,34 +1,34 @@
 /**
  * PATCH /api/mentor/tasks/:id
- *   Body: { action: "unlock" | "verify" | "reopen", menteeId: string }
+ *   Body: {
+ *     action: "release" | "extend" | "close" | "unlock" | "verify" | "reopen",
+ *     menteeId: string,
+ *     deadlineAt?: string  // ISO date — required for release & extend
+ *   }
  *
- * Mentor super-powers on a mentee's task:
- *   - "unlock"  — set status from locked → available (mentor decided they're ready, skip prerequisites)
- *   - "verify"  — set status → verified (mentor signs off on the work, bypasses AI interrogation)
- *   - "reopen"  — set verified/failed → available (let the mentee redo it)
+ * Mentor-controlled lifecycle of a mentee's week. New flow (May 2026):
  *
- * Only the mentee's active mentor can call this. Each action is logged
- * as an automatic MentorComment so there's a paper trail.
+ *   locked  --(release w/ deadline)-->  available  --(deadline hit OR close)-->  closed
+ *      ^                                     |                                       |
+ *      |                                     v                                       v
+ *      +---------(reopen)---------- verified <--(verify)--+    (extend)-->  available again
+ *
+ *   - release  → mark week available + set releasedAt + deadlineAt
+ *   - extend   → push deadlineAt forward (clears closedAt if set)
+ *   - close    → manually close before deadline (sets closedAt = now)
+ *   - verify   → sign off as done (status=verified)
+ *   - reopen   → flip verified back to available (clears verifiedAt + closedAt)
+ *   - unlock   → legacy: bypass prerequisite chain (no deadline)
+ *
+ * Each action is logged as a MentorComment with kind="action_log".
  */
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendNotification } from "@/lib/notify";
 
-type Action = "unlock" | "verify" | "reopen";
-const ALLOWED: Action[] = ["unlock", "verify", "reopen"];
-
-const STATUS_FOR_ACTION: Record<Action, "available" | "verified"> = {
-  unlock: "available",
-  verify: "verified",
-  reopen: "available",
-};
-
-const NOTE_FOR_ACTION: Record<Action, string> = {
-  unlock: "Mentor unlocked this week early — you're ready, go.",
-  verify: "Mentor signed off on your work for this week. Verified without interrogation.",
-  reopen: "Mentor reopened this week — take another pass.",
-};
+type Action = "release" | "extend" | "close" | "unlock" | "verify" | "reopen";
+const ALLOWED: Action[] = ["release", "extend", "close", "unlock", "verify", "reopen"];
 
 export async function PATCH(
   req: NextRequest,
@@ -44,6 +44,7 @@ export async function PATCH(
   const body = await req.json().catch(() => ({}));
   const action = body.action as Action | undefined;
   const menteeId = body.menteeId as string | undefined;
+  const deadlineRaw = body.deadlineAt as string | undefined;
 
   if (!action || !ALLOWED.includes(action)) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -52,7 +53,23 @@ export async function PATCH(
     return NextResponse.json({ error: "menteeId required" }, { status: 400 });
   }
 
-  // Verify mentor link
+  // Parse deadline for release/extend
+  let deadlineAt: Date | null = null;
+  if (action === "release" || action === "extend") {
+    if (!deadlineRaw) {
+      return NextResponse.json({ error: "deadlineAt required for release/extend" }, { status: 400 });
+    }
+    const parsed = new Date(deadlineRaw);
+    if (Number.isNaN(parsed.getTime())) {
+      return NextResponse.json({ error: "Invalid deadlineAt" }, { status: 400 });
+    }
+    if (parsed.getTime() <= Date.now()) {
+      return NextResponse.json({ error: "Deadline must be in the future" }, { status: 400 });
+    }
+    deadlineAt = parsed;
+  }
+
+  // Verify mentor → mentee link
   const link = await prisma.mentorLink.findFirst({
     where: { mentorId, menteeId, isActive: true },
   });
@@ -66,31 +83,75 @@ export async function PATCH(
       id: taskId,
       phase: { track: { roadmap: { userId: menteeId } } },
     },
-    select: { id: true, status: true, title: true },
+    select: { id: true, status: true, title: true, deadline: true, closedAt: true },
   });
   if (!task) {
     return NextResponse.json({ error: "Task not in mentee's roadmap" }, { status: 400 });
   }
 
-  const newStatus = STATUS_FOR_ACTION[action];
+  // Compute updates per action
+  type Updates = {
+    status?: "available" | "verified";
+    deadline?: Date | null;
+    releasedAt?: Date | null;
+    releasedBy?: string | null;
+    closedAt?: Date | null;
+    verifiedAt?: Date | null;
+  };
+  let updates: Updates = {};
+  let note = "";
 
-  // Apply the status change + automatic note in one transaction.
+  switch (action) {
+    case "release":
+      updates = {
+        status: "available",
+        deadline: deadlineAt,
+        releasedAt: new Date(),
+        releasedBy: mentorId,
+        closedAt: null,
+      };
+      note = `Mentor released this week. Deadline ${deadlineAt!.toLocaleDateString()} — get it done before then.`;
+      break;
+    case "extend":
+      updates = { deadline: deadlineAt, closedAt: null };
+      // If it was closed and we extend, also re-open it
+      if (task.closedAt) updates.status = "available";
+      note = `Mentor extended the deadline to ${deadlineAt!.toLocaleDateString()}.`;
+      break;
+    case "close":
+      updates = { closedAt: new Date() };
+      note = "Mentor closed this week. You can't access it until they reopen or extend.";
+      break;
+    case "unlock":
+      updates = { status: "available", closedAt: null };
+      note = "Mentor unlocked this week early — you're ready, go.";
+      break;
+    case "verify":
+      updates = { status: "verified", verifiedAt: new Date(), closedAt: null };
+      note = "Mentor signed off on your work for this week. Verified.";
+      break;
+    case "reopen":
+      updates = { status: "available", verifiedAt: null, closedAt: null };
+      note = "Mentor reopened this week — take another pass.";
+      break;
+  }
+
+  // Apply atomically + log
   const [updated] = await prisma.$transaction([
     prisma.task.update({
       where: { id: taskId },
-      data: {
-        status: newStatus,
-        ...(newStatus === "verified" ? { verifiedAt: new Date() } : {}),
-        ...(action === "reopen" ? { verifiedAt: null } : {}),
+      data: updates,
+      select: {
+        id: true, status: true, deadline: true, releasedAt: true,
+        releasedBy: true, closedAt: true, verifiedAt: true,
       },
-      select: { id: true, status: true, verifiedAt: true },
     }),
     prisma.mentorComment.create({
       data: {
         taskId,
         mentorId,
         menteeId,
-        body: NOTE_FOR_ACTION[action],
+        body: note,
         authorRole: "mentor",
         kind: "action_log",
       },
@@ -101,7 +162,7 @@ export async function PATCH(
     recipientId: menteeId,
     actorId: mentorId,
     taskTitle: task.title,
-    payload: { action },
+    payload: { action, deadlineAt: deadlineAt?.toISOString() ?? null },
   });
 
   return NextResponse.json({ task: updated, action });

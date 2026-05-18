@@ -202,7 +202,10 @@ model Task {
   resources      String[]
   milestone      String?
   estimatedHours Float?
-  deadline       DateTime?
+  deadline       DateTime?  // when this released week auto-closes (mentor-set)
+  releasedAt     DateTime?  // when mentor released this week to the mentee
+  releasedBy     String?    // mentor user id who released it
+  closedAt       DateTime?  // when the week hard-locked (deadline hit or mentor closed)
   sortOrder      Int        @default(0)
   status         TaskStatus @default(locked)
   verifiedAt     DateTime?

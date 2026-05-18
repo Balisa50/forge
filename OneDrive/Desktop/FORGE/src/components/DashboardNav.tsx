@@ -38,6 +38,10 @@ interface DashboardNavProps {
   isAlsoLearning?: boolean;
   /** Mentor-controlled visibility flags. Filters which sections show. */
   visibility?: VisibilityMap;
+  /** True if the user is a mentee (has any active MentorLink). Drives the
+   *  "mentor releases your weeks" mode — Roadmap nav hidden, dashboard
+   *  becomes the only place. */
+  hasMentor?: boolean;
 }
 
 const VISIBILITY_KEYS_BY_HREF: Record<string, keyof VisibilityMap> = {
@@ -125,11 +129,13 @@ function getNavItems(userRole: string, isAlsoLearning: boolean): NavItem[] {
   }
 }
 
-export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning = false, visibility }: DashboardNavProps) {
+export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning = false, visibility, hasMentor = false }: DashboardNavProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const vis = visibility ?? DEFAULT_VISIBILITY;
   const NAV_ITEMS = getNavItems(userRole, isAlsoLearning).filter((item) => {
+    // Mentees don't navigate the Roadmap — mentor releases weeks directly to dashboard.
+    if (hasMentor && item.href === "/dashboard/roadmap") return false;
     const key = VISIBILITY_KEYS_BY_HREF[item.href];
     if (!key) return true;
     return vis[key] !== false;

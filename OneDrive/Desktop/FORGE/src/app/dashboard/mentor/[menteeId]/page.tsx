@@ -48,6 +48,10 @@ interface MenteeTask {
   estimatedHours: number | null;
   status: string;
   verifiedAt: string | null;
+  releasedAt: string | null;
+  releasedBy: string | null;
+  deadline: string | null;
+  closedAt: string | null;
   sortOrder: number;
   checkins: Checkin[];
   mentorComments: MentorComment[];
@@ -186,8 +190,13 @@ export default function MenteeDrilldownPage() {
     }
   };
 
-  const handleAction = async (task: MenteeTask, action: "unlock" | "verify" | "reopen") => {
-    const verb = action === "unlock" ? "unlock this week" : action === "verify" ? "verify this week (bypass interrogation)" : "reopen this week";
+  const handleAction = async (task: MenteeTask, action: "unlock" | "verify" | "reopen" | "close") => {
+    const verb =
+      action === "unlock"  ? "unlock this week (legacy bypass)" :
+      action === "verify"  ? "mark this week verified" :
+      action === "reopen"  ? "reopen this week" :
+      action === "close"   ? "close this week now" :
+      action;
     if (!confirm(`${verb}?`)) return;
     setPosting(task.id);
     try {
@@ -199,6 +208,36 @@ export default function MenteeDrilldownPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `Could not ${action}`);
+      }
+      await load();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Action failed");
+    } finally {
+      setPosting(null);
+    }
+  };
+
+  /** Release a week with a mentor-set deadline. Prompts for a date. */
+  const handleRelease = async (task: MenteeTask, mode: "release" | "extend") => {
+    const label = mode === "release" ? "Release this week. Deadline?" : "Extend this week. New deadline?";
+    const defaultDate = new Date(Date.now() + 7 * 86_400_000).toISOString().split("T")[0];
+    const input = prompt(`${label} (YYYY-MM-DD, default 7 days from now)`, defaultDate);
+    if (!input) return;
+    const deadline = new Date(input + "T23:59:00");
+    if (Number.isNaN(deadline.getTime()) || deadline.getTime() <= Date.now()) {
+      alert("Pick a future date in YYYY-MM-DD format.");
+      return;
+    }
+    setPosting(task.id);
+    try {
+      const res = await fetch(`/api/mentor/tasks/${task.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: mode, menteeId, deadlineAt: deadline.toISOString() }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Could not ${mode}`);
       }
       await load();
     } catch (e) {
@@ -553,16 +592,59 @@ export default function MenteeDrilldownPage() {
                           {/* Mentor's question bank for this task */}
                           <MentorQuestionBank taskId={task.id} menteeId={menteeId} />
 
+                          {/* Release/deadline status chip */}
+                          {(task.releasedAt || task.closedAt) && (
+                            <div style={{ marginTop: "0.75rem", padding: "0.5rem 0.75rem", borderRadius: 6, background: task.closedAt ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)", border: `1px solid ${task.closedAt ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.25)"}`, fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: task.closedAt ? "var(--red)" : "var(--accent)" }}>
+                              {task.closedAt
+                                ? <>CLOSED {new Date(task.closedAt).toLocaleDateString()} — mentee locked out until you extend</>
+                                : task.deadline
+                                  ? <>RELEASED {task.releasedAt && new Date(task.releasedAt).toLocaleDateString()} · deadline {new Date(task.deadline).toLocaleDateString()}</>
+                                  : <>RELEASED — no deadline</>}
+                            </div>
+                          )}
+
                           {/* Mentor actions (super-powers) */}
                           <div style={{ marginTop: "0.875rem", paddingTop: "0.75rem", borderTop: "1px dashed var(--border)", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                            {/* Release / extend (primary mentor action) */}
+                            {task.status === "locked" && !task.closedAt && (
+                              <button
+                                onClick={() => handleRelease(task, "release")}
+                                disabled={posting === task.id}
+                                className="forge-btn forge-btn-primary"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.875rem", fontSize: "0.8125rem" }}
+                              >
+                                <Unlock size={13} /> Release with deadline
+                              </button>
+                            )}
+                            {(task.deadline || task.closedAt) && task.status !== "verified" && (
+                              <button
+                                onClick={() => handleRelease(task, "extend")}
+                                disabled={posting === task.id}
+                                className="forge-btn forge-btn-ghost"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.8125rem", color: "var(--accent)", borderColor: "rgba(245,158,11,0.3)" }}
+                              >
+                                <Clock size={13} /> {task.closedAt ? "Reopen + extend" : "Extend deadline"}
+                              </button>
+                            )}
+                            {(task.status === "available" || task.status === "in_progress") && !task.closedAt && (
+                              <button
+                                onClick={() => handleAction(task, "close")}
+                                disabled={posting === task.id}
+                                className="forge-btn forge-btn-ghost"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.8125rem", color: "var(--red)", borderColor: "rgba(239,68,68,0.3)" }}
+                              >
+                                <Lock size={13} /> Close now
+                              </button>
+                            )}
+                            {/* Legacy unlock (no deadline) */}
                             {task.status === "locked" && (
                               <button
                                 onClick={() => handleAction(task, "unlock")}
                                 disabled={posting === task.id}
                                 className="forge-btn forge-btn-ghost"
-                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.8125rem", color: "var(--accent)", borderColor: "rgba(245,158,11,0.3)" }}
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.4rem 0.75rem", fontSize: "0.75rem", color: "var(--text-dim)", borderColor: "var(--border)" }}
                               >
-                                <Unlock size={13} /> Unlock for them
+                                Unlock (no deadline)
                               </button>
                             )}
                             {(task.status === "available" || task.status === "in_progress" || task.status === "pending_verification") && (
