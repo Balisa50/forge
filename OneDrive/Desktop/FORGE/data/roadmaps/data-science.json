@@ -35,181 +35,175 @@
           "note": "Official reference"
         }
       ],
-      "context": "You're building TaxiPulse NYC — a polished analysis of NYC Yellow Taxi trips in October 2023. Specific dataset URL provided. Specific questions to answer (we tell you which). By Sunday you'll have a publishable Jupyter notebook that a journalist could read top-to-bottom and learn something real. Why this dataset? It's real, large (3M trips), clean enough to focus on analysis (not janitorial work), and everyone in NYC has an opinion about taxis.",
+      "context": "This week you are going to build TaxiPulse — a small data analysis of real New York City taxi trips from October 2023. Nothing fancy yet. By Sunday you will have a Jupyter notebook that answers three simple questions and tells a real story with numbers and charts. If you have never written Python before, that is fine — we walk you through every single command. Read slowly. Type things exactly as shown.",
       "days": [
         {
           "number": 1,
-          "title": "What data science actually is",
-          "summary": "Statistics + storytelling. Today, the mental model.",
+          "title": "What is data science?",
+          "summary": "Today is mostly watching and writing down what you think. No coding yet.",
           "items": [
             {
               "kind": "video",
-              "title": "Data Science in 100 Seconds — Fireship",
+              "title": "Data Science explained simply (2 minutes)",
               "url": "https://www.youtube.com/watch?v=X3paOmcrTjQ",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": ""
+              "why": "Watch this first. It is fast and clear."
             },
             {
               "kind": "video",
-              "title": "DS vs ML vs Analytics — clear breakdown",
-              "url": "https://www.youtube.com/results?search_query=data+science+vs+machine+learning+vs+analytics",
+              "title": "Data Science vs Machine Learning vs Analytics (10 min)",
+              "url": "https://www.youtube.com/results?search_query=data+science+vs+machine+learning+vs+analytics+beginner",
               "duration_min": 10,
               "creator": "various",
-              "why": ""
+              "why": "Helps you understand what your future job actually looks like."
             },
             {
               "kind": "reflection",
-              "title": "The questions",
-              "body": "By Sunday you'll answer these about NYC Yellow Taxis in October 2023:\n  Q1. What's the busiest hour of day?\n  Q2. Does tip percentage rise with trip distance? With trip duration?\n  Q3. Which day of week has the highest average fare?\nWrite your hypothesis for each. We'll see if you were right by Day 6."
+              "title": "Write three guesses",
+              "body": "By Sunday you will answer these three questions about NYC taxi trips in October 2023. Before you look at any data, write down your guess for each one — just a sentence each. Put your guesses in a file called `guesses.txt`. You will check them on Day 6 and see if you were right.\n\nQuestion 1: What hour of the day are the most taxi trips? (Midnight? 8am? 5pm?)\n\nQuestion 2: Do people tip more when the ride is longer, or less?\n\nQuestion 3: Which day of the week has the highest average fare? (Friday night fares? Sunday mornings?)"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Python + Jupyter setup",
-          "summary": "Smooth tools, smooth analysis.",
+          "title": "Install Python and Jupyter",
+          "summary": "Today we set up the tools. This is the boring but important day. Do not skip.",
           "items": [
             {
               "kind": "video",
-              "title": "Install Anaconda + Jupyter",
-              "url": "https://www.youtube.com/results?search_query=install+anaconda+jupyter+beginner+2024",
+              "title": "How to install Anaconda on Windows / Mac / Linux",
+              "url": "https://www.youtube.com/results?search_query=install+anaconda+2024+windows+mac+linux+beginner",
               "duration_min": 15,
               "creator": "various",
-              "why": ""
+              "why": "Pick the video that matches YOUR computer (Windows or Mac)."
             },
             {
               "kind": "exercise",
-              "title": "TaxiPulse repo",
-              "body": "Create folder `taxipulse/`. `conda create -n taxipulse python=3.11 pandas pyarrow matplotlib seaborn jupyter` (or venv equivalent). Activate. Push to GitHub repo `taxipulse-nyc`."
+              "title": "Step-by-step setup",
+              "body": "Follow each step in order. Do not skip ahead.\n\nSTEP 1 — Download Anaconda.\n  Go to https://www.anaconda.com/download\n  Click the big download button for your operating system (Windows, Mac, or Linux).\n  Run the installer when it finishes downloading. Click 'Next' on every screen — the defaults are fine.\n  This takes about 5-10 minutes.\n\nSTEP 2 — Open the terminal.\n  WINDOWS: Press the Windows key, type 'Anaconda Prompt', press Enter.\n  MAC: Press Cmd+Space, type 'Terminal', press Enter.\n  LINUX: Open your usual terminal.\n  A black or white window with text appears. This is where you type commands.\n\nSTEP 3 — Check Python works.\n  Type this and press Enter:\n      python --version\n  YOU SHOULD SEE: something like 'Python 3.11.5' (any 3.10+ is fine).\n  IF YOU SEE 'command not found': close the terminal, reopen it, try again. If still broken, watch the install video again.\n\nSTEP 4 — Make a folder for the project.\n  Type these one at a time, pressing Enter after each:\n      cd Desktop\n      mkdir taxipulse\n      cd taxipulse\n  Your prompt should now end with 'taxipulse'.\n  This is now your project home.\n\nSTEP 5 — Start Jupyter Notebook.\n  Type this and press Enter:\n      jupyter notebook\n  YOU SHOULD SEE: your web browser opens to a page showing files in the taxipulse folder. The page address starts with 'localhost:8888'.\n  This is Jupyter. It is where you will write Python and see results.\n\nSTEP 6 — Create your first notebook.\n  In the browser, click the 'New' button (top right) → choose 'Python 3'.\n  A new tab opens with an empty notebook called 'Untitled'.\n  Click the word 'Untitled' at the top and rename it to '01-setup'.\n\nSTEP 7 — Test that everything works.\n  In the first empty cell, type this exactly:\n      import pandas\n      import numpy\n      import matplotlib\n      print('All good — pandas is', pandas.__version__)\n  Press Shift+Enter to run the cell.\n  YOU SHOULD SEE: 'All good — pandas is 2.x.x' (any 2.x is fine).\n  IF YOU SEE 'ModuleNotFoundError': pandas isn't installed. In the terminal (not Jupyter), type 'conda install pandas numpy matplotlib' and press Enter. Then re-run the cell.\n\nSTEP 8 — Save.\n  Press Ctrl+S (or Cmd+S on Mac) in the Jupyter tab.\n\nIf you got here without errors — you have Python + Jupyter working. That alone is a win. Stop for today."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Download the dataset (this exact file)",
-          "summary": "No 'pick your own'. We tell you the file.",
+          "title": "Download the real NYC taxi data",
+          "summary": "Today you get the actual data file. One specific file. Do not look for others.",
           "items": [
             {
-              "kind": "reading",
-              "title": "NYC TLC Yellow Taxi data — official page",
-              "url": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
-              "why": "Official source, government-published."
-            },
-            {
               "kind": "exercise",
-              "title": "Get yellow_tripdata_2023-10.parquet",
-              "body": "Download:\n  https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\nSave to `taxipulse/data/yellow_2023_10.parquet` (gitignored, ~50MB). In `01_load.ipynb`:\n  ```python\n  import pandas as pd\n  df = pd.read_parquet('data/yellow_2023_10.parquet')\n  print(df.shape)\n  print(df.dtypes)\n  df.head()\n  ```\nDocument: how many rows? What columns? Add a markdown cell."
+              "title": "Get the data file",
+              "body": "STEP 1 — Open your terminal where 'taxipulse' is.\n  WINDOWS: Anaconda Prompt. Make sure your prompt ends with 'taxipulse'.\n  MAC/LINUX: Terminal in the taxipulse folder.\n  If unsure, type 'pwd' and press Enter — you should see a path ending in '/taxipulse'.\n\nSTEP 2 — Make a folder called 'data' inside taxipulse.\n      mkdir data\n\nSTEP 3 — Download the dataset. This is a 50MB file with about 3 million taxi trips.\n  WINDOWS (Anaconda Prompt):\n      curl -o data/taxi.parquet https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  MAC / LINUX:\n      curl -o data/taxi.parquet https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  IF curl IS NOT FOUND: copy the URL into your browser. The file will download. Move it to taxipulse/data/ and rename it to 'taxi.parquet'.\n  YOU SHOULD SEE: a progress bar that fills up over 30-60 seconds.\n\nSTEP 4 — Verify the file is there.\n      dir data            (Windows)\n      ls -lh data         (Mac / Linux)\n  YOU SHOULD SEE: 'taxi.parquet' listed, around 47 MB in size.\n\nSTEP 5 — Open Jupyter and load it.\n  In the taxipulse folder, type 'jupyter notebook' if it isn't already open.\n  Open '01-setup.ipynb' (or make a new notebook called '02-load').\n  In a new cell, type exactly this:\n\n      import pandas as pd\n      df = pd.read_parquet('data/taxi.parquet')\n      print('Rows:', len(df))\n      print('Columns:', list(df.columns))\n      df.head()\n\n  Press Shift+Enter to run.\n  YOU SHOULD SEE:\n    Rows: about 3,500,000\n    Columns: a list with 'tpep_pickup_datetime', 'tpep_dropoff_datetime', 'passenger_count', 'trip_distance', 'fare_amount', 'tip_amount', and others\n    A table showing the first 5 rows of real taxi trips.\n\n  IF YOU SEE 'FileNotFoundError': you are not in the taxipulse folder, OR the file is named differently. Re-check Step 4.\n\nSTEP 6 — Save the notebook. You're done for today.\n  You just loaded 3.5 MILLION real taxi rides into Python. That is a real data scientist move."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Clean — get rid of impossible trips",
-          "summary": "Real data has impossible rows (negative fares, etc.). Filter them.",
+          "title": "Clean the data",
+          "summary": "Real data has weird rows — negative fares, trips that take 0 seconds, trips that started before October. We remove them today.",
           "items": [
             {
               "kind": "video",
-              "title": "pandas filtering + datetime",
-              "url": "https://www.youtube.com/results?search_query=pandas+filtering+datetime+operations+tutorial",
-              "duration_min": 25,
+              "title": "pandas filtering for beginners (15 min)",
+              "url": "https://www.youtube.com/results?search_query=pandas+filter+rows+beginner+tutorial",
+              "duration_min": 15,
               "creator": "various",
-              "why": ""
+              "why": "Watch this once before you start the exercise."
             },
             {
               "kind": "exercise",
-              "title": "Clean to a sane subset",
-              "body": "In `02_clean.ipynb`:\n  1. Drop rows where `trip_distance <= 0` or `fare_amount <= 0`\n  2. Drop rows where `trip_distance > 100` (very long, likely glitches)\n  3. Drop rows where `tpep_pickup_datetime` is outside October 2023\n  4. Add column `trip_duration_min = (tpep_dropoff_datetime - tpep_pickup_datetime).dt.total_seconds() / 60`\n  5. Drop rows where `trip_duration_min < 1` or `> 180`\n  6. Add column `tip_pct = (tip_amount / fare_amount) * 100` (only for fare_amount > 0; dropna)\n  7. Save as `data/clean.parquet`. Print: how many rows did you drop, and why?"
+              "title": "Remove the impossible trips",
+              "body": "Open a new notebook called '03-clean.ipynb'. In each cell below, type the code and press Shift+Enter to run it.\n\nCELL 1 — Load the data again.\n      import pandas as pd\n      df = pd.read_parquet('data/taxi.parquet')\n      print('Starting rows:', len(df))\n  YOU SHOULD SEE: 'Starting rows: 3,500,000' or similar.\n\nCELL 2 — Remove trips with no distance or no fare.\n      df = df[df['trip_distance'] > 0]\n      df = df[df['fare_amount'] > 0]\n      print('After removing 0-distance and 0-fare trips:', len(df))\n  YOU SHOULD SEE the row count drops a little.\n\nCELL 3 — Remove super-long trips that are probably errors.\n      df = df[df['trip_distance'] < 100]\n      print('After removing 100+ mile trips:', len(df))\n\nCELL 4 — Keep only October 2023 trips. Some rows have wrong dates.\n      df = df[(df['tpep_pickup_datetime'] >= '2023-10-01') & (df['tpep_pickup_datetime'] < '2023-11-01')]\n      print('After fixing dates:', len(df))\n\nCELL 5 — Add two useful columns we will need later.\n      df['trip_minutes'] = (df['tpep_dropoff_datetime'] - df['tpep_pickup_datetime']).dt.total_seconds() / 60\n      df['tip_percent'] = (df['tip_amount'] / df['fare_amount']) * 100\n      df['pickup_hour'] = df['tpep_pickup_datetime'].dt.hour\n      df['pickup_dayofweek'] = df['tpep_pickup_datetime'].dt.day_name()\n      print('Added 4 new columns:', list(df.columns)[-4:])\n\nCELL 6 — Remove super short or super long trips by time.\n      df = df[(df['trip_minutes'] >= 1) & (df['trip_minutes'] <= 180)]\n      print('Final rows after cleaning:', len(df))\n\nCELL 7 — Save the cleaned data.\n      df.to_parquet('data/clean.parquet')\n      print('Saved data/clean.parquet — final size:', len(df), 'rows')\n\n  YOU SHOULD SEE: 'Saved data/clean.parquet — final size: 3,400,000 rows' or close.\n  You just cleaned 3.5M rows of real data. Save the notebook."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Answer Q1: busiest hour of day",
-          "summary": "Plot it. Eyeball it. Be honest.",
+          "title": "Answer Question 1: busiest hour",
+          "summary": "Today we make our first chart. By the end of today you will know what hour the most taxis run in October 2023.",
           "items": [
             {
               "kind": "video",
-              "title": "Matplotlib + Seaborn for plots",
-              "url": "https://www.youtube.com/results?search_query=matplotlib+seaborn+plotting+tutorial+2024",
-              "duration_min": 25,
+              "title": "Make a bar chart with pandas (10 min)",
+              "url": "https://www.youtube.com/results?search_query=pandas+plot+bar+chart+beginner+tutorial",
+              "duration_min": 10,
               "creator": "various",
               "why": ""
             },
             {
               "kind": "exercise",
-              "title": "The hour plot",
-              "body": "In `03_hour.ipynb`:\n  ```python\n  df['hour'] = df['tpep_pickup_datetime'].dt.hour\n  by_hour = df.groupby('hour').size()\n  by_hour.plot(kind='bar', figsize=(10,5), title='NYC Yellow Taxi trips by hour, Oct 2023')\n  ```\nSave the figure as `figures/by_hour.png`. Below the plot, write 2 sentences: which hour is busiest? What does the shape look like — single peak, double peak? Compare to your Day 1 hypothesis."
+              "title": "Count trips by hour and plot them",
+              "body": "Make a new notebook '04-busiest-hour.ipynb'.\n\nCELL 1 — Load the cleaned data.\n      import pandas as pd\n      import matplotlib.pyplot as plt\n      df = pd.read_parquet('data/clean.parquet')\n      print('Working with', len(df), 'trips')\n\nCELL 2 — Count how many trips started in each hour.\n      trips_per_hour = df.groupby('pickup_hour').size()\n      print(trips_per_hour)\n  YOU SHOULD SEE: 24 lines, one for each hour 0 to 23, with a count next to each.\n\nCELL 3 — Plot it as a bar chart.\n      trips_per_hour.plot(kind='bar', figsize=(12, 5), color='steelblue')\n      plt.title('NYC Yellow Taxi trips by hour of day — October 2023')\n      plt.xlabel('Hour of day (0 = midnight, 23 = 11pm)')\n      plt.ylabel('Number of trips')\n      plt.tight_layout()\n      plt.savefig('busiest_hour.png', dpi=150)\n      plt.show()\n  YOU SHOULD SEE: a bar chart inside the notebook. The tallest bar is your busiest hour.\n\nCELL 4 — Print the answer in plain English.\n      busiest = trips_per_hour.idxmax()\n      busiest_count = trips_per_hour.max()\n      print(f'The busiest hour is {busiest}:00, with {busiest_count:,} trips.')\n\n  Write down the answer in a markdown cell below the chart:\n      # Answer to Q1: The busiest hour in October 2023 was XX:00, with about XXX,XXX trips.\n  Compare with your guess from Day 1. Were you right?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Answer Q2 + Q3",
-          "summary": "Tip % vs distance, fare by weekday.",
+          "title": "Answer Questions 2 and 3",
+          "summary": "Two more charts, two more answers. By tonight you have everything for Sunday's polish.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Two more plots",
-              "body": "Q2 — tip_pct vs trip_distance:\n  Bin trip_distance into [0-1, 1-3, 3-5, 5-10, 10+] miles. Compute mean tip_pct per bin. Bar chart it. Same for trip_duration_min in similar bins. Save as `figures/tip_vs_distance.png` and `figures/tip_vs_duration.png`.\n\nQ3 — average fare by day of week:\n  `df['dow'] = df['tpep_pickup_datetime'].dt.day_name()`. Group by dow, take mean of fare_amount. Bar chart sorted Mon-Sun. Save as `figures/fare_by_dow.png`.\n\nBelow each: 1 sentence finding. Compare to your Day 1 hypotheses."
+              "title": "Tip percentage vs trip distance",
+              "body": "Make a new notebook '05-tips-and-fares.ipynb'.\n\nCELL 1 — Load data.\n      import pandas as pd\n      import matplotlib.pyplot as plt\n      df = pd.read_parquet('data/clean.parquet')\n\nCELL 2 — Group trips by distance bucket and average the tip percent.\n      df['distance_bucket'] = pd.cut(df['trip_distance'], bins=[0, 1, 3, 5, 10, 100], labels=['0-1 mi', '1-3 mi', '3-5 mi', '5-10 mi', '10+ mi'])\n      tip_by_distance = df.groupby('distance_bucket')['tip_percent'].mean()\n      print(tip_by_distance)\n  YOU SHOULD SEE: 5 lines, one for each distance bucket, with an average tip percent.\n\nCELL 3 — Plot it.\n      tip_by_distance.plot(kind='bar', figsize=(10, 5), color='seagreen')\n      plt.title('Average tip % by trip distance — NYC Yellow Taxi, Oct 2023')\n      plt.xlabel('Trip distance')\n      plt.ylabel('Average tip (% of fare)')\n      plt.tight_layout()\n      plt.savefig('tip_by_distance.png', dpi=150)\n      plt.show()\n\nCELL 4 — Now the day-of-week fare question.\n      days_in_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\n      fare_by_day = df.groupby('pickup_dayofweek')['fare_amount'].mean().reindex(days_in_order)\n      print(fare_by_day)\n\nCELL 5 — Plot day-of-week fares.\n      fare_by_day.plot(kind='bar', figsize=(10, 5), color='tomato')\n      plt.title('Average fare by day of week — NYC Yellow Taxi, Oct 2023')\n      plt.xlabel('Day of week')\n      plt.ylabel('Average fare ($)')\n      plt.xticks(rotation=45)\n      plt.tight_layout()\n      plt.savefig('fare_by_day.png', dpi=150)\n      plt.show()\n\nCELL 6 — Write the answers.\n  In a markdown cell at the bottom, write your three answers in plain English:\n      ## Answers\n      Q1 — Busiest hour: ... (from yesterday)\n      Q2 — Tip vs distance: short trips tip about XX%. Long trips tip about XX%. (So tips go up / down with distance — pick one.)\n      Q3 — Day with highest average fare: ... with $XX.XX average.\n\n  Now compare ALL THREE with your Day 1 guesses. How many did you get right?"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship TaxiPulse v0.1 — the publishable notebook",
-          "summary": "A notebook nobody reads is wasted work. Format like an article.",
+          "title": "Polish the notebook and ship it",
+          "summary": "Today you turn the messy notebooks into one clean story anyone could read. This is the artifact you put on your CV.",
           "items": [
             {
               "kind": "exercise",
-              "title": "Final acceptance — publishable notebook",
-              "body": "Create `TaxiPulse-NYC-October-2023.ipynb` — the polished version. Structure:\n\n  # TaxiPulse NYC — What 3 Million Trips Tell Us About October 2023\n  [Your name] · [Date]\n\n  ## TL;DR\n  3 bullets — your 3 findings, one sentence each, with specific numbers.\n\n  ## The data\n  Source URL, download date, row count, what's a 'trip' here.\n\n  ## Cleaning decisions\n  What you dropped + why. Be honest about edge cases.\n\n  ## Finding 1: Busiest hour\n  Plot + 2-paragraph narrative + 1 caveat.\n\n  ## Finding 2: Tip % vs distance\n  Same.\n\n  ## Finding 3: Fares by day of week\n  Same.\n\n  ## What I'd do next\n  3 bullets — borough breakdown, weather correlation, fare prediction model.\n\nRender to HTML: `jupyter nbconvert --to html TaxiPulse-NYC-October-2023.ipynb`. Commit the .html in `docs/`. Add a `README.md` linking the rendered HTML.\n\nPass criteria:\n  □ All 3 hypotheses answered with plots + numbers\n  □ 4 notebooks committed (01-load, 02-clean, 03-hour, 04-tip-fare)\n  □ 1 polished publishable notebook + rendered HTML\n  □ README with TL;DR, link to rendered HTML, dataset source\n  □ All 4 figures committed in `figures/`\n  □ Tag v0.1"
+              "title": "Final acceptance — TaxiPulse v0.1",
+              "body": "Make ONE final notebook called 'TaxiPulse-Final.ipynb'. Copy your best cells from the earlier notebooks into this one. Use the structure below exactly.\n\nUse markdown cells (in Jupyter: change cell type from 'Code' to 'Markdown' in the dropdown at the top) for the text sections.\n\n───────── STRUCTURE ─────────\n\nMARKDOWN CELL 1:\n      # TaxiPulse NYC — What 3 million taxi trips tell us about October 2023\n      Your Name · Today's date\n      \n      ## TL;DR\n      - The busiest hour is XX:00 with ~XXX,XXX trips.\n      - Short trips tip ~XX% — long trips tip ~XX%. (Tips go up / down with distance.)\n      - The day with the highest average fare is XXX at $XX.XX.\n      \n      ## The data\n      All NYC Yellow Taxi trips from October 2023.  \n      Source: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page  \n      Downloaded: [your date]  \n      Cleaned to about 3.4M rows after removing 0-distance, 0-fare, wrong-month, and impossibly-long trips.\n\nCODE CELL — Load + clean (one cell).\n\nMARKDOWN CELL: '## Finding 1: The busiest hour'\n  Then your hour bar chart code cell.  \n  Then a markdown cell with a 2-sentence finding.\n\nMARKDOWN CELL: '## Finding 2: Tipping vs distance'\n  Then your tip code cell.  \n  Then a markdown 2-sentence finding.\n\nMARKDOWN CELL: '## Finding 3: Fares by day of week'\n  Then your fare code cell.  \n  Then a 2-sentence finding.\n\nMARKDOWN CELL: '## What I would do next'\n  Three bullets — e.g. compare to other months, break down by borough, predict fare from distance.\n\n───────── PUSH TO GITHUB ─────────\n\nSTEP 1 — Make a free GitHub account at github.com if you don't have one.\n\nSTEP 2 — On github.com, click '+' (top right) → 'New repository'. Name it: taxipulse-nyc. Make it public. Click 'Create repository'.\n\nSTEP 3 — In your terminal, inside the taxipulse folder, type these one by one:\n      git init\n      echo 'data/' > .gitignore\n      git add .\n      git commit -m \"TaxiPulse v0.1 — answered 3 questions about NYC taxis Oct 2023\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/taxipulse-nyc.git\n      git push -u origin main\n\n  (Replace YOUR-USERNAME with your actual GitHub username.)\n  When asked, log in to GitHub.\n\nSTEP 4 — Open your repo on github.com. You should see your notebooks listed. Click 'TaxiPulse-Final.ipynb' — GitHub renders Jupyter notebooks beautifully.\n\nSTEP 5 — Add a README.\n  On github.com, click 'Add a README'.\n  Paste:\n      # TaxiPulse NYC\n      A small data-science analysis of NYC Yellow Taxi trips in October 2023.\n      \n      ## Findings\n      1. Busiest hour: XX:00\n      2. Tips: short trips tip XX%, long trips tip XX%\n      3. Highest-fare day: XXX ($XX.XX average)\n      \n      ## Open the notebook\n      [TaxiPulse-Final.ipynb](TaxiPulse-Final.ipynb)\n      \n      ## Data\n      https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n  Commit.\n\n───────── PASS CRITERIA ─────────\n  ☐ All three questions answered with specific numbers\n  ☐ TaxiPulse-Final.ipynb has the structure shown above\n  ☐ Three charts saved as PNG files\n  ☐ Repo pushed to GitHub, public\n  ☐ README written with the three findings\n  ☐ You can send the GitHub URL to a friend and they can read the notebook in their browser\n\nShare the GitHub URL in your forge dashboard check-in. You shipped your first real data-science project."
             },
             {
               "kind": "reflection",
-              "title": "Who reads this?",
-              "body": "Imagine you tweeted the rendered HTML link. Who retweets it — journalists? Other data scientists? NYC commuters? If nobody — your TL;DR isn't strong enough. Why?"
+              "title": "Be honest with yourself",
+              "body": "Look at your three findings. Could a NYC reporter or a taxi company actually use any of this? If yes — which one and how? If no — what else would you need to add to make it useful?"
             }
           ]
         }
       ],
       "topics": [
-        "Anaconda + Jupyter setup",
-        "pandas + pyarrow for parquet loading",
-        "Date/time operations: pd.to_datetime, .dt accessor, hour extraction",
-        "Data cleaning: dropping impossible rows + computing derived columns",
-        "groupby + aggregations (size, mean)",
-        "matplotlib + seaborn for bar charts",
-        "Storytelling: TL;DR-first notebook structure"
+        "Installing Python (Anaconda)",
+        "Opening and using a terminal",
+        "Using Jupyter notebooks",
+        "Loading data with pandas",
+        "Cleaning real-world messy data",
+        "Group-by and aggregations in pandas",
+        "Making bar charts with matplotlib",
+        "Pushing a project to GitHub"
       ],
       "tasks": [
-        "Set up Python + Jupyter + the right libraries",
-        "Download yellow_tripdata_2023-10.parquet from NYC TLC",
-        "Clean impossible rows + add derived columns (trip_duration_min, tip_pct, hour, dow)",
-        "Answer Q1 with a bar chart of trips by hour",
-        "Answer Q2 with binned plots of tip_pct vs distance/duration",
-        "Answer Q3 with bar chart of fare by day-of-week",
-        "Polish into 1 publishable notebook + rendered HTML"
+        "Install Anaconda and verify Python works",
+        "Open Jupyter and create your first notebook",
+        "Download the NYC Yellow Taxi October 2023 dataset",
+        "Clean the data (remove impossible trips)",
+        "Answer Q1 — find the busiest hour with a bar chart",
+        "Answer Q2 and Q3 — tipping by distance and fares by day",
+        "Polish into one final notebook and push to GitHub"
       ],
-      "project": "TaxiPulse NYC v0.1 — a published analysis of NYC Yellow Taxi trips in October 2023. Answers 3 specific assigned questions (busiest hour, tip% vs distance, fare by day of week). Polished notebook + rendered HTML + 4 figures + dataset cleaning decisions documented. Repo: `taxipulse-nyc` on GitHub, tagged v0.1.",
+      "project": "TaxiPulse NYC v0.1 — a Jupyter notebook that answers three specific questions about real NYC Yellow Taxi trips in October 2023. Busiest hour, tip percentage vs trip distance, and average fare by day of week. The notebook is pushed to a public GitHub repo called taxipulse-nyc, with a README that lists the three findings. This is your first data-science project on your CV.",
       "exercises": [
-        "Add a 4th finding YOU spot in the data — anything interesting beyond Q1/Q2/Q3",
-        "Recompute Q1 grouped by pickup borough — does the busy hour vary by location?",
-        "Plot the distribution of trip_duration_min — log-scale the y-axis. What jumps out?",
-        "Compare your tip_pct binned plot to the same plot without log-scale — which tells the story?"
+        "Add a fourth chart of your choice — anything interesting you spotted in the data",
+        "Group the busiest-hour chart by pickup borough — does the busy hour change by location?",
+        "Plot trip_minutes as a histogram — what shape does it have?",
+        "Find one trip that surprised you (very long, very expensive, very tipped) and write one sentence about it"
       ],
       "questions": [
-        "Why did you drop trips with fare_amount <= 0? What might have caused them?",
-        "What's the difference between mean tip_pct and median tip_pct here — and which is more honest?",
-        "Where did you make a judgment call that another analyst might disagree with?",
-        "What other dataset would amplify your TaxiPulse story — weather? events?"
+        "Why did we drop trips with fare_amount of 0?",
+        "What's the difference between mean and median tip — which is more honest here?",
+        "Where did you make a choice that another analyst might disagree with?",
+        "If you had weather data for October 2023 in NYC too, what new question could you ask?"
       ],
       "outputs": [
-        "`taxipulse-nyc` GitHub repo tagged v0.1",
-        "5 notebooks (4 working + 1 polished publishable)",
-        "Rendered HTML of the polished notebook in `docs/`",
-        "4 figures in `figures/`",
-        "README with TL;DR + link to rendered HTML"
+        "Public GitHub repo named taxipulse-nyc",
+        "TaxiPulse-Final.ipynb with three answered questions",
+        "Three saved chart PNGs",
+        "A README listing the three findings"
       ]
     },
     {

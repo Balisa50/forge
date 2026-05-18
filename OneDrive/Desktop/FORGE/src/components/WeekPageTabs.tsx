@@ -26,17 +26,13 @@ import ResourceViewer from "@/components/ResourceViewer";
  */
 
 /**
- * YouTube embedding is a permanent source of pain: wrong video IDs, deleted
- * videos, channel "embedding disabled" flags, search-URLs that can't iframe,
- * and the dreaded "Error 153 — Video player configuration error". We bail on
- * the whole thing. Every YouTube link opens in a new tab; only docs / PDFs
- * / non-YouTube URLs go through the in-app viewer.
+ * Iframe embedding is unreliable in 2026: YouTube blocks search URLs, gov
+ * sites set X-Frame-Options: DENY, news sites do the same, even Stack
+ * Overflow blocks embeds. Rather than guess which ones work, we always
+ * open external links in a new tab. Zero embed errors, ever.
  */
-function shouldOpenInNewTab(url: string): boolean {
-  try {
-    const u = new URL(url);
-    return u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
-  } catch { return false; }
+function shouldOpenInNewTab(_url: string): boolean {
+  return true;
 }
 
 export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: string }) {
