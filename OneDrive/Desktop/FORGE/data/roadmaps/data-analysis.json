@@ -203,6 +203,144 @@
     },
     {
       "number": 2,
+      "title": "Python pandas for analysts",
+      "phase": "Foundation",
+      "commitment_hours": "12-15",
+      "context": "Most 2026 analyst job ads list Python alongside SQL. This week you bring pandas into your toolkit — fast loops over data Excel can't handle, automatable reports, and a runway into ML for your career.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why analysts need Python too",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Python for data analysts (15 min)",
+              "url": "https://www.youtube.com/results?search_query=python+for+data+analysts+beginner+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Excel pain points",
+              "body": "Three things Excel does badly that pandas does well:\n  1. >1M rows — Excel crashes; pandas yawns\n  2. Repeating an analysis on next month's data — Excel: re-do; pandas: re-run\n  3. Joining 5+ tables — Excel: VLOOKUP hell; pandas: 1 line"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Install + first notebook",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Anaconda download",
+              "url": "https://www.anaconda.com/download",
+              "why": "Click 'Open'. If you did Data Science Week 2 already, you have this."
+            },
+            {
+              "kind": "exercise",
+              "title": "Hello pandas",
+              "body": "Open Jupyter. Create superstore-py.ipynb in your superstore-analysis repo:\n      import pandas as pd\n      df = pd.read_excel('Sample - Superstore.xls', sheet_name='Orders')\n      print(df.shape, df.columns.tolist())"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Re-do Q1 (margins) in pandas",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Margin pivot in pandas",
+              "body": "      df['margin'] = df['Profit'] / df['Sales']\n      out = df.groupby('Sub-Category').agg(\n          sales=('Sales','sum'),\n          profit=('Profit','sum'),\n          margin=('margin','mean'),\n      ).sort_values('margin', ascending=False)\n      print(out)\n\nMatch your Excel pivot? Should be the same."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Filter + group by multiple",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Region YoY",
+              "body": "      df['Year'] = pd.to_datetime(df['Order Date']).dt.year\n      out = df.groupby(['Region','Year'])['Sales'].sum().unstack()\n      out['yoy'] = (out[2023] - out[2022]) / out[2022]\n      print(out)\n\n1 line for 2-D pivot. Excel needs 5 clicks."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Charts with matplotlib",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Plot the margin pivot",
+              "body": "      import matplotlib.pyplot as plt\n      out['margin'].plot(kind='barh', figsize=(10,6), title='Margin by Sub-Category')\n      plt.tight_layout()\n      plt.savefig('margin.png', dpi=150)"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Automate the monthly report",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "monthly_report.py",
+              "body": "Create a script that:\n  1. Loads the latest Excel from data/\n  2. Computes top 5 / bottom 5 sub-categories by margin\n  3. Saves a chart\n  4. Prints a 3-line summary\n\nRun: python monthly_report.py. Imagine running this on the 1st of every month — 5 minutes vs 2 hours in Excel."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag pandas-ready",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "      git add . && git commit -m 'Python pandas version of Superstore analysis'\n\nPASS:\n  ☐ pandas matches your Excel pivots exactly\n  ☐ At least 3 grouping operations done\n  ☐ 1 chart saved as PNG\n  ☐ monthly_report.py runs end-to-end"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "pandas DataFrame basics",
+        "groupby + aggregations",
+        "Multi-dimensional pivots (unstack)",
+        "matplotlib for analysts",
+        "Automating recurring reports"
+      ],
+      "tasks": [
+        "Install Anaconda + Jupyter",
+        "Re-do margin pivot in pandas",
+        "Region YoY with groupby + unstack",
+        "Save 1 chart",
+        "Build monthly_report.py automation"
+      ],
+      "project": "Superstore in Python — same analysis as Excel, automated. monthly_report.py runs in 5 minutes, idempotent.",
+      "resources": [],
+      "exercises": [
+        "Add a 'Profit by Discount Bucket' chart in 5 lines",
+        "Use pd.read_sql to query SQLite directly",
+        "Schedule the script with cron / Windows Task Scheduler"
+      ],
+      "questions": [
+        "When does pandas slow down vs Excel?",
+        "Why use pd.read_excel vs converting to CSV first?",
+        "What's the gap between 'analyst with Python' and 'data scientist'?"
+      ],
+      "outputs": [
+        "pandas notebook + script committed",
+        "Chart PNG",
+        "Automation pattern documented"
+      ]
+    },
+    {
+      "number": 3,
       "title": "Superstore v0.2: Discount-vs-Profit deep dive",
       "phase": "Foundation",
       "commitment_hours": "10-15",
@@ -328,7 +466,7 @@
       ]
     },
     {
-      "number": 3,
+      "number": 4,
       "title": "Superstore v0.3: Customer lifetime value",
       "phase": "Foundation",
       "commitment_hours": "10-15",
@@ -462,7 +600,7 @@
       ]
     },
     {
-      "number": 4,
+      "number": 5,
       "title": "Superstore v0.4: SQL version",
       "phase": "Foundation",
       "commitment_hours": "12-18",
@@ -598,7 +736,294 @@
       ]
     },
     {
-      "number": 5,
+      "number": 6,
+      "title": "Statistical thinking for analysts",
+      "phase": "Foundation",
+      "commitment_hours": "10-12",
+      "context": "Analysts who say 'this looks like a trend' but can't say 'p < 0.001' get pushed back by senior managers. This week — sampling, confidence intervals, correlation vs causation. Real-world traps you'll see daily.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Sampling + selection bias",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Sampling explained for analysts (15 min)",
+              "url": "https://www.youtube.com/results?search_query=sampling+bias+data+analyst+beginner",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three biases",
+              "body": "When does Sample Superstore data MISLEAD?\n  1. Only customers who already bought\n  2. Only successful orders\n  3. Only 4 regions, not all possible"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Confidence intervals in Excel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CI for mean",
+              "body": "On Superstore data, pick 100 random orders:\n      = AVERAGE(N2:N101) - 1.96 * STDEV(N2:N101) / SQRT(100)  (lower)\n      = AVERAGE(N2:N101) + 1.96 * STDEV(N2:N101) / SQRT(100)  (upper)\n\nNow pick 30 instead of 100. What happens to the CI? Why?"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Correlation in Excel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CORREL function",
+              "body": "      =CORREL(Discount column, Profit column)\n\nResult is between -1 and +1. What does -0.4 mean? -0.9? +0.1?\nNow visualize as a scatter plot. Eyeball confirms?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Correlation != causation",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Spurious correlations (5 min)",
+              "url": "https://www.youtube.com/watch?v=8B271L3NtAw",
+              "duration_min": 5,
+              "creator": "various",
+              "why": "Best visual on this topic."
+            },
+            {
+              "kind": "reflection",
+              "title": "Three spurious correlations in Superstore",
+              "body": "Pretend a junior analyst claims:\n  1. 'Higher Discount causes lower Profit' (probably right but think...)\n  2. 'Customer Segment = Corporate causes higher Sales' (right? wrong?)\n  3. 'Region = West causes worse profit margin' (?)\n\nFor each, write what's REALLY happening + the confound."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Hypothesis tests in Excel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "T-test in Excel",
+              "body": "      =T.TEST(consumer_sales_range, corporate_sales_range, 2, 3)\n\n(2 = two-tailed, 3 = unequal variances)\nResult: a p-value. If <0.05 the two segments have significantly different average sales.\nRun for 3 region pairs. Document."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Simpson's paradox in Superstore",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Simpson's Paradox (10 min)",
+              "url": "https://www.youtube.com/results?search_query=simpson%27s+paradox+explained+data",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Find it",
+              "body": "Pivot: Discount Bucket × Region → AVG Profit. Compare WITHIN one region vs OVERALL. Sometimes a trend in subgroups REVERSES when aggregated. Find one example in Superstore."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag stats-aware",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Add to your superstore memo: every finding now has a CI or p-value attached.\n\nPASS:\n  ☐ Computed CIs on 2 metrics\n  ☐ Computed correlation + scatter plot\n  ☐ Ran t-test on 3 segment pairs\n  ☐ Identified 1 Simpson's paradox in data\n  ☐ Memo updated with stats-supported claims"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Sampling + selection bias",
+        "Confidence intervals for means",
+        "Pearson correlation",
+        "Correlation vs causation traps",
+        "T-test in Excel",
+        "Simpson's paradox"
+      ],
+      "tasks": [
+        "Compute CI for mean fare/sale",
+        "Compute + interpret correlations",
+        "List 3 spurious correlations",
+        "Run t-test on 3 segment pairs",
+        "Find Simpson's paradox example"
+      ],
+      "project": "Superstore memo upgraded — every finding has a p-value or CI. No 'I think there's a trend' — only 'X is significantly Y (p<Z)'.",
+      "resources": [],
+      "exercises": [
+        "Compute CIs for ALL pivot rows",
+        "Plot a confidence band on the monthly trend chart",
+        "Find one Simpson's paradox in HR data too"
+      ],
+      "questions": [
+        "Why isn't a correlation of 0.8 enough to claim causation?",
+        "What's a confound?",
+        "When does a junior analyst confuse association with causation?"
+      ],
+      "outputs": [
+        "Stats-supported memo PDF",
+        "Simpson's paradox example documented",
+        "t-test results table"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "AI-Augmented analyst + Prompt Engineering",
+      "phase": "Modern Analysis",
+      "commitment_hours": "10-12",
+      "context": "The biggest analyst-productivity unlock in 2026 is AI. This week you learn to make ChatGPT write SQL, draft memos, critique your work, and generate summary slides. The analyst who masters this owns the team.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why this matters",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "AI for analysts (10 min)",
+              "url": "https://www.youtube.com/results?search_query=ai+tools+for+data+analysts+chatgpt+2024",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Honest assessment",
+              "body": "What's the LAST analyst task that took you 4+ hours? By Sunday you'll do similar in 30 minutes."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "ChatGPT for SQL generation",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "ChatGPT",
+              "url": "https://chatgpt.com",
+              "why": "Free tier is plenty."
+            },
+            {
+              "kind": "exercise",
+              "title": "Schema-aware prompts",
+              "body": "Paste your Superstore table schema:\n      Table orders(Order Date, Region, Segment, Category, Sub-Category, Sales, Profit, Discount, Customer ID)\n\nAsk: 'Write a SQL query that finds the 3 sub-categories with the WORST profit margin in the West region, only for orders in 2023.'\n\nRun the result in sqliteonline.com. Did it work first try?"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "AI as memo drafter",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Auto-draft a memo",
+              "body": "Paste your top 3 Superstore findings (the numbers, not pretty prose). Ask:\n  'Draft a 1-page memo to a CEO summarising these 3 findings. Format: headline, 3 sections (1 per finding), recommendations. Tone: confident, concise.'\n\nCompare to your Week 5 hand-written memo. Which is better? Why?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "AI critiques YOUR memo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Sharper feedback",
+              "body": "Paste your hand-written memo. Ask:\n  'Critique this memo for a senior data leader. Point out: weak claims, missing numbers, vague recommendations, places where I should push back.'\n\nApply the 3 best critiques. Reject the rest."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "AI for slide content",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Speaker notes per slide",
+              "body": "Paste your 5-slide deck content. Ask:\n  'Write speaker notes for each slide. 30 seconds of speaking per slide. Tone: confident.'\n\nPaste into your deck's Notes panel."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Excel formula generation",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Hard formulas",
+              "body": "Try these prompts:\n  1. 'Excel formula to compute year-over-year growth in a pivot table'\n  2. 'Excel formula for rolling 30-day average of column B'\n  3. 'Excel formula to flag rows where Profit < 0 and Discount > 0.4'\n\nTest each. Save the working ones in a formulas.md."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag AI-aware",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance — prompts.md ships",
+              "body": "Save prompts.md in your superstore-analysis repo:\n  - 5 prompts that worked\n  - 2 that failed (and why)\n  - 'AI workflow rules' — when to trust, when to verify\n\nPASS:\n  ☐ Generated working SQL from schema prompt\n  ☐ AI-drafted memo compared to hand-written\n  ☐ AI critique applied to your memo\n  ☐ Speaker notes generated for deck\n  ☐ prompts.md committed"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Schema-aware SQL prompts",
+        "Memo drafting + critique loops",
+        "Slide speaker notes",
+        "Excel formula generation",
+        "Verification discipline"
+      ],
+      "tasks": [
+        "Generate working SQL from schema",
+        "Draft + critique a memo with AI",
+        "Get speaker notes for your deck",
+        "Generate 3 hard Excel formulas",
+        "Document AI workflow rules"
+      ],
+      "project": "prompts.md in superstore-analysis — your personal cheatsheet. 5 working prompts + clear rules for when to trust AI.",
+      "resources": [],
+      "exercises": [
+        "Have AI generate a 1-paragraph LinkedIn post about your finding",
+        "Try a different AI (Claude, Perplexity) on the same prompts",
+        "Have AI write unit tests for your formulas"
+      ],
+      "questions": [
+        "When does AI confidently produce wrong SQL?",
+        "What's the 'verify before trust' rule for an analyst?",
+        "Will AI replace junior analysts? When?"
+      ],
+      "outputs": [
+        "prompts.md committed",
+        "AI-supported deck speaker notes",
+        "1 AI-generated post published"
+      ]
+    },
+    {
+      "number": 8,
       "title": "Superstore v0.5: Executive deck",
       "phase": "Foundation",
       "commitment_hours": "10-15",
@@ -730,7 +1155,7 @@
       ]
     },
     {
-      "number": 6,
+      "number": 9,
       "title": "Superstore v1.0: Ship + retro",
       "phase": "Foundation",
       "commitment_hours": "10-15",
@@ -861,7 +1286,7 @@
       ]
     },
     {
-      "number": 7,
+      "number": 10,
       "title": "Project 2 — HR Attrition v0.1",
       "phase": "HR Analytics",
       "commitment_hours": "12-18",
@@ -990,7 +1415,7 @@
       ]
     },
     {
-      "number": 8,
+      "number": 11,
       "title": "HR Attrition v0.2: Tenure + cohorts",
       "phase": "HR Analytics",
       "commitment_hours": "12-18",
@@ -1115,7 +1540,7 @@
       ]
     },
     {
-      "number": 9,
+      "number": 12,
       "title": "HR Attrition v0.3: Memo + dashboard",
       "phase": "HR Analytics",
       "commitment_hours": "10-15",
@@ -1237,7 +1662,7 @@
       ]
     },
     {
-      "number": 10,
+      "number": 13,
       "title": "HR Attrition v1.0: Ship + retro",
       "phase": "HR Analytics",
       "commitment_hours": "10-15",
@@ -1361,7 +1786,145 @@
       ]
     },
     {
-      "number": 11,
+      "number": 14,
+      "title": "Web scraping for business data",
+      "phase": "Data Acquisition",
+      "commitment_hours": "10-15",
+      "context": "Real business data isn't always in your CRM. Sometimes it's on a competitor's pricing page, in a public review site, or buried in PDFs. This week: scrape competitor prices, build a dashboard.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why scraping for analysts",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Three real business uses",
+              "body": "  1. Competitor price monitoring (track 10 competitors weekly)\n  2. Review sentiment (Trustpilot, G2)\n  3. Public stats data (your government's open data portal)"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Ethics + robots.txt",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Books-to-scrape (practice site)",
+              "url": "https://books.toscrape.com",
+              "why": "Built for scraping practice. Legal + safe."
+            },
+            {
+              "kind": "video",
+              "title": "Web scraping ethics (10 min)",
+              "url": "https://www.youtube.com/results?search_query=web+scraping+ethics+legal+robots",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Rules",
+              "body": "Three you'll always follow:\n  1. Robots.txt\n  2. Rate limit (≤ 1 req/sec)\n  3. Identify yourself in User-Agent"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "BeautifulSoup hello world",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Scrape book prices",
+              "body": "      pip install requests beautifulsoup4 pandas\n\nCreate scraper.py:\n      import requests, time, pandas as pd\n      from bs4 import BeautifulSoup\n      headers = {'User-Agent':'forge-analyst scraper'}\n      books = []\n      for page in range(1, 6):\n          url = f'https://books.toscrape.com/catalogue/page-{page}.html'\n          r = requests.get(url, headers=headers)\n          soup = BeautifulSoup(r.text, 'html.parser')\n          for art in soup.select('article.product_pod'):\n              title = art.select_one('h3 a').get('title')\n              price = art.select_one('.price_color').text.replace('£','')\n              books.append({'title': title, 'price': float(price)})\n          time.sleep(1)\n      pd.DataFrame(books).to_csv('books.csv', index=False)"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Schedule the scraper",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Run it weekly",
+              "body": "Add a timestamp column:\n      from datetime import date\n      books_df['scraped_on'] = date.today().isoformat()\n      books_df.to_csv('books_history.csv', mode='a', header=False, index=False)\n\nSet up to run every Monday (Windows Task Scheduler / cron). Over time you'll have a time series of prices."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Analyze price changes",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Diff over time",
+              "body": "After running 2x (simulate by editing dates):\n      df = pd.read_csv('books_history.csv')\n      changes = df.pivot_table('price', 'title', 'scraped_on').dropna()\n      changes['change'] = (changes.iloc[:,-1] - changes.iloc[:,0]) / changes.iloc[:,0]\n      print(changes.sort_values('change').head(10))"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Build a Sheets dashboard",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Visualize price trends",
+              "body": "Upload books_history.csv to Google Sheets. Build:\n  - 1 line chart per top-10 book showing price over time\n  - 1 table flagging books with > 10% price change\n  - 1 KPI: 'average price drop this month'"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag scraping-ready",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "New repo: competitor-price-tracker. Push scraper + sample data + dashboard screenshot.\n\nPASS:\n  ☐ BS4 scraper pulls 5 pages\n  ☐ Saves with timestamp column\n  ☐ Rate-limited + User-Agent set\n  ☐ Diff analysis works\n  ☐ Sheets dashboard committed (screenshot in README)"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Ethical scraping basics",
+        "BeautifulSoup for static HTML",
+        "Rate limiting + User-Agent",
+        "Timestamped append-only CSVs",
+        "Sheets dashboards for scraped data"
+      ],
+      "tasks": [
+        "Read robots.txt + write ethics rules",
+        "Scrape 5 pages of practice site",
+        "Add timestamps + schedule",
+        "Compute price-change deltas",
+        "Build a Sheets dashboard"
+      ],
+      "project": "competitor-price-tracker repo — working BS4 scraper, append-only history, simple Sheets dashboard.",
+      "resources": [],
+      "exercises": [
+        "Scrape a different practice site (quotes.toscrape.com)",
+        "Add product reviews to the scrape",
+        "Build an email alert when price drops > 20%"
+      ],
+      "questions": [
+        "When is scraping illegal?",
+        "Why is timestamping every scrape critical?",
+        "When do you need Selenium (vs BS4)?"
+      ],
+      "outputs": [
+        "competitor-price-tracker repo",
+        "Sheets dashboard screenshot",
+        "ETHICS.md"
+      ]
+    },
+    {
+      "number": 15,
       "title": "Project 3 — Marketing Funnel v0.1",
       "phase": "Marketing",
       "commitment_hours": "12-18",
@@ -1499,7 +2062,7 @@
       ]
     },
     {
-      "number": 12,
+      "number": 16,
       "title": "Olist Funnel v0.2: Cohorts + repeat purchase",
       "phase": "Marketing",
       "commitment_hours": "12-18",
@@ -1631,7 +2194,140 @@
       ]
     },
     {
-      "number": 13,
+      "number": 17,
+      "title": "A/B testing for product analysts",
+      "phase": "Modern Analysis",
+      "commitment_hours": "10-12",
+      "context": "Product analyst roles ALWAYS ask: 'design an A/B test.' This week you do — applied to Olist. Test whether a 'free shipping over $50' rule lifts average order value. Compute lift, p-value, decision.",
+      "days": [
+        {
+          "number": 1,
+          "title": "What product A/B tests look like",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "A/B testing in product analytics (15 min)",
+              "url": "https://www.youtube.com/results?search_query=ab+testing+product+analyst+beginner",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three real tests",
+              "body": "Product A/Bs you'd run at Olist:\n  1. 'Free shipping over $50' (this week)\n  2. 'Show product reviews above the fold'\n  3. 'Send abandoned-cart email at 1hr vs 24hr'"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Simulate the test in Excel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Set up A and B groups",
+              "body": "From your Olist orders.csv: filter to delivered orders only.\nAdd a helper column: =IF(MOD(ROW(),2)=0, \"A\", \"B\") to randomly split.\nPretend the B group saw 'free shipping over $50' rule that boosted their order value by 8%. Add: =IF(group=\"B\", payment_value * 1.08, payment_value) as 'order_value_in_test'."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Compute lift",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Group A vs B",
+              "body": "Pivot: Rows = group (A/B), Values = AVG order_value_in_test, COUNT.\nCompute lift: (B - A) / A.\nIs it ~8%? Should be close (random noise will shift it slightly)."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "P-value with t-test",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Test it",
+              "body": "      =T.TEST(A_group_values, B_group_values, 2, 3)\n\nResult < 0.05? Significant. Document."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Compute required sample size",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "How many do you need?",
+              "body": "Use evanmiller.org/ab-testing/sample-size.html or compute:\n  Baseline mean: $150\n  Minimum detectable lift: 3%\n  Power: 80%\n  Significance: 0.05\n  → ~? users per arm\n\nDocument. This is exactly what product analysts compute weekly."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Write the test plan",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "AB-PLAN.md",
+              "body": "      # A/B Test — Free Shipping Threshold\n      ## Hypothesis\n  Free shipping over $50 increases AOV by ≥ 3%\n      ## Setup\n  - Random 50/50 split on new visitors\n  - Run for 14 days\n  - Primary metric: AOV\n  - Secondary: conversion rate\n      ## Sample size\n  ~N per arm to detect 3% lift\n      ## Decision criteria\n  Ship if p<0.05 AND lift > 3%"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag AB-ready",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Push AB-PLAN.md + simulated results into your olist-funnel repo.\n\nPASS:\n  ☐ A/B simulation in Excel\n  ☐ Lift computed\n  ☐ P-value computed\n  ☐ Sample size justified\n  ☐ AB-PLAN.md committed"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "A/B test design (hypothesis, metric, MDE, duration)",
+        "Random group assignment",
+        "Computing lift",
+        "T-test for significance",
+        "Sample size calculation"
+      ],
+      "tasks": [
+        "Hypothesize a real product A/B",
+        "Simulate A/B in Excel",
+        "Compute lift",
+        "Compute p-value",
+        "Justify sample size",
+        "Write AB-PLAN.md"
+      ],
+      "project": "Olist AB-PLAN.md — a full product test design ready to defend in any analyst interview. Plus a simulated result.",
+      "resources": [],
+      "exercises": [
+        "Add a secondary metric (e.g., conversion rate)",
+        "Plan a 2x2 factorial test instead of A/B",
+        "What happens to your power if MDE drops to 1%?"
+      ],
+      "questions": [
+        "What's a guardrail metric?",
+        "Why never peek at A/B results early?",
+        "What's a 'novelty effect' in product experiments?"
+      ],
+      "outputs": [
+        "AB-PLAN.md",
+        "Simulated lift + p-value",
+        "Sample-size justification"
+      ]
+    },
+    {
+      "number": 18,
       "title": "Olist Funnel v0.3: Memo + dashboard",
       "phase": "Marketing",
       "commitment_hours": "10-15",
@@ -1754,7 +2450,7 @@
       ]
     },
     {
-      "number": 14,
+      "number": 19,
       "title": "Olist Funnel v1.0: Ship + retro",
       "phase": "Marketing",
       "commitment_hours": "10-15",
@@ -1877,7 +2573,147 @@
       ]
     },
     {
-      "number": 15,
+      "number": 20,
+      "title": "Tableau — the other half of the BI market",
+      "phase": "BI Tools",
+      "commitment_hours": "12-15",
+      "context": "Power BI is ~50% of the BI market. Tableau is ~30%. Adding Tableau to your CV doubles the jobs you can apply for. This week you rebuild your Superstore dashboard in Tableau Public (free).",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why both Power BI + Tableau",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI vs Tableau in 2026 (10 min)",
+              "url": "https://www.youtube.com/results?search_query=power+bi+vs+tableau+2024+comparison",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Job ad mix",
+              "body": "Check 10 data analyst job ads on LinkedIn. How many list Tableau? Power BI? Both? Note ratios."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Install Tableau Public",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Tableau Public (free)",
+              "url": "https://www.tableau.com/products/public/download",
+              "why": "Click 'Open'. Sign up + download. ~500MB."
+            },
+            {
+              "kind": "exercise",
+              "title": "First connection",
+              "body": "Open Tableau Public. Connect to your Sample - Superstore.xls file. Drag 'Orders' to the data pane."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Build the same 4 KPIs",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "KPI cards",
+              "body": "New worksheet 'Total Sales'. Drag Sales → Text. Right-click → Format → big font.\nRepeat for: Total Profit, Profit Margin (Profit / Sales — Tableau makes this 'measure name + Aggregation'), YoY Growth.\nCombine into a single Dashboard 'Overview'."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Charts: trend + region",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "2 charts",
+              "body": "New worksheet 'Sales Trend'. Drag Order Date → Columns (month). Drag Sales → Rows. Line chart.\nNew worksheet 'Sales by Region'. Drag Region → Rows. Sales → Columns. Bar chart, sort desc."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Matrix + conditional color",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Sub-Category margin",
+              "body": "Drag Sub-Category → Rows. Profit/Sales as calculated field → Columns. Format as %.\nClick the bar color → Edit Colors → red-green diverging at 0."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Build the dashboard + filters",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Assemble",
+              "body": "New Dashboard. Drag in: 4 KPI sheets, Trend, Bar, Matrix.\nAdd a Date filter. Set it to apply to all sheets.\nAdd a Region filter too."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Publish to Tableau Public",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Server → Tableau Public → Save. Sign in.\nGet a public URL like public.tableau.com/profile/yourname/viz/SuperstoreDashboard.\n\nPASS:\n  ☐ 4 KPI cards built\n  ☐ Trend + bar + matrix charts\n  ☐ Date + Region filters applied to all\n  ☐ Published to Tableau Public\n  ☐ URL in superstore-analysis README"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Tableau Public installation",
+        "Tableau worksheet vs dashboard",
+        "Calculated fields",
+        "Conditional color formatting",
+        "Filters that apply globally",
+        "Publishing to Tableau Public"
+      ],
+      "tasks": [
+        "Install Tableau Public",
+        "Connect to Superstore",
+        "Build 4 KPI worksheets",
+        "Build trend + bar + matrix charts",
+        "Assemble dashboard with global filters",
+        "Publish public URL"
+      ],
+      "project": "Superstore dashboard in Tableau Public — live public URL anyone can open. Same data as your Power BI version, alternative tool mastered.",
+      "resources": [],
+      "exercises": [
+        "Add a parameter (let user pick a year)",
+        "Build a story (sequence of dashboards with annotations)",
+        "Use a map: sales by State"
+      ],
+      "questions": [
+        "When is Tableau better than Power BI?",
+        "What's the 'show me' panel for?",
+        "Why do enterprise teams have both?"
+      ],
+      "outputs": [
+        "Public Tableau URL",
+        "Same insights as Power BI version",
+        "Dashboard screenshot in repo"
+      ]
+    },
+    {
+      "number": 21,
       "title": "Capstone v0.1: Multi-source dashboard scope",
       "phase": "Capstone",
       "commitment_hours": "10-15",
@@ -2001,7 +2837,7 @@
       ]
     },
     {
-      "number": 16,
+      "number": 22,
       "title": "Capstone v0.2: Pages 1 + 2",
       "phase": "Capstone",
       "commitment_hours": "15-20",
@@ -2123,7 +2959,7 @@
       ]
     },
     {
-      "number": 17,
+      "number": 23,
       "title": "Capstone v0.3: Pages 3 + 4",
       "phase": "Capstone",
       "commitment_hours": "12-18",
@@ -2245,7 +3081,147 @@
       ]
     },
     {
-      "number": 18,
+      "number": 24,
+      "title": "Storytelling masterclass",
+      "phase": "Communication",
+      "commitment_hours": "10-12",
+      "context": "The most technically brilliant analyst who cannot explain findings to a CEO loses to someone with half the skill and twice the storytelling. This week: narrative structure, slide design, presentation practice. Applied to your capstone.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why storytelling beats analysis",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Storytelling with data (15 min)",
+              "url": "https://www.youtube.com/results?search_query=storytelling+with+data+cole+nussbaumer+beginner",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reading",
+              "title": "Storytelling with Data — free chapter",
+              "url": "https://www.storytellingwithdata.com",
+              "why": "Click 'Open'. The book that defined the field."
+            },
+            {
+              "kind": "reflection",
+              "title": "Pyramid principle",
+              "body": "Top: ONE clear answer.\nMiddle: 3 supporting findings.\nBottom: the data behind each.\n\nThis is how executives think — top-down. Build slides this way."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Distill capstone into ONE sentence",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "The headline",
+              "body": "Take your ForgeRetail Capstone. Write ONE sentence (≤ 20 words) that captures the most important thing you learned.\n\nExamples:\n  'Tables sub-category lost $X annually — exit or redesign within 90 days.'\n  'Sales > $50k correlate with 3x repeat rate — invest in big-account onboarding.'\n\nHard. Iterate until it FITS on one slide."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Slide as visual hierarchy",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Re-design slide 1",
+              "body": "Old slide 1: 'ForgeRetail Q4 Review'. Charts everywhere.\nNEW slide 1: just the headline. 48pt font. White space. ONE subtle accent color.\n\nIf they only see this slide, they get the message."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Show the numbers — but ONLY the ones that matter",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Kill 3 charts",
+              "body": "Look at your deck. For each chart, ask: 'If this disappeared, would the audience LOSE understanding?' If no — kill it.\nEnd deck should have ≤ 5 charts. Maximum."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Speaker notes that work",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Notes per slide",
+              "body": "For each slide, write 30 seconds of spoken text. Pattern:\n  - Tell them what you'll tell them (5 sec)\n  - Tell them (20 sec)\n  - Tell them what you told them (5 sec)\n\nPaste into the deck's Notes pane."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Record + practice",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Self-tape",
+              "body": "Use your phone. Record yourself presenting the full deck. Maximum 5 minutes.\nWatch back. List 3 things you'd improve. Re-record. Watch again."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag storyteller",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Final polished deck PDF + practice video (unlisted YouTube) committed.\n\nPASS:\n  ☐ One-sentence headline for capstone\n  ☐ Slide 1 redesigned to JUST the headline\n  ☐ Killed ≥ 3 unnecessary charts\n  ☐ Speaker notes per slide\n  ☐ Self-recorded ≤ 5 min presentation\n  ☐ Practice video URL in README"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Pyramid principle (answer-first)",
+        "Distilling findings to one sentence",
+        "Visual hierarchy in slides",
+        "Killing unnecessary charts",
+        "Speaker notes structure",
+        "Self-recording + iteration"
+      ],
+      "tasks": [
+        "Watch storytelling fundamentals",
+        "Distill capstone to 1 sentence",
+        "Redesign slide 1 around headline only",
+        "Kill 3 charts from deck",
+        "Write 30-sec speaker notes per slide",
+        "Self-tape full presentation"
+      ],
+      "project": "ForgeRetail Capstone deck v2 — half the charts, twice the impact. One-sentence headline. Practiced + recorded.",
+      "resources": [],
+      "exercises": [
+        "Try the deck in front of an actual person — get feedback",
+        "Replace one chart with a single big number",
+        "Find an example of 'bad' chart design and remake it"
+      ],
+      "questions": [
+        "What's the difference between a chart that's pretty and a chart that's persuasive?",
+        "Why do executives skim slides not read them?",
+        "What kills credibility fastest in a presentation?"
+      ],
+      "outputs": [
+        "Polished deck PDF",
+        "Practice video URL",
+        "One-sentence headline in repo README"
+      ]
+    },
+    {
+      "number": 25,
       "title": "Capstone v1.0: Ship + roadmap retro",
       "phase": "Capstone",
       "commitment_hours": "12-18",

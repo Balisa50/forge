@@ -238,6 +238,170 @@
     },
     {
       "number": 2,
+      "title": "Math you actually need (lin alg + prob + stats)",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Before going deeper into ML, you need real math intuition. Linear algebra (vectors + matrices — the language of all ML models), probability (distributions, Bayes), and stats (mean, variance, distributions). Applied — we use these on the TaxiPulse data you just shipped, not on toy examples.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why this week matters",
+          "summary": "Most beginners skip math and hit a wall in Week 8 when models become opaque. Don't.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Essence of Linear Algebra — 3Blue1Brown (15 min Ep 1)",
+              "url": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
+              "duration_min": 15,
+              "creator": "3Blue1Brown",
+              "why": "Watch Ep 1 today. Visual intuition for vectors."
+            },
+            {
+              "kind": "reflection",
+              "title": "Three things",
+              "body": "Write in notes.txt: (1) Why do ML models use VECTORS? (2) What's the dot product really doing? (3) What's a probability distribution in 1 sentence?"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Vectors + matrices on real data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Linear Algebra for ML — 3Blue1Brown Ep 2",
+              "url": "https://www.youtube.com/watch?v=k7RM-ot2NWY",
+              "duration_min": 12,
+              "creator": "3Blue1Brown",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "NumPy fluency",
+              "body": "In your taxipulse repo, create math.ipynb. Run:\n      import numpy as np\n      import pandas as pd\n      df = pd.read_parquet('data/clean.parquet')\n      X = df[['trip_distance','trip_minutes']].values  # shape (N, 2)\n      print('Shape:', X.shape)\n      print('Mean per column:', X.mean(axis=0))\n      print('Std per column:', X.std(axis=0))\n      print('Dot product of first two rows:', np.dot(X[0], X[1]))\n      # Normalize: subtract mean, divide by std\n      Xn = (X - X.mean(axis=0)) / X.std(axis=0)\n      print('Normalized mean (should be ~0):', Xn.mean(axis=0))\nWrite 1 sentence under each: what does each operation MEAN for taxi data?"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Probability distributions",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Probability primer for ML (20 min)",
+              "url": "https://www.youtube.com/results?search_query=probability+basics+machine+learning+beginner+2024",
+              "duration_min": 20,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Plot real distributions",
+              "body": "      import matplotlib.pyplot as plt\n      df['fare_amount'].hist(bins=50, range=(0,80))\n      plt.title('Distribution of NYC taxi fares')\n      plt.savefig('figures/fare_dist.png')\n      # Compute key stats\n      print('Mean fare:', df['fare_amount'].mean())\n      print('Median fare:', df['fare_amount'].median())\n      print('Std:', df['fare_amount'].std())\n      print('Skewness:', df['fare_amount'].skew())\nIs the distribution normal or skewed? Why does that matter for modelling?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Bayes intuition",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Bayes theorem visual — 3Blue1Brown",
+              "url": "https://www.youtube.com/watch?v=HZGCoVF3YvM",
+              "duration_min": 15,
+              "creator": "3Blue1Brown",
+              "why": "P(A|B) = P(B|A) × P(A) / P(B) — Bayes will haunt your career."
+            },
+            {
+              "kind": "reflection",
+              "title": "A Bayes problem",
+              "body": "In a city, 5% of flights are delayed >15 min. A weather alert is issued for 30% of delayed flights but only 8% of on-time flights. If you see a weather alert, what's the probability the flight is delayed? Show your math. Answer below.\n\nP(D|A) = P(A|D)·P(D) / P(A) = 0.30 × 0.05 / (0.30·0.05 + 0.08·0.95) = 0.015 / 0.091 ≈ 16.5%\n\nNotice: even with the alert, most flights still aren't delayed. THIS is why intuition fails on conditional probability."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Derivatives + gradient descent intuition",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Gradient descent visualized — 3Blue1Brown",
+              "url": "https://www.youtube.com/watch?v=IHZwWFHWa-w",
+              "duration_min": 21,
+              "creator": "3Blue1Brown",
+              "why": "Every ML model uses this. Watch carefully."
+            },
+            {
+              "kind": "reflection",
+              "title": "In your own words",
+              "body": "Write 1 paragraph in notes.txt: in plain English, what does 'gradient descent' actually do when training a model?"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Linear regression by hand",
+          "summary": "Connect math to ML. The math IS the model.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Solve normal equation",
+              "body": "      # Closed-form linear regression: beta = (X^T X)^-1 X^T y\n      import numpy as np\n      X = df[['trip_distance','trip_minutes']].values\n      X = np.column_stack([np.ones(len(X)), X])  # add bias\n      y = df['fare_amount'].values\n      beta = np.linalg.inv(X.T @ X) @ X.T @ y\n      print('Intercept:', beta[0])\n      print('Per-mile:', beta[1])\n      print('Per-minute:', beta[2])\nCompare these numbers to NYC's real taxi base + per-mile rate. Match?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag math-w1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Commit math.ipynb to taxipulse repo. Update README to add a 'Math notebook' link.\n      git add . && git commit -m 'math foundations notebook'\n\nPASS:\n  ☐ Computed mean/std/normalize with NumPy on real data\n  ☐ Plotted + interpreted fare distribution\n  ☐ Worked out a Bayes problem\n  ☐ Solved linear regression by hand (closed form)\n  ☐ Coefficients match real-world NYC rates"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "NumPy vectors + matrices",
+        "Probability distributions + skewness",
+        "Bayes' theorem with conditional probabilities",
+        "Gradient descent intuition",
+        "Closed-form linear regression"
+      ],
+      "tasks": [
+        "Watch 3 of 3Blue1Brown's lin alg + Bayes + grad descent videos",
+        "Use NumPy on real TaxiPulse data — mean/std/normalize",
+        "Plot + interpret fare distribution",
+        "Solve a Bayes conditional probability problem by hand",
+        "Derive linear regression coefficients via the normal equation"
+      ],
+      "project": "Math notebook in taxipulse repo — applied math, not toy examples. Linear regression solved by hand matches real NYC taxi rates.",
+      "resources": [],
+      "exercises": [
+        "Plot the same dist before/after log-transform",
+        "Compute the Pearson correlation between distance and fare by hand (no pandas .corr)",
+        "Solve another Bayes problem (medical test screening)"
+      ],
+      "questions": [
+        "When does linear regression fail and why?",
+        "What's the difference between sample mean and population mean?",
+        "Why does normalizing features help most ML models?"
+      ],
+      "outputs": [
+        "math.ipynb in taxipulse repo",
+        "Solved Bayes problem in notes.txt",
+        "Linear regression coefficients matching NYC real rates"
+      ]
+    },
+    {
+      "number": 3,
       "title": "TaxiPulse v0.2: Borough breakdown + multi-month",
       "phase": "Foundation",
       "commitment_hours": "12-18",
@@ -383,7 +547,141 @@
       ]
     },
     {
-      "number": 3,
+      "number": 4,
+      "title": "SQL for Data Scientists",
+      "phase": "Foundation",
+      "commitment_hours": "12-15",
+      "context": "If you can't write SQL, you can't pull data from a real company. This week you rewrite your entire TaxiPulse analysis in SQL — joins, CTEs, window functions. By Sunday you can answer any 'show me X grouped by Y over Z time period' question.",
+      "days": [
+        {
+          "number": 1,
+          "title": "SQL is not Excel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "SQL crash course (1 hour)",
+              "url": "https://www.youtube.com/results?search_query=sql+crash+course+beginner+full+2024",
+              "duration_min": 60,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reading",
+              "title": "SQLite Online — in-browser SQL",
+              "url": "https://sqliteonline.com/",
+              "why": "Click 'Open'. No install. Run queries instantly."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Load TaxiPulse data into SQL",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CSV → SQL",
+              "body": "Convert clean.parquet to CSV (small sample for SQL):\n      import pandas as pd\n      df = pd.read_parquet('data/clean.parquet').sample(100_000)\n      df.to_csv('data/taxi_sample.csv', index=False)\n\nOpen sqliteonline.com. Click '+' → Import → CSV → upload taxi_sample.csv. Table named 'taxi'.\nTest: SELECT COUNT(*) FROM taxi;"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "SELECT, WHERE, GROUP BY",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Rewrite Q1 in SQL",
+              "body": "      -- Q1: trips by hour (from your TaxiPulse Week 1)\n      SELECT pickup_hour, COUNT(*) AS trips\n      FROM taxi\n      GROUP BY pickup_hour\n      ORDER BY trips DESC\n      LIMIT 5;\n\nSave in queries.sql. Compare to your pandas result — match?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Joins (LEFT, INNER)",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Add zone lookup",
+              "body": "Import taxi_zone_lookup.csv as 'zones'.\n      SELECT z.Borough, COUNT(*) AS trips\n      FROM taxi t\n      LEFT JOIN zones z ON z.LocationID = t.PULocationID\n      GROUP BY z.Borough\n      ORDER BY trips DESC;"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Window functions",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Top 3 per borough",
+              "body": "      SELECT * FROM (\n        SELECT z.Borough, t.pickup_hour, COUNT(*) AS trips,\n               ROW_NUMBER() OVER (PARTITION BY z.Borough ORDER BY COUNT(*) DESC) AS rn\n        FROM taxi t LEFT JOIN zones z ON z.LocationID = t.PULocationID\n        GROUP BY z.Borough, t.pickup_hour\n      ) WHERE rn <= 3;\n\nThis is impossible cleanly in pandas. SQL wins."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "CTEs (WITH ...)",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Multi-step analysis",
+              "body": "      WITH busy AS (\n        SELECT pickup_hour, COUNT(*) AS trips FROM taxi GROUP BY pickup_hour\n      ),\n      avg_busy AS (SELECT AVG(trips) AS avg_trips FROM busy)\n      SELECT b.pickup_hour, b.trips,\n             ROUND(100.0 * (b.trips - a.avg_trips) / a.avg_trips, 1) AS pct_vs_avg\n      FROM busy b CROSS JOIN avg_busy a\n      ORDER BY pct_vs_avg DESC;"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Save 10 queries + push",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "queries.sql ships",
+              "body": "Save 10 SQL queries answering your TaxiPulse questions. Each with a comment.\n      git add queries.sql data/taxi_zone_lookup.csv\n      git commit -m 'SQL version of TaxiPulse analysis'\n\nPASS:\n  ☐ 10 commented queries in queries.sql\n  ☐ Each result matches pandas equivalent\n  ☐ At least 1 window function + 1 CTE used"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "SELECT/WHERE/GROUP BY",
+        "JOIN types (INNER, LEFT)",
+        "Window functions (ROW_NUMBER, RANK)",
+        "CTEs / WITH clauses",
+        "Validating SQL against pandas"
+      ],
+      "tasks": [
+        "Set up SQLite Online",
+        "Import 100k taxi rows + zone lookup",
+        "Rewrite 3 TaxiPulse pivots in SQL",
+        "Use a window function for 'top-N per group'",
+        "Use a CTE for multi-step analysis",
+        "Commit 10 commented queries"
+      ],
+      "project": "TaxiPulse SQL — 10 queries that replicate your pandas analysis. queries.sql committed.",
+      "resources": [],
+      "exercises": [
+        "Try BigQuery's public NYC TLC dataset (it's free + faster)",
+        "Write a query that finds outlier trips (fare > 99th pct of distance bucket)",
+        "Convert one query to a stored procedure"
+      ],
+      "questions": [
+        "When is SQL faster than pandas? When isn't it?",
+        "What's a window function vs a GROUP BY?",
+        "Why use a CTE instead of nested subqueries?"
+      ],
+      "outputs": [
+        "queries.sql with 10 commented queries",
+        "Validation: SQL = pandas results",
+        "1 window function + 1 CTE"
+      ]
+    },
+    {
+      "number": 5,
       "title": "TaxiPulse v0.3: Predict the fare",
       "phase": "Foundation",
       "commitment_hours": "12-18",
@@ -519,7 +817,147 @@
       ]
     },
     {
-      "number": 4,
+      "number": 6,
+      "title": "Statistical inference + hypothesis testing",
+      "phase": "Foundation",
+      "commitment_hours": "12-15",
+      "context": "You SAID the 6pm hour is busiest. But is it SIGNIFICANTLY busier — or could it be random noise? This week you learn to answer that with p-values, confidence intervals, and t-tests. Applied to TaxiPulse and FlightWise data.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why p-values matter",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Hypothesis testing in 15 minutes",
+              "url": "https://www.youtube.com/results?search_query=hypothesis+testing+p+value+beginner+explained",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three questions",
+              "body": "Write down (don't google):\n  1. What's a null hypothesis?\n  2. What does p < 0.05 actually mean?\n  3. What's a Type I vs Type II error?"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Confidence intervals",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CI on mean fare",
+              "body": "      import numpy as np\n      from scipy import stats\n      fares = df['fare_amount'].sample(1000).values\n      mean = fares.mean()\n      sem = stats.sem(fares)\n      ci = stats.t.interval(0.95, len(fares)-1, loc=mean, scale=sem)\n      print(f'95% CI for mean fare: [{ci[0]:.2f}, {ci[1]:.2f}]')\n\nNow sample 100 instead of 1000. What happens to the CI width? Why?"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "T-test between groups",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Manhattan vs Brooklyn fares",
+              "body": "      from scipy import stats\n      man = df[df['pickup_borough']=='Manhattan']['fare_amount'].sample(1000)\n      brk = df[df['pickup_borough']=='Brooklyn']['fare_amount'].sample(1000)\n      t, p = stats.ttest_ind(man, brk, equal_var=False)\n      print(f't={t:.2f}, p={p:.2e}')\nIs the difference statistically significant? What does the p-value actually tell you?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Chi-square for categorical",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Day-of-week vs delay",
+              "body": "Using FlightWise data:\n      from scipy.stats import chi2_contingency\n      ct = pd.crosstab(df['DAY_OF_WEEK'], df['delayed'])\n      chi2, p, dof, exp = chi2_contingency(ct)\n      print(f'chi2={chi2:.1f}, p={p:.2e}, dof={dof}')\n\nIs day-of-week REALLY associated with delay, or random?"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Multiple comparisons + Bonferroni",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Why you can't run 100 t-tests",
+              "url": "https://www.youtube.com/results?search_query=multiple+testing+problem+bonferroni+explained",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Bonferroni correction",
+              "body": "Compare fares across all 5 NYC boroughs (10 pairwise tests). Apply Bonferroni: significance threshold = 0.05 / 10 = 0.005. Which pairs are still significant?"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Bootstrap confidence intervals",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Bootstrap is robust",
+              "body": "      def bootstrap_ci(x, n=1000):\n          means = [np.random.choice(x, len(x), replace=True).mean() for _ in range(n)]\n          return np.percentile(means, [2.5, 97.5])\n      ci = bootstrap_ci(fares)\n      print('Bootstrap 95% CI:', ci)\n\nCompare to your t-distribution CI from Day 2. Match? When is bootstrap better?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag inference-ready",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Save all tests in inference.ipynb. Update TaxiPulse README with one finding: 'X is significantly different from Y (p < 0.001)'.\n\nPASS:\n  ☐ Computed t-distribution + bootstrap CIs\n  ☐ Ran t-test between 2 groups\n  ☐ Ran chi-square on categorical\n  ☐ Applied Bonferroni for multiple tests\n  ☐ One statistically-significant finding in README"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Null hypothesis + p-values",
+        "Confidence intervals (t-distribution + bootstrap)",
+        "t-test between two groups",
+        "Chi-square for categorical",
+        "Multiple-testing correction (Bonferroni)"
+      ],
+      "tasks": [
+        "Compute 95% CI for mean fare",
+        "Compare 2 boroughs with a t-test",
+        "Test categorical association with chi-square",
+        "Apply Bonferroni to 10 comparisons",
+        "Bootstrap CIs as a backup"
+      ],
+      "project": "TaxiPulse inference notebook — every finding now has a p-value. README claims become 'significantly different' instead of just 'different'.",
+      "resources": [],
+      "exercises": [
+        "Run an ANOVA across all 5 boroughs",
+        "Test if log-fares are normally distributed (Shapiro-Wilk)",
+        "Compute Cohen's d effect size alongside p-value"
+      ],
+      "questions": [
+        "Why is p-value misunderstood?",
+        "When is a small p-value misleading?",
+        "What's effect size and why does it matter alongside p?"
+      ],
+      "outputs": [
+        "inference.ipynb committed",
+        "1 statistically-significant claim in README",
+        "Bonferroni-corrected pairwise comparisons"
+      ]
+    },
+    {
+      "number": 7,
       "title": "TaxiPulse v0.4: Deploy a fare-predictor API",
       "phase": "Foundation",
       "commitment_hours": "12-18",
@@ -659,7 +1097,163 @@
       ]
     },
     {
-      "number": 5,
+      "number": 8,
+      "title": "Web scraping toolkit",
+      "phase": "NLP Prep",
+      "commitment_hours": "12-18",
+      "context": "Real DS jobs need data nobody has packaged for you. This week you scrape — BeautifulSoup for static, Selenium for JS, Scrapy for scale. Build a side-project: scrape headlines from a real news site (Hacker News) into a CSV.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Ethics + robots.txt",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Hacker News robots.txt",
+              "url": "https://news.ycombinator.com/robots.txt",
+              "why": "Click 'Open'. Read what's allowed."
+            },
+            {
+              "kind": "video",
+              "title": "Web scraping ethics (10 min)",
+              "url": "https://www.youtube.com/results?search_query=web+scraping+ethics+legal+robots+txt+2024",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Rules",
+              "body": "Write 3 rules for ethical scraping:\n  1. Respect robots.txt\n  2. Rate-limit (≤ 1 req/sec on small sites)\n  3. Identify yourself in User-Agent"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "BeautifulSoup basics",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "BeautifulSoup tutorial (20 min)",
+              "url": "https://www.youtube.com/results?search_query=beautifulsoup+python+tutorial+beginner+2024",
+              "duration_min": 20,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Hacker News scraper",
+              "body": "      pip install requests beautifulsoup4\n\nCreate scraper.py:\n      import requests, time\n      from bs4 import BeautifulSoup\n      headers = {'User-Agent': 'forge-learning scraper'}\n      r = requests.get('https://news.ycombinator.com', headers=headers)\n      soup = BeautifulSoup(r.text, 'html.parser')\n      for row in soup.select('tr.athing'):\n          title = row.select_one('.titleline a')\n          print(title.text)"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Scrape 5 pages, save to CSV",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Multi-page",
+              "body": "      import csv, time\n      data = []\n      for page in range(1, 6):\n          url = f'https://news.ycombinator.com/news?p={page}'\n          r = requests.get(url, headers=headers)\n          soup = BeautifulSoup(r.text, 'html.parser')\n          for row in soup.select('tr.athing'):\n              title = row.select_one('.titleline a')\n              data.append({'title': title.text, 'url': title.get('href')})\n          time.sleep(1)  # rate limit\n      with open('hn.csv','w',newline='',encoding='utf-8') as f:\n          w = csv.DictWriter(f, fieldnames=['title','url']); w.writeheader(); w.writerows(data)\n      print(f'Saved {len(data)} stories')"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "When BS4 fails: JS-rendered sites",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Selenium vs BeautifulSoup (10 min)",
+              "url": "https://www.youtube.com/results?search_query=selenium+vs+beautifulsoup+javascript+rendered",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Try Selenium",
+              "body": "      pip install selenium webdriver-manager\n\n      from selenium import webdriver\n      from selenium.webdriver.chrome.options import Options\n      opt = Options(); opt.add_argument('--headless')\n      driver = webdriver.Chrome(options=opt)\n      driver.get('https://quotes.toscrape.com/js/')\n      print(driver.page_source[:500])\n      driver.quit()"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Scrapy for production scale",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First Scrapy spider",
+              "body": "      pip install scrapy\n      scrapy startproject hn_spider\nCreate hn_spider/spiders/hn.py:\n      import scrapy\n      class HNSpider(scrapy.Spider):\n          name = 'hn'\n          start_urls = ['https://news.ycombinator.com']\n          def parse(self, response):\n              for row in response.css('tr.athing'):\n                  yield {'title': row.css('.titleline a::text').get()}\nRun: scrapy crawl hn -o hn.jsonl"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Sentiment-tag your scrape (preview of next project)",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Quick sentiment",
+              "body": "Use a pretrained model to label HN titles:\n      from transformers import pipeline\n      clf = pipeline('sentiment-analysis')\n      import pandas as pd\n      df = pd.read_csv('hn.csv')\n      results = clf(df['title'].tolist()[:50])\n      for t, r in zip(df['title'][:5], results[:5]):\n          print(r['label'], '-', t)"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship hn-scraper repo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Create new repo `hn-scraper`. Push the BS4 scraper + Scrapy version + README.\n\nPASS:\n  ☐ BS4 scraper pulls 5 pages of HN\n  ☐ Saves to hn.csv with rate limiting\n  ☐ Scrapy version produces hn.jsonl\n  ☐ README documents ethics rules + when to use each tool\n  ☐ Repo pushed"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Ethics + robots.txt",
+        "BeautifulSoup for static HTML",
+        "Rate limiting + User-Agent",
+        "Selenium for JS-rendered pages",
+        "Scrapy for production scale",
+        "CSV / JSONL output formats"
+      ],
+      "tasks": [
+        "Read robots.txt + write your scraping ethics rules",
+        "BS4 scraper for HN front page",
+        "Multi-page scraping with rate limit",
+        "Selenium hello-world on a JS site",
+        "Scrapy spider that outputs JSONL",
+        "Push hn-scraper repo"
+      ],
+      "project": "hn-scraper repo — 3 working scrapers (BS4, Selenium, Scrapy) collecting Hacker News titles into structured data. Side-project that becomes a foundation for next week's NLP work.",
+      "resources": [],
+      "exercises": [
+        "Add comment count scraping",
+        "Compare scrape speed: BS4 vs Scrapy on 10 pages",
+        "Try ProtonVPN to rotate IPs (advanced — only if you control the source)"
+      ],
+      "questions": [
+        "When is Scrapy overkill?",
+        "What's the legal grey zone around scraping?",
+        "Why does rate-limiting protect both you and the site?"
+      ],
+      "outputs": [
+        "hn-scraper repo public on GitHub",
+        "3 working scrapers",
+        "ETHICS.md committed"
+      ]
+    },
+    {
+      "number": 9,
       "title": "TaxiPulse v0.5: Streamlit explorer",
       "phase": "Foundation",
       "commitment_hours": "12-18",
@@ -794,7 +1388,7 @@
       ]
     },
     {
-      "number": 6,
+      "number": 10,
       "title": "TaxiPulse v1.0: Ship + retro",
       "phase": "Foundation",
       "commitment_hours": "10-15",
@@ -920,7 +1514,156 @@
       ]
     },
     {
-      "number": 7,
+      "number": 11,
+      "title": "AI-Augmented DS workflow + Prompt Engineering",
+      "phase": "Modern DS",
+      "commitment_hours": "10-15",
+      "context": "In 2026, the best data scientists use AI as a copilot. This week you learn to make Cursor / GitHub Copilot / ChatGPT do 80% of the grunt work — fast SQL generation, debugging, drafting findings, code reviews. Speed = career advantage.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why this matters NOW",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "AI coding tools changed everything",
+              "url": "https://www.youtube.com/results?search_query=github+copilot+cursor+ai+pair+programming+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Honest assessment",
+              "body": "What's the LAST data analysis task that took you 4+ hours? Write it down. By Sunday you'll do something similar in 30 minutes."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Cursor / Copilot setup",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Cursor (free AI code editor)",
+              "url": "https://cursor.sh",
+              "why": "Click 'Open'. Drop-in VS Code replacement with AI built in. Free tier is plenty for this week."
+            },
+            {
+              "kind": "exercise",
+              "title": "First AI-assisted code",
+              "body": "Install Cursor. Open your taxipulse repo.\nPress Cmd/Ctrl+K. Type: 'add a function that computes the median tip percentage for each pickup borough and plots a bar chart'.\nAI generates the code. Review BEFORE accepting. Run it. Does it work?"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Prompt patterns that work",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "OpenAI Prompt Engineering Guide",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "why": "Click 'Open'. The canonical reference."
+            },
+            {
+              "kind": "exercise",
+              "title": "4 prompt patterns",
+              "body": "Try each pattern in ChatGPT (chatgpt.com) on a TaxiPulse question:\n\n1. ROLE: 'You are a senior data scientist. Critique this approach: [paste]'\n2. EXAMPLES: 'Convert these pandas snippets to SQL. Here's an example:\\n[pandas] → [SQL]\\nNow do: [your query]'\n3. STEP-BY-STEP: 'Think step by step. How would you find anomalies in this taxi data?'\n4. CONSTRAINTS: 'Write a function in <10 lines that... '\n\nSave the BEST and WORST output to prompts.md."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Using AI to write SQL fast",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Schema-aware SQL",
+              "body": "Open ChatGPT. Paste your taxi table schema:\n      Table: taxi(pickup_datetime, dropoff_datetime, pickup_hour, trip_distance, trip_minutes, fare_amount, tip_amount, pickup_borough)\n\nAsk: 'Write a SQL query that finds the 3 boroughs with the LARGEST gap between weekday and weekend average fares. Use a CTE.'\n\nRun the result in SQLite Online. Did it work first try? If not — fix it WITH the AI's help (paste the error)."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Code review by AI",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Critique your code",
+              "body": "Open one of your TaxiPulse notebooks. Pick a function. In ChatGPT, paste it and ask: 'Review this for: bugs, edge cases, performance, naming, and pythonic style. Be brutal.'\n\nApply the BEST 2 suggestions. Reject the rest with reasoning."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "AI for explaining + summarising findings",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Draft a blog paragraph",
+              "body": "Paste your TaxiPulse final notebook into ChatGPT and ask:\n  'Draft 3 paragraphs that I could publish on dev.to about this analysis. Target audience: data analysts. Tone: confident but humble.'\n\nEdit. Publish 1 paragraph as a LinkedIn post WITH a screenshot of your chart."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag AI-aware",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance — prompts.md ships",
+              "body": "Save prompts.md in your taxipulse repo with:\n  - 5 prompts that worked well\n  - 2 that failed (and why)\n  - Your 'AI workflow notes' — 3 rules for when to trust AI vs verify\n\nPASS:\n  ☐ Cursor installed + tested\n  ☐ 4 prompt patterns tested\n  ☐ AI-generated SQL run successfully\n  ☐ AI code review applied to 1 function\n  ☐ AI-drafted paragraph published on LinkedIn or dev.to\n  ☐ prompts.md committed"
+            },
+            {
+              "kind": "reflection",
+              "title": "AI vs you",
+              "body": "Where did AI help most? Where did it confidently produce nonsense?"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Cursor / GitHub Copilot setup",
+        "4 prompt patterns: role, examples, step-by-step, constraints",
+        "Using AI for SQL generation",
+        "AI code review",
+        "AI for drafting communication"
+      ],
+      "tasks": [
+        "Install Cursor + first AI-assisted code",
+        "Test 4 prompt patterns",
+        "Generate working SQL via AI prompt",
+        "Apply AI code review to one function",
+        "Publish an AI-drafted paragraph"
+      ],
+      "project": "AI workflow notebook + prompts.md — your personal cheatsheet for using AI as a DS multiplier. 5 working prompts + 2 failures documented.",
+      "resources": [],
+      "exercises": [
+        "Try a different AI tool (Claude, Perplexity) on the same task",
+        "Use AI to generate UNIT TESTS for your code",
+        "Have AI explain a paper from arxiv.org"
+      ],
+      "questions": [
+        "When does AI confidently fabricate code?",
+        "What's the 'verify before trust' rule?",
+        "What kinds of work will AI replace within 2 years?"
+      ],
+      "outputs": [
+        "prompts.md committed",
+        "1 LinkedIn/dev.to post",
+        "Cursor configured + used in real work"
+      ]
+    },
+    {
+      "number": 12,
       "title": "Project 2 — Reddit Sentiment v0.1",
       "phase": "NLP",
       "commitment_hours": "15-20",
@@ -1058,7 +1801,7 @@
       ]
     },
     {
-      "number": 8,
+      "number": 13,
       "title": "Reddit Sentiment v0.2: Hand-label + classical ML",
       "phase": "NLP",
       "commitment_hours": "12-18",
@@ -1183,7 +1926,147 @@
       ]
     },
     {
-      "number": 9,
+      "number": 14,
+      "title": "A/B testing + experimentation",
+      "phase": "Modeling",
+      "commitment_hours": "12-15",
+      "context": "Every product company runs A/B tests. This week you design + analyse one — applied to your Reddit Sentiment project. Compare 2 system prompts on the same 100 posts. Which one wins? Is the difference real?",
+      "days": [
+        {
+          "number": 1,
+          "title": "What is an A/B test really",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "A/B testing fundamentals (15 min)",
+              "url": "https://www.youtube.com/results?search_query=a+b+testing+fundamentals+data+science+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three questions",
+              "body": "1. What's a randomized control trial?\n2. Why split RANDOMLY (vs by user_id mod 2)?\n3. What's a 'minimum detectable effect'?"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Two system prompts for Reddit sentiment",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Define the experiment",
+              "body": "Open your reddit-sentiment repo. Define 2 system prompts:\n  A (control): 'Classify the sentiment of this Reddit post. Reply: POSITIVE / NEGATIVE / NEUTRAL.'\n  B (treatment): 'You are a moderator on r/MachineLearning. For each post, judge the OVERALL TONE. Be strict — sarcasm is NEGATIVE. Reply with only one word: POSITIVE / NEGATIVE / NEUTRAL.'\n\nSave these in ab/prompts.py."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Sample size + power",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Sample size calculator explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=a+b+test+sample+size+power+calculation",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Compute n",
+              "body": "      from statsmodels.stats.power import zt_ind_solve_power\n      # Detect a 10% lift in accuracy with 80% power, alpha 0.05\n      n = zt_ind_solve_power(effect_size=0.2, alpha=0.05, power=0.8)\n      print(f'Need ~{int(n)} samples per arm')\n\nFor our case, 100 samples per arm is enough for a large effect. For real product tests, this can be 10,000+."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Run both prompts on the same 100 posts",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "ab/run.py",
+              "body": "      from openai import OpenAI\n      from prompts import PROMPT_A, PROMPT_B\n      import pandas as pd\n      df = pd.read_csv('data/gold.csv').sample(100, random_state=42)\n      client = OpenAI()\n      def classify(prompt, text):\n          r = client.chat.completions.create(model='gpt-4o-mini', messages=[\n              {'role':'system','content': prompt},\n              {'role':'user','content': text}], temperature=0)\n          return r.choices[0].message.content.strip()\n      df['pred_A'] = df['title'].apply(lambda t: classify(PROMPT_A, t))\n      df['pred_B'] = df['title'].apply(lambda t: classify(PROMPT_B, t))\n      df.to_csv('ab/results.csv', index=False)\n\nRun it. Takes ~2 min and ~$0.05."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Compute accuracy + significance",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Did B beat A?",
+              "body": "      from scipy.stats import chi2_contingency\n      acc_A = (df['pred_A'] == df['true_label']).mean()\n      acc_B = (df['pred_B'] == df['true_label']).mean()\n      print(f'A: {acc_A:.2%}, B: {acc_B:.2%}')\n      # Test significance\n      ct = pd.crosstab(\n          ['A'] * len(df) + ['B'] * len(df),\n          list(df['pred_A'] == df['true_label']) + list(df['pred_B'] == df['true_label'])\n      )\n      chi2, p, _, _ = chi2_contingency(ct)\n      print(f'p = {p:.3f}')"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Write the experiment report",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "ab/REPORT.md",
+              "body": "      # A/B Test — Sentiment Prompt v1 vs v2\n      ## Hypothesis\n  Adding 'strict mode + sarcasm flag' improves classification accuracy.\n      ## Setup\n  - 100 hand-labelled r/ML posts\n  - Same model: gpt-4o-mini\n  - Random seed 42 for reproducibility\n      ## Results\n  - A: X%\n  - B: Y%\n  - p = Z\n      ## Verdict\n  Significant / Not significant. Ship / Don't ship. Why."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag AB-tested",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "      git add ab/ && git commit -m 'A/B prompt experiment'\n\nPASS:\n  ☐ 2 prompts defined\n  ☐ Sample size justified\n  ☐ Same 100 posts scored with both\n  ☐ Accuracy + p-value computed\n  ☐ REPORT.md with verdict"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Hypothesis + null hypothesis for A/B",
+        "Sample size + statistical power",
+        "Random assignment",
+        "Computing lift + significance",
+        "Writing experiment reports"
+      ],
+      "tasks": [
+        "Design hypothesis",
+        "Compute sample size needed",
+        "Run both prompts on same 100 posts",
+        "Compute accuracy lift + p-value",
+        "Write decision: ship or kill"
+      ],
+      "project": "Reddit Sentiment v0.x — first A/B experiment. Two prompts compared on identical test set. Statistically-defensible verdict.",
+      "resources": [],
+      "exercises": [
+        "Add a 3rd prompt variant (one-shot example)",
+        "Test on 200 posts — does the verdict change?",
+        "Compute Cohen's d effect size alongside p-value"
+      ],
+      "questions": [
+        "Why random assignment over deterministic?",
+        "When is p < 0.05 misleading in A/B?",
+        "What's a peeking problem?"
+      ],
+      "outputs": [
+        "ab/ directory with prompts, results, report",
+        "REPORT.md with verdict",
+        "Reproducible random seed"
+      ]
+    },
+    {
+      "number": 15,
       "title": "Reddit Sentiment v0.3: Fine-tune DistilBERT",
       "phase": "NLP",
       "commitment_hours": "15-20",
@@ -1321,7 +2204,155 @@
       ]
     },
     {
-      "number": 10,
+      "number": 16,
+      "title": "Synthetic data generation",
+      "phase": "Modeling",
+      "commitment_hours": "12-15",
+      "context": "By 2026 public data ran out. Real ML teams generate synthetic data — to balance classes (SMOTE), fill rare events (Faker), or replace sensitive PII (CTGAN). This week applied to your Reddit Sentiment (highly imbalanced) and FlightWise.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why synthetic data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Synthetic data in ML (15 min)",
+              "url": "https://www.youtube.com/results?search_query=synthetic+data+generation+ml+beginner+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "When to use it",
+              "body": "Three real use cases:\n  1. Severe class imbalance (only 5% positives)\n  2. Privacy: replace real PII with realistic fakes\n  3. Rare events (fraud, churn): expand training set"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Faker for realistic fakes",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Generate fake users",
+              "body": "      pip install faker\n\n      from faker import Faker\n      fake = Faker()\n      import pandas as pd\n      users = [{'name': fake.name(), 'email': fake.email(), 'city': fake.city(), 'age': fake.random_int(18, 80)} for _ in range(100)]\n      df = pd.DataFrame(users)\n      df.to_csv('data/fake_users.csv', index=False)\n      print(df.head())"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "SMOTE for class imbalance",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "SMOTE explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=smote+class+imbalance+machine+learning",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Balance FlightWise data",
+              "body": "Open flightwise:\n      pip install imbalanced-learn\n      from imblearn.over_sampling import SMOTE\n      from sklearn.linear_model import LogisticRegression\n      X = pd.get_dummies(df.drop(columns=['delayed','CRS_DEP_TIME']), drop_first=True)\n      y = df['delayed']\n      X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)\n      sm = SMOTE(random_state=42)\n      X_res, y_res = sm.fit_resample(X_train, y_train)\n      print('Before:', y_train.value_counts().to_dict())\n      print('After SMOTE:', pd.Series(y_res).value_counts().to_dict())"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Train + compare with/without SMOTE",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Does balancing help?",
+              "body": "      m_raw = LogisticRegression(max_iter=1000).fit(X_train, y_train)\n      m_smote = LogisticRegression(max_iter=1000).fit(X_res, y_res)\n      from sklearn.metrics import classification_report\n      print('Without SMOTE:'); print(classification_report(y_test, m_raw.predict(X_test)))\n      print('With SMOTE:'); print(classification_report(y_test, m_smote.predict(X_test)))\n\nRecall on delayed class — does it go up? Precision — does it drop? Document the trade-off."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Augment small text datasets",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Paraphrase with LLM",
+              "body": "For your Reddit sentiment imbalance:\n      from openai import OpenAI\n      client = OpenAI()\n      def paraphrase(text):\n          r = client.chat.completions.create(model='gpt-4o-mini', messages=[\n              {'role':'system','content':'Rewrite this Reddit title to mean the same thing in different words. Keep the same sentiment.'},\n              {'role':'user','content': text}], temperature=0.7)\n          return r.choices[0].message.content\n      # Take 10 NEGATIVE posts, paraphrase 3x each → 30 new NEGATIVE samples\n      neg = df[df['true_label']=='NEGATIVE'].head(10)\n      synth = []\n      for _, row in neg.iterrows():\n          for _ in range(3):\n              synth.append({'title': paraphrase(row['title']), 'true_label': 'NEGATIVE', 'synthetic': True})\n      print(synth[:3])"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "When synthetic data HURTS",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Pitfalls of synthetic data",
+              "url": "https://www.youtube.com/results?search_query=synthetic+data+pitfalls+bias+overfitting",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Be honest",
+              "body": "Three risks:\n  1. Synthetic data can amplify bias\n  2. Model overfits to synthetic patterns that don't exist in real data\n  3. Always validate on REAL test set, never synthetic"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag synth-aware",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "Save synth.ipynb. Update FlightWise + Reddit READMEs with the synth experiments.\n\nPASS:\n  ☐ Faker generated 100 fake user records\n  ☐ SMOTE applied to FlightWise\n  ☐ Compared with/without SMOTE — documented trade-off\n  ☐ LLM paraphrasing for Reddit imbalance\n  ☐ Notes on when synthetic data hurts"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Synthetic data use cases (imbalance, privacy, scarcity)",
+        "Faker for realistic placeholders",
+        "SMOTE for tabular class imbalance",
+        "LLM paraphrasing for text augmentation",
+        "Risks: bias amplification, overfitting"
+      ],
+      "tasks": [
+        "Generate 100 fake users with Faker",
+        "Apply SMOTE to FlightWise — observe class rebalance",
+        "Train+compare with/without SMOTE — quantify trade-off",
+        "LLM-paraphrase Reddit minority class",
+        "Document when synth data is dangerous"
+      ],
+      "project": "Synth notebook in flightwise + reddit-sentiment repos. Real before/after numbers showing SMOTE's effect on recall vs precision.",
+      "resources": [],
+      "exercises": [
+        "Try ADASYN instead of SMOTE",
+        "Generate fake transactions with CTGAN (advanced)",
+        "Compare bootstrap resampling vs SMOTE"
+      ],
+      "questions": [
+        "When does SMOTE leak information across train/test?",
+        "Why does synthetic data amplify bias?",
+        "When is 'just collect more real data' the right answer?"
+      ],
+      "outputs": [
+        "synth.ipynb committed",
+        "Quantified SMOTE trade-off",
+        "Augmented Reddit dataset committed"
+      ]
+    },
+    {
+      "number": 17,
       "title": "Reddit Sentiment v0.4: Live dashboard",
       "phase": "NLP",
       "commitment_hours": "12-18",
@@ -1444,7 +2475,7 @@
       ]
     },
     {
-      "number": 11,
+      "number": 18,
       "title": "Reddit Sentiment v0.5: REST API + Docker",
       "phase": "Production",
       "commitment_hours": "12-18",
@@ -1573,7 +2604,7 @@
       ]
     },
     {
-      "number": 12,
+      "number": 19,
       "title": "Reddit Sentiment v1.0: Ship + retro",
       "phase": "Production",
       "commitment_hours": "10-15",
@@ -1703,7 +2734,7 @@
       ]
     },
     {
-      "number": 13,
+      "number": 20,
       "title": "Project 3 — Energy Forecast v0.1",
       "phase": "Time Series",
       "commitment_hours": "15-20",
@@ -1843,7 +2874,7 @@
       ]
     },
     {
-      "number": 14,
+      "number": 21,
       "title": "Energy Forecast v0.2: ARIMA model",
       "phase": "Time Series",
       "commitment_hours": "12-18",
@@ -1975,7 +3006,7 @@
       ]
     },
     {
-      "number": 15,
+      "number": 22,
       "title": "Energy Forecast v0.3: Prophet model",
       "phase": "Time Series",
       "commitment_hours": "10-15",
@@ -2113,7 +3144,7 @@
       ]
     },
     {
-      "number": 16,
+      "number": 23,
       "title": "Energy Forecast v0.4: LSTM (PyTorch)",
       "phase": "Time Series",
       "commitment_hours": "15-20",
@@ -2244,7 +3275,146 @@
       ]
     },
     {
-      "number": 17,
+      "number": 24,
+      "title": "MLOps — MLflow + drift monitoring",
+      "phase": "Production",
+      "commitment_hours": "12-18",
+      "context": "Real models in production drift. Demand patterns change, vocabularies evolve, weather shifts. This week we add MLflow experiment tracking to your Energy Forecast model + monitor for drift after deployment.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why MLOps",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "What is MLOps? (10 min)",
+              "url": "https://www.youtube.com/results?search_query=mlops+explained+beginner+2024",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three problems",
+              "body": "Real MLOps solves:\n  1. 'Which model is in prod?' (no versioning)\n  2. 'Why did it suddenly do worse?' (no drift detection)\n  3. 'I lost the experiment notes' (no tracking)"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Install + start MLflow",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "MLflow docs",
+              "url": "https://mlflow.org/docs/latest/index.html",
+              "why": "Click 'Open'. Bookmark."
+            },
+            {
+              "kind": "exercise",
+              "title": "First run",
+              "body": "      pip install mlflow\nStart the UI:\n      mlflow ui --port 5000\nOpen localhost:5000. Empty dashboard."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Track Prophet experiments",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Log a run",
+              "body": "In your energy-forecast repo, create train.py:\n      import mlflow, pandas as pd\n      from prophet import Prophet\n      from sklearn.metrics import mean_absolute_error\n\n      mlflow.set_experiment('energy-prophet')\n      df = pd.read_csv('data/AEP_hourly.csv', parse_dates=['Datetime'])\n      daily = df.set_index('Datetime')['AEP_MW'].resample('D').mean().reset_index()\n      pdf = daily.rename(columns={'Datetime':'ds','AEP_MW':'y'})\n      train, test = pdf[:-30], pdf[-30:]\n\n      with mlflow.start_run():\n          mlflow.log_param('seasonality_mode', 'multiplicative')\n          m = Prophet(seasonality_mode='multiplicative', yearly_seasonality=True)\n          m.fit(train)\n          forecast = m.predict(test[['ds']])\n          mae = mean_absolute_error(test['y'], forecast['yhat'])\n          mlflow.log_metric('mae', mae)\n          print(f'MAE: {mae:.1f}')\n\nRun it. Refresh localhost:5000 — you see the run."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Compare multiple runs",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Hyperparameter sweep",
+              "body": "Loop over 3 changepoint_prior_scale values:\n      for cps in [0.05, 0.1, 0.5]:\n          with mlflow.start_run():\n              mlflow.log_param('cps', cps)\n              m = Prophet(changepoint_prior_scale=cps)\n              m.fit(train)\n              ...\n              mlflow.log_metric('mae', mae)\n\nIn MLflow UI, sort by MAE. Pick the winner. Tag it 'prod'."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Detect data drift",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Drift check with evidently",
+              "body": "      pip install evidently\n      from evidently.report import Report\n      from evidently.metric_preset import DataDriftPreset\n      ref = daily.head(1000)['AEP_MW']  # historical\n      cur = daily.tail(100)['AEP_MW']    # recent\n      r = Report(metrics=[DataDriftPreset()])\n      r.run(reference_data=pd.DataFrame({'val': ref}), current_data=pd.DataFrame({'val': cur}))\n      r.save_html('drift.html')\nOpen drift.html. Drifted? Why might that be?"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Trigger alert on drift",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Simple alarm",
+              "body": "      summary = r.as_dict()\n      drifted = summary['metrics'][0]['result']['dataset_drift']\n      if drifted:\n          print('ALARM: data drift detected — consider retraining')\n          # In prod: send Slack/email here\nWrite a cron-like script that does this check daily."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag mlops-w1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance",
+              "body": "      git add . && git commit -m 'MLflow tracking + drift monitoring'\n\nPASS:\n  ☐ MLflow UI works locally\n  ☐ 3+ tracked experiments visible\n  ☐ Best model tagged 'prod'\n  ☐ Evidently drift report generated\n  ☐ Drift alarm script committed"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "MLflow basics (params/metrics/tags)",
+        "Experiment comparison + selection",
+        "Data drift definition",
+        "Evidently for drift reports",
+        "Simple alert pipelines"
+      ],
+      "tasks": [
+        "Install MLflow + start UI",
+        "Track a baseline Prophet run",
+        "Sweep 3 hyperparameter values",
+        "Tag the prod model",
+        "Run Evidently drift report",
+        "Build a daily drift-alarm script"
+      ],
+      "project": "Energy Forecast MLOps layer — MLflow experiment tracking + Evidently drift monitoring. Tagged 'prod' model + automated drift alarms.",
+      "resources": [],
+      "exercises": [
+        "Add a model registry stage transition (Staging → Production)",
+        "Send drift alerts to a Slack webhook",
+        "Track model artifacts (the .pkl file itself)"
+      ],
+      "questions": [
+        "Why is a metric-only view of model quality dangerous?",
+        "What's the difference between data drift and concept drift?",
+        "When should drift trigger automatic retraining vs human review?"
+      ],
+      "outputs": [
+        "MLflow tracking working",
+        "Drift report HTML",
+        "Daily alarm script committed"
+      ]
+    },
+    {
+      "number": 25,
       "title": "Energy Forecast v1.0: Ship + retro",
       "phase": "Time Series",
       "commitment_hours": "10-15",
@@ -2367,7 +3537,7 @@
       ]
     },
     {
-      "number": 18,
+      "number": 26,
       "title": "Capstone v0.1: Pick + scope",
       "phase": "Capstone",
       "commitment_hours": "10-15",
@@ -2492,7 +3662,7 @@
       ]
     },
     {
-      "number": 19,
+      "number": 27,
       "title": "Capstone v0.2: Build",
       "phase": "Capstone",
       "commitment_hours": "15-20",
@@ -2616,7 +3786,7 @@
       ]
     },
     {
-      "number": 20,
+      "number": 28,
       "title": "Capstone v1.0: Ship + roadmap done",
       "phase": "Capstone",
       "commitment_hours": "15-20",
