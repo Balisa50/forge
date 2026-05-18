@@ -16,6 +16,7 @@ import {
   LogOut,
   Building2,
   UserCheck,
+  UserPlus,
   GraduationCap,
   User as UserIcon,
   Flame,
@@ -97,6 +98,7 @@ function getNavItems(userRole: string, isAlsoLearning: boolean): NavItem[] {
         ? [
             { href: "/dashboard",                 label: "Overview",      Icon: LayoutDashboard },
             { href: "/dashboard/mentor",           label: "My Mentees",    Icon: Users },
+            { href: "/dashboard/mentor/invite",    label: "Invite mentee", Icon: UserPlus },
             { href: "/dashboard/checkin",          label: "Check In",      Icon: ClipboardCheck },
             { href: "/dashboard/roadmap",          label: "Roadmap",       Icon: Map },
             { href: "/dashboard/pod",             label: "My Pod",        Icon: Users },
@@ -107,8 +109,10 @@ function getNavItems(userRole: string, isAlsoLearning: boolean): NavItem[] {
             { href: "/dashboard/settings",         label: "Settings",      Icon: Settings },
           ]
         : [
-            { href: "/dashboard/mentor",     label: "Overview",     Icon: LayoutDashboard },
-            { href: "/dashboard/settings",   label: "Settings",     Icon: Settings },
+            { href: "/dashboard/mentor",          label: "Overview",       Icon: LayoutDashboard },
+            { href: "/dashboard/mentor/invite",   label: "Invite mentee",  Icon: UserPlus },
+            { href: "/dashboard/mentor/reviews",  label: "Reviews",        Icon: ClipboardCheck },
+            { href: "/dashboard/settings",        label: "Settings",       Icon: Settings },
           ];
 
     case "bootcamp":

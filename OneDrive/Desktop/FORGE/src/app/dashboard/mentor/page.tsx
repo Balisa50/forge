@@ -2,8 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare } from "lucide-react";
-import MentorInvitesPanel from "@/components/MentorInvitesPanel";
+import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus } from "lucide-react";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -34,23 +33,29 @@ export default async function MentorDashboardPage() {
     return (
       <div>
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
-            Welcome, {mentor?.name?.split(" ")[0]}
-          </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem" }}>
-            {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-          </p>
+        <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
+              Welcome, {mentor?.name?.split(" ")[0]}
+            </h1>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem" }}>
+              {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+            </p>
+          </div>
+          <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
+            <UserPlus size={15} /> Invite a mentee
+          </Link>
         </div>
 
-        <MentorInvitesPanel />
-
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center", marginTop: "2rem" }}>
+        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
           <Users size={48} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
-          <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>No Mentees Yet</h2>
-          <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "440px", margin: "0 auto" }}>
-            Generate an invite code above and share it with a learner. When they redeem it during signup, they appear here.
+          <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>No mentees yet</h2>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "440px", margin: "0 auto 1.5rem", lineHeight: 1.6 }}>
+            Generate an invite for your first mentee — you&apos;ll get a join link and a permanent Personal ID to send them privately.
           </p>
+          <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.25rem" }}>
+            <UserPlus size={15} /> Invite a mentee
+          </Link>
         </div>
       </div>
     );
@@ -108,13 +113,18 @@ export default async function MentorDashboardPage() {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
-          Welcome, {mentor?.name?.split(" ")[0]}
-        </h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem" }}>
-          {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-        </p>
+      <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+        <div>
+          <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
+            Welcome, {mentor?.name?.split(" ")[0]}
+          </h1>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem" }}>
+            {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+          </p>
+        </div>
+        <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
+          <UserPlus size={15} /> Invite a mentee
+        </Link>
       </div>
 
       {/* At-risk alert */}
