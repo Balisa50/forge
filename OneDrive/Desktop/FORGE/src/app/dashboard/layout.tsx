@@ -25,8 +25,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }),
   ]);
 
-  // Stale JWT pointing to a deleted user — boot back to login
-  if (!dbUser) redirect("/login");
+  // Stale JWT pointing to a deleted user — boot via signout so the cookie
+  // is cleared. Just `redirect("/login")` would loop infinitely because the
+  // proxy sees a valid token and sends you back to /dashboard.
+  if (!dbUser) redirect("/api/auth/signout?callbackUrl=/login");
 
   // Force onboarding if not completed
   if (!dbUser.onboardingDone) redirect("/onboarding");
