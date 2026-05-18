@@ -65,6 +65,9 @@ DATA_SCI = {
         day(2, "Install Python and Jupyter",
             "Today we set up the tools. This is the boring but important day. Do not skip.",
             [
+                reading("Anaconda download page (official)",
+                        "https://www.anaconda.com/download",
+                        "Click 'Open' to go to the page. Download the version for your computer (Windows, Mac, or Linux)."),
                 video("How to install Anaconda on Windows / Mac / Linux",
                       search("install anaconda 2024 windows mac linux beginner"),
                       15, "various",
@@ -119,6 +122,12 @@ DATA_SCI = {
         day(3, "Download the real NYC taxi data",
             "Today you get the actual data file. One specific file. Do not look for others.",
             [
+                reading("NYC Taxi data — official page (NYC.gov)",
+                        "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
+                        "Open this in your browser so you know where the data comes from. It is published by the NYC government."),
+                reading("Direct download link — yellow_tripdata_2023-10.parquet (50 MB)",
+                        "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet",
+                        "This is the exact file we will use this week. Click 'Open' to download it — or follow the terminal steps below."),
                 exercise("Get the data file",
                          "STEP 1 — Open your terminal where 'taxipulse' is.\n"
                          "  WINDOWS: Anaconda Prompt. Make sure your prompt ends with 'taxipulse'.\n"
@@ -279,6 +288,12 @@ DATA_SCI = {
         day(7, "Polish the notebook and ship it",
             "Today you turn the messy notebooks into one clean story anyone could read. This is the artifact you put on your CV.",
             [
+                reading("GitHub — sign up (free)",
+                        "https://github.com/signup",
+                        "Click 'Open' to make a free GitHub account if you don't have one. You will push your project here today."),
+                reading("Create a new GitHub repo",
+                        "https://github.com/new",
+                        "Click 'Open' when you're ready to make a new public repo. Name it: taxipulse-nyc"),
                 exercise("Final acceptance — TaxiPulse v0.1",
                          "Make ONE final notebook called 'TaxiPulse-Final.ipynb'. Copy your best cells from the earlier notebooks into this one. Use the structure below exactly.\n\n"
                          "Use markdown cells (in Jupyter: change cell type from 'Code' to 'Markdown' in the dropdown at the top) for the text sections.\n\n"
