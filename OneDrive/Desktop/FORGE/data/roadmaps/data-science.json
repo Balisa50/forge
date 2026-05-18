@@ -2205,6 +2205,154 @@
     },
     {
       "number": 16,
+      "title": "Model interpretability with SHAP",
+      "phase": "Modeling",
+      "commitment_hours": "10-12",
+      "context": "A model that's 95% accurate is useless if you can't explain WHY it predicted what it did. Hiring managers in 2026 expect this. This week we use SHAP — the industry-standard tool — to explain your Reddit Sentiment model's predictions. By Sunday you'll know exactly which words drove every classification.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why interpretability matters",
+          "summary": "Watch and read — no coding today.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "SHAP explained simply (15 min)",
+              "url": "https://www.youtube.com/results?search_query=shap+values+explained+beginner+machine+learning",
+              "duration_min": 15,
+              "creator": "various",
+              "why": "The clearest beginner intro on YouTube."
+            },
+            {
+              "kind": "reflection",
+              "title": "Where would explainability matter?",
+              "body": "Write 3 real cases in notes.txt where a wrong prediction without explanation would cause big problems:\n  1. A loan-approval model rejects someone — they have the legal right to know why\n  2. A fraud-detection model flags a transaction — the bank needs to defend the flag\n  3. A medical model predicts disease — doctors must know what feature drove it"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Install SHAP",
+          "summary": "Set up the tool. No prior install needed.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "SHAP documentation",
+              "url": "https://shap.readthedocs.io/en/latest/",
+              "why": "Click 'Open' to bookmark."
+            },
+            {
+              "kind": "exercise",
+              "title": "Install + verify",
+              "body": "STEP 1 — Open the terminal where your reddit-sentiment project lives. (If you're new — that's Anaconda Prompt on Windows or Terminal on Mac.)\n\nSTEP 2 — Type these one at a time:\n      cd Desktop/reddit-sentiment\n      pip install shap\n  YOU SHOULD SEE: 'Successfully installed shap-...' after about 30 seconds.\n\nSTEP 3 — Open Jupyter:\n      jupyter notebook\n  Create a new notebook called 08-interpret.ipynb.\n\nSTEP 4 — Test:\n      import shap\n      print('SHAP version:', shap.__version__)\n  Press Shift+Enter.\n  YOU SHOULD SEE: 'SHAP version: 0.x.x' (any 0.40+ works)."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Explain a simple classical model first",
+          "summary": "Build intuition on TFIDF + LogReg before transformers.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "SHAP on your TFIDF baseline",
+              "body": "In 08-interpret.ipynb:\n\nCELL 1 — Load + retrain the baseline:\n      import pandas as pd, joblib\n      from sklearn.feature_extraction.text import TfidfVectorizer\n      from sklearn.linear_model import LogisticRegression\n      df = pd.read_csv('data/gold.csv')\n      vec = TfidfVectorizer(max_features=500)\n      X = vec.fit_transform(df['title'])\n      m = LogisticRegression(max_iter=1000).fit(X, df['true_label'])\n\nCELL 2 — Compute SHAP values:\n      import shap\n      explainer = shap.LinearExplainer(m, X)\n      shap_values = explainer.shap_values(X[:50])\n      print('Shape of SHAP values:', shap_values[0].shape)\n  YOU SHOULD SEE: (50, 500) — one row per post, one column per word.\n\nCELL 3 — Plot:\n      import matplotlib.pyplot as plt\n      shap.summary_plot(shap_values, X[:50].toarray(),\n                        feature_names=vec.get_feature_names_out(),\n                        plot_type='bar', max_display=15, show=False)\n      plt.savefig('figures/shap_baseline.png', dpi=150, bbox_inches='tight')\n      plt.show()\n  YOU SHOULD SEE: a bar chart of the top 15 words driving predictions.\n\nSTEP — Write 2 sentences below the chart: which words push toward POSITIVE? toward NEGATIVE?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Explain ONE prediction at a time",
+          "summary": "The hiring-manager money question: WHY this single prediction?",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Force plot for one post",
+              "body": "      idx = 5   # pick any row index\n      print('Post:', df.iloc[idx]['title'])\n      print('True label:', df.iloc[idx]['true_label'])\n      print('Predicted:', m.predict(X[idx])[0])\n      shap.initjs()\n      shap.force_plot(explainer.expected_value[0], shap_values[0][idx],\n                      vec.get_feature_names_out(), matplotlib=True, show=False)\n      plt.savefig('figures/shap_single.png', dpi=150, bbox_inches='tight')\n  YOU SHOULD SEE: a horizontal force plot — red words pushed toward the prediction, blue words pushed away.\n\nPick a post the model got WRONG. Explain why it failed using the force plot."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Explain the transformer (advanced)",
+          "summary": "SHAP on your fine-tuned DistilBERT.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "SHAP for Transformers (10 min)",
+              "url": "https://www.youtube.com/results?search_query=shap+transformers+nlp+tutorial",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "exercise",
+              "title": "Transformer explanations",
+              "body": "Note: this needs your fine-tuned model from Week 15.\n\n      from transformers import pipeline\n      clf = pipeline('text-classification', model='models/distilbert', return_all_scores=True)\n      explainer = shap.Explainer(clf)\n      texts = df['title'].head(10).tolist()\n      shap_vals = explainer(texts)\n      shap.plots.text(shap_vals[0])  # interactive HTML\n\nIf your computer is slow, skip the transformer part and stick with the LogReg version. That's enough for v0.1."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Find ONE bias your model has",
+          "summary": "Honesty — every model is biased somewhere.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Bias hunt",
+              "body": "Look at your top SHAP words. Find ONE that's a proxy for something the model SHOULDN'T be using.\n\nExamples of what to look for:\n  - Words specific to one subreddit pushing a sentiment\n  - Profanity flagged as NEGATIVE even when it's playful\n  - Technical jargon being misread as NEGATIVE\n\nDocument ONE bias finding in BIASES.md with:\n  - The biased feature/word\n  - 2 example posts where it caused a wrong prediction\n  - A proposed fix (data augmentation? feature removal? prompt change?)"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag interpret-w1 + ship",
+          "summary": "Half of explainability is documentation.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance — interpretability v0.1",
+              "body": "STEP 1 — Add a section to your reddit-sentiment README called 'Explainability'. Include:\n  - The SHAP summary plot (from Day 3)\n  - The force plot (Day 4)\n  - A 3-sentence summary of which features drive each class\n\nSTEP 2 — Push:\n      git add . && git commit -m 'add SHAP interpretability + bias notes'\n      git push\n\nPASS:\n  ☐ shap installed + working\n  ☐ Global summary plot saved\n  ☐ Single-prediction force plot saved\n  ☐ One documented bias finding in BIASES.md\n  ☐ README updated with explainability section\n  ☐ Anyone reading the repo can see WHY the model decided"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "What model interpretability means + why it matters",
+        "Installing SHAP",
+        "Global feature importance with summary plots",
+        "Per-prediction force plots",
+        "Finding bias in real models",
+        "Documenting explainability for non-technical readers"
+      ],
+      "tasks": [
+        "Install SHAP + verify",
+        "Run LinearExplainer on TFIDF baseline",
+        "Generate summary bar plot",
+        "Generate single-prediction force plot",
+        "Find + document 1 model bias",
+        "Push explainability artifacts to repo"
+      ],
+      "project": "Reddit-sentiment with explainability — every prediction now has a SHAP-backed 'why'. BIASES.md documents one real bias the learner found.",
+      "resources": [],
+      "exercises": [
+        "Try SHAP on FlightWise's XGBoost model too (TreeExplainer is faster)",
+        "Compute SHAP for the 20 worst misclassifications",
+        "Build a Streamlit page that shows SHAP per user input"
+      ],
+      "questions": [
+        "Why is SHAP better than just looking at feature importance from the model?",
+        "When are SHAP values misleading?",
+        "What's the trade-off between interpretable models and accurate ones?"
+      ],
+      "outputs": [
+        "Updated README with explainability section",
+        "BIASES.md",
+        "2 SHAP plots committed (summary + force)"
+      ]
+    },
+    {
+      "number": 17,
       "title": "Synthetic data generation",
       "phase": "Modeling",
       "commitment_hours": "12-15",
@@ -2352,7 +2500,7 @@
       ]
     },
     {
-      "number": 17,
+      "number": 18,
       "title": "Reddit Sentiment v0.4: Live dashboard",
       "phase": "NLP",
       "commitment_hours": "12-18",
@@ -2475,7 +2623,7 @@
       ]
     },
     {
-      "number": 18,
+      "number": 19,
       "title": "Reddit Sentiment v0.5: REST API + Docker",
       "phase": "Production",
       "commitment_hours": "12-18",
@@ -2604,7 +2752,7 @@
       ]
     },
     {
-      "number": 19,
+      "number": 20,
       "title": "Reddit Sentiment v1.0: Ship + retro",
       "phase": "Production",
       "commitment_hours": "10-15",
@@ -2734,7 +2882,7 @@
       ]
     },
     {
-      "number": 20,
+      "number": 21,
       "title": "Project 3 — Energy Forecast v0.1",
       "phase": "Time Series",
       "commitment_hours": "15-20",
@@ -2874,7 +3022,7 @@
       ]
     },
     {
-      "number": 21,
+      "number": 22,
       "title": "Energy Forecast v0.2: ARIMA model",
       "phase": "Time Series",
       "commitment_hours": "12-18",
@@ -3006,7 +3154,7 @@
       ]
     },
     {
-      "number": 22,
+      "number": 23,
       "title": "Energy Forecast v0.3: Prophet model",
       "phase": "Time Series",
       "commitment_hours": "10-15",
@@ -3144,7 +3292,7 @@
       ]
     },
     {
-      "number": 23,
+      "number": 24,
       "title": "Energy Forecast v0.4: LSTM (PyTorch)",
       "phase": "Time Series",
       "commitment_hours": "15-20",
@@ -3275,7 +3423,7 @@
       ]
     },
     {
-      "number": 24,
+      "number": 25,
       "title": "MLOps — MLflow + drift monitoring",
       "phase": "Production",
       "commitment_hours": "12-18",
@@ -3414,7 +3562,171 @@
       ]
     },
     {
-      "number": 25,
+      "number": 26,
+      "title": "Cloud + BigQuery for Data Scientists",
+      "phase": "Production",
+      "commitment_hours": "10-12",
+      "context": "Real DS work moves to the cloud. AWS for storage, BigQuery for huge SQL queries. This week: get an AWS account, store your model + data on S3, then query the public NYC TLC dataset on BigQuery (it's free up to 1TB/month). By Sunday you've run SQL on a multi-billion-row dataset.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Why the cloud",
+          "summary": "No installs today — just understand the picture.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "AWS in 10 minutes — Fireship",
+              "url": "https://www.youtube.com/watch?v=Z4AmZSm5OTI",
+              "duration_min": 10,
+              "creator": "Fireship",
+              "why": ""
+            },
+            {
+              "kind": "video",
+              "title": "BigQuery explained (5 min)",
+              "url": "https://www.youtube.com/results?search_query=bigquery+beginner+5+minutes",
+              "duration_min": 5,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Two reasons",
+              "body": "Why does real DS work need the cloud?\n  1. Data too big for your laptop (NYC TLC = 50GB+, your laptop has limited RAM)\n  2. Models too slow on your laptop (training + serving need GPUs/many CPUs)\nWrite your answer in notes.txt."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Set up AWS Free Tier (safely)",
+          "summary": "The careful steps. Skip nothing.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "AWS Free Tier signup",
+              "url": "https://portal.aws.amazon.com/billing/signup",
+              "why": "Click 'Open'. You need a credit card. Cost this week: $0 if you stay in free tier."
+            },
+            {
+              "kind": "video",
+              "title": "AWS account setup with MFA + billing alarm",
+              "url": "https://www.youtube.com/results?search_query=aws+free+tier+safe+setup+mfa+billing+alarm+2024",
+              "duration_min": 15,
+              "creator": "various",
+              "why": "Watch BEFORE signing up. Important."
+            },
+            {
+              "kind": "exercise",
+              "title": "Safe AWS setup",
+              "body": "STEP 1 — Sign up. Real email, real card. Choose 'Basic Support — Free'.\n\nSTEP 2 — Enable MFA (multi-factor authentication) on the root user.\n  AWS Console → your name (top right) → Security credentials → MFA → Add.\n  Use Google Authenticator or Authy on your phone.\n\nSTEP 3 — Set a billing alarm at $5.\n  Console search 'CloudWatch' → Alarms → Create alarm → Billing → Total Estimated Charge → $5 threshold → notify your email.\n\nSTEP 4 — Create an IAM user for daily use (NEVER use root again).\n  Console search 'IAM' → Users → Create user.\n  Name: forge-dev. Attach policy: 'AmazonS3FullAccess' for this week.\n  Create access key. Save Access Key ID + Secret Key in a password manager."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Upload your model to S3",
+          "summary": "Cloud storage you control.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Install AWS CLI + upload",
+              "body": "STEP 1 — Install the AWS CLI on your computer:\n  MAC: brew install awscli\n  WINDOWS: download installer from https://aws.amazon.com/cli/\n  LINUX: sudo apt install awscli OR follow official instructions\n\nSTEP 2 — Verify:\n      aws --version\n  YOU SHOULD SEE: 'aws-cli/2.x.x ...'\n\nSTEP 3 — Configure your IAM user:\n      aws configure\n  Paste your Access Key ID + Secret. Region: us-east-1. Output: json.\n\nSTEP 4 — Create a bucket (replace YOUR-NAME):\n      aws s3 mb s3://YOUR-NAME-models-2026\n  YOU SHOULD SEE: 'make_bucket: YOUR-NAME-models-2026'\n\nSTEP 5 — Upload your reddit-sentiment model:\n      cd Desktop/reddit-sentiment\n      aws s3 cp models/baseline.pkl s3://YOUR-NAME-models-2026/baseline.pkl\n      aws s3 ls s3://YOUR-NAME-models-2026/\n  YOU SHOULD SEE: your file listed."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Load model FROM S3 in code",
+          "summary": "The whole point: anywhere your code runs, it can reach the model.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "boto3 load",
+              "body": "      pip install boto3 joblib\n\n      import boto3, joblib, tempfile\n      s3 = boto3.client('s3')\n      with tempfile.NamedTemporaryFile() as f:\n          s3.download_file('YOUR-NAME-models-2026', 'baseline.pkl', f.name)\n          model = joblib.load(f.name)\n      print('Loaded model:', model)\n\nNow your Flask/Streamlit/HF Spaces deployment can pull the model from S3 instead of bundling it in the container."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Set up BigQuery (free, no credit card)",
+          "summary": "Google's serverless data warehouse.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Google Cloud Console",
+              "url": "https://console.cloud.google.com",
+              "why": "Click 'Open'. Sign in with a Google account. Create a new project named 'forge-bq'."
+            },
+            {
+              "kind": "exercise",
+              "title": "First BigQuery query",
+              "body": "STEP 1 — In Google Cloud Console, search 'BigQuery'. Open it.\n\nSTEP 2 — Run your first query. Click 'New query', paste:\n      SELECT COUNT(*) AS total_trips\n      FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2023`;\n\nSTEP 3 — Click Run.\n  YOU SHOULD SEE: a count of ~38 million trips. You just queried 38M rows in 3 seconds.\n\nYour laptop can never do this with pandas + a CSV. The cloud just did it in 3 seconds."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Run your TaxiPulse analysis at full scale",
+          "summary": "All 38M rows, not just 3M sample.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Full-scale Q1",
+              "body": "Re-run your TaxiPulse 'busiest hour' question on the ENTIRE 2023 dataset:\n\n      SELECT\n        EXTRACT(HOUR FROM pickup_datetime) AS hour,\n        COUNT(*) AS trips\n      FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2023`\n      WHERE pickup_datetime IS NOT NULL\n      GROUP BY hour\n      ORDER BY trips DESC\n      LIMIT 5;\n\nCompare to your local sample answer. Same hour? Different?\n\nCost: ~$0.01 of your $300 free credits."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag cloud-aware + document",
+          "summary": "Push proof you can work in production conditions.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance — cloud v0.1",
+              "body": "STEP 1 — Add CLOUD.md to your reddit-sentiment repo:\n      # Cloud Setup\n      \n      ## S3 model storage\n      Bucket: s3://YOUR-NAME-models-2026/\n      Models: baseline.pkl, distilbert/\n      \n      ## BigQuery TaxiPulse at scale\n      Re-ran the busiest-hour query on 38M rows. Result: hour XX:00 with YY,YYY,YYY trips.\n      Cost: ~$0.01 in BigQuery.\n      \n      ## How to fork this work\n      [step-by-step for someone reading your CV]\n\nSTEP 2 — Push:\n      git add . && git commit -m 'add cloud setup notes + BigQuery scale-up'\n\nPASS:\n  ☐ AWS account with MFA + billing alarm + IAM dev user\n  ☐ S3 bucket with at least 1 model uploaded\n  ☐ Code that loads the model FROM S3 (not local)\n  ☐ BigQuery project created\n  ☐ Re-ran TaxiPulse Q1 on full 38M-row dataset\n  ☐ CLOUD.md committed"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Why DS needs the cloud",
+        "AWS account hygiene (MFA, IAM, billing alarms)",
+        "AWS CLI install + configure",
+        "S3 bucket + uploading models",
+        "Loading models from S3 in Python with boto3",
+        "Google Cloud + BigQuery basics",
+        "Querying public datasets at scale"
+      ],
+      "tasks": [
+        "Sign up for AWS Free Tier safely",
+        "Install + configure AWS CLI",
+        "Upload a model to S3",
+        "Load model from S3 in Python code",
+        "Create a Google Cloud project + open BigQuery",
+        "Re-run TaxiPulse Q1 on 38M-row public dataset",
+        "Document setup in CLOUD.md"
+      ],
+      "project": "Cloud v0.1 — model in S3, code that pulls it down, BigQuery analysis at full data scale. Real production muscle on your CV.",
+      "resources": [],
+      "exercises": [
+        "Mount S3 as a fake filesystem with s3fs and load it like a local file",
+        "Save your final FlightWise predictions to BigQuery",
+        "Compute BigQuery cost for 3 different query patterns"
+      ],
+      "questions": [
+        "What's the difference between S3 (object storage) and a database?",
+        "When does BigQuery beat your laptop's pandas?",
+        "What's the AWS Free Tier cliff — when do you start paying?"
+      ],
+      "outputs": [
+        "S3 bucket with model uploaded",
+        "BigQuery project + 1 working query at scale",
+        "CLOUD.md documenting setup"
+      ]
+    },
+    {
+      "number": 27,
       "title": "Energy Forecast v1.0: Ship + retro",
       "phase": "Time Series",
       "commitment_hours": "10-15",
@@ -3537,7 +3849,7 @@
       ]
     },
     {
-      "number": 26,
+      "number": 28,
       "title": "Capstone v0.1: Pick + scope",
       "phase": "Capstone",
       "commitment_hours": "10-15",
@@ -3662,7 +3974,7 @@
       ]
     },
     {
-      "number": 27,
+      "number": 29,
       "title": "Capstone v0.2: Build",
       "phase": "Capstone",
       "commitment_hours": "15-20",
@@ -3786,7 +4098,7 @@
       ]
     },
     {
-      "number": 28,
+      "number": 30,
       "title": "Capstone v1.0: Ship + roadmap done",
       "phase": "Capstone",
       "commitment_hours": "15-20",
@@ -3906,6 +4218,151 @@
         "v1.0 tag + ROADMAP COMPLETE",
         "4 projects in portfolio",
         "ROADMAP_RETRO.md"
+      ]
+    },
+    {
+      "number": 31,
+      "title": "Portfolio + interview prep",
+      "phase": "Wrap",
+      "commitment_hours": "10-12",
+      "context": "Final week. You've built TaxiPulse NYC, Reddit Sentiment, Energy Forecast, your Capstone. Now we package it for hiring managers. Polished portfolio site, LinkedIn-ready posts, interview answers practiced. By Sunday: you can hand someone your portfolio URL and they can see your work in 60 seconds.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Audit what you have",
+          "summary": "Inventory everything before polishing.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Inventory list",
+              "body": "Create PORTFOLIO.md at the top of your main work folder. List every project you shipped this roadmap:\n\nFor Data Science, that's:\n  TaxiPulse NYC, Reddit Sentiment, Energy Forecast, your Capstone\n\nFor each project, write 3 lines:\n  1. One sentence: what does it do?\n  2. One sentence: technologies used\n  3. One sentence: who it would help / why it matters\n\nPrint this. Look at it. This is your CV section."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Buy a domain (optional but recommended)",
+          "summary": "Real portfolios live on real domains. ~$10-15/year.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Namecheap (cheap registrar)",
+              "url": "https://www.namecheap.com",
+              "why": "Click 'Open'. .com = ~$10/yr, .dev = ~$15/yr. Brand your domain like yourname.com or yourname-data.dev."
+            },
+            {
+              "kind": "exercise",
+              "title": "Pick + buy",
+              "body": "STEP 1 — Brainstorm 5 candidates with your name.\nSTEP 2 — Check availability on Namecheap.\nSTEP 3 — Buy ONE. If you can't afford it this week, skip — use a Netlify *.netlify.app subdomain for now."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Build a 1-page portfolio site",
+          "summary": "Steal from your Edge Portfolio (DevOps Week 1) or use a free template.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Astro portfolio templates (free)",
+              "url": "https://astro.build/themes/?categories%5B%5D=portfolio",
+              "why": "Click 'Open'. Pick one you like. Free."
+            },
+            {
+              "kind": "exercise",
+              "title": "Build it",
+              "body": "STEP 1 — Pick a template. Click 'Try It' → 'Open in Stackblitz' to see it live.\n  Or download the template ZIP and extract it.\n\nSTEP 2 — Edit src/pages/index.astro (or equivalent). Replace placeholder content with YOUR:\n  - Name + title (e.g. 'Data Scientist')\n  - 2-paragraph bio\n  - Each project: name, 1-line description, link to GitHub, link to live demo if any\n  - Contact: GitHub link, email, LinkedIn\n\nSTEP 3 — Deploy on Netlify (drag the project folder onto netlify.app/drop).\n  Get a URL.\n\nSTEP 4 — Point your custom domain if you bought one (Netlify → Site settings → Domain → Add)."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Write 3 LinkedIn posts about your projects",
+          "summary": "One per project. Schedule them across 2 weeks.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "3 posts",
+              "body": "For each of your top 3 projects in Data Science, write a LinkedIn post:\n\nSTRUCTURE (~150 words):\n  - Hook line: 'I just shipped [project name].'\n  - 2-3 sentences on what it does + tech\n  - 1 finding or surprising result (with a number)\n  - Link to the repo + live demo\n  - Question for engagement: 'What would you build next?'\n\nSave all 3 in PORTFOLIO.md. Post one immediately. Schedule the others 5-7 days apart."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Update LinkedIn + GitHub profiles",
+          "summary": "These will get checked before any interview.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Profile polish",
+              "body": "LINKEDIN:\n  Headline: 'Data Science | Building [your domain interest] tools with [your top stack]'\n  About: 2 paragraphs. What you build, what you're learning, what you want.\n  Featured: pin the 4 project repos with screenshots.\n  Experience: add 'Personal Projects' role with bullet points per project.\n\nGITHUB:\n  Profile README — clone github.com/yourname/yourname repo, write a clean README listing 4 projects.\n  Pin the 4 project repos so they appear first on your profile.\n  Make sure each repo has a working README + screenshot."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Practice 3 interview questions",
+          "summary": "Aloud. To a recording.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Practice + record",
+              "body": "Record yourself answering these 3 standard interview questions. 2 minutes each:\n\n  1. 'Walk me through your favorite project — what did you build and why?'\n  2. 'What's the hardest problem you hit while learning Data Science?'\n  3. 'How would you approach a problem you've never solved before?'\n\nWatch yourself back. List 3 verbal habits to fix. Re-record. Watch again."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship + apply",
+          "summary": "Final acceptance — and a real application.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Apply to one job",
+              "body": "STEP 1 — Find one entry-level job posting that matches your roadmap. Sites: LinkedIn, Indeed, Wellfound (formerly AngelList).\n\nSTEP 2 — Apply. Use your new portfolio URL + LinkedIn. Tailor the cover note in 3 sentences.\n\nSTEP 3 — Add the application to APPLICATIONS.md so you track responses.\n\nPASS — Portfolio v1.0 ships when:\n  ☐ PORTFOLIO.md with inventory of all your projects\n  ☐ Live portfolio site at a URL (own domain or netlify.app)\n  ☐ 3 LinkedIn posts written (at least 1 posted)\n  ☐ LinkedIn profile updated with Featured projects\n  ☐ GitHub profile README + pinned repos\n  ☐ 3 interview questions practiced + recorded\n  ☐ At least 1 real job application submitted"
+            },
+            {
+              "kind": "reflection",
+              "title": "What's next",
+              "body": "Write 2 sentences in notes.txt:\n  1. What's the next skill you want to learn after this roadmap?\n  2. What's your ideal first job in 6 months?"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Portfolio site basics",
+        "LinkedIn optimization for analysts/data scientists",
+        "GitHub profile + pinned repos",
+        "Writing LinkedIn posts about projects",
+        "Interview answer practice",
+        "Submitting real applications"
+      ],
+      "tasks": [
+        "Inventory all your shipped projects",
+        "Set up a portfolio site (free or custom domain)",
+        "Write 3 LinkedIn posts (one per top project)",
+        "Update LinkedIn + GitHub profiles",
+        "Practice 3 interview questions on video",
+        "Submit at least 1 real job application"
+      ],
+      "project": "Portfolio v1.0 — live portfolio site, polished LinkedIn + GitHub, 3 prepared posts, recorded practice answers, 1 application submitted. Career runway built.",
+      "resources": [],
+      "exercises": [
+        "Reach out to 3 working professionals on LinkedIn for 15-min chats",
+        "Submit one project to /r/dataisbeautiful or /r/MachineLearning",
+        "Schedule a mock interview with a friend"
+      ],
+      "questions": [
+        "What's the difference between a hobbyist and a hireable candidate?",
+        "Why does sending applications matter even when you're not 'ready'?",
+        "What's your honest weakest project — and what would make it stronger?"
+      ],
+      "outputs": [
+        "Live portfolio URL",
+        "Polished LinkedIn + GitHub profiles",
+        "3 LinkedIn posts written",
+        "Practice interview video",
+        "At least 1 job application submitted"
       ]
     }
   ]

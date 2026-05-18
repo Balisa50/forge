@@ -2714,6 +2714,169 @@
     },
     {
       "number": 21,
+      "title": "Modern Data Stack — dbt + BigQuery",
+      "phase": "Modern Tools",
+      "commitment_hours": "10-12",
+      "context": "Big companies don't run SQL queries from notebooks. They use dbt — a tool that turns SQL into version-controlled, tested, reusable models. Plus BigQuery as the warehouse. This week you set both up (free tier) and rebuild your Superstore analysis as dbt models. Modern analyst skill, +$20k on your CV.",
+      "days": [
+        {
+          "number": 1,
+          "title": "What is dbt and why do analysts use it",
+          "summary": "Watch and understand. No setup yet.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "dbt explained in 10 minutes",
+              "url": "https://www.youtube.com/results?search_query=dbt+data+build+tool+beginner+10+minutes",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "video",
+              "title": "Modern data stack overview",
+              "url": "https://www.youtube.com/results?search_query=modern+data+stack+2024+explained",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three problems dbt solves",
+              "body": "Write in notes.txt:\n  1. 'I have 100 SQL queries in random files' — dbt makes them versioned + tested\n  2. 'I copy-paste the same JOIN everywhere' — dbt lets you DEFINE a model once and reuse\n  3. 'I don't know if my changes broke yesterday's reports' — dbt runs tests automatically"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Set up BigQuery (free)",
+          "summary": "Google's data warehouse. No credit card needed.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Google Cloud Console",
+              "url": "https://console.cloud.google.com",
+              "why": "Click 'Open'. Sign in with any Google account. Free tier includes $300 in credits and 1TB/month of BigQuery queries forever."
+            },
+            {
+              "kind": "exercise",
+              "title": "Create a BigQuery project",
+              "body": "STEP 1 — Sign in to console.cloud.google.com.\n\nSTEP 2 — Click the project dropdown (top, next to 'Google Cloud') → New Project.\n  Name: forge-analytics. Click Create.\n\nSTEP 3 — Search 'BigQuery' in the top search bar. Open it.\n\nSTEP 4 — Run a free test query:\n      SELECT 'Hello BigQuery' AS greeting;\n  Click Run. YOU SHOULD SEE: 'Hello BigQuery' in 1 second."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Upload Superstore to BigQuery",
+          "summary": "Your familiar data, now in the cloud.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Convert + upload",
+              "body": "STEP 1 — Convert your Superstore Excel to CSV.\n  Open Sample - Superstore.xls. File → Save As → CSV. Save as orders.csv.\n\nSTEP 2 — In BigQuery, click the 3 dots next to your project name → Create dataset.\n  Dataset ID: superstore. Location: US. Click Create.\n\nSTEP 3 — Click 3 dots next to your dataset → Create table.\n  Source: Upload. File: orders.csv. Format: CSV. Table name: orders. Schema: Auto-detect. Create.\n  Takes 10 seconds.\n\nSTEP 4 — Test:\n      SELECT COUNT(*) FROM `forge-analytics.superstore.orders`;\n  YOU SHOULD SEE: ~10000 rows."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Install dbt locally",
+          "summary": "The tool itself, set up step by step.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "dbt installation docs",
+              "url": "https://docs.getdbt.com/docs/core/pip-install",
+              "why": "Click 'Open'. Reference page."
+            },
+            {
+              "kind": "exercise",
+              "title": "Install dbt-bigquery",
+              "body": "STEP 1 — Open your terminal (Anaconda Prompt on Windows, Terminal on Mac).\n\nSTEP 2 — Install (this includes the BigQuery adapter):\n      pip install dbt-bigquery\n  Takes ~1 minute.\n\nSTEP 3 — Verify:\n      dbt --version\n  YOU SHOULD SEE: 'Core: 1.x.x  Plugins: bigquery 1.x.x'.\n\nSTEP 4 — Initialize a new dbt project:\n      cd Desktop\n      dbt init forge_analytics\n  It asks: which adapter? Type 1 (BigQuery).\n  Project name: forge_analytics. Method: oauth.\n  Project ID: forge-analytics (the one from BigQuery).\n  Dataset: superstore. Threads: 1. Location: US. Job execution timeout: 300.\n\nSTEP 5 — Verify the connection:\n      cd forge_analytics\n      dbt debug\n  YOU SHOULD SEE: 'All checks passed!'\n  IF YOU SEE: 'authentication errors' — run 'gcloud auth application-default login' in a new tab, then retry."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build your first dbt model",
+          "summary": "SQL that's now tested + version-controlled.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Margin model",
+              "body": "STEP 1 — Open the forge_analytics folder in VS Code.\n  Open models/example/. Delete the 2 sample files inside.\n\nSTEP 2 — Create a new file: models/example/sub_category_margin.sql\n  Type:\n      SELECT\n        `Sub-Category` AS subcategory,\n        SUM(Sales) AS total_sales,\n        SUM(Profit) AS total_profit,\n        SAFE_DIVIDE(SUM(Profit), SUM(Sales)) AS margin\n      FROM {{ source('superstore', 'orders') }}\n      GROUP BY 1\n\nSTEP 3 — Tell dbt where the source is. Create models/example/sources.yml:\n      version: 2\n      sources:\n        - name: superstore\n          tables:\n            - name: orders\n\nSTEP 4 — Run:\n      dbt run\n  YOU SHOULD SEE: 'Completed successfully' and a new table in BigQuery.\n\nSTEP 5 — Verify in BigQuery console:\n      SELECT * FROM `forge-analytics.superstore.sub_category_margin` ORDER BY margin DESC LIMIT 5;\n  YOU SHOULD SEE: 5 rows of top-margin sub-categories."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Add tests + documentation",
+          "summary": "What separates dbt from a script: tests that auto-run.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Schema tests",
+              "body": "STEP 1 — Create models/example/schema.yml:\n      version: 2\n      models:\n        - name: sub_category_margin\n          description: 'Profit margin per sub-category'\n          columns:\n            - name: subcategory\n              tests:\n                - unique\n                - not_null\n            - name: margin\n              description: 'Profit / Sales'\n\nSTEP 2 — Run the tests:\n      dbt test\n  YOU SHOULD SEE: '2 tests passed'.\n\nSTEP 3 — Generate docs:\n      dbt docs generate\n      dbt docs serve\n  Browser opens with a navigable diagram of your data + tests. This is what real analyst teams use."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag dbt-ready + commit",
+          "summary": "Your modern stack project is shipped.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "GitHub — create repository",
+              "url": "https://github.com/new",
+              "why": "Click 'Open'. Name: superstore-dbt. Public."
+            },
+            {
+              "kind": "exercise",
+              "title": "Acceptance — dbt v0.1",
+              "body": "STEP 1 — Add a README.md at the top of forge_analytics/:\n      # Superstore on the Modern Data Stack\n      Same analysis as my Excel/Sheets Superstore project — now powered by BigQuery + dbt.\n      \n      ## Stack\n      - Warehouse: BigQuery\n      - Transformation: dbt\n      - Models: 1 (sub_category_margin)\n      - Tests: 2 passing (unique + not_null on subcategory)\n      \n      ## How to run\n      pip install dbt-bigquery\n      gcloud auth application-default login\n      dbt run && dbt test\n\nSTEP 2 — Push:\n      git init && git add . && git commit -m 'dbt v0.1: superstore on modern data stack'\n      git remote add origin https://github.com/YOUR-USERNAME/superstore-dbt.git\n      git push -u origin main\n\nPASS:\n  ☐ BigQuery project + dataset created\n  ☐ Superstore data uploaded to BigQuery\n  ☐ dbt installed + dbt debug passes\n  ☐ At least 1 dbt model that runs successfully\n  ☐ At least 2 tests passing\n  ☐ dbt docs work locally\n  ☐ Public GitHub repo named superstore-dbt"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "What dbt is + why modern teams use it",
+        "BigQuery basics (free tier)",
+        "Uploading CSV to BigQuery",
+        "Installing dbt-bigquery",
+        "dbt project structure (models, sources, schema)",
+        "Writing testable SQL models",
+        "Generating dbt docs"
+      ],
+      "tasks": [
+        "Sign up for Google Cloud + create project",
+        "Upload Superstore to BigQuery",
+        "Install dbt-bigquery",
+        "Initialize a dbt project",
+        "Build one SQL model + run it",
+        "Add unique + not_null tests",
+        "Push to GitHub"
+      ],
+      "project": "superstore-dbt repo — same Superstore analysis rebuilt on a modern stack (BigQuery + dbt). Working tests + docs. Recruiters will know what this means.",
+      "resources": [],
+      "exercises": [
+        "Add a second model: regional_yoy_growth (using the SAME source)",
+        "Add a custom test (margin must be between -1 and 1)",
+        "Add docs + descriptions for every column"
+      ],
+      "questions": [
+        "Why is dbt different from just writing SQL scripts?",
+        "Why do tests matter for analyst work?",
+        "What's the relationship between dbt models and BigQuery tables?"
+      ],
+      "outputs": [
+        "GitHub repo named superstore-dbt",
+        "BigQuery dataset with the dbt-built table",
+        "Tests passing",
+        "Local dbt docs renderable"
+      ]
+    },
+    {
+      "number": 22,
       "title": "Capstone v0.1: Multi-source dashboard scope",
       "phase": "Capstone",
       "commitment_hours": "10-15",
@@ -2837,7 +3000,7 @@
       ]
     },
     {
-      "number": 22,
+      "number": 23,
       "title": "Capstone v0.2: Pages 1 + 2",
       "phase": "Capstone",
       "commitment_hours": "15-20",
@@ -2959,7 +3122,7 @@
       ]
     },
     {
-      "number": 23,
+      "number": 24,
       "title": "Capstone v0.3: Pages 3 + 4",
       "phase": "Capstone",
       "commitment_hours": "12-18",
@@ -3081,7 +3244,7 @@
       ]
     },
     {
-      "number": 24,
+      "number": 25,
       "title": "Storytelling masterclass",
       "phase": "Communication",
       "commitment_hours": "10-12",
@@ -3221,7 +3384,7 @@
       ]
     },
     {
-      "number": 25,
+      "number": 26,
       "title": "Capstone v1.0: Ship + roadmap retro",
       "phase": "Capstone",
       "commitment_hours": "12-18",
@@ -3342,6 +3505,151 @@
         "v1.0 tag + ROADMAP COMPLETE",
         "All 4 projects in portfolio",
         "ROADMAP_RETRO.md"
+      ]
+    },
+    {
+      "number": 27,
+      "title": "Portfolio + interview prep",
+      "phase": "Wrap",
+      "commitment_hours": "10-12",
+      "context": "Final week. You've built Sample Superstore, HR Attrition, Olist Funnel, ForgeRetail Capstone. Now we package it for hiring managers. Polished portfolio site, LinkedIn-ready posts, interview answers practiced. By Sunday: you can hand someone your portfolio URL and they can see your work in 60 seconds.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Audit what you have",
+          "summary": "Inventory everything before polishing.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Inventory list",
+              "body": "Create PORTFOLIO.md at the top of your main work folder. List every project you shipped this roadmap:\n\nFor Data Analysis, that's:\n  Sample Superstore, HR Attrition, Olist Funnel, ForgeRetail Capstone\n\nFor each project, write 3 lines:\n  1. One sentence: what does it do?\n  2. One sentence: technologies used\n  3. One sentence: who it would help / why it matters\n\nPrint this. Look at it. This is your CV section."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Buy a domain (optional but recommended)",
+          "summary": "Real portfolios live on real domains. ~$10-15/year.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Namecheap (cheap registrar)",
+              "url": "https://www.namecheap.com",
+              "why": "Click 'Open'. .com = ~$10/yr, .dev = ~$15/yr. Brand your domain like yourname.com or yourname-data.dev."
+            },
+            {
+              "kind": "exercise",
+              "title": "Pick + buy",
+              "body": "STEP 1 — Brainstorm 5 candidates with your name.\nSTEP 2 — Check availability on Namecheap.\nSTEP 3 — Buy ONE. If you can't afford it this week, skip — use a Netlify *.netlify.app subdomain for now."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Build a 1-page portfolio site",
+          "summary": "Steal from your Edge Portfolio (DevOps Week 1) or use a free template.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Astro portfolio templates (free)",
+              "url": "https://astro.build/themes/?categories%5B%5D=portfolio",
+              "why": "Click 'Open'. Pick one you like. Free."
+            },
+            {
+              "kind": "exercise",
+              "title": "Build it",
+              "body": "STEP 1 — Pick a template. Click 'Try It' → 'Open in Stackblitz' to see it live.\n  Or download the template ZIP and extract it.\n\nSTEP 2 — Edit src/pages/index.astro (or equivalent). Replace placeholder content with YOUR:\n  - Name + title (e.g. 'Data Scientist')\n  - 2-paragraph bio\n  - Each project: name, 1-line description, link to GitHub, link to live demo if any\n  - Contact: GitHub link, email, LinkedIn\n\nSTEP 3 — Deploy on Netlify (drag the project folder onto netlify.app/drop).\n  Get a URL.\n\nSTEP 4 — Point your custom domain if you bought one (Netlify → Site settings → Domain → Add)."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Write 3 LinkedIn posts about your projects",
+          "summary": "One per project. Schedule them across 2 weeks.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "3 posts",
+              "body": "For each of your top 3 projects in Data Analysis, write a LinkedIn post:\n\nSTRUCTURE (~150 words):\n  - Hook line: 'I just shipped [project name].'\n  - 2-3 sentences on what it does + tech\n  - 1 finding or surprising result (with a number)\n  - Link to the repo + live demo\n  - Question for engagement: 'What would you build next?'\n\nSave all 3 in PORTFOLIO.md. Post one immediately. Schedule the others 5-7 days apart."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Update LinkedIn + GitHub profiles",
+          "summary": "These will get checked before any interview.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Profile polish",
+              "body": "LINKEDIN:\n  Headline: 'Data Analysis | Building [your domain interest] tools with [your top stack]'\n  About: 2 paragraphs. What you build, what you're learning, what you want.\n  Featured: pin the 4 project repos with screenshots.\n  Experience: add 'Personal Projects' role with bullet points per project.\n\nGITHUB:\n  Profile README — clone github.com/yourname/yourname repo, write a clean README listing 4 projects.\n  Pin the 4 project repos so they appear first on your profile.\n  Make sure each repo has a working README + screenshot."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Practice 3 interview questions",
+          "summary": "Aloud. To a recording.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Practice + record",
+              "body": "Record yourself answering these 3 standard interview questions. 2 minutes each:\n\n  1. 'Walk me through your favorite project — what did you build and why?'\n  2. 'What's the hardest problem you hit while learning Data Analysis?'\n  3. 'How would you approach a problem you've never solved before?'\n\nWatch yourself back. List 3 verbal habits to fix. Re-record. Watch again."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship + apply",
+          "summary": "Final acceptance — and a real application.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Apply to one job",
+              "body": "STEP 1 — Find one entry-level job posting that matches your roadmap. Sites: LinkedIn, Indeed, Wellfound (formerly AngelList).\n\nSTEP 2 — Apply. Use your new portfolio URL + LinkedIn. Tailor the cover note in 3 sentences.\n\nSTEP 3 — Add the application to APPLICATIONS.md so you track responses.\n\nPASS — Portfolio v1.0 ships when:\n  ☐ PORTFOLIO.md with inventory of all your projects\n  ☐ Live portfolio site at a URL (own domain or netlify.app)\n  ☐ 3 LinkedIn posts written (at least 1 posted)\n  ☐ LinkedIn profile updated with Featured projects\n  ☐ GitHub profile README + pinned repos\n  ☐ 3 interview questions practiced + recorded\n  ☐ At least 1 real job application submitted"
+            },
+            {
+              "kind": "reflection",
+              "title": "What's next",
+              "body": "Write 2 sentences in notes.txt:\n  1. What's the next skill you want to learn after this roadmap?\n  2. What's your ideal first job in 6 months?"
+            }
+          ]
+        }
+      ],
+      "topics": [
+        "Portfolio site basics",
+        "LinkedIn optimization for analysts/data scientists",
+        "GitHub profile + pinned repos",
+        "Writing LinkedIn posts about projects",
+        "Interview answer practice",
+        "Submitting real applications"
+      ],
+      "tasks": [
+        "Inventory all your shipped projects",
+        "Set up a portfolio site (free or custom domain)",
+        "Write 3 LinkedIn posts (one per top project)",
+        "Update LinkedIn + GitHub profiles",
+        "Practice 3 interview questions on video",
+        "Submit at least 1 real job application"
+      ],
+      "project": "Portfolio v1.0 — live portfolio site, polished LinkedIn + GitHub, 3 prepared posts, recorded practice answers, 1 application submitted. Career runway built.",
+      "resources": [],
+      "exercises": [
+        "Reach out to 3 working professionals on LinkedIn for 15-min chats",
+        "Submit one project to /r/dataisbeautiful or /r/MachineLearning",
+        "Schedule a mock interview with a friend"
+      ],
+      "questions": [
+        "What's the difference between a hobbyist and a hireable candidate?",
+        "Why does sending applications matter even when you're not 'ready'?",
+        "What's your honest weakest project — and what would make it stronger?"
+      ],
+      "outputs": [
+        "Live portfolio URL",
+        "Polished LinkedIn + GitHub profiles",
+        "3 LinkedIn posts written",
+        "Practice interview video",
+        "At least 1 job application submitted"
       ]
     }
   ]
