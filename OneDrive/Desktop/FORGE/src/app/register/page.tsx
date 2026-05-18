@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowLeft, Ghost } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const TIMEZONES = [
   "UTC", "Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa", "Africa/Algiers",
@@ -29,28 +29,6 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [guestLoading, setGuestLoading] = useState(false);
-
-  const handleGuest = async () => {
-    setGuestLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/guest", { method: "POST" });
-      if (!res.ok) throw new Error("Failed to create guest session");
-      const { email: gEmail, password: gPass } = await res.json();
-      const result = await signIn("credentials", { email: gEmail, password: gPass, redirect: false });
-      if (result?.ok) {
-        router.push("/onboarding");
-        router.refresh();
-      } else {
-        setError("Could not start guest session. Try again.");
-        setGuestLoading(false);
-      }
-    } catch {
-      setError("Could not start guest session. Try again.");
-      setGuestLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,44 +138,6 @@ export default function RegisterPage() {
           <Link href="/login" style={{ color: "var(--blue)" }}>Sign In</Link>
         </div>
 
-        {/* Divider */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "1.5rem 0" }}>
-          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>OR</span>
-          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-        </div>
-
-        <button
-          type="button"
-          onClick={handleGuest}
-          disabled={guestLoading}
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            background: "transparent",
-            border: "1px solid var(--border)",
-            borderRadius: "6px",
-            cursor: guestLoading ? "not-allowed" : "pointer",
-            color: "var(--text-secondary)",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.8125rem",
-            letterSpacing: "0.05em",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            transition: "border-color 0.15s, color 0.15s",
-            opacity: guestLoading ? 0.6 : 1,
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-secondary)"; }}
-        >
-          <Ghost size={15} strokeWidth={1.5} />
-          {guestLoading ? "Starting demo..." : "Try as Guest"}
-        </button>
-        <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.5rem" }}>
-          No signup. Progress erased when you leave.
-        </p>
         </div>
       </motion.div>
     </div>
