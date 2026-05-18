@@ -50,57 +50,68 @@ export default async function MentorDashboardPage() {
         <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
           <Users size={48} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>No mentees yet</h2>
-          <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "440px", margin: "0 auto 1.5rem", lineHeight: 1.6 }}>
-            Generate an invite for your first mentee — you&apos;ll get a join link and a permanent Personal ID to send them privately.
+          <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "440px", margin: "0 auto", lineHeight: 1.6 }}>
+            Generate an invite for your first mentee using the button above — you&apos;ll get a join link and a permanent Personal ID to send them privately.
           </p>
-          <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.25rem" }}>
-            <UserPlus size={15} /> Invite a mentee
-          </Link>
         </div>
       </div>
     );
   }
 
-  // Fetch detailed progress for each mentee
-  const mentees = await Promise.all(
+  // Fetch detailed progress for each mentee. Per-mentee try/catch so one
+  // broken record doesn't crash the entire dashboard.
+  const mentees = (await Promise.all(
     mentorLinks.map(async (link) => {
-      const roadmap = await prisma.roadmap.findFirst({
-        where: { userId: link.mentee.id, isActive: true },
-        include: {
-          tracks: { include: { phases: { include: { tasks: true } } } },
-          checkins: {
-            orderBy: { createdAt: "desc" },
-            take: 10,
-            include: {
-              interrogation: { select: { passed: true, overallScore: true } },
-              task: { select: { title: true } },
+      try {
+        const roadmap = await prisma.roadmap.findFirst({
+          where: { userId: link.mentee.id, isActive: true },
+          include: {
+            tracks: { include: { phases: { include: { tasks: true } } } },
+            checkins: {
+              orderBy: { createdAt: "desc" },
+              take: 10,
+              include: {
+                task: { select: { title: true } },
+              },
             },
           },
-        },
-      });
+        });
 
-      const allTasks = roadmap?.tracks.flatMap((t) => t.phases.flatMap((p) => p.tasks)) ?? [];
-      const verifiedTasks = allTasks.filter((t) => t.status === "verified").length;
-      const totalTasks = allTasks.length;
+        const allTasks = roadmap?.tracks.flatMap((t) => t.phases.flatMap((p) => p.tasks)) ?? [];
+        const verifiedTasks = allTasks.filter((t) => t.status === "verified").length;
+        const totalTasks = allTasks.length;
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const lastCheckin = roadmap?.checkins[0];
-      const lastDate = lastCheckin ? new Date(lastCheckin.createdAt) : null;
-      if (lastDate) lastDate.setHours(0, 0, 0, 0);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const lastCheckin = roadmap?.checkins[0];
+        const lastDate = lastCheckin ? new Date(lastCheckin.createdAt) : null;
+        if (lastDate) lastDate.setHours(0, 0, 0, 0);
 
-      return {
-        user: link.mentee,
-        note: link.note,
-        roadmapTitle: roadmap?.title ?? null,
-        progress: totalTasks > 0 ? Math.round((verifiedTasks / totalTasks) * 100) : 0,
-        verifiedTasks,
-        totalTasks,
-        checkedInToday: lastDate?.getTime() === today.getTime(),
-        recentCheckins: roadmap?.checkins ?? [],
-      };
+        return {
+          user: link.mentee,
+          note: link.note,
+          roadmapTitle: roadmap?.title ?? null,
+          progress: totalTasks > 0 ? Math.round((verifiedTasks / totalTasks) * 100) : 0,
+          verifiedTasks,
+          totalTasks,
+          checkedInToday: lastDate?.getTime() === today.getTime(),
+          recentCheckins: roadmap?.checkins ?? [],
+        };
+      } catch (e) {
+        console.error(`[mentor-dashboard] Failed to load mentee ${link.mentee.id}:`, e);
+        return {
+          user: link.mentee,
+          note: link.note,
+          roadmapTitle: null,
+          progress: 0,
+          verifiedTasks: 0,
+          totalTasks: 0,
+          checkedInToday: false,
+          recentCheckins: [],
+        };
+      }
     })
-  );
+  ));
 
   // Aggregate stats
   const totalMentees = mentees.length;

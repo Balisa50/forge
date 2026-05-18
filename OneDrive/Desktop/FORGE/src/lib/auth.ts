@@ -95,18 +95,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const collision = providedEmail ? await prisma.user.findUnique({ where: { email } }) : null;
         const finalEmail = collision ? `mentee_${randomBytes(8).toString("hex")}@forge.local` : email;
 
+        // Path-scoped invite? Mark onboarding DONE — the mentor already
+        // chose the path. The mentee shouldn't see role-picker or roadmap-
+        // picker. They land straight on the dashboard waiting for Week 1.
+        const skipOnboarding = !!invite.roadmapSlug;
+
         const user = await prisma.user.create({
           data: {
             email: finalEmail,
-            // Always use the EXPECTED name (mentor's source of truth), not whatever
-            // the user typed. They had to match it anyway; storing the canonical form
-            // keeps the mentor's records clean.
             name: invite.expectedName?.trim() || parsed.data.name.trim(),
             passwordHash: await bcrypt.hash(randomBytes(32).toString("hex"), 10),
             isCodeOnly: true,
             recoveryToken: randomToken(),
             personalId: invite.personalIdIssued ?? null,
-            onboardingDone: false,
+            onboardingDone: skipOnboarding,
             role: "student",
           },
         });
@@ -120,10 +122,66 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             data: {
               usesCount: invite.usesCount + 1,
               consumedByUserId: user.id,
-              isActive: false, // single-use done
+              isActive: false,
             },
           }),
         ]);
+
+        // Auto-seed the curated roadmap for path-scoped invites. All weeks
+        // start LOCKED so the mentor controls every release. No role-picker,
+        // no roadmap-picker, no schedule step — the mentor pre-chose those.
+        if (invite.roadmapSlug) {
+          try {
+            const { loadRoadmap, getPhaseGroups } = await import("@/lib/roadmaps");
+            const curriculum = loadRoadmap(invite.roadmapSlug);
+            if (curriculum) {
+              const groups = getPhaseGroups(curriculum.weeks);
+              const TRACK_COLORS: Record<string, string> = {
+                "ai-engineering": "#a855f7", "ml-engineering": "#6366f1",
+                "full-stack-web": "#00c8ff", "mobile-engineering": "#ec4899",
+                "devops-cloud": "#f59e0b", "cybersecurity": "#22c55e",
+                "data-science": "#3b82f6", "data-analysis": "#14b8a6",
+                "bi-analytics": "#f97316",
+              };
+              const trackColor = TRACK_COLORS[invite.roadmapSlug] ?? "#00c8ff";
+              const { weekToTaskDetail, weekToTaskMilestone, weekToTaskResources, weekToTaskWhy, parseCommitmentHours } = await import("@/lib/curated-roadmaps");
+              await prisma.roadmap.create({
+                data: {
+                  userId: user.id,
+                  title: curriculum.title,
+                  tracks: {
+                    create: [{
+                      title: curriculum.title,
+                      color: trackColor,
+                      sortOrder: 0,
+                      phases: {
+                        create: groups.map((g, pi) => ({
+                          title: g.phase || `Phase ${pi + 1}`,
+                          sortOrder: pi,
+                          tasks: {
+                            create: g.weeks.map((w, wi) => ({
+                              title: `Week ${w.number}: ${w.title}`,
+                              detail: weekToTaskDetail(w),
+                              why: weekToTaskWhy(w),
+                              milestone: weekToTaskMilestone(w),
+                              resources: weekToTaskResources(w),
+                              estimatedHours: parseCommitmentHours(w.commitment_hours),
+                              sortOrder: wi,
+                              status: "locked", // every week locked — mentor must release
+                            })),
+                          },
+                        })),
+                      },
+                    }],
+                  },
+                },
+              });
+            }
+          } catch (e) {
+            console.error("[join] auto-seed roadmap failed:", e);
+            // Don't block sign-in if seeding fails — mentor can fix from dashboard
+          }
+        }
 
         return { id: user.id, email: user.email, name: user.name, image: user.image };
       },
