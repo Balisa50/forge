@@ -45,6 +45,7 @@ export async function PATCH(
   const action = body.action as Action | undefined;
   const menteeId = body.menteeId as string | undefined;
   const deadlineRaw = body.deadlineAt as string | undefined;
+  const customNote = (body.note as string | undefined)?.trim();
 
   if (!action || !ALLOWED.includes(action)) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -137,26 +138,39 @@ export async function PATCH(
   }
 
   // Apply atomically + log
-  const [updated] = await prisma.$transaction([
-    prisma.task.update({
-      where: { id: taskId },
-      data: updates,
-      select: {
-        id: true, status: true, deadline: true, releasedAt: true,
-        releasedBy: true, closedAt: true, verifiedAt: true,
-      },
-    }),
-    prisma.mentorComment.create({
+  // If mentor provided a custom note, write it as a separate "note" comment
+  // alongside the auto action_log so it's visually distinct on the mentee's
+  // dashboard.
+  const txOps: Promise<unknown>[] = [];
+  const updatedPromise = prisma.task.update({
+    where: { id: taskId },
+    data: updates,
+    select: {
+      id: true, status: true, deadline: true, releasedAt: true,
+      releasedBy: true, closedAt: true, verifiedAt: true,
+    },
+  });
+  txOps.push(updatedPromise);
+  txOps.push(prisma.mentorComment.create({
+    data: {
+      taskId, mentorId, menteeId,
+      body: note,
+      authorRole: "mentor",
+      kind: "action_log",
+    },
+  }));
+  if (customNote) {
+    txOps.push(prisma.mentorComment.create({
       data: {
-        taskId,
-        mentorId,
-        menteeId,
-        body: note,
+        taskId, mentorId, menteeId,
+        body: customNote,
         authorRole: "mentor",
-        kind: "action_log",
+        kind: "note",
       },
-    }),
-  ]);
+    }));
+  }
+  const results = await prisma.$transaction(txOps as never);
+  const updated = results[0];
 
   void sendNotification("mentor-action", {
     recipientId: menteeId,

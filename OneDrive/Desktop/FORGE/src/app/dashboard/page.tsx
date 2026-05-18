@@ -130,6 +130,14 @@ export default async function DashboardPage() {
         .flatMap((t) => t.phases.flatMap((p) => p.tasks.map((task) => ({ ...task, trackTitle: t.title, trackColor: t.color }))))
         .find((t) => t.releasedAt && t.status !== "verified" && !t.closedAt)
     : null;
+  // Latest mentor "note" comment for the released week — shown prominently
+  const releasedNote = releasedWeek
+    ? await prisma.mentorComment.findFirst({
+        where: { taskId: releasedWeek.id, kind: "note", authorRole: "mentor" },
+        orderBy: { createdAt: "desc" },
+        select: { body: true, createdAt: true },
+      })
+    : null;
   // Most-recently-closed task (so we can show a "closed — ask mentor to extend" card)
   const lastClosed = hasMentor
     ? activeRoadmap?.tracks
@@ -175,6 +183,16 @@ export default async function DashboardPage() {
                 </span>
               </div>
               <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>{releasedWeek.title}</h2>
+              {releasedNote && (
+                <div style={{ marginBottom: "1rem", padding: "0.875rem 1rem", borderRadius: 8, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)" }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--blue)", marginBottom: "0.375rem" }}>
+                    💬 Note from {primaryMentor?.name?.split(" ")[0] ?? "your mentor"}
+                  </p>
+                  <p style={{ color: "var(--text-primary)", fontSize: "0.9375rem", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>
+                    {releasedNote.body}
+                  </p>
+                </div>
+              )}
               {releasedWeek.detail && (
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1rem", maxWidth: 700 }}>
                   {releasedWeek.detail.slice(0, 240)}{releasedWeek.detail.length > 240 ? "…" : ""}

@@ -1,16 +1,13 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
+import { notFound, redirect } from "next/navigation";
+import { ArrowLeft, ArrowRight, Clock, Lock } from "lucide-react";
 import { loadAllRoadmaps, loadRoadmap, ROADMAP_META } from "@/lib/roadmaps";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import WeekPageTabs from "@/components/WeekPageTabs";
 
-export function generateStaticParams() {
-  const params: { slug: string; week: string }[] = [];
-  for (const r of loadAllRoadmaps()) {
-    for (const w of r.weeks) params.push({ slug: r.slug, week: String(w.number) });
-  }
-  return params;
-}
+// Force dynamic so the mentee gate runs on every request (no static cache)
+export const dynamic = "force-dynamic";
 
 export default async function WeekPage({ params }: { params: Promise<{ slug: string; week: string }> }) {
   const { slug, week } = await params;
@@ -20,6 +17,50 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const w = roadmap.weeks.find((x) => x.number === wNum);
   if (!w) return notFound();
   const meta = ROADMAP_META[roadmap.slug];
+
+  // ── Mentee gate ────────────────────────────────────────────────────
+  // If the logged-in user is a mentee (has any active MentorLink), they can
+  // ONLY view a week if their mentor has released it (or they've verified
+  // it). Otherwise: hard block with a 'Locked' screen. Public visitors and
+  // solo learners are unaffected.
+  const session = await auth();
+  if (session?.user?.id) {
+    const link = await prisma.mentorLink.findFirst({
+      where: { menteeId: session.user.id, isActive: true },
+      include: { mentor: { select: { name: true } } },
+    });
+    if (link) {
+      // Find this user's matching Task for this week (by week number in title)
+      const task = await prisma.task.findFirst({
+        where: {
+          phase: { track: { roadmap: { userId: session.user.id } } },
+          title: { startsWith: `Week ${wNum}:` },
+        },
+        select: { status: true, closedAt: true, releasedAt: true },
+      });
+      const blocked =
+        !task ||
+        task.status === "locked" ||
+        !task.releasedAt ||
+        (task.closedAt && task.status !== "verified");
+      if (blocked) {
+        return (
+          <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)", display: "grid", placeItems: "center", padding: "1.5rem" }}>
+            <div className="forge-panel" style={{ padding: "2.5rem 2rem", maxWidth: 460, textAlign: "center" }}>
+              <Lock size={36} color="var(--text-dim)" style={{ margin: "0 auto 1rem" }} />
+              <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>This week is locked</h1>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                {link.mentor.name ?? "Your mentor"} hasn&apos;t released Week {wNum} of {roadmap.title} to you yet. You&apos;ll see it on your dashboard the moment they do.
+              </p>
+              <Link href="/dashboard" className="forge-btn forge-btn-primary" style={{ display: "inline-block", padding: "0.625rem 1.25rem" }}>
+                Go to dashboard
+              </Link>
+            </div>
+          </main>
+        );
+      }
+    }
+  }
 
   const prev = roadmap.weeks.find((x) => x.number === wNum - 1);
   const next = roadmap.weeks.find((x) => x.number === wNum + 1);

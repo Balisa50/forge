@@ -217,7 +217,7 @@ export default function MenteeDrilldownPage() {
     }
   };
 
-  /** Release a week with a mentor-set deadline. Prompts for a date. */
+  /** Release a week with a mentor-set deadline + optional personal note. */
   const handleRelease = async (task: MenteeTask, mode: "release" | "extend") => {
     const label = mode === "release" ? "Release this week. Deadline?" : "Extend this week. New deadline?";
     const defaultDate = new Date(Date.now() + 7 * 86_400_000).toISOString().split("T")[0];
@@ -228,12 +228,22 @@ export default function MenteeDrilldownPage() {
       alert("Pick a future date in YYYY-MM-DD format.");
       return;
     }
+    // Optional personal note from mentor — shows prominently on mentee's dashboard
+    const note = prompt(
+      "Optional note to your mentee for this week (e.g. 'Focus on the SQL part — that's where most students struggle'). Leave blank to skip.",
+      "",
+    );
     setPosting(task.id);
     try {
       const res = await fetch(`/api/mentor/tasks/${task.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: mode, menteeId, deadlineAt: deadline.toISOString() }),
+        body: JSON.stringify({
+          action: mode,
+          menteeId,
+          deadlineAt: deadline.toISOString(),
+          note: note?.trim() || undefined,
+        }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
