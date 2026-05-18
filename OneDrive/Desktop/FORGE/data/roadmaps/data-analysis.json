@@ -2809,13 +2809,13 @@
         },
         {
           "number": 6,
-          "title": "Add tests + documentation",
-          "summary": "What separates dbt from a script: tests that auto-run.",
+          "title": "Add tests (docs OPTIONAL)",
+          "summary": "Tests are required — that's what makes dbt powerful. Docs generation is great-to-see but optional this week.",
           "items": [
             {
               "kind": "exercise",
               "title": "Schema tests",
-              "body": "STEP 1 — Create models/example/schema.yml:\n      version: 2\n      models:\n        - name: sub_category_margin\n          description: 'Profit margin per sub-category'\n          columns:\n            - name: subcategory\n              tests:\n                - unique\n                - not_null\n            - name: margin\n              description: 'Profit / Sales'\n\nSTEP 2 — Run the tests:\n      dbt test\n  YOU SHOULD SEE: '2 tests passed'.\n\nSTEP 3 — Generate docs:\n      dbt docs generate\n      dbt docs serve\n  Browser opens with a navigable diagram of your data + tests. This is what real analyst teams use."
+              "body": "STEP 1 — Create models/example/schema.yml:\n      version: 2\n      models:\n        - name: sub_category_margin\n          description: 'Profit margin per sub-category'\n          columns:\n            - name: subcategory\n              tests:\n                - unique\n                - not_null\n            - name: margin\n              description: 'Profit / Sales'\n\nSTEP 2 — Run the tests:\n      dbt test\n  YOU SHOULD SEE: '2 tests passed'.\n\nSTEP 3 — (OPTIONAL) Generate docs:\n      dbt docs generate\n      dbt docs serve\n  Browser opens with a navigable diagram of your data + tests. This is what real analyst teams use."
             }
           ]
         },
@@ -2833,7 +2833,7 @@
             {
               "kind": "exercise",
               "title": "Acceptance — dbt v0.1",
-              "body": "STEP 1 — Add a README.md at the top of forge_analytics/:\n      # Superstore on the Modern Data Stack\n      Same analysis as my Excel/Sheets Superstore project — now powered by BigQuery + dbt.\n      \n      ## Stack\n      - Warehouse: BigQuery\n      - Transformation: dbt\n      - Models: 1 (sub_category_margin)\n      - Tests: 2 passing (unique + not_null on subcategory)\n      \n      ## How to run\n      pip install dbt-bigquery\n      gcloud auth application-default login\n      dbt run && dbt test\n\nSTEP 2 — Push:\n      git init && git add . && git commit -m 'dbt v0.1: superstore on modern data stack'\n      git remote add origin https://github.com/YOUR-USERNAME/superstore-dbt.git\n      git push -u origin main\n\nPASS:\n  ☐ BigQuery project + dataset created\n  ☐ Superstore data uploaded to BigQuery\n  ☐ dbt installed + dbt debug passes\n  ☐ At least 1 dbt model that runs successfully\n  ☐ At least 2 tests passing\n  ☐ dbt docs work locally\n  ☐ Public GitHub repo named superstore-dbt"
+              "body": "STEP 1 — Add a README.md at the top of forge_analytics/:\n      # Superstore on the Modern Data Stack\n      Same analysis as my Excel/Sheets Superstore project — now powered by BigQuery + dbt.\n      \n      ## Stack\n      - Warehouse: BigQuery\n      - Transformation: dbt\n      - Models: 1 (sub_category_margin)\n      - Tests: 2 passing (unique + not_null on subcategory)\n      \n      ## How to run\n      pip install dbt-bigquery\n      gcloud auth application-default login\n      dbt run && dbt test\n\nSTEP 2 — Push:\n      git init && git add . && git commit -m 'dbt v0.1: superstore on modern data stack'\n      git remote add origin https://github.com/YOUR-USERNAME/superstore-dbt.git\n      git push -u origin main\n\nPASS:\n  ☐ BigQuery project + dataset created\n  ☐ Superstore data uploaded to BigQuery\n  ☐ dbt installed + dbt debug passes\n  ☐ At least 1 dbt model that runs successfully\n  ☐ At least 2 tests passing\n  ☐ (OPTIONAL) dbt docs generated locally\n  ☐ Public GitHub repo named superstore-dbt"
             }
           ]
         }

@@ -1163,8 +1163,8 @@
         },
         {
           "number": 4,
-          "title": "When BS4 fails: JS-rendered sites",
-          "summary": "",
+          "title": "When BS4 fails (OPTIONAL) — JS-rendered sites",
+          "summary": "Optional. Only do this if you finish Day 3 with time left or want to learn it.",
           "items": [
             {
               "kind": "video",
@@ -1177,19 +1177,19 @@
             {
               "kind": "exercise",
               "title": "Try Selenium",
-              "body": "      pip install selenium webdriver-manager\n\n      from selenium import webdriver\n      from selenium.webdriver.chrome.options import Options\n      opt = Options(); opt.add_argument('--headless')\n      driver = webdriver.Chrome(options=opt)\n      driver.get('https://quotes.toscrape.com/js/')\n      print(driver.page_source[:500])\n      driver.quit()"
+              "body": "(OPTIONAL — skip if short on time)\n\n      pip install selenium webdriver-manager\n\n      from selenium import webdriver\n      from selenium.webdriver.chrome.options import Options\n      opt = Options(); opt.add_argument('--headless')\n      driver = webdriver.Chrome(options=opt)\n      driver.get('https://quotes.toscrape.com/js/')\n      print(driver.page_source[:500])\n      driver.quit()"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Scrapy for production scale",
-          "summary": "",
+          "title": "Scrapy for scale (OPTIONAL)",
+          "summary": "Optional. BS4 handles 80% of real scraping. Scrapy is for industrial scale — try it if curious.",
           "items": [
             {
               "kind": "exercise",
               "title": "First Scrapy spider",
-              "body": "      pip install scrapy\n      scrapy startproject hn_spider\nCreate hn_spider/spiders/hn.py:\n      import scrapy\n      class HNSpider(scrapy.Spider):\n          name = 'hn'\n          start_urls = ['https://news.ycombinator.com']\n          def parse(self, response):\n              for row in response.css('tr.athing'):\n                  yield {'title': row.css('.titleline a::text').get()}\nRun: scrapy crawl hn -o hn.jsonl"
+              "body": "(OPTIONAL — skip if short on time)\n\n      pip install scrapy\n      scrapy startproject hn_spider\nCreate hn_spider/spiders/hn.py:\n      import scrapy\n      class HNSpider(scrapy.Spider):\n          name = 'hn'\n          start_urls = ['https://news.ycombinator.com']\n          def parse(self, response):\n              for row in response.css('tr.athing'):\n                  yield {'title': row.css('.titleline a::text').get()}\nRun: scrapy crawl hn -o hn.jsonl"
             }
           ]
         },
@@ -1213,7 +1213,7 @@
             {
               "kind": "exercise",
               "title": "Acceptance",
-              "body": "Create new repo `hn-scraper`. Push the BS4 scraper + Scrapy version + README.\n\nPASS:\n  ☐ BS4 scraper pulls 5 pages of HN\n  ☐ Saves to hn.csv with rate limiting\n  ☐ Scrapy version produces hn.jsonl\n  ☐ README documents ethics rules + when to use each tool\n  ☐ Repo pushed"
+              "body": "Create new repo `hn-scraper`. Push the BS4 scraper + README.\n\nPASS:\n  ☐ BS4 scraper pulls 5 pages of HN\n  ☐ Saves to hn.csv with rate limiting\n  ☐ Sentiment-tagged sample of titles\n  ☐ README documents ethics rules\n  ☐ Repo pushed\n\nOPTIONAL bonus (skip if short on time):\n  ☐ Selenium hello world\n  ☐ Scrapy version with jsonl output"
             }
           ]
         }
@@ -1230,9 +1230,9 @@
         "Read robots.txt + write your scraping ethics rules",
         "BS4 scraper for HN front page",
         "Multi-page scraping with rate limit",
-        "Selenium hello-world on a JS site",
-        "Scrapy spider that outputs JSONL",
-        "Push hn-scraper repo"
+        "Sentiment-tag the scraped titles with a pretrained model",
+        "Push hn-scraper repo",
+        "OPTIONAL: try Selenium / Scrapy if time permits"
       ],
       "project": "hn-scraper repo — 3 working scrapers (BS4, Selenium, Scrapy) collecting Hacker News titles into structured data. Side-project that becomes a foundation for next week's NLP work.",
       "resources": [],
@@ -2274,8 +2274,8 @@
         },
         {
           "number": 5,
-          "title": "Explain the transformer (advanced)",
-          "summary": "SHAP on your fine-tuned DistilBERT.",
+          "title": "Explain the transformer (OPTIONAL — slow on CPU)",
+          "summary": "Optional. Computing SHAP on DistilBERT takes 30+ min per run without a GPU. Skip if your machine is slow — the LogReg version from Days 3-4 is enough.",
           "items": [
             {
               "kind": "video",
@@ -2288,7 +2288,7 @@
             {
               "kind": "exercise",
               "title": "Transformer explanations",
-              "body": "Note: this needs your fine-tuned model from Week 15.\n\n      from transformers import pipeline\n      clf = pipeline('text-classification', model='models/distilbert', return_all_scores=True)\n      explainer = shap.Explainer(clf)\n      texts = df['title'].head(10).tolist()\n      shap_vals = explainer(texts)\n      shap.plots.text(shap_vals[0])  # interactive HTML\n\nIf your computer is slow, skip the transformer part and stick with the LogReg version. That's enough for v0.1."
+              "body": "(OPTIONAL — slow on CPU, skip if needed)\n\nNote: this needs your fine-tuned model from Week 15.\n\n      from transformers import pipeline\n      clf = pipeline('text-classification', model='models/distilbert', return_all_scores=True)\n      explainer = shap.Explainer(clf)\n      texts = df['title'].head(10).tolist()\n      shap_vals = explainer(texts)\n      shap.plots.text(shap_vals[0])  # interactive HTML\n\nIf your computer is slow, skip the transformer part and stick with the LogReg version. That's enough for v0.1."
             }
           ]
         },
@@ -2312,7 +2312,7 @@
             {
               "kind": "exercise",
               "title": "Acceptance — interpretability v0.1",
-              "body": "STEP 1 — Add a section to your reddit-sentiment README called 'Explainability'. Include:\n  - The SHAP summary plot (from Day 3)\n  - The force plot (Day 4)\n  - A 3-sentence summary of which features drive each class\n\nSTEP 2 — Push:\n      git add . && git commit -m 'add SHAP interpretability + bias notes'\n      git push\n\nPASS:\n  ☐ shap installed + working\n  ☐ Global summary plot saved\n  ☐ Single-prediction force plot saved\n  ☐ One documented bias finding in BIASES.md\n  ☐ README updated with explainability section\n  ☐ Anyone reading the repo can see WHY the model decided"
+              "body": "STEP 1 — Add a section to your reddit-sentiment README called 'Explainability'. Include:\n  - The SHAP summary plot (from Day 3)\n  - The force plot (Day 4)\n  - A 3-sentence summary of which features drive each class\n\nSTEP 2 — Push:\n      git add . && git commit -m 'add SHAP interpretability + bias notes'\n      git push\n\nPASS:\n  (transformer SHAP from Day 5 is OPTIONAL — not required)\n  ☐ shap installed + working\n  ☐ Global summary plot saved\n  ☐ Single-prediction force plot saved\n  ☐ One documented bias finding in BIASES.md\n  ☐ README updated with explainability section\n  ☐ Anyone reading the repo can see WHY the model decided"
             }
           ]
         }
