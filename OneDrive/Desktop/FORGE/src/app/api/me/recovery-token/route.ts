@@ -15,13 +15,14 @@ export async function GET() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { isCodeOnly: true, recoveryToken: true, name: true },
+    select: { isCodeOnly: true, recoveryToken: true, personalId: true, name: true },
   });
   if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   return NextResponse.json({
     isCodeOnly: user.isCodeOnly,
     recoveryToken: user.recoveryToken,
+    personalId: user.personalId,
     name: user.name,
   });
 }

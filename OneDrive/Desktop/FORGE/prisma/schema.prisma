@@ -84,6 +84,9 @@ model User {
   /// device. Stored hashed-free because it's the user's only key — they
   /// hold the secret in their bookmark, we just look it up.
   recoveryToken    String?   @unique
+  /// Human-typeable personal ID for mentees to return on any device.
+  /// Format: ALPHA-XXXX-YYYY. Issued by the mentor at invite time.
+  personalId       String?   @unique
   stripeCustomerId String?
   emailVerified    DateTime?
   image            String?
@@ -471,6 +474,16 @@ model MentorInvite {
   expiresAt   DateTime?
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
+  /// Mentor pre-registers the mentee's full name. Join is REJECTED unless the
+  /// name the mentee types matches this (case-insensitive, trimmed).
+  expectedName     String?
+  /// The personal ID that will be assigned to the mentee who consumes this
+  /// invite. Pre-generated at invite time so the mentor sees BOTH codes upfront
+  /// and can hand them over together.
+  personalIdIssued String?   @unique
+  /// Single-use marker: set to the mentee user id when redeemed. Once set,
+  /// nobody else can use this invite.
+  consumedByUserId String?
 
   mentor      User      @relation("MentorInviteMentor", fields: [mentorId], references: [id], onDelete: Cascade)
 

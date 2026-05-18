@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Copy, CheckCircle2, Plus, Trash2, Loader2, Link2, Share2 } from "lucide-react";
+import { Copy, CheckCircle2, Plus, Trash2, Loader2, Share2, KeyRound } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 
 interface Invite {
@@ -14,6 +14,9 @@ interface Invite {
   expiresAt: string | null;
   isActive: boolean;
   createdAt: string;
+  expectedName: string | null;
+  personalIdIssued: string | null;
+  consumedByUserId: string | null;
 }
 
 export default function MentorInvitesPanel() {
@@ -21,11 +24,11 @@ export default function MentorInvitesPanel() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const [draft, setDraft] = useState<{ roadmapSlug: string; label: string; maxUses: string; expiresInDays: string }>({
+  const [draft, setDraft] = useState({
+    expectedName: "",
     roadmapSlug: "",
     label: "",
-    maxUses: "",
-    expiresInDays: "",
+    expiresInDays: "30",
   });
 
   const load = useCallback(async () => {
@@ -44,12 +47,17 @@ export default function MentorInvitesPanel() {
   useEffect(() => { load(); }, [load]);
 
   const create = async () => {
+    if (!draft.expectedName.trim()) {
+      alert("Enter your mentee's full name — it locks the invite to them.");
+      return;
+    }
     setCreating(true);
     try {
-      const body: Record<string, unknown> = {};
+      const body: Record<string, unknown> = {
+        expectedName: draft.expectedName.trim(),
+      };
       if (draft.roadmapSlug) body.roadmapSlug = draft.roadmapSlug;
       if (draft.label.trim()) body.label = draft.label.trim();
-      if (draft.maxUses) body.maxUses = parseInt(draft.maxUses, 10);
       if (draft.expiresInDays) body.expiresInDays = parseInt(draft.expiresInDays, 10);
       const res = await fetch("/api/mentor/invites", {
         method: "POST",
@@ -57,7 +65,7 @@ export default function MentorInvitesPanel() {
         body: JSON.stringify(body),
       });
       if (res.ok) {
-        setDraft({ roadmapSlug: "", label: "", maxUses: "", expiresInDays: "" });
+        setDraft({ expectedName: "", roadmapSlug: "", label: "", expiresInDays: "30" });
         await load();
       } else {
         const data = await res.json().catch(() => ({}));
@@ -69,7 +77,7 @@ export default function MentorInvitesPanel() {
   };
 
   const deactivate = async (id: string) => {
-    if (!confirm("Deactivate this code? Existing mentees stay paired, but new redemptions are blocked.")) return;
+    if (!confirm("Deactivate this code? Existing mentees stay paired, but the link stops working for new joins.")) return;
     await fetch(`/api/mentor/invites?id=${id}`, { method: "DELETE" });
     await load();
   };
@@ -79,43 +87,46 @@ export default function MentorInvitesPanel() {
       await navigator.clipboard.writeText(text);
       setCopied(key);
       setTimeout(() => setCopied(null), 1500);
-    } catch {
-      // ignore
-    }
+    } catch { /* */ }
   };
 
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
     <section className="forge-panel" style={{ padding: "1.5rem", marginBottom: "2rem" }}>
-      <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
-        <div>
-          <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem" }}>Invite codes</h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginTop: "0.125rem" }}>
-            Share the <strong style={{ color: "var(--accent)" }}>Share link</strong> — your mentee clicks it, picks a name, and is in the dashboard. No signup, no password.
-          </p>
-        </div>
+      <div style={{ marginBottom: "1rem" }}>
+        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem" }}>Invite a mentee</h2>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginTop: "0.25rem", lineHeight: 1.55 }}>
+          Enter your mentee&apos;s <strong style={{ color: "var(--accent)" }}>full name</strong> + their path. You&apos;ll get TWO codes:<br/>
+          <span style={{ color: "var(--accent)" }}>① Join link</span> (single-use, locked to that name) and <span style={{ color: "var(--accent)" }}>② Personal ID</span> (their permanent return code). Send both privately.
+        </p>
       </div>
 
       {/* New invite form */}
       <div
-        className="responsive-form-row"
         style={{
           display: "grid",
-          gridTemplateColumns: "1.5fr 1.5fr 0.7fr 0.7fr auto",
+          gridTemplateColumns: "1.5fr 1.5fr 1fr 0.7fr auto",
           gap: "0.5rem",
           background: "var(--bg-card)",
-          padding: "0.75rem",
+          padding: "0.875rem",
           borderRadius: 8,
           marginBottom: "1.25rem",
         }}
+        className="responsive-form-row"
       >
+        <input
+          value={draft.expectedName}
+          onChange={(e) => setDraft({ ...draft, expectedName: e.target.value })}
+          placeholder="Mentee's full name (required)"
+          style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--accent)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 600 }}
+        />
         <select
           value={draft.roadmapSlug}
           onChange={(e) => setDraft({ ...draft, roadmapSlug: e.target.value })}
           style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
         >
-          <option value="">Any path (mentee picks)</option>
+          <option value="">Path (mentee picks)</option>
           {CURATED_ROADMAPS.map((r) => (
             <option key={r.slug} value={r.slug}>{r.title}</option>
           ))}
@@ -123,14 +134,8 @@ export default function MentorInvitesPanel() {
         <input
           value={draft.label}
           onChange={(e) => setDraft({ ...draft, label: e.target.value })}
-          placeholder="Label (optional) — e.g. 'Cohort 3'"
+          placeholder="Note (optional)"
           style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
-        />
-        <input
-          value={draft.maxUses}
-          onChange={(e) => setDraft({ ...draft, maxUses: e.target.value.replace(/[^0-9]/g, "") })}
-          placeholder="Max uses"
-          style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}
         />
         <input
           value={draft.expiresInDays}
@@ -140,77 +145,107 @@ export default function MentorInvitesPanel() {
         />
         <button
           onClick={create}
-          disabled={creating}
+          disabled={creating || !draft.expectedName.trim()}
           className="forge-btn forge-btn-primary"
           style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center" }}
         >
           {creating ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
-          Generate
+          Generate codes
         </button>
       </div>
 
       {/* Active invites */}
       {loading ? (
-        <div style={{ color: "var(--text-dim)", fontSize: "0.875rem" }}>Loading codes…</div>
+        <div style={{ color: "var(--text-dim)", fontSize: "0.875rem" }}>Loading…</div>
       ) : invites.length === 0 ? (
         <div style={{ padding: "1rem", textAlign: "center", color: "var(--text-dim)", fontSize: "0.875rem" }}>
-          No codes yet. Generate one above to start pairing with mentees.
+          No codes yet. Generate one above to invite your first mentee.
         </div>
       ) : (
         <ul className="flex flex-col gap-2">
           {invites.map((i) => {
             const path = i.roadmapSlug ? CURATED_ROADMAPS.find((r) => r.slug === i.roadmapSlug)?.title ?? i.roadmapSlug : "Any path";
             const expired = i.expiresAt ? new Date(i.expiresAt) < new Date() : false;
-            const maxedOut = i.maxUses != null && i.usesCount >= i.maxUses;
-            const dead = !i.isActive || expired || maxedOut;
+            const consumed = !!i.consumedByUserId;
+            const dead = !i.isActive || expired || consumed;
             return (
               <li
                 key={i.id}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.75rem 0.875rem",
+                  display: "flex", flexDirection: "column", gap: "0.625rem",
+                  padding: "0.875rem 1rem",
                   background: dead ? "var(--bg-card)" : "rgba(245,158,11,0.05)",
                   border: dead ? "1px solid var(--border)" : "1px solid rgba(245,158,11,0.25)",
                   borderRadius: 8,
-                  opacity: dead ? 0.55 : 1,
-                  flexWrap: "wrap",
-                  rowGap: "0.5rem",
+                  opacity: dead ? 0.65 : 1,
                 }}
               >
-                <code style={{ fontFamily: "var(--font-mono)", fontSize: "1rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--text-primary)" }}>{i.code}</code>
-                <button
-                  onClick={() => copy(i.code, `code-${i.id}`)}
-                  className="forge-btn forge-btn-ghost"
-                  style={{ padding: "0.3rem 0.625rem", fontSize: "0.6875rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}
-                >
-                  {copied === `code-${i.id}` ? <><CheckCircle2 size={11} /> Copied</> : <><Copy size={11} /> Code</>}
-                </button>
-                <button
-                  onClick={() => copy(`${baseUrl}/j/${i.code}`, `link-${i.id}`)}
-                  className="forge-btn forge-btn-ghost"
-                  style={{ padding: "0.3rem 0.625rem", fontSize: "0.6875rem", display: "inline-flex", gap: "0.25rem", alignItems: "center", color: "var(--accent)", borderColor: "rgba(245,158,11,0.3)" }}
-                  title="Share a one-click join link instead — mentee skips signup entirely"
-                >
-                  {copied === `link-${i.id}` ? <><CheckCircle2 size={11} /> Copied</> : <><Share2 size={11} /> Share link</>}
-                </button>
-                <span style={{ flex: 1, fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
-                  <Link2 size={10} style={{ display: "inline", marginRight: 4 }} />
-                  {path}
-                  {i.label && <span> · {i.label}</span>}
-                  <span> · {i.usesCount}{i.maxUses != null ? `/${i.maxUses}` : ""} used</span>
-                  {i.expiresAt && <span> · {expired ? "expired" : `expires ${new Date(i.expiresAt).toLocaleDateString()}`}</span>}
-                  {!i.isActive && <span> · deactivated</span>}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", flexWrap: "wrap" }}>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-body)", fontSize: "0.9375rem", fontWeight: 600 }}>
+                      {i.expectedName || "(legacy code — no name lock)"}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginTop: "0.125rem" }}>
+                      {path}
+                      {i.label && <> · {i.label}</>}
+                      {i.expiresAt && <> · {expired ? "expired" : `expires ${new Date(i.expiresAt).toLocaleDateString()}`}</>}
+                      {consumed && <> · ✓ joined</>}
+                      {!i.isActive && !consumed && <> · deactivated</>}
+                    </div>
+                  </div>
+                  {!dead && (
+                    <button
+                      onClick={() => deactivate(i.id)}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem" }}
+                      title="Deactivate"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
+
                 {!dead && (
-                  <button
-                    onClick={() => deactivate(i.id)}
-                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem" }}
-                    title="Deactivate"
-                  >
-                    <Trash2 size={13} />
-                  </button>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                    {/* Code 1: Join link */}
+                    <div style={{ padding: "0.625rem 0.75rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6 }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.1em", color: "var(--text-dim)", textTransform: "uppercase", marginBottom: "0.25rem" }}>
+                        ① Join link (one-time)
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexWrap: "wrap" }}>
+                        <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-primary)" }}>
+                          {baseUrl.replace(/^https?:\/\//, "")}/j/{i.code}
+                        </code>
+                        <button
+                          onClick={() => copy(`${baseUrl}/j/${i.code}`, `link-${i.id}`)}
+                          className="forge-btn forge-btn-ghost"
+                          style={{ padding: "0.25rem 0.5rem", fontSize: "0.6875rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}
+                        >
+                          {copied === `link-${i.id}` ? <><CheckCircle2 size={11} /> Copied</> : <><Share2 size={11} /> Copy</>}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Code 2: Personal ID */}
+                    <div style={{ padding: "0.625rem 0.75rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6 }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.1em", color: "var(--text-dim)", textTransform: "uppercase", marginBottom: "0.25rem" }}>
+                        ② Personal ID (permanent)
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexWrap: "wrap" }}>
+                        <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", fontWeight: 600, color: "var(--accent)" }}>
+                          {i.personalIdIssued ?? "—"}
+                        </code>
+                        {i.personalIdIssued && (
+                          <button
+                            onClick={() => copy(i.personalIdIssued!, `pid-${i.id}`)}
+                            className="forge-btn forge-btn-ghost"
+                            style={{ padding: "0.25rem 0.5rem", fontSize: "0.6875rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}
+                          >
+                            {copied === `pid-${i.id}` ? <><CheckCircle2 size={11} /> Copied</> : <><KeyRound size={11} /> Copy</>}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 )}
               </li>
             );

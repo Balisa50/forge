@@ -80,33 +80,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const code = normaliseCode(parsed.data.code);
         const invite = await prisma.mentorInvite.findUnique({ where: { code } });
         if (!invite || !invite.isActive) return null;
+        if (invite.consumedByUserId) return null; // single-use already redeemed
         if (invite.expiresAt && invite.expiresAt < new Date()) return null;
         if (invite.maxUses != null && invite.usesCount >= invite.maxUses) return null;
 
-        const providedEmail = parsed.data.email?.trim();
-        // For email-less signups we mint a deterministic-but-uncrackable local email.
-        const email = providedEmail || `mentee_${randomBytes(8).toString("hex")}@forge.local`;
+        // STRICT NAME MATCH against mentor's pre-registered name
+        if (invite.expectedName) {
+          const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+          if (norm(parsed.data.name) !== norm(invite.expectedName)) return null;
+        }
 
-        // If the email collides with an existing user, fall back to a random one.
+        const providedEmail = parsed.data.email?.trim();
+        const email = providedEmail || `mentee_${randomBytes(8).toString("hex")}@forge.local`;
         const collision = providedEmail ? await prisma.user.findUnique({ where: { email } }) : null;
         const finalEmail = collision ? `mentee_${randomBytes(8).toString("hex")}@forge.local` : email;
 
         const user = await prisma.user.create({
           data: {
             email: finalEmail,
-            name: parsed.data.name.trim(),
-            // bcrypt-hash a random 32-byte secret nobody (not even us) will ever see —
-            // satisfies any future password requirement without giving anyone a way in.
+            // Always use the EXPECTED name (mentor's source of truth), not whatever
+            // the user typed. They had to match it anyway; storing the canonical form
+            // keeps the mentor's records clean.
+            name: invite.expectedName?.trim() || parsed.data.name.trim(),
             passwordHash: await bcrypt.hash(randomBytes(32).toString("hex"), 10),
             isCodeOnly: true,
             recoveryToken: randomToken(),
-            // Mentees still need to pick a roadmap unless the invite is path-scoped:
+            personalId: invite.personalIdIssued ?? null,
             onboardingDone: false,
             role: "student",
           },
         });
 
-        // Pair the mentee with the mentor; increment usage.
         await prisma.$transaction([
           prisma.mentorLink.create({
             data: { mentorId: invite.mentorId, menteeId: user.id, isActive: true },
@@ -115,11 +119,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             where: { id: invite.id },
             data: {
               usesCount: invite.usesCount + 1,
-              isActive: invite.maxUses != null && invite.usesCount + 1 >= invite.maxUses ? false : invite.isActive,
+              consumedByUserId: user.id,
+              isActive: false, // single-use done
             },
           }),
         ]);
 
+        return { id: user.id, email: user.email, name: user.name, image: user.image };
+      },
+    }),
+    // ── Mentee return via human-typeable personal ID ──────────────────
+    Credentials({
+      id: "mentee-return",
+      name: "Personal ID",
+      credentials: { personalId: { type: "text" } },
+      async authorize(credentials) {
+        const raw = (credentials?.personalId as string | undefined)?.trim().toUpperCase();
+        if (!raw) return null;
+        const user = await prisma.user.findUnique({ where: { personalId: raw } });
+        if (!user) return null;
         return { id: user.id, email: user.email, name: user.name, image: user.image };
       },
     }),

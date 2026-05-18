@@ -28,7 +28,9 @@ export default function JoinPage() {
   // Post-join recovery info
   const [joined, setJoined] = useState(false);
   const [recoveryUrl, setRecoveryUrl] = useState<string | null>(null);
+  const [personalId, setPersonalId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedPid, setCopiedPid] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,16 +61,24 @@ export default function JoinPage() {
         redirect: false,
       });
       if (!res?.ok || res?.error) {
-        setError(res?.error ?? "Couldn't pair you with this mentor. The code may have expired or hit its usage cap.");
+        const msg = res?.error ?? "";
+        if (msg.includes("CredentialsSignin") || msg.toLowerCase().includes("credentialssignin")) {
+          setError("That name doesn't match what your mentor registered for this link. Check spelling — or ask your mentor to confirm the exact name.");
+        } else {
+          setError(msg || "Couldn't pair you with this mentor. The code may have expired or already been used.");
+        }
         setJoining(false);
         return;
       }
-      // Pull the recovery token so we can show the bookmarkable URL
+      // Pull the recovery token AND personal ID so the mentee sees both
       const meRes = await fetch("/api/me/recovery-token");
       if (meRes.ok) {
         const me = await meRes.json();
         if (me.recoveryToken) {
           setRecoveryUrl(`${window.location.origin}/r/${me.recoveryToken}`);
+        }
+        if (me.personalId) {
+          setPersonalId(me.personalId);
         }
       }
       setJoined(true);
@@ -113,21 +123,31 @@ export default function JoinPage() {
               <Flame size={28} color="var(--green)" />
             </div>
             <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.625rem", marginBottom: "0.25rem" }}>You&apos;re paired with {preview.mentor?.name ?? "your mentor"}</h1>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.5rem" }}>
-              Save this personal link so you can return to your account on any device:
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.25rem" }}>
+              Save your <strong style={{ color: "var(--accent)" }}>Personal ID</strong> — it&apos;s how you log back in on any device.
             </p>
-            {recoveryUrl ? (
-              <div style={{ marginBottom: "1rem", padding: "0.75rem 0.875rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8 }}>
-                <code style={{ display: "block", wordBreak: "break-all", fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-primary)", marginBottom: "0.5rem" }}>{recoveryUrl}</code>
-                <button onClick={copyRecovery} className="forge-btn forge-btn-ghost" style={{ padding: "0.4rem 0.75rem", fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                  <Bookmark size={11} /> {copied ? "Copied" : "Copy link"}
+            {personalId && (
+              <div style={{ marginBottom: "1rem", padding: "1rem", background: "rgba(245,158,11,0.08)", border: "1px solid var(--accent)", borderRadius: 8 }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.375rem" }}>Your Personal ID</p>
+                <code style={{ display: "block", fontFamily: "var(--font-mono)", fontSize: "1.125rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.625rem", letterSpacing: "0.05em" }}>{personalId}</code>
+                <button onClick={async () => {
+                  try { await navigator.clipboard.writeText(personalId); setCopiedPid(true); setTimeout(() => setCopiedPid(false), 1500); } catch { /* */ }
+                }} className="forge-btn forge-btn-ghost" style={{ padding: "0.4rem 0.75rem", fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                  <Bookmark size={11} /> {copiedPid ? "Copied" : "Copy Personal ID"}
                 </button>
               </div>
-            ) : (
-              <div style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem" }}>(Recovery link will appear in your settings if you need it later.)</div>
+            )}
+            {recoveryUrl && (
+              <details style={{ marginBottom: "1rem", textAlign: "left", padding: "0.5rem 0.75rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8 }}>
+                <summary style={{ cursor: "pointer", fontSize: "0.75rem", color: "var(--text-dim)" }}>Alternative: bookmarkable recovery link</summary>
+                <code style={{ display: "block", wordBreak: "break-all", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-primary)", marginTop: "0.5rem", marginBottom: "0.375rem" }}>{recoveryUrl}</code>
+                <button onClick={copyRecovery} className="forge-btn forge-btn-ghost" style={{ padding: "0.3rem 0.625rem", fontSize: "0.6875rem", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                  <Bookmark size={10} /> {copied ? "Copied" : "Copy link"}
+                </button>
+              </details>
             )}
             <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "1.5rem" }}>
-              Bookmark or email it to yourself. Without it, you&apos;d need a new code from your mentor.
+              Lost your Personal ID? Use &quot;Forgot my code&quot; on the login page and your mentor will resend it.
             </p>
             <button onClick={continueIn} className="forge-btn forge-btn-primary" style={{ width: "100%", padding: "0.75rem 1rem", display: "inline-flex", justifyContent: "center", alignItems: "center", gap: "0.375rem" }}>
               Continue to dashboard <ArrowRight size={14} />

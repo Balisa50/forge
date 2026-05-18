@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowLeft, Ghost } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,26 +14,29 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [guestLoading, setGuestLoading] = useState(false);
+  // Mentee return via personal ID
+  const [personalId, setPersonalId] = useState("");
+  const [menteeLoading, setMenteeLoading] = useState(false);
 
-  const handleGuest = async () => {
-    setGuestLoading(true);
+  const handleMenteeReturn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!personalId.trim()) return;
+    setMenteeLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/guest", { method: "POST" });
-      if (!res.ok) throw new Error("Failed to create guest session");
-      const { email, password } = await res.json();
-      const result = await signIn("credentials", { email, password, redirect: false });
+      const result = await signIn("mentee-return", {
+        personalId: personalId.trim().toUpperCase(),
+        redirect: false,
+      });
       if (result?.ok) {
-        router.push("/onboarding");
-        router.refresh();
+        window.location.href = "/dashboard";
       } else {
-        setError("Could not start guest session. Try again.");
-        setGuestLoading(false);
+        setError("That Personal ID didn't match any mentee account. Check spelling, or use 'Forgot my code' below.");
+        setMenteeLoading(false);
       }
     } catch {
-      setError("Could not start guest session. Try again.");
-      setGuestLoading(false);
+      setError("Couldn't sign you in. Try again.");
+      setMenteeLoading(false);
     }
   };
 
@@ -152,41 +155,37 @@ export default function LoginPage() {
         {/* Divider */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "1.5rem 0" }}>
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>OR</span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>MENTEE? RETURN WITH YOUR PERSONAL ID</span>
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
         </div>
 
-        <button
-          type="button"
-          onClick={handleGuest}
-          disabled={guestLoading}
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            background: "transparent",
-            border: "1px solid var(--border)",
-            borderRadius: "6px",
-            cursor: guestLoading ? "not-allowed" : "pointer",
-            color: "var(--text-secondary)",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.8125rem",
-            letterSpacing: "0.05em",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            transition: "border-color 0.15s, color 0.15s",
-            opacity: guestLoading ? 0.6 : 1,
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-secondary)"; }}
-        >
-          <Ghost size={15} strokeWidth={1.5} />
-          {guestLoading ? "Starting demo..." : "Try as Guest"}
-        </button>
-        <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.5rem" }}>
-          No signup. Progress erased when you leave.
-        </p>
+        <form onSubmit={handleMenteeReturn}>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <input
+              type="text"
+              value={personalId}
+              onChange={(e) => setPersonalId(e.target.value)}
+              placeholder="FORGE-XXXX-YYYY"
+              className="forge-input"
+              style={{ flex: 1, fontFamily: "var(--font-mono)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+              autoComplete="off"
+            />
+            <button
+              type="submit"
+              disabled={menteeLoading || !personalId.trim()}
+              className="forge-btn forge-btn-primary"
+              style={{ padding: "0 1rem", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+            >
+              <KeyRound size={14} />
+              {menteeLoading ? "..." : "Enter"}
+            </button>
+          </div>
+        </form>
+        <div style={{ textAlign: "center", marginTop: "0.625rem" }}>
+          <Link href="/forgot-code" style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
+            Forgot my Personal ID
+          </Link>
+        </div>
         </div>
       </motion.div>
     </div>

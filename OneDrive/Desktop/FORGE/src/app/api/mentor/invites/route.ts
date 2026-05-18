@@ -24,13 +24,18 @@ const VALID_SLUGS = new Set([
   "bi-analytics",
 ]);
 
-/** Generate a 10-char code: FORGE-XXXX-XXXX, base32 (no confusable chars). */
+/** Generate a 10-char code: XXXX-XXXX, base32 (no confusable chars). */
 function makeCode(): string {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I, O, 0, 1, U
   const bytes = randomBytes(8);
   let out = "";
   for (let i = 0; i < 8; i++) out += alphabet[bytes[i] % alphabet.length];
   return `${out.slice(0, 4)}-${out.slice(4, 8)}`;
+}
+
+/** Personal ID for mentee return: FORGE-XXXX-YYYY (10 chars after FORGE-) */
+function makePersonalId(): string {
+  return `FORGE-${makeCode()}`;
 }
 
 export async function GET() {
@@ -48,11 +53,14 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
+  const expectedName = (body.expectedName as string | undefined)?.trim();
   const roadmapSlug = (body.roadmapSlug as string | undefined)?.trim() || null;
   const label = (body.label as string | undefined)?.trim() || null;
-  const maxUses = typeof body.maxUses === "number" && body.maxUses > 0 ? Math.floor(body.maxUses) : null;
   const expiresInDays = typeof body.expiresInDays === "number" && body.expiresInDays > 0 ? Math.floor(body.expiresInDays) : null;
 
+  if (!expectedName || expectedName.length < 2) {
+    return NextResponse.json({ error: "Mentee's full name is required" }, { status: 400 });
+  }
   if (roadmapSlug && !VALID_SLUGS.has(roadmapSlug)) {
     return NextResponse.json({ error: "Unknown roadmap" }, { status: 400 });
   }
@@ -61,22 +69,32 @@ export async function POST(req: NextRequest) {
     ? new Date(Date.now() + expiresInDays * 86400_000)
     : null;
 
-  // Loop guard: extremely unlikely collision (32^8 codes) but keep safe
+  // Generate unique join code + personal ID
   let code = makeCode();
   for (let attempt = 0; attempt < 5; attempt++) {
     const exists = await prisma.mentorInvite.findUnique({ where: { code } });
     if (!exists) break;
     code = makeCode();
   }
+  let personalId = makePersonalId();
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const existsInvite = await prisma.mentorInvite.findUnique({ where: { personalIdIssued: personalId } });
+    const existsUser = await prisma.user.findUnique({ where: { personalId } });
+    if (!existsInvite && !existsUser) break;
+    personalId = makePersonalId();
+  }
 
+  // Single-use semantics: maxUses fixed at 1
   const invite = await prisma.mentorInvite.create({
     data: {
       code,
       mentorId: session.user.id,
       roadmapSlug,
       label,
-      maxUses,
+      maxUses: 1,
       expiresAt,
+      expectedName,
+      personalIdIssued: personalId,
     },
   });
 

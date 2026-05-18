@@ -29,12 +29,20 @@ async function findInvite(code: string) {
   });
 }
 
-function invalidReason(invite: { isActive: boolean; expiresAt: Date | null; maxUses: number | null; usesCount: number } | null): string | null {
+function invalidReason(invite: { isActive: boolean; expiresAt: Date | null; maxUses: number | null; usesCount: number; consumedByUserId: string | null } | null): string | null {
   if (!invite) return "Code not found";
   if (!invite.isActive) return "This code has been deactivated";
+  if (invite.consumedByUserId) return "This code has already been used";
   if (invite.expiresAt && invite.expiresAt < new Date()) return "This code has expired";
   if (invite.maxUses != null && invite.usesCount >= invite.maxUses) return "This code has reached its usage limit";
   return null;
+}
+
+/** Loose name match: case-insensitive, whitespace-collapsed, punctuation-stripped. */
+function namesMatch(a: string, b: string): boolean {
+  const norm = (s: string) =>
+    s.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+  return norm(a) === norm(b);
 }
 
 export async function GET(req: NextRequest) {
@@ -64,6 +72,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const code = body.code ? normalise(String(body.code)) : null;
+  const submittedName = (body.name as string | undefined)?.trim();
   if (!code) return NextResponse.json({ error: "code required" }, { status: 400 });
 
   const invite = await findInvite(code);
@@ -76,7 +85,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "You can't pair with yourself" }, { status: 400 });
   }
 
-  // Idempotent MentorLink + usage increment
+  // STRICT NAME CHECK: if the mentor pre-registered an expected name on this
+  // invite, the mentee MUST submit a matching name. This is the gate that
+  // stops anyone with the link from joining as someone else.
+  if (invite.expectedName) {
+    if (!submittedName) {
+      return NextResponse.json({ error: "Your full name is required" }, { status: 400 });
+    }
+    if (!namesMatch(submittedName, invite.expectedName)) {
+      return NextResponse.json(
+        { error: "That name doesn't match what your mentor registered. Check spelling or ask your mentor to confirm." },
+        { status: 403 },
+      );
+    }
+  }
+
+  // Atomic redeem: link + consume invite + assign personalId to user
   await prisma.$transaction(async (tx) => {
     await tx.mentorLink.upsert({
       where: { mentorId_menteeId: { mentorId: invite.mentorId, menteeId } },
@@ -88,14 +112,27 @@ export async function POST(req: NextRequest) {
       where: { id: invite.id },
       data: {
         usesCount: newCount,
-        isActive: invite.maxUses != null && newCount >= invite.maxUses ? false : invite.isActive,
+        // Single-use: mark consumed and deactivate
+        consumedByUserId: menteeId,
+        isActive: false,
       },
     });
+    // Assign the pre-issued personalId to this user (if not already)
+    if (invite.personalIdIssued) {
+      const existing = await tx.user.findUnique({ where: { id: menteeId }, select: { personalId: true } });
+      if (!existing?.personalId) {
+        await tx.user.update({
+          where: { id: menteeId },
+          data: { personalId: invite.personalIdIssued, isCodeOnly: true },
+        });
+      }
+    }
   });
 
   return NextResponse.json({
     paired: true,
     mentor: invite.mentor,
     roadmapSlug: invite.roadmapSlug,
+    personalId: invite.personalIdIssued,
   });
 }
