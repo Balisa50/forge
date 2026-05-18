@@ -4,7 +4,10 @@
  */
 import { Resend } from "resend";
 
-const FROM = process.env.RESEND_FROM ?? "The Forge <noreply@theforge.app>";
+const FROM = process.env.RESEND_FROM ?? "The Forge <onboarding@resend.dev>";
+const REPLY_TO = process.env.RESEND_REPLY_TO ?? "theforgelearn@proton.me";
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? "theforgelearn@proton.me";
+export { SUPPORT_EMAIL };
 const BASE_URL =
   process.env.NEXTAUTH_URL ??
   process.env.AUTH_URL ??
@@ -239,6 +242,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
   try {
     await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: `Welcome to The Forge, ${name} ⚡`,
       html: welcomeEmailHtml(name),
@@ -254,6 +258,7 @@ export async function sendCheckinReminderEmail(to: string, name: string, taskTit
   try {
     await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: `⚡ ${name}, you haven't checked in yet today`,
       html: checkinReminderEmailHtml(name, taskTitle),
@@ -277,6 +282,7 @@ export async function sendInterrogationResultEmail(
   try {
     await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: passed
         ? `✅ You passed today's interrogation — The Forge`
@@ -299,6 +305,7 @@ export async function sendPodActivityEmail(
   try {
     await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: `Your pod this week — The Forge`,
       html: podActivityEmailHtml(name, podName, members),
@@ -314,6 +321,7 @@ export async function sendPasswordResetEmail(to: string, name: string, resetUrl:
   try {
     await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: "Reset your Forge password",
       html: passwordResetEmailHtml(name, resetUrl),
