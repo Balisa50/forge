@@ -660,1199 +660,2082 @@
     },
     {
       "number": 5,
-      "title": "Data Cleaning",
-      "phase": "Data Engineering",
-      "commitment_hours": "25--35",
-      "context": "Real-world data science is mostly data preparation. This week you master advanced cleaning and feature engineering — creating new informative features from raw data, which often has more impact on model performance than algorithm choice.",
-      "topics": [
-        "Advanced missing value strategies: KNN imputation, forward fill, MICE",
-        "Outlier treatment: capping, transformation, and removal decisions",
-        "Encoding categorical variables: one-hot, ordinal, and target encoding",
-        "Feature scaling: StandardScaler, MinMaxScaler, RobustScaler",
-        "Feature creation: ratios, interactions, and polynomial features",
-        "Date/time features: day of week, seasonality, time since event",
-        "Text features: length, word count, presence of keywords",
-        "Building reproducible preprocessing pipelines with sklearn Pipeline"
-      ],
-      "tasks": [
-        "Download the Kaggle House Prices dataset (see resources) for this week's project",
-        "Take the multi-source dataset from Week 4 and apply advanced cleaning",
-        "Engineer at least 5 new features from existing columns",
-        "Build a full sklearn Pipeline that preprocesses data end-to-end",
-        "Compare model performance before and after feature engineering using a simple model",
-        "Write a feature engineering report explaining each new feature and its rationale"
-      ],
-      "project": "Feature Factory — Take the Kaggle House Prices dataset. Without fitting any complex model, focus entirely on feature engineering: create price per sqft, is new build, age at sale, bedroom ratio, and total rooms. Handle all missing values with documented strategy. Apply appropriate scaling. Show that new features increase correlation with the target variable. Build the full sklearn Pipeline.",
-      "resources": [
+      "title": "TaxiPulse v0.5: Streamlit explorer",
+      "phase": "Foundation",
+      "commitment_hours": "12-18",
+      "context": "Last week your fare API went live. This week you put a UI on top — a Streamlit explorer where anyone can pick a route and see the predicted fare + Q4 trends.",
+      "days": [
         {
-          "label": "House Prices Dataset on Kaggle",
-          "url": "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques",
-          "note": "(download the train.csv from here — this is your main dataset this week)"
+          "number": 1,
+          "title": "Plan the explorer",
+          "summary": "Sketch the UI before you code.",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Streamlit docs",
+              "url": "https://docs.streamlit.io/library/get-started",
+              "why": "Click 'Open' to bookmark for this week."
+            },
+            {
+              "kind": "reflection",
+              "title": "UI sketch",
+              "body": "Sketch on paper:\n  - Title: 'TaxiPulse NYC Explorer'\n  - Sidebar: borough dropdown, hour slider, distance slider\n  - Main: predicted fare card + Q4 trend chart + a map of NYC borough boundaries"
+            }
+          ]
         },
         {
-          "label": "How to Download from Kaggle — Step by Step",
-          "url": "https://www.youtube.com/results?search_query=how+to+download+kaggle+dataset+beginners+step+by+step",
-          "note": "(YouTube, ~5 min if you need a reminder)"
+          "number": 2,
+          "title": "Set up Streamlit",
+          "summary": "Install + Hello world.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First app",
+              "body": "STEP 1 — In your taxipulse folder, terminal:\n      pip install streamlit\n\nSTEP 2 — Create explorer.py:\n      import streamlit as st\n      st.title('TaxiPulse NYC Explorer')\n      st.write('Q4 2023 yellow taxi data + fare prediction')\n\nSTEP 3 — Run:\n      streamlit run explorer.py\n  YOU SHOULD SEE: localhost:8501 with your title."
+            }
+          ]
         },
         {
-          "label": "Feature Engineering for ML — Krish Naik",
-          "url": "https://www.youtube.com/results?search_query=krish+naik+feature+engineering+machine+learning+tutorial",
-          "note": "(YouTube, ~40 min)"
+          "number": 3,
+          "title": "Sidebar controls",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Sidebar widgets",
+              "body": "Add to explorer.py:\n      borough = st.sidebar.selectbox('Pickup borough', ['Manhattan','Brooklyn','Queens','Bronx','Staten Island'])\n      hour = st.sidebar.slider('Pickup hour', 0, 23, 14)\n      distance = st.sidebar.slider('Trip distance (mi)', 0.5, 50.0, 5.0)\n      duration = st.sidebar.slider('Duration (min)', 1, 120, 18)\n\n      st.write(f'Selected: {borough}, hour {hour}, {distance} mi, {duration} min')"
+            }
+          ]
         },
         {
-          "label": "sklearn Pipeline Tutorial — Python ML",
-          "url": "https://www.youtube.com/results?search_query=sklearn+pipeline+tutorial+python+machine+learning",
-          "note": "(YouTube, ~20 min)"
+          "number": 4,
+          "title": "Load model + predict",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Wire the predictor",
+              "body": "Copy fare_model.pkl from Week 4 into this folder.\n\n      import joblib\n      m = joblib.load('fare_model.pkl')\n      pred = m.predict([[distance, duration, hour]])[0]\n      st.metric('Predicted fare', f'${pred:.2f}')"
+            }
+          ]
         },
         {
-          "label": "scikit-learn Preprocessing Documentation",
-          "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
-          "note": "(reference for all scalers and encoders)"
+          "number": 5,
+          "title": "Add Q4 trend chart",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Trend",
+              "body": "      import pandas as pd\n      df = pd.read_parquet('data/q4_2023.parquet')\n      df = df[df['pickup_borough'] == borough]\n      daily = df.groupby(df['tpep_pickup_datetime'].dt.date).size()\n      st.line_chart(daily, height=240)\n      st.caption(f'Daily trips from {borough} in Q4 2023')"
+            }
+          ]
         },
         {
-          "label": "Advanced Missing Data Handling — Imputation Techniques",
-          "url": "https://www.youtube.com/results?search_query=handling+missing+data+advanced+techniques+imputation+python",
-          "note": "(YouTube, ~20 min)"
+          "number": 6,
+          "title": "Deploy to Streamlit Cloud",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Streamlit Community Cloud",
+              "url": "https://streamlit.io/cloud",
+              "why": "Free hosting."
+            },
+            {
+              "kind": "exercise",
+              "title": "Deploy",
+              "body": "Trim q4_2023.parquet to a sample so it fits in GitHub (under 50MB):\n      df.sample(500000).to_parquet('data/q4_sample.parquet')\nUpdate explorer.py to load q4_sample.parquet.\nCommit + push.\nSign up at Streamlit Cloud → New app → pick your repo → file: explorer.py → Deploy.\nGet a *.streamlit.app URL."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.5",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.5",
+              "body": "Update README with the live URL.\n      git add . && git commit -m 'v0.5: Streamlit explorer'\n      git tag v0.5 && git push --tags\n\nPASS:\n  ☐ Streamlit explorer live\n  ☐ Sidebar filters work\n  ☐ Predicted fare updates as you slide\n  ☐ Daily trend chart per borough\n  ☐ v0.5 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After computing the Pearson correlation between your engineered feature age_at_sale and SalePrice: is it higher or lower than the correlation between the raw YearBuilt feature and SalePrice? What does this tell you about whether feature transformation adds value?",
-        "You created an is_new_build binary feature (built within 5 years of sale). What percentage of houses in the dataset qualify as 'new builds'? Compare the average SalePrice of new builds vs older houses. Is the premium statistically significant (run a t-test)?",
-        "After applying StandardScaler to the numeric features: what is the mean and standard deviation of the scaled GrLivArea column? Now intentionally add one extreme outlier and re-scale. How much does the scaler shift? Repeat with RobustScaler. Which is more stable?",
-        "You built an sklearn Pipeline with imputation, encoding, and scaling. What exactly happens if you call fit_transform() on the whole dataset instead of only the training set, and then evaluate on the test set? Demonstrate the numerical difference in at least one metric."
+      "topics": [
+        "Streamlit sidebar widgets",
+        "st.metric + st.line_chart",
+        "Streamlit Cloud deploy",
+        "Sampling large parquets for git limits"
       ],
+      "tasks": [
+        "Install Streamlit",
+        "Build sidebar with 4 controls",
+        "Wire the fare model into the UI",
+        "Add Q4 daily trend chart per borough",
+        "Deploy on Streamlit Cloud"
+      ],
+      "project": "TaxiPulse v0.5 — interactive explorer with sidebar controls, predicted fare, and per-borough Q4 trend chart. Live on Streamlit Cloud.",
+      "resources": [],
       "exercises": [
-        "Implement KNN imputation on a dataset with missing values and compare to simple mean imputation.",
-        "Apply one-hot encoding to a column with 20+ categories without creating too many sparse columns.",
-        "Build a sklearn Pipeline that: imputes missing values, encodes categoricals, and scales numerics. Fit on training data only.",
-        "Create a date feature that captures whether a sale occurred during a holiday period."
+        "Add a heatmap of trips by hour × day-of-week",
+        "Add a 'compare 2 boroughs' mode side-by-side",
+        "Cache the parquet load with @st.cache_data"
+      ],
+      "questions": [
+        "Why @st.cache_data?",
+        "Why does Streamlit re-run the whole script on every interaction?",
+        "What's the size limit on a free Streamlit Cloud app?"
       ],
       "outputs": [
-        "Feature engineering notebook with before/after correlation comparisons",
-        "sklearn Pipeline saved as a .pkl file",
-        "Feature engineering report (written document explaining each feature)",
-        "Updated cleaned dataset ready for modelling"
+        "Live Streamlit URL",
+        "v0.5 tag",
+        "Updated README"
       ]
     },
     {
       "number": 6,
-      "title": "Exploratory Data Analysis",
-      "phase": "Data Engineering",
-      "commitment_hours": "25--35",
-      "context": "EDA is how data scientists understand data before modelling. Combined with statistical testing, it builds the evidence base for analytical decisions. This week you master the full EDA workflow for data science.",
-      "topics": [
-        "EDA workflow: analyse the target variable first",
-        "Distribution analysis for modelling: normality, skewness, log transforms",
-        "Bivariate analysis: relationship between features and target variable",
-        "Multivariate visualisation: pairplot, heatmaps, 3D scatter",
-        "Hypothesis testing: t-test, ANOVA, chi-square, Mann-Whitney U",
-        "Effect size: why p-value alone is not enough",
-        "Automated EDA with ydata-profiling",
-        "Feature importance from a quick Random Forest model"
-      ],
-      "tasks": [
-        "Run ydata-profiling on your House Prices dataset and review the automated report",
-        "Write a structured EDA notebook answering at least 10 data questions",
-        "Run 3 statistical tests and document hypotheses, results, and conclusions",
-        "Create a feature importance chart and compare with correlation heatmap",
-        "Write a 2-page EDA summary for a non-technical audience"
-      ],
-      "project": "EDA for Model Readiness — Using the House Prices dataset: (1) Analyse the target variable SalePrice and apply a log transform, (2) Identify the top 10 features correlated with SalePrice, (3) Test statistical significance of key group differences, (4) Flag multicollinearity issues, (5) Conclude with a modelling strategy recommendation supported by evidence from the EDA.",
-      "resources": [
+      "title": "TaxiPulse v1.0: Ship + retro",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Last week of Project 1. Polish everything. Write a real retro. Get one stranger to read your notebook and report back.",
+      "days": [
         {
-          "label": "EDA for Machine Learning — Krish Naik",
-          "url": "https://www.youtube.com/results?search_query=krish+naik+exploratory+data+analysis+machine+learning+python",
-          "note": "(YouTube, ~35 min)"
+          "number": 1,
+          "title": "What 'polish' means",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "List the rough edges",
+              "body": "Walk through your project. List 10 small things that are 'good enough' but could be better:\n  - Typos in README\n  - Charts without axis labels\n  - Cells that take too long to run\n  - Variables named df, df2, df3\n  - Cells with import statements halfway through"
+            }
+          ]
         },
         {
-          "label": "ydata-profiling Tutorial (formerly Pandas Profiling)",
-          "url": "https://www.youtube.com/results?search_query=ydata+profiling+pandas+profiling+tutorial+python",
-          "note": "(YouTube, ~15 min)"
+          "number": 2,
+          "title": "Fix half of them",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Polish pass 1",
+              "body": "Pick the 5 most obvious. Fix them. Commit each as its own small commit (clean history)."
+            }
+          ]
         },
         {
-          "label": "ANOVA Clearly Explained — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+anova+one+way+two+way+clearly+explained",
-          "note": "(YouTube, ~15 min)"
+          "number": 3,
+          "title": "Add docstrings + comments",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Document the code",
+              "body": "Every function in your notebooks: add a docstring saying what it does, what it returns.\nEvery non-obvious cell: 1-sentence markdown above explaining WHY."
+            }
+          ]
         },
         {
-          "label": "ydata-profiling Documentation",
-          "url": "https://docs.profiling.ydata.ai",
-          "note": "(install with: pip install ydata-profiling)"
+          "number": 4,
+          "title": "Profile slow cells",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Speed it up",
+              "body": "Find the slowest cell with %%time:\n      %%time\n      ...your code...\n\nIf anything takes > 30 seconds, find a way to make it faster (use parquet not csv, filter rows earlier, use vectorized pandas not Python loops)."
+            }
+          ]
         },
         {
-          "label": "House Prices Dataset (same as Week 5)",
-          "url": "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques",
-          "note": "(use the same train.csv)"
+          "number": 5,
+          "title": "Show a stranger",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Get one reader",
+              "body": "Send your final notebook GitHub URL to one person who knows nothing about NYC taxis. Ask: 'Can you read this and tell me ONE thing that confused you?' Note their answer."
+            }
+          ]
         },
         {
-          "label": "Multicollinearity Explained — VIF and Heatmaps",
-          "url": "https://www.youtube.com/results?search_query=multicollinearity+explained+machine+learning+vif",
-          "note": "(YouTube, ~12 min)"
+          "number": 6,
+          "title": "Fix what confused them",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Apply feedback",
+              "body": "Fix whatever the reader flagged. Real readers are gold."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + write the retro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Retro + v1.0",
+              "body": "Add RETRO.md to the repo:\n      # TaxiPulse Retro\n      ## What worked\n      - ...\n      ## What didn't\n      - ...\n      ## What I'd do differently\n      - ...\n      ## What I learned\n      - ...\n\n      git add . && git commit -m 'v1.0: ship Project 1'\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ All cells have markdown context\n  ☐ All functions have docstrings\n  ☐ Slow cells profiled + fixed\n  ☐ One stranger read the notebook + their feedback addressed\n  ☐ RETRO.md committed\n  ☐ v1.0 tag\n\nPROJECT 1 DONE. Next week: Project 2 — Reddit Sentiment."
+            }
+          ]
         }
       ],
-      "questions": [
-        "Apply a log transform to SalePrice. Plot the distribution before and after. Compute the skewness coefficient for both. How much did skewness decrease? Why does reducing skewness in the target variable matter specifically for linear regression models?",
-        "Your correlation heatmap shows GarageArea and GarageCars are correlated at 0.88. What is this problem called? Why is it specifically harmful to linear models but NOT to tree-based models? If you had to keep only one of these two features, which would you keep and why?",
-        "Run a one-way ANOVA to test whether SalePrice is significantly different across MSZoning (zoning) categories. Report the F-statistic, p-value, and your conclusion. Now calculate Cohen's d between the highest and lowest zoning group. Is the difference practically significant even if statistically significant?",
-        "Run ydata-profiling on the House Prices dataset. Find 3 statistics it reveals that manual EDA missed or would have taken a long time to find. For each one, write what modelling decision it changes."
+      "topics": [
+        "Polishing notebooks for portfolio",
+        "Docstrings",
+        "Profiling with %%time",
+        "Soliciting + applying outside feedback",
+        "Writing a retrospective"
       ],
+      "tasks": [
+        "List 10 rough edges in your project",
+        "Fix at least 5 of them",
+        "Add docstrings + markdown context",
+        "Profile + speed up slow cells",
+        "Get one stranger to read + give feedback",
+        "Write RETRO.md"
+      ],
+      "project": "TaxiPulse v1.0 — Project 1 fully polished. Notebook reads like an article. Stranger-tested. Real retro committed.",
+      "resources": [],
       "exercises": [
-        "Apply a log transform to a skewed column and show the before/after distribution.",
-        "Run a one-way ANOVA to test whether 3 groups have significantly different means.",
-        "Identify features with correlation above 0.9 with each other and document the multicollinearity.",
-        "Build a Random Forest with default settings and extract feature importances. Compare with Pearson correlation."
+        "Add a single 'How I made this' blog post (Medium / Dev.to) linking the repo",
+        "Make a 3-minute screen recording walking through the analysis",
+        "Add a profile photo + bio to the notebook header"
+      ],
+      "questions": [
+        "What's the difference between 'done' and 'shippable'?",
+        "Why is outside feedback worth more than self-review?",
+        "What's the smallest unit of 'polish' that moves the needle?"
       ],
       "outputs": [
-        "ydata-profiling HTML report",
-        "Structured EDA Jupyter Notebook (10+ questions answered)",
-        "Statistical test results table (hypothesis, test, p-value, conclusion)",
-        "2-page non-technical EDA summary"
+        "v1.0 tag — PROJECT 1 COMPLETE",
+        "RETRO.md",
+        "Cleaner repo",
+        "One stranger's verified feedback"
       ]
     },
     {
       "number": 7,
-      "title": "ML Fundamentals",
-      "phase": "Machine Learning",
-      "commitment_hours": "25--35",
-      "context": "This week you build the conceptual and practical foundation for machine learning: what it is, how learning works, and how to use scikit-learn, the industry-standard Python ML library.",
-      "topics": [
-        "What is machine learning? Supervised, unsupervised, reinforcement learning",
-        "The ML workflow: split data, train model, evaluate, iterate",
-        "Train/validation/test split and cross-validation",
-        "Overfitting and underfitting: the bias-variance tradeoff",
-        "Evaluation metrics: RMSE, MAE, R2, accuracy, precision, recall, F1, AUC-ROC",
-        "The scikit-learn API: fit, predict, score, Pipeline",
-        "Hyperparameter tuning: GridSearchCV and RandomizedSearchCV",
-        "Baseline models and the importance of benchmarks"
-      ],
-      "tasks": [
-        "Watch all videos in the resource list before writing any code",
-        "Implement train/test split on 3 different datasets",
-        "Fit 3 different models (Linear Regression, Decision Tree, k-NN) on the same dataset",
-        "Compare their performance using 3 different metrics",
-        "Build a GridSearchCV pipeline for one model"
-      ],
-      "project": "Model Benchmarking Study — Take any tabular dataset with a clear target variable. Build 5 models: Linear Regression, Ridge, Decision Tree, k-NN, and a dummy baseline (always predicts mean). Evaluate each on RMSE, MAE, R2, and 5-fold cross-validation. Build a comparison table. Conclude which model performs best and why — and what this tells you about the data.",
-      "resources": [
+      "title": "Project 2 — Reddit Sentiment v0.1",
+      "phase": "NLP",
+      "commitment_hours": "15-20",
+      "context": "New project. You'll build a sentiment classifier that reads Reddit posts and labels them positive / negative / neutral. Specific subreddit: r/MachineLearning. By W12 it'll be deployed and live.",
+      "days": [
         {
-          "label": "Machine Learning Crash Course — Google Developers",
-          "url": "https://www.youtube.com/results?search_query=google+developers+machine+learning+crash+course+beginners",
-          "note": "(YouTube, watch the first 5 videos (~1 hr total))"
+          "number": 1,
+          "title": "What is sentiment analysis?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Sentiment analysis explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=sentiment+analysis+nlp+beginner+explained",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Why r/MachineLearning?",
+              "body": "Why this subreddit?\n  - Real text, technical vocabulary\n  - Mixed tone (snark + excitement + frustration)\n  - We can scrape it free + legally\n  - 4M subscribers — real signal"
+            }
+          ]
         },
         {
-          "label": "Bias-Variance Tradeoff — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+bias+variance+tradeoff+clearly+explained",
-          "note": "(YouTube, ~10 min — watch before any code)"
+          "number": 2,
+          "title": "Set up the project",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "New repo",
+              "body": "      cd Desktop\n      mkdir reddit-sentiment\n      cd reddit-sentiment\n      conda create -n sentiment python=3.11 pandas requests jupyter -y\n      conda activate sentiment\n      pip install praw transformers torch\n\nCreate GitHub repo `reddit-sentiment` (public). git init + push."
+            }
+          ]
         },
         {
-          "label": "Cross-Validation — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+cross+validation+clearly+explained",
-          "note": "(YouTube, ~10 min)"
+          "number": 3,
+          "title": "Get Reddit API credentials",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Reddit — create app",
+              "url": "https://www.reddit.com/prefs/apps",
+              "why": "Click 'Open' → scroll down → 'Create app' → choose 'script' → name it 'forge-sentiment' → note client_id + secret."
+            },
+            {
+              "kind": "exercise",
+              "title": "PRAW setup",
+              "body": "Create .env:\n      REDDIT_CLIENT_ID=...\n      REDDIT_SECRET=...\n      REDDIT_USER_AGENT=forge-sentiment by /u/yourname\n\nTest in scrape.py:\n      import praw, os\n      from dotenv import load_dotenv\n      load_dotenv()\n      r = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),\n                      client_secret=os.getenv('REDDIT_SECRET'),\n                      user_agent=os.getenv('REDDIT_USER_AGENT'))\n      for s in r.subreddit('MachineLearning').hot(limit=5):\n          print(s.title)\n\nYOU SHOULD SEE: 5 post titles."
+            }
+          ]
         },
         {
-          "label": "scikit-learn User Guide",
-          "url": "https://scikit-learn.org/stable/user_guide.html",
-          "note": "(the best documentation in ML — read the intro and supervised learning sections)"
+          "number": 4,
+          "title": "Scrape 1000 posts",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Bulk scrape",
+              "body": "Update scrape.py:\n      import praw, os, csv\n      from dotenv import load_dotenv\n      load_dotenv()\n      r = praw.Reddit(...)\n      rows = []\n      for s in r.subreddit('MachineLearning').new(limit=1000):\n          rows.append({\n              'id': s.id, 'title': s.title, 'selftext': s.selftext,\n              'score': s.score, 'num_comments': s.num_comments,\n              'created_utc': s.created_utc\n          })\n      with open('data/posts.csv','w',newline='',encoding='utf-8') as f:\n          w = csv.DictWriter(f, fieldnames=rows[0].keys())\n          w.writeheader(); w.writerows(rows)\n      print(f'Saved {len(rows)} posts')\n\nRun: python scrape.py. Takes ~3 minutes."
+            }
+          ]
         },
         {
-          "label": "GridSearchCV Tutorial — Scikit-learn",
-          "url": "https://www.youtube.com/results?search_query=sklearn+gridsearchcv+tutorial+python+machine+learning",
-          "note": "(YouTube, ~20 min)"
+          "number": 5,
+          "title": "Use a pretrained sentiment model",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Hugging Face zero-shot",
+              "body": "Create label.py:\n      from transformers import pipeline\n      import pandas as pd\n      df = pd.read_csv('data/posts.csv')\n      classifier = pipeline('sentiment-analysis', model='distilbert-base-uncased-finetuned-sst-2-english')\n      texts = df['title'].fillna('').tolist()[:100]\n      results = classifier(texts)\n      for t, r in zip(texts[:5], results[:5]):\n          print(f'{r[\"label\"]} ({r[\"score\"]:.2f}): {t}')\n\nFirst run downloads the model (~250MB)."
+            }
+          ]
         },
         {
-          "label": "ML Evaluation Metrics: RMSE, MAE, R2 Explained",
-          "url": "https://www.youtube.com/results?search_query=machine+learning+evaluation+metrics+rmse+mae+r2+explained",
-          "note": "(YouTube, ~15 min)"
+          "number": 6,
+          "title": "Score all 1000",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Full pipeline",
+              "body": "Apply to all 1000:\n      results = classifier(df['title'].fillna('').tolist(), batch_size=16)\n      df['sentiment'] = [r['label'] for r in results]\n      df['confidence'] = [r['score'] for r in results]\n      df.to_csv('data/labeled.csv', index=False)\n      print(df['sentiment'].value_counts())"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.1",
+              "body": "Make .gitignore exclude data/, .env. Write a short README.\n      git add . && git commit -m 'reddit-sentiment v0.1: scrape + label 1000 posts'\n      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ PRAW credentials configured (key not committed)\n  ☐ scrape.py pulls 1000 posts to data/posts.csv\n  ☐ label.py applies pretrained sentiment\n  ☐ data/labeled.csv contains sentiment + confidence\n  ☐ v0.1 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After running your 5-model benchmark: which model has the best test RMSE? Which has the best training RMSE? If they are different models, calculate the gap between training and test performance for each model. Which model is overfitting most? Which is underfitting?",
-        "Your baseline model (always predicts the mean) has an R\\\\textasciicircum{}{}2 of 0.0 by definition. What is the R\\\\textasciicircum{}{}2 of your best model? Calculate the percentage improvement over baseline. Now interpret what R\\\\textasciicircum{}{}2 = 0.72 means in plain English — what fraction of the outcome is your model explaining?",
-        "After running GridSearchCV on your Decision Tree: what are the best max_depth and min_samples_split values? Compare the default parameters vs best parameters on the cross-validation score. Was the improvement worth the search? How many model fits did GridSearchCV run in total?",
-        "Plot a learning curve for your best model showing training and validation error as a function of training set size. At what training size does the validation curve flatten? Does adding more data improve the model significantly? What does this diagnose about your current model?"
+      "topics": [
+        "Reddit API via PRAW",
+        "Storing secrets in .env",
+        "Hugging Face pipeline API",
+        "Pretrained sentiment models (DistilBERT)",
+        "Batch inference"
       ],
+      "tasks": [
+        "Create reddit-sentiment repo",
+        "Get Reddit API credentials",
+        "Scrape 1000 r/MachineLearning posts",
+        "Label them with a pretrained model",
+        "Save labeled.csv"
+      ],
+      "project": "Reddit Sentiment v0.1 — 1000 r/MachineLearning posts scraped and sentiment-labelled with a pretrained Hugging Face model.",
+      "resources": [],
       "exercises": [
-        "Implement k-fold cross-validation manually (without sklearn) for a simple model.",
-        "Build a GridSearchCV that tunes 3 hyperparameters for a Decision Tree.",
-        "Plot a validation curve showing how model performance changes as a hyperparameter varies.",
-        "Build a learning curve to diagnose whether your model is underfitting or overfitting."
+        "Also scrape comments (top 5 per post)",
+        "Try a different subreddit",
+        "Compare sentiment distribution between r/ML and r/learnmachinelearning"
+      ],
+      "questions": [
+        "Why use a pretrained model first instead of training your own?",
+        "What's a 'zero-shot' classifier?",
+        "How does Reddit's rate limit affect scraping?"
       ],
       "outputs": [
-        "Model Benchmarking notebook with comparison table",
-        "GridSearchCV implementation with tuned model",
-        "Validation curve and learning curve plots",
-        "Written conclusion explaining model performance differences"
+        "v0.1 tag",
+        "data/labeled.csv with 1000 labelled posts",
+        "scrape.py + label.py committed"
       ]
     },
     {
       "number": 8,
-      "title": "Supervised Learning — Regression",
-      "phase": "Machine Learning",
-      "commitment_hours": "25--35",
-      "context": "Regression is the most fundamental ML task. This week you master the full spectrum of regression algorithms, learning when each applies and how to optimise them for real problems.",
-      "topics": [
-        "Linear Regression: OLS, assumptions, and residual analysis",
-        "Ridge and Lasso Regression: regularisation concepts",
-        "Elastic Net: combining L1 and L2 regularisation",
-        "Polynomial Regression: when relationships are non-linear",
-        "Decision Tree Regression: splits and pruning",
-        "Support Vector Regression: margin and kernels (intuition)",
-        "Residual plots and regression diagnostics",
-        "Interpreting model coefficients for business stakeholders"
-      ],
-      "tasks": [
-        "Implement each regression algorithm on the same dataset and compare performance",
-        "Perform residual analysis on your Linear Regression model",
-        "Tune Lasso and Ridge alpha using cross-validation and plot the regularisation path",
-        "Build a Polynomial Regression and choose the optimal degree using cross-validation",
-        "Write a 1-page guide: when to use each regression algorithm",
-        "Submit to the Kaggle House Prices competition and record your score"
-      ],
-      "project": "House Price Prediction — Using the Kaggle House Prices dataset: build a complete regression pipeline. Start with baseline Linear Regression, diagnose issues (multicollinearity, heteroscedasticity), apply Ridge/Lasso for regularisation, try Polynomial features on key variables, and land on the best-performing model. Document every decision. Submit to Kaggle and record your leaderboard score.",
-      "resources": [
+      "title": "Reddit Sentiment v0.2: Hand-label + classical ML",
+      "phase": "NLP",
+      "commitment_hours": "12-18",
+      "context": "The pretrained model is OK. But it's general-purpose. This week we build a custom classical ML baseline trained on YOUR hand-labels for THIS subreddit.",
+      "days": [
         {
-          "label": "Ridge and Lasso Regression — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+ridge+regression+lasso+clearly+explained",
-          "note": "(YouTube, ~20 min each — watch both)"
+          "number": 1,
+          "title": "Why hand-label",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Disagreement points",
+              "body": "Look at 20 random posts where the pretrained model disagreed with what you'd say. Note: in technical subreddits, 'this is broken' might be a complaint OR neutral technical fact."
+            }
+          ]
         },
         {
-          "label": "Regularisation — Preventing Overfitting — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+regularisation+preventing+overfitting",
-          "note": "(YouTube, ~12 min)"
+          "number": 2,
+          "title": "Hand-label 200",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Build your gold set",
+              "body": "Open data/labeled.csv in Excel/Sheets. Sample 200 random rows. Add a column 'true_label' and fill it yourself with POSITIVE / NEGATIVE / NEUTRAL.\n\nSave as data/gold.csv."
+            }
+          ]
         },
         {
-          "label": "Linear Regression Residual Analysis — Python",
-          "url": "https://www.youtube.com/results?search_query=linear+regression+residual+plots+diagnostics+python",
-          "note": "(YouTube, ~20 min)"
+          "number": 3,
+          "title": "Bag-of-words + LogReg",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Classical baseline",
+              "body": "In 01-baseline.ipynb:\n      import pandas as pd\n      from sklearn.feature_extraction.text import TfidfVectorizer\n      from sklearn.linear_model import LogisticRegression\n      from sklearn.model_selection import train_test_split\n      from sklearn.metrics import classification_report\n      df = pd.read_csv('data/gold.csv')\n      X = TfidfVectorizer(max_features=2000, ngram_range=(1,2)).fit_transform(df['title'])\n      y = df['true_label']\n      Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=42)\n      m = LogisticRegression(max_iter=1000)\n      m.fit(Xtr, ytr)\n      print(classification_report(yte, m.predict(Xte)))"
+            }
+          ]
         },
         {
-          "label": "scikit-learn Linear Models Documentation",
-          "url": "https://scikit-learn.org/stable/modules/linear_model.html",
-          "note": "(reference for Ridge, Lasso, ElasticNet)"
+          "number": 4,
+          "title": "Inspect what the model learned",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Top features per class",
+              "body": "      vec = TfidfVectorizer(max_features=2000, ngram_range=(1,2))\n      X = vec.fit_transform(df['title'])\n      m = LogisticRegression(max_iter=1000).fit(X, y)\n      import numpy as np\n      feats = vec.get_feature_names_out()\n      for i, c in enumerate(m.classes_):\n          top = np.argsort(m.coef_[i])[-10:]\n          print(c, [feats[j] for j in top])\n\nLook at the words. Surprising?"
+            }
+          ]
         },
         {
-          "label": "Kaggle House Prices Competition",
-          "url": "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques",
-          "note": "(submit your model here and check the leaderboard)"
+          "number": 5,
+          "title": "Compare baseline vs pretrained",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Side-by-side",
+              "body": "On the same gold test set, run BOTH:\n  - Your TFIDF + LogReg\n  - The Week 7 pretrained sentiment pipeline\nReport accuracy + F1 for each. Which wins on YOUR data?"
+            }
+          ]
         },
         {
-          "label": "Polynomial Regression with Cross-Validation — Python",
-          "url": "https://www.youtube.com/results?search_query=polynomial+regression+python+sklearn+cross+validation+degree",
-          "note": "(YouTube, ~15 min)"
+          "number": 6,
+          "title": "Save the baseline",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Persist",
+              "body": "      import joblib\n      joblib.dump(m, 'models/baseline.pkl')\n      joblib.dump(vec, 'models/vectorizer.pkl')"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git add . && git commit -m 'v0.2: hand-labeled gold + TFIDF baseline'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ 200 hand-labeled gold rows\n  ☐ TFIDF + LogReg baseline trained\n  ☐ Comparison vs pretrained in README\n  ☐ baseline.pkl + vectorizer.pkl committed\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After fitting Linear Regression on House Prices and plotting the residual plot: do you see a funnel shape (heteroscedasticity), a curve (non-linearity), or a random scatter? What does each pattern indicate about which regression assumption is violated? What specific fix would you apply for the pattern you observe?",
-        "Compare your Lasso and Ridge coefficient plots. How many features does Lasso set to exactly zero at the optimal alpha? List the features that survive (non-zero Lasso coefficients). Do these features make intuitive business sense as drivers of house price?",
-        "After adding polynomial features and cross-validating across degrees 1 through 5: at what degree does validation performance peak? What happens at degree 4 or 5? Calculate the gap between training RMSE and validation RMSE at degree 5 — is the model overfitting?",
-        "What is your Kaggle public leaderboard score? Find the score of the submission at the 50th percentile of the leaderboard. What is your gap from median? Identify one technique used by top-scoring public notebooks that you have not yet applied."
+      "topics": [
+        "Hand-labelling a gold set",
+        "TF-IDF vectorization",
+        "n-gram features",
+        "Logistic regression for text",
+        "Feature importance for linear text models",
+        "Comparing classical vs pretrained models"
       ],
+      "tasks": [
+        "Hand-label 200 posts as gold set",
+        "Vectorize with TFIDF + 1-2 grams",
+        "Train LogisticRegression baseline",
+        "Inspect top features per class",
+        "Compare against pretrained on same test set"
+      ],
+      "project": "Reddit Sentiment v0.2 — hand-labeled gold set + classical baseline (TFIDF + LogReg). Honest accuracy comparison against pretrained.",
+      "resources": [],
       "exercises": [
-        "Plot residuals vs fitted values for a linear model and interpret the pattern you see.",
-        "Use cross-validated Ridge regression with alphas from 0.001 to 1000 and plot the regularisation path.",
-        "Compare feature importance from Lasso (zero coefficients) vs Ridge (shrunk coefficients).",
-        "Add polynomial features to a dataset and use cross-validation to select the optimal degree."
+        "Add subreddit and score as features (not just title)",
+        "Try Naive Bayes alongside LogReg",
+        "Plot a confusion matrix"
+      ],
+      "questions": [
+        "Why hand-label instead of trusting the pretrained model?",
+        "What does ngram_range=(1,2) mean?",
+        "Why is TFIDF better than raw word counts?"
       ],
       "outputs": [
-        "Regression comparison notebook (all algorithms on same dataset)",
-        "Kaggle submission with documented leaderboard score",
-        "Residual analysis plots and written interpretation",
-        "Algorithm selection guide (your own reference document)"
+        "models/baseline.pkl + vectorizer.pkl",
+        "Hand-labeled gold.csv",
+        "v0.2 tag"
       ]
     },
     {
       "number": 9,
-      "title": "Supervised Learning — Classification",
-      "phase": "Machine Learning",
-      "commitment_hours": "25--35",
-      "context": "Classification is the most common ML task in industry — spam detection, fraud detection, churn prediction. This week you master classification algorithms and the metrics that matter when classes are imbalanced.",
-      "topics": [
-        "Logistic Regression: sigmoid function, log-loss, decision boundary",
-        "k-Nearest Neighbours: distance metrics and k selection",
-        "Naive Bayes: assumptions and text classification use case",
-        "Support Vector Machine: hyperplane, margin, and kernels",
-        "Decision Tree Classifier: Gini impurity and information gain",
-        "Classification metrics: confusion matrix, precision, recall, F1, AUC-ROC",
-        "Handling class imbalance: SMOTE, class_weight, threshold tuning",
-        "ROC curves and Precision-Recall curves"
-      ],
-      "tasks": [
-        "Download the Credit Card Fraud dataset from Kaggle (see resources)",
-        "Train all 5 classification algorithms on the Titanic dataset",
-        "Build a full confusion matrix and calculate all metrics manually (not just using sklearn)",
-        "Plot ROC curves for each model on one comparison chart",
-        "Apply SMOTE to the fraud dataset and compare results with and without it",
-        "Write a model card documenting the best-performing model"
-      ],
-      "project": "Credit Card Fraud Detection — Using the Kaggle fraud dataset (highly imbalanced): build a fraud detection pipeline. Handle class imbalance with SMOTE and class_weight tuning. Evaluate using Precision-Recall AUC (not accuracy — explain why in your report). Try Logistic Regression, SVM, and Decision Tree. Maximise recall for fraud while keeping false positives acceptable.",
-      "resources": [
+      "title": "Reddit Sentiment v0.3: Fine-tune DistilBERT",
+      "phase": "NLP",
+      "commitment_hours": "15-20",
+      "context": "This week we fine-tune a real transformer on your gold set. Goes beyond classical ML.",
+      "days": [
         {
-          "label": "Credit Card Fraud Dataset on Kaggle",
-          "url": "https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud",
-          "note": "(download the CSV — highly imbalanced, real transactions)"
+          "number": 1,
+          "title": "What is fine-tuning?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Fine-tuning explained (15 min)",
+              "url": "https://www.youtube.com/results?search_query=fine+tuning+transformer+beginner+huggingface",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Compute cost",
+              "body": "Fine-tuning needs a GPU. Free options: Google Colab. Plan for ~30 min of GPU time."
+            }
+          ]
         },
         {
-          "label": "Logistic Regression — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+logistic+regression+clearly+explained",
-          "note": "(YouTube, ~20 min)"
+          "number": 2,
+          "title": "Move to Colab",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Google Colab",
+              "url": "https://colab.research.google.com",
+              "why": "Click 'Open' → New notebook. Free tier gives you a T4 GPU."
+            },
+            {
+              "kind": "exercise",
+              "title": "Set up Colab",
+              "body": "In Colab: Runtime → Change runtime type → T4 GPU.\nUpload your data/gold.csv via the files panel.\nFirst cell: !pip install transformers datasets accelerate -q"
+            }
+          ]
         },
         {
-          "label": "ROC and AUC — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+roc+and+auc+clearly+explained",
-          "note": "(YouTube, ~15 min — watch before plotting ROC curves)"
+          "number": 3,
+          "title": "Prepare data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Tokenize",
+              "body": "      import pandas as pd\n      from datasets import Dataset\n      from transformers import AutoTokenizer\n      df = pd.read_csv('gold.csv')\n      df['label'] = df['true_label'].map({'NEGATIVE':0,'NEUTRAL':1,'POSITIVE':2})\n      ds = Dataset.from_pandas(df[['title','label']]).train_test_split(test_size=0.2)\n      tok = AutoTokenizer.from_pretrained('distilbert-base-uncased')\n      def tokenize(b): return tok(b['title'], padding='max_length', truncation=True, max_length=128)\n      ds = ds.map(tokenize, batched=True)"
+            }
+          ]
         },
         {
-          "label": "Handling Imbalanced Datasets with SMOTE — Krish Naik",
-          "url": "https://www.youtube.com/results?search_query=krish+naik+imbalanced+dataset+smote+oversampling+python",
-          "note": "(YouTube, ~25 min)"
+          "number": 4,
+          "title": "Fine-tune",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Train",
+              "body": "      from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer\n      model = AutoModelForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=3)\n      args = TrainingArguments(output_dir='out', num_train_epochs=3, per_device_train_batch_size=16, learning_rate=2e-5, eval_strategy='epoch')\n      trainer = Trainer(model=model, args=args, train_dataset=ds['train'], eval_dataset=ds['test'])\n      trainer.train()\n\nTakes ~10-20 minutes on T4."
+            }
+          ]
         },
         {
-          "label": "scikit-learn: Classification Metrics Documentation",
-          "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
-          "note": "(reference for confusion matrix, precision, recall, F1)"
+          "number": 5,
+          "title": "Evaluate",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Compare to baseline",
+              "body": "      preds = trainer.predict(ds['test'])\n      import numpy as np\n      from sklearn.metrics import classification_report\n      y_pred = np.argmax(preds.predictions, axis=1)\n      print(classification_report(preds.label_ids, y_pred, target_names=['NEG','NEU','POS']))\n\nBeat the TFIDF baseline?"
+            }
+          ]
         },
         {
-          "label": "Support Vector Machines — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+support+vector+machine+svm+clearly+explained",
-          "note": "(YouTube, ~20 min)"
+          "number": 6,
+          "title": "Save + download model",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Persist",
+              "body": "      trainer.save_model('reddit-sentiment-distilbert')\n      !zip -r model.zip reddit-sentiment-distilbert\nDownload model.zip from Colab. Unzip into your local repo at models/distilbert/.\nWARNING: ~250MB. Use Git LFS:\n      git lfs install\n      git lfs track 'models/distilbert/*'\n      git add .gitattributes models/\n      git commit -m 'add fine-tuned model via LFS'"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git push\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Fine-tuned in Colab on T4\n  ☐ Beats TFIDF baseline on same test\n  ☐ Model saved + downloaded\n  ☐ Stored in repo via Git LFS\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "On the Credit Card Fraud dataset: before any imbalance handling, what is the accuracy of a classifier that always predicts 'not fraud'? Calculate it from class proportions. Now calculate its recall for actual fraud cases. What does this demonstrate about using accuracy as the primary metric for imbalanced problems?",
-        "After applying SMOTE: how many synthetic fraud samples were generated? Compare Precision-Recall AUC before and after SMOTE. Did it improve — and if so, by how much? Did precision decrease even if recall improved? Write a sentence explaining the trade-off.",
-        "You tuned the classification threshold. At threshold 0.5: what are precision and recall? Find the threshold that maximises F1. Find the threshold that maximises recall while keeping precision above 50\\%. In a real fraud detection system, which threshold would you recommend and why?",
-        "From your best model's ROC curve: at a False Positive Rate of 5\\%, what is the True Positive Rate? Now translate this into business terms: if a bank processes 500,000 transactions per day with a 0.17\\% fraud rate, how many actual frauds does your model catch? How many legitimate transactions does it falsely flag?"
+      "topics": [
+        "Fine-tuning transformers",
+        "Hugging Face datasets library",
+        "Google Colab GPU usage",
+        "Trainer API basics",
+        "Git LFS for large model files"
       ],
+      "tasks": [
+        "Move work to Colab T4",
+        "Tokenize gold set",
+        "Fine-tune DistilBERT 3 epochs",
+        "Beat TFIDF baseline",
+        "Save + commit model via Git LFS"
+      ],
+      "project": "Reddit Sentiment v0.3 — fine-tuned DistilBERT on your hand-labeled set. Outperforms classical baseline. Stored via Git LFS.",
+      "resources": [],
       "exercises": [
-        "Build a confusion matrix from scratch (no sklearn) given a list of predictions and true labels.",
-        "Plot Precision-Recall curves for 3 models on the same chart. Which model performs best at high recall?",
-        "Tune the classification threshold from 0.5 to the value that maximises F1 score.",
-        "Compare model performance before and after applying SMOTE on an imbalanced dataset."
+        "Try a smaller model like ALBERT for faster inference",
+        "Add a learning-rate sweep with 3 different lr values",
+        "Plot training loss + eval accuracy over epochs"
+      ],
+      "questions": [
+        "Why does fine-tuning beat zero-shot on domain-specific text?",
+        "What's the trade-off of more epochs?",
+        "Why use max_length=128 instead of 512?"
       ],
       "outputs": [
-        "Classification comparison notebook (5 algorithms)",
-        "Fraud detection pipeline with SMOTE and threshold tuning",
-        "ROC and Precision-Recall curve comparison chart",
-        "Model card documenting the best classifier's performance and limitations"
+        "Fine-tuned model committed",
+        "v0.3 tag",
+        "Eval results in README"
       ]
     },
     {
       "number": 10,
-      "title": "Ensemble Methods",
-      "phase": "Machine Learning",
-      "commitment_hours": "25--35",
-      "context": "Ensemble methods — Random Forest, XGBoost, LightGBM — are the most powerful algorithms for tabular data in 2026. This week you master them and learn to tune and explain them properly.",
-      "topics": [
-        "Bagging: Random Forest and ExtraTreesClassifier",
-        "Boosting: AdaBoost and Gradient Boosting",
-        "XGBoost: architecture, key hyperparameters, and early stopping",
-        "LightGBM: advantages over XGBoost for large datasets",
-        "CatBoost: handling categorical features natively",
-        "Feature importance from tree-based models",
-        "SHAP values for model interpretability",
-        "Stacking and blending ensemble techniques"
-      ],
-      "tasks": [
-        "Train Random Forest, XGBoost, and LightGBM on the same dataset and compare",
-        "Use Optuna or RandomizedSearchCV for hyperparameter tuning",
-        "Generate SHAP summary, waterfall, and dependency plots for your best model",
-        "Implement early stopping on XGBoost with a validation set",
-        "Submit an ensemble to Kaggle and record improvement over single models"
-      ],
-      "project": "Kaggle Competition Entry — Enter the Titanic or House Prices Kaggle competition. Build: (1) Random Forest baseline, (2) XGBoost with tuned hyperparameters, (3) LightGBM, (4) A stacking ensemble using predictions from all 3 as features for a meta-learner. Use SHAP to explain predictions. Document every experiment. Target: top 30\\% of the leaderboard.",
-      "resources": [
+      "title": "Reddit Sentiment v0.4: Live dashboard",
+      "phase": "NLP",
+      "commitment_hours": "12-18",
+      "context": "Build a Streamlit dashboard that scrapes r/MachineLearning live and shows current sentiment.",
+      "days": [
         {
-          "label": "Random Forest — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+random+forest+clearly+explained",
-          "note": "(YouTube, ~20 min)"
+          "number": 1,
+          "title": "Plan it",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Dashboard sketch",
+              "body": "What does the dashboard show?\n  - 'Refresh' button → scrape latest 50 posts\n  - Pie chart: sentiment breakdown\n  - List: most negative posts (warnings)\n  - List: most positive (good news)\n  - Time series of last 7 days if cached"
+            }
+          ]
         },
         {
-          "label": "XGBoost — StatQuest (Parts 1-4)",
-          "url": "https://www.youtube.com/results?search_query=statquest+xgboost+clearly+explained+part+1",
-          "note": "(YouTube, watch all 4 parts)"
+          "number": 2,
+          "title": "Inference function",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "predict.py",
+              "body": "      import torch\n      from transformers import AutoTokenizer, AutoModelForSequenceClassification\n      MODEL = 'models/distilbert'\n      tok = AutoTokenizer.from_pretrained(MODEL)\n      model = AutoModelForSequenceClassification.from_pretrained(MODEL)\n      LABELS = ['NEGATIVE','NEUTRAL','POSITIVE']\n      def predict(texts):\n          inputs = tok(texts, padding=True, truncation=True, max_length=128, return_tensors='pt')\n          with torch.no_grad():\n              outputs = model(**inputs)\n          probs = torch.softmax(outputs.logits, dim=-1)\n          preds = probs.argmax(dim=-1)\n          return [(LABELS[p], probs[i, p].item()) for i, p in enumerate(preds)]"
+            }
+          ]
         },
         {
-          "label": "SHAP Values for Model Explainability — Krish Naik",
-          "url": "https://www.youtube.com/results?search_query=shap+values+machine+learning+explainability+krish+naik",
-          "note": "(YouTube, ~25 min)"
+          "number": 3,
+          "title": "Streamlit dashboard skeleton",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "dash.py",
+              "body": "      import streamlit as st\n      from scrape import fetch_latest  # extract scraping logic into a function\n      from predict import predict\n      st.title('r/ML Sentiment — Live')\n      if st.button('Refresh'):\n          with st.spinner('Scraping + scoring...'):\n              posts = fetch_latest(50)\n              labels = predict([p['title'] for p in posts])\n              for (lab, conf), p in zip(labels, posts):\n                  p['sentiment'] = lab; p['confidence'] = conf\n              st.session_state['posts'] = posts"
+            }
+          ]
         },
         {
-          "label": "XGBoost Documentation",
-          "url": "https://xgboost.readthedocs.io/en/stable/",
-          "note": "(reference for all hyperparameters and early stopping)"
+          "number": 4,
+          "title": "Add charts",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Visualize sentiment",
+              "body": "      posts = st.session_state.get('posts', [])\n      if posts:\n          import pandas as pd\n          df = pd.DataFrame(posts)\n          counts = df['sentiment'].value_counts()\n          st.bar_chart(counts)\n          \n          col1, col2 = st.columns(2)\n          with col1:\n              st.subheader('Most negative')\n              for _, r in df[df['sentiment']=='NEGATIVE'].nlargest(5,'confidence').iterrows():\n                  st.write(r['title'])\n          with col2:\n              st.subheader('Most positive')\n              for _, r in df[df['sentiment']=='POSITIVE'].nlargest(5,'confidence').iterrows():\n                  st.write(r['title'])"
+            }
+          ]
         },
         {
-          "label": "SHAP Library Documentation",
-          "url": "https://shap.readthedocs.io/en/latest/",
-          "note": "(installation and examples for all plot types)"
+          "number": 5,
+          "title": "Cache + history",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Save snapshots",
+              "body": "Save each refresh as a row in history.csv with timestamp + counts. Show a line chart of negative-count over time."
+            }
+          ]
         },
         {
-          "label": "LightGBM Tutorial — Fast Gradient Boosting",
-          "url": "https://www.youtube.com/results?search_query=lightgbm+tutorial+python+fast+gradient+boosting+tutorial",
-          "note": "(YouTube, ~20 min)"
+          "number": 6,
+          "title": "Deploy",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Deploy on Streamlit Cloud",
+              "body": "Add the model files via Git LFS to a fresh push.\nAdd Reddit secrets to Streamlit Cloud secrets manager.\nDeploy. Note: Streamlit Cloud has a 1GB RAM limit; if DistilBERT is too heavy, fall back to scikit baseline."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ Dashboard scrapes + scores live\n  ☐ Bar chart + most pos/neg lists\n  ☐ History chart\n  ☐ Live URL works\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "From your SHAP summary plot: what are the 3 features with the highest mean absolute SHAP value? Do these match the top 3 from built-in feature importance (Gini/gain)? Where they differ, explain why SHAP gives a different ranking — what information does SHAP use that Gini importance does not?",
-        "Compare XGBoost vs LightGBM on your dataset: what is the training time difference in seconds? What is the performance difference in RMSE or AUC? Is the performance gain (if any) from XGBoost worth the extra training time? At what dataset size would you definitely switch to LightGBM?",
-        "In your stacking ensemble: how much does the stacked model improve over the best single model in cross-validation score? Calculate the percentage improvement. Given this improvement size, write a 2-sentence assessment of whether stacking is worth the added complexity for a production system.",
-        "For your Kaggle submission: look at the 20 worst predictions (largest residuals or misclassifications). Do they share any patterns in their feature values? Identify one specific additional feature that could potentially help the model on these hard cases."
+      "topics": [
+        "PyTorch inference from a saved transformer",
+        "Streamlit columns + session_state",
+        "Caching API calls",
+        "Time-series snapshots in a CSV"
       ],
+      "tasks": [
+        "Write a predict() function for inference",
+        "Build a Streamlit dashboard with refresh button",
+        "Add sentiment bar chart + most positive/negative lists",
+        "Save history snapshots",
+        "Deploy live"
+      ],
+      "project": "Reddit Sentiment v0.4 — live dashboard. One click pulls latest 50 posts, scores them with your fine-tuned model, shows sentiment distribution + the most strongly opinionated posts.",
+      "resources": [],
       "exercises": [
-        "Tune XGBoost learning_rate, n_estimators, max_depth, and subsample using cross-validation.",
-        "Generate a SHAP summary plot and waterfall plot for a single prediction.",
-        "Implement a simple stacking ensemble using predictions from 3 models as features for a meta-learner.",
-        "Compare training time and performance of XGBoost vs LightGBM on a dataset with 100k+ rows."
+        "Add a sentiment-by-hour heatmap of the past day",
+        "Subreddit picker (compare 3 subs)",
+        "Add sound alert when negativity spikes above a threshold"
+      ],
+      "questions": [
+        "Why @st.cache_resource for the model?",
+        "Where does the bottleneck sit — scraping or inference?",
+        "What's the trade-off of running inference in Streamlit vs a separate worker?"
       ],
       "outputs": [
-        "Ensemble comparison notebook with all 4 models",
-        "Kaggle submission with documented leaderboard score",
-        "SHAP visualisations (summary, waterfall, dependency plots)",
-        "Hyperparameter tuning experiment log"
+        "Live dashboard URL",
+        "v0.4 tag",
+        "history.csv tracked"
       ]
     },
     {
       "number": 11,
-      "title": "Unsupervised Learning",
-      "phase": "Machine Learning",
-      "commitment_hours": "25--35",
-      "context": "Not all data has labels. Unsupervised learning finds hidden structure — customer segments, anomalies, and patterns. This week you master clustering and dimensionality reduction, used in nearly every real-world project.",
-      "topics": [
-        "K-Means Clustering: algorithm, inertia, elbow method, silhouette score",
-        "Hierarchical Clustering: dendrograms and linkage methods",
-        "DBSCAN: density-based clustering and noise handling",
-        "Principal Component Analysis (PCA): variance explained and scree plot",
-        "t-SNE and UMAP: high-dimensional data visualisation",
-        "Anomaly Detection: Isolation Forest and Local Outlier Factor",
-        "Evaluating clustering: silhouette, Davies-Bouldin, Calinski-Harabasz",
-        "Business applications: customer segmentation, fraud, recommendation"
-      ],
-      "tasks": [
-        "Download the Online Retail dataset from Kaggle (see resources)",
-        "Apply K-Means and evaluate with elbow method and silhouette score",
-        "Run PCA on a high-dimensional dataset and visualise the explained variance",
-        "Apply t-SNE to visualise a dataset in 2D and compare clusters",
-        "Implement Isolation Forest for anomaly detection on a transaction dataset",
-        "Write a business interpretation of each cluster you identify"
-      ],
-      "project": "Customer Segmentation — Using the online retail customer dataset: (1) Apply K-Means, (2) Use PCA to reduce dimensions before clustering, (3) Visualise clusters with t-SNE, (4) Profile each segment (average spend, frequency, recency), (5) Write a business brief describing who each segment is and how marketing should treat them differently.",
-      "resources": [
+      "title": "Reddit Sentiment v0.5: REST API + Docker",
+      "phase": "Production",
+      "commitment_hours": "12-18",
+      "context": "Separate the inference from the UI. Wrap the model in a FastAPI server, dockerize it, deploy.",
+      "days": [
         {
-          "label": "Online Retail Dataset on Kaggle",
-          "url": "https://www.kaggle.com/datasets/vijayuv/onlineretail",
-          "note": "(download and use for all clustering exercises this week)"
+          "number": 1,
+          "title": "Why split the stack",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Architecture",
+              "body": "Reasons to separate API from UI:\n  - Model heavy → wants its own machine\n  - UI lightweight → cheap hosting\n  - API reusable by other clients"
+            }
+          ]
         },
         {
-          "label": "K-Means Clustering — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+k+means+clustering+clearly+explained",
-          "note": "(YouTube, ~15 min)"
+          "number": 2,
+          "title": "FastAPI hello",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "FastAPI",
+              "body": "      pip install fastapi uvicorn\n\nCreate api.py:\n      from fastapi import FastAPI\n      from pydantic import BaseModel\n      from predict import predict\n      app = FastAPI()\n      class Req(BaseModel):\n          texts: list[str]\n      @app.post('/predict')\n      def p(req: Req):\n          out = predict(req.texts)\n          return {'predictions': [{'label':l, 'confidence':c} for l,c in out]}\n      @app.get('/health')\n      def health(): return {'ok': True}\n\nRun: uvicorn api:app --reload"
+            }
+          ]
         },
         {
-          "label": "PCA Clearly Explained — StatQuest (all parts)",
-          "url": "https://www.youtube.com/results?search_query=statquest+pca+clearly+explained+step+by+step",
-          "note": "(YouTube, watch all 5 parts (~45 min total))"
+          "number": 3,
+          "title": "Test",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Curl",
+              "body": "      curl -X POST localhost:8000/predict -H 'Content-Type: application/json' -d '{\"texts\":[\"This paper is amazing\",\"Reproducibility is broken again\"]}'"
+            }
+          ]
         },
         {
-          "label": "t-SNE Clearly Explained — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+t-sne+clearly+explained",
-          "note": "(YouTube, ~10 min)"
+          "number": 4,
+          "title": "Dockerfile",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Package it",
+              "body": "Create Dockerfile:\n      FROM python:3.11-slim\n      WORKDIR /app\n      COPY requirements.txt .\n      RUN pip install -r requirements.txt\n      COPY api.py predict.py models/ ./\n      EXPOSE 8000\n      CMD [\"uvicorn\", \"api:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n\nBuild:\n      docker build -t reddit-sentiment-api .\n      docker run -p 8000:8000 reddit-sentiment-api"
+            }
+          ]
         },
         {
-          "label": "scikit-learn Clustering Documentation",
-          "url": "https://scikit-learn.org/stable/modules/clustering.html",
-          "note": "(reference for K-Means, DBSCAN, and evaluation metrics)"
+          "number": 5,
+          "title": "Deploy to Hugging Face Spaces",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Hugging Face Spaces",
+              "url": "https://huggingface.co/new-space",
+              "why": "Click 'Open'. Free GPU CPU hosting for model APIs."
+            },
+            {
+              "kind": "exercise",
+              "title": "Deploy",
+              "body": "Create a Space with Docker SDK. Push your Dockerfile + code. Get a URL like reddit-sentiment-api.hf.space"
+            }
+          ]
         },
         {
-          "label": "Customer Segmentation with K-Means and RFM — Python",
-          "url": "https://www.youtube.com/results?search_query=customer+segmentation+k+means+python+rfm+analysis",
-          "note": "(YouTube, ~30 min)"
+          "number": 6,
+          "title": "Point Streamlit at the API",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Slim the dashboard",
+              "body": "Remove model loading from Streamlit. Replace predict() with a requests call:\n      import requests\n      r = requests.post(API_URL + '/predict', json={'texts': titles})\n      results = r.json()['predictions']\n\nRe-deploy Streamlit — it's now lightweight."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.5",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.5",
+              "body": "      git tag v0.5 && git push --tags\n\nPASS:\n  ☐ FastAPI app works locally\n  ☐ Dockerfile builds\n  ☐ Live API endpoint on HF Spaces or Render\n  ☐ Streamlit calls the API\n  ☐ v0.5 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After running K-Means with K from 1 to 15 on the retail data: at what K does the elbow appear? What is the silhouette score at this K? At K+2? If silhouette peaks at a different K than the elbow, which K do you choose and why?",
-        "Profile each cluster you identified: calculate average Recency (days since last purchase), Frequency (number of purchases), and Monetary value (total spend) for each cluster. Give each cluster a descriptive business label. What percentage of total revenue does each segment represent?",
-        "Run PCA on your customer features before clustering, then cluster again in PCA space. Compare the silhouette scores with and without PCA preprocessing. Did PCA improve cluster quality? Look at the first 2 PCA components — what do they seem to capture about customer behaviour?",
-        "After running Isolation Forest to find the top 1\\% most anomalous customers: examine their purchase history. Are they high-value customers with unusual but legitimate patterns, or do they look like data errors or suspicious activity? What would a real business do with this list?"
+      "topics": [
+        "FastAPI basics",
+        "Pydantic request validation",
+        "Dockerfile for ML services",
+        "Hugging Face Spaces deployment",
+        "Splitting frontend and backend"
       ],
+      "tasks": [
+        "Build FastAPI /predict endpoint",
+        "Dockerize it",
+        "Deploy to HF Spaces",
+        "Update Streamlit to call the API"
+      ],
+      "project": "Reddit Sentiment v0.5 — production split. FastAPI + Docker on Hugging Face Spaces. Streamlit talks to it via HTTP.",
+      "resources": [],
       "exercises": [
-        "Plot the elbow curve for K-Means with K from 1 to 15 and select the optimal K.",
-        "Apply PCA to reduce a 50-feature dataset to 2 components and visualise the result.",
-        "Run DBSCAN on a dataset with non-spherical clusters and compare results to K-Means.",
-        "Use Isolation Forest to flag the top 1\\% of anomalous records in a transaction dataset."
+        "Add JWT auth on the API",
+        "Add rate limiting (slowapi)",
+        "Add a /batch endpoint that takes 1000 texts efficiently"
+      ],
+      "questions": [
+        "Why FastAPI over Flask for ML?",
+        "What does the Docker layer order matter for?",
+        "What's the cold-start cost on HF Spaces?"
       ],
       "outputs": [
-        "Customer segmentation notebook with detailed cluster profiles",
-        "PCA visualisation with explained variance scree plot",
-        "t-SNE 2D visualisation with colour-coded clusters",
-        "Business brief: customer segment descriptions and marketing recommendations"
+        "Live API URL",
+        "Docker image",
+        "v0.5 tag"
       ]
     },
     {
       "number": 12,
-      "title": "Time Series Analysis",
-      "phase": "Machine Learning",
-      "commitment_hours": "25--35",
-      "context": "Time series data is everywhere: stock prices, weather, sales, web traffic. This week you learn the specific techniques for analysing and forecasting sequential data.",
-      "topics": [
-        "Time series components: trend, seasonality, and residual",
-        "Stationarity and the Augmented Dickey-Fuller (ADF) test",
-        "Autocorrelation (ACF) and partial autocorrelation (PACF) plots",
-        "Classical models: ARIMA and SARIMA",
-        "Exponential smoothing: Holt-Winters method",
-        "ML for time series: lag features, rolling windows, LightGBM on time data",
-        "Prophet (Meta): easy forecasting with seasonality",
-        "Evaluation: MAE, RMSE, MAPE, and proper backtesting"
-      ],
-      "tasks": [
-        "Download a retail sales time series dataset from Kaggle (see resources)",
-        "Decompose a time series and plot trend, seasonality, and residuals",
-        "Test for stationarity and apply differencing if needed",
-        "Fit an ARIMA model and select p, d, q using ACF/PACF plots",
-        "Fit a Prophet model and visualise the forecast with confidence intervals",
-        "Evaluate both models using backtesting on held-out periods"
-      ],
-      "project": "Sales Forecasting System — Using a retail sales time series (monthly data): (1) Decompose and diagnose the series, (2) Fit ARIMA with correct parameter selection, (3) Fit Prophet with holiday effects, (4) Build an ML approach using lag features plus LightGBM, (5) Compare all 3 approaches with 12-month backtesting. Recommend the best approach with full justification.",
-      "resources": [
+      "title": "Reddit Sentiment v1.0: Ship + retro",
+      "phase": "Production",
+      "commitment_hours": "10-15",
+      "context": "Polish, write the readme, write a blog post about what you built. Project 2 complete.",
+      "days": [
         {
-          "label": "M5 Forecasting Dataset on Kaggle",
-          "url": "https://www.kaggle.com/competitions/m5-forecasting-accuracy",
-          "note": "(use the simpler store-level monthly aggregation for this week)"
+          "number": 1,
+          "title": "What's left",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Final list",
+              "body": "List every rough edge. Pick the top 5."
+            }
+          ]
         },
         {
-          "label": "ARIMA Time Series Forecasting — ritvikmath",
-          "url": "https://www.youtube.com/results?search_query=ritvikmath+arima+time+series+forecasting+tutorial",
-          "note": "(YouTube, ~30 min — the clearest ARIMA explanation)"
+          "number": 2,
+          "title": "Fix them",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Polish",
+              "body": "Same as TaxiPulse Week 6 — fix the rough edges, polish notebooks, clean READMEs."
+            }
+          ]
         },
         {
-          "label": "Prophet Forecasting Library — Tutorial",
-          "url": "https://www.youtube.com/results?search_query=prophet+facebook+forecasting+library+python+tutorial",
-          "note": "(YouTube, ~25 min)"
+          "number": 3,
+          "title": "Write a blog post",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "dev.to — write a post",
+              "url": "https://dev.to/new",
+              "why": "Free blog platform. Click 'Open' to write."
+            },
+            {
+              "kind": "exercise",
+              "title": "Write the post",
+              "body": "Title: 'How I built a live Reddit sentiment dashboard with a fine-tuned DistilBERT'.\nSections: problem, data, classical baseline, fine-tuning, dashboard, deployment, lessons.\nWord count: 1000-1500. Include a screenshot.\nPublish on dev.to."
+            }
+          ]
         },
         {
-          "label": "Time Series with ML Lag Features — LightGBM",
-          "url": "https://www.youtube.com/results?search_query=time+series+machine+learning+lag+features+lightgbm+python",
-          "note": "(YouTube, ~20 min)"
+          "number": 4,
+          "title": "Add a demo video",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Screen recording",
+              "body": "Record a 90-second walkthrough of the live dashboard. Upload to YouTube unlisted. Embed in README."
+            }
+          ]
         },
         {
-          "label": "Prophet Official Documentation",
-          "url": "https://facebook.github.io/prophet/",
-          "note": "(install with: pip install prophet)"
+          "number": 5,
+          "title": "Get 3 readers",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "External feedback",
+              "body": "Send the blog post + repo URL to 3 people. Ask: 'Where did I lose you?' Note answers."
+            }
+          ]
         },
         {
-          "label": "statsmodels SARIMAX Documentation",
-          "url": "https://www.statsmodels.org/stable/statespace.sarimax.html",
-          "note": "(reference for ARIMA and SARIMA implementation)"
+          "number": 6,
+          "title": "Address feedback",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Fix it",
+              "body": "Apply the 3 readers' feedback to the post + README."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + retro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Project 2 complete",
+              "body": "Write RETRO.md (same shape as TaxiPulse's).\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Dev.to post published\n  ☐ Demo video on YouTube\n  ☐ 3 readers' feedback applied\n  ☐ RETRO.md committed\n  ☐ v1.0 tag\n\nPROJECT 2 DONE. Next: Project 3 — Time Series Forecasting."
+            }
+          ]
         }
       ],
-      "questions": [
-        "After decomposing your retail sales series: describe the trend and seasonal pattern in plain English. In which month does seasonality consistently peak? Calculate the approximate seasonal uplift as a percentage above the trend line. What business event likely drives that seasonal peak?",
-        "After fitting ARIMA and Prophet on the same data and backtesting on the last 12 months: which model has lower MAE? On which specific months does each model perform worst? Is there a pattern to the hard-to-forecast months — do they correspond to holidays or unusual events?",
-        "After engineering lag features (lag-1, lag-7, lag-30) for LightGBM: which lag has the highest SHAP or feature importance value? What does this tell you about the dominant pattern in the data — is sales today more driven by yesterday, last week, or last month?",
-        "Your best model has a MAPE of 18\\%. A retail manager asks: 'Is that good enough to use for inventory planning?' What factors in your specific dataset make this series harder or easier to forecast? Give a concrete answer about whether you would recommend using this model in production."
+      "topics": [
+        "Writing a project blog post",
+        "Recording demo videos",
+        "Feedback cycles",
+        "Polishing for portfolio"
       ],
+      "tasks": [
+        "Polish project",
+        "Write 1000-1500 word blog post",
+        "Record + upload demo video",
+        "Get 3 readers + apply feedback",
+        "Write retro"
+      ],
+      "project": "Reddit Sentiment v1.0 — Project 2 complete. Published blog post. Demo video. Stranger-verified.",
+      "resources": [],
       "exercises": [
-        "Apply the ADF test to a time series. Difference it until it becomes stationary.",
-        "Plot ACF and PACF for a stationary series and identify p and q from the plots.",
-        "Create lag-1, lag-7, and lag-30 features from a daily sales series and use them in LightGBM.",
-        "Add holiday effects to a Prophet model for a retail dataset and show the improvement."
+        "Cross-post on Medium",
+        "Submit to a r/MachineLearning weekly thread for feedback",
+        "Add a 'cite as' BibTeX snippet to the README"
+      ],
+      "questions": [
+        "What makes a portfolio piece beat a coding-bootcamp project?",
+        "Why post about it publicly?",
+        "What feedback are you most afraid of?"
       ],
       "outputs": [
-        "Time series decomposition notebook with all 3 components plotted",
-        "ARIMA model with ACF/PACF selection documented",
-        "Prophet forecast with seasonality components visualised",
-        "Backtesting comparison table for all 3 approaches"
+        "Blog post URL",
+        "Demo video URL",
+        "v1.0 tag",
+        "PROJECT 2 COMPLETE"
       ]
     },
     {
       "number": 13,
-      "title": "NLP Fundamentals",
-      "phase": "Advanced Topics",
-      "commitment_hours": "25--35",
-      "context": "NLP is one of the fastest-growing areas of data science in 2026. This week you build a solid NLP foundation: text preprocessing, classical methods, and modern transformer-based approaches.",
-      "topics": [
-        "Text preprocessing: tokenisation, stopword removal, stemming, lemmatisation",
-        "Bag-of-Words and TF-IDF representations",
-        "Sentiment analysis with Naive Bayes and Logistic Regression",
-        "Word embeddings: Word2Vec and GloVe (intuition and usage)",
-        "Hugging Face Transformers: using pre-trained models",
-        "Sentiment analysis with pre-trained BERT",
-        "Named Entity Recognition (NER)",
-        "End-to-end text classification pipeline"
-      ],
-      "tasks": [
-        "Download the IMDB movie reviews dataset from Kaggle (see resources)",
-        "Build a text preprocessing pipeline (tokenise, clean, vectorise)",
-        "Train a Naive Bayes classifier on the IMDB movie reviews dataset",
-        "Build a TF-IDF plus Logistic Regression sentiment classifier",
-        "Use a Hugging Face pre-trained model for zero-shot text classification",
-        "Compare classical approach vs BERT on the same dataset"
-      ],
-      "project": "Social Media Sentiment Dashboard — Collect or use 500+ social media posts on a topic. Build a sentiment classifier and classify all posts as positive, negative, or neutral. Build a simple Streamlit dashboard showing: sentiment trends over time, word frequency charts, and the most positive/negative posts. Deploy to Streamlit Community Cloud.",
-      "resources": [
+      "title": "Project 3 — Energy Forecast v0.1",
+      "phase": "Time Series",
+      "commitment_hours": "15-20",
+      "context": "New project: forecast hourly electricity demand. Dataset: AEP_hourly.csv from PJM Interconnection — a real US power grid operator. 10 years of hourly data. Goal by W17: predict next 24h.",
+      "days": [
         {
-          "label": "IMDB Movie Reviews Dataset on Kaggle",
-          "url": "https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews",
-          "note": "(50,000 labelled positive/negative reviews)"
+          "number": 1,
+          "title": "Why time series matters",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Time series forecasting in 10 min",
+              "url": "https://www.youtube.com/results?search_query=time+series+forecasting+beginner+10+minutes",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Mental model",
+              "body": "Time series has 3 things classical regression doesn't:\n  1. Order matters (yesterday → today)\n  2. Seasonality (winter vs summer demand)\n  3. Autocorrelation (today is like yesterday)"
+            }
+          ]
         },
         {
-          "label": "NLP with Python — Full Course for Beginners",
-          "url": "https://www.youtube.com/results?search_query=nlp+python+beginners+full+course+text+classification",
-          "note": "(YouTube, watch the first 2 hours)"
+          "number": 2,
+          "title": "Get the dataset",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "PJM Energy Consumption — Kaggle",
+              "url": "https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption",
+              "why": "Click 'Open' → download AEP_hourly.csv. ~120K rows, ~3MB."
+            },
+            {
+              "kind": "exercise",
+              "title": "New repo",
+              "body": "      cd Desktop\n      mkdir energy-forecast\n      cd energy-forecast\n      conda create -n energy python=3.11 pandas numpy matplotlib statsmodels prophet -y\n      conda activate energy\nSave AEP_hourly.csv in data/."
+            }
+          ]
         },
         {
-          "label": "Hugging Face Transformers Tutorial — Sentiment Analysis",
-          "url": "https://www.youtube.com/results?search_query=hugging+face+transformers+tutorial+python+sentiment+analysis",
-          "note": "(YouTube, ~30 min)"
+          "number": 3,
+          "title": "Load + plot",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First look",
+              "body": "In 01-explore.ipynb:\n      import pandas as pd, matplotlib.pyplot as plt\n      df = pd.read_csv('data/AEP_hourly.csv', parse_dates=['Datetime'], index_col='Datetime').sort_index()\n      print(df.shape, df.index.min(), df.index.max())\n      df['AEP_MW'].plot(figsize=(14,4), title='AEP hourly demand (MW)')\n      plt.savefig('figures/full_series.png')\n\nNotice the yearly seasonality."
+            }
+          ]
         },
         {
-          "label": "Word2Vec / Word Embeddings — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+word2vec+word+embeddings+clearly+explained",
-          "note": "(YouTube, ~20 min)"
+          "number": 4,
+          "title": "Decompose",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Trend / seasonal / residual",
+              "body": "      from statsmodels.tsa.seasonal import seasonal_decompose\n      # Resample to daily to make decomp tractable\n      daily = df['AEP_MW'].resample('D').mean()\n      decomp = seasonal_decompose(daily.dropna(), period=365)\n      fig = decomp.plot(); fig.set_size_inches(12,8)\n      plt.savefig('figures/decomp.png')"
+            }
+          ]
         },
         {
-          "label": "Hugging Face Transformers Documentation",
-          "url": "https://huggingface.co/docs/transformers/",
-          "note": "(the fastest way to use BERT and other pre-trained models)"
+          "number": 5,
+          "title": "Hourly + weekly patterns",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Multi-seasonal",
+              "body": "      df['hour'] = df.index.hour\n      df['dow'] = df.index.dayofweek\n      pivot = df.pivot_table('AEP_MW', index='hour', columns='dow', aggfunc='mean')\n      import seaborn as sns\n      sns.heatmap(pivot, cmap='YlOrRd'); plt.savefig('figures/hour_dow.png')"
+            }
+          ]
         },
         {
-          "label": "Streamlit Tutorial — Build and Deploy a Dashboard",
-          "url": "https://www.youtube.com/results?search_query=streamlit+tutorial+beginners+python+dashboard+deploy",
-          "note": "(YouTube, ~25 min — for your Streamlit project)"
+          "number": 6,
+          "title": "Split + persistence baseline",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "'Tomorrow == yesterday'",
+              "body": "Hold out last 30 days as test.\nBaseline forecast: y_pred(t) = y(t-24).\n      from sklearn.metrics import mean_absolute_error\n      test = df.last('30D')['AEP_MW']\n      pred = df.shift(24).last('30D')['AEP_MW']\n      print('MAE baseline:', mean_absolute_error(test, pred))"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.1",
+              "body": "Push the repo. Tag v0.1.\n\nPASS:\n  ☐ Data loaded\n  ☐ Full series chart\n  ☐ STL decomposition saved\n  ☐ Hour×DOW heatmap\n  ☐ Persistence baseline MAE recorded\n  ☐ v0.1 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After training on IMDB reviews: compare the F1 score of Naive Bayes vs TF-IDF + Logistic Regression. Look at the 20 words with the highest positive TF-IDF weight in your classifier. Do they all make intuitive sense as signals of positive sentiment? Are there any surprising words — words that appear positive but aren't clearly so?",
-        "Compare your TF-IDF Logistic Regression vs pre-trained BERT on the same 200 test reviews. Pick 3 specific reviews where BERT was correct and Naive Bayes was wrong. What characteristic of the language (sarcasm, negation, context) caused Naive Bayes to fail but BERT to succeed?",
-        "In your Streamlit sentiment dashboard: what are the 5 most common positive words and 5 most common negative words? Check if any word appears in both the positive and negative top lists. What does the existence of such words tell you about the limitations of bag-of-words sentiment analysis?",
-        "Your model misclassifies some sarcastic reviews. Write 2 specific examples of review text that a human understands as negative but your Naive Bayes model classifies as positive. Identify exactly which words or phrases caused the misclassification."
+      "topics": [
+        "Time series core concepts: trend / seasonality / autocorrelation",
+        "Pandas DatetimeIndex + resample",
+        "STL decomposition",
+        "Hour × day-of-week heatmaps",
+        "Train/test split for time series (held-out tail)",
+        "Persistence baseline"
       ],
+      "tasks": [
+        "Get AEP_hourly.csv from Kaggle",
+        "Set up energy-forecast repo",
+        "Plot the full 10-year series",
+        "Decompose into trend/seasonal/residual",
+        "Build hour × DOW heatmap",
+        "Compute persistence baseline MAE"
+      ],
+      "project": "Energy Forecast v0.1 — exploratory analysis of AEP hourly demand. Persistence baseline as benchmark for upcoming models.",
+      "resources": [],
       "exercises": [
-        "Build a text preprocessing function that tokenises, lowercases, removes stopwords, and lemmatises.",
-        "Train a TF-IDF plus Logistic Regression model on IMDB reviews and report the F1 score.",
-        "Use a Hugging Face pipeline for zero-shot text classification on 5 custom categories.",
-        "Visualise the most common words in positive vs negative reviews using word frequency plots."
+        "Try the COMED, DUQ, or PJM_East series alongside AEP",
+        "Plot just summer 2023 vs winter 2023 to see seasonality",
+        "Compute the autocorrelation function (acf) plot"
+      ],
+      "questions": [
+        "Why does time-series train/test split need to keep the tail held out?",
+        "What's 'persistence' and why is it the right baseline?",
+        "Why is decomposition useful before modelling?"
       ],
       "outputs": [
-        "Text preprocessing pipeline (.py utility file)",
-        "Sentiment classifier comparison report (classical vs BERT)",
-        "Streamlit sentiment dashboard (live URL or screenshot)",
-        "Performance comparison table across all models"
+        "v0.1 tag",
+        "5 figures in figures/",
+        "Baseline MAE in README"
       ]
     },
     {
       "number": 14,
-      "title": "Deep Learning Fundamentals",
-      "phase": "Advanced Topics",
-      "commitment_hours": "25--35",
-      "context": "Deep learning powers the most impressive AI applications of 2026. This week you understand how neural networks work, build them with Keras/TensorFlow, and apply them to real problems.",
-      "topics": [
-        "Neural network architecture: neurons, layers, and activation functions",
-        "Feedforward networks: forward pass, loss function, and backpropagation",
-        "Activation functions: ReLU, sigmoid, softmax — when to use each",
-        "Optimisers: SGD, Adam, and RMSProp",
-        "Regularisation for deep learning: dropout and batch normalisation",
-        "Building networks with Keras Sequential and Functional API",
-        "Training loops: epochs, batch size, callbacks, and early stopping",
-        "Convolutional Neural Networks (CNN) for image classification"
-      ],
-      "tasks": [
-        "Watch the 3Blue1Brown 'Neural Networks' series (all 4 videos — REQUIRED before coding)",
-        "Build a feedforward neural network on the tabular dataset from Week 8",
-        "Implement dropout and batch normalisation and compare training curves",
-        "Build a CNN that classifies Fashion MNIST digits",
-        "Plot training and validation loss curves and diagnose any issues"
-      ],
-      "project": "Tabular and Image Neural Networks — Part 1: Build a neural network for house price prediction (tabular data) and compare with your Week 8 XGBoost model. Part 2: Build a CNN for Fashion MNIST achieving above 95\\% accuracy. For both, document architecture choices, training curves, and a written reflection on when neural networks outperform classical ML.",
-      "resources": [
+      "title": "Energy Forecast v0.2: ARIMA model",
+      "phase": "Time Series",
+      "commitment_hours": "12-18",
+      "context": "Classical time series model. Today: ARIMA — the workhorse of forecasting before deep learning.",
+      "days": [
         {
-          "label": "Neural Networks — 3Blue1Brown (Full Playlist)",
-          "url": "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi",
-          "note": "(YouTube, 4 videos — REQUIRED before writing any code)"
+          "number": 1,
+          "title": "What is ARIMA",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "ARIMA explained simply (15 min)",
+              "url": "https://www.youtube.com/results?search_query=arima+time+series+forecasting+beginner",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Three knobs",
+              "body": "ARIMA(p,d,q):\n  p = AR (auto-regressive lag)\n  d = differencing (to remove trend)\n  q = MA (moving average of errors)\nGuess (p,d,q) for a strongly seasonal hourly demand series."
+            }
+          ]
         },
         {
-          "label": "Keras Tutorial for Beginners — Build Neural Networks",
-          "url": "https://www.youtube.com/results?search_query=keras+tutorial+beginners+build+neural+network+python+2024",
-          "note": "(YouTube, ~40 min)"
+          "number": 2,
+          "title": "Stationarity check",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "ADF test",
+              "body": "      from statsmodels.tsa.stattools import adfuller\n      daily = df['AEP_MW'].resample('D').mean()\n      print(adfuller(daily.dropna()))\n      # p-value > 0.05 → not stationary → need differencing\n      diff = daily.diff().dropna()\n      print(adfuller(diff))"
+            }
+          ]
         },
         {
-          "label": "Convolutional Neural Networks Explained — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+convolutional+neural+networks+cnn+explained",
-          "note": "(YouTube, ~15 min)"
+          "number": 3,
+          "title": "Fit auto-ARIMA",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "pmdarima",
+              "body": "      pip install pmdarima\n      from pmdarima import auto_arima\n      train = daily[:-30]\n      test = daily[-30:]\n      model = auto_arima(train, seasonal=True, m=7, stepwise=True, suppress_warnings=True)\n      print(model.summary())\n\nTakes ~5 min."
+            }
+          ]
         },
         {
-          "label": "Keras Getting Started Guide",
-          "url": "https://keras.io/getting_started/",
-          "note": "(official documentation — Sequential and Functional API)"
+          "number": 4,
+          "title": "Forecast + evaluate",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "30-day forecast",
+              "body": "      preds = model.predict(n_periods=30)\n      from sklearn.metrics import mean_absolute_error\n      print('ARIMA MAE:', mean_absolute_error(test, preds))\n      ax = train[-90:].plot(label='Train')\n      test.plot(ax=ax, label='Actual')\n      pd.Series(preds, index=test.index).plot(ax=ax, label='ARIMA')\n      plt.legend(); plt.savefig('figures/arima_forecast.png')"
+            }
+          ]
         },
         {
-          "label": "fast.ai — Practical Deep Learning for Coders (free)",
-          "url": "https://www.fast.ai",
-          "note": "(Chapter 1 is excellent for intuition without heavy math)"
+          "number": 5,
+          "title": "Add confidence intervals",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CI",
+              "body": "      preds, conf = model.predict(n_periods=30, return_conf_int=True)\n      plt.fill_between(test.index, conf[:,0], conf[:,1], alpha=0.2)"
+            }
+          ]
         },
         {
-          "label": "Fashion MNIST Dataset — TensorFlow",
-          "url": "https://www.tensorflow.org/datasets/catalog/fashion_mnist",
-          "note": "(load directly with: tensorflow\\_datasets.load('fashion\\_mnist'))"
+          "number": 6,
+          "title": "Compare to baseline",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Side-by-side",
+              "body": "Make a table in README:\n  | Model | MAE on last 30 days |\n  | Persistence | X |\n  | ARIMA | Y |\n  | Improvement | Z% |"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "Save model: model.save('arima.pkl'). Tag v0.2.\n\nPASS:\n  ☐ ADF stationarity test run\n  ☐ auto_arima fit\n  ☐ ARIMA forecast MAE recorded\n  ☐ Forecast chart with CI\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After building your feedforward neural network for house price prediction: compare its test RMSE vs your Week 8 XGBoost model. Which is better? Plot both training curves — at what epoch does your neural network stop improving on the validation set? How does this compare to XGBoost's training behaviour?",
-        "Add dropout (rate 0.3) and batch normalisation to your neural network. Plot the training vs validation loss curves before and after adding regularisation on the same chart. How many epochs before overfitting begins without regularisation? Does that number increase with regularisation?",
-        "Your CNN on Fashion MNIST: at what epoch does test accuracy first exceed 90\\%? 95\\%? Plot the confusion matrix. Which fashion categories does the model confuse most often? Do these confusions make sense intuitively (e.g., does it confuse coats with shirts but not coats with sandals)?",
-        "Remove one Conv layer from your CNN and rerun. What happens to test accuracy? Then add an extra Dense layer after the CNN. What happens? Based on these ablation experiments, write a one-paragraph reflection on how you know when a network is appropriately sized for a given problem."
+      "topics": [
+        "Stationarity + ADF test",
+        "Differencing for trend removal",
+        "Auto-ARIMA + seasonal m parameter",
+        "Forecast intervals (CI)",
+        "Comparing classical baselines"
       ],
+      "tasks": [
+        "Run ADF stationarity test",
+        "Difference until stationary",
+        "Fit auto_arima on daily data",
+        "Forecast 30 days + compute MAE",
+        "Plot forecast with CI"
+      ],
+      "project": "Energy Forecast v0.2 — ARIMA model fitted on daily series. Beats persistence baseline. Confidence intervals on the forecast.",
+      "resources": [],
       "exercises": [
-        "Build a 3-layer feedforward network and plot training/validation loss curves.",
-        "Add dropout (rate 0.3) and batch normalisation and show how training curves change.",
-        "Implement early stopping with patience of 5 epochs and restore the best weights.",
-        "Build a CNN with 2 Conv layers and 1 Dense layer on Fashion MNIST. Report test accuracy."
+        "Try SARIMAX with weekly + yearly seasonality",
+        "Use AICc to compare model orders",
+        "Forecast on hourly directly (computationally expensive — careful)"
+      ],
+      "questions": [
+        "What's the difference between AR and MA terms?",
+        "When does differencing too many times hurt?",
+        "Why limit ARIMA to daily not hourly here?"
       ],
       "outputs": [
-        "Feedforward network for tabular data with XGBoost comparison",
-        "CNN for Fashion MNIST achieving above 95\\% accuracy",
-        "Training curves and architecture documentation",
-        "Written reflection: when to use deep learning vs classical ML"
+        "arima.pkl saved",
+        "MAE comparison table",
+        "v0.2 tag"
       ]
     },
     {
       "number": 15,
-      "title": "MLOps — Deployment",
-      "phase": "MLOps",
-      "commitment_hours": "25--35",
-      "context": "A model that is not deployed is not useful. This week you learn MLOps fundamentals: packaging, serving, monitoring, and versioning machine learning models the way it is done in industry.",
-      "topics": [
-        "ML lifecycle: development, staging, and production",
-        "Model serialisation: joblib, pickle, and ONNX",
-        "Building a REST API with FastAPI to serve predictions",
-        "Streamlit: rapid ML app development for prototyping",
-        "Docker basics: containerising an ML application",
-        "MLflow: experiment tracking and model registry",
-        "Model monitoring: data drift detection and performance degradation",
-        "CI/CD concepts for ML pipelines"
-      ],
-      "tasks": [
-        "Serialise your best model from previous weeks using joblib",
-        "Build a FastAPI endpoint that accepts input and returns a prediction",
-        "Build a Streamlit app with a user interface around your model",
-        "Track 3 experiments with MLflow and compare them in the UI",
-        "Deploy your Streamlit app to Streamlit Community Cloud (free) and save the public URL"
-      ],
-      "project": "Deployed Prediction App — Take your best regression or classification model. Build: (1) a FastAPI backend serving predictions via a REST endpoint, (2) a Streamlit frontend with input fields and prediction display, (3) all experiments tracked in MLflow, (4) the Streamlit app deployed publicly. Add the live URL to your GitHub portfolio.",
-      "resources": [
+      "title": "Energy Forecast v0.3: Prophet model",
+      "phase": "Time Series",
+      "commitment_hours": "10-15",
+      "context": "Facebook's Prophet handles multiple seasonalities + holidays out of the box. This week we apply it.",
+      "days": [
         {
-          "label": "FastAPI for Machine Learning Model Deployment",
-          "url": "https://www.youtube.com/results?search_query=fastapi+tutorial+machine+learning+model+deployment+python",
-          "note": "(YouTube, ~30 min)"
+          "number": 1,
+          "title": "What is Prophet",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Facebook Prophet in 10 min",
+              "url": "https://www.youtube.com/results?search_query=facebook+prophet+time+series+tutorial",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reading",
+              "title": "Prophet docs",
+              "url": "https://facebook.github.io/prophet/",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "When to use it",
+              "body": "Prophet shines when: multiple seasonalities, missing data, holidays matter. Why are these all true for power demand?"
+            }
+          ]
         },
         {
-          "label": "Deploy ML Model with Streamlit — Full Tutorial",
-          "url": "https://www.youtube.com/results?search_query=deploy+machine+learning+model+streamlit+tutorial+python",
-          "note": "(YouTube, ~25 min)"
+          "number": 2,
+          "title": "Install + format data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Prophet format",
+              "body": "Prophet needs columns named 'ds' (date) and 'y' (value).\n      from prophet import Prophet\n      daily = df['AEP_MW'].resample('D').mean()\n      pdf = daily.reset_index().rename(columns={'Datetime':'ds','AEP_MW':'y'})\n      train = pdf.iloc[:-30]\n      test = pdf.iloc[-30:]"
+            }
+          ]
         },
         {
-          "label": "MLflow Tutorial — ML Experiment Tracking",
-          "url": "https://www.youtube.com/results?search_query=mlflow+tutorial+ml+experiment+tracking+python+beginners",
-          "note": "(YouTube, ~20 min)"
+          "number": 3,
+          "title": "Fit",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "First Prophet",
+              "body": "      m = Prophet(yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False)\n      m.fit(train)\n      future = m.make_future_dataframe(periods=30)\n      forecast = m.predict(future)\n      fig = m.plot(forecast); fig.savefig('figures/prophet.png')\n      fig2 = m.plot_components(forecast); fig2.savefig('figures/prophet_components.png')"
+            }
+          ]
         },
         {
-          "label": "FastAPI Official Tutorial",
-          "url": "https://fastapi.tiangolo.com/tutorial/",
-          "note": "(clear, complete documentation with examples)"
+          "number": 4,
+          "title": "Add holidays",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "US holidays",
+              "body": "      from prophet.make_holidays import make_holidays_df\n      hols = make_holidays_df(year_list=range(2002,2025), country='US')\n      m = Prophet(holidays=hols, yearly_seasonality=True, weekly_seasonality=True)\n      m.fit(train)\n      # Re-evaluate MAE"
+            }
+          ]
         },
         {
-          "label": "Streamlit Documentation",
-          "url": "https://docs.streamlit.io",
-          "note": "(reference for all Streamlit components)"
+          "number": 5,
+          "title": "Evaluate",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Prophet MAE",
+              "body": "      from sklearn.metrics import mean_absolute_error\n      pred_30 = forecast['yhat'].iloc[-30:].values\n      print('Prophet MAE:', mean_absolute_error(test['y'].values, pred_30))\n\nUpdate your model-comparison table in the README."
+            }
+          ]
         },
         {
-          "label": "Streamlit Community Cloud",
-          "url": "https://share.streamlit.io",
-          "note": "(deploy your app for free here)"
+          "number": 6,
+          "title": "Inspect components",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "What does the model see?",
+              "body": "Look at the components plot. What's the trend doing? When are the seasonal peaks? Which holidays impact demand most? Write 3 observations."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Prophet fit + forecast\n  ☐ US holidays included\n  ☐ Components chart saved\n  ☐ MAE in comparison table\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After building your FastAPI endpoint: measure the average response time in milliseconds for a single prediction request (use Python's time module or the requests library timer). What would happen to response time if 100 users sent requests at the same time? What architectural change would you need to handle that?",
-        "In your Streamlit app: test it with edge-case inputs — values far outside your training range (5 standard deviations above the mean). What does your model predict? Is the prediction sensible or extreme? What does this reveal about the danger of model extrapolation in production?",
-        "After tracking 3 experiments with MLflow: which experiment achieved the best metric? What was the single most impactful hyperparameter change between your worst and best experiment? What did you learn about which hyperparameters matter most for your specific model?",
-        "Explain data drift in the context of your specific deployed model. Give a concrete example: what input feature would likely drift over time in your use case, and how would you detect it? What would you measure, how often would you check it, and what threshold would trigger a model retraining?"
+      "topics": [
+        "Prophet's piecewise-linear trend",
+        "Prophet's multiplicative vs additive seasonality",
+        "Adding holiday effects",
+        "make_holidays_df helper",
+        "Components plot interpretation"
       ],
+      "tasks": [
+        "Format data as ds/y",
+        "Fit baseline Prophet",
+        "Add US holidays",
+        "Evaluate on 30-day test",
+        "Plot components + interpret"
+      ],
+      "project": "Energy Forecast v0.3 — Prophet model with holidays. Compared against persistence + ARIMA in the README table.",
+      "resources": [],
       "exercises": [
-        "Serialise a trained model and load it successfully in a completely new Python script.",
-        "Build a FastAPI endpoint with Pydantic input validation for prediction requests.",
-        "Create an MLflow run that logs model parameters, metrics, and the model artifact.",
-        "Build a Streamlit app with sliders and dropdowns as model inputs."
+        "Add temperature as an extra regressor (download from NOAA)",
+        "Try the changepoint_prior_scale parameter",
+        "Forecast 90 days instead of 30"
+      ],
+      "questions": [
+        "When would Prophet lose to ARIMA?",
+        "Why is Prophet popular in industry?",
+        "What's a 'changepoint' and why does it matter?"
       ],
       "outputs": [
-        "Deployed Streamlit app (public URL added to portfolio)",
-        "FastAPI prediction service code",
-        "MLflow experiment tracking dashboard screenshot",
-        "Deployment documentation README"
+        "prophet model saved",
+        "Components plot in figures/",
+        "v0.3 tag"
       ]
     },
     {
       "number": 16,
-      "title": "AI-Assisted Data Science",
-      "phase": "MLOps",
-      "commitment_hours": "25--35",
-      "context": "Professional data scientists use AI tools to accelerate work in 2026. This week you learn responsible AI tool use AND examine the ethical dimensions every practitioner must consider.",
-      "topics": [
-        "AI tools for data science: Claude, ChatGPT, GitHub Copilot, Cursor",
-        "Effective prompt engineering for data science tasks",
-        "Using AI for code review, documentation, and debugging",
-        "Catching AI-generated wrong or misleading code",
-        "Algorithmic bias: what it is, where it comes from, and how to detect it",
-        "Fairness metrics: demographic parity, equal opportunity, calibration",
-        "Privacy and data ethics: GDPR concepts and anonymisation",
-        "Responsible AI documentation: model cards and datasheets"
-      ],
-      "tasks": [
-        "Complete 3 AI-assisted coding tasks and document what AI did vs what you verified/corrected",
-        "Audit your best classification model for fairness across demographic groups",
-        "Write a Model Card for your deployed model",
-        "Write a Datasheet for your capstone dataset",
-        "Create a personal AI usage policy document (1 page)"
-      ],
-      "project": "Bias Audit — Take a classification model trained on a dataset with demographic features (loan approval, hiring, or similar). Measure: (1) accuracy by demographic group, (2) false positive and false negative rates by group, (3) demographic parity difference. Document all findings honestly, even unflattering results. Write a 2-page bias report and propose concrete mitigation strategies.",
-      "resources": [
+      "title": "Energy Forecast v0.4: LSTM (PyTorch)",
+      "phase": "Time Series",
+      "commitment_hours": "15-20",
+      "context": "Deep learning for time series. We build a small LSTM in PyTorch — see if it beats Prophet.",
+      "days": [
         {
-          "label": "Algorithmic Bias and Fairness in ML — IBM Technology",
-          "url": "https://www.youtube.com/results?search_query=algorithmic+bias+fairness+machine+learning+ibm+technology",
-          "note": "(YouTube, ~15 min)"
+          "number": 1,
+          "title": "What's an LSTM",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "LSTM explained (15 min)",
+              "url": "https://www.youtube.com/results?search_query=lstm+long+short+term+memory+explained+beginner",
+              "duration_min": 15,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Honest expectation",
+              "body": "LSTMs sometimes lose to Prophet on simple univariate forecasting. Set your expectation: we're learning the tooling, not necessarily winning."
+            }
+          ]
         },
         {
-          "label": "Using AI Tools in Data Science Effectively",
-          "url": "https://www.youtube.com/results?search_query=using+ai+tools+data+science+effectively+github+copilot",
-          "note": "(YouTube, ~20 min)"
+          "number": 2,
+          "title": "Prepare windowed data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Sliding windows",
+              "body": "Use 30 days of history to predict the next day:\n      import numpy as np\n      vals = daily.values\n      mean, std = vals.mean(), vals.std()\n      norm = (vals - mean) / std\n      WINDOW = 30\n      X = np.array([norm[i:i+WINDOW] for i in range(len(norm)-WINDOW-1)])\n      y = norm[WINDOW+1:WINDOW+1+len(X)]\n      print(X.shape, y.shape)"
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(use for code review, debugging, and documentation)"
+          "number": 3,
+          "title": "Build LSTM",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "PyTorch model",
+              "body": "      import torch\n      import torch.nn as nn\n      class Forecaster(nn.Module):\n          def __init__(self):\n              super().__init__()\n              self.lstm = nn.LSTM(input_size=1, hidden_size=32, num_layers=1, batch_first=True)\n              self.linear = nn.Linear(32, 1)\n          def forward(self, x):\n              out, _ = self.lstm(x)\n              return self.linear(out[:, -1, :]).squeeze(-1)\n      model = Forecaster()"
+            }
+          ]
         },
         {
-          "label": "Fairlearn — Python Fairness Toolkit",
-          "url": "https://fairlearn.org",
-          "note": "(measure and mitigate algorithmic bias)"
+          "number": 4,
+          "title": "Train",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Training loop",
+              "body": "      X_train = X[:-30]; y_train = y[:-30]\n      X_test = X[-30:]; y_test = y[-30:]\n      Xtr = torch.tensor(X_train.reshape(-1, WINDOW, 1), dtype=torch.float32)\n      ytr = torch.tensor(y_train, dtype=torch.float32)\n      opt = torch.optim.Adam(model.parameters(), lr=1e-3)\n      loss_fn = nn.MSELoss()\n      for epoch in range(50):\n          opt.zero_grad()\n          pred = model(Xtr)\n          loss = loss_fn(pred, ytr)\n          loss.backward(); opt.step()\n          if epoch % 10 == 0:\n              print(f'epoch {epoch}: loss {loss.item():.4f}')"
+            }
+          ]
         },
         {
-          "label": "Model Cards for Model Reporting — Google (paper)",
-          "url": "https://arxiv.org/abs/1810.03993",
-          "note": "(the original model card paper — read the abstract and template section)"
+          "number": 5,
+          "title": "Evaluate",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "MAE",
+              "body": "      Xte = torch.tensor(X_test.reshape(-1, WINDOW, 1), dtype=torch.float32)\n      with torch.no_grad():\n          preds = model(Xte).numpy()\n      # Denormalize\n      preds_real = preds * std + mean\n      true_real = y_test * std + mean\n      from sklearn.metrics import mean_absolute_error\n      print('LSTM MAE:', mean_absolute_error(true_real, preds_real))"
+            }
+          ]
         },
         {
-          "label": "GitHub Copilot",
-          "url": "https://github.com/features/copilot",
-          "note": "(AI code completion — try the free trial)"
+          "number": 6,
+          "title": "Plot vs others",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Final comparison chart",
+              "body": "Plot all 3 models (Persistence, ARIMA, Prophet, LSTM) on the same chart against actuals. Save as figures/all_models.png."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.4",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.4",
+              "body": "      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ LSTM trained 50 epochs\n  ☐ LSTM MAE recorded\n  ☐ Comparison chart with all 4 models\n  ☐ Updated MAE table in README\n  ☐ v0.4 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After auditing your model by demographic group: calculate accuracy, false positive rate, and false negative rate for each group. Are these metrics meaningfully different across groups? Now a stakeholder says 'But the overall accuracy is 94\\%, that's great.' Explain clearly and specifically why overall accuracy alone is not enough to declare the model fair.",
-        "Your bias report found that one demographic group has a false negative rate 15 percentage points higher than another. Write 2 concrete, specific mitigation strategies you could implement. For each, explain what trade-off it introduces (e.g., does reducing one group's false negatives increase another's false positives?).",
-        "You asked Claude to write a data cleaning function and tested it on 5 edge cases. On which edge cases did it fail? Was the failure a syntax error, a logic error, or an unhandled edge case? Now write a principle for yourself: what category of task is Claude currently reliable for vs not reliable for in your data science work?",
-        "Review your own Model Card and look at the limitations section. Is there any finding from your bias audit that you were tempted to minimise or leave out? Write a paragraph reflecting on the ethical consequences of deploying the model without disclosing that specific finding."
+      "topics": [
+        "LSTM intuition + use cases",
+        "Sliding-window data prep",
+        "PyTorch nn.Module + training loop",
+        "Normalization + denormalization for forecasting",
+        "Comparing models on a single test set"
       ],
+      "tasks": [
+        "Build sliding windows of length 30",
+        "Define + train a small LSTM",
+        "Predict next-day demand for 30 days",
+        "Compare to all previous models"
+      ],
+      "project": "Energy Forecast v0.4 — LSTM forecasting model. Honest comparison against Prophet and ARIMA — sometimes loses, that's a fact you document.",
+      "resources": [],
       "exercises": [
-        "Ask Claude to write a data cleaning function. Test it on 5 edge cases. Document where it failed.",
-        "Compute accuracy, precision, and recall separately for each demographic group in a dataset.",
-        "Write a Model Card for a model you built this roadmap using the Google template.",
-        "Iterate a data science prompt 3 times to get progressively more precise and accurate results."
+        "Increase WINDOW to 60 days",
+        "Add a second LSTM layer",
+        "Try a GRU instead of LSTM"
+      ],
+      "questions": [
+        "Why must you normalize before training a neural net?",
+        "Why is LSTM not always the answer?",
+        "Why 50 epochs and not 500?"
       ],
       "outputs": [
-        "Bias audit report with demographic parity measurements",
-        "Model Card for your best deployed model",
-        "Datasheet for your capstone dataset",
-        "Personal AI usage policy (1 page)"
+        "LSTM model saved",
+        "4-model comparison chart",
+        "v0.4 tag"
       ]
     },
     {
       "number": 17,
-      "title": "GitHub Portfolio",
-      "phase": "Career",
-      "commitment_hours": "25--35",
-      "context": "Your technical skills mean nothing if you cannot communicate them. This week you build a professional data science portfolio and prepare for every stage of a data science interview.",
-      "topics": [
-        "Structuring a data science GitHub portfolio",
-        "Writing compelling README files for ML projects",
-        "Data science interview stages: technical screen, coding challenge, ML design, system design",
-        "ML interview questions: algorithm selection, evaluation, and deployment",
-        "SQL interview practice for data science roles",
-        "Statistics and probability interview questions",
-        "System design for ML: feature stores, model serving, monitoring",
-        "Behavioural questions: STAR method for data science"
-      ],
-      "tasks": [
-        "Create or improve GitHub repositories for all major projects",
-        "Write READMEs that include problem, approach, results, and lessons learned",
-        "Solve 15 LeetCode/StrataScratch problems at Medium difficulty",
-        "Prepare written answers to 30 ML interview questions",
-        "Conduct 2 full mock technical interviews with your mentor"
-      ],
-      "project": "Mock DS Interview — Your mentor conducts a 60-minute interview: (1) 15-minute SQL challenge, (2) 15-minute ML algorithm walkthrough, (3) 15-minute statistics questions, (4) 15-minute system design case study (design an ML system for a described problem). Responses are evaluated against real interview standards.",
-      "resources": [
+      "title": "Energy Forecast v1.0: Ship + retro",
+      "phase": "Time Series",
+      "commitment_hours": "10-15",
+      "context": "Polish, ship, retro. Project 3 done.",
+      "days": [
         {
-          "label": "StrataScratch — SQL and Python Interview Practice",
-          "url": "https://www.stratascratch.com",
-          "note": "(do the 15 Data Scientist SQL problems)"
+          "number": 1,
+          "title": "Pick the winner",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Which model ships?",
+              "body": "Based on MAE: which model do you ship as 'the' model? Document the trade-off: simplicity vs accuracy."
+            }
+          ]
         },
         {
-          "label": "LeetCode Database Problems",
-          "url": "https://leetcode.com/problemset/database/",
-          "note": "(Medium difficulty)"
+          "number": 2,
+          "title": "Build a small dashboard",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Streamlit forecast viewer",
+              "body": "Create app.py — Streamlit page that shows:\n  - The chosen model's 30-day forecast\n  - Past 90 days of actuals\n  - MAE comparison table\n  - 'Refresh' button (no live data, just for demo)"
+            }
+          ]
         },
         {
-          "label": "DataLemur — SQL Interview Questions",
-          "url": "https://datalemur.com",
-          "note": "(detailed solutions and explanations)"
+          "number": 3,
+          "title": "Deploy",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Streamlit Cloud",
+              "body": "Deploy the app. Free."
+            }
+          ]
         },
         {
-          "label": "ML System Design Interview — Exponent",
-          "url": "https://www.youtube.com/results?search_query=machine+learning+system+design+interview+exponent",
-          "note": "(YouTube, ~40 min)"
+          "number": 4,
+          "title": "Blog post",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "'Forecasting energy demand with Prophet vs LSTM'",
+              "body": "Write 1000-1500 words. Be honest about what didn't work."
+            }
+          ]
         },
         {
-          "label": "Data Science Interview Q\\&A — Ken Jee",
-          "url": "https://www.youtube.com/results?search_query=ken+jee+data+science+interview+questions+answers",
-          "note": "(YouTube, ~30 min)"
+          "number": 5,
+          "title": "Demo video",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "90-second walkthrough",
+              "body": "Record. Upload. Embed in README."
+            }
+          ]
         },
         {
-          "label": "STAR Method for Behavioural Questions — Data Science",
-          "url": "https://www.youtube.com/results?search_query=star+method+interview+behavioural+questions+data+science",
-          "note": "(YouTube, ~12 min)"
+          "number": 6,
+          "title": "Get 3 readers",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Feedback",
+              "body": "3 readers. Apply 1 piece of feedback from each."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + retro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v1.0 — PROJECT 3 DONE",
+              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Live Streamlit URL\n  ☐ Blog post published\n  ☐ Demo video\n  ☐ 3 readers + feedback addressed\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 3 COMPLETE."
+            }
+          ]
         }
       ],
-      "questions": [
-        "You are given 10 minutes to answer: 'Design an ML system for detecting fake product reviews on an e-commerce platform.' Write your complete answer covering: data sources, feature engineering, model choice, evaluation metric, deployment, and monitoring. Then self-evaluate: what did you cover well and what did you miss?",
-        "Write this SQL query on paper before touching a computer: 'Find all data scientists who deployed more than 3 models in the last 90 days, excluding any who had a model fail in production in the same period.' Run it and check your logic.",
-        "Look at your best GitHub project as a stranger seeing it for the first time. In 30 seconds, can you answer: (a) what problem was solved, (b) what data and tools were used, (c) what was the measurable result? If any of the three are unclear within 30 seconds, fix them now.",
-        "A recruiter asks: 'Tell me about a time your model failed in an unexpected way.' Choose a specific failure from your 20-week roadmap. Write a complete STAR answer: what was the situation, what went wrong specifically, what action you took, and what you learned. Be specific about what model, dataset, and metric was involved."
+      "topics": [
+        "Choosing a production model based on trade-offs",
+        "Streamlit deployment",
+        "Writing honest project posts",
+        "Soliciting feedback at scale"
       ],
+      "tasks": [
+        "Pick the winning model",
+        "Build dashboard",
+        "Deploy",
+        "Write blog post + video",
+        "Get feedback + retro"
+      ],
+      "project": "Energy Forecast v1.0 — Project 3 complete. Best model deployed in a Streamlit dashboard. Blog post + demo video published.",
+      "resources": [],
       "exercises": [
-        "Design a fraud detection ML system for a bank: address data, features, model, deployment, and monitoring.",
-        "Answer 10 ML questions out loud (recorded). Review and improve your explanations.",
-        "Solve 5 StrataScratch problems at the Hard difficulty level.",
-        "Given a new Kaggle dataset, describe your full ML approach in 10 minutes without writing any code."
+        "Submit the blog to Hacker News",
+        "Send the post to the PJM data team",
+        "Make a Kaggle notebook version"
+      ],
+      "questions": [
+        "What's the cost of choosing the simpler model in production?",
+        "What questions do readers still have?",
+        "What would you do next week if you had to keep working on this?"
       ],
       "outputs": [
-        "Polished GitHub portfolio with 8+ repositories",
-        "Written answers to 30 ML interview questions",
-        "Mock interview feedback document",
-        "Personal improvement plan based on interview feedback"
+        "v1.0 tag",
+        "PROJECT 3 COMPLETE",
+        "Blog + video URLs"
       ]
     },
     {
       "number": 18,
-      "title": "Capstone — Part 1: Problem Definition",
+      "title": "Capstone v0.1: Pick + scope",
       "phase": "Capstone",
-      "commitment_hours": "25--35",
-      "context": "Your capstone begins. This 3-week independent project demonstrates everything you have learned. Week 18 covers problem definition, data collection, and thorough EDA.",
-      "topics": [
-        "Defining an ML problem with real business value",
-        "Writing a project specification document",
-        "Data collection, quality assessment, and preprocessing",
-        "Full EDA with statistical validation"
-      ],
-      "tasks": [
-        "Define your problem, target variable, and success metrics",
-        "Collect and clean your dataset (minimum 5,000 rows)",
-        "Produce a full EDA report with at least 2 statistical tests",
-        "Write a Project Specification document (1 to 2 pages)",
-        "Get mentor approval on your spec before proceeding"
-      ],
-      "project": "Select ONE of: (A) Credit scoring model for a fictional microfinance institution; (B) Crop yield prediction using climate and soil data for West Africa; (C) Employee attrition prediction with fairness audit; (D) Social media virality predictor; (E) Your own idea with mentor approval. The problem must have real stakeholder value and require at least 3 different ML techniques.",
-      "resources": [
+      "commitment_hours": "10-15",
+      "context": "Final project. You pick the question. Apply everything: NLP + time series + deployment + storytelling. This week is just scoping.",
+      "days": [
         {
-          "label": "World Bank Open Data",
-          "url": "https://data.worldbank.org",
-          "note": "(economic and agricultural data including West Africa)"
+          "number": 1,
+          "title": "Capstone options",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Pick ONE",
+              "body": "Pick one of these 3 capstones:\n  A. Stock news sentiment → returns: scrape financial news, label sentiment, correlate with next-day stock return\n  B. Weather → energy demand: combine your energy model with NOAA weather, predict demand from weather forecast\n  C. GitHub trending: predict which repos will trend in 7 days from their week-1 commit + star pattern\n\nPick the one that excites you most. The other 2 die."
+            }
+          ]
         },
         {
-          "label": "African Development Bank Data Portal",
-          "url": "https://data.afdb.org",
-          "note": "(economic indicators specifically for Africa)"
+          "number": 2,
+          "title": "Write the spec",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "SPEC.md",
+              "body": "Make a new repo: forge-capstone. Inside, SPEC.md:\n      # Capstone Spec\n      ## Question\n  (one sentence)\n      ## Data sources\n  (with URLs)\n      ## Method\n  (3 bullets)\n      ## Definition of success\n  (specific metric + threshold)\n      ## Definition of done\n  (deliverables list)\n      ## What's out of scope\n  (3 bullets — what you're NOT doing)"
+            }
+          ]
         },
         {
-          "label": "Kaggle Datasets",
-          "url": "https://www.kaggle.com/datasets",
-          "note": "(filter by 5,000+ rows and search your specific topic)"
+          "number": 3,
+          "title": "Find datasets",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Verify access",
+              "body": "Click through every dataset URL. Download a sample. Confirm it's free + accessible. If anything's blocked or paid, revise SPEC.md."
+            }
+          ]
         },
         {
-          "label": "Data Science for Social Good — Project Template",
-          "url": "https://github.com/dssg/hitchhikers-guide",
-          "note": "(use as a starting point for your project structure)"
+          "number": 4,
+          "title": "Plan 3 weeks",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "ROADMAP.md",
+              "body": "      # Capstone Roadmap\n      ## W19\n  - Data collection + cleaning\n  - EDA\n  ## W20\n  - Modeling\n  - Evaluation\n  - Final dashboard + blog post"
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(use to review your Project Specification and EDA interpretations)"
+          "number": 5,
+          "title": "Build a tiny prototype",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Prove it's possible",
+              "body": "Pull JUST ENOUGH data to verify the idea has signal. 100 rows, the simplest model, the laziest evaluation. If the signal isn't there with 100 rows, no amount of scaling will save it."
+            }
+          ]
         },
         {
-          "label": "Gambia Bureau of Statistics",
-          "url": "https://www.gbos.gov.gm",
-          "note": "(official Gambian data if you choose a Gambia-specific project)"
+          "number": 6,
+          "title": "Adjust scope",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Be honest",
+              "body": "If the prototype was disappointing, what's the smaller, more achievable version of the question? Edit SPEC.md."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.1",
+              "body": "      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ SPEC.md committed\n  ☐ Datasets verified accessible\n  ☐ ROADMAP.md for W19 + W20\n  ☐ Prototype run with real data\n  ☐ v0.1 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Write your project specification and then ask yourself: can this problem actually be solved with the data you have? Run a quick correlation or chi-square test between your target variable and your most promising feature. Is there a detectable signal? If not, what does that mean for your project viability?",
-        "After your initial EDA: what are the 3 biggest data quality risks in your dataset that could lead to wrong model conclusions? For each risk, write what you will do about it (drop, impute, flag, or collect more data).",
-        "Who would actually use this model in a real organisation, and in what specific workflow? Write a 150-word user story: 'A [role] at [organisation] would use this model to [action] when [trigger], which would help them [outcome].' Share this with a non-technical person and ask if it makes sense.",
-        "Run ydata-profiling on your dataset. Find the 3 most important warnings it raises. For each, write what modelling risk it represents and what you will do before proceeding."
+      "topics": [
+        "Scoping a project",
+        "Writing a SPEC",
+        "Prototype-first to validate signal",
+        "Definition of done",
+        "Out-of-scope explicit lists"
       ],
+      "tasks": [
+        "Pick capstone topic",
+        "Write SPEC.md",
+        "Verify data sources",
+        "Plan W19-20",
+        "Build a 100-row prototype",
+        "Adjust scope based on what you saw"
+      ],
+      "project": "Capstone v0.1 — scoped, datasets verified, prototype proves there's signal, roadmap for the next 2 weeks.",
+      "resources": [],
       "exercises": [
-        "Write the project specification and get mentor feedback BEFORE proceeding to any modelling.",
-        "Build a ydata-profiling report on your dataset.",
-        "Run at least 2 statistical tests that are directly relevant to your problem.",
-        "Reduce your EDA to 5 slides: what are the 5 most important things to know about this data?"
+        "Pitch your spec to one friend in 2 minutes",
+        "Search for similar projects on GitHub — what did they NOT do?",
+        "Pick the metric you'll be most embarrassed if it's bad"
+      ],
+      "questions": [
+        "Why prototype-first?",
+        "How is your spec falsifiable?",
+        "What's the smallest version that's still interesting?"
       ],
       "outputs": [
-        "Project Specification document (mentor-approved)",
-        "Cleaned dataset with provenance documentation",
-        "Full EDA Jupyter Notebook",
-        "ydata-profiling HTML report"
+        "SPEC.md + ROADMAP.md",
+        "Prototype notebook",
+        "v0.1 tag"
       ]
     },
     {
       "number": 19,
-      "title": "Capstone — Part 2: Modelling",
+      "title": "Capstone v0.2: Build",
       "phase": "Capstone",
-      "commitment_hours": "25--35",
-      "context": "This week you build, evaluate, and iterate on your capstone models. The goal is not just a working model but a rigorously evaluated one with honest documentation of its limitations.",
-      "topics": [
-        "Baseline model establishment",
-        "Model selection and comparison",
-        "Feature engineering specific to your problem domain",
-        "Advanced evaluation and error analysis",
-        "Fairness and bias assessment where applicable"
-      ],
-      "tasks": [
-        "Build a baseline model and establish a benchmark to beat",
-        "Train at least 3 different algorithms with cross-validation",
-        "Perform hyperparameter tuning with Optuna or GridSearchCV",
-        "Generate SHAP plots for the best model",
-        "Write an honest model evaluation report including error analysis"
-      ],
-      "project": "Full Modelling Pipeline — For your chosen problem: (1) Establish a naive baseline, (2) Train 3+ algorithms with cross-validation, (3) Tune the best model with Optuna, (4) Generate SHAP explainability plots, (5) Perform error analysis: examine the worst predictions and understand WHY the model fails. Document all limitations honestly.",
-      "resources": [
+      "commitment_hours": "15-20",
+      "context": "Heads-down building. Follow your roadmap.",
+      "days": [
         {
-          "label": "Optuna — Hyperparameter Optimisation Framework",
-          "url": "https://optuna.org",
-          "note": "(pip install optuna — run 100 trials on your best model)"
+          "number": 1,
+          "title": "Full data collection",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Scrape / download everything",
+              "body": "Pull all the data you need. Save it raw to data/raw/. Document each source's URL + download date in README."
+            }
+          ]
         },
         {
-          "label": "Error Analysis in Machine Learning — Andrew Ng",
-          "url": "https://www.youtube.com/results?search_query=andrew+ng+error+analysis+machine+learning+lecture",
-          "note": "(YouTube, ~15 min)"
+          "number": 2,
+          "title": "Clean",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "01-clean.ipynb",
+              "body": "Apply the same cleaning patterns from TaxiPulse: drop impossible rows, type-correct, derive features, save clean.parquet."
+            }
+          ]
         },
         {
-          "label": "SHAP Library Documentation",
-          "url": "https://shap.readthedocs.io/en/latest/",
-          "note": "(dependency plots, waterfall plots, and summary plots)"
+          "number": 3,
+          "title": "EDA",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "3-5 charts",
+              "body": "Make charts that answer the most basic version of your question. Verify the signal is still there at full scale."
+            }
+          ]
         },
         {
-          "label": "How to Debug a Machine Learning Model",
-          "url": "https://www.youtube.com/results?search_query=how+to+debug+machine+learning+model+not+working",
-          "note": "(YouTube, ~20 min)"
+          "number": 4,
+          "title": "Baseline model",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Simplest model first",
+              "body": "Whatever your problem is, the simplest baseline:\n  - Classification → LogisticRegression\n  - Regression → LinearRegression\n  - Time series → persistence\n  - Sentiment → pretrained model\n\nGet a number. Even if it's bad."
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(use to review your modelling decisions and get a second opinion on your approach)"
+          "number": 5,
+          "title": "Iterate",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Better model",
+              "body": "ONE more model. Could be: XGBoost, fine-tuned transformer, Prophet, LSTM. Pick the one most relevant to your problem."
+            }
+          ]
         },
         {
-          "label": "Optuna Tutorial — Hyperparameter Tuning with Python",
-          "url": "https://www.youtube.com/results?search_query=optuna+tutorial+python+hyperparameter+tuning+beginners",
-          "note": "(YouTube, ~20 min)"
+          "number": 6,
+          "title": "Evaluation",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Honest evaluation",
+              "body": "Compute every metric that matters. Write a table comparing the 2 models. If neither hits your SPEC's success threshold, revise: did the question need to be smaller?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ All data collected + cleaned\n  ☐ EDA done\n  ☐ Baseline + 1 better model\n  ☐ Evaluation table\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Your best model outperforms the naive baseline by X\\%. Identify specifically WHY it is better: which features are driving the improvement according to SHAP? Now find where the model still fails — look at the 20 worst predictions. Do they share a common pattern in feature values or context?",
-        "After running Optuna for 100 trials: which hyperparameters changed the most from their defaults? Which hyperparameters did Optuna explore a wide range of without improving performance — what does that tell you about their importance?",
-        "Build SHAP dependency plots for the 3 most important features. For each, describe the relationship between the feature and your target: is it linear, is there a threshold effect, is it different for different subgroups? Write one business sentence interpreting each plot.",
-        "Is your model fair across all groups in your dataset? Calculate precision, recall, and false positive rate for at least 2 demographic or categorical subgroups. If there is a meaningful disparity, what are the ethical implications of deploying this model in a real context?"
+      "topics": [
+        "Full-scale data collection",
+        "Pipeline-driven notebook structure",
+        "Baseline-first modeling",
+        "Honest evaluation tables",
+        "Scope-cutting when results are weak"
       ],
+      "tasks": [
+        "Collect all data",
+        "Clean everything",
+        "Run EDA",
+        "Train baseline + better model",
+        "Build comparison table"
+      ],
+      "project": "Capstone v0.2 — actual model trained, evaluated, comparison table written, real numbers.",
+      "resources": [],
       "exercises": [
-        "Run Optuna with 100 trials on your best model and document the best hyperparameters found.",
-        "Manually inspect the 20 worst predictions and categorise the error types you find.",
-        "Build a SHAP dependency plot for the 3 most important features.",
-        "Write your evaluation report before receiving any feedback, then compare with mentor's assessment."
+        "Try a 3rd model just for sport",
+        "Document one wrong path you took today",
+        "Save predictions for inspection later"
+      ],
+      "questions": [
+        "Where did the actual data disappoint vs the prototype?",
+        "What's the gap between your model and a great model?",
+        "What would you need to close that gap?"
       ],
       "outputs": [
-        "Modelling notebook with all algorithms compared",
-        "Tuned best model saved as .pkl artifact",
-        "SHAP explainability visualisations (summary, waterfall, dependency)",
-        "Honest evaluation report with error analysis and limitations"
+        "Trained models in models/",
+        "Eval table",
+        "v0.2 tag"
       ]
     },
     {
       "number": 20,
-      "title": "Capstone — Part 3: Deployment",
+      "title": "Capstone v1.0: Ship + roadmap done",
       "phase": "Capstone",
-      "commitment_hours": "25--35",
-      "context": "The final week. You deploy your model, build professional documentation, and defend your work in a formal capstone review. This is the culmination of 20 weeks of rigorous study.",
-      "topics": [
-        "Model deployment: Streamlit app or FastAPI service",
-        "Final documentation: README, Model Card, and project report",
-        "Presentation skills for data science",
-        "Answering hard questions about your methodology under pressure"
-      ],
-      "tasks": [
-        "Deploy your model as a Streamlit app or FastAPI service",
-        "Write a comprehensive project README",
-        "Write a Model Card and Datasheet",
-        "Prepare a 20-minute presentation with slides",
-        "Present to your mentor in a formal capstone review with Q\\&A"
-      ],
-      "project": "Complete Capstone Delivery — Final deliverables: (1) Live deployed model (Streamlit Cloud URL or FastAPI), (2) GitHub repo with clean, documented code, (3) Jupyter Notebook — full pipeline reproducible from scratch, (4) Model Card, (5) 3 to 5 page project report, (6) 20-minute presentation covering problem, data, approach, results, limitations, and next steps.",
-      "resources": [
+      "commitment_hours": "15-20",
+      "context": "Final week of 20. Ship the capstone. Write the retro. Look back at the whole roadmap.",
+      "days": [
         {
-          "label": "Streamlit Community Cloud — Free Deployment",
-          "url": "https://share.streamlit.io",
-          "note": "(deploy your app here and get a public URL)"
+          "number": 1,
+          "title": "Build the demo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Streamlit or web app",
+              "body": "Whatever shows your model best: a Streamlit explorer, a static dashboard, a video walkthrough. Pick one. Build it."
+            }
+          ]
         },
         {
-          "label": "How to Present a Data Science Project — Ken Jee",
-          "url": "https://www.youtube.com/results?search_query=ken+jee+how+to+present+data+science+project+portfolio",
-          "note": "(YouTube, ~20 min)"
+          "number": 2,
+          "title": "Deploy",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Get it live",
+              "body": "Push to Streamlit Cloud / HF Spaces / Render. Get a URL."
+            }
+          ]
         },
         {
-          "label": "Model Cards Template",
-          "url": "https://modelcards.github.io",
-          "note": "(use this template for your Model Card)"
+          "number": 3,
+          "title": "Write the blog post",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "1500-2000 words",
+              "body": "The biggest post yet. Cover the spec, the data, the journey, the results, what didn't work."
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(review and improve your project report before final submission)"
+          "number": 4,
+          "title": "Demo video",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "3-minute walkthrough",
+              "body": "Longer than previous videos — this is your capstone."
+            }
+          ]
         },
         {
-          "label": "How to Record Your Screen with Loom (free)",
-          "url": "https://www.youtube.com/results?search_query=loom+screen+recording+tutorial+free+beginners",
-          "note": "(YouTube, ~5 min — record your capstone presentation)"
+          "number": 5,
+          "title": "Update your portfolio",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Portfolio update",
+              "body": "If you have a personal site (Edge Portfolio from DevOps), add the 4 projects:\n  1. TaxiPulse (Project 1)\n  2. Reddit Sentiment (Project 2)\n  3. Energy Forecast (Project 3)\n  4. [Capstone name]\n\nIf you don't have a personal site, add them to your LinkedIn 'Featured' section."
+            }
+          ]
         },
         {
-          "label": "GitHub Releases Documentation",
-          "url": "https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases",
-          "note": "(tag your final submission as v1.0)"
+          "number": 6,
+          "title": "Get 5 readers",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Feedback at scale",
+              "body": "Send blog post URL to 5 people. Apply common feedback."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + ROADMAP RETRO",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Final acceptance — Roadmap complete",
+              "body": "Write RETRO.md for the capstone.\nWrite ROADMAP_RETRO.md at the top level — your retro on the WHOLE 20 weeks:\n      # Forge Data Science Roadmap — Retro\n      ## 4 projects shipped\n  1. TaxiPulse\n  2. Reddit Sentiment\n  3. Energy Forecast\n  4. [Capstone]\n      ## What I learned\n  ...\n      ## What I'd do differently\n  ...\n      ## Hardest week\n  ...\n      ## Proudest moment\n  ...\n      ## What's next\n  ...\n\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Capstone live demo\n  ☐ Blog post + video\n  ☐ Portfolio updated with all 4 projects\n  ☐ 5 readers' feedback applied\n  ☐ RETRO.md + ROADMAP_RETRO.md\n  ☐ v1.0 tag\n\nDATA SCIENCE ROADMAP COMPLETE. 4 named projects on your CV."
+            }
+          ]
         }
       ],
-      "questions": [
-        "You have completed 20 weeks. Look back at Week 1 where you built a data generator script. Write one specific thing you believed about machine learning in Week 1 that you now know is wrong or oversimplified. Describe in concrete terms what changed in your mental model.",
-        "Take your most important capstone finding and express it in one sentence that a non-data-scientist could act on. Read it to someone outside this programme. Did they immediately understand what decision or action it implies? If not, rewrite it until they do.",
-        "Identify the single weakest part of your capstone analysis — be brutally specific. Not 'I could have used more data' but: 'I did not control for [X], which means my finding on [Y] could be alternatively explained by [Z].' Write this as the Limitations section of your report.",
-        "If a real organisation implemented the main recommendation from your capstone project today: what would success look like in 12 months? Write 3 specific, measurable outcomes. How would you collect the data to verify those outcomes? This is the difference between analysis and decision-making."
+      "topics": [
+        "Capstone deployment",
+        "Portfolio building",
+        "Roadmap-level retrospectives",
+        "Long-form blog writing"
       ],
+      "tasks": [
+        "Build + deploy capstone demo",
+        "Write capstone blog post + video",
+        "Update portfolio with all 4 projects",
+        "Get 5 readers",
+        "Write capstone retro + roadmap retro"
+      ],
+      "project": "Capstone v1.0 — full project shipped. Roadmap complete. 4 named projects on your CV. Real retrospective written.",
+      "resources": [],
       "exercises": [
-        "Give your presentation to a non-technical person and observe what confuses them.",
-        "Reduce your whole project to a single tweet (280 characters). What is the core message?",
-        "Write the Limitations section of your report without softening or minimising any issue.",
-        "Ask Claude to critique your report. Implement suggestions you agree with and explain those you rejected."
+        "Apply to one job using the portfolio",
+        "Post the capstone on /r/datascience for feedback",
+        "Schedule a 30-min portfolio review with a working DS"
+      ],
+      "questions": [
+        "Of the 4 projects, which one would you trust to defend in an interview?",
+        "Which week of the roadmap stretched you most?",
+        "If you started over, what would you change?"
       ],
       "outputs": [
-        "Live deployed Streamlit app (public URL in portfolio)",
-        "GitHub repository with full, complete documentation",
-        "3 to 5 page project report (PDF)",
-        "Model Card and Datasheet",
-        "Presentation slides (10 to 15 slides)",
-        "Capstone review recording (if possible)"
+        "v1.0 tag + ROADMAP COMPLETE",
+        "4 projects in portfolio",
+        "ROADMAP_RETRO.md"
       ]
     }
   ]

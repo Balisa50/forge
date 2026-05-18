@@ -599,1050 +599,1773 @@
     },
     {
       "number": 5,
-      "title": "Data Cleaning",
-      "phase": "Core Analysis",
-      "commitment_hours": "25--35",
-      "context": "Real-world data is almost never clean. Up to 80\\% of an analyst's time is spent cleaning data. This week you develop the discipline and techniques to transform raw, messy data into analysis-ready form.",
-      "topics": [
-        "Identifying and handling missing values: dropna(), fillna(), interpolation",
-        "Detecting and removing duplicate rows",
-        "Data type conversion and coercion",
-        "Outlier detection with IQR and Z-score methods",
-        "String cleaning: strip(), lower(), replace(), regex with str.extract()",
-        "Date and time parsing: pd.to_datetime(), extracting day/month/year",
-        "Column standardisation and renaming conventions",
-        "Saving cleaned data back to CSV or Excel"
-      ],
-      "tasks": [
-        "Download the messy HR / Employee dataset from Kaggle (see resources)",
-        "Document all data quality issues you find BEFORE touching any code",
-        "Write a step-by-step cleaning notebook that fixes each issue programmatically",
-        "Validate the cleaned dataset: zero nulls in critical columns, correct dtypes, no duplicates",
-        "Write a data quality report comparing before vs after cleaning"
-      ],
-      "project": "Real-World Cleaning Pipeline — The messy HR dataset contains inconsistent capitalisation, missing salary data, invalid dates, duplicate records, and outlier ages. Clean the entire dataset programmatically (no manual editing), document every decision, and save the clean version. Your code must produce the same result when re-run from scratch.",
-      "resources": [
+      "title": "Superstore v0.5: Executive deck",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Last week you wrote a 1-page memo. This week you turn it into a 5-slide executive deck — the format leadership actually consumes.",
+      "days": [
         {
-          "label": "Messy HR / Employee Dataset on Kaggle",
-          "url": "https://www.kaggle.com/datasets/rhuebner/human-resources-data-set",
-          "note": "(download the CSV here)"
+          "number": 1,
+          "title": "Why decks",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "How analysts communicate to leadership (10 min)",
+              "url": "https://www.youtube.com/results?search_query=data+analyst+executive+communication+slides",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Audience",
+              "body": "If the CEO has 5 minutes and only looks at 1 slide of your deck, which slide should it be?"
+            }
+          ]
         },
         {
-          "label": "How to download from Kaggle (reminder)",
-          "url": "https://www.youtube.com/results?search_query=how+to+download+kaggle+dataset+beginners+step+by+step",
-          "note": "(YouTube, ~5 min if you need it)"
+          "number": 2,
+          "title": "Build slide 1 — headline",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Title slide",
+              "body": "Open Google Slides or PowerPoint. New deck named 'Superstore Q4 Review'.\nSlide 1:\n  Big headline (40pt font): 'Furniture profitability is at risk — tables losing $X/qtr'\n  Subhead: 'And 3 other findings from 4 years of sales data'\n  Footer: Your name + date"
+            }
+          ]
         },
         {
-          "label": "Data Cleaning in Pandas — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+pandas+data+cleaning+tutorial",
-          "note": "(YouTube, ~20 min)"
+          "number": 3,
+          "title": "Slides 2-4 — findings",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "One finding per slide",
+              "body": "Slide 2: Q1 — Margin leaders/laggards. Chart on left, 3 bullets on right.\nSlide 3: Q2 — Regional YoY. Chart on left, 1 recommendation.\nSlide 4: Q3 — Furniture deep dive. Chart with the failing sub-category highlighted in red."
+            }
+          ]
         },
         {
-          "label": "Working with Dates and Times in Pandas — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+python+datetime+pandas+tutorial",
-          "note": "(YouTube, ~20 min)"
+          "number": 4,
+          "title": "Slide 5 — recommendations",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "So what?",
+              "body": "Slide 5:\n  Title: 'Recommendations'\n  3 bullets, each with a specific action + expected impact:\n    - 'Cap discounts at 20% on Furniture → save ~$X profit annually'\n    - 'Discontinue or redesign Tables sub-category → free up $X capital'\n    - 'Replicate West region strategy in Central → +$X revenue at run rate'"
+            }
+          ]
         },
         {
-          "label": "Pandas Official Guide: Handling Missing Data",
-          "url": "https://pandas.pydata.org/docs/user_guide/missing_data.html",
-          "note": "(documentation reference)"
+          "number": 5,
+          "title": "Design pass",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Visual consistency",
+              "body": "Apply a consistent color palette (2 colors + grey). Make every chart label readable from across a room (min 14pt). Strip every gridline that doesn't help."
+            }
+          ]
         },
         {
-          "label": "Data Cleaning with Pandas — Real Python",
-          "url": "https://realpython.com/python-data-cleaning-numpy-pandas/",
-          "note": "(read-along article with code examples)"
+          "number": 6,
+          "title": "Practice the 5-minute pitch",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Record yourself",
+              "body": "Use your phone. Pretend you're presenting to the CEO. 5 minutes max. Listen back. What's confusing? Which words are filler?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.5",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.5",
+              "body": "Export deck as PDF. Add to your superstore-analysis repo as deck.pdf.\n      git add deck.pdf && git commit -m 'v0.5: executive deck'\n      git tag v0.5 && git push --tags\n\nPASS:\n  ☐ 5-slide deck exists\n  ☐ Each slide has 1 main idea\n  ☐ Recommendations are specific with numbers\n  ☐ Practiced 5-minute pitch\n  ☐ deck.pdf committed\n  ☐ v0.5 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Before cleaning: calculate the average salary in the raw HR dataset. After cleaning: recalculate it. Did the number change? By how much? Identify exactly which rows or values were responsible for the change.",
-        "Which department had the most data quality issues (nulls, duplicates, or invalid values combined) in the raw file? What proportion of that department's records needed at least one fix?",
-        "After removing outliers from the Age column using the IQR method: how many rows were removed? What was the age range of the removed outliers? Are these plausible data entry errors, or could any of them be real edge cases?",
-        "How many employees have a hire date that is impossible or suspicious (e.g., before 1970 or in the future)? These are likely data entry errors. Write out your decision: do you drop them, flag them, or impute them, and why?"
+      "topics": [
+        "Executive communication",
+        "Slide design fundamentals",
+        "Headline-first slides",
+        "Practicing pitches",
+        "Translating analysis into actions"
       ],
+      "tasks": [
+        "Draft headline slide",
+        "Build 3 finding slides (1 chart + 1 takeaway each)",
+        "Build recommendations slide",
+        "Polish visuals",
+        "Practice 5-minute pitch",
+        "Export and commit deck.pdf"
+      ],
+      "project": "Superstore v0.5 — 5-slide executive deck with specific recommendations. Practiced and exported as PDF.",
+      "resources": [],
       "exercises": [
-        "Given a column 'Age' with values like '25', '30 years', 'N/A', '45', '-' — extract numeric values and handle non-numeric entries.",
-        "Write a function that detects outliers in any numeric column using the IQR method and returns the outlier rows.",
-        "Parse a column of mixed-format dates into a consistent datetime format.",
-        "Write a cleaning function that takes a raw DataFrame, returns a cleaned version, and prints a log of every change made."
+        "Rebuild the deck without ANY chart — only big numbers and text. Compare effectiveness.",
+        "Make a 'CFO-version' that's all about money saved",
+        "Make an 'ops-version' that's all about discount caps"
+      ],
+      "questions": [
+        "Why do executives consume slides not memos?",
+        "Why is one-idea-per-slide a rule?",
+        "What's the difference between a chart label and a chart title?"
       ],
       "outputs": [
-        "Cleaning Jupyter Notebook with every step documented and explained",
-        "Cleaned CSV file ready for analysis",
-        "Data Quality Report (Markdown or text): before vs after comparison with row/column counts",
-        "Reusable outlier detection function saved in a utils.py file"
+        "deck.pdf committed",
+        "v0.5 tag"
       ]
     },
     {
       "number": 6,
-      "title": "Exploratory Data Analysis (EDA)",
-      "phase": "Core Analysis",
-      "commitment_hours": "25--35",
-      "context": "EDA is how analysts understand data before drawing conclusions. This week you learn to ask the right questions, find patterns, detect anomalies, and summarise data in a way that tells a story.",
-      "topics": [
-        "The EDA mindset: ask 10 questions first, then code",
-        "Univariate analysis: distributions, histograms, value counts",
-        "Bivariate analysis: scatter plots, box plots, cross-tabulations",
-        "Correlation analysis: Pearson/Spearman, heatmaps",
-        "Grouped analysis: groupby, aggregations, pivot tables in Pandas",
-        "Time-based analysis: resampling, rolling averages",
-        "Detecting skewness, kurtosis, and data imbalance"
-      ],
-      "tasks": [
-        "Download the Titanic dataset (see resources) for this week's project",
-        "Write 10 analytical questions about the dataset BEFORE writing any code",
-        "Answer each question with code and a brief written explanation",
-        "Build a correlation heatmap and interpret 3 key relationships",
-        "Identify the 3 most important findings and write them as insights with business implications"
-      ],
-      "project": "End-to-End EDA Report — Using the Titanic dataset, complete structured EDA: (1) Data overview and missing values, (2) Survival rate by gender, class, and age group, (3) Fare distribution analysis, (4) Correlation heatmap with interpretation, (5) 5 written insights. Present as a clean Jupyter Notebook that reads like a report, not just code.",
-      "resources": [
+      "title": "Superstore v1.0: Ship + retro",
+      "phase": "Foundation",
+      "commitment_hours": "10-15",
+      "context": "Final polish, retro, hand off Project 1.",
+      "days": [
         {
-          "label": "Titanic Dataset on Kaggle",
-          "url": "https://www.kaggle.com/competitions/titanic/data",
-          "note": "(download train.csv from here)"
+          "number": 1,
+          "title": "Final polish list",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Rough edges",
+              "body": "List 10 things in the repo + memo + deck that could be slightly better."
+            }
+          ]
         },
         {
-          "label": "Titanic EDA Walkthrough — Ken Jee",
-          "url": "https://www.youtube.com/results?search_query=ken+jee+titanic+eda+exploratory+data+analysis+python",
-          "note": "(YouTube, ~30 min — follows the same dataset)"
+          "number": 2,
+          "title": "Fix them",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Polish pass",
+              "body": "Fix the top 5."
+            }
+          ]
         },
         {
-          "label": "Pandas GroupBy Tutorial — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+pandas+groupby+tutorial+python",
-          "note": "(YouTube, ~20 min)"
+          "number": 3,
+          "title": "Reformat memo as Word doc",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Microsoft Word / Google Docs",
+              "url": "https://docs.google.com",
+              "why": "Click 'Open' to access Google Docs free."
+            },
+            {
+              "kind": "exercise",
+              "title": "Polished memo",
+              "body": "Move your memo into Google Docs with proper formatting: title page, headers in a brand color, page numbers, footer.\nExport as PDF. Save as memo-final.pdf in the repo."
+            }
+          ]
         },
         {
-          "label": "Exploratory Data Analysis with Pandas — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+exploratory+data+analysis+pandas+python",
-          "note": "(YouTube, ~25 min)"
+          "number": 4,
+          "title": "Add anonymized public dataset version",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Public-safe",
+              "body": "Sample Superstore IS public — but in real work you'd anonymize. As practice: rename Customer Name + Customer ID columns with fake names (Faker library or manually). Save as orders-public.csv."
+            }
+          ]
         },
         {
-          "label": "Seaborn Chart Gallery",
-          "url": "https://seaborn.pydata.org/examples/",
-          "note": "(browse for chart ideas — click any chart for its code)"
+          "number": 5,
+          "title": "Get one reader",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Stranger review",
+              "body": "Send the deck + memo to one person. Get their honest 'what was confusing' answer."
+            }
+          ]
         },
         {
-          "label": "Pandas GroupBy Official Docs",
-          "url": "https://pandas.pydata.org/docs/user_guide/groupby.html",
-          "note": "(reference when groupby behaves unexpectedly)"
+          "number": 6,
+          "title": "Fix what confused them",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Apply feedback",
+              "body": "Fix it."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + retro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Project 1 DONE",
+              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Memo + deck + dashboard all in repo\n  ☐ Anonymized version available\n  ☐ 1 reader's feedback applied\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 1 DONE. Next: Project 2 — HR analytics."
+            }
+          ]
         }
       ],
-      "questions": [
-        "What is the overall survival rate in the Titanic dataset? Now calculate it separately for male and female passengers. What is the exact percentage point difference between male and female survival rates? If you had to explain this gap to a journalist in one sentence, what would you write?",
-        "Calculate the survival rate for each passenger class (1st, 2nd, 3rd). What is the gap between 1st class and 3rd class survival rate? Can the data alone prove this was intentional discrimination, or could other factors explain it?",
-        "Bin passengers into age groups: 0—12 (children), 13—18 (teens), 19—35 (young adults), 36—60 (adults), 60+ (elderly). Which age group had the highest survival rate? Which the lowest? Does this match the 'women and children first' narrative?",
-        "Among passengers who survived, what was the average fare paid? Compare this to non-survivors. Calculate the ratio. Now ask: does this prove wealth saved lives, or could fare simply be a proxy for passenger class (which also correlated with survival)?",
-        "How many passengers have a missing Age value? What percentage is this? If you filled all missing ages with the median age, how would your age-group survival analysis change? Try it and compare the two results."
+      "topics": [
+        "Polishing analytical artifacts",
+        "Anonymizing data for sharing",
+        "Memo formatting in Docs/Word",
+        "Outside-reader feedback",
+        "Project retrospectives"
       ],
+      "tasks": [
+        "Fix 5 rough edges",
+        "Reformat memo as polished PDF",
+        "Create anonymized public dataset version",
+        "Get one stranger's feedback",
+        "Apply feedback",
+        "Write RETRO.md"
+      ],
+      "project": "Superstore v1.0 — Project 1 done. Polished memo PDF, deck PDF, dashboard sheet, anonymized data, retro all committed.",
+      "resources": [],
       "exercises": [
-        "Load a dataset of your choice and answer: What is the distribution of the target variable? Is it skewed?",
-        "Use groupby to find the average value of a numeric column across 3 different categorical groups.",
-        "Build a cross-tabulation (crosstab) of two categorical variables and interpret the result.",
-        "Write code that automatically flags any numeric column with skewness above 1 and prints a warning."
+        "Make a 2-minute Loom video walkthrough of the dashboard",
+        "Post a screenshot on LinkedIn",
+        "Add the repo to your GitHub pinned repos"
+      ],
+      "questions": [
+        "What's the smallest unit of analyst polish that makes a real difference?",
+        "How does anonymization change trust?",
+        "What feedback hurt the most?"
       ],
       "outputs": [
-        "EDA Jupyter Notebook (polished enough to share on GitHub)",
-        "Correlation heatmap as an image file (.png)",
-        "5 written insights with supporting charts",
-        "A list of follow-up questions your EDA raised (demonstrates analytical thinking)"
+        "v1.0 tag — PROJECT 1 COMPLETE",
+        "Polished deliverables",
+        "RETRO.md"
       ]
     },
     {
       "number": 7,
-      "title": "Statistics for Data Analysis",
-      "phase": "Core Analysis",
-      "commitment_hours": "25--35",
-      "context": "An analyst without statistical knowledge will draw wrong conclusions. This week you build statistical intuition and practical skills — not abstract theory, but the exact stats used every week on the job.",
-      "topics": [
-        "Descriptive statistics: mean, median, mode, variance, standard deviation",
-        "Probability distributions: normal, binomial, Poisson (conceptual intuition)",
-        "Central Limit Theorem and its implications for analysis",
-        "Hypothesis testing: null hypothesis, p-value, significance level (alpha)",
-        "t-test: one-sample, two-sample, paired",
-        "Chi-square test for categorical data",
-        "Confidence intervals",
-        "A/B testing fundamentals"
-      ],
-      "tasks": [
-        "Watch ALL StatQuest videos in the resource list (required before any code)",
-        "Use scipy.stats to run a two-sample t-test on a real dataset",
-        "Run a chi-square test on categorical data (gender vs survival in Titanic)",
-        "Design a simple A/B test scenario for a fictional e-commerce site",
-        "Write a 1-page explanation of p-values that a non-technical manager could understand"
-      ],
-      "project": "Statistical Audit — Using the Titanic dataset, test: (1) Is there a statistically significant difference in survival rates between male and female passengers? (2) Is there a significant relationship between ticket class and survival? (3) Is the average fare for survivors significantly different from non-survivors? Document your hypothesis, test used, p-value, and conclusion for each.",
-      "resources": [
+      "title": "Project 2 — HR Attrition v0.1",
+      "phase": "HR Analytics",
+      "commitment_hours": "12-18",
+      "context": "New project. IBM HR Attrition dataset — 1470 employee records with whether they left. Goal by W10: a dashboard + memo for the HR director on who leaves and why.",
+      "days": [
         {
-          "label": "StatQuest with Josh Starmer — YouTube Channel",
-          "url": "https://www.youtube.com/@statquest",
-          "note": "(subscribe and watch the Statistics Fundamentals playlist)"
+          "number": 1,
+          "title": "Why HR analytics",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "IBM HR Attrition dataset — Kaggle",
+              "url": "https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset",
+              "why": "Click 'Open' → download. CSV, ~225KB."
+            },
+            {
+              "kind": "reflection",
+              "title": "Three questions",
+              "body": "Before you look at the data, write 3 questions HR would care about:\n  1. Who is most likely to leave?\n  2. Which department / role / tenure has worst attrition?\n  3. What predicts attrition — salary? overtime? distance from home?"
+            }
+          ]
         },
         {
-          "label": "p-values Clearly Explained — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+p+values+clearly+explained",
-          "note": "(YouTube, ~12 min — watch before any coding)"
+          "number": 2,
+          "title": "Load + first look",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Set up",
+              "body": "Make folder hr-attrition/. Save the CSV in data/.\nIn Excel/Sheets: open the file. ~1470 rows, ~35 columns. Note: Attrition (Yes/No), Age, Department, MonthlyIncome, OverTime, YearsAtCompany, DistanceFromHome.\n\nHeadline: =COUNTIF(Attrition column, \"Yes\") / COUNT(...)\nWhat's the overall attrition rate?"
+            }
+          ]
         },
         {
-          "label": "t-tests Clearly Explained — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+t+tests+clearly+explained",
-          "note": "(YouTube, ~10 min)"
+          "number": 3,
+          "title": "Attrition by department",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Department pivot",
+              "body": "Pivot: Rows = Department, Values = COUNT Yes / COUNT All * 100% = Attrition rate.\nSort. Which department has worst attrition?"
+            }
+          ]
         },
         {
-          "label": "Chi-Square Test — StatQuest",
-          "url": "https://www.youtube.com/results?search_query=statquest+chi+square+test+clearly+explained",
-          "note": "(YouTube, ~10 min)"
+          "number": 4,
+          "title": "Attrition by role",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Job role pivot",
+              "body": "Pivot: Rows = JobRole, Values = attrition rate.\nSort. Top 3 most-leaving roles?"
+            }
+          ]
         },
         {
-          "label": "scipy.stats Documentation",
-          "url": "https://docs.scipy.org/doc/scipy/reference/stats.html",
-          "note": "(reference for running t-tests and chi-square in Python)"
+          "number": 5,
+          "title": "Salary effect",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Bucketed salary",
+              "body": "Add column: Salary Bucket = nested IF on MonthlyIncome:\n  <3000 = Low; 3000-7000 = Mid; 7000-15000 = High; >15000 = Top\nPivot: rate by bucket. Where's the cliff?"
+            }
+          ]
         },
         {
-          "label": "A/B Testing Explained Simply",
-          "url": "https://www.youtube.com/results?search_query=ab+testing+explained+simply+data+analyst",
-          "note": "(YouTube, ~15 min)"
+          "number": 6,
+          "title": "Overtime effect",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "OverTime pivot",
+              "body": "Pivot: Rows = OverTime (Yes/No), Values = attrition rate.\nDocument: by what factor does overtime increase attrition?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.1",
+              "body": "Create GitHub repo hr-attrition. Commit Excel/Sheets file + 4 pivots + a README listing what you found.\n      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ Data loaded\n  ☐ Overall attrition rate documented\n  ☐ 4 pivots (department, role, salary, overtime)\n  ☐ One-paragraph 'first findings' note in README\n  ☐ v0.1 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Run a chi-square test on gender (Sex) vs survival (Survived) in the Titanic dataset. State your null hypothesis. Report the chi-square statistic and p-value. At the 95\\% confidence level, can you reject the null? Write your conclusion in one plain-English sentence a manager could understand.",
-        "Run an independent-samples t-test comparing the average Fare paid by survivors vs non-survivors. Is the difference statistically significant at p < 0.05? What would it mean if the p-value were 0.4 instead? Would you still report the difference?",
-        "Calculate a 95\\% confidence interval for the mean age of all Titanic passengers. Interpret it correctly: what does it mean to say you are 95\\% confident the true mean falls in this range?",
-        "Design (without coding) an A/B test for a fictional shipping company testing a new packaging design. Define: null hypothesis, alternative hypothesis, success metric, alpha level, and how you would calculate required sample size."
+      "topics": [
+        "HR analytics fundamentals",
+        "Calculating attrition rate from Yes/No",
+        "Multi-dimensional pivot tables",
+        "Bucketing continuous variables (salary)",
+        "Identifying biggest-effect features"
       ],
+      "tasks": [
+        "Download IBM HR dataset",
+        "Compute overall attrition rate",
+        "Pivots by Department, JobRole, Salary bucket, OverTime",
+        "Note biggest effects in README"
+      ],
+      "project": "HR Attrition v0.1 — initial exploration. 4 pivots identifying which departments, roles, salary bands, and overtime status have the worst attrition.",
+      "resources": [],
       "exercises": [
-        "Given two lists of sales figures (before and after a marketing campaign), run a paired t-test. Is the campaign effective?",
-        "In the Titanic dataset, test whether ticket class and survival are independent using a chi-square test.",
-        "Calculate a 95\\% confidence interval for the mean salary in the cleaned HR dataset from Week 5.",
-        "Design (without coding) an A/B test for a website button colour change: define hypothesis, metric, sample size, and duration."
+        "Add pivots for DistanceFromHome buckets",
+        "Compare attrition by Education level",
+        "Look at Gender (note: be careful with interpretation)"
+      ],
+      "questions": [
+        "Why is overall attrition rate the wrong KPI to focus on?",
+        "What's the difference between attrition and turnover?",
+        "Where could correlation mislead a recommendation?"
       ],
       "outputs": [
-        "Statistical Analysis Notebook with all tests documented",
-        "Written conclusions for each test in plain business language",
-        "A/B test design document (1 page)",
-        "Summary table: test used, p-value, decision for each analysis"
+        "Excel file + 4 pivots",
+        "v0.1 tag",
+        "First findings paragraph"
       ]
     },
     {
       "number": 8,
-      "title": "Data Visualisation with Python",
-      "phase": "Core Analysis",
-      "commitment_hours": "25--35",
-      "context": "Visualisation is how analysts communicate findings. This week you master Matplotlib and Seaborn to create clear, professional, publication-quality charts that tell a story.",
-      "topics": [
-        "Matplotlib fundamentals: Figure, Axes, subplots, Artist hierarchy",
-        "Core chart types: line, bar, histogram, scatter, box, pie",
-        "Seaborn statistical plots: heatmap, pairplot, violinplot, regplot, barplot",
-        "Chart customisation: titles, axis labels, annotations, colour palettes, legends",
-        "Multi-panel figures with plt.subplots()",
-        "Exporting charts at high resolution (.png, .svg)",
-        "Plotly Express: interactive charts (introduction)"
-      ],
-      "tasks": [
-        "Recreate 5 specific charts from the Seaborn gallery (see resources)",
-        "Build a multi-panel figure with 4 related charts on one dataset",
-        "Create a publication-quality Seaborn correlation heatmap",
-        "Build one interactive Plotly chart from your Week 6 EDA dataset",
-        "Write a 1-sentence insight (caption) for every chart you create"
-      ],
-      "project": "Visual Data Story — Using any dataset from prior weeks, create a visual report with exactly 8 charts: (1) Distribution histogram, (2) Bar chart with error bars, (3) Scatter plot with regression line, (4) Boxplot comparing groups, (5) Heatmap, (6) Line chart of a time trend, (7) Pairplot, (8) One interactive Plotly chart. Each chart must have a title, axis labels, and a 1-sentence caption.",
-      "resources": [
+      "title": "HR Attrition v0.2: Tenure + cohorts",
+      "phase": "HR Analytics",
+      "commitment_hours": "12-18",
+      "context": "Most people leave in their first 2 years. This week we prove it — and find which tenure buckets HR should worry about.",
+      "days": [
         {
-          "label": "Matplotlib Tutorial Series — Corey Schafer",
-          "url": "https://www.youtube.com/results?search_query=corey+schafer+matplotlib+tutorial+python+full+series",
-          "note": "(YouTube, watch parts 1 through 4 (~1.5 hrs))"
+          "number": 1,
+          "title": "What is tenure analysis",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Sketch hypothesis",
+              "body": "Draw a chart on paper of attrition rate vs YearsAtCompany. What shape do you expect — flat? J-shape? Bathtub curve?"
+            }
+          ]
         },
         {
-          "label": "Seaborn Tutorial for Beginners — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+seaborn+tutorial+python+beginners",
-          "note": "(YouTube, ~20 min)"
+          "number": 2,
+          "title": "Attrition by tenure bucket",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Bucket pivot",
+              "body": "Add column YearsBucket: nested IF on YearsAtCompany:\n  =IF(A2<=1, \"0-1\", IF(A2<=3, \"2-3\", IF(A2<=5, \"4-5\", IF(A2<=10, \"6-10\", \"10+\"))))\nPivot: Rows = YearsBucket, Values = attrition rate, COUNT.\nWhat's the shape?"
+            }
+          ]
         },
         {
-          "label": "Plotly Express Interactive Charts — Charming Data",
-          "url": "https://www.youtube.com/results?search_query=charming+data+plotly+express+python+tutorial+interactive+charts",
-          "note": "(YouTube, ~20 min)"
+          "number": 3,
+          "title": "Time-since-promotion",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "YearsSinceLastPromotion",
+              "body": "Pivot: Rows = YearsSinceLastPromotion (cap at 8+), Values = attrition rate.\nWhere's the danger zone?"
+            }
+          ]
         },
         {
-          "label": "Seaborn Chart Gallery",
-          "url": "https://seaborn.pydata.org/examples/",
-          "note": "(click any chart to get its code immediately)"
+          "number": 4,
+          "title": "Cross-tab tenure × role",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "2-D pivot",
+              "body": "Rows = YearsBucket, Columns = JobRole, Values = attrition rate.\nConditional formatting (red high, green low). Which combos are worst?"
+            }
+          ]
         },
         {
-          "label": "Matplotlib Chart Gallery",
-          "url": "https://matplotlib.org/stable/gallery/",
-          "note": "(browse all chart types with working code)"
+          "number": 5,
+          "title": "Years × salary",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Tenure-salary interaction",
+              "body": "Rows = YearsBucket, Columns = Salary Bucket, Values = attrition rate.\nFindings: do high-tenure low-salary employees leave more?"
+            }
+          ]
         },
         {
-          "label": "Storytelling with Data: Which Chart to Use",
-          "url": "https://www.storytellingwithdata.com/chart-guide",
-          "note": "(quick guide to choosing the right chart)"
+          "number": 6,
+          "title": "Plot a 'survival curve'",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Cumulative leave rate by tenure",
+              "body": "Compute % of all leavers who had ≤ N years tenure. Plot as a step chart. This is your 'cumulative attrition by tenure'."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "Update README with findings.\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Tenure bucket pivot\n  ☐ Promotion gap pivot\n  ☐ Cross-tab tenure × role\n  ☐ Cross-tab tenure × salary\n  ☐ Cumulative attrition step chart\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Build a bar chart of survival rate by passenger class on the Titanic data. Add a horizontal reference line showing the overall average survival rate. Now write a one-sentence headline that would appear under this chart in a newspaper — what is the single message you want a reader to take away in 3 seconds?",
-        "Plot Age vs Fare as a scatter plot on the Titanic dataset, coloured by whether the passenger survived. Describe in words what you see: is there a cluster of high-fare, younger passengers who survived? Which group appears most underrepresented among survivors?",
-        "Create two visualisations of the same data: a pie chart and a bar chart both showing the proportion of passengers in each class. Show them side by side. Which one makes it easier to compare the three proportions accurately? Why?",
-        "You have monthly sales data for 5 product categories over 12 months. Before writing any code, sketch on paper: (a) which chart type best shows how each category changed over time, and (b) which chart type best shows each category's share of total annual sales. Are they the same chart?"
+      "topics": [
+        "Tenure bucketing",
+        "Promotion-gap as a signal",
+        "2-D pivots with conditional formatting",
+        "Interaction effects (tenure × salary)",
+        "Cumulative / survival-curve visuals"
       ],
+      "tasks": [
+        "Bucket YearsAtCompany into ranges",
+        "Pivot tenure → attrition",
+        "Pivot promotion gap → attrition",
+        "Cross-tab tenure × role",
+        "Cross-tab tenure × salary",
+        "Build cumulative-attrition chart"
+      ],
+      "project": "HR Attrition v0.2 — tenure analysis. Specific finding: at what tenure HR should intervene. Cross-tabs identify danger combinations.",
+      "resources": [],
       "exercises": [
-        "Create a figure with 2 rows and 3 columns of subplots, each showing a different chart type on the same dataset.",
-        "Build a bar chart of monthly sales. Add a horizontal line at the average. Annotate the highest bar with its exact value.",
-        "Create a Seaborn heatmap of feature correlations with a custom colour palette and descriptive title.",
-        "Build an interactive Plotly scatter plot where hovering shows the country name and happiness score."
+        "Add interaction with OverTime — does overtime hurt new hires more?",
+        "Compare tenure curves by Department side-by-side",
+        "Find the single ROLE × TENURE combo with the highest attrition"
+      ],
+      "questions": [
+        "What's a survival curve?",
+        "Why does promotion gap predict attrition?",
+        "How would you validate that tenure×salary interaction is real and not noise?"
       ],
       "outputs": [
-        "Visualisation Jupyter Notebook with all 8 chart types demonstrated",
-        "Visual Data Story project: clean notebook ready for GitHub",
-        "All 8 charts exported as .png files at high resolution",
-        "Chart caption document with 1-sentence insight per chart"
+        "Pivots + chart in Excel",
+        "v0.2 tag",
+        "README updated"
       ]
     },
     {
       "number": 9,
-      "title": "Advanced SQL",
-      "phase": "Core Analysis",
-      "commitment_hours": "25--35",
-      "context": "Intermediate and advanced SQL skills separate entry-level analysts from senior ones. This week you move beyond basics to window functions, CTEs, subqueries, and data modelling concepts that appear in every real job.",
-      "topics": [
-        "Subqueries: inline, correlated, in FROM and WHERE clauses",
-        "Common Table Expressions (CTEs) with the WITH clause",
-        "Window functions: ROW_NUMBER, RANK, DENSE_RANK",
-        "Window functions: LAG, LEAD, running totals, moving averages",
-        "CASE WHEN for conditional logic in queries",
-        "String functions: UPPER, LOWER, TRIM, CONCAT, SUBSTRING",
-        "Date functions: DATEPART, DATEDIFF, DATE_TRUNC",
-        "Database normalisation: 1NF, 2NF, 3NF (conceptual understanding)"
-      ],
-      "tasks": [
-        "Set up a PostgreSQL instance (ElephantSQL free tier or local install)",
-        "Complete 10 StrataScratch SQL problems at the Intermediate level",
-        "Rewrite 5 of your Week 2 queries using CTEs instead of subqueries",
-        "Write a running total query and a 7-day moving average query",
-        "Rank customers by total spend using a window function"
-      ],
-      "project": "Sales Analytics with Advanced SQL — Using a provided e-commerce database: (1) Rank products by revenue within each category using DENSE_RANK, (2) Calculate month-over-month revenue growth using LAG, (3) Find the first and last purchase date per customer using window frames, (4) Create a 'customer tier' column using CASE WHEN based on lifetime value, (5) Build a CTE pipeline that cleans then analyses data in stages.",
-      "resources": [
+      "title": "HR Attrition v0.3: Memo + dashboard",
+      "phase": "HR Analytics",
+      "commitment_hours": "10-15",
+      "context": "Time to ship findings. Build the dashboard. Write the memo.",
+      "days": [
         {
-          "label": "SQL Window Functions Full Tutorial — TechTFQ",
-          "url": "https://www.youtube.com/results?search_query=techtfq+sql+window+functions+tutorial+full",
-          "note": "(YouTube, ~40 min — very clear explanations)"
+          "number": 1,
+          "title": "What HR needs",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Audience",
+              "body": "Imagine you're presenting to the HR Director. They want to know:\n  - Who do we lose?\n  - Why?\n  - What 1 thing should we do this quarter?"
+            }
+          ]
         },
         {
-          "label": "SQL CTEs Explained — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+sql+cte+with+clause+tutorial",
-          "note": "(YouTube, ~15 min)"
+          "number": 2,
+          "title": "Build the dashboard sheet",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "4 KPIs + 3 charts",
+              "body": "On a Dashboard sheet:\n  TOP ROW (4 KPI cards):\n    - Total employees\n    - Overall attrition rate\n    - Worst-department attrition rate\n    - Highest-risk tenure bucket\n  MIDDLE:\n    - Bar chart: attrition by department\n    - Line/step chart: attrition by tenure\n  BOTTOM:\n    - Table: top 5 most-at-risk role × tenure combos"
+            }
+          ]
         },
         {
-          "label": "Mode Analytics: Window Functions Tutorial",
-          "url": "https://mode.com/sql-tutorial/sql-window-functions/",
-          "note": "(interactive examples you can run in-browser)"
+          "number": 3,
+          "title": "Filters",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Slicer / dropdown",
+              "body": "Add a Department filter — let the viewer focus on one department and see all KPIs for just that team."
+            }
+          ]
         },
         {
-          "label": "StrataScratch SQL Practice",
-          "url": "https://www.stratascratch.com",
-          "note": "(do the 10 intermediate Data Analyst problems)"
+          "number": 4,
+          "title": "Write the memo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "HR-Memo.docx",
+              "body": "1 page. Structure:\n      # IBM HR Attrition — Memo to HR Director\n      ## Headline\n  Sales Reps in 0-3 years are leaving at 3x company rate.\n      ## Findings\n  Q1. Overall attrition: 16%. Sales: 21%. Research: 14%.\n      Q2. Tenure 0-1 yr has 37% attrition.\n      Q3. Overtime DOUBLES attrition rate from 10% to 30%.\n      ## Recommendations\n  - Year-1 retention program for sales reps\n  - Audit overtime exposure\n  - Promotion review for employees > 4 yrs without promotion\n      ## What's next\n  - 3 bullets"
+            }
+          ]
         },
         {
-          "label": "LeetCode Database Problems",
-          "url": "https://leetcode.com/problemset/database/",
-          "note": "(Easy and Medium level for interview prep)"
+          "number": 5,
+          "title": "Export as PDF",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "PDF",
+              "body": "Export the memo as HR-Memo.pdf."
+            }
+          ]
         },
         {
-          "label": "PostgreSQL Window Functions Docs",
-          "url": "https://www.postgresql.org/docs/current/tutorial-window.html",
-          "note": "(official reference)"
+          "number": 6,
+          "title": "Build a 4-slide exec deck",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Same as Superstore W5",
+              "body": "Headline slide + 3 finding slides. Practice the 5-minute pitch."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Dashboard sheet built\n  ☐ Department filter works\n  ☐ HR-Memo.pdf 1-page\n  ☐ 4-slide deck\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Using LAG(), calculate month-over-month revenue change for each month in the Northwind data. Which single month saw the largest decline in revenue? Write a business sentence explaining what you would investigate first if this were real company data.",
-        "Use DENSE_RANK() to rank products by total revenue within each category. Do roughly 20\\% of products generate 80\\% of revenue in each category? Calculate the actual percentage for the top category and compare to the 80/20 rule.",
-        "Write a CTE that labels each customer as 'High' (top 20\\% by lifetime revenue), 'Mid' (middle 60\\%), or 'Low' (bottom 20\\%). How many customers are in each tier? What is the average order value for High-tier customers vs Low-tier customers?",
-        "Find customers who made a purchase in both the first half and second half of the dataset's date range. Compare their average order value to customers who only bought in one half. Are repeat buyers spending more per order?"
+      "topics": [
+        "HR-targeted dashboard design",
+        "Filter-driven dashboards",
+        "Specific, actionable recommendations",
+        "Re-using the executive deck pattern"
       ],
+      "tasks": [
+        "Build 4-KPI + 3-chart dashboard",
+        "Add department filter",
+        "Write 1-page HR memo",
+        "Export as PDF",
+        "Build 4-slide exec deck"
+      ],
+      "project": "HR Attrition v0.3 — full deliverable set. Dashboard, memo PDF, deck PDF. Specific recommendations to the HR Director.",
+      "resources": [],
       "exercises": [
-        "Write a query returning each order and the running total of revenue, ordered by date.",
-        "Find customers who made their second purchase within 30 days of their first purchase.",
-        "Write a CTE that first cleans data (removes nulls), then analyses (calculates averages), then filters the result.",
-        "Rank employees by salary within each department and return only the top 3 per department."
+        "Add a 'manager' filter (column ManagerID isn't in the dataset but you could simulate it)",
+        "Add overtime hours estimate",
+        "Quantify dollar impact: cost of replacing one employee × attrition count = X"
+      ],
+      "questions": [
+        "What's 'cost of attrition' and how would you estimate it?",
+        "Why is 'overall attrition rate' a weak headline?",
+        "Where could your recommendations backfire?"
       ],
       "outputs": [
-        ".sql file with all 10 StrataScratch solutions",
-        ".sql file with the Sales Analytics project (5 queries)",
-        "Query explanation document: each query annotated with its business purpose",
-        "Updated GitHub repository with a dedicated SQL folder"
+        "Dashboard + memo + deck",
+        "v0.3 tag"
       ]
     },
     {
       "number": 10,
-      "title": "Tableau Fundamentals",
-      "phase": "Professional Tools",
-      "commitment_hours": "25--35",
-      "context": "Tableau is one of the most widely used BI and visualisation tools globally. This week you build your first real Tableau dashboards — connecting to data, creating visualisations, and making them interactive.",
-      "topics": [
-        "Installing Tableau Public (free) and navigating the interface",
-        "Connecting to CSV, Excel, and live database sources",
-        "Dimensions vs measures, discrete vs continuous fields",
-        "Building: bar charts, line charts, maps, scatter plots, treemaps",
-        "Filters: quick filters, filter actions, context filters",
-        "Calculated fields: basic formulas in Tableau",
-        "Dashboard basics: containers, layout, sizing, padding",
-        "Publishing to Tableau Public"
-      ],
-      "tasks": [
-        "Install Tableau Public (free) — link in resources — and open the Sample Superstore dataset",
-        "Complete the official Tableau 'Getting Started' training video (free at tableau.com/learn/training)",
-        "Build 5 individual worksheets: bar chart, line chart, filled map, scatter plot, treemap",
-        "Build a regional sales dashboard with a map, bar chart, and KPI tiles",
-        "Add at least 2 interactive filter actions to your dashboard",
-        "Publish your dashboard to Tableau Public and save the URL"
-      ],
-      "project": "Tableau Sales Dashboard — Using Sample Superstore: build a 3-view dashboard: (1) Sales and Profit by State on a filled map, (2) Monthly Sales Trend by Category as a line chart, (3) Top 10 Customers by profit as a bar chart. Add dropdown filters for Region and Year. Use consistent colours and clear titles. Publish to Tableau Public and share the link.",
-      "resources": [
+      "title": "HR Attrition v1.0: Ship + retro",
+      "phase": "HR Analytics",
+      "commitment_hours": "10-15",
+      "context": "Polish, share, retro. Project 2 done.",
+      "days": [
         {
-          "label": "Tableau Public — Download and Gallery",
-          "url": "https://public.tableau.com/app/discover",
-          "note": "(download Tableau Public here (free), then browse gallery for inspiration)"
+          "number": 1,
+          "title": "Polish list",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "10 rough edges",
+              "body": "List them."
+            }
+          ]
         },
         {
-          "label": "Official Tableau Free Training Videos",
-          "url": "https://www.tableau.com/learn/training",
-          "note": "(start with 'Getting Started' — free and well-made)"
+          "number": 2,
+          "title": "Fix them",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Polish pass",
+              "body": "Top 5."
+            }
+          ]
         },
         {
-          "label": "Tableau for Beginners — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+tableau+tutorial+beginners+2024",
-          "note": "(YouTube, ~45 min)"
+          "number": 3,
+          "title": "Anonymize the dataset",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Public-safe",
+              "body": "Even though IBM HR is public, practice: drop EmployeeID and any near-identifying combos."
+            }
+          ]
         },
         {
-          "label": "Tableau Tutorial — Tableau Tim",
-          "url": "https://www.youtube.com/results?search_query=tableau+tim+tableau+tutorial+beginners+2024+dashboard",
-          "note": "(YouTube, ~30 min — good for dashboard layout)"
+          "number": 4,
+          "title": "Add a SQL version",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "queries.sql",
+              "body": "Re-do the 3 main findings in SQLite Online. Save 5+ queries. Verify results match pivots."
+            }
+          ]
         },
         {
-          "label": "How to Build a Filled Map in Tableau",
-          "url": "https://www.youtube.com/results?search_query=tableau+filled+map+tutorial+beginners",
-          "note": "(YouTube, ~10 min — for the map in your project)"
+          "number": 5,
+          "title": "Demo video",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "90-sec walkthrough of the dashboard",
+              "body": "Upload to YouTube unlisted. Embed in README."
+            }
+          ]
         },
         {
-          "label": "Tableau Calculated Fields — Official Help",
-          "url": "https://help.tableau.com/current/pro/desktop/en-us/calculated_fields_create.htm",
-          "note": "(reference when writing calculated field formulas)"
+          "number": 6,
+          "title": "Get one reader",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Feedback",
+              "body": "Apply 1 piece of feedback."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + retro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Project 2 DONE",
+              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Polished\n  ☐ SQL queries.sql committed\n  ☐ Demo video embedded\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 2 COMPLETE. Next: Project 3 — Marketing Funnel."
+            }
+          ]
         }
       ],
-      "questions": [
-        "Open the Sample Superstore in Tableau and build a filled map of profit by state. Which states are showing a loss (negative profit)? Pick the single worst state and drill down: which sub-categories are driving the loss there? Write a one-paragraph analysis.",
-        "Create a bar chart of sales by sub-category sorted descending. What are the top 3 sub-categories by sales? Now switch the measure to Profit. Do the same 3 sub-categories rank at the top? If not, identify which sub-categories are high-sales but low-profit — what does this suggest about those products?",
-        "Build a line chart of monthly sales across all years with a trend line. Is overall revenue growing, declining, or flat? In which specific year did the most significant growth occur? Hover over specific points — which month is consistently the highest every year?",
-        "Create a dual-axis chart showing both Sales (bars) and the Discount rate (line) across sub-categories. Does higher average discount correspond to higher sales? Does it correspond to higher or lower profit? What does this suggest about the company's discount strategy?"
+      "topics": [
+        "Polishing HR analytics deliverables",
+        "SQL version of analysis",
+        "Demo videos",
+        "Project retros"
       ],
+      "tasks": [
+        "Polish",
+        "Anonymize",
+        "Add SQL",
+        "Record demo video",
+        "Get feedback",
+        "Retro"
+      ],
+      "project": "HR Attrition v1.0 — Project 2 done. Full set of polished deliverables + demo video.",
+      "resources": [],
       "exercises": [
-        "Build a bar chart showing sales by sub-category, sorted descending, with a reference line at the average.",
-        "Create a dual-axis chart showing both Sales (bar) and Profit (line) on the same chart.",
-        "Build a filled map showing profit ratio by state using a diverging colour scale (red = negative, green = positive).",
-        "Create a dashboard where clicking a region on the map filters both the bar chart and line chart simultaneously."
+        "Post a screenshot on LinkedIn with 1 finding",
+        "Anonymize and post as a Kaggle notebook",
+        "Send to one HR pro for industry sanity check"
+      ],
+      "questions": [
+        "What would HR pros add that I missed?",
+        "What sounds wrong about my recommendations?",
+        "Where do I need to be MORE specific?"
       ],
       "outputs": [
-        "Published Tableau dashboard on Tableau Public (URL saved for portfolio)",
-        "Screenshot of dashboard (.png) for portfolio README",
-        "Tableau workbook (.twbx) with at least 5 individual worksheets",
-        "Brief description of your dashboard (for your GitHub README)"
+        "v1.0 tag — PROJECT 2 DONE",
+        "Demo video URL",
+        "RETRO.md"
       ]
     },
     {
       "number": 11,
-      "title": "Advanced Tableau — LOD, Calculations",
-      "phase": "Professional Tools",
-      "commitment_hours": "25--35",
-      "context": "This week you level up in Tableau: mastering LOD expressions, table calculations, and professional dashboard design. These skills appear in Tableau job interviews and separate beginners from intermediate practitioners.",
-      "topics": [
-        "LOD (Level of Detail) expressions: FIXED, INCLUDE, EXCLUDE",
-        "Table calculations: percent of total, running total, rank, index",
-        "Parameters: dynamic user-controlled inputs",
-        "Sets and groups for custom segmentation",
-        "Dashboard design principles: layout, whitespace, typography, colour theory",
-        "Story points for presenting data narratives",
-        "Performance optimisation: data extracts vs live connections"
-      ],
-      "tasks": [
-        "Complete 3 exercises specifically on LOD expressions (see resources for targeted content)",
-        "Build a dashboard with at least 2 different LOD expressions",
-        "Add a Parameter that lets users switch between 'Sales' and 'Profit' on a single chart",
-        "Create a Tableau Story with 3 pages telling a data narrative",
-        "Critique and redesign one of your previous dashboards using proper design principles"
-      ],
-      "project": "Customer Analytics Dashboard — Using a customer/order dataset: (1) Calculate customer-level total spend using a FIXED LOD expression, (2) Segment customers into tiers (Top/Mid/Low) using a calculated field with CASE WHEN, (3) Show year-over-year growth using a table calculation, (4) Add a parameter to switch between revenue metrics, (5) Design a polished 2-view dashboard. Publish to Tableau Public.",
-      "resources": [
+      "title": "Project 3 — Marketing Funnel v0.1",
+      "phase": "Marketing",
+      "commitment_hours": "12-18",
+      "context": "New project. Olist e-commerce dataset from Brazil — 100K orders with full funnel (view → add to cart → order → review). Build a funnel analysis + recommendations for marketing.",
+      "days": [
         {
-          "label": "LOD Expressions Complete Tutorial — Tableau Tim",
-          "url": "https://www.youtube.com/results?search_query=tableau+tim+lod+expressions+fixed+include+exclude+tutorial",
-          "note": "(YouTube, ~35 min — essential for this week)"
+          "number": 1,
+          "title": "What is a funnel?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Marketing funnel analysis (10 min)",
+              "url": "https://www.youtube.com/results?search_query=marketing+funnel+analysis+explained",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Funnel intuition",
+              "body": "Classic funnel: Visitors → Carts → Checkouts → Orders → Repeat customers. At each step, what % usually drops off?"
+            }
+          ]
         },
         {
-          "label": "Table Calculations — Andy Kriebel",
-          "url": "https://www.youtube.com/results?search_query=andy+kriebel+tableau+table+calculations+running+total+percent",
-          "note": "(YouTube, ~20 min)"
+          "number": 2,
+          "title": "Get Olist data",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Olist Brazilian E-Commerce — Kaggle",
+              "url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+              "why": "Click 'Open' → download. ~50MB zip with 9 CSVs."
+            },
+            {
+              "kind": "exercise",
+              "title": "Setup",
+              "body": "Make repo olist-funnel/. Unzip the Kaggle dataset into data/.\nFiles: customers, orders, order_items, order_payments, order_reviews, products, sellers, geolocation, category translation."
+            }
+          ]
         },
         {
-          "label": "Tableau Parameters Tutorial — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+tableau+parameters+dynamic",
-          "note": "(YouTube, ~15 min)"
+          "number": 3,
+          "title": "Understand the schema",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Schema diagram",
+              "body": "On paper or in a draw.io file: how do the 9 tables connect?\n  orders.customer_id → customers.customer_id\n  orders.order_id → order_items.order_id → products.product_id\n  orders.order_id → order_payments\n  orders.order_id → order_reviews\n\nSave the diagram as schema.png."
+            }
+          ]
         },
         {
-          "label": "Tableau LOD Expressions — Official Help Docs",
-          "url": "https://help.tableau.com/current/pro/desktop/en-us/calculations_calculatedfields_lod.htm",
-          "note": "(full reference with examples)"
+          "number": 4,
+          "title": "Funnel step 1: orders by status",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Status pivot",
+              "body": "Load orders.csv. Pivot: status → COUNT.\nOlist statuses: created, approved, invoiced, shipped, delivered, canceled, unavailable.\nWhat's the conversion from 'created' to 'delivered'?"
+            }
+          ]
         },
         {
-          "label": "Makeover Monday Weekly Challenges",
-          "url": "https://www.makeovermonday.co.uk",
-          "note": "(download a dataset each week and redesign a bad chart)"
+          "number": 5,
+          "title": "Time-to-delivery",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Lag metrics",
+              "body": "Compute days from order_purchase_timestamp to order_delivered_customer_date for delivered orders.\nPlot the distribution. Median? 90th percentile? What's the customer-promise gap (estimated vs actual)?"
+            }
+          ]
         },
         {
-          "label": "Tableau Dashboard Design Best Practices",
-          "url": "https://www.youtube.com/results?search_query=tableau+dashboard+design+principles+best+practices",
-          "note": "(YouTube, ~20 min)"
+          "number": 6,
+          "title": "Review scores",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Review by delivery time",
+              "body": "Join orders + reviews. Plot avg review_score by delivery-time bucket. Late = lower review?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.1",
+              "body": "Push the repo. Tag v0.1.\n\nPASS:\n  ☐ Data loaded\n  ☐ Schema diagram\n  ☐ Order status funnel\n  ☐ Delivery time distribution\n  ☐ Review vs delivery analysis\n  ☐ v0.1 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Write a FIXED LOD to calculate each customer's lifetime total spend, independent of any dashboard filters. Sort customers by this value. Who are the top 5 customers? Calculate their combined spend as a percentage of total company revenue.",
-        "Create a table calculation for percentage of total by month. Which month accounts for the highest share of annual sales? Check whether this pattern repeats across multiple years in the data — is there a seasonal pattern?",
-        "Build a parameter that switches between 'Top 5', 'Top 10', and 'Top 20' customers displayed on a chart. When set to Top 10, what percentage of total revenue do those 10 customers represent? Is the business heavily dependent on a small number of customers?",
-        "Compare a regular calculated field for average sales per order vs an EXCLUDE LOD that calculates it excluding the effect of sub-category filters. Apply a sub-category filter and observe where the two calculations diverge. Explain in writing why they differ."
+      "topics": [
+        "Multi-table schema understanding",
+        "Order status funnel",
+        "Time-lag computations (purchase → deliver)",
+        "Joining orders + reviews",
+        "Review-score interpretation"
       ],
+      "tasks": [
+        "Load Olist 9-CSV dataset",
+        "Draw schema diagram",
+        "Compute order-status funnel",
+        "Plot delivery time distribution",
+        "Correlate delivery time with reviews"
+      ],
+      "project": "Olist Funnel v0.1 — initial exploration. Schema diagram + order status funnel + delivery vs review correlation.",
+      "resources": [],
       "exercises": [
-        "Write a FIXED LOD that calculates each customer's first purchase date regardless of other filters applied.",
-        "Create a table calculation showing each month's sales as a percentage of the full-year total.",
-        "Build a parameter that switches the date aggregation between Daily, Weekly, and Monthly views.",
-        "Redesign a cluttered example dashboard applying the principles of clarity and focus: remove at least 3 elements that add noise without adding insight."
+        "Compute revenue by status (lost revenue from cancellations)",
+        "Build a customer-lifetime view: 1 vs repeat purchasers",
+        "Filter to São Paulo state only — is the funnel different there?"
+      ],
+      "questions": [
+        "Why does delivery time predict review score so strongly?",
+        "What's the gap between an 'order' and a 'delivered order'?",
+        "How big is the data here vs Superstore?"
       ],
       "outputs": [
-        "Advanced Tableau workbook with LOD expressions and parameters",
-        "Polished Customer Analytics Dashboard published to Tableau Public",
-        "3-page Tableau Story",
-        "Before/after dashboard redesign (both versions saved in portfolio)"
+        "v0.1 tag",
+        "Schema diagram",
+        "Funnel pivot + delivery analysis"
       ]
     },
     {
       "number": 12,
-      "title": "Power BI Fundamentals",
-      "phase": "Professional Tools",
-      "commitment_hours": "25--35",
-      "context": "Power BI is Microsoft's enterprise BI tool used by millions of organisations globally. This week you learn the fundamentals: loading data, building reports, and understanding the Power BI data model.",
-      "topics": [
-        "Installing Power BI Desktop (free download from Microsoft)",
-        "Power BI architecture: Desktop, Service, Mobile, and Embedded",
-        "Importing data from CSV, Excel, SQL Server, and the web",
-        "Power Query Editor: transformations, applied steps, M language basics",
-        "Building a data model: tables, relationships, cardinality (1:1, 1:M, M:M)",
-        "Star schema in Power BI: fact tables and dimension tables",
-        "Creating visuals: bar, line, donut, card, map, table, and matrix",
-        "Report pages, slicers, bookmarks, and cross-filtering"
-      ],
-      "tasks": [
-        "Download and install Power BI Desktop from Microsoft (free — link in resources)",
-        "Download the AdventureWorks sample dataset and load it into Power BI",
-        "Use Power Query to clean and transform at least one table",
-        "Build a 3-page report: Executive Summary, Sales Detail, and Customer Analysis",
-        "Create slicers for date range and product category",
-        "Publish the report to Power BI Service (free account) and pin visuals to a dashboard"
-      ],
-      "project": "AdventureWorks Sales Report — Build a professional 3-page Power BI report: Page 1 — KPIs (Total Revenue, Orders, Avg Order Value as card visuals) with a trend line. Page 2 — Product Analysis: revenue by category with drill-through to subcategory. Page 3 — Customer Geography: map of sales by region with customer count. Add slicers for year and region on all pages.",
-      "resources": [
+      "title": "Olist Funnel v0.2: Cohorts + repeat purchase",
+      "phase": "Marketing",
+      "commitment_hours": "12-18",
+      "context": "Most of Olist's customers buy ONCE. This week we measure cohort retention — and find the % who come back.",
+      "days": [
         {
-          "label": "Power BI Desktop — Free Download from Microsoft",
-          "url": "https://www.microsoft.com/en-us/download/details.aspx?id=58494",
-          "note": "(download and install this first)"
+          "number": 1,
+          "title": "What's a cohort?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Cohort analysis explained (10 min)",
+              "url": "https://www.youtube.com/results?search_query=cohort+analysis+tutorial+beginner",
+              "duration_min": 10,
+              "creator": "various",
+              "why": ""
+            },
+            {
+              "kind": "reflection",
+              "title": "Question",
+              "body": "If Olist gets 1000 first-time customers in January, how many come back in February? March? August?"
+            }
+          ]
         },
         {
-          "label": "How to Get the AdventureWorks Dataset for Power BI",
-          "url": "https://www.youtube.com/results?search_query=how+to+download+adventureworks+power+bi+pbix+sample",
-          "note": "(YouTube, ~5 min — shows exactly where to download it)"
+          "number": 2,
+          "title": "First-purchase month per customer",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Identify cohort",
+              "body": "Build a derived table: for each customer, their first order date.\nThen for each customer, label every order with the customer's COHORT (first-purchase year-month).\n\nIn Excel: add Helper column 'is_first_order' = whether this order is the customer's earliest. Filter to is_first_order = true → that's your cohort table."
+            }
+          ]
         },
         {
-          "label": "Power BI for Beginners — Guy in a Cube",
-          "url": "https://www.youtube.com/results?search_query=guy+in+a+cube+power+bi+beginners+tutorial+2024",
-          "note": "(YouTube, ~45 min — best free Power BI tutorial)"
+          "number": 3,
+          "title": "Cohort retention matrix",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Cohort × month matrix",
+              "body": "Pivot: Rows = cohort year-month, Columns = (order month - cohort month) in months, Values = COUNT distinct customer_id.\nColor-code with conditional formatting (green = high retention, white = low)."
+            }
+          ]
         },
         {
-          "label": "Power Query Tutorial — Enterprise DNA",
-          "url": "https://www.youtube.com/results?search_query=enterprise+dna+power+query+tutorial+beginners+transformations",
-          "note": "(YouTube, ~30 min)"
+          "number": 4,
+          "title": "Repeat-purchase rate",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Single metric",
+              "body": "Across ALL cohorts: what % of customers bought again at any later point?\nSpoiler: Olist's repeat rate is famously low (~3%). Confirm with your data."
+            }
+          ]
         },
         {
-          "label": "Star Schema in Power BI — SQLBI",
-          "url": "https://www.youtube.com/results?search_query=sqlbi+star+schema+power+bi+data+model+explained",
-          "note": "(YouTube, ~20 min — watch before building your model)"
+          "number": 5,
+          "title": "Investigate: who buys again?",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Compare repeat vs one-time",
+              "body": "Split customers into 2 groups: repeat buyers vs one-time. Compare:\n  - average order value\n  - average review score on first order\n  - average delivery time on first order\n  - product category on first order\nAnything stand out?"
+            }
+          ]
         },
         {
-          "label": "Microsoft Official Power BI Learning Path",
-          "url": "https://learn.microsoft.com/en-us/training/powerplatform/power-bi",
-          "note": "(free, structured, self-paced)"
+          "number": 6,
+          "title": "Average days to second purchase",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Second-purchase lag",
+              "body": "For repeat customers: days between 1st and 2nd order. Plot the distribution.\nMost repeats happen within X days — what's X?"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Cohort retention matrix\n  ☐ Overall repeat rate documented\n  ☐ Repeat-vs-onetime comparison\n  ☐ Days-to-second-purchase distribution\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Load the AdventureWorks data into Power BI and create a Card visual for Total Revenue. Now segment by product category — which category generates the most revenue? Which generates the most orders by count? Are these the same category? What does the difference tell you?",
-        "Use Power Query to merge the Sales and Products tables. After the merge, add a calculated column for Revenue per Unit Sold. Which product has the highest revenue per unit? Does this product also have the highest total revenue? Explain why or why not.",
-        "Create a Matrix visual of revenue by Year (rows) and Product Category (columns). Which year-category combination had the highest revenue? Which had the highest percentage growth from the previous year? Write the numbers explicitly.",
-        "Add a slicer to filter by a single region. When you filter to just one region, which product category's share of revenue changes most dramatically compared to the overall unfiltered picture? What does this reveal about regional purchasing preferences?"
+      "topics": [
+        "Cohort definitions",
+        "Cohort retention matrices",
+        "Repeat-purchase rate",
+        "Behavioral comparison (repeat vs one-time)",
+        "Time-to-repeat distributions"
       ],
+      "tasks": [
+        "Compute first purchase per customer",
+        "Build cohort × month retention matrix",
+        "Compute overall repeat rate",
+        "Compare repeat vs one-time customer behaviors",
+        "Plot days-to-second-purchase"
+      ],
+      "project": "Olist Funnel v0.2 — cohort analysis. Specific finding: Olist's repeat rate + what predicts second purchases.",
+      "resources": [],
       "exercises": [
-        "In Power Query, split a 'Full Name' column into separate 'First Name' and 'Last Name' columns.",
-        "Create a relationship between a Sales table and a Products table, then build a visual using columns from both.",
-        "Create a Card visual showing Total Revenue and format it with a custom title and border.",
-        "Add a slicer, then use bookmarks to create a 'Reset Filters' button."
+        "Cohort by state instead of month",
+        "Cohort by product category of first purchase",
+        "Look at 3rd, 4th, 5th purchase patterns"
+      ],
+      "questions": [
+        "Why is repeat rate the metric e-commerce optimizes for?",
+        "What's the survivorship bias in cohort matrices?",
+        "How would a recommendation engine change repeat rate?"
       ],
       "outputs": [
-        "Power BI .pbix file with all three report pages",
-        "Published report link on Power BI Service",
-        "Data model screenshot showing all table relationships",
-        "Power Query Applied Steps screenshot showing your transformation pipeline"
+        "Cohort matrix",
+        "Repeat-rate KPI",
+        "v0.2 tag"
       ]
     },
     {
       "number": 13,
-      "title": "Power BI Advanced — DAX",
-      "phase": "Professional Tools",
-      "commitment_hours": "25--35",
-      "context": "DAX (Data Analysis Expressions) is what makes Power BI powerful. This week you master measures, calculated columns, and time intelligence — the skills that make a Power BI developer stand out in any job.",
-      "topics": [
-        "DAX fundamentals: syntax, functions, and evaluation context",
-        "Row context vs filter context (the most critical DAX concept)",
-        "Measures vs calculated columns: rules and best practices",
-        "Core DAX functions: SUM, AVERAGE, COUNT, CALCULATE, FILTER",
-        "CALCULATE: how it modifies the filter context",
-        "Time intelligence: DATEYTD, SAMEPERIODLASTYEAR, DATESYTD, DATEADD",
-        "Variables in DAX: VAR and RETURN",
-        "SWITCH, IF, DIVIDE, and ISINSCOPE functions"
-      ],
-      "tasks": [
-        "Read the 'Understanding CALCULATE in DAX' article on SQLBI.com before writing any code",
-        "Write 10 original DAX measures for the AdventureWorks report",
-        "Implement year-over-year comparison using SAMEPERIODLASTYEAR",
-        "Build a YTD sales measure and verify it resets every January",
-        "Organise all measures in a dedicated measure table (Power BI best practice)"
-      ],
-      "project": "Executive KPI Dashboard — Build an executive-level Power BI dashboard with: (1) Total Revenue for the current period, (2) Revenue vs same period last year (percentage change), (3) Year-to-date revenue, (4) Rolling 3-month average, (5) Revenue by category with target vs actual comparison. All values must be driven by DAX measures, not direct column references.",
-      "resources": [
+      "title": "Olist Funnel v0.3: Memo + dashboard",
+      "phase": "Marketing",
+      "commitment_hours": "10-15",
+      "context": "Build the deliverables for marketing.",
+      "days": [
         {
-          "label": "SQLBI Articles — Understanding CALCULATE in DAX",
-          "url": "https://www.sqlbi.com/articles/",
-          "note": "(read the CALCULATE article before writing any DAX this week)"
+          "number": 1,
+          "title": "Audience",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Marketing director needs",
+              "body": "Who reads this? A marketing director who needs to:\n  - Know the funnel drop-offs\n  - Know the repeat rate\n  - Know what 1 action could grow repeat rate"
+            }
+          ]
         },
         {
-          "label": "DAX for Beginners: CALCULATE, FILTER, ALL — SQLBI",
-          "url": "https://www.youtube.com/results?search_query=sqlbi+dax+beginners+calculate+filter+all+explained",
-          "note": "(YouTube, ~30 min)"
+          "number": 2,
+          "title": "Dashboard layout",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "4 KPI + 3 charts",
+              "body": "Dashboard:\n  TOP: total customers / total orders / repeat rate / avg review score\n  MIDDLE: funnel chart (created → delivered with drop-offs) + cohort retention heatmap\n  BOTTOM: top 5 categories driving repeat purchases"
+            }
+          ]
         },
         {
-          "label": "Row Context vs Filter Context — SQLBI",
-          "url": "https://www.youtube.com/results?search_query=sqlbi+filter+context+row+context+dax+explained",
-          "note": "(YouTube, ~25 min — the most important DAX concept)"
+          "number": 3,
+          "title": "Funnel chart",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Build it",
+              "body": "Excel: insert chart → Funnel (Excel 365 / Sheets has it built-in).\nCategories: Created, Approved, Shipped, Delivered, 2nd Purchase.\nEach: count.\nDrop-off % between each stage shown."
+            }
+          ]
         },
         {
-          "label": "Time Intelligence in DAX — Guy in a Cube",
-          "url": "https://www.youtube.com/results?search_query=guy+in+a+cube+time+intelligence+dax+power+bi+tutorial",
-          "note": "(YouTube, ~30 min)"
+          "number": 4,
+          "title": "Memo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "MEMO.docx",
+              "body": "Title: 'Olist e-commerce funnel analysis'\nHeadline finding (one sentence)\n## Funnel\n  - X% drop from order to delivery (and Y% of those due to delivery time)\n## Repeat purchases\n  - 3% repeat rate. 80% of repeats happen within 30 days.\n## Recommendations\n  - 1. Improve delivery time on top 5 highest-revenue categories\n  - 2. Email campaign at day 14 post-purchase\n  - 3. Loyalty discount on 2nd purchase\nExport PDF."
+            }
+          ]
         },
         {
-          "label": "DAX.guide — Complete DAX Function Reference",
-          "url": "https://dax.guide",
-          "note": "(look up any DAX function with examples)"
+          "number": 5,
+          "title": "Exec deck",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "5 slides",
+              "body": "Same shape as previous decks."
+            }
+          ]
         },
         {
-          "label": "Organising DAX Measures in Power BI — Best Practices",
-          "url": "https://www.youtube.com/results?search_query=power+bi+measure+table+best+practices+organisation",
-          "note": "(YouTube, ~10 min)"
+          "number": 6,
+          "title": "Practice pitch",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "5-minute pitch",
+              "body": "Record yourself."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Dashboard built\n  ☐ Funnel chart works\n  ☐ Memo PDF\n  ☐ 5-slide deck PDF\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Write a YTD Sales measure. Pick any month in your AdventureWorks data and manually verify: does your measure's value exactly match the sum of all sales from January 1st to that month's last day? Show the verification calculation explicitly.",
-        "Your SAMEPERIODLASTYEAR measure returns BLANK for January of the earliest year in the dataset. Explain precisely why this happens. What would you change in the measure if a stakeholder wanted to see 0\\% growth instead of a blank?",
-        "Write a CALCULATE measure for Technology category sales. Now apply a product category slicer to a different category. Does your measure still show Technology sales, or does it respond to the slicer? Explain in one paragraph why it behaves the way it does.",
-        "Use DIVIDE() instead of the / operator in a profit margin measure. Intentionally set up a product with zero cost in your test data and verify that DIVIDE returns 0 or blank instead of an error. Why does this matter when a dashboard is used by hundreds of people daily?"
+      "topics": [
+        "Marketing-targeted dashboards",
+        "Excel funnel charts",
+        "Cohort retention heatmaps",
+        "Marketing memos",
+        "5-slide decks"
       ],
+      "tasks": [
+        "Build 4 KPI + 3 chart dashboard",
+        "Build funnel chart with drop-offs",
+        "Write 1-page memo",
+        "Build 5-slide exec deck",
+        "Practice 5-minute pitch"
+      ],
+      "project": "Olist Funnel v0.3 — full marketing deliverable set. Funnel chart, retention heatmap, memo, deck.",
+      "resources": [],
       "exercises": [
-        "Write a DAX measure that calculates profit margin percentage using DIVIDE.",
-        "Write a CALCULATE measure showing revenue for the 'Technology' category only, regardless of current slicers.",
-        "Write a time intelligence measure for YTD sales that resets each January 1st.",
-        "Use SWITCH to create a measure returning different KPIs based on a slicer selection."
+        "Add a 'sellers' perspective dashboard (which sellers have best/worst funnel)",
+        "Add a 'by-state' dashboard view",
+        "Estimate $ value of a 1pp lift in repeat rate"
+      ],
+      "questions": [
+        "Why does funnel analysis lie if you ignore time?",
+        "What's a 'last-touch' attribution vs cohort retention?",
+        "How would a real marketing director push back on your memo?"
       ],
       "outputs": [
-        "Updated .pbix file with 10+ DAX measures in an organised measure table",
-        "Executive KPI Dashboard published to Power BI Service",
-        "DAX formula reference sheet (written by you, not copied from the internet)",
-        "Annotated screenshot of your most complex DAX measure with line-by-line explanation"
+        "Dashboard + memo + deck",
+        "v0.3 tag"
       ]
     },
     {
       "number": 14,
-      "title": "Git, GitHub",
-      "phase": "Career",
-      "commitment_hours": "25--35",
-      "context": "Every professional analyst needs version control and a GitHub portfolio. This week you set up your GitHub profile, learn Git fundamentals, and upload all your projects in a professional, documented way.",
-      "topics": [
-        "What is version control and why does it matter for analysts?",
-        "Git fundamentals: init, add, commit, push, pull, branch, merge",
-        "GitHub: repositories, README files, Issues, and Pull Requests",
-        "Writing professional README files with Markdown",
-        "Organising a data analyst portfolio on GitHub",
-        "Jupyter Notebook best practices for public sharing",
-        "AI-assisted workflow: using Claude or ChatGPT for code review and documentation"
-      ],
-      "tasks": [
-        "Create a GitHub account and set up your profile (photo, bio, pinned repositories)",
-        "Install Git and connect it to GitHub via SSH or HTTPS",
-        "Create a repository for each project from Weeks 1 through 13 and push your work",
-        "Write a professional README for each repository",
-        "Create a main portfolio repository with a landing README linking all other projects"
-      ],
-      "project": "GitHub Portfolio Setup — Create at minimum 6 repositories (Excel, SQL, Python/EDA, Visualisation, Tableau, Power BI), each with a proper README containing: project description, tools used, dataset source, key findings, and a screenshot. Your profile README should introduce you as an analyst and link to all projects.",
-      "resources": [
+      "title": "Olist Funnel v1.0: Ship + retro",
+      "phase": "Marketing",
+      "commitment_hours": "10-15",
+      "context": "Polish, share, retro. Project 3 done.",
+      "days": [
         {
-          "label": "Create a GitHub Account and First Repository — beginners",
-          "url": "https://www.youtube.com/results?search_query=how+to+create+github+account+and+first+repository+beginners",
-          "note": "(YouTube, ~10 min — start here)"
+          "number": 1,
+          "title": "Polish list",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "10 rough edges",
+              "body": "List them."
+            }
+          ]
         },
         {
-          "label": "Git and GitHub Crash Course — freeCodeCamp",
-          "url": "https://www.youtube.com/results?search_query=freecodecamp+git+github+beginners+crash+course",
-          "note": "(YouTube, ~1 hr — covers everything you need)"
+          "number": 2,
+          "title": "Fix top 5",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Polish",
+              "body": "Fix."
+            }
+          ]
         },
         {
-          "label": "How to Write a Good GitHub README — Forrest Knight",
-          "url": "https://www.youtube.com/results?search_query=forrest+knight+github+readme+how+to+write+good",
-          "note": "(YouTube, ~15 min)"
+          "number": 3,
+          "title": "SQL version",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "queries.sql",
+              "body": "Re-do all major queries in SQLite Online. 10+ queries with comments."
+            }
+          ]
         },
         {
-          "label": "Best README Template on GitHub",
-          "url": "https://github.com/othneildrew/Best-README-Template",
-          "note": "(use this as a starting point for all your project READMEs)"
+          "number": 4,
+          "title": "Demo video",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "90-sec walkthrough",
+              "body": "Upload to YouTube unlisted."
+            }
+          ]
         },
         {
-          "label": "GitHub Official Documentation — Getting Started",
-          "url": "https://docs.github.com/en/get-started",
-          "note": "(reference for any Git/GitHub question)"
+          "number": 5,
+          "title": "Polish memo + deck",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Final polish",
+              "body": "Make sure every chart has axis labels, every recommendation has a number."
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(paste your README drafts here and ask for feedback)"
+          "number": 6,
+          "title": "Get one reader",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Feedback",
+              "body": "Apply 1 piece of feedback."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + retro",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Project 3 DONE",
+              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Polished\n  ☐ queries.sql committed\n  ☐ Demo video\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 3 COMPLETE. Next: capstone — multi-source executive dashboard."
+            }
+          ]
         }
       ],
-      "questions": [
-        "You have now completed 13 weeks of work. Open your very first notebook from Week 1 and your most recent one side by side. List 3 specific technical practices you are now doing better — not 'I know more', but concrete things like variable naming, commenting, or code structure.",
-        "Imagine a recruiter has 30 seconds to look at your GitHub profile. What is the first thing they will see? Is it a clear signal of your skills as a data analyst? What single change to your profile would have the highest impact on a first impression?",
-        "You accidentally committed a CSV file with 100,000 rows and your repository is now 150MB. GitHub has a 100MB limit. What are your options? Research 'BFG Repo Cleaner' or 'git filter-branch' and write a 3-step action plan.",
-        "A peer disagrees with one of your analysis conclusions. How would you use a GitHub Issue to formally record the disagreement, your evidence, their counter-argument, and the final resolution? Write out what that Issue would say."
+      "topics": [
+        "Polishing marketing analytics",
+        "SQL version of analysis",
+        "Demo videos",
+        "Project retros"
       ],
+      "tasks": [
+        "Polish",
+        "Add SQL",
+        "Record demo",
+        "Get feedback",
+        "Retro"
+      ],
+      "project": "Olist Funnel v1.0 — Project 3 done. Full polished deliverables + demo video + SQL version.",
+      "resources": [],
       "exercises": [
-        "Create a new branch called 'feature/add-readme', add a README, merge it to main via a Pull Request.",
-        "Accidentally delete a file from a repo and use git to restore it from the previous commit.",
-        "Write a README for your EDA project. Ask Claude to review it. Implement suggestions you agree with and explain which you rejected.",
-        "Find a public data analysis repo on GitHub. Fork it, make one improvement, and submit a Pull Request."
+        "Post the funnel chart on LinkedIn",
+        "Submit to /r/marketing for feedback",
+        "Make a Kaggle notebook version"
+      ],
+      "questions": [
+        "What feedback hurt most?",
+        "What would you do differently?",
+        "Where do real e-commerce funnels differ from this one?"
       ],
       "outputs": [
-        "Live GitHub profile with 6+ repositories and a profile README",
-        "Each repository has a properly structured README with screenshot",
-        "Portfolio landing page README linking all projects",
-        "All code files committed with meaningful commit messages"
+        "v1.0 tag — PROJECT 3 DONE",
+        "Demo video URL",
+        "RETRO.md"
       ]
     },
     {
       "number": 15,
-      "title": "Real-World Analysis Project",
-      "phase": "Career",
-      "commitment_hours": "25--35",
-      "context": "This week integrates everything into one end-to-end analysis project. You work through the full analyst workflow: problem framing, data acquisition, cleaning, analysis, visualisation, and communication.",
-      "topics": [
-        "Framing an analytical problem: What question are we answering?",
-        "Data acquisition from public APIs and open data portals",
-        "End-to-end analysis workflow management",
-        "Writing an executive analysis report",
-        "Presenting findings to a non-technical audience",
-        "Peer review practices for data work"
-      ],
-      "tasks": [
-        "Choose a real-world dataset from the options below",
-        "Define 5 analytical questions BEFORE writing any code",
-        "Complete the full analysis cycle: load, clean, explore, visualise, insight",
-        "Build a Power BI OR Tableau dashboard as your main deliverable",
-        "Write a 2-page executive report (not a technical report)",
-        "Present your findings in a 10-minute verbal walkthrough to your mentor"
-      ],
-      "project": "Choose ONE topic: (A) COVID-19 vaccination rollout rates by country and income group; (B) Global CO2 emissions by country and sector over time; (C) West African economic indicators (GDP, unemployment, trade); (D) Your own chosen dataset with mentor approval. Deliverables: cleaned dataset, analysis notebook, dashboard, and a 2-page executive report.",
-      "resources": [
+      "title": "Capstone v0.1: Multi-source dashboard scope",
+      "phase": "Capstone",
+      "commitment_hours": "10-15",
+      "context": "Final project. Combine 3 different real data sources into one executive dashboard for a fictional company. Project 4 spans W15-W18.",
+      "days": [
         {
-          "label": "Our World in Data — Free Datasets on Global Topics",
-          "url": "https://ourworldindata.org/data",
-          "note": "(high-quality data on health, economics, CO2, and more)"
+          "number": 1,
+          "title": "Capstone brief",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Pick the scenario",
+              "body": "Pick ONE fictional company:\n  A. ForgeRetail — combine sales (Superstore-like) + customer (HR-like demographics) + reviews (Olist-like)\n  B. ForgeMedia — combine subscribers + content engagement + ad revenue\n  C. ForgeHealth — combine patient visits + outcomes + costs\n\nA is recommended — you already have similar data on disk. B and C need synthetic data."
+            }
+          ]
         },
         {
-          "label": "World Bank Open Data",
-          "url": "https://data.worldbank.org",
-          "note": "(economic indicators for all countries including West Africa)"
+          "number": 2,
+          "title": "Write the SPEC",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "SPEC.md",
+              "body": "Make repo forge-da-capstone/. SPEC.md:\n      # Capstone\n      ## Company\n  ForgeRetail (fictional)\n      ## Audience\n  CEO + 4 VPs (Sales, Ops, Marketing, Finance)\n      ## Dashboard pages\n      1. Executive overview (1 page)\n      2. Sales detail\n      3. Customer / segment\n      4. Operations\n      ## Data sources\n  - sales.csv (Superstore-style)\n  - customers.csv (HR-style)\n  - reviews.csv (Olist-style)\n      ## Definition of done\n  4-page dashboard + 1-page memo for CEO + 1 deck for board"
+            }
+          ]
         },
         {
-          "label": "Kaggle Datasets",
-          "url": "https://www.kaggle.com/datasets",
-          "note": "(search for your topic — filter by file size and votes)"
+          "number": 3,
+          "title": "Build the synthetic dataset",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Combine + augment",
+              "body": "Combine Sample Superstore + Olist + IBM HR slices:\n  - Take 1000 Superstore orders as 'sales'\n  - Take 200 Olist reviews as 'reviews', randomly link to sales\n  - Take 100 IBM employees as 'staff', randomly link some sales to a salesperson\nSave 3 CSVs in data/."
+            }
+          ]
         },
         {
-          "label": "African Development Bank Data Portal",
-          "url": "https://data.afdb.org",
-          "note": "(economic data specifically for Africa)"
+          "number": 4,
+          "title": "Schema diagram",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "schema.png",
+              "body": "Draw how sales / customers / reviews / staff connect. Save as schema.png."
+            }
+          ]
         },
         {
-          "label": "Presenting Data Analysis to Non-Technical Stakeholders",
-          "url": "https://www.youtube.com/results?search_query=how+to+present+data+analysis+non+technical+stakeholders",
-          "note": "(YouTube, ~20 min — watch before writing your executive report)"
+          "number": 5,
+          "title": "Build the data model in Excel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Data Model relationships",
+              "body": "Open Excel. Power Pivot / Data Model. Add 3 tables. Define relationships (sales.customer_id → customers.id, etc).\nOR use Google Sheets + VLOOKUP across sheets. Power Pivot is preferred."
+            }
+          ]
         },
         {
-          "label": "How to Write an Executive Summary for Data Analysis",
-          "url": "https://www.youtube.com/results?search_query=executive+summary+data+analysis+how+to+write",
-          "note": "(YouTube, ~12 min)"
+          "number": 6,
+          "title": "First KPIs",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "3 KPIs",
+              "body": "Using the data model:\n  - Total revenue\n  - Avg review score\n  - % sales tied to a staff member\nThese are the foundation."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.1",
+              "body": "      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ SPEC.md\n  ☐ 3 CSVs in data/\n  ☐ Schema diagram\n  ☐ Data model with relationships\n  ☐ First 3 KPIs\n  ☐ v0.1 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "After completing the analysis: one of your original 5 questions turned out to be unanswerable with the available data. Which one, and why? What alternative question did you substitute, and how did you decide it was equivalent?",
-        "What was the single most surprising finding in your analysis — a result that contradicted your initial hypothesis? What was your first guess before seeing the data, and what does the gap between your guess and reality tell you about analytical assumptions?",
-        "If you had to present one number to a government minister or CEO that captures the most important insight from your analysis, what is it? Write the sentence: 'The most important finding is [X], which means [organisation] should consider [action].'",
-        "A peer says: 'That is just correlation, not causation.' Pick your most important finding and identify one plausible alternative explanation that your current data cannot rule out. What additional data would you need to distinguish between the two explanations?"
+      "topics": [
+        "Capstone scoping",
+        "Multi-source data merging",
+        "Star-schema design",
+        "Excel Power Pivot",
+        "Cross-table KPIs"
       ],
+      "tasks": [
+        "Pick scenario + write SPEC.md",
+        "Build synthetic 3-source dataset",
+        "Draw schema diagram",
+        "Build data model with relationships",
+        "Compute first 3 cross-source KPIs"
+      ],
+      "project": "Capstone v0.1 — scoped + foundations built. 3 data sources merged into a data model. First KPIs computed across sources.",
+      "resources": [],
       "exercises": [
-        "Write your executive report without any charts. Force yourself to communicate findings in words only.",
-        "Ask a classmate to review your dashboard and list every piece of feedback they give.",
-        "Reduce your dashboard to only 3 visuals. Which 3 do you keep and why?",
-        "Present your findings to someone with no data background. What questions do they ask?"
+        "Add a 4th data source (e.g. weather)",
+        "Try moving from Excel to Power BI for this",
+        "Practice the 'audience' speech — who reads each page?"
+      ],
+      "questions": [
+        "What's the hardest part of merging 3 sources?",
+        "Why is a SPEC critical for multi-page dashboards?",
+        "What's a data model vs a flat table?"
       ],
       "outputs": [
-        "Cleaned dataset (.csv)",
-        "Analysis Jupyter Notebook (.ipynb) — fully reproducible",
-        "Dashboard (Power BI .pbix or Tableau Public link)",
-        "2-page Executive Report (.docx or .pdf)",
-        "GitHub repository with all files and a thorough README"
+        "v0.1 tag",
+        "SPEC.md + schema.png",
+        "3 CSVs + data model"
       ]
     },
     {
       "number": 16,
-      "title": "Portfolio Refinement",
-      "phase": "Career",
-      "commitment_hours": "25--35",
-      "context": "This week you strengthen your portfolio and learn to work effectively with AI tools — using Claude and ChatGPT to accelerate work as a professional analyst without compromising genuine understanding.",
-      "topics": [
-        "Portfolio curation: which projects to showcase and how",
-        "Writing analytical case studies for each project",
-        "AI-assisted data analysis: when and how to use AI responsibly",
-        "Prompt engineering for data analysis tasks",
-        "Using Claude for code review, documentation, and report writing",
-        "Using GitHub Copilot for code completion",
-        "Ethics of AI in data analysis: transparency, verification, and bias"
-      ],
-      "tasks": [
-        "Review all GitHub repositories and improve any READMEs that are thin or unclear",
-        "Add a 'Key Findings' section to every analysis project",
-        "Use Claude to review one of your analysis notebooks and act on the feedback",
-        "Write a 300-word case study for each of your 3 strongest projects",
-        "Record a 5-minute video walkthrough of your best project (use Loom or any screen recorder)"
-      ],
-      "project": "Portfolio Website (Recommended) — Create a simple one-page portfolio site using GitHub Pages. List your 3 best projects with screenshots, a brief description, and links to GitHub. Include a short bio and your LinkedIn or contact information. Use Claude to help draft the copy, but personalise every sentence yourself before publishing.",
-      "resources": [
+      "title": "Capstone v0.2: Pages 1 + 2",
+      "phase": "Capstone",
+      "commitment_hours": "15-20",
+      "context": "Build the executive overview page and the sales detail page.",
+      "days": [
         {
-          "label": "Build a GitHub Pages Portfolio — Kevin Powell",
-          "url": "https://www.youtube.com/results?search_query=kevin+powell+github+pages+portfolio+website+beginners",
-          "note": "(YouTube, ~30 min)"
+          "number": 1,
+          "title": "Page 1 layout",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reflection",
+              "title": "Executive Overview",
+              "body": "What's on the CEO's single-page view?\n  - 6 KPIs (revenue, growth, customer count, avg review, NPS, ops efficiency)\n  - 1 trend chart\n  - 1 segment-of-business breakdown chart"
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(paste your notebook or README for detailed review and improvement)"
+          "number": 2,
+          "title": "Build the KPI band",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "6 cards in a row",
+              "body": "Excel: insert 6 large text boxes. Each linked to a SUMIFS/COUNTIFS that computes the KPI from the data model.\nStyle: big number top, label below, micro-trend arrow if you can."
+            }
+          ]
         },
         {
-          "label": "GitHub Copilot",
-          "url": "https://github.com/features/copilot",
-          "note": "(AI code completion — try the free trial for Python and SQL)"
+          "number": 3,
+          "title": "Trend chart",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Monthly revenue",
+              "body": "Pivot: rows = month, value = SUM revenue. Line chart on the dashboard. Compare vs LY."
+            }
+          ]
         },
         {
-          "label": "Using AI for Data Analysis — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+chatgpt+ai+data+analysis+workflow",
-          "note": "(YouTube, ~20 min)"
+          "number": 4,
+          "title": "Segment breakdown",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Donut or bar",
+              "body": "Revenue by Segment (Consumer / Corporate / Home Office). Compact chart at bottom right of page."
+            }
+          ]
         },
         {
-          "label": "Learn Prompting — Free Prompt Engineering Guide",
-          "url": "https://learnprompting.org/docs/intro",
-          "note": "(practical guide to writing better AI prompts for data tasks)"
+          "number": 5,
+          "title": "Page 2: Sales Detail",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Sales page layout",
+              "body": "New sheet 'Sales'. 3-4 KPIs (avg order value, top product, top region). 2 charts (monthly trend by segment, top 10 sub-categories by margin). 1 table (top 20 orders by profit)."
+            }
+          ]
         },
         {
-          "label": "How to Record Your Screen with Loom (free)",
-          "url": "https://www.youtube.com/results?search_query=how+to+record+screen+loom+tutorial+beginners",
-          "note": "(YouTube, ~5 min — for your portfolio walkthrough video)"
+          "number": 6,
+          "title": "Filter linking",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Cross-page filters",
+              "body": "Make a 'Region' filter on Page 1 that ALSO affects Page 2. Use slicers connected to the data model."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.2",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.2",
+              "body": "      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Page 1 with 6 KPIs + trend + segment chart\n  ☐ Page 2 with 3-4 KPIs + 2 charts + 1 table\n  ☐ Cross-page filter works\n  ☐ v0.2 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Open your best project README on GitHub and read it as a complete stranger. In 30 seconds, can you answer: what problem was solved, what tools were used, and what was found? If any of those three are unclear, rewrite until they are. What specifically did you change?",
-        "Paste one of your analysis notebooks into Claude and ask it to identify 3 specific weaknesses. Read its response carefully. Which criticisms do you genuinely agree with? Which do you think are wrong or not applicable? Justify your position on each one.",
-        "Ask Claude to write a SQL query or Python function for a task you already know how to do. Compare its version to yours line by line. Where are the differences? Did it do something better than you, or did you find a bug or unnecessary complexity in its code?",
-        "Write a personal AI policy for your analyst work: a short paragraph describing exactly when you will use AI assistance and when you will not. Be specific — not 'when appropriate', but specific scenarios. What is the one thing you will never ask AI to do for you?"
+      "topics": [
+        "Multi-page Excel dashboards",
+        "KPI band design",
+        "Cross-sheet data flow",
+        "Slicer-based filtering",
+        "Year-over-year comparisons"
       ],
+      "tasks": [
+        "Build Page 1 (Executive Overview)",
+        "Build Page 2 (Sales Detail)",
+        "Link a Region filter across both pages"
+      ],
+      "project": "Capstone v0.2 — Pages 1 and 2 built. Cross-page filtering works.",
+      "resources": [],
       "exercises": [
-        "Paste your best analysis notebook into Claude and ask it to identify 3 weaknesses. Evaluate each critique honestly.",
-        "Write a SQL query yourself first, then ask Claude to improve it. Compare the two versions and explain differences.",
-        "Ask Claude to generate a data cleaning function. Test it on 3 edge cases and document where it fails.",
-        "Write your project description yourself first, then ask Claude for improvements. Keep only the changes that are genuinely better."
+        "Add micro-trend arrows to each KPI",
+        "Add conditional formatting where green/red flags an out-of-target KPI",
+        "Add a comment column to the top-orders table"
+      ],
+      "questions": [
+        "Why do executives skim Page 1 and rarely click further?",
+        "What's the difference between a slicer and a filter?",
+        "How does a data model make multi-page filtering easier?"
       ],
       "outputs": [
-        "Polished GitHub portfolio with 6+ repositories and project screenshots",
-        "3 written case studies (300 words each)",
-        "5-minute portfolio walkthrough video",
-        "Written list of AI tools you use and your personal responsible usage policy"
+        "Two pages working",
+        "Cross-page filter",
+        "v0.2 tag"
       ]
     },
     {
       "number": 17,
-      "title": "Interview Preparation",
-      "phase": "Career",
-      "commitment_hours": "25--35",
-      "context": "This week prepares you for data analyst interviews: SQL technical rounds, take-home analysis tests, and behavioural questions. You practise under realistic conditions so the real interview feels familiar.",
-      "topics": [
-        "Data analyst interview process: what to expect at each stage",
-        "SQL technical interview: the most common question patterns",
-        "Python/Pandas interview questions",
-        "Take-home analysis case studies: structure and time strategy",
-        "Statistics interview questions every analyst must know",
-        "Behavioural questions: the STAR method (Situation, Task, Action, Result)",
-        "How to present your portfolio projects compellingly in 3 minutes"
-      ],
-      "tasks": [
-        "Solve 20 SQL problems on StrataScratch (Data Analyst difficulty)",
-        "Solve 10 SQL problems on LeetCode (Easy/Medium database set)",
-        "Write answers to 25 interview questions (listed in Comprehension Questions section)",
-        "Complete a mock analysis case study under timed conditions (2 hours)",
-        "Record yourself answering 3 behavioural questions and review the recording critically"
-      ],
-      "project": "Mock Interview Challenge — Your mentor will give you an unseen dataset and one business question. You have 3 hours to: clean the data, perform analysis, build a visual, and write a 1-page brief. Then present it in a 10-minute mock interview. This simulates a real take-home test interview scenario.",
-      "resources": [
+      "title": "Capstone v0.3: Pages 3 + 4",
+      "phase": "Capstone",
+      "commitment_hours": "12-18",
+      "context": "Customer/Segment page + Operations page.",
+      "days": [
         {
-          "label": "StrataScratch — SQL Interview Practice",
-          "url": "https://www.stratascratch.com",
-          "note": "(do the 20 Data Analyst problems — real interview questions from tech companies)"
+          "number": 1,
+          "title": "Page 3 — Customer",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Customer segment layout",
+              "body": "New sheet. KPIs: total customers, repeat rate, top segment by revenue, top customer.\nCharts: revenue per customer histogram, top 10 customers by lifetime sales, segment × profit cross-tab."
+            }
+          ]
         },
         {
-          "label": "LeetCode Database Problems",
-          "url": "https://leetcode.com/problemset/database/",
-          "note": "(Easy and Medium level)"
+          "number": 2,
+          "title": "Cohort retention mini",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Embed simplified cohort",
+              "body": "Smaller version of Olist Project 3's cohort matrix. Just 6 months × 6 months."
+            }
+          ]
         },
         {
-          "label": "DataLemur — SQL Interview Questions",
-          "url": "https://datalemur.com",
-          "note": "(another great source with detailed solutions)"
+          "number": 3,
+          "title": "Page 4 — Operations",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Ops layout",
+              "body": "KPIs: avg fulfillment time, avg review score, % late shipments.\nCharts: review score distribution, fulfillment time by region."
+            }
+          ]
         },
         {
-          "label": "Data Analyst Interview Q\\&A — Alex The Analyst",
-          "url": "https://www.youtube.com/results?search_query=alex+the+analyst+data+analyst+interview+questions+answers",
-          "note": "(YouTube, ~30 min)"
+          "number": 4,
+          "title": "Add an 'Alerts' section to Page 1",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Red flags",
+              "body": "On Page 1, add a small text box: 'Alerts'. With formulas: IF(avg_review < 4, 'Reviews are dropping', '')\nList 3-5 alert rules. They show only when triggered."
+            }
+          ]
         },
         {
-          "label": "SQL Interview Questions with Solutions — TechTFQ",
-          "url": "https://www.youtube.com/results?search_query=techtfq+sql+interview+questions+data+analyst+solutions",
-          "note": "(YouTube, ~40 min)"
+          "number": 5,
+          "title": "Unified filter panel",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "All filters in one place",
+              "body": "On Page 1 right side: stack the 3-4 most-used filters (Region, Segment, Time period). All linked."
+            }
+          ]
         },
         {
-          "label": "STAR Method for Behavioural Interviews — with examples",
-          "url": "https://www.youtube.com/results?search_query=star+method+interview+technique+examples+data+analyst",
-          "note": "(YouTube, ~12 min)"
+          "number": 6,
+          "title": "Polish + branding",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Brand pass",
+              "body": "Pick 2 colors + 1 accent. Apply across all pages. Consistent font sizes (header 14, body 11, caption 9)."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v0.3",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Acceptance v0.3",
+              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ All 4 pages exist + working\n  ☐ Filters cross-link\n  ☐ Alerts section on Page 1\n  ☐ Visual consistency across pages\n  ☐ v0.3 tag"
+            }
+          ]
         }
       ],
-      "questions": [
-        "Write this SQL query on paper before touching a computer: 'Find all customers who placed orders in both 2022 and 2023 but NOT in 2024.' Then run it on a real database and verify your paper version was correct. If it was wrong, identify exactly where your logic failed.",
-        "A mock interviewer asks: 'You are given a dataset where 30\\% of a key column is missing. What do you do?' Structure a complete answer covering at least 3 different approaches and the specific conditions under which you would choose each one.",
-        "You are given a completely unfamiliar dataset in an interview with no context. What are the first 5 things you do in the first 5 minutes — before any actual analysis? Write them out in order. This is a process question, not a technical one.",
-        "Look critically at your own dashboards from this roadmap as if you were a hiring manager who has never seen your work before. List 3 things you would change or improve. Now make those changes before your next interview."
+      "topics": [
+        "Multi-page dashboard architecture",
+        "Embedded cohort matrices",
+        "Alert-rule design with IF formulas",
+        "Branding + visual consistency"
       ],
+      "tasks": [
+        "Build Page 3 (Customer/Segment) with cohort matrix",
+        "Build Page 4 (Operations)",
+        "Add alert section to Page 1",
+        "Build unified filter panel",
+        "Polish branding"
+      ],
+      "project": "Capstone v0.3 — all 4 dashboard pages built + visually consistent + alert-driven.",
+      "resources": [],
       "exercises": [
-        "Solve 5 StrataScratch problems under time pressure (15 minutes max per problem).",
-        "Write answers to 10 common interview questions using the STAR method.",
-        "Present your strongest portfolio project in exactly 3 minutes. Practise until it flows naturally.",
-        "Write a 1-page analysis brief on a new dataset in under 90 minutes."
+        "Add a 5th page: 'Drill into one customer' for the customer success team",
+        "Add a printable export-ready layout view",
+        "Add scenario comparison (this quarter vs target)"
+      ],
+      "questions": [
+        "What's the trade-off of having 4 pages vs 1?",
+        "Why is a unified filter panel better than per-page filters?",
+        "What's an alert-rule and where would you misuse it?"
       ],
       "outputs": [
-        "Written answers to 25 interview questions",
-        "StrataScratch and LeetCode solution history (with your own comments)",
-        "Mock take-home test submission",
-        "A list of 5 weak areas identified from mock interview feedback"
+        "4 working pages",
+        "v0.3 tag"
       ]
     },
     {
       "number": 18,
-      "title": "Capstone Project",
+      "title": "Capstone v1.0: Ship + roadmap retro",
       "phase": "Capstone",
-      "commitment_hours": "25--35",
-      "context": "The capstone is your proof of mastery. You complete an independent end-to-end analysis applying every skill from this roadmap. This project is the centrepiece of your portfolio and your main talking point in interviews.",
-      "topics": [
-        "Project scoping and problem framing",
-        "Full data analysis lifecycle: from raw data to executive insight",
-        "Professional deliverable production",
-        "Stakeholder communication",
-        "Self-directed learning and independent problem solving"
-      ],
-      "tasks": [
-        "Choose a real, meaningful dataset — ideally related to your region or personal interests",
-        "Write a Project Brief: business question, dataset source, scope, and success criteria",
-        "Complete the full analysis pipeline independently",
-        "Build a polished, interactive dashboard (Power BI or Tableau)",
-        "Write a professional Analysis Report (3 to 5 pages)",
-        "Publish everything to GitHub with a thorough README",
-        "Present the project in a 20-minute mentor session with Q\\&A"
-      ],
-      "project": "Your capstone must: (1) Address a real-world question with business value, (2) Use a dataset with at least 10,000 rows, (3) Require SQL or Python for data processing, (4) Include statistical analysis (at least one hypothesis test), (5) Include an interactive dashboard, (6) Be accompanied by a professional report. Suggested topics: Gambia or West Africa economic data, global health trends, fintech transactions, or social media analytics.",
-      "resources": [
+      "commitment_hours": "12-18",
+      "context": "Final week of 18. Ship the capstone. Roadmap retro.",
+      "days": [
         {
-          "label": "World Bank Open Data",
-          "url": "https://data.worldbank.org",
-          "note": "(economic, health, and development indicators for every country)"
+          "number": 1,
+          "title": "Write the CEO memo",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "CEO-Memo.docx",
+              "body": "1 page. Headline. 4 findings (one per dashboard page). 3 recommendations. Export PDF."
+            }
+          ]
         },
         {
-          "label": "UN Data Portal",
-          "url": "https://data.un.org",
-          "note": "(United Nations datasets on population, trade, and human development)"
+          "number": 2,
+          "title": "Build the board deck",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "8-slide board deck",
+              "body": "Cover slide + 4 finding slides + 1 recommendations + 1 next-quarter plan + 1 closing. Export PDF."
+            }
+          ]
         },
         {
-          "label": "Kaggle Datasets",
-          "url": "https://www.kaggle.com/datasets",
-          "note": "(filter by 10,000+ rows; search your specific topic)"
+          "number": 3,
+          "title": "Demo video",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "3-minute walkthrough of all 4 pages",
+              "body": "Upload to YouTube unlisted."
+            }
+          ]
         },
         {
-          "label": "Gambia Bureau of Statistics",
-          "url": "https://www.gbos.gov.gm",
-          "note": "(official Gambian statistical data)"
+          "number": 4,
+          "title": "Add a SQL version of all KPIs",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "queries.sql",
+              "body": "Re-do all KPIs in SQLite Online. 15+ queries covering every page."
+            }
+          ]
         },
         {
-          "label": "Claude AI",
-          "url": "https://claude.ai",
-          "note": "(use to review and improve your report drafts before final submission)"
+          "number": 5,
+          "title": "Polish + brand",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Final polish",
+              "body": "Every chart has labels. Every page has a footer with 'as of [date]'."
+            }
+          ]
         },
         {
-          "label": "End-to-End Data Analysis Project Walkthrough",
-          "url": "https://www.youtube.com/results?search_query=end+to+end+data+analysis+project+portfolio+python+tableau",
-          "note": "(YouTube — search for a project in your chosen domain for inspiration)"
+          "number": 6,
+          "title": "Get 3 readers",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Feedback",
+              "body": "Apply common feedback."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Tag v1.0 + ROADMAP RETRO",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "DATA ANALYSIS ROADMAP COMPLETE",
+              "body": "Write RETRO.md for the capstone.\nWrite ROADMAP_RETRO.md at the top level:\n      # Forge Data Analysis Roadmap — Retro\n      ## 4 projects shipped\n  1. Superstore\n  2. HR Attrition\n  3. Olist Funnel\n  4. ForgeRetail Capstone\n      ## What I learned\n  ...\n      ## What I'd do differently\n  ...\n      ## Hardest week\n  ...\n      ## Proudest moment\n  ...\n      ## What's next\n  ...\n\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Capstone memo PDF + board deck PDF\n  ☐ Demo video\n  ☐ queries.sql\n  ☐ 3 readers' feedback applied\n  ☐ RETRO.md + ROADMAP_RETRO.md\n  ☐ v1.0 tag\n\nDATA ANALYSIS ROADMAP COMPLETE. 4 named projects + capstone on your CV."
+            }
+          ]
         }
       ],
-      "questions": [
-        "You have just completed 18 weeks of work. Your Week 1 self used Excel and did not know what a DataFrame was. Name one specific thing you believed about data analysis in Week 1 that you now know is wrong or oversimplified. Describe exactly what changed in your understanding.",
-        "Take your most important capstone finding and express it in exactly one sentence that a non-analyst could act on. Now ask someone outside this programme to read it. Did they immediately understand what action to take? If not, rewrite it until they do.",
-        "Identify the single weakest part of your capstone analysis — be brutally specific. Not 'I could have used more data' but something like: 'I did not control for [X], which means my finding on [Y] could alternatively be explained by [Z].' Write this as the 'Limitations' section of your report.",
-        "If a real organisation in The Gambia or West Africa implemented the main recommendation from your capstone: what would success look like in 12 months? How would you measure it? What data would you collect to know if the recommendation worked?"
+      "topics": [
+        "CEO memos",
+        "Board deck design",
+        "Capstone-level polish",
+        "Roadmap-level retrospectives"
       ],
+      "tasks": [
+        "Write CEO memo PDF",
+        "Build 8-slide board deck PDF",
+        "Record 3-min demo video",
+        "Add SQL version of all KPIs",
+        "Get 3 readers + apply feedback",
+        "Write capstone + roadmap retros"
+      ],
+      "project": "Capstone v1.0 — Data Analysis roadmap complete. 4 named projects: Superstore, HR Attrition, Olist Funnel, ForgeRetail Capstone. CEO memo + board deck + demo video + SQL.",
+      "resources": [],
       "exercises": [
-        "Reduce your findings to a single tweet (280 characters). What is the most important message?",
-        "Ask someone outside of data to read your report. Note every question they ask.",
-        "Convert one of your findings into a specific business recommendation with concrete actions.",
-        "Write a critical self-assessment: what is genuinely weak about your analysis and why?"
+        "Apply to one analyst job using the portfolio",
+        "Post the capstone on /r/dataanalysis",
+        "Schedule a 30-min portfolio review with a working analyst"
+      ],
+      "questions": [
+        "Of the 4 projects, which one defends best in an interview?",
+        "Which week stretched you most?",
+        "If you started over, what would you change?"
       ],
       "outputs": [
-        "Cleaned dataset (.csv) and raw data archived in GitHub",
-        "Analysis Jupyter Notebook (.ipynb) — fully documented and reproducible",
-        "Interactive dashboard (.pbix published to Power BI Service or Tableau Public link)",
-        "Professional Analysis Report (3 to 5 pages, PDF)",
-        "GitHub repository with comprehensive README including summary, tools, and findings",
-        "20-minute presentation (recorded if possible)"
+        "v1.0 tag + ROADMAP COMPLETE",
+        "All 4 projects in portfolio",
+        "ROADMAP_RETRO.md"
       ]
     }
   ]
