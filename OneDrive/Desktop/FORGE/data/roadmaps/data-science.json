@@ -234,6 +234,18 @@
         "TaxiPulse-Final.ipynb with three answered questions",
         "Three saved chart PNGs",
         "A README listing the three findings"
+      ],
+      "mastery_questions": [
+        "Run `python --version` and `jupyter --version`. Paste both outputs.",
+        "Open your TaxiPulse-Final.ipynb and paste the line of code that loads the October 2023 parquet file.",
+        "After loading, run `df.shape`. Paste the row and column count.",
+        "Paste the exact filter expressions you used to remove impossible trips (negative fares, zero distance, etc).",
+        "From your busiest-hour chart, what is the busiest pickup hour and how many trips happened then? Paste both numbers.",
+        "From your Q2 analysis, what is the average tip percentage on trips over 5 miles vs under 1 mile? Paste both.",
+        "From your Q3 analysis, which day of the week has the highest average fare? Paste the day and the average.",
+        "Group the busiest-hour chart by pickup borough. Does the busy hour change by borough? Yes/no + the busiest hour per borough.",
+        "Plot trip_minutes as a histogram. Describe the shape in one sentence. Paste the PNG URL.",
+        "Push the notebook + 3 chart PNGs + README to GitHub at repo named taxipulse-nyc. Paste the public URL."
       ]
     },
     {
@@ -398,6 +410,18 @@
         "math.ipynb in taxipulse repo",
         "Solved Bayes problem in notes.txt",
         "Linear regression coefficients matching NYC real rates"
+      ],
+      "mastery_questions": [
+        "Watch 3 of 3Blue1Brown's lin alg / Bayes / grad descent videos. Paste the 3 video URLs.",
+        "Load your TaxiPulse data with NumPy. Compute mean and std of fare_amount. Paste both.",
+        "Normalize the fare column (mean 0, std 1) using NumPy only (no sklearn). Paste the line of code.",
+        "Plot fare distribution before and after log-transform. Paste both PNG URLs and describe the change in one sentence.",
+        "Compute Pearson correlation between distance and fare by hand using numpy (no .corr()). Paste the value to 4 decimals.",
+        "Solve this Bayes problem by hand: 1% of trips are 'suspicious' (long, late-night). A flag system has 90% sensitivity, 5% false-positive rate. What's P(suspicious | flagged)? Paste your work in notes.txt.",
+        "Compute the normal equation coefficients for fare = a*distance + b. Paste a and b. Do they match NYC's real per-mile + base fare?",
+        "Solve a second Bayes problem (medical test: 0.5% prevalence, 95% sensitivity, 4% FP). Paste your worked solution.",
+        "Commit math.ipynb + notes.txt to the taxipulse-nyc repo. Paste the commit URL.",
+        "In one sentence, when you would use Bayes vs frequentist inference."
       ]
     },
     {
@@ -544,6 +568,18 @@
         "data/q4_2023.parquet (gitignored)",
         "2 new figures committed",
         "v0.2 tag"
+      ],
+      "mastery_questions": [
+        "Download the TLC zone lookup CSV. Paste the file row count.",
+        "Merge zones into your trips dataframe. Paste df.shape after the merge.",
+        "Plot trips-by-hour for each borough (5 subplots). Paste the figure URL.",
+        "Download Sept and Nov 2023 parquets and concat with October. Paste the total row count.",
+        "Plot daily trip volume across Q4 (Oct-Dec). Paste the chart URL.",
+        "What day in Q4 had the fewest trips? Paste the date and count. Any guess why?",
+        "Plot tip% by borough. Paste the chart and the top borough by tip%.",
+        "Build a heatmap of trips by hour × day-of-week. Paste the URL.",
+        "Compare weekday vs weekend traffic by borough. Paste the comparison table.",
+        "Update TaxiPulse-Final.ipynb with the borough section and tag v0.2. Paste the release URL."
       ]
     },
     {
@@ -678,6 +714,18 @@
         "queries.sql with 10 commented queries",
         "Validation: SQL = pandas results",
         "1 window function + 1 CTE"
+      ],
+      "mastery_questions": [
+        "Set up SQLite Online and import 100k taxi rows + zone lookup. Confirm with SELECT COUNT(*) on each. Paste both counts.",
+        "Rewrite the busiest-hour query in SQL. Paste the query and the top 5 hours.",
+        "Rewrite tip% by borough in SQL. Paste the query.",
+        "Rewrite a trip-count-by-day query in SQL. Paste the query.",
+        "Use ROW_NUMBER() to get top 3 highest-fare trips per borough. Paste the query and result.",
+        "Write a CTE that first aggregates daily trips, then ranks them. Paste the query.",
+        "Write a query that finds outlier trips (fare > 99th percentile of distance bucket). Paste the query and 5 example rows.",
+        "Validate: do your SQL totals exactly match your pandas totals from W3? Yes or no.",
+        "Save 10 commented queries to queries.sql. Paste the GitHub URL.",
+        "In one line: when do you reach for SQL vs pandas?"
       ]
     },
     {
@@ -814,6 +862,18 @@
         "Residual plot in figures/",
         "Fare model section in the publishable notebook",
         "v0.3 tag"
+      ],
+      "mastery_questions": [
+        "Pick 5 features for fare prediction. Paste the list with one-line justification each.",
+        "Train a LinearRegression baseline. Paste the test MAE.",
+        "Paste the coefficient for distance. Does it look like NYC's real per-mile rate (~$3-4)? Why?",
+        "Train an XGBoost regressor. Paste the test MAE.",
+        "Which model wins on MAE? Paste both and the winner.",
+        "Plot residuals (predicted vs actual). Paste the URL. Where does the model fail?",
+        "Add passenger_count as a feature. Does it help MAE? Paste before/after.",
+        "Build a model just for trips inside Manhattan. Paste the new MAE.",
+        "Find 5 test rows the model is hugely wrong on. Paste them and a one-line guess why.",
+        "Save the winning model with joblib and tag v0.3. Paste the model file URL."
       ]
     },
     {
@@ -954,6 +1014,18 @@
         "inference.ipynb committed",
         "1 statistically-significant claim in README",
         "Bonferroni-corrected pairwise comparisons"
+      ],
+      "mastery_questions": [
+        "Compute 95% confidence interval for mean fare. Paste [low, high].",
+        "Run a two-sample t-test on average fare in Manhattan vs Brooklyn. Paste the p-value.",
+        "Compute Cohen's d effect size for the same comparison. Paste the value and your interpretation in one line.",
+        "Run a chi-square test of borough × payment_type. Paste the p-value.",
+        "Apply Bonferroni correction to 10 pairwise borough comparisons. Which remain significant?",
+        "Bootstrap the mean fare with 1000 resamples. Paste the 95% bootstrap CI.",
+        "Run an ANOVA across all 5 boroughs on fare. Paste the F-statistic and p-value.",
+        "Run Shapiro-Wilk on log(fare). Is it normal? Paste the result.",
+        "Add one statistically-significant claim to your README, with the test name and p-value cited.",
+        "Commit inference.ipynb. Paste the URL."
       ]
     },
     {
@@ -1094,6 +1166,18 @@
         "Live Render URL",
         "taxipulse-api repo public",
         "v0.4 tag"
+      ],
+      "mastery_questions": [
+        "Save your fare model with joblib. Paste model.pkl filename and size.",
+        "Write a Flask app with /predict and /health endpoints. Paste app.py URL.",
+        "Test locally: curl POST /predict with a sample trip. Paste the response.",
+        "Add gunicorn + requirements.txt. Paste requirements.txt contents.",
+        "Deploy to Render or Railway. Paste the live URL.",
+        "curl your live /predict endpoint. Paste the response.",
+        "Add input validation: distance must be positive, hour must be 0-23. Paste the validation code.",
+        "Add a /batch endpoint that takes a list of trips. Paste 1 example request and response.",
+        "Log every prediction with timestamp. Paste 3 example log lines.",
+        "Tag v0.4 and paste the release URL."
       ]
     },
     {
@@ -1250,6 +1334,18 @@
         "hn-scraper repo public on GitHub",
         "3 working scrapers",
         "ETHICS.md committed"
+      ],
+      "mastery_questions": [
+        "Pick a target site (Hacker News, books.toscrape.com). Paste robots.txt contents.",
+        "Write ETHICS.md: 5 rules you'll follow. Paste the URL.",
+        "Build a BS4 scraper for HN front page. Paste the script URL and the first 5 stories.",
+        "Add pagination: scrape 5 pages with a 1-second rate limit. Paste the row count.",
+        "Use a pretrained sentiment model to tag the scraped titles. Paste a sample of 10 rows.",
+        "Plot the sentiment distribution. Paste the PNG.",
+        "Add comment counts to your scrape. Paste 5 example rows.",
+        "Compare BS4 speed vs Scrapy on 10 pages. Paste both times.",
+        "Push hn-scraper repo with scrape.py + ETHICS.md + sample data. Paste the URL.",
+        "Write one paragraph in the README about why you respect robots.txt."
       ]
     },
     {
@@ -1385,6 +1481,18 @@
         "Live Streamlit URL",
         "v0.5 tag",
         "Updated README"
+      ],
+      "mastery_questions": [
+        "Install Streamlit. Paste `streamlit --version`.",
+        "Build the sidebar with 4 controls (borough, hour range, day-of-week, fare cap). Paste a screenshot.",
+        "Wire your fare model in: user picks distance + hour, app shows predicted fare. Paste a screenshot of a prediction.",
+        "Add the Q4 daily trend chart, filtered by borough. Paste the screenshot.",
+        "Add a heatmap of trips by hour × day-of-week. Paste the screenshot.",
+        "Add a compare-2-boroughs mode side by side. Paste the screenshot.",
+        "Cache the parquet load with @st.cache_data. Confirm refresh time improved. Paste before/after.",
+        "Deploy to Streamlit Cloud. Paste the live URL.",
+        "Get one person to try the app. Paste their first reaction.",
+        "Tag v0.5 and paste the release URL."
       ]
     },
     {
@@ -1511,6 +1619,18 @@
         "RETRO.md",
         "Cleaner repo",
         "One stranger's verified feedback"
+      ],
+      "mastery_questions": [
+        "List 10 rough edges in the TaxiPulse project. One line each.",
+        "Fix at least 5 of them. Paste the diff or commit URLs.",
+        "Add docstrings + markdown context to every notebook section. Paste a screenshot of one polished section.",
+        "Profile your slowest cell. Paste the time before and after optimization.",
+        "Add a profile photo + bio to the notebook header. Paste the screenshot.",
+        "Get one stranger (Discord, Reddit, friend) to read the notebook. Paste their top critique.",
+        "Apply the critique. Paste the commit URL.",
+        "Write RETRO.md. Paste the URL.",
+        "Write a 1-paragraph 'How I made this' blog post (Medium / Dev.to). Paste the URL.",
+        "Tag v1.0 and paste the release URL. PROJECT 1 COMPLETE."
       ]
     },
     {
@@ -1660,6 +1780,18 @@
         "prompts.md committed",
         "1 LinkedIn/dev.to post",
         "Cursor configured + used in real work"
+      ],
+      "mastery_questions": [
+        "Install Cursor (or your AI coding tool). Paste the version.",
+        "Test 4 prompt patterns (zero-shot, few-shot, chain-of-thought, role-prompt). Paste examples + outputs.",
+        "Generate working SQL for: 'top 5 boroughs by avg tip% in 2023'. Paste the prompt and the SQL.",
+        "Run the generated SQL on TaxiPulse data. Paste the result.",
+        "Apply AI code review to one of your previous functions. Paste the function + the AI critique.",
+        "Try the same SQL prompt in 2 different AI tools (Claude, ChatGPT, Perplexity). Which gave the better SQL?",
+        "Use AI to write 3 unit tests for one of your functions. Paste the tests and confirm they pass.",
+        "Have AI explain one paper from arxiv.org in 100 words. Paste the explanation.",
+        "Write prompts.md with 5 reusable prompts. Paste the URL.",
+        "Publish one AI-drafted paragraph as a LinkedIn or Dev.to post. Paste the live URL."
       ]
     },
     {
@@ -1798,6 +1930,18 @@
         "v0.1 tag",
         "data/labeled.csv with 1000 labelled posts",
         "scrape.py + label.py committed"
+      ],
+      "mastery_questions": [
+        "Create a public repo named reddit-sentiment. Paste the URL.",
+        "Get Reddit API credentials. Paste the client_id (no secret).",
+        "Write scrape.py to fetch 1000 r/MachineLearning posts. Paste the script URL.",
+        "Save the raw posts to data/raw.csv. Paste the row count.",
+        "Write label.py using a HuggingFace pretrained sentiment model. Paste the script URL.",
+        "Save labeled.csv. Paste 5 example rows (title + label + score).",
+        "Plot the sentiment distribution. Paste the PNG URL.",
+        "Scrape another subreddit (r/learnmachinelearning) and compare distributions. Paste both side by side.",
+        "Also scrape the top 5 comments per post. Paste 3 example rows.",
+        "Tag v0.1 and paste the release URL."
       ]
     },
     {
@@ -1923,6 +2067,18 @@
         "models/baseline.pkl + vectorizer.pkl",
         "Hand-labeled gold.csv",
         "v0.2 tag"
+      ],
+      "mastery_questions": [
+        "Hand-label 200 posts as a gold set (positive / neutral / negative). Paste a sample of 20 with your labels.",
+        "Split into 160 train + 40 test. Paste the split sizes.",
+        "Vectorize with TF-IDF + 1-2 grams. Paste the vectorizer config.",
+        "Train LogisticRegression baseline. Paste the test accuracy.",
+        "Print top 10 features per class. Paste them.",
+        "Run the pretrained model on the same test set. Paste its accuracy.",
+        "Which is better, baseline or pretrained? Paste both numbers and explain in one line.",
+        "Try Naive Bayes alongside LogReg. Paste its accuracy.",
+        "Plot a confusion matrix for your best model. Paste the URL.",
+        "Save vectorizer.pkl + baseline.pkl and tag v0.2. Paste the release URL."
       ]
     },
     {
@@ -2063,6 +2219,18 @@
         "ab/ directory with prompts, results, report",
         "REPORT.md with verdict",
         "Reproducible random seed"
+      ],
+      "mastery_questions": [
+        "Write your A/B hypothesis in one sentence (e.g. 'few-shot prompt vs zero-shot improves accuracy by 5pp').",
+        "Compute required sample size for 80% power, 5% alpha, 5% MDE. Paste the number.",
+        "Run both prompts on the same 100 posts. Paste 10 example rows with both predictions.",
+        "Compute accuracy lift = (variant_acc - control_acc) / control_acc. Paste the percentage.",
+        "Compute p-value via a two-sample test. Paste it to 4 decimals.",
+        "Compute Cohen's d effect size. Paste the value.",
+        "Run on 200 posts instead. Does the verdict change? Yes/no + the new p-value.",
+        "Try a 3rd variant (one-shot example). Paste its accuracy and how it compares.",
+        "Write the ship-or-kill decision in one line. Paste it.",
+        "Commit ab/REPORT.md and paste the URL."
       ]
     },
     {
@@ -2201,6 +2369,18 @@
         "Fine-tuned model committed",
         "v0.3 tag",
         "Eval results in README"
+      ],
+      "mastery_questions": [
+        "Move to Colab T4 (or local GPU). Paste a screenshot of the GPU info from nvidia-smi.",
+        "Tokenize the gold set with DistilBERT tokenizer. Paste the line of code.",
+        "Train for 3 epochs. Paste the final eval accuracy.",
+        "Beat your TFIDF baseline accuracy. Paste both numbers and the improvement.",
+        "Save the fine-tuned model with Git LFS. Paste the LFS-tracked file URL.",
+        "Try a smaller model (ALBERT or distilroberta). Paste its accuracy and inference time.",
+        "Run a learning-rate sweep with 3 values (1e-5, 2e-5, 5e-5). Paste the 3 results.",
+        "Plot training loss + eval accuracy over epochs. Paste the URL.",
+        "Update README with the eval table. Paste the URL.",
+        "Tag v0.3 and paste the release URL."
       ]
     },
     {
@@ -2349,6 +2529,18 @@
         "Updated README with explainability section",
         "BIASES.md",
         "2 SHAP plots committed (summary + force)"
+      ],
+      "mastery_questions": [
+        "Install SHAP. Paste `shap.__version__`.",
+        "Run LinearExplainer on your TFIDF baseline. Paste 3 lines of code.",
+        "Generate a SHAP summary bar plot. Paste the URL.",
+        "Generate a force plot for a single prediction. Paste the URL.",
+        "Find ONE bias in the model (a feature it relies on that it shouldn't). Document in BIASES.md.",
+        "Compute SHAP for the 20 worst misclassifications. Paste the URL of that aggregated plot.",
+        "If you have an XGBoost model from earlier, run TreeExplainer on it. Paste the summary plot.",
+        "Build a small Streamlit page that shows SHAP per user input. Paste the live URL.",
+        "Write an explainability section in README. Paste the URL.",
+        "Commit both SHAP plots + BIASES.md. Paste the commit URL."
       ]
     },
     {
@@ -2497,6 +2689,18 @@
         "synth.ipynb committed",
         "Quantified SMOTE trade-off",
         "Augmented Reddit dataset committed"
+      ],
+      "mastery_questions": [
+        "Use Faker to generate 100 fake users. Paste 5 example rows.",
+        "Apply SMOTE to one of your imbalanced datasets. Paste the class counts before and after.",
+        "Train your model with and without SMOTE. Paste the two accuracies AND the change in F1 for the minority class.",
+        "Quantify the trade-off in one sentence: did SMOTE help or hurt the rare class on real held-out data?",
+        "Try ADASYN instead. Paste the same comparison.",
+        "Compare bootstrap resampling vs SMOTE. Which approach gave more honest results?",
+        "Use an LLM to paraphrase 50 minority-class posts (Reddit). Paste 3 examples of original + paraphrased.",
+        "Retrain with the LLM-augmented data. Paste the new accuracy.",
+        "Document one case when synthetic data is dangerous (paste into synth.ipynb).",
+        "Commit synth.ipynb and paste the URL."
       ]
     },
     {
@@ -2620,6 +2824,18 @@
         "Live dashboard URL",
         "v0.4 tag",
         "history.csv tracked"
+      ],
+      "mastery_questions": [
+        "Write a predict() function that takes raw text and returns sentiment label + score. Paste the function.",
+        "Build a Streamlit dashboard with a refresh button. Paste the live URL.",
+        "Show sentiment bar chart + most positive + most negative posts. Paste the screenshot.",
+        "Save snapshots of sentiment per refresh to history.csv. Paste 5 example rows.",
+        "Add a sentiment-by-hour heatmap for the past day. Paste the screenshot.",
+        "Add a subreddit picker (3+ subs). Confirm switching works. Paste 2 screenshots.",
+        "Add a sound or visual alert when negativity spikes above threshold. Describe how it triggers.",
+        "Cache the model load with @st.cache_resource. Paste before/after refresh time.",
+        "Deploy to Streamlit Cloud. Paste the live URL.",
+        "Tag v0.4 and paste the release URL."
       ]
     },
     {
@@ -2749,6 +2965,18 @@
         "Live API URL",
         "Docker image",
         "v0.5 tag"
+      ],
+      "mastery_questions": [
+        "Build a FastAPI app with POST /predict that takes a list of texts. Paste main.py URL.",
+        "Test locally: curl POST with sample text. Paste the response.",
+        "Write Dockerfile. Paste it.",
+        "Build the image and run it locally. Paste `docker ps` output.",
+        "Push the image to a public registry (Docker Hub or HF Spaces). Paste the image URL.",
+        "Deploy to HF Spaces. Paste the live API URL.",
+        "Update your Streamlit dashboard to call this API instead of running the model in-process. Confirm with a screenshot.",
+        "Add JWT auth on the API. Paste an example request with auth header.",
+        "Add rate limiting (slowapi). Paste the rate limit decorator and config.",
+        "Add /batch endpoint that takes 1000 texts efficiently. Paste timing for 1000 texts vs single-shot."
       ]
     },
     {
@@ -2879,6 +3107,18 @@
         "Demo video URL",
         "v1.0 tag",
         "PROJECT 2 COMPLETE"
+      ],
+      "mastery_questions": [
+        "Polish the project: list the 3 top fixes you applied.",
+        "Write a 1000-1500 word blog post about the project. Paste the live URL.",
+        "Record a demo video walking through the architecture. Paste the YouTube/Loom URL.",
+        "Get 3 readers and paste their top critique each.",
+        "Apply the most common critique. Paste the commit URL.",
+        "Write RETRO.md. Paste the URL.",
+        "Add a 'cite as' BibTeX snippet to the README. Paste it.",
+        "Cross-post the blog on Medium. Paste the URL.",
+        "Submit to /r/MachineLearning weekly thread for feedback. Paste the post URL.",
+        "Tag v1.0 and paste the release URL. PROJECT 2 COMPLETE."
       ]
     },
     {
@@ -3019,6 +3259,18 @@
         "v0.1 tag",
         "5 figures in figures/",
         "Baseline MAE in README"
+      ],
+      "mastery_questions": [
+        "Download AEP_hourly.csv from Kaggle. Paste the row count and date range.",
+        "Set up energy-forecast repo. Paste the URL.",
+        "Plot the full 10-year series. Paste the PNG URL.",
+        "Decompose into trend / seasonal / residual using seasonal_decompose. Paste the 3-panel plot URL.",
+        "Build a hour × day-of-week heatmap. Paste the URL.",
+        "Compute the persistence baseline MAE (predict y_t = y_t-24). Paste the value.",
+        "Try a 2nd series (COMED, DUQ, or PJM_East) alongside AEP. Paste a comparison plot.",
+        "Plot just summer 2023 vs winter 2023 to see seasonality. Paste both PNGs.",
+        "Compute the ACF (autocorrelation function) plot. Paste the URL. At what lag does autocorrelation peak?",
+        "Tag v0.1 and paste the release URL."
       ]
     },
     {
@@ -3151,6 +3403,18 @@
         "arima.pkl saved",
         "MAE comparison table",
         "v0.2 tag"
+      ],
+      "mastery_questions": [
+        "Run the ADF stationarity test on the raw series. Paste the p-value.",
+        "Difference until stationary. How many differences did you need? Paste the new ADF p-value.",
+        "Fit auto_arima on daily aggregated data. Paste the chosen (p, d, q) order.",
+        "Forecast 30 days ahead. Compute MAE on the test set. Paste the value.",
+        "Plot the forecast with confidence intervals. Paste the URL.",
+        "Compare ARIMA MAE vs persistence baseline. Which won? By how much?",
+        "Try SARIMAX with weekly + yearly seasonality. Paste the seasonal order and new MAE.",
+        "Use AICc to compare 3 candidate models. Paste the table.",
+        "Save arima.pkl. Paste the file URL.",
+        "Tag v0.2 and paste the release URL."
       ]
     },
     {
@@ -3289,6 +3553,18 @@
         "prophet model saved",
         "Components plot in figures/",
         "v0.3 tag"
+      ],
+      "mastery_questions": [
+        "Format your data as ds / y columns for Prophet. Paste df.head().",
+        "Fit baseline Prophet (no holidays, no extra regressors). Paste training time.",
+        "Add US holidays. Compare MAE before vs after. Paste both values.",
+        "Evaluate on 30-day test set. Paste the MAE.",
+        "Plot the components (trend + weekly + yearly). Paste the URL. Which seasonal pattern is strongest?",
+        "Add temperature as an extra regressor (download from NOAA or similar). Paste the new MAE.",
+        "Try changepoint_prior_scale = 0.01, 0.05, 0.5. Paste the 3 MAEs.",
+        "Forecast 90 days instead of 30. Paste MAE for that horizon.",
+        "Compare Prophet vs ARIMA on the same test set. Which wins on MAE?",
+        "Save the prophet model + components plot. Tag v0.3 and paste the release URL."
       ]
     },
     {
@@ -3420,6 +3696,18 @@
         "LSTM model saved",
         "4-model comparison chart",
         "v0.4 tag"
+      ],
+      "mastery_questions": [
+        "Build sliding windows of length 30 (use 30 days to predict day 31). Paste X.shape and y.shape.",
+        "Define a small LSTM in PyTorch (1 layer, 32 units). Paste the model class.",
+        "Train for 50 epochs. Paste the final training and validation loss.",
+        "Predict next-day demand for 30 days. Compute MAE. Paste the value.",
+        "Compare LSTM MAE vs Prophet vs ARIMA vs persistence. Paste the 4-model table.",
+        "Increase the window to 60 days. Paste the new MAE.",
+        "Add a second LSTM layer. Paste the new MAE.",
+        "Try a GRU instead of LSTM. Paste its MAE.",
+        "Save the best LSTM model with torch.save. Paste the file URL.",
+        "Tag v0.4 and paste the release URL."
       ]
     },
     {
@@ -3559,6 +3847,18 @@
         "MLflow tracking working",
         "Drift report HTML",
         "Daily alarm script committed"
+      ],
+      "mastery_questions": [
+        "Install MLflow and start the UI. Paste `mlflow ui` startup output.",
+        "Track a baseline Prophet run with mlflow.log_param + mlflow.log_metric. Paste the run URL/screenshot.",
+        "Sweep 3 hyperparameter values for one parameter. Paste the run comparison table.",
+        "Promote the best model to a 'Production' registry stage. Paste a screenshot showing the stage.",
+        "Track the model artifact (the .pkl file). Confirm it shows up in MLflow UI. Paste the screenshot.",
+        "Install Evidently. Run a drift report comparing 2 different months of data. Paste the HTML report URL.",
+        "Build a daily drift-alarm script that fires when KS p-value < 0.05. Paste the script.",
+        "Send drift alerts to a Slack webhook (or email). Paste the webhook code.",
+        "Document the entire MLOps setup in MLOPS.md. Paste the URL.",
+        "Tag v0.6 (MLOps milestone) and paste the release URL."
       ]
     },
     {
@@ -3723,6 +4023,18 @@
         "S3 bucket with model uploaded",
         "BigQuery project + 1 working query at scale",
         "CLOUD.md documenting setup"
+      ],
+      "mastery_questions": [
+        "Sign up for AWS Free Tier and create an IAM user (NOT root). Paste a screenshot of the user (no keys).",
+        "Install + configure AWS CLI. Paste `aws sts get-caller-identity` output.",
+        "Upload your model.pkl to an S3 bucket. Paste the bucket URI.",
+        "From Python, load the model back from S3 with boto3. Paste the 5 lines of code.",
+        "Create a Google Cloud project + open BigQuery. Paste the project ID.",
+        "Run your busiest-hour query on the 38M-row public NYC TLC dataset. Paste the query and runtime.",
+        "Compare BigQuery runtime to pandas runtime on the local 1-month file. Paste both times.",
+        "Estimate BigQuery cost for 3 different query patterns. Paste your numbers.",
+        "Document the entire cloud setup in CLOUD.md (S3 + BigQuery). Paste the URL.",
+        "Save final FlightWise predictions to BigQuery. Paste the table name."
       ]
     },
     {
@@ -3846,6 +4158,18 @@
         "v1.0 tag",
         "PROJECT 3 COMPLETE",
         "Blog + video URLs"
+      ],
+      "mastery_questions": [
+        "Pick the winning forecasting model. Paste the model name + final MAE.",
+        "Build a dashboard (Streamlit) for forecasts. Paste the live URL.",
+        "Deploy somewhere public. Paste the live URL.",
+        "Write a 1000-word blog post about the project. Paste the URL.",
+        "Record a demo video. Paste the URL.",
+        "Get 3 readers and paste their top critique each.",
+        "Apply feedback. Paste the commit URL.",
+        "Write RETRO.md. Paste the URL.",
+        "Submit the blog to Hacker News or to the PJM data community. Paste the post URL.",
+        "Tag v1.0 and paste the release URL. PROJECT 3 COMPLETE."
       ]
     },
     {
@@ -3971,6 +4295,18 @@
         "SPEC.md + ROADMAP.md",
         "Prototype notebook",
         "v0.1 tag"
+      ],
+      "mastery_questions": [
+        "Pick your capstone topic. Paste a 1-sentence description.",
+        "Write SPEC.md (problem, data sources, success metric). Paste the URL.",
+        "Verify every data source is accessible: paste 3 source URLs and confirm you can download from each.",
+        "Plan the next 2 weeks in ROADMAP.md (W29 build + W30 ship). Paste the URL.",
+        "Build a 100-row prototype that proves the analysis is feasible. Paste the notebook URL.",
+        "Pitch your spec to one friend in 2 minutes. Paste their top critique.",
+        "Search GitHub for 3 similar projects. Paste the URLs and what each did NOT do.",
+        "Pick the metric you'd be most embarrassed if it's bad. Paste it.",
+        "Adjust the spec based on what you learned. Paste the commit URL.",
+        "Tag v0.1 and paste the release URL."
       ]
     },
     {
@@ -4095,6 +4431,18 @@
         "Trained models in models/",
         "Eval table",
         "v0.2 tag"
+      ],
+      "mastery_questions": [
+        "Collect all data. Paste the total row count across sources.",
+        "Clean everything. Paste the rows-removed count and the reason for each filter.",
+        "Run EDA. Paste 5 plots (histograms, scatters, etc) PNG URLs.",
+        "Train a baseline model. Paste its main eval metric.",
+        "Train a better model. Paste its main eval metric.",
+        "Build a comparison table (baseline vs better). Paste it.",
+        "Try a 3rd model just for sport. Paste its result.",
+        "Document one wrong path you took today. One paragraph in NOTES.md. Paste the URL.",
+        "Save all predictions to a CSV for later inspection. Paste the file URL.",
+        "Tag v0.2 and paste the release URL."
       ]
     },
     {
@@ -4218,6 +4566,18 @@
         "v1.0 tag + ROADMAP COMPLETE",
         "4 projects in portfolio",
         "ROADMAP_RETRO.md"
+      ],
+      "mastery_questions": [
+        "Build the capstone demo (notebook OR app OR API). Paste the live URL or notebook URL.",
+        "Deploy or publish wherever applicable. Paste the public URL.",
+        "Write a 1500-2000 word blog post about it. Paste the URL.",
+        "Record a 3-5 minute demo video. Paste the URL.",
+        "Update your portfolio site with this project. Paste the portfolio URL.",
+        "Confirm all 4 projects are listed on the portfolio. Paste a screenshot.",
+        "Get 5 readers. Paste 5 single-line critiques.",
+        "Write capstone-specific RETRO.md. Paste the URL.",
+        "Write ROADMAP_RETRO.md covering all 4 projects. Paste the URL.",
+        "Tag v1.0 and paste the release URL. ROADMAP COMPLETE."
       ]
     },
     {
@@ -4363,6 +4723,18 @@
         "3 LinkedIn posts written",
         "Practice interview video",
         "At least 1 job application submitted"
+      ],
+      "mastery_questions": [
+        "Inventory all 4 shipped projects. Paste a README-style summary.",
+        "Set up a portfolio site (Vercel/Netlify or GitHub Pages). Paste the live URL.",
+        "Write LinkedIn post #1 about TaxiPulse. Paste the URL.",
+        "Write LinkedIn post #2 about Reddit Sentiment. Paste the URL.",
+        "Write LinkedIn post #3 about Energy Forecast or Capstone. Paste the URL.",
+        "Update your LinkedIn About + Experience to mention the projects. Paste the LinkedIn URL.",
+        "Update your GitHub pinned repos. Paste a screenshot.",
+        "Practice 3 common DS interview questions on video (ML concepts / SQL / system design). Paste the video URL.",
+        "Submit 1 real job application. Paste the company and role.",
+        "Reach out to 3 working data scientists on LinkedIn for 15-min chats. Paste the 3 DMs."
       ]
     }
   ]
