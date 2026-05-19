@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
+import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 
 interface Checkin {
   id: string;
@@ -257,6 +258,30 @@ export default function MenteeDrilldownPage() {
     }
   };
 
+  /** Mentor picks a roadmap on behalf of the mentee (backfill for mentees
+   *  who joined before path-scoped invites, or whose invite didn't have one). */
+  const [seedingSlug, setSeedingSlug] = useState<string | null>(null);
+  const handleSeedRoadmap = async (slug: string, title: string) => {
+    if (!confirm(`Assign "${title}" to ${mentee?.name ?? "this mentee"}? All weeks start locked — you'll release them one by one.`)) return;
+    setSeedingSlug(slug);
+    try {
+      const res = await fetch("/api/mentor/seed-roadmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ menteeId, slug }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Failed (${res.status})`);
+      }
+      await load();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Could not assign roadmap");
+    } finally {
+      setSeedingSlug(null);
+    }
+  };
+
   const stats = useMemo(() => {
     let total = 0, verified = 0, failed = 0, pending = 0;
     for (const r of roadmaps) {
@@ -330,10 +355,76 @@ export default function MenteeDrilldownPage() {
 
       <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
 
-      {/* Roadmaps */}
+      {/* Roadmaps — empty state lets the mentor PICK one on their behalf */}
       {roadmaps.length === 0 && (
-        <div className="forge-panel" style={{ padding: "2rem", textAlign: "center", color: "var(--text-dim)" }}>
-          This mentee hasn&apos;t picked a roadmap yet.
+        <div className="forge-panel" style={{ padding: "1.5rem" }}>
+          <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.375rem" }}>
+            Assign a roadmap
+          </h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", marginBottom: "1.25rem", lineHeight: 1.55 }}>
+            {mentee.name?.split(" ")[0] ?? "This mentee"} doesn&apos;t have a roadmap yet. Pick one below — every week will start
+            locked and you control when each one is released.
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gap: "0.75rem",
+            }}
+          >
+            {CURATED_ROADMAPS.map((r) => {
+              const Icon = r.Icon;
+              const busy = seedingSlug === r.slug;
+              const disabled = seedingSlug !== null;
+              return (
+                <button
+                  key={r.slug}
+                  type="button"
+                  onClick={() => handleSeedRoadmap(r.slug, r.title)}
+                  disabled={disabled}
+                  style={{
+                    textAlign: "left",
+                    padding: "0.875rem 1rem",
+                    background: "var(--bg-card)",
+                    border: `1px solid ${busy ? r.accent : "var(--border)"}`,
+                    borderRadius: 10,
+                    cursor: disabled ? "not-allowed" : "pointer",
+                    opacity: disabled && !busy ? 0.5 : 1,
+                    transition: "border-color 0.15s, transform 0.1s",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.375rem",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 8,
+                        background: `${r.accent}22`,
+                        color: r.accent,
+                        display: "grid",
+                        placeItems: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={16} />
+                    </span>
+                    <span style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
+                      {r.title}
+                    </span>
+                  </div>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.75rem", lineHeight: 1.45, margin: 0 }}>
+                    {r.tagline}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", letterSpacing: "0.08em", marginTop: "0.125rem" }}>
+                    {r.weeks} weeks · {r.phases} phases {busy && "· assigning…"}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
