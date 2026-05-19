@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus } from "lucide-react";
+import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus, Send } from "lucide-react";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -133,9 +133,14 @@ export default async function MentorDashboardPage() {
             {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           </p>
         </div>
-        <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
-          <UserPlus size={15} /> Invite a mentee
-        </Link>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <Link href="/dashboard/mentor/release" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
+            <Send size={15} /> Release a week
+          </Link>
+          <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
+            <UserPlus size={15} /> Invite a mentee
+          </Link>
+        </div>
       </div>
 
       {/* At-risk alert */}
