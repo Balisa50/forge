@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus } from "lucide-react";
-import MentorInvitesPanel from "@/components/MentorInvitesPanel";
 
 export default async function MentorDashboardPage() {
   try {
@@ -211,8 +210,6 @@ async function renderMentorDashboard() {
       </div>
 
       {/* Section title */}
-      <MentorInvitesPanel />
-
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", gap: "0.75rem", flexWrap: "wrap" }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           Your Mentees
