@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus, Send } from "lucide-react";
+import MentorOnboardingCard from "@/components/MentorOnboardingCard";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -32,6 +33,7 @@ export default async function MentorDashboardPage() {
   if (mentorLinks.length === 0) {
     return (
       <div>
+        <MentorOnboardingCard mentorName={mentor?.name ?? null} />
         {/* Header */}
         <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -123,6 +125,7 @@ export default async function MentorDashboardPage() {
 
   return (
     <div>
+      <MentorOnboardingCard mentorName={mentor?.name ?? null} />
       {/* Header */}
       <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
         <div>

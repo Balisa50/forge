@@ -37,6 +37,30 @@ export default function WeekVerifiedCelebration({
         // New verification since the last visit - fire celebration.
         setCelebrating(true);
         localStorage.setItem(STORAGE_KEY, latestVerifiedId);
+        // Optional success sound - skip if user previously muted.
+        const muted = localStorage.getItem("forge.celebrationMuted") === "true";
+        if (!muted) {
+          try {
+            // Synth a quick 3-note ding using the Web Audio API. No file needed.
+            const Ctx = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+            const ctx = new Ctx();
+            [523.25, 659.25, 783.99].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = "sine";
+              osc.frequency.value = freq;
+              gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.12);
+              gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.12 + 0.02);
+              gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.12 + 0.4);
+              osc.connect(gain).connect(ctx.destination);
+              osc.start(ctx.currentTime + i * 0.12);
+              osc.stop(ctx.currentTime + i * 0.12 + 0.4);
+            });
+            setTimeout(() => ctx.close(), 1500);
+          } catch {
+            // Audio context blocked (e.g. no user gesture yet) - silently skip.
+          }
+        }
         // Auto-dismiss after 6 seconds.
         const t = setTimeout(() => setCelebrating(false), 6000);
         return () => clearTimeout(t);
