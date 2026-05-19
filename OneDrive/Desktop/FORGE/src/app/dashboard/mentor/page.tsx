@@ -5,34 +5,6 @@ import Link from "next/link";
 import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus } from "lucide-react";
 
 export default async function MentorDashboardPage() {
-  try {
-    return await renderMentorDashboard();
-  } catch (e) {
-    // Don't swallow Next.js redirect()/notFound() — they signal via throw.
-    if (e && typeof e === "object" && "digest" in e && typeof (e as { digest: unknown }).digest === "string" && ((e as { digest: string }).digest.startsWith("NEXT_REDIRECT") || (e as { digest: string }).digest.startsWith("NEXT_NOT_FOUND"))) {
-      throw e;
-    }
-    const err = e as Error;
-    console.error("[mentor-dashboard] CRASH:", err);
-    return (
-      <div style={{ padding: "2rem", maxWidth: "720px" }}>
-        <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", color: "var(--red)", marginBottom: "0.75rem" }}>
-          Mentor dashboard error (debug)
-        </h1>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "1rem", fontSize: "0.875rem" }}>
-          Temporary debug screen. Send this to Claude to fix.
-        </p>
-        <pre style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, padding: "1rem", color: "var(--text-primary)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-          {err.name}: {err.message}
-          {"\n\n"}
-          {err.stack?.split("\n").slice(0, 8).join("\n")}
-        </pre>
-      </div>
-    );
-  }
-}
-
-async function renderMentorDashboard() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
