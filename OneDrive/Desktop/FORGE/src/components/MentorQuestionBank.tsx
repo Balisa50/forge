@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Loader2, Save, ListChecks } from "lucide-react";
+import { Plus, Trash2, Loader2, Save, ListChecks, ChevronDown, ChevronRight } from "lucide-react";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 
 interface Question {
@@ -20,6 +20,12 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
   const [draft, setDraft] = useState({ prompt: "", rubric: "", idealAnswer: "" });
   const [edits, setEdits] = useState<Record<string, Partial<Question>>>({});
   const [dialog, setDialog] = useState<DialogConfig | null>(null);
+  // Section is OPTIONAL - collapsed by default. Auto-opens when the mentor
+  // has already authored questions for this week (so they don't get hidden).
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!loading && questions.length > 0) setOpen(true);
+  }, [loading, questions.length]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -87,18 +93,42 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
 
   return (
     <div style={{ marginTop: "0.875rem", paddingTop: "0.875rem", borderTop: "1px dashed var(--border)" }}>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.375rem" }}>
-        <ListChecks size={11} /> Your questions for this week
-      </p>
-      <p style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginBottom: "0.75rem", lineHeight: 1.55 }}>
-        When you author questions here, the mentee takes <strong>your interrogation</strong> instead of the AI Professor.
-        After they submit, you review and grade each answer.
-      </p>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          background: "none",
+          border: "none",
+          padding: "0.25rem 0",
+          cursor: "pointer",
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.6875rem",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "var(--accent)",
+          minHeight: "unset",
+        }}
+        aria-expanded={open}
+      >
+        {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+        <ListChecks size={11} />
+        Your questions for this week
+        <span style={{ color: "var(--text-dim)", letterSpacing: 0, textTransform: "none", fontFamily: "var(--font-body)", fontSize: "0.75rem", marginLeft: "0.375rem" }}>
+          (optional{questions.length > 0 ? ` - ${questions.length} authored` : ""})
+        </span>
+      </button>
 
-      {loading ? (
-        <div style={{ color: "var(--text-dim)", fontSize: "0.8125rem" }}><Loader2 size={12} className="inline animate-spin mr-1" /> Loading…</div>
+      {!open ? null : loading ? (
+        <div style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginTop: "0.5rem" }}><Loader2 size={12} className="inline animate-spin mr-1" /> Loading...</div>
       ) : (
         <>
+          <p style={{ fontSize: "0.75rem", color: "var(--text-dim)", margin: "0.625rem 0 0.75rem", lineHeight: 1.55 }}>
+            When you author questions here, the mentee takes <strong>your interrogation</strong> instead of the AI Professor.
+            After they submit, you review and grade each answer. Skip this whole section if you want to use the AI Professor.
+          </p>
           {questions.length > 0 && (
             <ul className="flex flex-col gap-2 mb-3">
               {questions.map((q, i) => {

@@ -74,35 +74,47 @@ export function parseCommitmentHours(s: string): number {
  * Compile a week from the JSON into the Task model's `detail` text.
  * Includes topics, tasks, exercises in a single readable Markdown block.
  */
+/** Scrub asterisks, em-dashes, en-dashes anywhere in a rendered string. */
+function clean(s: string): string {
+  return s
+    .replace(/\*\*/g, "")    // markdown bold
+    .replace(/\*/g, "")      // any stray asterisks
+    .replace(/—/g, "-")      // em-dash -> hyphen
+    .replace(/–/g, "-");     // en-dash -> hyphen
+}
+
 export function weekToTaskDetail(week: RoadmapWeek): string {
   const lines: string[] = [];
   if (week.context) {
-    lines.push(week.context);
+    lines.push(clean(week.context));
     lines.push("");
   }
   if (week.topics.length) {
-    lines.push("**Topics to study:**");
-    week.topics.forEach((t) => lines.push(`- ${t}`));
+    lines.push("TOPICS TO STUDY");
+    week.topics.forEach((t) => lines.push(`- ${clean(t)}`));
     lines.push("");
   }
   if (week.tasks.length) {
-    lines.push("**Tasks & deliverables:**");
-    week.tasks.forEach((t, i) => lines.push(`${i + 1}. ${t}`));
+    lines.push("TASKS AND DELIVERABLES");
+    week.tasks.forEach((t, i) => lines.push(`${i + 1}. ${clean(t)}`));
     lines.push("");
   }
   if (week.project) {
-    lines.push("**Real-world project:**");
-    lines.push(week.project);
+    lines.push("REAL-WORLD PROJECT");
+    lines.push(clean(week.project));
     lines.push("");
   }
-  if (week.questions.length) {
-    lines.push("**Think like an expert — questions on your data:**");
-    week.questions.forEach((q, i) => lines.push(`Q${i + 1}: ${q}`));
-    lines.push("");
-  }
-  if (week.exercises.length) {
-    lines.push("**Practical exercises:**");
-    week.exercises.forEach((e, i) => lines.push(`${i + 1}. ${e}`));
+  // Combined mastery check list: forces the student to open the tool and DO things.
+  // Theory-style `questions` are no longer rendered separately - any meaningful
+  // checks should live inside `exercises` (or `mastery_questions` once weeks are
+  // rewritten). `questions` remains in the JSON for backwards-compat but is
+  // intentionally not shown anymore.
+  const mastery = (week as { mastery_questions?: string[] }).mastery_questions?.length
+    ? (week as { mastery_questions: string[] }).mastery_questions
+    : week.exercises;
+  if (mastery && mastery.length) {
+    lines.push("MASTERY CHECKS - prove you did the work");
+    mastery.forEach((e, i) => lines.push(`${i + 1}. ${clean(e)}`));
   }
   return lines.join("\n").trim();
 }
@@ -110,21 +122,23 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
 /** Flatten the rich resource objects into a string array the DB expects. */
 export function weekToTaskResources(week: RoadmapWeek): string[] {
   return week.resources.map((r) => {
-    if (r.url) return r.note ? `${r.label} — ${r.url} (${r.note})` : `${r.label} — ${r.url}`;
-    return r.label;
+    const label = clean(r.label);
+    const note = r.note ? clean(r.note) : undefined;
+    if (r.url) return note ? `${label} - ${r.url} (${note})` : `${label} - ${r.url}`;
+    return label;
   });
 }
 
-/** Build the "why" field — short punchy framing of the week. */
+/** Build the "why" field - short punchy framing of the week. */
 export function weekToTaskWhy(week: RoadmapWeek): string {
   const first = week.context.split(".")[0] || week.title;
-  return first.trim() + ".";
+  return clean(first.trim()) + ".";
 }
 
 /** Outputs become the "milestone" text. */
 export function weekToTaskMilestone(week: RoadmapWeek): string {
   return week.outputs.length
-    ? "Demonstrable outputs: " + week.outputs.join(" · ")
+    ? "Demonstrable outputs: " + week.outputs.map(clean).join(" · ")
     : "Submit a write-up demonstrating you completed the week's work.";
 }
 
