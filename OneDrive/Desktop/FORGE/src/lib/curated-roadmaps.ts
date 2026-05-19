@@ -109,7 +109,7 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
   // module" - it's a permanent part of the workflow.
   const aiAssist = (week as { ai_assist?: string }).ai_assist;
   if (aiAssist) {
-    lines.push("AI ASSIST - how to use Cursor or Claude this week");
+    lines.push("AI ASSIST");
     lines.push(clean(aiAssist));
     lines.push("");
   }
@@ -117,7 +117,7 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
   // how to handle the conversation. Recurring beat for analyst weeks.
   const stakeholder = (week as { stakeholder_moment?: string }).stakeholder_moment;
   if (stakeholder) {
-    lines.push("STAKEHOLDER MOMENT - who reads this and what they want");
+    lines.push("WHO READS THIS");
     lines.push(clean(stakeholder));
     lines.push("");
   }
@@ -130,7 +130,7 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
     ? (week as { mastery_questions: string[] }).mastery_questions
     : week.exercises;
   if (mastery && mastery.length) {
-    lines.push("MASTERY CHECKS - prove you did the work");
+    lines.push("MASTERY CHECKPOINTS");
     mastery.forEach((e, i) => lines.push(`${i + 1}. ${clean(e)}`));
   }
   return lines.join("\n").trim();
