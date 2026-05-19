@@ -47,6 +47,7 @@ interface MenteeTask {
   detail: string;
   why: string | null;
   milestone: string | null;
+  resources: string[];
   estimatedHours: number | null;
   status: string;
   verifiedAt: string | null;
@@ -540,11 +541,73 @@ export default function MenteeDrilldownPage() {
                             </p>
                           )}
                           {(task.milestone || task.estimatedHours) && (
-                            <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
                               {task.estimatedHours != null && (
-                                <span className="inline-flex items-center gap-1"><Clock size={11} /> ~{task.estimatedHours}h</span>
+                                <span className="inline-flex items-center gap-1" style={{ flexShrink: 0 }}><Clock size={11} /> ~{task.estimatedHours}h</span>
                               )}
-                              {task.milestone && <span>{task.milestone.slice(0, 120)}{task.milestone.length > 120 ? "…" : ""}</span>}
+                              {task.milestone && <span style={{ lineHeight: 1.55 }}>{task.milestone}</span>}
+                            </div>
+                          )}
+
+                          {/* Full week brief — the curated curriculum detail */}
+                          {task.detail && (
+                            <div style={{ marginTop: "0.875rem", padding: "0.75rem 0.875rem", borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+                                Week brief
+                              </p>
+                              <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                                {task.detail}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Curated learning resources from the roadmap (books, videos, articles) */}
+                          {task.resources && task.resources.length > 0 && (
+                            <div style={{ marginTop: "0.875rem" }}>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                                <Link2 size={11} /> Curated resources for this week
+                              </p>
+                              <ul className="flex flex-col gap-1.5">
+                                {task.resources.map((raw, idx) => {
+                                  // Resource strings ship as: "Label — URL" or "Label — URL (note)" or just "Label".
+                                  const urlMatch = raw.match(/(https?:\/\/[^\s)]+)/);
+                                  const url = urlMatch?.[0];
+                                  const noteMatch = raw.match(/\(([^)]+)\)\s*$/);
+                                  const note = noteMatch?.[1];
+                                  // Label = everything before " — " (em-dash separator we wrote in weekToTaskResources).
+                                  const label = raw.split(/\s+—\s+/)[0]?.trim() || raw;
+                                  return (
+                                    <li
+                                      key={idx}
+                                      style={{
+                                        padding: "0.5rem 0.75rem",
+                                        borderRadius: 7,
+                                        background: "var(--bg-card)",
+                                        border: "1px solid var(--border)",
+                                        fontSize: "0.8125rem",
+                                      }}
+                                    >
+                                      {url ? (
+                                        <a
+                                          href={url}
+                                          target="_blank"
+                                          rel="noreferrer noopener"
+                                          style={{ color: "var(--text-primary)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.375rem", flexWrap: "wrap" }}
+                                        >
+                                          <ExternalLink size={11} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                                          <span style={{ fontWeight: 500 }}>{label}</span>
+                                          {note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>— {note}</span>}
+                                        </a>
+                                      ) : (
+                                        <span style={{ color: "var(--text-primary)" }}>
+                                          {label}
+                                          {note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginLeft: "0.375rem" }}>— {note}</span>}
+                                        </span>
+                                      )}
+                                    </li>
+                                  );
+                                })}
+                              </ul>
                             </div>
                           )}
 
