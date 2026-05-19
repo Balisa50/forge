@@ -15,9 +15,14 @@
           "note": "2 min signup. Username matters - use your real name where you can. This becomes your public portfolio."
         },
         {
-          "label": "What a Data Analyst Actually Does (Day in the Life) - 12 min",
-          "url": "https://www.youtube.com/watch?v=foO9phUDPM8",
-          "note": "12 min. Alex The Analyst walks you through his real day. Sets the tone for the whole roadmap."
+          "label": "What is Data Analysis? 4 min - Simplilearn",
+          "url": "https://www.youtube.com/watch?v=yZvFH7B6gKI",
+          "note": "4 min. The simplest definition of data analysis with real examples. Watch first."
+        },
+        {
+          "label": "Day in the Life of a Data Analyst - Tina Huang (7 min)",
+          "url": "https://www.youtube.com/watch?v=mLOyjyZSPm0",
+          "note": "7 min. Real working analyst at FAANG. Honest take on the actual day-to-day."
         },
         {
           "label": "Excel Tutorial for Beginners in 30 Minutes - Kevin Stratvert",
@@ -231,16 +236,16 @@
         "Dashboard screenshot in README"
       ],
       "mastery_questions": [
-        "Open your Drills sheet. Paste the exact value from your Total Sales 2023 cell, rounded to the nearest dollar.",
-        "From your Q1 pivot, name the sub-category with the HIGHEST profit margin and the one with the LOWEST. Give both percentages to 1 decimal place.",
-        "In your Q1 pivot, how many sub-categories show a NEGATIVE profit margin? List each one by name.",
-        "From your Q2 pivot, which region had the highest year-over-year sales growth in the latest year? Give the exact percentage.",
-        "In your Furniture pivot from Q3, which Furniture sub-category loses the most money? Which single region is the worst region for that sub-category?",
-        "Build a NEW pivot you have not built yet: Profit by Ship Mode (rows = Ship Mode, values = Sum of Profit). Which Ship Mode has the worst total profit, and what is the number?",
-        "In any blank cell type: =CORREL(Orders!O:O, Orders!R:R). What number did you get (3 decimals)? Is the relationship between Discount and Profit positive or negative?",
-        "Open the People sheet. How many regions are listed and which person is assigned to each? Paste the table.",
-        "In your final 1-page Dashboard sheet, list the exact chart types you used (for example: bar chart of sales by region, line of monthly sales). Briefly say why you picked those two and not others.",
-        "Push your superstore-analysis repo to GitHub. Paste the full public URL here so your mentor can open it."
+        "Hunt for your top customer of 2023: who spent the most? Paste their Customer Name and total Sales.",
+        "Q4 2023 versus Q4 2022 - which quarter was better in Sales? By how many dollars AND what percent?",
+        "Find the surprise: is there ANY Sub-Category where giving HIGHER average discount came with HIGHER profit margin? Name it if yes, write 'none found' if no.",
+        "The bad-customer puzzle: find ONE customer with 5+ orders but NEGATIVE total profit. Paste their name and total profit number.",
+        "Median test: what is the median Sales-per-order in the West vs the East? Which median is higher and by how many dollars?",
+        "The Sub-Category race: which Sub-Category grew its Sales the most from 2020 to 2023 in dollars? Paste the 2020 and 2023 totals.",
+        "Saturday vs Wednesday: use =WEEKDAY() to extract day-of-week. Is average Profit per order higher on weekends or weekdays? Paste both averages.",
+        "First Class is supposed to be premium. But which Ship Mode actually has the highest profit margin? Was it the one you expected?",
+        "2024 projection: if 2024 Sales grew at the same compound rate that 2020-2023 did, what would 2024 Sales be? Paste your formula and the answer.",
+        "The 30-second test: show your dashboard to one real person without explaining anything. What was the FIRST insight they spotted? Did it match yours?"
       ]
     },
     {
@@ -432,16 +437,16 @@
         "Automation pattern documented"
       ],
       "mastery_questions": [
-        "Run `python -c \"import pandas; print(pandas.__version__)\"` in your terminal. Paste the version number.",
-        "Open your notebook and paste the exact line of pandas code that recreates the Q1 margin pivot (groupby + aggregate + sort).",
-        "After reading the CSV, run `df.dtypes` and paste the dtype of the Sales column. If it loaded as object instead of float, paste the line that fixed it.",
-        "From your pandas Q1 result, paste the top 3 sub-categories by margin with exact percentages to 1 decimal.",
-        "In your Region YoY analysis, paste the `.unstack()` line you wrote. In one sentence, what does unstack() do that groupby alone does not?",
-        "Run df.groupby('Region')['Sales'].sum().plot(kind='bar'); plt.savefig('region_sales.png'). Paste the GitHub raw URL of the saved PNG.",
-        "Open monthly_report.py. Paste lines 1 through 15. Does the script run end-to-end from the command line without errors? Yes or no.",
-        "Add one line that prints how many rows have a null Postal Code. Paste the count.",
-        "Compare your pandas margin numbers to last week's Excel margin numbers for the same 3 top sub-categories. Are they identical? If not, by how much do they differ?",
-        "Push the notebook and the .py script to GitHub. Paste the commit URL."
+        "Re-run W1's top-2023-customer hunt in pandas. Same answer? Paste the one-liner you used: df.groupby(...) ...",
+        "In pandas, find the Sub-Category with the BEST profit margin (Profit/Sales) and the WORST. Paste both with percentages to 2 decimals.",
+        "Using pandas, what percent of total Sales comes from the West region? Compute it in one line. Paste line + answer.",
+        "Plot monthly Sales for 2023 as a line chart. Which calendar MONTH is the worst? Paste the PNG GitHub URL and name the month.",
+        "Using df.groupby and df.agg, build a table showing Sales, Profit, Margin per Category for ALL years. Paste the table.",
+        "Speed test: time the pandas version of your Region YoY analysis vs Excel. Paste both seconds. Which is faster on 10k rows?",
+        "Write monthly_report.py so that running 'python monthly_report.py' prints the top 5 Sub-Categories by Profit for the latest month. Paste the script URL.",
+        "Schedule monthly_report.py to run on the 1st of every month. Paste a screenshot of the Task Scheduler entry (Windows) or your crontab line (Mac/Linux).",
+        "Pandas catch: count how many rows have Profit < 0. Then count Sales < 0 (returns). What is the dollar value of returns?",
+        "Push notebook + script + monthly report PNG to GitHub. Paste the commit URL that contains all three files."
       ]
     },
     {
@@ -601,16 +606,16 @@
         "v0.2 tag"
       ],
       "mastery_questions": [
-        "Build the Discount-vs-Profit scatter (Excel or pandas) and save the PNG. Paste the GitHub raw URL.",
-        "In a blank cell type =CORREL(Orders!O:O, Orders!R:R). Paste the value to 3 decimals.",
-        "Bin Discount into 5 ranges (0%, 1-10%, 11-20%, 21-40%, 41%+). What is the average Profit per order in each bucket? Paste the 5 numbers.",
-        "At which discount range does average Profit first turn negative? Paste the exact threshold range.",
-        "Cross-tab Category × Discount Bucket on average Profit. Which Category × Bucket cell has the worst average profit?",
-        "Pick a max-safe discount cap you would recommend to the business. Justify it in one sentence with one number from your analysis.",
-        "Re-run the entire scatter for ONLY 2023 orders. Did the tipping point shift? By how much?",
-        "Find the single worst order in the dataset by Profit. Paste Order ID, Sub-Category, Discount, Profit.",
-        "Update your memo PDF to include the new discount section. Paste the GitHub link to memo v2.",
-        "Tag the repo v0.2 in git and paste the release URL on GitHub."
+        "Run =CORREL(Discount, Profit) on the FULL dataset. Now filter to just Office Supplies and re-run. Paste both numbers - did the relationship change?",
+        "Find the discount tipping point: at what discount % does AVERAGE Profit go from positive to negative? Paste the exact bucket.",
+        "Discover the smart-discount Sub-Category: find one Sub-Category where 20%+ discount actually INCREASED order volume enough to offset margin loss. Or prove none exists.",
+        "Build a 3D scatter (or 2D with size=Quantity) showing Discount vs Profit vs Quantity. Paste the PNG URL.",
+        "Find the single worst order in the dataset by Profit. Paste Order ID, Customer, Sub-Category, Discount, Quantity, Profit.",
+        "The category split: for EACH Category, what was the average margin at 0% discount vs 30%+ discount? Paste the 3-row comparison.",
+        "Predict the cap: based on your tipping point, write ONE recommendation to the business in 1 sentence with 1 number.",
+        "Compare 2023 vs 2020: did the discount-profit relationship get worse over time? Paste both correlation values.",
+        "Push memo v2 PDF that includes a chart + the recommendation + the data behind it. Paste the GitHub URL.",
+        "Tag v0.2 and paste the GitHub release URL."
       ]
     },
     {
@@ -773,16 +778,16 @@
         "v0.3 tag"
       ],
       "mastery_questions": [
-        "Compute CLV = SUM(Sales) per Customer ID. Paste the top 10 customers as a table (Customer ID, Name, CLV).",
-        "What CLV thresholds did you use to split into VIP / Regular / Casual? Paste the three ranges.",
-        "What percentage of customers are VIPs? What percentage of total revenue do they bring in? Paste both numbers.",
-        "For each segment (VIP / Regular / Casual), name the top Category they buy. Paste the 3-row table.",
-        "Compute repeat-buyer rate = customers with 2+ orders / total customers. Paste the percentage.",
-        "How many days on average pass between a customer's 1st and 2nd order? Paste the median number.",
-        "Define churn as no order in the last 180 days. How many customers are churned? Paste the count.",
-        "Find the 5 customers who lost you the most money (largest negative profit total). Paste names and losses.",
-        "Update your memo PDF with the customer section. Paste the link to memo v3 on GitHub.",
-        "Tag the repo v0.3 and paste the release URL."
+        "Find your VIP: the single highest-CLV customer across all 4 years. Paste name + total Sales + their favorite Category.",
+        "Build the VIP/Regular/Casual split using the 33rd and 66th percentiles. Paste the 3 thresholds.",
+        "Compare what each segment buys: what % of VIP spend goes to Technology vs Office Supplies vs Furniture? Paste the 9-cell breakdown.",
+        "The repeat-buyer puzzle: what percent of customers placed 2+ orders? What about 5+? Paste both numbers.",
+        "Find the 3 customers who lost you the MOST money (largest negative total Profit). Paste names and losses.",
+        "Days-between-orders: for customers with 2+ orders, what is the MEDIAN gap between their 1st and 2nd order in days?",
+        "The churn definition: how many customers placed an order in 2020-2022 but NOT in 2023? Paste the count and one likely reason.",
+        "VIP comparison: do VIPs have BETTER or WORSE profit margins than Casual customers? Paste both margins.",
+        "Push memo v3 with the customer section. Paste the GitHub link.",
+        "Tag v0.3 and paste the release URL."
       ]
     },
     {
@@ -957,16 +962,16 @@
         "Validation that SQL results match pivots"
       ],
       "mastery_questions": [
-        "Open sqliteonline.com and import Orders.csv. Run `SELECT COUNT(*) FROM Orders;` and paste the count.",
-        "Rewrite Q1 margin pivot in SQL. Paste the full query.",
-        "Paste the result: top 3 sub-categories by margin from the SQL query. Numbers must match your pivot from W1.",
-        "Rewrite Q2 YoY using a CTE and self-join. Paste the full query.",
-        "Compute median Sales using a window function. Paste the query and the median value.",
-        "Write a query that returns the running total of Sales by Order Date. Paste the first 10 rows.",
-        "Write a query that finds customers who bought in every quarter of 2023. Paste the count of such customers.",
-        "Open queries.sql in your repo. How many queries does it contain? Each should have a one-line comment above explaining what it does.",
-        "Validate: do your SQL margin numbers match your pandas and Excel numbers exactly? Yes or no, and which differ if any.",
-        "Commit queries.sql and tag v0.4. Paste the release URL."
+        "Write a SQL query that returns the top 5 customers of 2023 by total Sales. Paste query + result.",
+        "Rewrite the Sub-Category margin pivot in SQL. Do your top 3 and bottom 3 match Excel exactly? Paste the query.",
+        "Use a CTE to compute YoY growth per Region. Paste the query.",
+        "Use a window function to rank customers by Sales WITHIN each Region. Paste the query and the top 1 per region.",
+        "Compute MEDIAN Sales per order using a window function. Paste the query and the value.",
+        "Write a running-total query: cumulative Sales by Order Date. Paste the first 10 rows.",
+        "Find customers who bought in every single quarter of 2023. Paste the count.",
+        "Catch the duplicates: write a query to find Order IDs that appear more than once. Paste count + first 5 examples.",
+        "Validate: does your SQL Sales total match your Excel total to the dollar? Yes or no, and the difference if any.",
+        "Push queries.sql with all 10 commented queries. Tag v0.4 and paste the release URL."
       ]
     },
     {
@@ -1154,16 +1159,16 @@
         "t-test results table"
       ],
       "mastery_questions": [
-        "Compute the 95% confidence interval for mean Sales per order. Paste the CI as [low, high].",
-        "Run a two-sample t-test: average Sales for Consumer vs Corporate segment. Paste the p-value to 4 decimals.",
-        "From your earlier work, list 3 correlations you found that are likely spurious (correlation does not imply causation). One sentence each.",
-        "Compute Pearson r between Discount and Profit, and between Quantity and Profit. Paste both values.",
-        "Find one example of Simpson's paradox in this dataset (an aggregated trend that flips when you split). Describe in 3 lines.",
-        "Run a chi-square test of Region × Segment. Paste the p-value and your interpretation in one line.",
-        "Bootstrap the mean Profit per order with 1000 resamples. Paste the 95% bootstrap CI.",
-        "Apply Bonferroni correction across your 3+ pairwise tests. Which results stay significant after correction?",
-        "Add a confidence band to your monthly sales line chart. Paste the chart PNG URL.",
-        "Commit the stats notebook and update README with one statistically-supported claim. Paste the README URL."
+        "Compute the 95% confidence interval for average Profit per order. Paste [low, high].",
+        "Compare Consumer vs Corporate segment average Sales: run a t-test, paste the p-value AND Cohen's d.",
+        "Find your Simpson's paradox: an aggregated trend that flips when you split by another column. Describe it in 3 lines.",
+        "Compute Pearson r between Quantity and Profit. Now Quantity and Margin. Are they the same direction? Why or why not.",
+        "Bootstrap the median Sales with 1000 resamples. Paste the 95% bootstrap CI.",
+        "Run a chi-square: is Segment independent of Region? Paste p-value and your one-line interpretation.",
+        "Apply Bonferroni to 3 pairwise segment comparisons (Consumer vs Corporate, Consumer vs Home Office, Corporate vs Home Office). Which stay significant?",
+        "List 2 correlations in your data that are almost certainly spurious (correlated but unrelated). One sentence each.",
+        "Add a 95% confidence band to your monthly trend chart. Paste the PNG URL.",
+        "Update README with one statistically-supported claim citing the test + p-value. Paste the URL."
       ]
     },
     {
@@ -1325,16 +1330,16 @@
         "1 AI-generated post published"
       ],
       "mastery_questions": [
-        "Open Cursor or ChatGPT. Generate working SQL for: 'top 5 customers by total profit in 2023'. Paste the prompt and the SQL it returned.",
-        "Run the AI-generated SQL on your dataset. Did it work first try? If not, what did you have to fix?",
-        "Use AI to critique your Week 1 memo PDF. Paste the AI's top 3 critiques and how you'll act on them.",
-        "Generate speaker notes for your dashboard slides using AI. Paste 2 sets of speaker notes (one good, one bad).",
-        "Have AI generate 3 hard Excel formulas you have not seen before. Test each one and paste both the formula and the result.",
-        "Try the same 'generate SQL' prompt in 2 different AI tools (e.g. ChatGPT vs Claude). Which output was better and why?",
-        "Have AI explain Simpson's paradox in 100 words for a non-technical reader. Paste the explanation.",
-        "Write prompts.md with at least 5 reusable prompts you'd use weekly. Paste the GitHub link.",
-        "Use AI to draft a 1-paragraph LinkedIn post about your Superstore finding. Paste the final published URL.",
-        "Document 3 rules for when NOT to trust AI output. Paste the rules into prompts.md."
+        "Ask AI to generate SQL for: 'top 5 customers in West region by 2023 profit'. Paste the prompt + the SQL it gave. Did it run first try? If not, what did you fix?",
+        "Ask AI to critique your W1 memo PDF. Paste the top 3 critiques and which one you'll act on.",
+        "Have AI generate 3 Excel formulas that solve real Superstore puzzles you have not solved. Test each. Paste the formulas + the answers.",
+        "Have AI write speaker notes for your 5-slide deck. Paste 2 sets (slide 1 + slide 5). Are they better than yours?",
+        "Test the same SQL prompt in 2 AIs (ChatGPT + Claude or Perplexity). Which gave the better SQL? Why?",
+        "Have AI explain Simpson's paradox in 100 words to a non-technical person. Paste the explanation. Would your aunt understand?",
+        "Find one case where AI hallucinated. Paste the prompt + the wrong answer + what you caught.",
+        "Have AI draft a 100-word LinkedIn post about your Superstore finding. Edit it. Publish. Paste the post URL.",
+        "Write prompts.md with the 5 prompts you would re-use weekly. Paste the GitHub URL.",
+        "Add 3 rules for when NOT to trust AI to prompts.md. Paste the rules."
       ]
     },
     {
@@ -1490,16 +1495,16 @@
         "v0.5 tag"
       ],
       "mastery_questions": [
-        "Build your 5-slide executive deck. Paste the deck.pdf GitHub URL.",
-        "Slide 1 must be a single headline insight, not a chart. Paste the exact headline sentence.",
-        "Each of slides 2-4 must have exactly ONE chart and ONE takeaway sentence. Paste the 3 takeaways.",
-        "Slide 5 is the recommendation. Paste your recommendation in one sentence with one supporting number.",
-        "Time yourself pitching all 5 slides in under 5 minutes. Paste your total time.",
-        "Have one real person watch the pitch. Paste their single biggest critique.",
-        "Make a CFO-version of the deck that's all about money saved. Paste the GitHub link.",
+        "Distill your 9-week Superstore work into ONE headline sentence under 20 words. Paste it.",
+        "Slide 1: that headline + ONE big number. Paste the slide screenshot.",
+        "Slides 2-4: one chart + one takeaway sentence each. Paste the 3 takeaway sentences.",
+        "Slide 5 must be a SPECIFIC recommendation with a dollar impact estimate. Paste the recommendation and the number.",
+        "Time yourself pitching all 5 slides cold. Paste your time. Goal: under 5 minutes.",
+        "Make the CFO-version: same deck, all about money saved. Paste the GitHub link.",
+        "Make the OPS-version: same deck, all about discount caps and ship mode changes. Paste the link.",
         "Kill the chart on slide 3 and replace it with one giant number. Compare effectiveness in 2 lines.",
-        "Save the deck as PDF and commit. Paste the v0.5 release URL.",
-        "Post the headline insight on LinkedIn. Paste the post URL."
+        "Have one real person watch the pitch. Paste their single biggest critique.",
+        "Tag v0.5 and post the headline insight + a key chart on LinkedIn. Paste the post URL."
       ]
     },
     {
@@ -1654,16 +1659,16 @@
         "RETRO.md"
       ],
       "mastery_questions": [
-        "List the 5 rough edges you fixed before v1.0. One line each.",
-        "Reformat your memo as a polished PDF (proper margins, headers, no markdown leaks). Paste the link.",
-        "Create an anonymized public version of the dataset (no customer names, etc). Paste the file URL.",
-        "Find one stranger (Discord, Reddit, classmate) to read your project. Paste their single biggest critique.",
-        "Apply the feedback to one specific thing. Paste the commit URL that addresses it.",
-        "Write RETRO.md answering: what worked, what didn't, what I'll do differently next project. Paste the GitHub URL.",
-        "Add your repo to your GitHub pinned repos. Paste a screenshot URL.",
+        "List the 5 cosmetic edges you fixed before v1.0. One line each.",
+        "Reformat the memo as a polished 1-page PDF (proper margins, no markdown leaks). Paste the link.",
+        "Create an anonymized public dataset (remove customer names, mask postal codes). Paste the file URL.",
+        "Recruit one stranger (Discord, Reddit, classmate) to read the project. Paste their single biggest critique.",
+        "Apply the feedback. Paste the commit URL that fixes it.",
+        "Write RETRO.md: what worked, what failed, what you would do differently. Paste the URL.",
+        "Add the repo to your GitHub PINNED repos. Paste a screenshot.",
         "Record a 2-minute Loom walkthrough of the dashboard. Paste the Loom URL.",
-        "Post a screenshot of the dashboard on LinkedIn with a 1-sentence finding. Paste the post URL.",
-        "Tag v1.0 and paste the release URL. PROJECT 1 is now COMPLETE."
+        "Post a dashboard screenshot on LinkedIn with a 1-sentence finding. Paste the post URL.",
+        "Tag v1.0. PROJECT 1 COMPLETE. Paste the release URL."
       ]
     },
     {
@@ -1821,16 +1826,16 @@
         "First findings paragraph"
       ],
       "mastery_questions": [
-        "Download the IBM HR Attrition dataset from Kaggle. Paste the row count and column count.",
-        "Compute the overall attrition rate (Attrition='Yes' / total). Paste the percentage to 1 decimal.",
-        "Build a pivot of attrition rate by Department. Paste the 3-row table with rates.",
-        "Build a pivot of attrition rate by JobRole. Which role has the highest? Paste the rate.",
-        "Bucket MonthlyIncome into Low/Med/High thirds. Paste attrition rate per bucket.",
-        "What is the attrition rate among OverTime='Yes' vs OverTime='No' employees? Paste both rates.",
-        "Add a pivot for DistanceFromHome buckets (0-5, 6-15, 16+). Paste attrition per bucket.",
-        "Compare attrition by Education level. Paste the table.",
-        "Write the first paragraph of your README with the top 3 findings. Paste the GitHub link.",
-        "Commit the file and tag v0.1. Paste the release URL."
+        "Hunt for the worst department: which Department has the highest attrition rate? Paste the rate.",
+        "Find the most-at-risk job: which JobRole has the highest attrition?",
+        "The OverTime puzzle: how many TIMES more likely is an OverTime employee to leave vs a non-OverTime one? Paste the ratio.",
+        "Salary effect: bucket MonthlyIncome into thirds. Paste attrition rate per third. Linear, U-shaped, or something else?",
+        "Distance trap: at what DistanceFromHome bucket does attrition first jump above 25%? Paste the bucket.",
+        "Education paradox: which Education level has the HIGHEST attrition? Was that what you expected?",
+        "Gender check: paste the attrition rate by Gender. Be careful with interpretation - in 1 line, what would you NOT conclude from this?",
+        "The young-employee story: among employees under 30, what is the biggest predictor of leaving? Show numbers.",
+        "Compare HR analytics findings to industry context (from the HR 101 video). Which finding is most surprising vs the standard literature?",
+        "Push the dataset + first findings paragraph in README. Tag v0.1 and paste the release URL."
       ]
     },
     {
@@ -1979,16 +1984,16 @@
         "README updated"
       ],
       "mastery_questions": [
-        "Bucket YearsAtCompany into 0-1, 2-5, 6-10, 11+ years. Build a pivot of attrition per bucket. Paste the 4 numbers.",
-        "Which tenure bucket has the highest attrition? Was that surprising? Why or why not in one line.",
-        "Build a pivot of YearsSinceLastPromotion buckets × attrition. Paste the table.",
-        "Cross-tab tenure × JobRole on attrition rate. Which ROLE × TENURE combo is the worst?",
-        "Cross-tab tenure × MonthlyIncome bucket. Paste the cell with the highest attrition rate.",
-        "Build a cumulative-attrition chart: how many years until 50% of a cohort leaves? Paste the PNG URL.",
-        "Add interaction: does OverTime hurt new hires (0-1 yr) more than veterans (11+ yr)? Paste the two attrition rates.",
-        "Find the single ROLE × TENURE combination with the highest attrition. Paste it with the rate.",
-        "Update your README with the new tenure findings. Paste the commit URL.",
-        "Tag v0.2 and paste the release URL."
+        "Cliff hunting: at which exact YearsAtCompany bucket does attrition DROP the most sharply? Paste the before/after rates.",
+        "The 0-1 year crisis: what percent of all 0-1 year employees leave? Paste the rate.",
+        "Promotion neglect: among employees with YearsSinceLastPromotion = 5+, what is attrition? Compare to those with 0-1 year. Paste both.",
+        "Find the worst combo: which JobRole × TenureBucket cell has the highest attrition? Paste the cell + rate.",
+        "Income × Tenure interaction: does low income hurt more for 0-1 year or 6-10 year employees? Show the numbers.",
+        "Cumulative attrition: by year 5, what percent of the original cohort is gone? Year 10? Paste both.",
+        "Department deep-dive: pick the highest-attrition department. What is its CLIFF tenure (the year with the biggest jump)? Paste the year + the rate jump.",
+        "OverTime poison check: among 0-1 year employees, does OverTime double or triple attrition? Paste the ratio.",
+        "Find the surprise: a JobRole where MORE tenure goes with MORE attrition (counterintuitive). Or prove none exists.",
+        "Update README with the tenure findings + cumulative-attrition chart. Tag v0.2 and paste the release URL."
       ]
     },
     {
@@ -2134,15 +2139,15 @@
         "v0.3 tag"
       ],
       "mastery_questions": [
-        "Build a 4-KPI dashboard (Overall attrition, Top-risk department rate, OverTime rate, Avg tenure). Paste the dashboard image URL.",
-        "Add 3 charts beneath the KPIs (attrition by tenure, by JobRole, by income bucket). Paste the dashboard PNG URL.",
-        "Add a slicer/filter for Department. Confirm: when you click Sales, do the KPIs update? Yes or no.",
-        "Write a 1-page HR memo recommending 3 concrete actions. Paste the memo PDF URL.",
-        "Estimate dollar impact: cost to replace one employee × total annual attritions = X. Paste your number and the assumptions.",
-        "Build a 4-slide executive deck. Paste the deck PDF URL.",
-        "Time yourself pitching the deck in under 4 minutes. Paste your time.",
-        "Add an 'overtime hours estimate' to your dashboard. Paste the formula or column you used.",
-        "Have one person read the memo. Paste their single biggest question after reading.",
+        "Build 4 KPI tiles: Overall attrition, Top-risk department rate, OverTime attrition rate, Average tenure of leavers. Paste all 4 numbers.",
+        "Add 3 supporting charts: attrition by tenure, by JobRole, by income bucket. Paste the dashboard screenshot URL.",
+        "Add a Department slicer. Confirm: when you click Sales, do the KPIs update? Paste a screenshot of 2 different departments selected.",
+        "Estimate the DOLLAR impact: cost per replacement * total annual attritions. Use $15k-$30k from the SHRM video. Paste your number and the assumption.",
+        "Write a 1-page HR memo with the headline + 3 findings + 2 specific recommendations. Paste the PDF URL.",
+        "Build a 4-slide exec deck: Problem, Top Finding, Recommendation, Cost of Inaction. Paste the deck PDF.",
+        "Time yourself pitching the deck. Paste your time. Goal: under 4 minutes.",
+        "Find one quote from a real HR pro (LinkedIn, podcast, article) that supports your top recommendation. Paste it + source.",
+        "Have one person read the memo silently. Paste their first question after reading.",
         "Tag v0.3 and paste the release URL."
       ]
     },
@@ -2286,16 +2291,16 @@
         "RETRO.md"
       ],
       "mastery_questions": [
-        "Polish the project. List the top 3 cosmetic fixes you made.",
-        "Anonymize the dataset and commit the anonymized version. Paste the file URL.",
-        "Add a SQL version of your top 5 queries. Paste queries.sql URL.",
-        "Record a 3-minute demo video of the dashboard. Paste the YouTube/Loom URL.",
-        "Get feedback from one HR professional or one experienced person. Paste their top critique.",
+        "Polish: list the top 3 cosmetic fixes you made before v1.0.",
+        "Anonymize the dataset properly (no IDs, no names, no exact dates). Paste the file URL.",
+        "Add a SQL version of your top 5 queries used in the dashboard. Paste queries.sql URL.",
+        "Record a 3-min demo video. Paste the Loom/YouTube URL.",
+        "Find one HR professional or experienced person and get them to read the project. Paste their top critique.",
         "Apply the feedback. Paste the commit URL.",
-        "Write RETRO.md (what worked, what didn't, what's next). Paste the GitHub URL.",
-        "Post a screenshot on LinkedIn with one finding. Paste the post URL.",
-        "Add the repo to your GitHub pinned. Paste a screenshot URL.",
-        "Tag v1.0 and paste the release URL. PROJECT 2 is now COMPLETE."
+        "Write RETRO.md: what worked, what didn't, lessons for next project. Paste the URL.",
+        "Post a screenshot of one finding on LinkedIn with a 1-sentence hook. Paste the post URL.",
+        "Add the project to your GitHub pinned repos. Paste a screenshot.",
+        "Tag v1.0. PROJECT 2 COMPLETE. Paste the release URL."
       ]
     },
     {
@@ -2462,16 +2467,16 @@
         "ETHICS.md"
       ],
       "mastery_questions": [
-        "Pick a public practice site (books.toscrape.com or quotes.toscrape.com). Paste the URL and the contents of its robots.txt.",
-        "Write a 5-line ETHICS.md for your scraping. Paste the file URL.",
-        "Build a BeautifulSoup scraper for 5 pages with a 1-second rate limit. Paste the script URL.",
-        "Scrape the data and save to scraped.csv. Paste the row count and the columns.",
-        "Add a timestamp column to every scraped row. Paste the first 3 rows.",
-        "Schedule the scraper to run daily (cron on Linux/Mac, Task Scheduler on Windows). Paste the cron expression or screenshot.",
-        "Compute price-change deltas between two scrape runs. Paste 5 example deltas.",
-        "Build a Google Sheets dashboard showing the price tracker output. Paste the public Sheet URL.",
-        "Add an email or alert when price drops more than 20%. Paste the trigger script or rule.",
-        "Push competitor-price-tracker repo to GitHub. Paste the URL."
+        "Pick books.toscrape.com. Paste robots.txt contents.",
+        "Write ETHICS.md with 5 rules you'll follow. Paste the file URL.",
+        "Scrape 5 pages with a 1-second rate limit. Paste row count + first 3 rows.",
+        "Add a timestamp column. Paste the first 3 rows with timestamps.",
+        "Run the scraper TWICE 1 hour apart. Compute price-change deltas. Paste 5 example deltas.",
+        "Schedule the scraper to run daily. Paste the Task Scheduler screenshot OR the cron expression.",
+        "Detect a price drop: write code that triggers an alert when any product drops more than 20% in price. Paste the alert function.",
+        "Build a 1-page Google Sheets dashboard from the scraped data. Paste the public Sheet URL.",
+        "Compute time-on-shelf: for products that disappeared, what was their median days-on-site before disappearing?",
+        "Push competitor-price-tracker to GitHub with ETHICS.md, scraper, scheduled script, and one screenshot. Paste the repo URL."
       ]
     },
     {
@@ -2633,16 +2638,16 @@
         "Funnel pivot + delivery analysis"
       ],
       "mastery_questions": [
-        "Download the Olist 9-CSV dataset from Kaggle. Paste the total row count across all 9 files.",
-        "Draw a schema diagram showing how the 9 tables join. Paste the diagram image URL.",
-        "Load the orders table and compute the funnel (created → approved → delivered → reviewed). Paste counts at each stage.",
-        "Plot the delivery time distribution in days. Paste the PNG URL and the median delivery time.",
-        "Compute Pearson r between delivery_time_days and review_score. Paste the value.",
-        "What revenue (sum of price) was lost due to canceled orders? Paste the dollar figure.",
-        "Build a customer-lifetime view: average orders per customer. Paste the number.",
-        "Filter to São Paulo state only and recompute the funnel. Is it different? Paste both funnels side by side.",
-        "Add findings paragraph to README. Paste the link.",
-        "Tag v0.1 and paste the release URL."
+        "Compute the order-status funnel: created -> approved -> delivered -> reviewed. Paste counts at each step.",
+        "Find the BIGGEST drop-off in the funnel. Paste the stage and the drop percentage.",
+        "Median delivery time: how many days from purchase to delivery? Paste the number.",
+        "Compute correlation between delivery_time_days and review_score. Paste r value + interpret in 1 line.",
+        "Find the worst-rated city: which Brazilian city has the lowest average review score (min 50 orders)? Paste city + score.",
+        "Revenue loss puzzle: what's the dollar value of CANCELED orders? Paste the number.",
+        "Compare São Paulo vs Rio de Janeiro funnel: any difference? Paste both funnels.",
+        "Draw the schema diagram. Paste the diagram image URL.",
+        "Find the seller star: which seller has the highest review score (min 50 sales)? Paste seller_id + score.",
+        "Push v0.1 with findings paragraph in README. Paste the release URL."
       ]
     },
     {
@@ -2798,16 +2803,16 @@
         "v0.2 tag"
       ],
       "mastery_questions": [
-        "For each customer compute first-purchase month. Paste a sample of 5 rows.",
-        "Build the cohort × month retention matrix (months 0 through 11). Paste the matrix image URL.",
-        "What is the overall repeat-buyer rate (customers with 2+ orders / total)? Paste the percentage.",
-        "Plot days-to-second-purchase histogram. Paste the PNG URL and the median days.",
-        "Compare average order value: repeat vs one-time customers. Paste both numbers.",
-        "Build a cohort matrix by STATE instead of month. Which state has the best retention?",
-        "Build a cohort matrix by first-purchase Category. Which category drives the best repeat rate?",
-        "Look at customers with 3+ orders. What is their average lifetime spend? Paste the number.",
-        "Update README with the cohort findings. Paste the link.",
-        "Tag v0.2 and paste the release URL."
+        "Compute the cohort × month retention matrix for all 12 months. Paste the matrix image URL.",
+        "Overall repeat-buyer rate: what % of customers placed 2+ orders? Paste the number.",
+        "Plot days-to-second-purchase histogram. Median days? Paste the number.",
+        "Compare AOV: repeat customers vs one-time customers. Paste both numbers + the ratio.",
+        "Best cohort: which month's cohort had the HIGHEST month-3 retention? Paste month + rate.",
+        "Cohort by state: which Brazilian state has the best retention? Paste state + month-3 rate.",
+        "Cohort by category: which first-purchase Category drives the BEST repeat rate? Paste category + rate.",
+        "Hunt for super-customers: how many customers placed 3+ orders? What's their average lifetime spend?",
+        "Find the surprise: a category that has LOW first-purchase volume but HIGH retention. Or prove none.",
+        "Update README and tag v0.2. Paste the release URL."
       ]
     },
     {
@@ -2969,16 +2974,16 @@
         "Sample-size justification"
       ],
       "mastery_questions": [
-        "Pick a real product change to A/B test (button color, copy, layout). Write the hypothesis in one sentence.",
-        "Compute required sample size for 80% power, 5% alpha, 5% MDE. Paste the number.",
-        "Simulate 2 variants in Excel/pandas with a 2% true lift. Paste 10 example rows.",
-        "Compute the lift (variant - control) / control. Paste the percentage.",
-        "Compute the p-value via a two-sample z-test. Paste the value to 4 decimals.",
-        "Justify the sample size in one short paragraph. Paste it into AB-PLAN.md and link the file.",
-        "Add a secondary metric (e.g. clicks alongside conversions). What happens to your decision if primary wins but secondary loses?",
-        "If MDE dropped to 1%, what is the new required sample size? Paste it.",
-        "Write the ship/kill decision in one sentence based on your simulated result. Paste it.",
-        "Commit AB-PLAN.md and paste the GitHub link."
+        "Pick a real product change to A/B test. Write the hypothesis in one sentence with a specific MDE.",
+        "Compute required sample size (80% power, 5% alpha, 5% MDE). Paste the number.",
+        "Simulate variant + control in Excel with a true 2% lift. Paste 10 example rows.",
+        "Compute the observed lift in your simulation. Paste it.",
+        "Compute the p-value via z-test on conversion rates. Paste it to 4 decimals.",
+        "Compute Cohen's d for your test. Interpret in 1 sentence.",
+        "What happens to sample size if MDE drops to 1%? Paste the new N. Is that feasible?",
+        "Add a secondary metric (e.g. revenue per user). What if primary wins but secondary loses?",
+        "Write the ship/kill decision. Paste it in AB-PLAN.md and link the file.",
+        "Add one paragraph: 3 real-world A/B tests that famously went wrong. Paste it."
       ]
     },
     {
@@ -3125,15 +3130,15 @@
         "v0.3 tag"
       ],
       "mastery_questions": [
-        "Build a 4-KPI dashboard for the Olist funnel project (overall conversion, repeat rate, avg delivery days, NPS proxy). Paste the dashboard PNG URL.",
-        "Build a funnel chart showing drop-offs at each stage. Paste the PNG URL.",
-        "Add 3 supporting charts to the dashboard. Paste the dashboard PNG URL.",
-        "Write a 1-page memo summarizing the funnel insights and 2 recommendations. Paste the memo PDF URL.",
-        "Build a 5-slide executive deck. Paste the deck PDF URL.",
-        "Time yourself pitching the deck in under 5 minutes. Paste your time.",
-        "Estimate dollar value of a 1pp improvement in repeat rate. Paste the calculation and result.",
-        "Add a 'sellers' perspective dashboard view. Which 3 sellers have the worst funnel?",
-        "Add a 'by-state' view. Which state has the worst funnel?",
+        "Build 4 KPI tiles for Olist: overall conversion, repeat rate, avg delivery days, avg review score. Paste all 4 numbers.",
+        "Build the funnel chart with drop-offs labeled. Paste the chart URL.",
+        "Add 3 supporting charts to the dashboard. Paste the dashboard URL.",
+        "Write a 1-page memo with the 3 most-actionable findings. Paste the PDF URL.",
+        "Build a 5-slide deck: Funnel, Cohorts, Delivery problem, Seller variation, Recommendation. Paste the deck.",
+        "Time your 5-minute pitch. Paste your time.",
+        "Estimate dollar value of a 1pp improvement in repeat rate. Paste the calculation.",
+        "Add a sellers view: which 3 sellers have the WORST funnel? Paste seller IDs.",
+        "Add a by-state view to the dashboard. Worst state for conversion? Paste state + rate.",
         "Tag v0.3 and paste the release URL."
       ]
     },
@@ -3271,16 +3276,16 @@
         "RETRO.md"
       ],
       "mastery_questions": [
-        "Polish the project: list 3 cosmetic fixes you made.",
-        "Add a SQL version of your 5 key queries. Paste queries.sql URL.",
-        "Record a 3-minute demo video. Paste the URL.",
-        "Get feedback from one experienced person. Paste their top critique.",
-        "Apply the feedback. Paste the commit URL.",
-        "Write RETRO.md (what worked, what didn't, what's next). Paste the link.",
+        "Polish: list 3 cosmetic edges you fixed before v1.0.",
+        "Add a SQL version of your 5 key queries. Paste queries.sql.",
+        "Record a 3-min demo video. Paste the URL.",
+        "Find one experienced person to review the project. Paste their top critique.",
+        "Apply the critique. Paste the commit URL.",
+        "Write RETRO.md. Paste the URL.",
         "Post the funnel chart on LinkedIn with a 1-sentence finding. Paste the post URL.",
-        "Make a Kaggle notebook version of the analysis. Paste the Kaggle URL.",
-        "Add the repo to your GitHub pinned. Paste screenshot URL.",
-        "Tag v1.0 and paste the release URL. PROJECT 3 is now COMPLETE."
+        "Make a Kaggle notebook version. Paste the Kaggle URL.",
+        "Add to GitHub pinned repos. Paste screenshot.",
+        "Tag v1.0. PROJECT 3 COMPLETE. Paste the release URL."
       ]
     },
     {
@@ -3455,15 +3460,15 @@
       ],
       "mastery_questions": [
         "Install Tableau Public. Paste the version number.",
-        "Connect to Superstore data and confirm it loaded. Paste the row count Tableau reports.",
-        "Build 4 KPI worksheets (Total Sales, Total Profit, Avg Margin, Top Region). Paste a screenshot of the 4 KPIs.",
-        "Build a trend chart of monthly sales. Paste the screenshot URL.",
-        "Build a bar chart of sales by sub-category. Paste the screenshot URL.",
-        "Build a matrix (heatmap) of profit by Category × Region. Paste the screenshot URL.",
-        "Assemble all into a single dashboard with a global Year filter. Paste the dashboard screenshot URL.",
-        "Add a parameter that lets the user pick a year. Confirm it works. Paste a screenshot showing 2 different years.",
-        "Build a US state map of total sales. Paste the screenshot URL.",
-        "Publish to Tableau Public and paste the live URL. Same insights as your earlier Power BI version - 1 line on why both matter."
+        "Connect to Superstore. Paste the row count Tableau reports.",
+        "Build 4 KPI worksheets (Total Sales, Total Profit, Avg Margin, Top Region). Paste a screenshot of all 4.",
+        "Build a monthly trend chart. Paste screenshot.",
+        "Build a profit-by-state US map. Which state is most profitable? Paste screenshot + state name.",
+        "Build a profit by Category × Region matrix. Paste screenshot.",
+        "Assemble a dashboard with a Year filter that applies to ALL charts. Confirm with 2 screenshots (2020 vs 2023).",
+        "Add a parameter that lets users switch the main metric (Sales vs Profit vs Margin). Paste screenshot showing each state.",
+        "Build a Tableau Story with 3 sequenced dashboards (Overview -> Discount problem -> Recommendation). Paste screenshot.",
+        "Publish to Tableau Public. Paste the live URL. Tableau version of your Superstore project is now public."
       ]
     },
     {
@@ -3656,15 +3661,15 @@
       ],
       "mastery_questions": [
         "Sign up for Google Cloud Free Tier. Paste your project ID.",
-        "Upload Superstore Orders.csv to BigQuery. Paste the dataset.table name (e.g. superstore.orders).",
-        "Run a quick query: SELECT COUNT(*) FROM your table. Paste the count.",
-        "Install dbt-bigquery via pip. Paste `dbt --version` output.",
-        "Initialize a new dbt project (dbt init) and configure profiles.yml to your BigQuery project. Paste the profiles.yml (with credentials redacted).",
-        "Build one dbt model: monthly_sales_by_region as a SELECT from your raw orders. Paste the model SQL.",
-        "Run `dbt run` and `dbt test`. Paste the test output showing pass.",
-        "Add a unique test on order_id and a not_null test on order_date. Paste the schema.yml snippet.",
-        "Build a second model: regional_yoy_growth using the same source. Paste the SQL.",
-        "Push superstore-dbt repo to GitHub. Paste the URL."
+        "Upload Superstore.csv to BigQuery. Paste the table reference (project.dataset.table).",
+        "Run SELECT COUNT(*) on the loaded table. Paste the count.",
+        "Install dbt-bigquery. Paste 'dbt --version' output.",
+        "Initialize a dbt project. Paste profiles.yml with credentials redacted.",
+        "Build model 1: monthly_sales_by_region. Paste the SQL.",
+        "Run 'dbt run' + 'dbt test'. Paste the test pass output.",
+        "Add a unique test on order_id and not_null on order_date. Paste the schema.yml snippet.",
+        "Build model 2: regional_yoy_growth. Paste the SQL.",
+        "Push superstore-dbt repo and paste the URL."
       ]
     },
     {
@@ -3812,16 +3817,16 @@
         "3 CSVs + data model"
       ],
       "mastery_questions": [
-        "Pick your capstone scenario (e.g. ecommerce, healthcare, fintech). Write SPEC.md in 1 page. Paste the URL.",
-        "Build a synthetic 3-source dataset (e.g. orders + products + customers). Paste the file URLs.",
-        "Draw the schema diagram (ER style) showing how the 3 sources join. Paste the image URL.",
-        "Build the data model with relationships in Excel/PowerBI/Tableau. Paste a screenshot.",
-        "Compute 3 cross-source KPIs (each must touch at least 2 of the 3 sources). Paste the formulas and values.",
-        "Add a 4th data source (e.g. weather, holidays, prices). Paste the file URL.",
-        "Write the 'audience' section: who reads each future dashboard page and why? Paste the bullets.",
-        "Pitch your spec to one real person in 2 minutes. Paste their top critique.",
-        "Adjust the spec based on the critique. Paste the diff or update commit URL.",
-        "Tag v0.1 and paste the release URL."
+        "Pick your capstone scenario in one sentence. Paste it.",
+        "Write SPEC.md (problem, data sources, success metric, timeline). Paste the URL.",
+        "Build a synthetic 3-source dataset (e.g. orders + products + customers). Paste 3 file URLs.",
+        "Draw the schema diagram (3 tables joined). Paste the diagram URL.",
+        "Build the data model with relationships in your chosen tool. Paste a screenshot.",
+        "Compute 3 KPIs that REQUIRE joining 2+ sources. Paste formulas + values.",
+        "Add a 4th data source (weather, holidays, prices). Paste the file URL.",
+        "Write the audience section: who reads each future dashboard page? Paste bullets.",
+        "Pitch the spec to one real person in 2 minutes. Paste their top critique.",
+        "Adjust the spec based on critique. Tag v0.1 and paste the release URL."
       ]
     },
     {
@@ -3967,15 +3972,15 @@
         "v0.2 tag"
       ],
       "mastery_questions": [
-        "Build Page 1 (Executive Overview) with 4 KPIs and 1 trend chart. Paste the screenshot URL.",
-        "Build Page 2 (Sales Detail) with breakdowns by product, region, time. Paste the screenshot URL.",
-        "Link a Region filter so it applies across both pages. Confirm with a screenshot of both pages filtered to one region.",
-        "Add micro-trend arrows (up/down indicators) to each KPI on Page 1. Paste the screenshot.",
-        "Add conditional formatting that flags any KPI below target in red. Paste the screenshot.",
-        "Add a comment/notes column to the top-orders table on Page 2. Paste a screenshot.",
-        "Time yourself navigating Page 1 → Page 2 with the filter. Is it under 2 seconds? If not, optimize the data.",
-        "Capture both pages as PDFs and commit to the repo. Paste the GitHub link.",
-        "Get one person to click around for 1 minute. Paste their feedback.",
+        "Build Page 1 (Executive Overview): 4 KPIs + 1 trend chart. Paste the screenshot.",
+        "Build Page 2 (Sales Detail): breakdowns by product, region, time. Paste the screenshot.",
+        "Link a Region filter across both pages. Confirm with 2 screenshots (West vs East).",
+        "Add micro-trend arrows (up/down indicators) to each KPI on Page 1. Paste screenshot.",
+        "Add conditional formatting that flags below-target KPIs in red. Paste screenshot.",
+        "Add a notes column to the top-orders table on Page 2. Paste screenshot.",
+        "Time yourself navigating Page 1 -> Page 2 with the filter. Under 2 seconds? If not, optimize.",
+        "Export both pages as PDF and commit them. Paste the GitHub link.",
+        "Get one person to click around for 1 minute. Paste their first piece of feedback.",
         "Tag v0.2 and paste the release URL."
       ]
     },
@@ -4117,14 +4122,14 @@
         "v0.3 tag"
       ],
       "mastery_questions": [
-        "Build Page 3 (Customer/Segment) with a cohort matrix. Paste the screenshot URL.",
-        "Build Page 4 (Operations) with operational KPIs (avg cycle time, errors, throughput). Paste the screenshot URL.",
-        "Add an alerts section to Page 1 that flags 3 KPIs in red when below target. Paste the screenshot.",
-        "Build a unified filter panel (Year, Region, Segment) that applies to all 4 pages. Confirm with a screenshot.",
-        "Polish branding (font, colors, logo). Paste before/after screenshots.",
-        "Add a 5th page: drill into one customer's lifetime view. Paste the screenshot.",
-        "Add a print-ready / export layout (1 page summary PDF). Paste the PDF URL.",
-        "Add scenario comparison (this quarter vs target). Paste the screenshot.",
+        "Build Page 3 (Customer/Segment) with a cohort matrix. Paste the screenshot.",
+        "Build Page 4 (Operations) with operational KPIs. Paste the screenshot.",
+        "Add an alerts section to Page 1 that flags 3 KPIs in red when below target. Paste screenshot.",
+        "Build a unified filter panel (Year, Region, Segment) across all 4 pages. Confirm.",
+        "Polish branding: pick one font, one color palette, add a logo. Paste before/after.",
+        "Add Page 5: drill into ONE customer's lifetime view. Paste screenshot.",
+        "Add a print-ready / 1-page summary export layout. Paste the PDF.",
+        "Add scenario comparison (this quarter vs target). Paste screenshot.",
         "Get one stranger to read all 4 pages. Paste their biggest 'confusing' moment.",
         "Tag v0.3 and paste the release URL."
       ]
@@ -4290,15 +4295,15 @@
         "One-sentence headline in repo README"
       ],
       "mastery_questions": [
-        "Watch 1 storytelling fundamentals video (Cole Knaflic or similar, 20-30 min). Paste the URL.",
-        "Distill your capstone into ONE sentence (under 20 words). Paste it.",
-        "Redesign slide 1 around that headline only - no chart, just one big number or one sentence. Paste the slide screenshot.",
-        "Kill 3 charts from your existing deck. Paste before/after slide counts.",
-        "Write 30-second speaker notes for every remaining slide. Paste 3 sample notes.",
+        "Distill your capstone into ONE sentence under 20 words. Paste it.",
+        "Redesign slide 1: that headline only. No chart. Paste the slide screenshot.",
+        "Kill 3 charts from the deck. Paste before/after slide counts.",
+        "Write 30-second speaker notes for every remaining slide. Paste 3 samples.",
         "Self-record the full presentation. Paste the video URL.",
-        "Show the recording to 1 person and get their first reaction (in 1 line).",
-        "Replace one chart with a single big number formatted for impact. Paste before/after.",
-        "Find one example of bad chart design (online) and remake it cleaner. Paste before/after images.",
+        "Show the recording to 1 person. Paste their first reaction in 1 line.",
+        "Replace one chart with a single big number, formatted big and bold. Paste before/after.",
+        "Find one example of BAD chart design online and remake it cleaner. Paste before/after.",
+        "Practice the pitch in front of a mirror twice without notes. Paste your final time.",
         "Commit the polished deck PDF and paste the link."
       ]
     },
@@ -4442,16 +4447,16 @@
         "ROADMAP_RETRO.md"
       ],
       "mastery_questions": [
-        "Write a 1-page CEO memo PDF summarizing your capstone findings + recommendations. Paste the PDF URL.",
+        "Write a 1-page CEO memo summarizing findings + recommendations. Paste the PDF URL.",
         "Build an 8-slide board deck PDF. Paste the URL.",
-        "Record a 3-minute demo video walking through the capstone. Paste the URL.",
+        "Record a 3-minute demo video. Paste the URL.",
         "Add a SQL version of every key KPI. Paste sql/ folder URL.",
-        "Get 3 readers and paste their top critique each.",
-        "Apply the most common critique. Paste the commit URL.",
+        "Get 3 readers and paste each top critique.",
+        "Apply the most-common critique. Paste the commit URL.",
         "Write capstone-specific RETRO.md. Paste the URL.",
-        "Write ROADMAP_RETRO.md covering all 4 projects: what worked across the roadmap, what you'd do differently. Paste the URL.",
-        "Apply to 1 real analyst job using the portfolio. Paste the company name (no email needed).",
-        "Tag v1.0 and paste the release URL. ROADMAP COMPLETE."
+        "Write ROADMAP_RETRO.md covering all 4 projects. Paste the URL.",
+        "Apply to ONE real analyst job using the portfolio. Paste the company name.",
+        "Tag v1.0. ROADMAP COMPLETE. Paste the release URL."
       ]
     },
     {
@@ -4625,16 +4630,16 @@
         "At least 1 job application submitted"
       ],
       "mastery_questions": [
-        "Inventory all your shipped projects (Superstore, HR, Marketing Funnel, Capstone). Paste the README-style summary.",
-        "Set up a portfolio site (Vercel/Netlify or GitHub Pages). Paste the live URL.",
-        "Write LinkedIn post #1 about Superstore. Paste the URL.",
-        "Write LinkedIn post #2 about HR Attrition. Paste the URL.",
-        "Write LinkedIn post #3 about Marketing Funnel or Capstone. Paste the URL.",
-        "Update your LinkedIn About + Experience to mention the projects. Paste the LinkedIn profile URL.",
-        "Update your GitHub README/profile pinned repos. Paste a screenshot.",
-        "Practice 3 common analyst interview questions on video (Tell me about a project / SQL question / dashboarding question). Paste the video URL.",
-        "Submit 1 real job application. Paste the company and role.",
-        "Reach out to 3 working analysts on LinkedIn for 15-min chats. Paste the 3 messages you sent (DM-style)."
+        "Inventory all 4 shipped projects. Paste a README-style summary of each.",
+        "Set up a portfolio site (Vercel/Netlify/GitHub Pages). Paste the live URL.",
+        "Write LinkedIn post 1 (Superstore). Paste the URL.",
+        "Write LinkedIn post 2 (HR Attrition). Paste the URL.",
+        "Write LinkedIn post 3 (Marketing Funnel or Capstone). Paste the URL.",
+        "Update your LinkedIn About + Experience to mention all 4 projects. Paste the profile URL.",
+        "Update GitHub profile README + pin top repos. Paste a screenshot.",
+        "Record yourself answering 3 analyst interview questions (Tell me about a project / SQL / dashboarding). Paste the video URL.",
+        "Submit ONE real job application. Paste the company name + role.",
+        "Send 3 DMs to working analysts on LinkedIn asking for 15-min chats. Paste the 3 messages."
       ]
     }
   ]
