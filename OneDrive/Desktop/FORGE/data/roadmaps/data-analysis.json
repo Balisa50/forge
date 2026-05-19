@@ -1,7 +1,7 @@
 {
   "slug": "data-analysis",
   "title": "Data Analysis",
-  "total_weeks": 27,
+  "total_weeks": 28,
   "weeks": [
     {
       "number": 1,
@@ -4682,6 +4682,211 @@
         "Send 3 DMs to working analysts on LinkedIn asking for 15-min chats. Paste the 3 messages."
       ],
       "ai_assist": "Ask AI to rewrite your LinkedIn About section in 3 different tones - pick the best. Use it to generate strong opening sentences for each project's portfolio page. Have it role-play an analyst interview - ask you 5 SQL + 5 behavioral questions."
+    },
+    {
+      "number": 28,
+      "title": "Power BI Mastery - DAX, modeling, deployment",
+      "phase": "Advanced BI",
+      "commitment_hours": "8-10",
+      "context": "Power BI is the BI tool used by more companies than Tableau, Looker, and Qlik combined. This week you get fluent: DAX measures, data modeling with relationships, and publishing to Power BI Service. By Sunday you have a Power BI version of your Superstore dashboard published to a workspace.",
+      "topics": [
+        "Power BI Desktop interface and Power Query (M language basics)",
+        "Data modeling with relationships (1:1, 1:many, many:many)",
+        "Star schema vs flat tables in Power BI",
+        "DAX measures vs calculated columns (when to use which)",
+        "Time intelligence DAX (YTD, YoY, rolling averages)",
+        "Drill-through pages and bookmarks",
+        "Publishing to Power BI Service + workspaces",
+        "Power BI vs Tableau - when to recommend each"
+      ],
+      "tasks": [
+        "Install Power BI Desktop (free on Windows; web version on Mac)",
+        "Import Superstore CSV and build the data model",
+        "Write 8 DAX measures (Total Sales, Margin %, YoY Growth, Top-N filters, etc)",
+        "Build a 4-page dashboard (Overview, Sales detail, Product detail, Customer detail)",
+        "Add a drill-through page from any product to its order history",
+        "Publish to Power BI Service free tier - paste the public-share URL",
+        "Compare Power BI version to Tableau version - write SWITCH.md noting which tool wins for which task"
+      ],
+      "outputs": [
+        "Public Power BI Service URL of your Superstore dashboard",
+        "DAX measures committed in dax-measures.md",
+        "SWITCH.md comparing Power BI vs Tableau for this analysis"
+      ],
+      "project": "Superstore in Power BI - a 4-page Power BI Service dashboard with proper data modeling, DAX measures, and drill-through. Same insights as your Tableau version, demonstrating fluency in both major BI tools.",
+      "resources": [
+        {
+          "label": "Power BI Beginner in 30 min (top YouTube result)",
+          "url": "https://www.youtube.com/results?search_query=Power+BI+beginner+tutorial+30+minutes+Pragmatic+Works",
+          "note": "30 min. Pragmatic Works walkthrough. Open Power BI on the side and follow along."
+        },
+        {
+          "label": "DAX measures fundamentals - SQLBI (top YouTube result)",
+          "url": "https://www.youtube.com/results?search_query=DAX+measures+vs+calculated+columns+SQLBI",
+          "note": "20 min. SQLBI is THE Power BI authority. Measures vs calculated columns is the #1 confusion point."
+        },
+        {
+          "label": "Power BI data modeling 101 (top YouTube result)",
+          "url": "https://www.youtube.com/results?search_query=Power+BI+data+modeling+star+schema+beginner",
+          "note": "15 min. Relationships, cardinality, star schema. The thing that makes Power BI fast."
+        },
+        {
+          "label": "Time intelligence DAX in 12 min (top YouTube result)",
+          "url": "https://www.youtube.com/results?search_query=Power+BI+time+intelligence+DAX+YoY+YTD",
+          "note": "12 min. YoY, YTD, rolling averages. The DAX patterns you'll use weekly in any job."
+        },
+        {
+          "label": "Drill-through pages tutorial (top YouTube result)",
+          "url": "https://www.youtube.com/results?search_query=Power+BI+drill+through+pages+tutorial",
+          "note": "8 min. Click a customer name, jump to a customer-detail page. Pro feature in 8 minutes."
+        },
+        {
+          "label": "Power BI Service deployment in 6 min (top YouTube result)",
+          "url": "https://www.youtube.com/results?search_query=Power+BI+publish+to+service+workspace+tutorial",
+          "note": "6 min. From Desktop to live URL."
+        },
+        {
+          "label": "Power BI Desktop download (free, Windows)",
+          "url": "https://powerbi.microsoft.com/desktop/",
+          "note": "Free download. Mac users use the web version at app.powerbi.com."
+        }
+      ],
+      "days": [
+        {
+          "number": 1,
+          "title": "Install + first dashboard",
+          "summary": "Install Power BI Desktop, import Superstore, build the simplest possible visual.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI Beginner in 30 min",
+              "url": "https://www.youtube.com/results?search_query=Power+BI+beginner+tutorial+30+minutes+Pragmatic+Works",
+              "duration_min": 30
+            },
+            {
+              "kind": "exercise",
+              "title": "Import + first bar chart",
+              "body": "Install Power BI Desktop. File > Get Data > Excel > select Superstore. Drag Region to Axis, Sales to Values. You have your first Power BI visual."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Data modeling and relationships",
+          "summary": "Build the model. Star schema. Relationships matter more than measures.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI data modeling 101",
+              "url": "https://www.youtube.com/results?search_query=Power+BI+data+modeling+star+schema+beginner",
+              "duration_min": 15
+            },
+            {
+              "kind": "exercise",
+              "title": "Build the star schema",
+              "body": "Model view. Add a Date table. Create relationships from Date[Date] to Orders[Order Date]. Mark Date as a date table. Now your time intelligence will work."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "DAX measures",
+          "summary": "Write 8 measures. Measures vs columns is the central concept.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "DAX measures fundamentals",
+              "url": "https://www.youtube.com/results?search_query=DAX+measures+vs+calculated+columns+SQLBI",
+              "duration_min": 20
+            },
+            {
+              "kind": "exercise",
+              "title": "Write 8 DAX measures",
+              "body": "Total Sales, Total Profit, Margin %, YoY Sales Growth, MoM Sales, YTD Sales, Top 10 Customers (using TOPN), Average Order Value. Commit them to dax-measures.md."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Time intelligence",
+          "summary": "YoY, YTD, rolling averages with DATEADD and SAMEPERIODLASTYEAR.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Time intelligence DAX in 12 min",
+              "url": "https://www.youtube.com/results?search_query=Power+BI+time+intelligence+DAX+YoY+YTD",
+              "duration_min": 12
+            },
+            {
+              "kind": "exercise",
+              "title": "Build a YoY chart",
+              "body": "Use SAMEPERIODLASTYEAR to compute YoY on monthly sales. Add it to a line chart showing this year vs last year."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Multi-page dashboard",
+          "summary": "Build 4 pages with cross-page slicers.",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Build 4 pages",
+              "body": "Page 1: Executive Overview (KPI tiles + trend). Page 2: Sales detail (by region, sub-category, customer). Page 3: Product detail. Page 4: Customer detail. Add a Year slicer that syncs across all pages (right-click slicer > Sync slicers)."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Drill-through + bookmarks",
+          "summary": "Click a customer name, jump to their detail page.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Drill-through pages tutorial",
+              "url": "https://www.youtube.com/results?search_query=Power+BI+drill+through+pages+tutorial",
+              "duration_min": 8
+            },
+            {
+              "kind": "exercise",
+              "title": "Add drill-through",
+              "body": "Right-click on a customer in a table on Page 2 > Drill through > Customer Detail. The drill-through filter is auto-applied to Page 4."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Publish + compare to Tableau",
+          "summary": "Publish to Power BI Service. Write SWITCH.md.",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Power BI Service deployment in 6 min",
+              "url": "https://www.youtube.com/results?search_query=Power+BI+publish+to+service+workspace+tutorial",
+              "duration_min": 6
+            },
+            {
+              "kind": "exercise",
+              "title": "Publish + compare",
+              "body": "Sign up for Power BI Service free tier (powerbi.microsoft.com). Publish your .pbix from Desktop. Get the share link. Then write SWITCH.md - 1 paragraph each on: what Power BI does better, what Tableau does better, when to recommend each."
+            }
+          ]
+        }
+      ],
+      "ai_assist": "Cursor + Claude can write DAX measures correctly first try. Paste the question in plain English ('measure for sales growth vs same period last year, returning %') and validate the formula against SQLBI's docs. Use AI to generate alternative ways to model the same data (long-vs-wide). Have it critique your dashboard layout from a CFO perspective.",
+      "stakeholder_moment": "Power BI is the de facto tool inside Microsoft-stack companies (60% of mid-large enterprises). Your audience is often a manager who already uses Power BI in their day job - they'll ask 'why didn't you use Tableau?' Be ready to defend the tool choice based on the company's existing stack, not personal preference.",
+      "mastery_questions": [
+        "Install Power BI Desktop and paste a screenshot of the version number.",
+        "Build your data model. Paste a screenshot of the Model view showing the relationships you created. Is your Date table marked? Yes/no.",
+        "Write a DAX measure: 'Margin %' that returns Profit / Sales. Paste the exact DAX formula.",
+        "Write a DAX measure: 'YoY Sales Growth %' using SAMEPERIODLASTYEAR. Paste the formula.",
+        "Build the Top 10 Customers measure using TOPN. Paste the formula and the top 3 customer names it returns.",
+        "Build 4 pages. Add a Year slicer that syncs across all 4. Confirm with a screenshot of the same Year filter applied on 2 different pages.",
+        "Add drill-through from a customer table on Page 2 to a customer detail page on Page 4. Confirm with a 2-screenshot sequence (click + landing page).",
+        "Publish to Power BI Service. Paste the public share URL.",
+        "Compare to your Tableau version: in SWITCH.md write one paragraph each on (a) what Power BI does better here, (b) what Tableau does better, (c) when to recommend each. Paste the GitHub URL.",
+        "Push your .pbix file to GitHub. Paste the commit URL."
+      ]
     }
   ]
 }

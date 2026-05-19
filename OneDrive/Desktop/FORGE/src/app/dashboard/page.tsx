@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass, BookOpen, Send } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
 const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
@@ -164,12 +165,34 @@ export default async function DashboardPage() {
   const totalTasks = allTasks.length;
   const overallPct = totalTasks > 0 ? Math.round((verifiedTasks / totalTasks) * 100) : 0;
 
+  // Celebration + streak. orderedTasks is sort-stable by phase/sortOrder, so
+  // we can walk from the END to find the contiguous run of verified weeks.
+  const orderedTasks = activeRoadmap?.tracks
+    .flatMap((t) => t.phases.flatMap((p) => p.tasks))
+    ?? [];
+  const latestVerified = [...orderedTasks]
+    .filter((t) => t.status === "verified" && t.verifiedAt)
+    .sort((a, b) => (b.verifiedAt!.getTime() - a.verifiedAt!.getTime()))[0];
+  let streakWeeks = 0;
+  for (let i = orderedTasks.length - 1; i >= 0; i--) {
+    const t = orderedTasks[i];
+    if (t.status === "verified") streakWeeks++;
+    else if (t.status === "locked" && !t.releasedAt) continue;
+    else break;
+  }
+
   // Not used — analytics page handles detailed scores
 
   // ── MENTEE MODE: mentor controls every week release ────────────────
   if (hasMentor) {
     return (
       <div>
+        <WeekVerifiedCelebration
+          latestVerifiedId={latestVerified?.id ?? null}
+          latestVerifiedTitle={latestVerified?.title ?? null}
+          streakWeeks={streakWeeks}
+          menteeFirstName={user?.name?.split(" ")[0] ?? "You"}
+        />
         <div style={{ marginBottom: "2rem" }}>
           <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
             Welcome, {user?.name?.split(" ")[0]}
