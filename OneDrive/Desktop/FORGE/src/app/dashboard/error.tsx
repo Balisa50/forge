@@ -47,7 +47,7 @@ export default function DashboardError({
         </p>
 
         {error.digest && (
-          <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginBottom: "1.5rem" }}>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginBottom: "0.5rem" }}>
             Error ID: {error.digest}
           </p>
         )}

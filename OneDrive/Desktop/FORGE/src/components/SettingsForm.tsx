@@ -313,7 +313,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
             <label className="label-mono" style={{ display: "block", marginBottom: "0.5rem" }}>Current Password</label>
             <div style={{ position: "relative" }}>
               <input type={showCurrent ? "text" : "password"} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="forge-input" style={{ paddingRight: "2.75rem" }} placeholder="••••••••" required />
-              <button type="button" onClick={() => setShowCurrent(!showCurrent)} style={{ position: "absolute", right: "0.75rem", top: 0, bottom: 0, background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0 0.25rem", display: "flex", alignItems: "center" }}>
+              <button type="button" onClick={() => setShowCurrent(!showCurrent)} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0 0.25rem", display: "flex", alignItems: "center", minHeight: "unset" }}>
                 {showCurrent ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
               </button>
             </div>
@@ -322,7 +322,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
             <label className="label-mono" style={{ display: "block", marginBottom: "0.5rem" }}>New Password</label>
             <div style={{ position: "relative" }}>
               <input type={showNew ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="forge-input" style={{ paddingRight: "2.75rem" }} placeholder="Min 6 characters" required minLength={6} />
-              <button type="button" onClick={() => setShowNew(!showNew)} style={{ position: "absolute", right: "0.75rem", top: 0, bottom: 0, background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0 0.25rem", display: "flex", alignItems: "center" }}>
+              <button type="button" onClick={() => setShowNew(!showNew)} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0 0.25rem", display: "flex", alignItems: "center", minHeight: "unset" }}>
                 {showNew ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
               </button>
             </div>

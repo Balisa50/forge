@@ -97,7 +97,7 @@ function ResetPasswordForm() {
                       autoComplete="new-password"
                       disabled={!!error && !newPassword}
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: "0.75rem", top: 0, bottom: 0, background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0 0.25rem", display: "flex", alignItems: "center" }}>
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0 0.25rem", display: "flex", alignItems: "center", minHeight: "unset" }}>
                       {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
                     </button>
                   </div>

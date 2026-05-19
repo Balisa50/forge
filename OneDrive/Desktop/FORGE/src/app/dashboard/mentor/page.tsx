@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus } from "lucide-react";
+import MentorInvitesPanel from "@/components/MentorInvitesPanel";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -266,7 +267,7 @@ export default async function MentorDashboardPage() {
                           ? <CheckCircle2 size={12} color="var(--green)" />
                           : <XCircle size={12} color="var(--red)" />
                         }
-                        <span style={{ fontSize: "0.8125rem" }}>{c.task.title}</span>
+                        <span style={{ fontSize: "0.8125rem" }}>{c.task?.title ?? "—"}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         {c.interrogation && (

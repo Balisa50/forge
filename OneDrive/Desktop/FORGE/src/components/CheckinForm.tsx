@@ -290,7 +290,7 @@ export default function CheckinForm({
       <button
         type="submit"
         className="forge-btn forge-btn-primary"
-        style={{ width: "100%", padding: "1rem", fontSize: "1rem" }}
+        style={{ width: "100%", maxWidth: "480px", padding: "1rem", fontSize: "1rem" }}
         disabled={submitting || !selectedTaskId || description.length < 50 || !projectUrl.trim() || (!!projectUrl && !isValidUrl(projectUrl))}
       >
         {submitting

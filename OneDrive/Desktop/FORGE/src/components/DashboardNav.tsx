@@ -257,26 +257,43 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
   return (
     <>
       {/* Mobile hamburger */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="nav-hamburger dashboard-hamburger"
-        aria-label="Open navigation"
+      {/* Mobile top bar — fixed strip across the full width so it never floats over content */}
+      <div
+        className="nav-hamburger-bar"
         style={{
           display: "none",
           position: "fixed",
-          top: "1rem",
-          left: "1rem",
-          zIndex: 50,
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "3.5rem",
           background: "var(--bg-panel)",
-          border: "1px solid var(--border)",
-          borderRadius: "8px",
-          padding: "0.5rem",
-          cursor: "pointer",
-          color: "var(--text-primary)",
+          borderBottom: "1px solid var(--border)",
+          zIndex: 50,
+          alignItems: "center",
+          padding: "0 1rem",
+          gap: "0.75rem",
         }}
       >
-        <Menu size={20} />
-      </button>
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open navigation"
+          style={{
+            background: "none",
+            border: "none",
+            padding: "0.25rem",
+            cursor: "pointer",
+            color: "var(--text-primary)",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Menu size={22} />
+        </button>
+        <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em" }}>
+          THE FORGE
+        </span>
+      </div>
 
       {/* Mobile overlay */}
       {mobileOpen && (
@@ -316,7 +333,7 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
 
       <style>{`
         @media (max-width: 768px) {
-          .nav-hamburger { display: block !important; }
+          .nav-hamburger-bar { display: flex !important; }
           .nav-overlay { display: block !important; }
           .nav-close-btn { display: block !important; }
           .dashboard-sidebar {
