@@ -104,6 +104,23 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
     lines.push(clean(week.project));
     lines.push("");
   }
+  // AI assist - threaded through every week. Tells the student EXACTLY how to
+  // use Cursor / Claude / ChatGPT on THIS week's work. No more "AI is a one-week
+  // module" - it's a permanent part of the workflow.
+  const aiAssist = (week as { ai_assist?: string }).ai_assist;
+  if (aiAssist) {
+    lines.push("AI ASSIST - how to use Cursor or Claude this week");
+    lines.push(clean(aiAssist));
+    lines.push("");
+  }
+  // Stakeholder moment - who reads this week's deliverable, what they want,
+  // how to handle the conversation. Recurring beat for analyst weeks.
+  const stakeholder = (week as { stakeholder_moment?: string }).stakeholder_moment;
+  if (stakeholder) {
+    lines.push("STAKEHOLDER MOMENT - who reads this and what they want");
+    lines.push(clean(stakeholder));
+    lines.push("");
+  }
   // Combined mastery check list: forces the student to open the tool and DO things.
   // Theory-style `questions` are no longer rendered separately - any meaningful
   // checks should live inside `exercises` (or `mastery_questions` once weeks are
