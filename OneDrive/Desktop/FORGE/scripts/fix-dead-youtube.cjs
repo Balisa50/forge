@@ -44,7 +44,8 @@ function labelToSearch(label) {
 
 let fixed = 0;
 let totalDead = 0;
-for (const file of ["data-analysis.json", "data-science.json"]) {
+const allFiles = fs.readdirSync(ROOT).filter((f) => f.endsWith(".json"));
+for (const file of allFiles) {
   const p = path.join(ROOT, file);
   const d = JSON.parse(fs.readFileSync(p, "utf8"));
   for (const w of d.weeks) {

@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Map, FlaskConical, Flame, Shield, BarChart3, Trophy, Users, ExternalLink, CheckCircle2 } from "lucide-react";
 
 const FEATURES = [
-  { Icon: Map,          title: "Roadmap From roadmap.sh",  desc: "Choose from 38 curated roadmap.sh paths — React, Python, DevOps, ML, and more. The AI generates missions for each phase based on the exact curriculum used by 1M+ developers." },
+  { Icon: Map,          title: "9 Hand-Curated Roadmaps",  desc: "Data Analysis, Data Science, AI Engineering, ML Engineering, Full Stack Web, Mobile, DevOps + Cloud, Cybersecurity, BI Analytics. Each one is 17 to 43 weeks of mentor-controlled releases with 10 mastery checkpoints per week. Validated YouTube resources, no dead links, all under 30 minutes." },
   { Icon: FlaskConical, title: "Daily AI Interrogation",   desc: "3 open-ended questions from THE PROFESSOR every time you check in. You explain what you built and why. Either you know it — or you don't. There's nowhere to hide." },
   { Icon: Flame,        title: "Verified Project Evidence", desc: "Submit your GitHub repo or live URL with every session. The system checks it's real, non-empty, and updated. No placeholder repos. No recycled links." },
   { Icon: Users,        title: "Accountability Pods",       desc: "Auto-matched with 4 people on similar paths. See who checked in today. Track each other's progress. No chat, no noise — just the shared weight of showing up." },
@@ -15,18 +15,18 @@ const FEATURES = [
 ];
 
 const HOW_IT_WORKS = [
-  { step: "01", title: "Pick your path", desc: "Choose a roadmap.sh curriculum or describe your own goal. The AI builds a structured multi-phase roadmap with real resources." },
-  { step: "02", title: "Commit to a schedule", desc: "Daily, weekdays, or custom. You decide. The Forge holds you to it." },
-  { step: "03", title: "Check in with proof", desc: "Every committed day: submit a verified project URL and describe what you built. The system checks the URL is real." },
-  { step: "04", title: "Face THE PROFESSOR", desc: "3 open-ended questions about your work. Pass at 40%. No MCQs, no guessing — you either understand what you built or you don't." },
-  { step: "05", title: "Build your track record", desc: "Your public build log fills up. Your pod sees you showing up. Your certificate earns credibility session by session." },
+  { step: "01", title: "Pick one of 9 curated paths", desc: "Data Analysis, Data Science, AI Engineering, ML Engineering, Full Stack Web, Mobile, DevOps + Cloud, Cybersecurity, BI Analytics. Each one is built for zero-tech-knowledge beginners. Every assumed skill (open a terminal, push to GitHub, install Python) has its own hand-curated video tutorial linked." },
+  { step: "02", title: "Get a real human mentor (or go solo)", desc: "Paired with a working professional who controls your week-by-week pace. They release each week with a personal note. They sign off when you've actually learned it. Or pick Solo and walk the path alone with the AI Professor." },
+  { step: "03", title: "Work the week, ship the proof", desc: "Each week has 7 days of bite-sized tasks. Watch the videos (none over 30 min). Build the project. Push to GitHub. Answer 10 hands-on mastery checkpoints proving you actually did the work — not theory questions, real puzzles tied to your data." },
+  { step: "04", title: "Mentor verifies and you celebrate", desc: "When your mentor clicks 'Verified', confetti rains down on your dashboard. Your streak grows. Next week unlocks. By week 28 you've shipped 4 portfolio-ready projects." },
+  { step: "05", title: "Graduate. Get hired. Wall of Fame.", desc: "Your name and project appear on the public Wall of Fame. Your certificate is cryptographically signed by your mentor + FORGE. Employers can verify it. This is the receipt no bootcamp gives you for free." },
 ];
 
 const STATS = [
-  { value: "38", label: "Curated Roadmaps" },
-  { value: "3",  label: "Questions Per Session" },
-  { value: "5",  label: "Grace Days / Month" },
-  { value: "∞",  label: "Retry On Fail" },
+  { value: "9",     label: "Hand-Curated Roadmaps" },
+  { value: "1100+", label: "Validated Video Resources" },
+  { value: "10",    label: "Mastery Checks Per Week" },
+  { value: "1:1",   label: "Mentor Per Mentee" },
 ];
 
 export default function LandingPage() {

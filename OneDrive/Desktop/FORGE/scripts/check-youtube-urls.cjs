@@ -37,7 +37,8 @@ async function checkUrl(url) {
 async function main() {
   const dead = [];
   const alive = [];
-  for (const file of ["data-analysis.json", "data-science.json"]) {
+  const allFiles = fs.readdirSync(ROOT).filter((f) => f.endsWith(".json"));
+  for (const file of allFiles) {
     const d = JSON.parse(fs.readFileSync(path.join(ROOT, file), "utf8"));
     for (const w of d.weeks) {
       for (const r of w.resources || []) {
