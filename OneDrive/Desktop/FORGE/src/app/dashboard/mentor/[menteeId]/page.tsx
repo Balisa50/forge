@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
+import Dialog, { type DialogConfig } from "@/components/Dialog";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 
 interface Checkin {
@@ -113,6 +114,7 @@ export default function MenteeDrilldownPage() {
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [resDraft, setResDraft] = useState<Record<string, { title: string; url: string; note: string }>>({});
   const [posting, setPosting] = useState<string | null>(null);
+  const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -151,7 +153,7 @@ export default function MenteeDrilldownPage() {
       setDraft((d) => ({ ...d, [task.id]: "" }));
       await load();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed to post comment");
+      setDialog({ kind: "alert", title: "Couldn't post", message: e instanceof Error ? e.message : "Failed to post comment" });
     } finally {
       setPosting(null);
     }
@@ -174,112 +176,131 @@ export default function MenteeDrilldownPage() {
       setResDraft({ ...resDraft, [task.id]: { title: "", url: "", note: "" } });
       await load();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed");
+      setDialog({ kind: "alert", title: "Couldn't grant resource", message: e instanceof Error ? e.message : "Failed" });
     } finally {
       setPosting(null);
     }
   };
 
-  const handleDeleteResource = async (resourceId: string, taskId: string) => {
-    if (!confirm("Remove this resource for the mentee?")) return;
-    setPosting(taskId);
-    try {
-      await fetch(`/api/mentor/resources?id=${resourceId}`, { method: "DELETE" });
-      await load();
-    } finally {
-      setPosting(null);
-    }
+  const handleDeleteResource = (resourceId: string, taskId: string) => {
+    setDialog({
+      kind: "confirm",
+      title: "Remove this resource?",
+      message: "It will disappear from your mentee's view immediately.",
+      confirmText: "Remove",
+      danger: true,
+      onConfirm: async () => {
+        setPosting(taskId);
+        try {
+          await fetch(`/api/mentor/resources?id=${resourceId}`, { method: "DELETE" });
+          await load();
+        } finally {
+          setPosting(null);
+        }
+      },
+    });
   };
 
-  const handleAction = async (task: MenteeTask, action: "unlock" | "verify" | "reopen" | "close") => {
-    const verb =
-      action === "unlock"  ? "unlock this week (legacy bypass)" :
-      action === "verify"  ? "mark this week verified" :
-      action === "reopen"  ? "reopen this week" :
-      action === "close"   ? "close this week now" :
-      action;
-    if (!confirm(`${verb}?`)) return;
-    setPosting(task.id);
-    try {
-      const res = await fetch(`/api/mentor/tasks/${task.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, menteeId }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Could not ${action}`);
-      }
-      await load();
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "Action failed");
-    } finally {
-      setPosting(null);
-    }
+  const handleAction = (task: MenteeTask, action: "unlock" | "verify" | "reopen" | "close") => {
+    const meta: Record<typeof action, { title: string; message: string; confirmText: string; danger?: boolean }> = {
+      unlock:  { title: "Unlock without a deadline?", message: "Legacy bypass — gives the mentee access to this week with no closing date. Prefer 'Release with deadline' for normal use.", confirmText: "Unlock anyway" },
+      verify:  { title: "Mark this week as passed?",  message: "This will count it as verified for the mentee. They'll see it green on their roadmap.", confirmText: "Mark verified" },
+      reopen:  { title: "Reopen this week for redo?", message: "The mentee will be able to check in on this week again — useful if they need another attempt.", confirmText: "Reopen" },
+      close:   { title: "Close this week now?",       message: "The mentee will lose access to this week until you extend or reopen it.", confirmText: "Close now", danger: true },
+    };
+    const m = meta[action];
+    setDialog({
+      kind: "confirm",
+      title: m.title,
+      message: m.message,
+      confirmText: m.confirmText,
+      danger: m.danger,
+      onConfirm: async () => {
+        setPosting(task.id);
+        try {
+          const res = await fetch(`/api/mentor/tasks/${task.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action, menteeId }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || `Could not ${action}`);
+          }
+          await load();
+        } catch (e) {
+          setDialog({ kind: "alert", title: "Action failed", message: e instanceof Error ? e.message : "Something went wrong" });
+        } finally {
+          setPosting(null);
+        }
+      },
+    });
   };
 
   /** Release a week with a mentor-set deadline + optional personal note. */
-  const handleRelease = async (task: MenteeTask, mode: "release" | "extend") => {
-    const label = mode === "release" ? "Release this week. Deadline?" : "Extend this week. New deadline?";
+  const handleRelease = (task: MenteeTask, mode: "release" | "extend") => {
     const defaultDate = new Date(Date.now() + 7 * 86_400_000).toISOString().split("T")[0];
-    const input = prompt(`${label} (YYYY-MM-DD, default 7 days from now)`, defaultDate);
-    if (!input) return;
-    const deadline = new Date(input + "T23:59:00");
-    if (Number.isNaN(deadline.getTime()) || deadline.getTime() <= Date.now()) {
-      alert("Pick a future date in YYYY-MM-DD format.");
-      return;
-    }
-    // Optional personal note from mentor — shows prominently on mentee's dashboard
-    const note = prompt(
-      "Optional note to your mentee for this week (e.g. 'Focus on the SQL part — that's where most students struggle'). Leave blank to skip.",
-      "",
-    );
-    setPosting(task.id);
-    try {
-      const res = await fetch(`/api/mentor/tasks/${task.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: mode,
-          menteeId,
-          deadlineAt: deadline.toISOString(),
-          note: note?.trim() || undefined,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Could not ${mode}`);
-      }
-      await load();
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "Action failed");
-    } finally {
-      setPosting(null);
-    }
+    setDialog({
+      kind: "release",
+      taskTitle: task.title,
+      mode,
+      defaultDate,
+      onSubmit: async (deadlineIso, note) => {
+        setPosting(task.id);
+        try {
+          const res = await fetch(`/api/mentor/tasks/${task.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: mode,
+              menteeId,
+              deadlineAt: deadlineIso,
+              note: note || undefined,
+            }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || `Could not ${mode}`);
+          }
+          await load();
+        } catch (e) {
+          setDialog({ kind: "alert", title: `Could not ${mode}`, message: e instanceof Error ? e.message : "Something went wrong" });
+        } finally {
+          setPosting(null);
+        }
+      },
+    });
   };
 
   /** Mentor picks a roadmap on behalf of the mentee (backfill for mentees
    *  who joined before path-scoped invites, or whose invite didn't have one). */
   const [seedingSlug, setSeedingSlug] = useState<string | null>(null);
-  const handleSeedRoadmap = async (slug: string, title: string) => {
-    if (!confirm(`Assign "${title}" to ${mentee?.name ?? "this mentee"}? All weeks start locked — you'll release them one by one.`)) return;
-    setSeedingSlug(slug);
-    try {
-      const res = await fetch("/api/mentor/seed-roadmap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ menteeId, slug }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Failed (${res.status})`);
-      }
-      await load();
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "Could not assign roadmap");
-    } finally {
-      setSeedingSlug(null);
-    }
+  const handleSeedRoadmap = (slug: string, title: string) => {
+    setDialog({
+      kind: "confirm",
+      title: `Assign "${title}"?`,
+      message: `${mentee?.name ?? "This mentee"} will get the full ${title} curriculum. Every week starts locked — you'll release them one by one.`,
+      confirmText: "Assign roadmap",
+      onConfirm: async () => {
+        setSeedingSlug(slug);
+        try {
+          const res = await fetch("/api/mentor/seed-roadmap", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ menteeId, slug }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || `Failed (${res.status})`);
+          }
+          await load();
+        } catch (e) {
+          setDialog({ kind: "alert", title: "Couldn't assign roadmap", message: e instanceof Error ? e.message : "Something went wrong" });
+        } finally {
+          setSeedingSlug(null);
+        }
+      },
+    });
   };
 
   const stats = useMemo(() => {
@@ -813,6 +834,8 @@ export default function MenteeDrilldownPage() {
           ))}
         </div>
       ))}
+
+      <Dialog config={dialog} onClose={() => setDialog(null)} />
     </div>
   );
 }

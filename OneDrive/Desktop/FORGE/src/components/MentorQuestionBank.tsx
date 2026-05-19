@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Trash2, Loader2, Save, ListChecks } from "lucide-react";
+import Dialog, { type DialogConfig } from "@/components/Dialog";
 
 interface Question {
   id: string;
@@ -18,6 +19,7 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
   const [saving, setSaving] = useState(false);
   const [draft, setDraft] = useState({ prompt: "", rubric: "", idealAnswer: "" });
   const [edits, setEdits] = useState<Record<string, Partial<Question>>>({});
+  const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -45,7 +47,7 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
         await load();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || "Failed");
+        setDialog({ kind: "alert", title: "Couldn't add question", message: data.error || "Failed" });
       }
     } finally {
       setSaving(false);
@@ -69,10 +71,18 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
     }
   };
 
-  const remove = async (id: string) => {
-    if (!confirm("Remove this question?")) return;
-    await fetch(`/api/mentor/questions?id=${id}`, { method: "DELETE" });
-    await load();
+  const remove = (id: string) => {
+    setDialog({
+      kind: "confirm",
+      title: "Remove this question?",
+      message: "It won't appear in your mentee's interrogation for this week anymore.",
+      confirmText: "Remove",
+      danger: true,
+      onConfirm: async () => {
+        await fetch(`/api/mentor/questions?id=${id}`, { method: "DELETE" });
+        await load();
+      },
+    });
   };
 
   return (
@@ -165,6 +175,7 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
           </div>
         </>
       )}
+      <Dialog config={dialog} onClose={() => setDialog(null)} />
     </div>
   );
 }

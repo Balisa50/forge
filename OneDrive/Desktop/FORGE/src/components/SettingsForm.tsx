@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getIntegrityBadge } from "@/lib/utils";
 import { CheckCircle2, Copy, Check, Eye, EyeOff } from "lucide-react";
+import Dialog, { type DialogConfig } from "@/components/Dialog";
 
 const TIMEZONES = [
   "UTC", "Africa/Abidjan", "Africa/Accra", "Africa/Banjul", "Africa/Cairo",
@@ -53,6 +54,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [copiedProfile, setCopiedProfile] = useState(false);
+  const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
   // Password change state
   const [currentPassword, setCurrentPassword] = useState("");
@@ -343,11 +345,17 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
         </p>
         <button
           onClick={() => {
-            if (confirm("Delete your account? All data will be permanently removed.")) {
-              fetch("/api/user/delete", { method: "DELETE" }).then(() => {
+            setDialog({
+              kind: "confirm",
+              title: "Delete your account?",
+              message: "This permanently removes your roadmap, check-ins, mentor links, and every record we have. There is no undo.",
+              confirmText: "Delete forever",
+              danger: true,
+              onConfirm: async () => {
+                await fetch("/api/user/delete", { method: "DELETE" });
                 window.location.href = "/";
-              });
-            }
+              },
+            });
           }}
           className="forge-btn"
           style={{ background: "transparent", border: "1px solid var(--red)", color: "var(--red)", fontSize: "0.8125rem" }}
@@ -355,6 +363,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
           Delete Account
         </button>
       </div>
+      <Dialog config={dialog} onClose={() => setDialog(null)} />
     </div>
   );
 }

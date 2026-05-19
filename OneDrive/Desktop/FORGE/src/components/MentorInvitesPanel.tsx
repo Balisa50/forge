@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Copy, CheckCircle2, Plus, Trash2, Loader2, Share2, KeyRound } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+import Dialog, { type DialogConfig } from "@/components/Dialog";
 
 interface Invite {
   id: string;
@@ -30,6 +31,7 @@ export default function MentorInvitesPanel() {
     label: "",
     expiresInDays: "30",
   });
+  const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -48,7 +50,7 @@ export default function MentorInvitesPanel() {
 
   const create = async () => {
     if (!draft.expectedName.trim()) {
-      alert("Enter your mentee's full name — it locks the invite to them.");
+      setDialog({ kind: "alert", title: "Name required", message: "Enter your mentee's full name — it locks the invite to them so nobody else can claim the code." });
       return;
     }
     setCreating(true);
@@ -69,17 +71,25 @@ export default function MentorInvitesPanel() {
         await load();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || "Failed to create code");
+        setDialog({ kind: "alert", title: "Couldn't create code", message: data.error || "Failed to create code" });
       }
     } finally {
       setCreating(false);
     }
   };
 
-  const deactivate = async (id: string) => {
-    if (!confirm("Deactivate this code? Existing mentees stay paired, but the link stops working for new joins.")) return;
-    await fetch(`/api/mentor/invites?id=${id}`, { method: "DELETE" });
-    await load();
+  const deactivate = (id: string) => {
+    setDialog({
+      kind: "confirm",
+      title: "Deactivate this code?",
+      message: "Existing mentees stay paired with you, but this link will stop working for new joins. You can always generate another one.",
+      confirmText: "Deactivate",
+      danger: true,
+      onConfirm: async () => {
+        await fetch(`/api/mentor/invites?id=${id}`, { method: "DELETE" });
+        await load();
+      },
+    });
   };
 
   const copy = async (text: string, key: string) => {
@@ -252,6 +262,7 @@ export default function MentorInvitesPanel() {
           })}
         </ul>
       )}
+      <Dialog config={dialog} onClose={() => setDialog(null)} />
     </section>
   );
 }

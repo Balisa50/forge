@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Zap, Clock, TrendingUp, LogOut, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import Dialog, { type DialogConfig } from "@/components/Dialog";
 
 interface PodMember {
   userId: string;
@@ -49,6 +50,7 @@ export default function PodPage() {
   const [leaving, setLeaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
   const loadPod = async () => {
     setLoading(true);
@@ -85,17 +87,25 @@ export default function PodPage() {
     }
   };
 
-  const handleLeave = async () => {
-    if (!confirm("Leave your pod? You can rejoin another one any time.")) return;
-    setLeaving(true);
-    try {
-      await fetch("/api/pods/leave", { method: "POST" });
-      setPod(null);
-    } catch {
-      setError("Failed to leave pod.");
-    } finally {
-      setLeaving(false);
-    }
+  const handleLeave = () => {
+    setDialog({
+      kind: "confirm",
+      title: "Leave your pod?",
+      message: "You can rejoin another one any time. Your check-in history stays — only your membership in this group ends.",
+      confirmText: "Leave pod",
+      danger: true,
+      onConfirm: async () => {
+        setLeaving(true);
+        try {
+          await fetch("/api/pods/leave", { method: "POST" });
+          setPod(null);
+        } catch {
+          setError("Failed to leave pod.");
+        } finally {
+          setLeaving(false);
+        }
+      },
+    });
   };
 
   if (loading) {
@@ -377,6 +387,7 @@ export default function PodPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      <Dialog config={dialog} onClose={() => setDialog(null)} />
     </div>
   );
 }
