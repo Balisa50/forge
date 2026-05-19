@@ -2,7 +2,19 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass } from "lucide-react";
+import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass, BookOpen, Send } from "lucide-react";
+import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+
+/** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
+const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
+  CURATED_ROADMAPS.map((r) => [r.title, r.slug]),
+);
+
+/** Pull the week number out of a task title like "Week 7: Build the dashboard". */
+function parseWeekNumber(taskTitle: string): number | null {
+  const m = taskTitle.match(/^Week\s+(\d+)\s*[:\-]/i);
+  return m ? parseInt(m[1], 10) : null;
+}
 
 function getDaysRemaining(targetDate: Date | null | undefined): number | null {
   if (!targetDate) return null;
@@ -209,8 +221,26 @@ export default async function DashboardPage() {
                 </div>
               )}
               <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-                <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                  <ArrowRight size={14} /> Open this week
+                {(() => {
+                  const slug = activeRoadmap ? TITLE_TO_SLUG[activeRoadmap.title] : null;
+                  const wNum = parseWeekNumber(releasedWeek.title);
+                  // Primary CTA: open the FULL week brief - topics, days, videos, resources, mastery checks.
+                  if (slug && wNum) {
+                    return (
+                      <Link href={`/learn/${slug}/${wNum}`} className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                        <BookOpen size={14} /> Open this week
+                      </Link>
+                    );
+                  }
+                  // Fallback (custom roadmap with no slug match): old behaviour
+                  return (
+                    <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                      <ArrowRight size={14} /> Open this week
+                    </Link>
+                  );
+                })()}
+                <Link href="/dashboard/checkin" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                  <Send size={14} /> Submit work
                 </Link>
                 <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
                   Message mentor
