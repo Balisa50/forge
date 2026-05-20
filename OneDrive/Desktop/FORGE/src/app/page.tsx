@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Map, FlaskConical, Flame, Shield, BarChart3, Trophy, Users, ExternalLink, CheckCircle2 } from "lucide-react";
+import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 
 const FEATURES = [
   { Icon: Map,          title: "9 Hand-Curated Roadmaps",  desc: "Data Analysis, Data Science, AI Engineering, ML Engineering, Full Stack Web, Mobile, DevOps + Cloud, Cybersecurity, BI Analytics. Each one is 17 to 43 weeks of mentor-controlled releases with 10 mastery checkpoints per week. Validated YouTube resources, no dead links, all under 30 minutes." },
@@ -194,6 +195,69 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Available roadmaps - display only, NOT clickable. Pure preview of
+          what FORGE teaches. The actual curriculum is behind login. */}
+      <section style={{ borderTop: "1px solid var(--border)" }} className="py-20 px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", letterSpacing: "0.32em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "0.75rem" }}>
+              ~/forge/roadmaps
+            </p>
+            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.1 }}>
+              9 paths. <span style={{ color: "var(--accent)" }}>One standard.</span>
+            </h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "1rem", maxWidth: 560, margin: "0 auto", lineHeight: 1.6 }}>
+              Each path is hand-curated. Each week ships a real artefact. The full curriculum opens after you sign up.
+            </p>
+          </div>
+          <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+            {CURATED_ROADMAPS.map((r) => {
+              const Icon = r.Icon;
+              return (
+                <div
+                  key={r.slug}
+                  aria-disabled
+                  style={{
+                    padding: "1.25rem 1.25rem",
+                    background: "var(--bg-panel)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                    cursor: "default",
+                    userSelect: "none",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.625rem" }}>
+                    <span
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 8,
+                        background: `${r.accent}22`,
+                        color: r.accent,
+                        display: "grid",
+                        placeItems: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={18} />
+                    </span>
+                    <h3 style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1rem", color: "var(--text-primary)" }}>
+                      {r.title}
+                    </h3>
+                  </div>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", lineHeight: 1.55, marginBottom: "0.625rem" }}>
+                    {r.tagline}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                    {r.weeks} weeks · {r.phases} phases
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section style={{ background: "var(--bg-panel)", borderTop: "1px solid var(--border)" }} className="py-20 px-6 text-center">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
@@ -203,15 +267,6 @@ export default function LandingPage() {
           <p style={{ color: "var(--text-secondary)", marginBottom: "2.5rem", fontSize: "1.0625rem", maxWidth: "440px", margin: "0 auto 2.5rem" }}>
             Free forever. No credit card. Show up or don&apos;t — the record will be honest either way.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/register" className="forge-btn forge-btn-primary" style={{ padding: "1rem 3rem", fontSize: "1.125rem" }}>Forge Your Path →</Link>
-            <Link
-              href="/register?next=/learn"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.875rem", color: "var(--accent)", textDecoration: "none" }}
-            >
-              <ExternalLink size={13} /> Sign up to see the roadmaps →
-            </Link>
-          </div>
         </motion.div>
       </section>
 
