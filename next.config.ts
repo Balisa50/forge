@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    // Lint errors shouldn't block production deploys; run lint in CI separately.
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
