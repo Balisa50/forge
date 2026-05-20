@@ -12,6 +12,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { aiMentorEnabled, AI_MENTOR_DISABLED_RESPONSE } from "@/lib/ai-mentor/feature-flag";
 import { callTheProfessor } from "@/lib/ai-mentor/client";
+import { checkBudget } from "@/lib/ai-mentor/budget";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -21,6 +22,11 @@ export async function POST(req: NextRequest) {
 
   if (!aiMentorEnabled({ userId: session.user.id })) {
     return NextResponse.json(AI_MENTOR_DISABLED_RESPONSE, { status: 501 });
+  }
+
+  const budget = await checkBudget(session.user.id);
+  if (!budget.withinBudget) {
+    return NextResponse.json({ error: "budget_exhausted", message: budget.reason, budget }, { status: 429 });
   }
 
   const body = await req.json().catch(() => ({}));

@@ -1,13 +1,23 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowRight, Clock, BookOpen, Target } from "lucide-react";
 import { loadAllRoadmaps, ROADMAP_META } from "@/lib/roadmaps";
+import { auth } from "@/lib/auth";
 
 export const metadata = {
   title: "Roadmaps — THE FORGE",
   description: "Multi-week curriculums in Data Science, Data Analysis, and BI Analytics. Topics, deliverables, real projects, resources, and exercises — every single week.",
 };
 
-export default function LearnIndexPage() {
+// Force dynamic so the auth check runs on every request (no static cache leak)
+export const dynamic = "force-dynamic";
+
+export default async function LearnIndexPage() {
+  // Gate: curriculum content is for FORGE members only. Unauthenticated
+  // visitors see the landing-page pitch, NOT the actual roadmap content.
+  const session = await auth();
+  if (!session?.user?.id) redirect("/register?next=/learn");
+
   const roadmaps = loadAllRoadmaps();
 
   return (

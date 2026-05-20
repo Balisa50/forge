@@ -206,10 +206,10 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/register" className="forge-btn forge-btn-primary" style={{ padding: "1rem 3rem", fontSize: "1.125rem" }}>Forge Your Path →</Link>
             <Link
-              href="/learn"
+              href="/register?next=/learn"
               style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.875rem", color: "var(--accent)", textDecoration: "none" }}
             >
-              <ExternalLink size={13} /> Browse the roadmaps →
+              <ExternalLink size={13} /> Sign up to see the roadmaps →
             </Link>
           </div>
         </motion.div>

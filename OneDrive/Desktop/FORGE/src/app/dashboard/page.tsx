@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass, BookOpen, Send } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
+import AskTheProfessor from "@/components/AskTheProfessor";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
 const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
@@ -327,6 +328,9 @@ export default async function DashboardPage() {
           {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
+
+      {/* Solo learner companion: Ask THE PROFESSOR (dormant until activated) */}
+      <AskTheProfessor />
 
       {/* Re-entry: Welcome back after 3+ days absence */}
       {isReturning && !checkedInToday && (

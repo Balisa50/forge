@@ -1,14 +1,20 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock, Layers } from "lucide-react";
 import { loadAllRoadmaps, loadRoadmap, ROADMAP_META, getPhaseGroups } from "@/lib/roadmaps";
+import { auth } from "@/lib/auth";
 
-export function generateStaticParams() {
-  return loadAllRoadmaps().map((r) => ({ slug: r.slug }));
-}
+// Force dynamic so the auth check runs on every request - no static prerender
+// for the curriculum content. Drops the route from generateStaticParams.
+export const dynamic = "force-dynamic";
 
 export default async function RoadmapDetail({ params }: { params: Promise<{ slug: string }> }) {
+  // Gate: curriculum content requires login. Public visitors see the landing-page
+  // pitch, not the week-by-week details.
+  const session = await auth();
   const { slug } = await params;
+  if (!session?.user?.id) redirect(`/register?next=/learn/${slug}`);
+
   const roadmap = loadRoadmap(slug);
   if (!roadmap) return notFound();
   const meta = ROADMAP_META[roadmap.slug];

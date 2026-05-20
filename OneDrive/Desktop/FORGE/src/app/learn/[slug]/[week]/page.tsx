@@ -19,11 +19,14 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const meta = ROADMAP_META[roadmap.slug];
 
   // ── Mentee gate ────────────────────────────────────────────────────
-  // If the logged-in user is a mentee (has any active MentorLink), they can
-  // ONLY view a week if their mentor has released it (or they've verified
-  // it). Otherwise: hard block with a 'Locked' screen. Public visitors and
-  // solo learners are unaffected.
+  // First gate: curriculum is for FORGE members only. Public visitors get
+  // redirected to register with a return URL.
   const session = await auth();
+  if (!session?.user?.id) redirect(`/register?next=/learn/${slug}/${week}`);
+
+  // Second gate: if the logged-in user is a mentee (has any active
+  // MentorLink), they can ONLY view a week if their mentor has released it
+  // or they've already verified it. Solo learners are unaffected.
   if (session?.user?.id) {
     const link = await prisma.mentorLink.findFirst({
       where: { menteeId: session.user.id, isActive: true },

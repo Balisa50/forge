@@ -15,6 +15,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { aiMentorEnabled, AI_MENTOR_DISABLED_RESPONSE } from "@/lib/ai-mentor/feature-flag";
 import { verifyWithTheProfessor } from "@/lib/ai-mentor/client";
+import { inspectGithubRepo, formatInspectionForProfessor } from "@/lib/ai-mentor/github-inspector";
+import { inspectLiveUrl, formatUrlInspectionForProfessor } from "@/lib/ai-mentor/url-fetcher";
+import { checkBudget } from "@/lib/ai-mentor/budget";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -28,11 +31,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(AI_MENTOR_DISABLED_RESPONSE, { status: 501 });
   }
 
+  // Budget guardrail BEFORE any expensive API call
+  const budget = await checkBudget(session.user.id);
+  if (!budget.withinBudget) {
+    return NextResponse.json(
+      { error: "budget_exhausted", message: budget.reason, budget },
+      { status: 429 },
+    );
+  }
+
   const body = await req.json().catch(() => ({}));
   const taskId: string | undefined = body.taskId;
   const masteryAnswers: string[] = Array.isArray(body.masteryAnswers) ? body.masteryAnswers : [];
   const githubUrl: string | undefined = body.githubUrl;
-  // Future: uploaded artefact IDs (excel files, screenshots) live here.
+  const liveUrl: string | undefined = body.liveUrl;
   const additionalEvidence: string = body.additionalEvidence ?? "";
 
   if (!taskId) {
@@ -80,11 +92,31 @@ export async function POST(req: NextRequest) {
     .map((p) => `[${p.kind} - ${p.verdict ?? "n/a"} - ${p.createdAt.toISOString()}]: ${p.response.slice(0, 200)}...`)
     .join("\n");
 
-  // Build the evidence summary for the AI to inspect
-  const evidenceSummary = [
-    githubUrl ? `GitHub repo URL provided: ${githubUrl}` : "No GitHub URL provided.",
-    additionalEvidence ? `Additional evidence: ${additionalEvidence}` : "",
-  ].filter(Boolean).join("\n");
+  // Inspect submitted evidence BEFORE handing to The Professor. This is the
+  // bit that makes FORGE different from every other AI tutor: we actually
+  // FETCH and INSPECT the artefacts, then hand the inspection to Claude
+  // as ground truth - so it cannot be fooled by lies about what's in a repo.
+  const evidenceSections: string[] = [];
+  if (githubUrl) {
+    try {
+      const insp = await inspectGithubRepo(githubUrl);
+      evidenceSections.push(formatInspectionForProfessor(insp));
+    } catch (e) {
+      evidenceSections.push(`GitHub inspection FAILED: ${(e as Error).message}`);
+    }
+  } else {
+    evidenceSections.push("No GitHub URL provided.");
+  }
+  if (liveUrl) {
+    try {
+      const insp = await inspectLiveUrl(liveUrl);
+      evidenceSections.push(formatUrlInspectionForProfessor(insp));
+    } catch (e) {
+      evidenceSections.push(`Live URL inspection FAILED: ${(e as Error).message}`);
+    }
+  }
+  if (additionalEvidence) evidenceSections.push(`Additional evidence: ${additionalEvidence}`);
+  const evidenceSummary = evidenceSections.join("\n\n---\n\n");
 
   // Call The Professor
   let verifyResult;
