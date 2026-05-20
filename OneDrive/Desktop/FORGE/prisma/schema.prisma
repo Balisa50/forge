@@ -106,6 +106,7 @@ model User {
   commentsAsMentee  MentorComment[]  @relation("MentorCommentMentee")
   resourcesGiven    MentorResource[] @relation("MentorResourceMentor")
   resourcesReceived MentorResource[] @relation("MentorResourceMentee")
+  aiMentorInteractions AIMentorInteraction[]
   mentorInvites     MentorInvite[]   @relation("MentorInviteMentor")
   mentorQuestions   MentorQuestion[] @relation("MentorQuestionMentor")
   certificates      Certificate[]
@@ -220,6 +221,7 @@ model Task {
   mentorComments   MentorComment[]
   mentorResources  MentorResource[]
   mentorQuestions  MentorQuestion[]
+  aiMentorInteractions AIMentorInteraction[]
 }
 
 model Checkin {
@@ -451,6 +453,40 @@ model MentorComment {
 
   @@index([menteeId, taskId])
   @@index([mentorId, menteeId])
+}
+
+/// AI Mentor interaction log. Every release / verification / question / warning
+/// from THE PROFESSOR persona is stored so the AI has memory across sessions
+/// and so we can audit + budget API costs.
+///
+/// Feature-flag gated - rows are only created when AI_MENTOR_ENABLED=true.
+model AIMentorInteraction {
+  id           String   @id @default(cuid())
+  userId       String
+  taskId       String?
+  /// "release" | "verification" | "question" | "warning"
+  kind         String
+  /// User-facing message the AI Mentor produced (in The Professor's voice).
+  response     String
+  /// "verified" | "needs_work" | "rejected" | null (only set for verifications).
+  verdict      String?
+  /// Running count of warnings issued to this user for THIS task.
+  /// Used by the persona's escalation rules (3 strikes -> recommend human mentor).
+  warningCount Int      @default(0)
+  /// JSON blob of evidence the AI inspected: github URL, file IDs, screenshot
+  /// URLs, raw mastery answers. Keeps the audit trail.
+  evidence     Json?
+  /// Approximate API tokens used by this interaction. Lets us track cost.
+  tokensUsed   Int?
+  /// USD cost of this interaction (computed from tokens at known per-model rates).
+  costUsd      Float?
+  createdAt    DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([userId, taskId])
+  @@index([userId, createdAt])
 }
 
 /// Invite code a mentor generates so learners can pair with them.
