@@ -569,22 +569,34 @@ export default function MenteeDrilldownPage() {
                               </p>
                               <ul className="flex flex-col gap-1.5">
                                 {task.resources.map((raw, idx) => {
-                                  // Resource strings ship as: "Label — URL" or "Label — URL (note)" or just "Label".
+                                  // Resource strings can ship as either:
+                                  //   "Label - URL"   (regular hyphen, post-clean formatter)
+                                  //   "Label — URL"   (em-dash, legacy)
+                                  //   plus optional trailing "(note)"
+                                  // Match a separator that is space + dash + space + URL, so a
+                                  // short label like "5-min" doesn't accidentally split.
                                   const urlMatch = raw.match(/(https?:\/\/[^\s)]+)/);
                                   const url = urlMatch?.[0];
                                   const noteMatch = raw.match(/\(([^)]+)\)\s*$/);
                                   const note = noteMatch?.[1];
-                                  // Label = everything before " — " (em-dash separator we wrote in weekToTaskResources).
-                                  const label = raw.split(/\s+—\s+/)[0]?.trim() || raw;
+                                  // Strip the URL + trailing note from the label.
+                                  let label = raw;
+                                  if (url) label = label.replace(/\s+[-—–]?\s*https?:\/\/\S+.*$/, "").trim();
+                                  if (note) label = label.replace(/\s*\([^)]+\)\s*$/, "").trim();
+                                  if (label === raw) {
+                                    // Fallback: split on dash separator
+                                    label = raw.split(/\s+[—–-]\s+/)[0]?.trim() || raw;
+                                  }
                                   return (
                                     <li
                                       key={idx}
                                       style={{
-                                        padding: "0.5rem 0.75rem",
+                                        padding: "0.625rem 0.875rem",
                                         borderRadius: 7,
                                         background: "var(--bg-card)",
                                         border: "1px solid var(--border)",
                                         fontSize: "0.8125rem",
+                                        overflow: "hidden",
                                       }}
                                     >
                                       {url ? (
@@ -592,16 +604,18 @@ export default function MenteeDrilldownPage() {
                                           href={url}
                                           target="_blank"
                                           rel="noreferrer noopener"
-                                          style={{ color: "var(--text-primary)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.375rem", flexWrap: "wrap" }}
+                                          style={{ color: "var(--text-primary)", textDecoration: "none", display: "flex", alignItems: "flex-start", gap: "0.5rem", minWidth: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}
                                         >
-                                          <ExternalLink size={11} style={{ color: "var(--accent)", flexShrink: 0 }} />
-                                          <span style={{ fontWeight: 500 }}>{label}</span>
-                                          {note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>— {note}</span>}
+                                          <ExternalLink size={12} style={{ color: "var(--accent)", flexShrink: 0, marginTop: 2 }} />
+                                          <span style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: "0.125rem" }}>
+                                            <span style={{ fontWeight: 500, color: "var(--text-primary)", lineHeight: 1.4 }}>{label}</span>
+                                            {note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem", lineHeight: 1.4 }}>{note}</span>}
+                                          </span>
                                         </a>
                                       ) : (
-                                        <span style={{ color: "var(--text-primary)" }}>
-                                          {label}
-                                          {note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginLeft: "0.375rem" }}>— {note}</span>}
+                                        <span style={{ color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.125rem", overflowWrap: "anywhere", wordBreak: "break-word" }}>
+                                          <span style={{ fontWeight: 500 }}>{label}</span>
+                                          {note && <span style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>{note}</span>}
                                         </span>
                                       )}
                                     </li>
