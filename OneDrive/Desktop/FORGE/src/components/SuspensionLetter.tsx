@@ -14,9 +14,10 @@ interface Props {
   mentorName: string | null;
   reason: string | null;
   bannedAt: string; // ISO
+  pactWhy?: string | null;
 }
 
-export default function SuspensionLetter({ menteeName, mentorName, reason, bannedAt }: Props) {
+export default function SuspensionLetter({ menteeName, mentorName, reason, bannedAt, pactWhy }: Props) {
   const firstName = menteeName?.split(" ")[0] ?? "there";
   const mentor = mentorName ?? "your mentor";
   const date = new Date(bannedAt).toLocaleDateString("en-US", {
@@ -110,6 +111,33 @@ export default function SuspensionLetter({ menteeName, mentorName, reason, banne
                 Reason given
               </p>
               <p style={{ color: "var(--text-primary)", fontSize: "0.9375rem", lineHeight: 1.6 }}>{reason}</p>
+            </div>
+          )}
+          {pactWhy && (
+            <div
+              style={{
+                margin: "1.25rem 0",
+                padding: "0.875rem 1rem",
+                background: "rgba(245,158,11,0.06)",
+                border: "1px solid rgba(245,158,11,0.25)",
+                borderRadius: 8,
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "var(--accent)",
+                  marginBottom: "0.375rem",
+                }}
+              >
+                What you wrote in your Forge Pact
+              </p>
+              <p style={{ color: "var(--text-primary)", fontSize: "0.9375rem", lineHeight: 1.65, fontStyle: "italic" }}>
+                &ldquo;{pactWhy}&rdquo;
+              </p>
             </div>
           )}
           <p style={{ marginBottom: "1rem" }}>

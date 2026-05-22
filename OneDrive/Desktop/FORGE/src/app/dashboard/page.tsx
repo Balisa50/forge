@@ -6,6 +6,7 @@ import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import AskTheProfessor from "@/components/AskTheProfessor";
+import ForgePactCard from "@/components/ForgePactCard";
 import { soloModeEnabled } from "@/lib/modes";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
@@ -204,6 +205,8 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        <ForgePactCard />
+
         {/* Current released week */}
         {releasedWeek && (() => {
           const deadlineDate = releasedWeek.deadline ? new Date(releasedWeek.deadline) : null;
@@ -329,6 +332,8 @@ export default async function DashboardPage() {
           {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
+
+      <ForgePactCard />
 
       {/* Solo learner companion: Ask THE PROFESSOR. Only shown when Solo
           mode is enabled - the panel is a solo-learner feature. */}

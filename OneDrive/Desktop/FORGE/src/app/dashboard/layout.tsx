@@ -11,7 +11,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [dbUser, membership, mentorLinks] = await Promise.all([
+  const [dbUser, membership, mentorLinks, forgePact] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id! },
       select: { role: true, onboardingDone: true, isAlsoLearning: true, isGuest: true, name: true },
@@ -30,6 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         mentor: { select: { name: true } },
       },
     }),
+    prisma.forgePact.findUnique({ where: { userId: session.user.id! }, select: { id: true } }),
   ]);
 
   // Stale JWT pointing to a deleted user — boot via signout so the cookie
@@ -41,18 +42,34 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // whole app is replaced with the suspension letter. Nothing else renders.
   const suspension = mentorLinks.find((l) => l.bannedAt);
   if (suspension) {
+    // Pull their Forge Pact "why" - the most powerful moment to show it back
+    // is the moment they have stopped. This is what they signed.
+    const pact = await prisma.forgePact.findUnique({
+      where: { userId: session.user.id! },
+      select: { why: true },
+    });
     return (
       <SuspensionLetter
         menteeName={dbUser.name}
         mentorName={suspension.mentor?.name ?? null}
         reason={suspension.banReason}
         bannedAt={suspension.bannedAt!.toISOString()}
+        pactWhy={pact?.why ?? null}
       />
     );
   }
 
   // Force onboarding if not completed
   if (!dbUser.onboardingDone) redirect("/onboarding");
+
+  // THE FORGE PACT GATE: every learner signs the binding commitment before
+  // they can reach their dashboard. Pure mentors (not also learning) are
+  // exempt - they are not on a roadmap themselves.
+  const isLearner =
+    dbUser.role === "learner" ||
+    dbUser.role === "student" ||
+    (dbUser.role === "mentor" && dbUser.isAlsoLearning);
+  if (isLearner && !forgePact) redirect("/pact");
 
   // SOLO-MODE GATE: while SOLO_MODE_ENABLED is off, FORGE is mentor-required.
   // A solo learner ("learner" role) with no mentor link has no valid path -

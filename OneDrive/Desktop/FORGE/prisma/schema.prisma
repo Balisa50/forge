@@ -107,6 +107,7 @@ model User {
   resourcesGiven    MentorResource[] @relation("MentorResourceMentor")
   resourcesReceived MentorResource[] @relation("MentorResourceMentee")
   aiMentorInteractions AIMentorInteraction[]
+  forgePact         ForgePact?
   mentorInvites     MentorInvite[]   @relation("MentorInviteMentor")
   mentorQuestions   MentorQuestion[] @relation("MentorQuestionMentor")
   certificates      Certificate[]
@@ -492,6 +493,28 @@ model AIMentorInteraction {
 
   @@index([userId, taskId])
   @@index([userId, createdAt])
+}
+
+/// The Forge Pact - a binding written commitment every learner signs before
+/// they can begin. Grounded in commitment-device research (Karlan/Ayres) and
+/// identity-based behaviour change. The student writes WHY they are really
+/// doing this, what they LOSE if they quit, and WHO they are becoming - then
+/// signs it. The Pact is shown back to them whenever they slip: it is the
+/// psychological anchor of FORGE accountability.
+model ForgePact {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  /// The student's deeper reason - in their own words.
+  why       String
+  /// What it costs them if they abandon this - the stake.
+  stake     String
+  /// The identity they are forging ("I am becoming someone who...").
+  identity  String
+  /// Typed full-name signature.
+  signature String
+  signedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// Invite code a mentor generates so learners can pair with them.
