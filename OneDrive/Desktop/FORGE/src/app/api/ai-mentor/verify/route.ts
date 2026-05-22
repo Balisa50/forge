@@ -54,8 +54,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "masteryAnswers required" }, { status: 400 });
   }
 
-  // Load the task + roadmap + user
-  const [task, user] = await Promise.all([
+  // Load the task + roadmap + user + the student's check-in history for this
+  // task. The check-ins ARE part of what THE PROFESSOR is conscious of - it
+  // sees what the student claimed they did, day by day, not just the final
+  // mastery answers.
+  const [task, user, checkins] = await Promise.all([
     prisma.task.findFirst({
       where: { id: taskId, phase: { track: { roadmap: { userId: session.user.id } } } },
       select: {
@@ -68,6 +71,11 @@ export async function POST(req: NextRequest) {
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: { name: true },
+    }),
+    prisma.checkin.findMany({
+      where: { userId: session.user.id, taskId },
+      orderBy: { createdAt: "asc" },
+      select: { description: true, evidenceUrl: true, evidenceType: true, createdAt: true },
     }),
   ]);
 
@@ -116,6 +124,18 @@ export async function POST(req: NextRequest) {
     }
   }
   if (additionalEvidence) evidenceSections.push(`Additional evidence: ${additionalEvidence}`);
+
+  // THE PROFESSOR's consciousness of the week: every check-in the student
+  // logged. This lets it cross-check the final submission against what the
+  // student claimed day by day - and catch contradictions.
+  if (checkins.length > 0) {
+    const checkinLog = checkins
+      .map((c, i) => `Check-in ${i + 1} (${c.createdAt.toISOString().slice(0, 10)}): ${c.description}${c.evidenceUrl ? ` [evidence: ${c.evidenceUrl}]` : ""}`)
+      .join("\n");
+    evidenceSections.push(`The student's check-in log for this week (what they claimed they did, day by day):\n${checkinLog}`);
+  } else {
+    evidenceSections.push("The student logged NO check-ins for this week. They are submitting it cold. Note this.");
+  }
   const evidenceSummary = evidenceSections.join("\n\n---\n\n");
 
   // Call The Professor
