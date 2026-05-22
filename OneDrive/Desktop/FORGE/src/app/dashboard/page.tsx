@@ -7,6 +7,8 @@ import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import AskTheProfessor from "@/components/AskTheProfessor";
 import ForgePactCard from "@/components/ForgePactCard";
+import WeekIntention from "@/components/WeekIntention";
+import ShippedChain from "@/components/ShippedChain";
 import { soloModeEnabled } from "@/lib/modes";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
@@ -207,6 +209,8 @@ export default async function DashboardPage() {
 
         <ForgePactCard />
 
+        <ShippedChain shipped={verifiedTasks} total={totalTasks} streak={streakWeeks} />
+
         {/* Current released week */}
         {releasedWeek && (() => {
           const deadlineDate = releasedWeek.deadline ? new Date(releasedWeek.deadline) : null;
@@ -248,32 +252,48 @@ export default async function DashboardPage() {
                   </span>
                 </div>
               )}
-              <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-                {(() => {
-                  const slug = activeRoadmap ? TITLE_TO_SLUG[activeRoadmap.title] : null;
-                  const wNum = parseWeekNumber(releasedWeek.title);
-                  // Primary CTA: open the FULL week brief - topics, days, videos, resources, mastery checks.
-                  if (slug && wNum) {
-                    return (
-                      <Link href={`/learn/${slug}/${wNum}`} className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                        <BookOpen size={14} /> Open this week
-                      </Link>
-                    );
-                  }
-                  // Fallback (custom roadmap with no slug match): old behaviour
-                  return (
-                    <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                      <ArrowRight size={14} /> Open this week
+              {/* Implementation-intention gate: the student commits a plan
+                  before the week opens. If not yet set, this BLOCKS the
+                  action buttons until they lock it in. */}
+              {!releasedWeek.intentSetAt ? (
+                <WeekIntention taskId={releasedWeek.id} weekTitle={releasedWeek.title} />
+              ) : (
+                <>
+                  <WeekIntention
+                    taskId={releasedWeek.id}
+                    weekTitle={releasedWeek.title}
+                    initial={{
+                      when: releasedWeek.intentWhen ?? "",
+                      where: releasedWeek.intentWhere ?? "",
+                      first: releasedWeek.intentFirst ?? "",
+                    }}
+                  />
+                  <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                    {(() => {
+                      const slug = activeRoadmap ? TITLE_TO_SLUG[activeRoadmap.title] : null;
+                      const wNum = parseWeekNumber(releasedWeek.title);
+                      if (slug && wNum) {
+                        return (
+                          <Link href={`/learn/${slug}/${wNum}`} className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                            <BookOpen size={14} /> Open this week
+                          </Link>
+                        );
+                      }
+                      return (
+                        <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                          <ArrowRight size={14} /> Open this week
+                        </Link>
+                      );
+                    })()}
+                    <Link href="/dashboard/checkin" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                      <Send size={14} /> Submit work
                     </Link>
-                  );
-                })()}
-                <Link href="/dashboard/checkin" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                  <Send size={14} /> Submit work
-                </Link>
-                <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                  Message mentor
-                </Link>
-              </div>
+                    <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                      Message mentor
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           );
         })()}

@@ -214,6 +214,13 @@ model Task {
   sortOrder      Int        @default(0)
   status         TaskStatus @default(locked)
   verifiedAt     DateTime?
+  /// Implementation intention (Gollwitzer) - the student commits to WHEN,
+  /// WHERE, and WHAT FIRST before the week opens. Highest-ROI behavioural
+  /// lever in the research. Set once when the week is released.
+  intentWhen     String?
+  intentWhere    String?
+  intentFirst    String?
+  intentSetAt    DateTime?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
