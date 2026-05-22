@@ -71,19 +71,19 @@ export async function inspectLiveUrl(url: string): Promise<UrlInspection> {
   const contentType = res.headers.get("content-type");
   let body = "";
   try {
-    // Read at most 100KB to keep token budget reasonable.
+    // Read at most 100KB to keep token budget reasonable. Decode chunks
+    // incrementally with TextDecoder - avoids Blob's strict ArrayBuffer typing.
     const reader = res.body?.getReader();
     if (reader) {
-      const chunks: Uint8Array[] = [];
+      const decoder = new TextDecoder("utf-8");
       let total = 0;
       while (total < 100_000) {
         const { done, value } = await reader.read();
         if (done) break;
-        chunks.push(value);
+        body += decoder.decode(value, { stream: true });
         total += value.length;
       }
-      const blob = new Blob(chunks);
-      body = await blob.text();
+      body += decoder.decode(); // flush
     }
   } catch {
     // Body unreadable, that's fine - we still have the status code

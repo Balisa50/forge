@@ -8,7 +8,12 @@ export default async function SettingsPage() {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { name: true, email: true, timezone: true, tier: true, integrityScore: true, createdAt: true },
+    select: {
+      id: true, name: true, email: true, timezone: true, tier: true,
+      integrityScore: true, createdAt: true,
+      bio: true, github: true, linkedin: true, isPublic: true,
+      role: true, isAlsoLearning: true,
+    },
   });
 
   if (!user) return null;
@@ -18,7 +23,12 @@ export default async function SettingsPage() {
       <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Settings</h1>
       <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Manage your account and preferences.</p>
 
-      <SettingsForm user={{ ...user, createdAt: user.createdAt.toISOString() }} userId={userId} />
+      <SettingsForm
+        user={{ ...user, createdAt: user.createdAt.toISOString() }}
+        userId={userId}
+        role={user.role}
+        isAlsoLearning={user.isAlsoLearning}
+      />
     </div>
   );
 }

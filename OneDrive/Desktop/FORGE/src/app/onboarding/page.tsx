@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Flame, Swords, Clock, TrendingDown, Shield, FlaskConical, CalendarDays, CalendarCheck, CalendarRange, Building2, UserCheck, User, ArrowRight, GraduationCap, Video, Target, AlertTriangle, Search, ExternalLink, Sparkles } from "lucide-react";
+import { Flame, Swords, Clock, TrendingDown, Shield, FlaskConical, CalendarDays, CalendarCheck, CalendarRange, Building2, UserCheck, User, ArrowRight, GraduationCap, Video, Target, AlertTriangle, Search, ExternalLink, Sparkles, ClipboardCheck } from "lucide-react";
 import { ROADMAPSH_PATHS, ROADMAPSH_CATEGORIES, type RoadmapShPath } from "@/lib/roadmapsh-paths";
 import { CURATED_ROADMAPS, type CuratedRoadmapPickerEntry } from "@/lib/curated-roadmaps-client";
 
@@ -214,9 +214,7 @@ export default function OnboardingPage() {
 
       // Use window.location (not router.push) to force full reload
       // This ensures the proxy picks up the updated JWT
-      if (role === "bootcamp") {
-        window.location.href = "/dashboard/org";
-      } else if (role === "mentor") {
+      if (role === "mentor") {
         window.location.href = "/dashboard/mentor";
       } else {
         // Send learners straight to check-in — first interrogation is the product
@@ -667,9 +665,7 @@ export default function OnboardingPage() {
                     ? "I commit to guiding my mentees with integrity. I will review their work honestly, hold them to the standard, and never let them slide. I am here to forge, not to coddle."
                     : role === "mentor" && isAlsoLearning
                       ? <>I commit to guiding my mentees with integrity while also holding myself accountable. I will show up {scheduleText}, complete my check-ins honestly, and face the consequences when I fail. I mentor and I learn — no exceptions.</>
-                    : role === "bootcamp"
-                      ? "I commit to running my organization with integrity. I will hold my students to the standard, enforce the consequences, and lead by example. The Forge is not a game — it's a system that works because we don't bend."
-                      : <>I commit to showing up {scheduleText}. I will complete my check-ins honestly. I will face the consequences when I fail. I will not cheat, skip, or make excuses. I am here to be forged, not coddled.{role === "student" && " As a student in my organization, I will show up, do the work, and prove it."}</>
+                    : <>I commit to showing up {scheduleText}. I will complete my check-ins honestly. I will face the consequences when I fail. I will not cheat, skip, or make excuses. I am here to be forged, not coddled.{role === "student" && " I will show up, do the work, and prove it to my mentor."}</>
                   }
                 </p>
               </div>
@@ -692,9 +688,7 @@ export default function OnboardingPage() {
                     ? (loadingMessage ? "Generating Roadmap..." : "Forging...")
                     : role === "mentor"
                       ? "START MENTORING"
-                      : role === "bootcamp"
-                        ? "LAUNCH ORGANIZATION"
-                        : "FORGE MY PATH"
+                      : "FORGE MY PATH"
                   }
                 </button>
               </div>

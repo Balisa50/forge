@@ -11,12 +11,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
-  // Legacy schema refactor in progress — several routes still reference
-  // models that were renamed/removed. Ignoring TypeScript during build so
-  // the curated-roadmap flow can ship without holding back unrelated areas.
-  // TODO: clean up the pre-existing type errors and remove this.
+  // Type errors now HARD-FAIL the build. The whole codebase typechecks
+  // clean (audited 2026-05). A type error can never silently ship to
+  // production again. If the build fails on types, fix the type - do
+  // NOT re-enable ignoreBuildErrors.
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 };
 

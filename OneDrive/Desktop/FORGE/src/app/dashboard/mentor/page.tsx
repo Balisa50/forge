@@ -275,11 +275,6 @@ export default async function MentorDashboardPage() {
                         <span style={{ fontSize: "0.8125rem" }}>{c.task?.title ?? "—"}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        {c.interrogation && (
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: c.interrogation.passed ? "var(--green)" : "var(--red)" }}>
-                            {c.interrogation.overallScore.toFixed(1)}
-                          </span>
-                        )}
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
                           {new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                         </span>

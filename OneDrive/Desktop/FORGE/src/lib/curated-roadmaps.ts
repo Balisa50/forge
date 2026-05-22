@@ -126,9 +126,7 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
   // checks should live inside `exercises` (or `mastery_questions` once weeks are
   // rewritten). `questions` remains in the JSON for backwards-compat but is
   // intentionally not shown anymore.
-  const mastery = (week as { mastery_questions?: string[] }).mastery_questions?.length
-    ? (week as { mastery_questions: string[] }).mastery_questions
-    : week.exercises;
+  const mastery = week.mastery_questions?.length ? week.mastery_questions : week.exercises;
   if (mastery && mastery.length) {
     lines.push("MASTERY CHECKPOINTS");
     mastery.forEach((e, i) => lines.push(`${i + 1}. ${clean(e)}`));

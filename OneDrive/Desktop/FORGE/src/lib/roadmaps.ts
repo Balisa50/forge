@@ -54,6 +54,13 @@ export interface RoadmapWeek {
   questions: string[];
   exercises: string[];
   outputs: string[];
+  /** 10 hands-on mastery checkpoints, hand-curated per week. Optional on the
+   *  type for backward-compat; in practice every shipped week now has them. */
+  mastery_questions?: string[];
+  /** How to use AI tooling on this specific week's work. */
+  ai_assist?: string;
+  /** Who reads this week's deliverable + what they want (deliverable weeks). */
+  stakeholder_moment?: string;
 }
 
 export interface Roadmap {
