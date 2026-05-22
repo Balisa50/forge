@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import DashboardNav from "@/components/DashboardNav";
 import SuspensionLetter from "@/components/SuspensionLetter";
+import InviteRequired from "@/components/InviteRequired";
 import { effectiveVisibility } from "@/lib/visibility";
+import { soloModeEnabled } from "@/lib/modes";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -51,6 +53,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Force onboarding if not completed
   if (!dbUser.onboardingDone) redirect("/onboarding");
+
+  // SOLO-MODE GATE: while SOLO_MODE_ENABLED is off, FORGE is mentor-required.
+  // A solo learner ("learner" role) with no mentor link has no valid path -
+  // show them the invite-required screen. Mentors + mentees are unaffected.
+  if (!soloModeEnabled() && dbUser.role === "learner" && mentorLinks.length === 0) {
+    return <InviteRequired />;
+  }
 
   const visibility = effectiveVisibility(mentorLinks.map((l) => l.visibility));
   const hasMentor = mentorLinks.length > 0;

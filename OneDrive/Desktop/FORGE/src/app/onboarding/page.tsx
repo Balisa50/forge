@@ -264,7 +264,11 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col gap-4">
-                {ROLES.map((r) => (
+                {/* Solo Learner ("learner") is gated behind SOLO_MODE_ENABLED.
+                    While off, FORGE is mentor-required: only Mentee + Mentor. */}
+                {ROLES.filter(
+                  (r) => r.id !== "learner" || process.env.NEXT_PUBLIC_SOLO_MODE_ENABLED === "true",
+                ).map((r) => (
                   <button
                     key={r.id}
                     onClick={() => handleRoleSelect(r.id)}

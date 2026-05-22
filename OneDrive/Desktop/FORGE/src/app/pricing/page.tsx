@@ -130,9 +130,13 @@ export default function PricingPage() {
             </span>
           </div>
 
-          {/* Cards */}
+          {/* Cards. The Solo tier is hidden while SOLO_MODE_ENABLED is off -
+              FORGE is mentor-required, so we don't advertise a tier nobody
+              can actually get. */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {PLANS.map((plan, i) => {
+            {PLANS.filter(
+              (p) => p.id !== "solo" || process.env.NEXT_PUBLIC_SOLO_MODE_ENABLED === "true",
+            ).map((plan, i) => {
               const monthlyPrice = parseInt(plan.price.replace("$", "")) || 0;
               const displayPrice = annual && monthlyPrice > 0
                 ? `$${Math.round(monthlyPrice * 0.8)}`
