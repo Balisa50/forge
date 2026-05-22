@@ -116,6 +116,7 @@ export default function MenteeDrilldownPage() {
   const [resDraft, setResDraft] = useState<Record<string, { title: string; url: string; note: string }>>({});
   const [posting, setPosting] = useState<string | null>(null);
   const [dialog, setDialog] = useState<DialogConfig | null>(null);
+  const [suspension, setSuspension] = useState<{ bannedAt: string; reason: string | null } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -129,6 +130,7 @@ export default function MenteeDrilldownPage() {
       const data = await res.json();
       setMentee(data.mentee);
       setRoadmaps(data.roadmaps);
+      setSuspension(data.suspension ?? null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -304,6 +306,62 @@ export default function MenteeDrilldownPage() {
     });
   };
 
+  /** Suspend the mentee - locks them out of the whole app. */
+  const handleBan = () => {
+    setDialog({
+      kind: "prompt",
+      title: `Suspend ${mentee?.name?.split(" ")[0] ?? "this mentee"}?`,
+      message: "They will be locked out of the entire app. On their next login they see a suspension letter with the reason below. Only you can lift it.",
+      label: "Reason for suspension (the mentee will read this)",
+      placeholder: "You abandoned Week 3 past the deadline and stopped responding. Reach out to me when you're ready to recommit.",
+      confirmText: "Suspend mentee",
+      danger: true,
+      minLength: 3,
+      onSubmit: async (reason) => {
+        try {
+          const res = await fetch("/api/mentor/ban", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ menteeId, action: "ban", reason }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || `Failed (${res.status})`);
+          }
+          await load();
+        } catch (e) {
+          setDialog({ kind: "alert", title: "Could not suspend", message: e instanceof Error ? e.message : "Something went wrong" });
+        }
+      },
+    });
+  };
+
+  /** Lift the suspension - the mentee regains access immediately. */
+  const handleUnban = () => {
+    setDialog({
+      kind: "confirm",
+      title: `Reinstate ${mentee?.name?.split(" ")[0] ?? "this mentee"}?`,
+      message: "They will regain full access to FORGE immediately on their next login. The suspension letter disappears.",
+      confirmText: "Reinstate",
+      onConfirm: async () => {
+        try {
+          const res = await fetch("/api/mentor/ban", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ menteeId, action: "unban" }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || `Failed (${res.status})`);
+          }
+          await load();
+        } catch (e) {
+          setDialog({ kind: "alert", title: "Could not reinstate", message: e instanceof Error ? e.message : "Something went wrong" });
+        }
+      },
+    });
+  };
+
   const stats = useMemo(() => {
     let total = 0, verified = 0, failed = 0, pending = 0;
     for (const r of roadmaps) {
@@ -373,7 +431,63 @@ export default function MenteeDrilldownPage() {
             <span>Tasks {stats.total} · {stats.verified} passed · {stats.failed} failed · {stats.pending} awaiting</span>
           </div>
         </div>
+        {!suspension && (
+          <button
+            type="button"
+            onClick={handleBan}
+            className="forge-btn forge-btn-ghost"
+            style={{
+              flexShrink: 0,
+              padding: "0.5rem 0.875rem",
+              fontSize: "0.75rem",
+              minHeight: "unset",
+              color: "var(--red)",
+              borderColor: "rgba(239,68,68,0.3)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.375rem",
+            }}
+          >
+            <Lock size={13} /> Suspend
+          </button>
+        )}
       </div>
+
+      {/* Suspension banner — shows when this mentee is currently suspended */}
+      {suspension && (
+        <div
+          className="forge-panel"
+          style={{
+            padding: "1rem 1.25rem",
+            marginBottom: "1.5rem",
+            background: "rgba(239,68,68,0.06)",
+            border: "1px solid rgba(239,68,68,0.35)",
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <Lock size={18} color="var(--red)" style={{ flexShrink: 0 }} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "var(--font-headline)", fontSize: "0.9375rem", color: "var(--red)" }}>
+              This mentee is suspended
+            </div>
+            <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: "0.125rem" }}>
+              Since {new Date(suspension.bannedAt).toLocaleDateString()}
+              {suspension.reason ? ` — "${suspension.reason}"` : ""}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleUnban}
+            className="forge-btn forge-btn-primary"
+            style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", minHeight: "unset", flexShrink: 0 }}
+          >
+            Reinstate access
+          </button>
+        </div>
+      )}
 
       <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
 

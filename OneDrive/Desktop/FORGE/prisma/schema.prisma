@@ -421,6 +421,11 @@ model MentorLink {
   /// migrations. Shape: { pod: boolean, certificates: boolean, analytics: boolean, journal: boolean, leaderboard: boolean }
   /// Missing keys default to TRUE (visible) so existing rows aren't broken.
   visibility Json?
+  /// Mentor-controlled suspension. When bannedAt is set, the mentee is locked
+  /// out of the whole app and sees a suspension letter on login. The mentor
+  /// who set it is the only one who can lift it (set bannedAt back to null).
+  bannedAt   DateTime?
+  banReason  String?
   createdAt DateTime @default(now())
 
   mentor    User          @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)

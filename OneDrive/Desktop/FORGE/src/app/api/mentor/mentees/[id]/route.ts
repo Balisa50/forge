@@ -81,5 +81,11 @@ export async function GET(
     },
   });
 
-  return NextResponse.json({ mentee, roadmaps });
+  return NextResponse.json({
+    mentee,
+    roadmaps,
+    suspension: link.bannedAt
+      ? { bannedAt: link.bannedAt.toISOString(), reason: link.banReason }
+      : null,
+  });
 }

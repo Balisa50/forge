@@ -36,6 +36,18 @@ export type DialogConfig =
       mode: "release" | "extend";
       defaultDate: string;
       onSubmit: (deadlineIsoDate: string, note: string) => void | Promise<void>;
+    }
+  | {
+      kind: "prompt";
+      title: string;
+      message: string;
+      label: string;
+      placeholder?: string;
+      confirmText?: string;
+      danger?: boolean;
+      /** Minimum characters required before the confirm button enables. */
+      minLength?: number;
+      onSubmit: (value: string) => void | Promise<void>;
     };
 
 interface Props {
@@ -96,6 +108,17 @@ export default function Dialog({ config, onClose }: Props) {
       }
       return;
     }
+    if (config.kind === "prompt") {
+      if (note.trim().length < (config.minLength ?? 1)) return;
+      setBusy(true);
+      try {
+        await config.onSubmit(note.trim());
+        onClose();
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     setBusy(true);
     try {
       await config.onConfirm();
@@ -109,7 +132,7 @@ export default function Dialog({ config, onClose }: Props) {
     config.kind === "release" &&
     (!date || Number.isNaN(new Date(date + "T23:59:00").getTime()) || new Date(date + "T23:59:00").getTime() <= Date.now());
 
-  const danger = config.kind === "confirm" && config.danger;
+  const danger = (config.kind === "confirm" || config.kind === "prompt") && config.danger;
 
   return (
     <div
@@ -205,6 +228,36 @@ export default function Dialog({ config, onClose }: Props) {
             <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>
               {config.message}
             </p>
+          ) : config.kind === "prompt" ? (
+            <div className="flex flex-col gap-3">
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>
+                {config.message}
+              </p>
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.6875rem",
+                    color: "var(--text-dim)",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    marginBottom: "0.375rem",
+                  }}
+                >
+                  {config.label}
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={4}
+                  placeholder={config.placeholder}
+                  className="forge-input"
+                  style={{ resize: "vertical", lineHeight: 1.55 }}
+                  autoFocus
+                />
+              </div>
+            </div>
           ) : (
             <div className="flex flex-col gap-3">
               <div>
@@ -289,11 +342,15 @@ export default function Dialog({ config, onClose }: Props) {
           )}
           <button
             ref={(el) => {
-              if (config.kind !== "release" && el && !firstFocusRef.current) firstFocusRef.current = el;
+              if (config.kind !== "release" && config.kind !== "prompt" && el && !firstFocusRef.current) firstFocusRef.current = el;
             }}
             type="button"
             onClick={handleConfirm}
-            disabled={busy || (config.kind === "release" && releaseDateInvalid)}
+            disabled={
+              busy ||
+              (config.kind === "release" && releaseDateInvalid) ||
+              (config.kind === "prompt" && note.trim().length < (config.minLength ?? 1))
+            }
             className={danger ? "forge-btn forge-btn-red" : "forge-btn forge-btn-primary"}
             style={{ padding: "0.5rem 1.125rem", fontSize: "0.875rem", display: "inline-flex", alignItems: "center", gap: "0.375rem", minHeight: "unset" }}
           >
