@@ -155,7 +155,7 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
         <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", textAlign: "center", marginBottom: "2rem" }}>
           What you are signing up for
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.25rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.25rem" }}>
           {WHAT_TO_EXPECT.map(({ Icon, title, body }) => (
             <div key={title} style={{ padding: "1.25rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 10 }}>
               <span style={{ display: "inline-grid", placeItems: "center", width: 36, height: 36, borderRadius: 8, background: "rgba(245,158,11,0.1)", color: "var(--accent)", marginBottom: "0.875rem" }}>
