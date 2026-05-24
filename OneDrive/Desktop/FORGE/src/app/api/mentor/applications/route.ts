@@ -62,11 +62,60 @@ export async function POST(req: NextRequest) {
   const mentorId = session.user.id;
 
   const body = await req.json().catch(() => ({}));
-  const applicationId: string | undefined = body.applicationId;
   const action: string | undefined = body.action;
 
-  if (!applicationId || (action !== "approve" && action !== "reject")) {
-    return NextResponse.json({ error: "applicationId and a valid action required" }, { status: 400 });
+  if (action !== "approve" && action !== "reject") {
+    return NextResponse.json({ error: "Valid action required" }, { status: 400 });
+  }
+
+  // ── Bulk mode: ids[] ──────────────────────────────────────────────
+  if (Array.isArray(body.ids) && body.ids.length > 0) {
+    const ids: string[] = body.ids.slice(0, 100); // cap at 100
+    const applications = await prisma.mentorApplication.findMany({
+      where: { id: { in: ids }, status: "pending" },
+    });
+
+    const results: { id: string; status: string; inviteCode?: string }[] = [];
+
+    for (const application of applications) {
+      if (action === "reject") {
+        await prisma.mentorApplication.update({
+          where: { id: application.id },
+          data: { status: "rejected", reviewedById: mentorId, reviewedAt: new Date() },
+        });
+        results.push({ id: application.id, status: "rejected" });
+        continue;
+      }
+
+      // Approve: generate unique code + personalId
+      const { code, personalId } = await generateUniqueCodePair();
+      await prisma.$transaction([
+        prisma.mentorInvite.create({
+          data: {
+            code, mentorId,
+            roadmapSlug: application.trackSlug,
+            label: `From application: ${application.applicantName}`,
+            maxUses: 1,
+            expectedName: application.applicantName,
+            personalIdIssued: personalId,
+          },
+        }),
+        prisma.mentorApplication.update({
+          where: { id: application.id },
+          data: { status: "approved", reviewedById: mentorId, reviewedAt: new Date(), inviteCode: code },
+        }),
+      ]);
+      sendApplicationApprovedEmail(application.applicantEmail, application.applicantName, code).catch(() => {});
+      results.push({ id: application.id, status: "approved", inviteCode: code });
+    }
+
+    return NextResponse.json({ bulk: true, results, count: results.length });
+  }
+
+  // ── Single mode: applicationId ────────────────────────────────────
+  const applicationId: string | undefined = body.applicationId;
+  if (!applicationId) {
+    return NextResponse.json({ error: "applicationId or ids required" }, { status: 400 });
   }
 
   const application = await prisma.mentorApplication.findUnique({ where: { id: applicationId } });
@@ -83,25 +132,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "rejected" });
   }
 
-  // APPROVE: generate a name-locked, single-use invite code.
-  let code = makeCode();
-  for (let i = 0; i < 5; i++) {
-    if (!(await prisma.mentorInvite.findUnique({ where: { code } }))) break;
-    code = makeCode();
-  }
-  let personalId = makePersonalId();
-  for (let i = 0; i < 5; i++) {
-    const a = await prisma.mentorInvite.findUnique({ where: { personalIdIssued: personalId } });
-    const b = await prisma.user.findUnique({ where: { personalId } });
-    if (!a && !b) break;
-    personalId = makePersonalId();
-  }
-
+  const { code, personalId } = await generateUniqueCodePair();
   await prisma.$transaction([
     prisma.mentorInvite.create({
       data: {
-        code,
-        mentorId,
+        code, mentorId,
         roadmapSlug: application.trackSlug,
         label: `From application: ${application.applicantName}`,
         maxUses: 1,
@@ -115,12 +150,7 @@ export async function POST(req: NextRequest) {
     }),
   ]);
 
-  // Fire approval email — non-blocking, failure won't break the response
-  sendApplicationApprovedEmail(
-    application.applicantEmail,
-    application.applicantName,
-    code,
-  ).catch(() => {});
+  sendApplicationApprovedEmail(application.applicantEmail, application.applicantName, code).catch(() => {});
 
   return NextResponse.json({
     status: "approved",
@@ -129,4 +159,20 @@ export async function POST(req: NextRequest) {
     applicantName: application.applicantName,
     applicantEmail: application.applicantEmail,
   });
+}
+
+async function generateUniqueCodePair(): Promise<{ code: string; personalId: string }> {
+  let code = makeCode();
+  for (let i = 0; i < 5; i++) {
+    if (!(await prisma.mentorInvite.findUnique({ where: { code } }))) break;
+    code = makeCode();
+  }
+  let personalId = makePersonalId();
+  for (let i = 0; i < 5; i++) {
+    const a = await prisma.mentorInvite.findUnique({ where: { personalIdIssued: personalId } });
+    const b = await prisma.user.findUnique({ where: { personalId } });
+    if (!a && !b) break;
+    personalId = makePersonalId();
+  }
+  return { code, personalId };
 }

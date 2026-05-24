@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2, ChevronDown, ChevronUp, CheckSquare } from "lucide-react";
 
 interface Application {
   id: string;
@@ -26,7 +26,9 @@ export default function ApplicationsPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded]   = useState<string | null>(null);
+  const [selected, setSelected]   = useState<Set<string>>(new Set());
+  const [bulkActing, setBulkActing] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -80,6 +82,45 @@ export default function ApplicationsPage() {
 
   const pending  = apps.filter((a) => a.status === "pending");
   const reviewed = apps.filter((a) => a.status !== "pending");
+
+  const allSelected = pending.length > 0 && pending.every((a) => selected.has(a.id));
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (allSelected) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(pending.map((a) => a.id)));
+    }
+  };
+
+  const bulkAct = async (action: "approve" | "reject") => {
+    if (selected.size === 0) return;
+    setBulkActing(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/mentor/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [...selected], action }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Bulk action failed");
+      setSelected(new Set());
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Bulk action failed");
+    } finally {
+      setBulkActing(false);
+    }
+  };
 
   return (
     <div style={{ paddingBottom: "4rem" }}>
@@ -145,19 +186,42 @@ export default function ApplicationsPage() {
         <>
           {pending.length > 0 && (
             <>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
-                Pending — {pending.length}
-              </p>
+              {/* Select all row */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", margin: 0 }}>
+                  Pending — {pending.length}
+                </p>
+                <button
+                  onClick={toggleAll}
+                  style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: allSelected ? "var(--accent)" : "var(--text-dim)", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "0.375rem" }}
+                >
+                  <span style={{ width: 14, height: 14, border: `1.5px solid ${allSelected ? "var(--accent)" : "var(--border)"}`, borderRadius: 3, display: "inline-grid", placeItems: "center", background: allSelected ? "var(--accent)" : "none" }}>
+                    {allSelected && <span style={{ color: "#000", fontSize: "0.5rem", fontWeight: 900 }}>✓</span>}
+                  </span>
+                  {allSelected ? "Deselect all" : "Select all"}
+                </button>
+              </div>
+
               <div className="flex flex-col gap-3" style={{ marginBottom: "2rem" }}>
                 {pending.map((a) => {
                   const isOpen = expanded === a.id;
+                  const isSelected = selected.has(a.id);
                   return (
-                    <div key={a.id} className="forge-panel" style={{ overflow: "hidden" }}>
+                    <div key={a.id} className="forge-panel" style={{ overflow: "hidden", borderColor: isSelected ? "rgba(245,158,11,0.4)" : undefined }}>
 
                       {/* ── Collapsed header — always visible, tap to expand ── */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "1.25rem 1.5rem 0" }}>
+                        {/* Checkbox */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); toggleSelect(a.id); }}
+                          style={{ flexShrink: 0, width: 18, height: 18, border: `1.5px solid ${isSelected ? "var(--accent)" : "var(--border)"}`, borderRadius: 4, background: isSelected ? "var(--accent)" : "none", display: "grid", placeItems: "center", cursor: "pointer" }}
+                        >
+                          {isSelected && <span style={{ color: "#000", fontSize: "0.625rem", fontWeight: 900 }}>✓</span>}
+                        </button>
+                      </div>
                       <button
                         onClick={() => setExpanded(isOpen ? null : a.id)}
-                        style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "1.25rem 1.5rem", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}
+                        style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "0.5rem 1.5rem 1.25rem", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}
                       >
                         <div style={{ minWidth: 0 }}>
                           <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem" }}>{a.applicantName}</div>
@@ -275,6 +339,45 @@ export default function ApplicationsPage() {
             </>
           )}
         </>
+      )}
+      {/* ── Sticky bulk action bar ── */}
+      {selected.size > 0 && (
+        <div style={{
+          position: "fixed", bottom: "1.5rem", left: "50%", transform: "translateX(-50%)",
+          display: "flex", alignItems: "center", gap: "0.75rem",
+          background: "var(--bg-panel)", border: "1px solid var(--border)",
+          borderRadius: 12, padding: "0.75rem 1.25rem",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+          zIndex: 100,
+        }}>
+          <CheckSquare size={16} color="var(--accent)" />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+            {selected.size} selected
+          </span>
+          <button
+            onClick={() => bulkAct("approve")}
+            disabled={bulkActing}
+            className="forge-btn forge-btn-primary"
+            style={{ padding: "0.5rem 1.25rem", fontSize: "0.875rem", minHeight: "unset", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+          >
+            {bulkActing ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+            Approve all
+          </button>
+          <button
+            onClick={() => bulkAct("reject")}
+            disabled={bulkActing}
+            className="forge-btn forge-btn-ghost"
+            style={{ padding: "0.5rem 1.25rem", fontSize: "0.875rem", minHeight: "unset", color: "var(--red)", borderColor: "rgba(239,68,68,0.3)", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+          >
+            <X size={14} /> Reject all
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem" }}
+          >
+            <X size={14} />
+          </button>
+        </div>
       )}
     </div>
   );
