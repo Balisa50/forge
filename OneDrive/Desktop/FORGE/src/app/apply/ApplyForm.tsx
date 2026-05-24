@@ -20,22 +20,22 @@ const WHAT_TO_EXPECT = [
   {
     Icon: ShieldCheck,
     title: "Real accountability",
-    body: "You will have a mentor who checks your work, tracks your progress, and will not let you slide. No ghost mentors.",
+    body: "Your mentor checks your work. No ghosting.",
   },
   {
     Icon: Target,
     title: "A structured path",
-    body: "Not a course. A roadmap built for your specific goal — released week by week so you cannot skip ahead.",
+    body: "Week by week. You cannot skip ahead.",
   },
   {
     Icon: Zap,
     title: "High standards",
-    body: "Every check-in is reviewed. Every week is unlocked only when the previous one is done. FORGE does not do participation trophies.",
+    body: "Every check-in reviewed. No participation trophies.",
   },
   {
     Icon: Lock,
     title: "Invite only",
-    body: "Applications are reviewed by a real person. Not everyone gets in. That is the point.",
+    body: "Not everyone gets in. That is the point.",
   },
 ];
 
@@ -145,8 +145,8 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
             <>Apply to be<br /><span style={{ color: "var(--accent)" }}>Forged.</span></>
           )}
         </h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "clamp(1rem, 2vw, 1.125rem)", lineHeight: 1.7, maxWidth: 560, margin: "0 auto 0" }}>
-          FORGE is not a course. It is a commitment — between you and a mentor who will push you, check your work, and hold the standard. Most people are not ready for this. Some are.
+        <p style={{ color: "var(--text-secondary)", fontSize: "clamp(1rem, 2vw, 1.125rem)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 0" }}>
+          A mentor. A roadmap. Real accountability. Most people are not ready for this. Some are.
         </p>
       </div>
 
@@ -170,12 +170,9 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
 
       {/* APPLICATION FORM */}
       <div style={{ padding: "3rem 1.25rem 5rem", maxWidth: 620, margin: "0 auto" }}>
-        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", letterSpacing: "0.03em", marginBottom: "0.375rem" }}>
+        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", letterSpacing: "0.03em", marginBottom: "2rem" }}>
           Your application
         </h2>
-        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "2rem" }}>
-          This is not a waitlist form. Write like you mean it — a real person will read every word and decide if you are ready.
-        </p>
 
         <div className="flex flex-col gap-5">
 
@@ -221,15 +218,12 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
           {/* Background */}
           <div>
             <label style={labelStyle}>Your background</label>
-            <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.55, marginBottom: "0.5rem" }}>
-              Where are you right now? What have you tried? What have you built, if anything? Be honest — there is no wrong answer.
-            </p>
             <textarea
               value={background}
               onChange={(e) => setBackground(e.target.value)}
-              rows={4}
+              rows={3}
               className="forge-input"
-              placeholder="e.g. I have done a few YouTube tutorials but never shipped anything. I have been trying to learn for 6 months and keep stopping."
+              placeholder="Where you are now. What you have tried. Be honest."
               style={{ resize: "vertical", lineHeight: 1.65 }}
             />
           </div>
@@ -242,15 +236,12 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
                 {charCount} / 80 min
               </span>
             </label>
-            <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.55, marginBottom: "0.5rem" }}>
-              Not the polished version. The real one. What does getting this right actually mean for your life? What happens if you quit again?
-            </p>
             <textarea
               value={motivation}
               onChange={(e) => setMotivation(e.target.value)}
-              rows={6}
+              rows={5}
               className="forge-input"
-              placeholder="Be specific. Vague answers get rejected."
+              placeholder="The real reason. Vague answers get rejected."
               style={{ resize: "vertical", lineHeight: 1.65, borderColor: motivation.length > 0 && !motivationOk ? "rgba(239,68,68,0.5)" : undefined }}
             />
           </div>
@@ -297,7 +288,7 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
               {submitting ? "Submitting..." : "Submit my application"}
             </button>
             <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "1rem" }}>
-              Applications are reviewed by a real person. You will hear back by email.
+              You will hear back by email.
             </p>
           </div>
 
