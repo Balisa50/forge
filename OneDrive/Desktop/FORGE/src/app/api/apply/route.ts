@@ -22,9 +22,9 @@ export async function POST(req: NextRequest) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(applicantEmail)) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
-  if (motivation.length < 30) {
+  if (motivation.length < 80) {
     return NextResponse.json(
-      { error: "Tell us why you want this - at least a sentence or two. Mean it." },
+      { error: "Tell us why you want this. Really. Write at least a few sentences — vague answers get rejected." },
       { status: 400 },
     );
   }
