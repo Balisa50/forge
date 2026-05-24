@@ -146,7 +146,7 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
           )}
         </h1>
         <p style={{ color: "var(--text-secondary)", fontSize: "clamp(1rem, 2vw, 1.125rem)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 0" }}>
-          A mentor. A roadmap. Real accountability. Most people are not ready for this. Some are.
+          A mentor. A roadmap. Real accountability.
         </p>
       </div>
 
