@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
   const trackSlug = body.trackSlug ? body.trackSlug.toString().trim() : null;
   const motivation = (body.motivation ?? "").toString().trim();
   const commitment = body.commitment ? body.commitment.toString().trim() : null;
+  const mentorId   = body.mentorId ? body.mentorId.toString().trim() : null;
 
   if (applicantName.length < 2) {
     return NextResponse.json({ error: "Enter your full name." }, { status: 400 });
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
       trackSlug,
       motivation: motivation.slice(0, 2000),
       commitment: commitment?.slice(0, 300) ?? null,
+      mentorId: mentorId ?? null,
     },
   });
 

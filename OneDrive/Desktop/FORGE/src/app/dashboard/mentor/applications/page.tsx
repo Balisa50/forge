@@ -3,12 +3,12 @@
 /**
  * /dashboard/mentor/applications - the mentor's application review queue.
  * Pending applications first; approve generates an invite code to hand over,
- * reject closes it.
+ * reject closes it. Also shows the mentor's personal apply link.
  */
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox } from "lucide-react";
+import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2 } from "lucide-react";
 
 interface Application {
   id: string;
@@ -19,15 +19,18 @@ interface Application {
   commitment: string | null;
   status: string;
   inviteCode: string | null;
+  mentorId: string | null;
   createdAt: string;
 }
 
 export default function ApplicationsPage() {
   const [apps, setApps] = useState<Application[]>([]);
+  const [mentorId, setMentorId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<string | null>(null);
   const [approved, setApproved] = useState<Record<string, { code: string; email: string; name: string }>>({});
   const [copied, setCopied] = useState<string | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -37,6 +40,7 @@ export default function ApplicationsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load");
       setApps(data.applications);
+      if (data.mentorId) setMentorId(data.mentorId);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load");
     } finally {
@@ -45,6 +49,17 @@ export default function ApplicationsPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  const applyLink = mentorId
+    ? `${typeof window !== "undefined" ? window.location.origin : "https://forge-ab.vercel.app"}/apply/${mentorId}`
+    : null;
+
+  const copyLink = () => {
+    if (!applyLink) return;
+    navigator.clipboard.writeText(applyLink);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 1500);
+  };
 
   const act = async (id: string, action: "approve" | "reject") => {
     setActing(id);
@@ -85,9 +100,36 @@ export default function ApplicationsPage() {
         Applications
       </h1>
       <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.5rem", lineHeight: 1.55, maxWidth: 640 }}>
-        People who applied to learn on FORGE. Read why they want it. Approve to generate their invite code,
-        or reject. Share the FORGE apply link: <strong style={{ color: "var(--accent)" }}>/apply</strong>
+        People who applied to train with you. Read why they want it. Approve to generate their invite code, or reject.
       </p>
+
+      {/* ── Personal Apply Link ─────────────────────────────────── */}
+      {applyLink && (
+        <div style={{ marginBottom: "1.75rem", padding: "1rem 1.25rem", background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+            <Link2 size={14} color="var(--accent)" />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--accent)" }}>
+              Your personal apply link
+            </span>
+          </div>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.5, marginBottom: "0.75rem" }}>
+            Share this with anyone you want to apply specifically to train with you. Applications from this link go directly into your queue.
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap" }}>
+            <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-primary)", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, padding: "0.375rem 0.625rem", wordBreak: "break-all" }}>
+              {applyLink}
+            </code>
+            <button
+              onClick={copyLink}
+              className="forge-btn forge-btn-ghost"
+              style={{ padding: "0.375rem 0.75rem", fontSize: "0.75rem", minHeight: "unset", display: "inline-flex", alignItems: "center", gap: "0.3rem", flexShrink: 0 }}
+            >
+              {linkCopied ? <CheckCheck size={13} /> : <Copy size={13} />}
+              {linkCopied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div style={{ padding: "0.75rem 1rem", borderRadius: 8, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "var(--red)", marginBottom: "1rem", fontSize: "0.875rem" }}>
@@ -104,7 +146,7 @@ export default function ApplicationsPage() {
           <Inbox size={32} color="var(--text-dim)" style={{ margin: "0 auto 0.75rem" }} />
           <p style={{ color: "var(--text-secondary)" }}>No applications yet.</p>
           <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginTop: "0.25rem" }}>
-            Share your apply link and they will show up here.
+            Share your apply link above and they will show up here.
           </p>
         </div>
       ) : (
@@ -112,7 +154,7 @@ export default function ApplicationsPage() {
           {pending.length > 0 && (
             <>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
-                Pending - {pending.length}
+                Pending — {pending.length}
               </p>
               <div className="flex flex-col gap-3" style={{ marginBottom: "2rem" }}>
                 {pending.map((a) => (
@@ -124,6 +166,7 @@ export default function ApplicationsPage() {
                       </div>
                       <div style={{ textAlign: "right", fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
                         {a.trackSlug ?? "undecided"} · {new Date(a.createdAt).toLocaleDateString()}
+                        {a.mentorId ? "" : <span style={{ color: "rgba(245,158,11,0.7)", marginLeft: "0.375rem" }}>· global</span>}
                       </div>
                     </div>
                     <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: a.commitment ? "0.5rem" : "0.875rem", whiteSpace: "pre-wrap" }}>
@@ -138,7 +181,7 @@ export default function ApplicationsPage() {
                     {approved[a.id] ? (
                       <div style={{ padding: "0.875rem 1rem", borderRadius: 8, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.3)" }}>
                         <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--green)", marginBottom: "0.375rem" }}>
-                          Approved - send this code to {approved[a.id].name}
+                          Approved — send this code to {approved[a.id].name}
                         </p>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
                           <code style={{ fontFamily: "var(--font-mono)", fontSize: "1.125rem", color: "var(--accent)", letterSpacing: "0.05em" }}>
@@ -154,7 +197,7 @@ export default function ApplicationsPage() {
                           </button>
                         </div>
                         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "0.5rem" }}>
-                          Email it to {approved[a.id].email}. They register at /register with this code.
+                          Email it to {approved[a.id].email}. They register at /register, then enter this code during onboarding as a Mentee.
                         </p>
                       </div>
                     ) : (

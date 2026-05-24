@@ -36,11 +36,20 @@ export async function GET() {
     return NextResponse.json({ error: "Mentors only" }, { status: 403 });
   }
 
+  // Show: applications scoped to this mentor, plus unscoped global ones.
+  // Global applications (mentorId = null) are visible to all mentors as a
+  // shared queue — first to approve wins.
   const applications = await prisma.mentorApplication.findMany({
+    where: {
+      OR: [
+        { mentorId: session.user.id },
+        { mentorId: null },
+      ],
+    },
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     take: 100,
   });
-  return NextResponse.json({ applications });
+  return NextResponse.json({ applications, mentorId: session.user.id });
 }
 
 export async function POST(req: NextRequest) {

@@ -652,8 +652,12 @@ model MentorApplication {
   reviewedById   String?
   /// The MentorInvite code generated when approved - the mentor hands this over.
   inviteCode     String?
+  /// Which mentor this application is scoped to. Set when the applicant used
+  /// a per-mentor apply link (/apply/[mentorId]). Null = submitted via global /apply.
+  mentorId       String?
   createdAt      DateTime  @default(now())
   reviewedAt     DateTime?
 
   @@index([status, createdAt])
+  @@index([mentorId, status])
 }
