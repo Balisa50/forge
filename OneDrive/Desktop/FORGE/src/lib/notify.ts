@@ -1,17 +1,22 @@
 /**
- * Best-effort transactional email when something happens in the
- * mentor-mentee thread. No-ops cleanly when:
- *   - RESEND_API_KEY is missing
- *   - recipient or actor user can't be found
- *   - recipient is a guest user (no real email)
- *
- * Errors are caught and logged — never thrown — so a failing email
- * never breaks the API call that triggered it.
+ * Best-effort in-app + email notifications for mentor-mentee events.
+ * Always writes to the DB Notification table (in-app bell).
+ * Also sends Gmail SMTP email when GMAIL_USER + GMAIL_APP_PASSWORD are set.
+ * Never throws — errors are caught and logged.
  */
+import nodemailer from "nodemailer";
 import { prisma } from "./prisma";
 
-const FROM = process.env.RESEND_FROM ?? "The Forge <noreply@theforge.app>";
 const BASE_URL = process.env.NEXTAUTH_URL ?? process.env.AUTH_URL ?? "https://forge-ab.vercel.app";
+
+function getTransport(): nodemailer.Transporter | null {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass) return null;
+  return nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+}
+
+const GMAIL_FROM = process.env.GMAIL_USER ? `The Forge <${process.env.GMAIL_USER}>` : "";
 
 export type NotificationKind =
   | "mentor-left-note"
@@ -58,15 +63,15 @@ export async function sendNotification(kind: NotificationKind, args: Args): Prom
       },
     });
 
-    // ── Email — only if domain is configured (no-op without one) ──
-    if (!process.env.RESEND_API_KEY) return;
+    // ── Email — only when Gmail creds are configured ───────────────
+    const transport = getTransport();
+    if (!transport) return;
     if (!recipient.email || recipient.email.endsWith("@forge.guest")) return;
 
     const link = `${BASE_URL}${href}`;
-    const { Resend } = await import("resend");
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: FROM,
+    await transport.sendMail({
+      from: GMAIL_FROM,
+      replyTo: "theforgelearn@proton.me",
       to: recipient.email,
       subject,
       html: wrapHtml(body + `<p style="margin-top:24px"><a href="${link}" style="background:#f59e0b;color:#000;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600">Open in The Forge</a></p>`),

@@ -1,24 +1,36 @@
 /**
  * Centralized email service — all Forge transactional emails.
- * Requires RESEND_API_KEY env var. Silently no-ops if missing.
+ * Uses Gmail SMTP via nodemailer. Requires GMAIL_USER + GMAIL_APP_PASSWORD env vars.
+ * Silently no-ops if either is missing.
  */
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const FROM = process.env.RESEND_FROM ?? "The Forge <onboarding@resend.dev>";
-const REPLY_TO = process.env.RESEND_REPLY_TO ?? "theforgelearn@proton.me";
+const GMAIL_USER  = process.env.GMAIL_USER ?? "";
+const REPLY_TO    = process.env.EMAIL_REPLY_TO ?? "theforgelearn@proton.me";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? "theforgelearn@proton.me";
 export { SUPPORT_EMAIL };
+
 const BASE_URL =
   process.env.NEXTAUTH_URL ??
   process.env.AUTH_URL ??
-  process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-function getResend(): Resend | null {
-  const key = process.env.RESEND_API_KEY;
-  if (!key || key.trim() === "" || key === "placeholder") return null;
-  return new Resend(key);
+const FROM = GMAIL_USER ? `The Forge <${GMAIL_USER}>` : "";
+
+function getTransport(): nodemailer.Transporter | null {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass || user.trim() === "" || pass.trim() === "") return null;
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: { user, pass },
+  });
+}
+
+async function sendMail(to: string, subject: string, html: string): Promise<void> {
+  const transport = getTransport();
+  if (!transport) return; // env vars not set — silent no-op
+  await transport.sendMail({ from: FROM, replyTo: REPLY_TO, to, subject, html });
 }
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
@@ -100,7 +112,6 @@ export function welcomeEmailHtml(name: string): string {
 }
 
 export function checkinReminderEmailHtml(name: string, taskTitle: string): string {
-  const hour = new Date().toLocaleString("en-US", { hour: "numeric", hour12: true, timeZone: "UTC" });
   return `
     <div style="${BASE_STYLE}">
       ${header("You haven't checked in yet")}
@@ -272,56 +283,36 @@ export function applicationApprovedEmailHtml(
   `;
 }
 
-export async function sendApplicationApprovedEmail(
-  to: string,
-  name: string,
-  inviteCode: string,
-) {
-  const resend = getResend();
-  if (!resend) return;
+// ─── Send helpers ─────────────────────────────────────────────────────────────
+
+export async function sendApplicationApprovedEmail(to: string, name: string, inviteCode: string) {
   const registerUrl = `${BASE_URL}/register`;
   try {
-    await resend.emails.send({
-      from: FROM,
-      replyTo: REPLY_TO,
+    await sendMail(
       to,
-      subject: `⚡ You're in — your Forge invite code`,
-      html: applicationApprovedEmailHtml(name, inviteCode, registerUrl),
-    });
+      `⚡ You're in — your Forge invite code`,
+      applicationApprovedEmailHtml(name, inviteCode, registerUrl),
+    );
   } catch (e) {
     console.error("[email] sendApplicationApprovedEmail failed:", (e as Error).message);
   }
 }
 
-// ─── Send helpers ─────────────────────────────────────────────────────────────
-
 export async function sendWelcomeEmail(to: string, name: string) {
-  const resend = getResend();
-  if (!resend) return;
   try {
-    await resend.emails.send({
-      from: FROM,
-      replyTo: REPLY_TO,
-      to,
-      subject: `Welcome to The Forge, ${name} ⚡`,
-      html: welcomeEmailHtml(name),
-    });
+    await sendMail(to, `Welcome to The Forge, ${name} ⚡`, welcomeEmailHtml(name));
   } catch (e) {
     console.error("[email] sendWelcomeEmail failed:", (e as Error).message);
   }
 }
 
 export async function sendCheckinReminderEmail(to: string, name: string, taskTitle: string) {
-  const resend = getResend();
-  if (!resend) return;
   try {
-    await resend.emails.send({
-      from: FROM,
-      replyTo: REPLY_TO,
+    await sendMail(
       to,
-      subject: `⚡ ${name}, you haven't checked in yet today`,
-      html: checkinReminderEmailHtml(name, taskTitle),
-    });
+      `⚡ ${name}, you haven't checked in yet today`,
+      checkinReminderEmailHtml(name, taskTitle),
+    );
   } catch (e) {
     console.error("[email] sendCheckinReminderEmail failed:", (e as Error).message);
   }
@@ -336,18 +327,12 @@ export async function sendInterrogationResultEmail(
   verdict: string,
   taskTitle: string,
 ) {
-  const resend = getResend();
-  if (!resend) return;
   try {
-    await resend.emails.send({
-      from: FROM,
-      replyTo: REPLY_TO,
+    await sendMail(
       to,
-      subject: passed
-        ? `✅ You passed today's interrogation — The Forge`
-        : `❌ Interrogation failed — The Forge`,
-      html: interrogationResultEmailHtml(name, passed, score, maxScore, verdict, taskTitle),
-    });
+      passed ? `✅ You passed today's interrogation — The Forge` : `❌ Interrogation failed — The Forge`,
+      interrogationResultEmailHtml(name, passed, score, maxScore, verdict, taskTitle),
+    );
   } catch (e) {
     console.error("[email] sendInterrogationResultEmail failed:", (e as Error).message);
   }
@@ -359,32 +344,16 @@ export async function sendPodActivityEmail(
   podName: string,
   members: Array<{ name: string; checkedIn: boolean; progress: number }>,
 ) {
-  const resend = getResend();
-  if (!resend) return;
   try {
-    await resend.emails.send({
-      from: FROM,
-      replyTo: REPLY_TO,
-      to,
-      subject: `Your pod this week — The Forge`,
-      html: podActivityEmailHtml(name, podName, members),
-    });
+    await sendMail(to, `Your pod this week — The Forge`, podActivityEmailHtml(name, podName, members));
   } catch (e) {
     console.error("[email] sendPodActivityEmail failed:", (e as Error).message);
   }
 }
 
 export async function sendPasswordResetEmail(to: string, name: string, resetUrl: string) {
-  const resend = getResend();
-  if (!resend) return;
   try {
-    await resend.emails.send({
-      from: FROM,
-      replyTo: REPLY_TO,
-      to,
-      subject: "Reset your Forge password",
-      html: passwordResetEmailHtml(name, resetUrl),
-    });
+    await sendMail(to, "Reset your Forge password", passwordResetEmailHtml(name, resetUrl));
   } catch (e) {
     console.error("[email] sendPasswordResetEmail failed:", (e as Error).message);
   }
