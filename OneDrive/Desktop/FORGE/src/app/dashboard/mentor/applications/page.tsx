@@ -1,14 +1,8 @@
 "use client";
 
-/**
- * /dashboard/mentor/applications - the mentor's application review queue.
- * Pending applications first; approve generates an invite code to hand over,
- * reject closes it. Also shows the mentor's personal apply link.
- */
-
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2 } from "lucide-react";
+import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Application {
   id: string;
@@ -32,6 +26,7 @@ export default function ApplicationsPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -83,7 +78,7 @@ export default function ApplicationsPage() {
     }
   };
 
-  const pending = apps.filter((a) => a.status === "pending");
+  const pending  = apps.filter((a) => a.status === "pending");
   const reviewed = apps.filter((a) => a.status !== "pending");
 
   return (
@@ -100,7 +95,7 @@ export default function ApplicationsPage() {
         Applications
       </h1>
       <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.5rem", lineHeight: 1.55, maxWidth: 640 }}>
-        People who applied to train with you. Read why they want it. Approve to generate their invite code, or reject.
+        People who applied to train with you. Tap a card to read their full application.
       </p>
 
       {/* ── Personal Apply Link ─────────────────────────────────── */}
@@ -112,11 +107,8 @@ export default function ApplicationsPage() {
               Your personal apply link
             </span>
           </div>
-          <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.5, marginBottom: "0.75rem" }}>
-            Share this with anyone you want to apply specifically to train with you. Applications from this link go directly into your queue.
-          </p>
           <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap" }}>
-            <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-primary)", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, padding: "0.375rem 0.625rem", wordBreak: "break-all" }}>
+            <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-primary)", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, padding: "0.375rem 0.625rem", wordBreak: "break-all", flex: 1 }}>
               {applyLink}
             </code>
             <button
@@ -157,72 +149,110 @@ export default function ApplicationsPage() {
                 Pending — {pending.length}
               </p>
               <div className="flex flex-col gap-3" style={{ marginBottom: "2rem" }}>
-                {pending.map((a) => (
-                  <div key={a.id} className="forge-panel" style={{ padding: "1.25rem 1.5rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap", marginBottom: "0.625rem" }}>
-                      <div>
-                        <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem" }}>{a.applicantName}</div>
-                        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>{a.applicantEmail}</div>
-                      </div>
-                      <div style={{ textAlign: "right", fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
-                        {a.trackSlug ?? "undecided"} · {new Date(a.createdAt).toLocaleDateString()}
-                        {a.mentorId ? "" : <span style={{ color: "rgba(245,158,11,0.7)", marginLeft: "0.375rem" }}>· global</span>}
-                      </div>
-                    </div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: a.commitment ? "0.5rem" : "0.875rem", whiteSpace: "pre-wrap" }}>
-                      {a.motivation}
-                    </p>
-                    {a.commitment && (
-                      <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "0.875rem" }}>
-                        Commitment: {a.commitment}
-                      </p>
-                    )}
+                {pending.map((a) => {
+                  const isOpen = expanded === a.id;
+                  return (
+                    <div key={a.id} className="forge-panel" style={{ overflow: "hidden" }}>
 
-                    {approved[a.id] ? (
-                      <div style={{ padding: "0.875rem 1rem", borderRadius: 8, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.3)" }}>
-                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--green)", marginBottom: "0.375rem" }}>
-                          Approved — send this code to {approved[a.id].name}
-                        </p>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                          <code style={{ fontFamily: "var(--font-mono)", fontSize: "1.125rem", color: "var(--accent)", letterSpacing: "0.05em" }}>
-                            {approved[a.id].code}
-                          </code>
-                          <button
-                            onClick={() => { navigator.clipboard.writeText(approved[a.id].code); setCopied(a.id); setTimeout(() => setCopied(null), 1500); }}
-                            className="forge-btn forge-btn-ghost"
-                            style={{ padding: "0.3rem 0.625rem", fontSize: "0.75rem", minHeight: "unset", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
-                          >
-                            {copied === a.id ? <CheckCheck size={12} /> : <Copy size={12} />}
-                            {copied === a.id ? "Copied" : "Copy"}
-                          </button>
+                      {/* ── Collapsed header — always visible, tap to expand ── */}
+                      <button
+                        onClick={() => setExpanded(isOpen ? null : a.id)}
+                        style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "1.25rem 1.5rem", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}
+                      >
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem" }}>{a.applicantName}</div>
+                          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.125rem" }}>{a.applicantEmail}</div>
+                          {!isOpen && (
+                            <div style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginTop: "0.375rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                              {a.motivation.slice(0, 80)}{a.motivation.length > 80 ? "…" : ""}
+                            </div>
+                          )}
                         </div>
-                        <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "0.5rem" }}>
-                          Email it to {approved[a.id].email}. They register at /register, then enter this code during onboarding as a Mentee.
-                        </p>
-                      </div>
-                    ) : (
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <button
-                          onClick={() => act(a.id, "approve")}
-                          disabled={acting === a.id}
-                          className="forge-btn forge-btn-primary"
-                          style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", minHeight: "unset", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
-                        >
-                          {acting === a.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => act(a.id, "reject")}
-                          disabled={acting === a.id}
-                          className="forge-btn forge-btn-ghost"
-                          style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", minHeight: "unset", color: "var(--red)", borderColor: "rgba(239,68,68,0.3)", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
-                        >
-                          <X size={13} /> Reject
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.25rem", flexShrink: 0 }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
+                            {new Date(a.createdAt).toLocaleDateString()}
+                          </span>
+                          {isOpen ? <ChevronUp size={16} color="var(--text-dim)" /> : <ChevronDown size={16} color="var(--text-dim)" />}
+                        </div>
+                      </button>
+
+                      {/* ── Expanded body ── */}
+                      {isOpen && (
+                        <div style={{ padding: "0 1.5rem 1.5rem", borderTop: "1px solid var(--border)" }}>
+
+                          {/* Meta */}
+                          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", padding: "0.875rem 0", marginBottom: "0.875rem" }}>
+                            {a.trackSlug && (
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--accent)", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 999, padding: "0.2rem 0.625rem" }}>
+                                {a.trackSlug}
+                              </span>
+                            )}
+                            {a.commitment && (
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
+                                ⏱ {a.commitment}
+                              </span>
+                            )}
+                            {!a.mentorId && (
+                              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
+                                via global apply
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Full motivation */}
+                          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.7, whiteSpace: "pre-wrap", marginBottom: "1.25rem" }}>
+                            {a.motivation}
+                          </p>
+
+                          {/* Actions */}
+                          {approved[a.id] ? (
+                            <div style={{ padding: "0.875rem 1rem", borderRadius: 8, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.3)" }}>
+                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--green)", marginBottom: "0.375rem" }}>
+                                Approved — send this code to {approved[a.id].name}
+                              </p>
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                                <code style={{ fontFamily: "var(--font-mono)", fontSize: "1.125rem", color: "var(--accent)", letterSpacing: "0.05em" }}>
+                                  {approved[a.id].code}
+                                </code>
+                                <button
+                                  onClick={() => { navigator.clipboard.writeText(approved[a.id].code); setCopied(a.id); setTimeout(() => setCopied(null), 1500); }}
+                                  className="forge-btn forge-btn-ghost"
+                                  style={{ padding: "0.3rem 0.625rem", fontSize: "0.75rem", minHeight: "unset", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
+                                >
+                                  {copied === a.id ? <CheckCheck size={12} /> : <Copy size={12} />}
+                                  {copied === a.id ? "Copied" : "Copy"}
+                                </button>
+                              </div>
+                              <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "0.5rem" }}>
+                                Email it to {approved[a.id].email}. They register at /register then enter this code as a Mentee.
+                              </p>
+                            </div>
+                          ) : (
+                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                              <button
+                                onClick={() => act(a.id, "approve")}
+                                disabled={acting === a.id}
+                                className="forge-btn forge-btn-primary"
+                                style={{ flex: 1, padding: "0.75rem", fontSize: "0.9375rem", minHeight: "unset", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.375rem" }}
+                              >
+                                {acting === a.id ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => act(a.id, "reject")}
+                                disabled={acting === a.id}
+                                className="forge-btn forge-btn-ghost"
+                                style={{ flex: 1, padding: "0.75rem", fontSize: "0.9375rem", minHeight: "unset", color: "var(--red)", borderColor: "rgba(239,68,68,0.3)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.375rem" }}
+                              >
+                                <X size={15} /> Reject
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}
@@ -236,7 +266,7 @@ export default function ApplicationsPage() {
                 {reviewed.map((a) => (
                   <div key={a.id} className="forge-panel" style={{ padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
                     <span style={{ fontSize: "0.875rem" }}>{a.applicantName} <span style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>· {a.applicantEmail}</span></span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: a.status === "approved" ? "var(--green)" : "var(--text-dim)" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: a.status === "approved" ? "var(--green)" : "var(--red)" }}>
                       {a.status}{a.status === "approved" && a.inviteCode ? ` · ${a.inviteCode}` : ""}
                     </span>
                   </div>
