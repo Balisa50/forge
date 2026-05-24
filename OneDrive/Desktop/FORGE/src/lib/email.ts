@@ -234,6 +234,65 @@ export function passwordResetEmailHtml(name: string, resetUrl: string): string {
   `;
 }
 
+export function applicationApprovedEmailHtml(
+  name: string,
+  inviteCode: string,
+  registerUrl: string,
+): string {
+  return `
+    <div style="${BASE_STYLE}">
+      ${header("You have been accepted.")}
+      <p style="color:#22c55e;margin:0 0 1.5rem;font-family:monospace;font-size:0.75rem;letter-spacing:0.15em;">APPLICATION APPROVED</p>
+
+      <p style="margin:0 0 1rem;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 1.5rem;line-height:1.7;color:#adadb5;">
+        Your application to The Forge has been reviewed and accepted.
+        Here is your personal invite code — this is your key in. Do not share it.
+      </p>
+
+      <div style="background:#0c0c12;border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;">
+        <p style="margin:0 0 0.375rem;font-family:monospace;font-size:0.6875rem;color:#6b7084;letter-spacing:0.2em;text-transform:uppercase;">Your invite code</p>
+        <div style="font-size:2rem;font-weight:900;color:#f59e0b;letter-spacing:0.15em;font-family:monospace;">${inviteCode}</div>
+      </div>
+
+      <p style="margin:0 0 0.5rem;font-weight:700;color:#e8e8ea;">How to enrol — 3 steps:</p>
+      <ol style="margin:0 0 1.5rem;padding:0 0 0 1.25rem;color:#adadb5;font-size:0.9375rem;line-height:1.9;">
+        <li>Go to <a href="${registerUrl}" style="color:#f59e0b;">${registerUrl}</a> and create your account.</li>
+        <li>During onboarding, select <strong style="color:#e8e8ea;">Mentee</strong> when asked who you are.</li>
+        <li>Enter your invite code <strong style="color:#f59e0b;font-family:monospace;">${inviteCode}</strong> when prompted. That's it — you're in.</li>
+      </ol>
+
+      ${ctaButton("Create Your Account →", registerUrl)}
+
+      <p style="margin:1rem 0 0;font-size:0.8125rem;color:#3a3d4a;line-height:1.6;">
+        This code is single-use and locked to your name. If you have any trouble, reply to this email.
+      </p>
+      ${footer()}
+    </div>
+  `;
+}
+
+export async function sendApplicationApprovedEmail(
+  to: string,
+  name: string,
+  inviteCode: string,
+) {
+  const resend = getResend();
+  if (!resend) return;
+  const registerUrl = `${BASE_URL}/register`;
+  try {
+    await resend.emails.send({
+      from: FROM,
+      replyTo: REPLY_TO,
+      to,
+      subject: `⚡ You're in — your Forge invite code`,
+      html: applicationApprovedEmailHtml(name, inviteCode, registerUrl),
+    });
+  } catch (e) {
+    console.error("[email] sendApplicationApprovedEmail failed:", (e as Error).message);
+  }
+}
+
 // ─── Send helpers ─────────────────────────────────────────────────────────────
 
 export async function sendWelcomeEmail(to: string, name: string) {

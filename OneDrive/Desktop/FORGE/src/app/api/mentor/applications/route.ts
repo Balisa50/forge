@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendApplicationApprovedEmail } from "@/lib/email";
 
 /** 10-char code XXXX-XXXX, base32, no confusable chars - matches invites route. */
 function makeCode(): string {
@@ -113,6 +114,13 @@ export async function POST(req: NextRequest) {
       data: { status: "approved", reviewedById: mentorId, reviewedAt: new Date(), inviteCode: code },
     }),
   ]);
+
+  // Fire approval email — non-blocking, failure won't break the response
+  sendApplicationApprovedEmail(
+    application.applicantEmail,
+    application.applicantName,
+    code,
+  ).catch(() => {});
 
   return NextResponse.json({
     status: "approved",
