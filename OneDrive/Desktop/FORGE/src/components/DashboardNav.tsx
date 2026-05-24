@@ -96,23 +96,25 @@ function getNavItems(userRole: string, isAlsoLearning: boolean): NavItem[] {
     case "mentor":
       return isAlsoLearning
         ? [
-            { href: "/dashboard",                 label: "Overview",      Icon: LayoutDashboard },
-            { href: "/dashboard/mentor",           label: "My Mentees",    Icon: Users },
-            { href: "/dashboard/mentor/invite",    label: "Invite mentee", Icon: UserPlus },
-            { href: "/dashboard/checkin",          label: "Check In",      Icon: ClipboardCheck },
-            { href: "/dashboard/roadmap",          label: "Roadmap",       Icon: Map },
-            { href: "/dashboard/pod",             label: "My Pod",        Icon: Users },
-            { href: "/dashboard/journal",          label: "Journal",       Icon: BookOpen },
-            { href: "/dashboard/calendar",         label: "Calendar",      Icon: CalendarDays },
-            { href: "/dashboard/analytics",        label: "Analytics",     Icon: BarChart3 },
-            { href: "/dashboard/certificates",     label: "Certificates",  Icon: Award },
-            { href: "/dashboard/settings",         label: "Settings",      Icon: Settings },
+            { href: "/dashboard",                        label: "Overview",      Icon: LayoutDashboard },
+            { href: "/dashboard/mentor",                  label: "My Mentees",    Icon: Users },
+            { href: "/dashboard/mentor/applications",     label: "Applications",  Icon: UserPlus },
+            { href: "/dashboard/mentor/invite",           label: "Invite mentee", Icon: UserPlus },
+            { href: "/dashboard/checkin",                 label: "Check In",      Icon: ClipboardCheck },
+            { href: "/dashboard/roadmap",                 label: "Roadmap",       Icon: Map },
+            { href: "/dashboard/pod",                    label: "My Pod",        Icon: Users },
+            { href: "/dashboard/journal",                 label: "Journal",       Icon: BookOpen },
+            { href: "/dashboard/calendar",                label: "Calendar",      Icon: CalendarDays },
+            { href: "/dashboard/analytics",               label: "Analytics",     Icon: BarChart3 },
+            { href: "/dashboard/certificates",            label: "Certificates",  Icon: Award },
+            { href: "/dashboard/settings",                label: "Settings",      Icon: Settings },
           ]
         : [
-            { href: "/dashboard/mentor",          label: "Overview",       Icon: LayoutDashboard },
-            { href: "/dashboard/mentor/invite",   label: "Invite mentee",  Icon: UserPlus },
-            { href: "/dashboard/mentor/reviews",  label: "Reviews",        Icon: ClipboardCheck },
-            { href: "/dashboard/settings",        label: "Settings",       Icon: Settings },
+            { href: "/dashboard/mentor",                  label: "Overview",       Icon: LayoutDashboard },
+            { href: "/dashboard/mentor/applications",     label: "Applications",   Icon: UserPlus },
+            { href: "/dashboard/mentor/invite",           label: "Invite mentee",  Icon: UserPlus },
+            { href: "/dashboard/mentor/reviews",          label: "Reviews",        Icon: ClipboardCheck },
+            { href: "/dashboard/settings",                label: "Settings",       Icon: Settings },
           ];
 
     case "bootcamp":

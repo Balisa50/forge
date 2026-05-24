@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const taskId = url.searchParams.get("taskId");
 
-  const [comments, resources] = await Promise.all([
+  const [rawComments, rawResources] = await Promise.all([
     prisma.mentorComment.findMany({
       where: { menteeId, ...(taskId ? { taskId } : {}) },
       orderBy: { createdAt: "desc" },
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
         readAt: true,
         authorRole: true,
         kind: true,
-        mentor: { select: { id: true, name: true, image: true } },
+        mentor: { select: { id: true, name: true, mentorDisplayName: true, image: true } },
       },
     }),
     prisma.mentorResource.findMany({
@@ -43,10 +43,22 @@ export async function GET(req: NextRequest) {
         url: true,
         note: true,
         createdAt: true,
-        mentor: { select: { id: true, name: true } },
+        mentor: { select: { id: true, name: true, mentorDisplayName: true } },
       },
     }),
   ]);
+
+  // Mentees see the mentor's persona name (mentorDisplayName) - never the real
+  // account name. Resolve here so every consumer of this API gets the right
+  // thing for free.
+  const comments = rawComments.map((c) => ({
+    ...c,
+    mentor: { id: c.mentor.id, name: c.mentor.mentorDisplayName ?? c.mentor.name, image: c.mentor.image },
+  }));
+  const resources = rawResources.map((r) => ({
+    ...r,
+    mentor: { id: r.mentor.id, name: r.mentor.mentorDisplayName ?? r.mentor.name },
+  }));
 
   return NextResponse.json({
     comments,

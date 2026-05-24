@@ -116,7 +116,7 @@ export default function MenteeDrilldownPage() {
   const [resDraft, setResDraft] = useState<Record<string, { title: string; url: string; note: string }>>({});
   const [posting, setPosting] = useState<string | null>(null);
   const [dialog, setDialog] = useState<DialogConfig | null>(null);
-  const [suspension, setSuspension] = useState<{ bannedAt: string; reason: string | null } | null>(null);
+  const [suspension, setSuspension] = useState<{ bannedAt: string; reason: string | null; appeal: string | null; appealAt: string | null } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -458,34 +458,71 @@ export default function MenteeDrilldownPage() {
         <div
           className="forge-panel"
           style={{
-            padding: "1rem 1.25rem",
+            padding: "1.25rem",
             marginBottom: "1.5rem",
             background: "rgba(239,68,68,0.06)",
             border: "1px solid rgba(239,68,68,0.35)",
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-            flexWrap: "wrap",
           }}
         >
-          <Lock size={18} color="var(--red)" style={{ flexShrink: 0 }} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--font-headline)", fontSize: "0.9375rem", color: "var(--red)" }}>
-              This mentee is suspended
+          {/* Header row */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <Lock size={18} color="var(--red)" style={{ flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: "var(--font-headline)", fontSize: "0.9375rem", color: "var(--red)" }}>
+                This mentee is suspended
+              </div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: "0.125rem" }}>
+                Since {new Date(suspension.bannedAt).toLocaleDateString()}
+                {suspension.reason ? ` — "${suspension.reason}"` : ""}
+              </div>
             </div>
-            <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: "0.125rem" }}>
-              Since {new Date(suspension.bannedAt).toLocaleDateString()}
-              {suspension.reason ? ` — "${suspension.reason}"` : ""}
-            </div>
+            <button
+              type="button"
+              onClick={handleUnban}
+              className="forge-btn forge-btn-primary"
+              style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", minHeight: "unset", flexShrink: 0 }}
+            >
+              Reinstate access
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleUnban}
-            className="forge-btn forge-btn-primary"
-            style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", minHeight: "unset", flexShrink: 0 }}
-          >
-            Reinstate access
-          </button>
+
+          {/* Appeal — only shows when the mentee sent one */}
+          {suspension.appeal && (
+            <div
+              style={{
+                marginTop: "1rem",
+                padding: "1rem",
+                background: "rgba(245,158,11,0.06)",
+                border: "1px solid rgba(245,158,11,0.3)",
+                borderRadius: 8,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                <MessageSquare size={14} color="var(--accent)" />
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent)" }}>
+                  Mentee appeal
+                  {suspension.appealAt && (
+                    <span style={{ color: "var(--text-dim)", marginLeft: "0.5rem" }}>
+                      · {new Date(suspension.appealAt).toLocaleDateString()}
+                    </span>
+                  )}
+                </span>
+              </div>
+              <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>
+                {suspension.appeal}
+              </p>
+              <p style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.75rem" }}>
+                This was their one appeal. Reinstate their access above if you accept it — or leave the suspension in place.
+              </p>
+            </div>
+          )}
+
+          {/* No appeal yet */}
+          {!suspension.appeal && (
+            <p style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.75rem" }}>
+              The mentee has not submitted an appeal yet.
+            </p>
+          )}
         </div>
       )}
 

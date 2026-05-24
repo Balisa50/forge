@@ -27,6 +27,7 @@ interface Props {
     linkedin: string | null;
     isPublic: boolean;
     learningStyle?: string;
+    mentorDisplayName?: string | null;
     createdAt: string;
   };
   userId: string;
@@ -50,6 +51,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
   const [linkedin, setLinkedin] = useState(user.linkedin ?? "");
   const [isPublic, setIsPublic] = useState(user.isPublic);
   const [learningStyle, setLearningStyle] = useState(user.learningStyle ?? "balanced");
+  const [mentorDisplayName, setMentorDisplayName] = useState(user.mentorDisplayName ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -77,7 +79,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
       const res = await fetch("/api/user/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, timezone, bio, github, linkedin, isPublic, learningStyle }),
+        body: JSON.stringify({ name, timezone, bio, github, linkedin, isPublic, learningStyle, mentorDisplayName }),
       });
       if (res.ok) {
         setSaved(true);
@@ -189,6 +191,23 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
             <label className="label-mono" style={{ display: "block", marginBottom: "0.5rem" }}>Display Name</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="forge-input" required minLength={2} />
           </div>
+
+          {role === "mentor" && (
+            <div>
+              <label className="label-mono" style={{ display: "block", marginBottom: "0.35rem" }}>Mentor Name (what your mentees see)</label>
+              <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.5, marginBottom: "0.5rem" }}>
+                Mentor under a persona name so mentees use in-app messaging instead of your personal contacts.
+                Leave blank to use your real name.
+              </p>
+              <input
+                type="text"
+                value={mentorDisplayName}
+                onChange={(e) => setMentorDisplayName(e.target.value)}
+                className="forge-input"
+                placeholder="e.g. Allen"
+              />
+            </div>
+          )}
 
           <div>
             <label className="label-mono" style={{ display: "block", marginBottom: "0.5rem" }}>Bio</label>

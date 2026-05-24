@@ -30,6 +30,7 @@ const EMOJI: Record<string, string> = {
   "data-science": "🧪",
   "data-analysis": "📈",
   "bi-analytics": "📋",
+  "ai-automation": "⚡",
 };
 
 export function loadCuratedRoadmaps(): CuratedRoadmapPickerEntry[] {
@@ -51,7 +52,7 @@ export function loadCuratedRoadmaps(): CuratedRoadmapPickerEntry[] {
     // Show in a consistent order: AI/ML/Full Stack first, then the rest
     .sort((a, b) => {
       const priority = (s: string) =>
-        ({ "ai-engineering": 0, "ml-engineering": 1, "full-stack-web": 2, "mobile-engineering": 3, "devops-cloud": 4, "cybersecurity": 5 }[s] ?? 99);
+        ({ "ai-engineering": 0, "ml-engineering": 1, "ai-automation": 2, "full-stack-web": 3, "mobile-engineering": 4, "devops-cloud": 5, "cybersecurity": 6 }[s] ?? 99);
       return priority(a.slug) - priority(b.slug);
     });
 }

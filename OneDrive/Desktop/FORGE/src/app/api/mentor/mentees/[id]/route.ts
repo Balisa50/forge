@@ -85,7 +85,12 @@ export async function GET(
     mentee,
     roadmaps,
     suspension: link.bannedAt
-      ? { bannedAt: link.bannedAt.toISOString(), reason: link.banReason }
+      ? {
+          bannedAt: link.bannedAt.toISOString(),
+          reason: link.banReason,
+          appeal: link.banAppeal ?? null,
+          appealAt: link.banAppealAt ? link.banAppealAt.toISOString() : null,
+        }
       : null,
   });
 }

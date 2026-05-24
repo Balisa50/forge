@@ -1,0 +1,1105 @@
+{
+  "slug": "ai-automation",
+  "title": "AI Automation",
+  "total_weeks": 20,
+  "weeks": [
+    {
+      "number": 1,
+      "title": "What is AI Automation?",
+      "phase": "Foundations",
+      "commitment_hours": "5–7",
+      "resources": [
+        { "label": "Zapier — What is automation?", "url": "https://zapier.com/blog/what-is-automation/", "note": "Plain-English primer, 8 min read" },
+        { "label": "OpenAI Cookbook", "url": "https://cookbook.openai.com", "note": "Reference for every exercise this week" },
+        { "label": "n8n — self-hostable automation", "url": "https://n8n.io", "note": "The tool you will use in Week 2" }
+      ],
+      "context": "This week is pure orientation. You will watch two videos, read one article, and end the week by mapping out — in plain English — a boring task in your own life that could be automated. No code yet.",
+      "days": [
+        {
+          "number": 1,
+          "title": "The automation landscape",
+          "summary": "Watch and orient. Understand where AI automation sits in the world.",
+          "items": [
+            { "kind": "video", "title": "What is AI Automation? (Liam Ottley, 18 min)", "url": "https://www.youtube.com/watch?v=kG0InflXHVY", "duration_min": 18, "creator": "Liam Ottley", "why": "Best single overview of the AI automation space for beginners." },
+            { "kind": "reflection", "title": "First impressions", "body": "Open a notebook (paper or digital). Write:\n1. One task at work or home that eats your time.\n2. One task you have seen a business do badly that a computer could do better.\nKeep this — you'll build one of these by Week 10." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "No-code vs low-code vs code",
+          "summary": "Understand the three tiers. Know which tool to reach for.",
+          "items": [
+            { "kind": "reading", "title": "Zapier vs Make vs n8n comparison", "url": "https://zapier.com/blog/zapier-vs-make/", "why": "Objective breakdown of the main no-code tools." },
+            { "kind": "reflection", "title": "Pick your path", "body": "After reading, write one sentence: which tier (no-code / low-code / code) matches where you are RIGHT NOW? There is no wrong answer — just be honest. You will revisit this at Week 10." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "How AI fits into automation",
+          "summary": "AI is one step in a pipeline — not the whole pipeline.",
+          "items": [
+            { "kind": "video", "title": "How AI agents actually work (Andrej Karpathy, 1 hr)", "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g", "duration_min": 60, "creator": "Andrej Karpathy", "why": "The foundational mental model. Worth every minute." },
+            { "kind": "reflection", "title": "Draw the pipeline", "body": "On paper, draw boxes for: Trigger → Data In → AI Step → Action → Output.\nLabel each box with a real example from your own life. For example:\nTrigger = new email arrives\nData In = email text\nAI Step = GPT reads and classifies it\nAction = move to correct folder\nOutput = inbox zero" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "The tools you will learn",
+          "summary": "Quick tour of every tool in this 20-week course.",
+          "items": [
+            { "kind": "reading", "title": "n8n — 5-minute intro", "url": "https://docs.n8n.io/getting-started/", "why": "You will use n8n from Week 2. Read the first page only today." },
+            { "kind": "reading", "title": "OpenAI API overview", "url": "https://platform.openai.com/docs/overview", "why": "Skim — just get a feel for the landscape." },
+            { "kind": "reflection", "title": "Tool list", "body": "Write down the 5 tools from this course you are most curious about. You will revisit this at Week 20." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Your automation idea",
+          "summary": "Define one real automation you will build by Week 10.",
+          "items": [
+            { "kind": "exercise", "title": "Write your automation brief", "body": "Write a short brief for ONE automation you want to build. Answer these:\n1. What triggers it? (a new email, a form submission, a time schedule...)\n2. What data does it need?\n3. What should it do with that data?\n4. What is the final output or action?\n\nKeep it simple. 'Send me a WhatsApp when my boss emails me' is a perfect Week-10 goal.\nSave this. You will build it." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "No-code automation with n8n",
+      "phase": "Foundations",
+      "commitment_hours": "6–8",
+      "resources": [
+        { "label": "n8n docs — getting started", "url": "https://docs.n8n.io/getting-started/", "note": "Official, well-written" },
+        { "label": "n8n community forum", "url": "https://community.n8n.io", "note": "Search here when stuck" },
+        { "label": "n8n YouTube channel", "url": "https://www.youtube.com/@n8n-io", "note": "Official tutorial videos" }
+      ],
+      "context": "This week you build your first working automation without writing a single line of code. By Friday you will have an n8n workflow that does something real — fetches data, transforms it, and sends it somewhere.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Install n8n",
+          "summary": "Get n8n running on your machine.",
+          "items": [
+            { "kind": "exercise", "title": "Install n8n via npm", "body": "Open your terminal and run:\n\n  npm install -g n8n\n\nThen start it:\n\n  n8n start\n\nOpen http://localhost:5678 in your browser. You should see the n8n canvas.\n\nIF you don't have Node.js:\n  Go to https://nodejs.org — download the LTS version and install it first, then repeat the steps above." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Your first workflow",
+          "summary": "Trigger → HTTP request → display result.",
+          "items": [
+            { "kind": "video", "title": "n8n beginner workflow (official, 15 min)", "url": "https://www.youtube.com/watch?v=1MwSoB0gnM4", "duration_min": 15, "creator": "n8n", "why": "Follow along exactly. Pause and repeat steps." },
+            { "kind": "exercise", "title": "Build: fetch a joke and display it", "body": "In n8n:\n1. Add a Manual Trigger node.\n2. Add an HTTP Request node. Set URL to: https://official-joke-api.appspot.com/random_joke\n3. Connect them.\n4. Click 'Execute Workflow'.\n5. In the output panel you should see a JSON object with a joke setup and punchline.\n\nCongratulations — that is an automation. A trigger caused data to be fetched." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Add a transformation step",
+          "summary": "Use the Set node to reshape data.",
+          "items": [
+            { "kind": "exercise", "title": "Build: extract just the punchline", "body": "Continue from yesterday's workflow:\n1. Add a Set node after the HTTP Request.\n2. In the Set node, add a field called 'punchline'.\n3. Set its value to the expression: {{ $json.punchline }}\n4. Run the workflow.\n5. The output should now show only the punchline text.\n\nThis is data transformation — one of the most common steps in any automation." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Add a schedule trigger",
+          "summary": "Make your automation run automatically every hour.",
+          "items": [
+            { "kind": "exercise", "title": "Replace manual trigger with schedule", "body": "1. Delete the Manual Trigger node.\n2. Add a Schedule Trigger node.\n3. Set it to run every 1 hour.\n4. Activate the workflow using the toggle in the top right.\n5. Your automation now runs on its own. Check back in an hour to see the execution log.\n\nThis is the shift from 'I run it' to 'it runs itself'." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Connect to Gmail or Webhook",
+          "summary": "Use a real-world trigger.",
+          "items": [
+            { "kind": "exercise", "title": "Build: webhook that echoes data", "body": "1. Create a new workflow.\n2. Add a Webhook node. Copy the generated URL.\n3. Add a Set node. Set a field 'received' = {{ $json.body }}.\n4. Activate the workflow.\n5. Open your terminal and run:\n   curl -X POST YOUR_WEBHOOK_URL -H 'Content-Type: application/json' -d '{\"message\":\"hello forge\"}'\n6. Check the n8n execution log — you should see your message received and echoed.\n\nYou just built an API endpoint with no code." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Python for automation",
+      "phase": "Foundations",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "Automate the Boring Stuff with Python (free online)", "url": "https://automatetheboringstuff.com", "note": "The best free Python automation book" },
+        { "label": "Python docs — os module", "url": "https://docs.python.org/3/library/os.html", "note": "Reference for file operations" },
+        { "label": "requests library docs", "url": "https://requests.readthedocs.io", "note": "The HTTP library you'll use constantly" }
+      ],
+      "context": "No-code tools are fast but limited. This week you learn just enough Python to go beyond what n8n can do. By Friday you will have scripts that rename files, read spreadsheets, and hit an API.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Python basics refresher",
+          "summary": "Variables, loops, functions — the three things you need.",
+          "items": [
+            { "kind": "reading", "title": "Automate the Boring Stuff — Chapter 1", "url": "https://automatetheboringstuff.com/2e/chapter1/", "why": "Read and run every example. Takes about 45 minutes." },
+            { "kind": "exercise", "title": "Write three functions", "body": "Create a file called practice.py. Write:\n\n1. A function that takes a name and prints 'Hello, {name}!'\n2. A function that takes a list of numbers and returns their sum.\n3. A function that takes a sentence and returns the number of words.\n\nRun each one with a test input." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "File automation",
+          "summary": "Python renames, moves, and reads files automatically.",
+          "items": [
+            { "kind": "reading", "title": "Automate the Boring Stuff — Chapter 9 (Files)", "url": "https://automatetheboringstuff.com/2e/chapter9/", "why": "Read sections on os.path, shutil, and reading/writing files." },
+            { "kind": "exercise", "title": "Script: bulk file renamer", "body": "Create rename_files.py:\n\nimport os\n\nfolder = 'test_folder'\nos.makedirs(folder, exist_ok=True)\n\n# Create 5 dummy files\nfor i in range(1, 6):\n    open(f'{folder}/file_{i}.txt', 'w').close()\n\n# Rename them all with a prefix\nfor filename in os.listdir(folder):\n    old = os.path.join(folder, filename)\n    new = os.path.join(folder, 'RENAMED_' + filename)\n    os.rename(old, new)\n    print(f'Renamed: {filename} → RENAMED_{filename}')\n\nRun it. Check the folder. Every file should be renamed." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "HTTP requests in Python",
+          "summary": "Fetch anything from the internet with one function call.",
+          "items": [
+            { "kind": "exercise", "title": "Install requests and fetch data", "body": "Run in terminal: pip install requests\n\nCreate fetch.py:\n\nimport requests\n\nresponse = requests.get('https://official-joke-api.appspot.com/random_joke')\ndata = response.json()\n\nprint('Setup:', data['setup'])\nprint('Punchline:', data['punchline'])\n\nRun it. You just did the same thing n8n did on Day 2 of Week 2 — but in code." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Reading and writing spreadsheets",
+          "summary": "openpyxl and csv — the two tools for spreadsheet automation.",
+          "items": [
+            { "kind": "exercise", "title": "Script: read a CSV and summarise it", "body": "Run: pip install openpyxl\n\nCreate a file called data.csv with this content:\nname,score\nAlice,88\nBob,72\nCarla,95\nDave,61\n\nCreate summarise.py:\n\nimport csv\n\nscores = []\nwith open('data.csv') as f:\n    reader = csv.DictReader(f)\n    for row in reader:\n        scores.append(int(row['score']))\n\nprint('Average score:', sum(scores) / len(scores))\nprint('Top score:', max(scores))\nprint('Lowest score:', min(scores))\n\nRun it." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Scheduled Python scripts",
+          "summary": "Make your script run automatically using cron (Mac/Linux) or Task Scheduler (Windows).",
+          "items": [
+            { "kind": "reading", "title": "Schedule Python scripts — Real Python", "url": "https://realpython.com/python-subprocess/#scheduling-python-scripts", "why": "Short guide, picks up where today's exercise leads." },
+            { "kind": "exercise", "title": "Schedule your fetch script", "body": "WINDOWS:\n1. Open Task Scheduler (search in Start menu).\n2. Create Basic Task.\n3. Set trigger: Daily, repeat every 1 hour.\n4. Action: Start a program → python → add path to fetch.py as argument.\n\nMAC / LINUX:\n1. Open terminal, type: crontab -e\n2. Add this line (runs every hour):\n   0 * * * * python3 /full/path/to/fetch.py >> /tmp/fetch.log 2>&1\n3. Save and exit.\n\nYou now have a scheduled Python automation." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Calling AI APIs",
+      "phase": "Foundations",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "OpenAI API docs", "url": "https://platform.openai.com/docs", "note": "Your main reference" },
+        { "label": "Anthropic docs — getting started", "url": "https://docs.anthropic.com/en/docs/get-started", "note": "Alternative API — Claude" },
+        { "label": "OpenAI Cookbook", "url": "https://cookbook.openai.com", "note": "Copy-paste recipes for common tasks" }
+      ],
+      "context": "This is the week everything clicks. You will write Python scripts that send text to an AI and get intelligent responses back. By Friday you will have a script that classifies emails, summarises text, and answers questions about a document.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Get your API key and make your first call",
+          "summary": "Sign up, get a key, make one call.",
+          "items": [
+            { "kind": "exercise", "title": "First OpenAI API call", "body": "STEP 1 — Sign up at https://platform.openai.com/signup\nSTEP 2 — Go to https://platform.openai.com/api-keys and create a key.\nSTEP 3 — Run: pip install openai python-dotenv\n\nSTEP 4 — Create .env in your project folder:\n   OPENAI_API_KEY=sk-your-key-here\n\nSTEP 5 — Create hello_ai.py:\n\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\nresponse = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[{'role': 'user', 'content': 'Say hello in three languages.'}]\n)\n\nprint(response.choices[0].message.content)\n\nRun it. You should see hello in three languages." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Text summarisation",
+          "summary": "Feed a long text to GPT and get a short summary back.",
+          "items": [
+            { "kind": "exercise", "title": "Script: summarise any text", "body": "Create summarise_ai.py:\n\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\nlong_text = \"\"\"\n[Paste any article or email here — at least 3 paragraphs]\n\"\"\"\n\nresponse = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[\n        {'role': 'system', 'content': 'You are a summarisation engine. Return a 3-bullet summary.'},\n        {'role': 'user', 'content': long_text}\n    ]\n)\n\nprint(response.choices[0].message.content)\n\nPaste a real article or email. Run it." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Text classification",
+          "summary": "Use AI to sort emails, support tickets, or any text into categories.",
+          "items": [
+            { "kind": "exercise", "title": "Script: classify emails by urgency", "body": "Create classify.py:\n\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\nemails = [\n    'Server is down and clients cannot log in. URGENT.',\n    'Could you update the logo on the homepage when you get a chance?',\n    'I need to reschedule our 3pm meeting to 4pm.',\n    'The payment gateway is failing for ALL users RIGHT NOW.',\n]\n\nfor email in emails:\n    response = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[\n            {'role': 'system', 'content': 'Classify this email as one of: URGENT, NORMAL, LOW. Reply with only the classification word.'},\n            {'role': 'user', 'content': email}\n        ]\n    )\n    label = response.choices[0].message.content.strip()\n    print(f'{label} — {email[:60]}')\n\nRun it. Check the labels." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Q&A over a document",
+          "summary": "Paste a document and ask GPT questions about it.",
+          "items": [
+            { "kind": "exercise", "title": "Script: document Q&A loop", "body": "Create qa_doc.py:\n\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\ndocument = open('any_document.txt').read()  # create this file with any text\n\nprint('Document loaded. Ask questions (type quit to exit):\\n')\n\nwhile True:\n    question = input('You: ')\n    if question.lower() == 'quit':\n        break\n    response = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[\n            {'role': 'system', 'content': f'Answer questions based only on this document:\\n\\n{document}'},\n            {'role': 'user', 'content': question}\n        ]\n    )\n    print('AI:', response.choices[0].message.content, '\\n')" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Combine: classify + summarise pipeline",
+          "summary": "Chain two AI calls together — your first mini-pipeline.",
+          "items": [
+            { "kind": "exercise", "title": "Script: triage pipeline", "body": "Create triage.py:\n\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\ndef classify(text):\n    r = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[{'role':'system','content':'Reply with one word: URGENT, NORMAL, or LOW.'},{'role':'user','content':text}]\n    )\n    return r.choices[0].message.content.strip()\n\ndef summarise(text):\n    r = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[{'role':'system','content':'Summarise in one sentence.'},{'role':'user','content':text}]\n    )\n    return r.choices[0].message.content.strip()\n\nmessage = 'Our main database crashed an hour ago. Customers cannot place orders. The engineering team has been paged but no fix yet. This is costing us $500/minute.'\n\nlabel = classify(message)\nsummary = summarise(message)\n\nprint(f'Priority: {label}')\nprint(f'Summary: {summary}')\n\nTwo AI calls, chained. That is a pipeline." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Prompt engineering for automation",
+      "phase": "Core Skills",
+      "commitment_hours": "6–8",
+      "resources": [
+        { "label": "Anthropic prompt engineering guide", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview", "note": "Best structured guide on prompting" },
+        { "label": "OpenAI prompt engineering guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering", "note": "Official, practical" },
+        { "label": "Learnprompting.org", "url": "https://learnprompting.org", "note": "Free interactive course" }
+      ],
+      "context": "The quality of your automation depends almost entirely on the quality of your prompts. This week you learn the patterns that make AI reliable enough to run unsupervised in a pipeline.",
+      "days": [
+        {
+          "number": 1,
+          "title": "System vs user prompts",
+          "summary": "The system prompt is your instruction manual. The user prompt is the input.",
+          "items": [
+            { "kind": "reading", "title": "Anthropic — system prompts", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/system-prompts", "why": "Read this carefully. System prompts are how you make AI behave consistently." },
+            { "kind": "exercise", "title": "Experiment: same question, different system prompts", "body": "Send the same user message ('Explain recursion') to GPT three times with different system prompts:\n\n1. System: 'You are a university professor.'\n2. System: 'You are explaining to a 10-year-old.'\n3. System: 'You are a senior software engineer at a startup.'\n\nObserve how dramatically different the responses are. The system prompt is your most powerful tool." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Output formatting — make AI return structured data",
+          "summary": "For automation, you need predictable output — JSON, not prose.",
+          "items": [
+            { "kind": "exercise", "title": "Force JSON output", "body": "Create json_output.py:\n\nresponse = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[\n        {'role': 'system', 'content': 'You extract data from text. Always reply with valid JSON only. No explanation. Format: {\"name\": string, \"email\": string, \"urgency\": \"high\"|\"medium\"|\"low\"}'},\n        {'role': 'user', 'content': 'Hi, I am Sarah Johnson, sarah@acme.com. Our server is completely down and we need help immediately.'}\n    ]\n)\n\nimport json\ndata = json.loads(response.choices[0].message.content)\nprint(data['name'])     # Sarah Johnson\nprint(data['urgency'])  # high\n\nThis is how you make AI output safe to use in code." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Few-shot prompting",
+          "summary": "Show the AI examples of what you want — it learns instantly.",
+          "items": [
+            { "kind": "exercise", "title": "Few-shot: sentiment classification", "body": "Add examples directly in the prompt:\n\nmessages = [\n    {'role': 'system', 'content': 'Classify sentiment as POSITIVE, NEGATIVE, or NEUTRAL.'},\n    {'role': 'user', 'content': 'I love this product!'},\n    {'role': 'assistant', 'content': 'POSITIVE'},\n    {'role': 'user', 'content': 'Delivery was late and the package was damaged.'},\n    {'role': 'assistant', 'content': 'NEGATIVE'},\n    {'role': 'user', 'content': 'Order received.'},\n    {'role': 'assistant', 'content': 'NEUTRAL'},\n    {'role': 'user', 'content': 'Honestly blown away by how fast this shipped. Will order again.'}\n]\n\nRun it. The AI has learned from your three examples and classifies the new text correctly." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Prompt templates",
+          "summary": "Build reusable prompt functions you can import into any script.",
+          "items": [
+            { "kind": "exercise", "title": "Build a prompts.py module", "body": "Create prompts.py:\n\ndef summarise_prompt(text, bullets=3):\n    return {\n        'system': f'Summarise in exactly {bullets} bullet points. Be concise.',\n        'user': text\n    }\n\ndef classify_prompt(text, categories):\n    cats = ', '.join(categories)\n    return {\n        'system': f'Classify into one of: {cats}. Reply with the category name only.',\n        'user': text\n    }\n\ndef extract_prompt(text, fields):\n    field_list = ', '.join(fields)\n    return {\n        'system': f'Extract these fields from the text and return as JSON: {field_list}. Return valid JSON only.',\n        'user': text\n    }\n\nNow import and call these in all your other scripts." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Reliability patterns — making AI safe for automation",
+          "summary": "What to do when the AI returns garbage.",
+          "items": [
+            { "kind": "exercise", "title": "Add retry + validation to your pipeline", "body": "Create safe_call.py:\n\nimport json, time\n\ndef safe_json_call(client, system_prompt, user_text, retries=3):\n    for attempt in range(retries):\n        try:\n            r = client.chat.completions.create(\n                model='gpt-4o-mini',\n                messages=[\n                    {'role':'system','content': system_prompt},\n                    {'role':'user','content': user_text}\n                ]\n            )\n            content = r.choices[0].message.content.strip()\n            return json.loads(content)  # will raise if not valid JSON\n        except json.JSONDecodeError:\n            print(f'Attempt {attempt+1}: invalid JSON, retrying...')\n            time.sleep(1)\n    raise ValueError('AI did not return valid JSON after 3 attempts')\n\nWrap every AI call in production automation with this pattern." }
+          ]
+        }
+      ]
+    }
+  ,
+    {
+      "number": 6,
+      "title": "AI agents — what they are and how they work",
+      "phase": "Core Skills",
+      "commitment_hours": "6–8",
+      "resources": [
+        { "label": "LangChain — agents conceptual guide", "url": "https://python.langchain.com/docs/concepts/agents/", "note": "Best written overview" },
+        { "label": "OpenAI function calling docs", "url": "https://platform.openai.com/docs/guides/function-calling", "note": "The technical foundation of most agents" },
+        { "label": "Anthropic — tool use guide", "url": "https://docs.anthropic.com/en/docs/build-with-claude/tool-use", "note": "Claude's version of function calling" }
+      ],
+      "context": "An agent is an AI that can take actions — not just reply. This week you understand the core loop (think → act → observe → repeat) and build a simple agent that can call tools.",
+      "days": [
+        {
+          "number": 1,
+          "title": "The agent loop",
+          "summary": "Understand the think-act-observe cycle.",
+          "items": [
+            { "kind": "video", "title": "What are AI agents? (IBM, 8 min)", "url": "https://www.youtube.com/watch?v=F8NKVhkZZWI", "duration_min": 8, "creator": "IBM", "why": "Clearest short explanation of the agent concept." },
+            { "kind": "reflection", "title": "Map the loop", "body": "Draw the agent loop for this scenario:\n'Agent that monitors your email and books calendar slots automatically'\n\nLabel: Think (what does it reason about?), Act (what tool does it call?), Observe (what does it read back?)" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Function calling — giving AI tools",
+          "summary": "Define functions the AI can call instead of just talking.",
+          "items": [
+            { "kind": "reading", "title": "OpenAI function calling docs", "url": "https://platform.openai.com/docs/guides/function-calling", "why": "Read the first two sections — overview and basic example." },
+            { "kind": "exercise", "title": "Define your first tool", "body": "Create tool_agent.py:\n\ntools = [\n    {\n        'type': 'function',\n        'function': {\n            'name': 'get_weather',\n            'description': 'Get the current weather for a city',\n            'parameters': {\n                'type': 'object',\n                'properties': {\n                    'city': {'type': 'string', 'description': 'City name'}\n                },\n                'required': ['city']\n            }\n        }\n    }\n]\n\nresponse = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[{'role': 'user', 'content': 'What is the weather in Banjul?'}],\n    tools=tools\n)\n\nprint(response.choices[0].message.tool_calls)\n# The AI tells you it wants to call get_weather with city='Banjul'\n# Now you run that function yourself and return the result" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Complete the tool loop",
+          "summary": "Return the tool result back to the AI and get a final answer.",
+          "items": [
+            { "kind": "exercise", "title": "Full tool loop script", "body": "Continuing from yesterday — add the tool response step:\n\nimport json\n\n# Step 1: AI decides to call a tool\nmessages = [{'role': 'user', 'content': 'What is the weather in Banjul?'}]\nresponse = client.chat.completions.create(model='gpt-4o-mini', messages=messages, tools=tools)\n\ntool_call = response.choices[0].message.tool_calls[0]\ncity = json.loads(tool_call.function.arguments)['city']\n\n# Step 2: You run the tool (fake result here)\nweather_result = f'Sunny, 34°C in {city}'\n\n# Step 3: Return result to AI\nmessages.append(response.choices[0].message)\nmessages.append({'role': 'tool', 'tool_call_id': tool_call.id, 'content': weather_result})\n\nfinal = client.chat.completions.create(model='gpt-4o-mini', messages=messages, tools=tools)\nprint(final.choices[0].message.content)\n# 'The current weather in Banjul is sunny with a temperature of 34°C.'" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Multiple tools",
+          "summary": "Give the agent two tools — let it pick which one to use.",
+          "items": [
+            { "kind": "exercise", "title": "Two-tool agent", "body": "Add a second tool definition for 'search_web':\n\n{\n    'type': 'function',\n    'function': {\n        'name': 'search_web',\n        'description': 'Search the web for current information',\n        'parameters': {\n            'type': 'object',\n            'properties': {\n                'query': {'type': 'string'}\n            },\n            'required': ['query']\n        }\n    }\n}\n\nAdd both tools to the tools list. Ask the agent:\n1. 'What is the weather in London?' — it should pick get_weather\n2. 'Who won the Champions League this year?' — it should pick search_web\n\nThe AI routes to the correct tool without you telling it which one." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "ReAct pattern — reason then act",
+          "summary": "Make the agent explain its thinking before acting.",
+          "items": [
+            { "kind": "exercise", "title": "Add a reasoning step", "body": "Modify your system prompt to:\n\n'You are a helpful assistant with access to tools. Before calling any tool, explain in one sentence WHY you are calling it. Format your reasoning as: [REASON: ...] then proceed.'\n\nAsk a multi-step question like: 'What is the weather in the capital of France?'\n\nThe agent should:\n1. Reason that it needs to know France's capital → call search_web('capital of France')\n2. Get 'Paris' back\n3. Then call get_weather('Paris')\n\nThis is the ReAct pattern — the foundation of most production agents." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Web scraping + AI extraction",
+      "phase": "Core Skills",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "BeautifulSoup docs", "url": "https://www.crummy.com/software/BeautifulSoup/bs4/doc/", "note": "The scraping library you will use" },
+        { "label": "Playwright Python docs", "url": "https://playwright.dev/python/docs/intro", "note": "For pages that require JavaScript" },
+        { "label": "Real Python — web scraping guide", "url": "https://realpython.com/python-web-scraping-practical-introduction/", "note": "Step-by-step, beginner-friendly" }
+      ],
+      "context": "Most automation pipelines need to pull data from the web. This week you scrape websites with Python, then use AI to extract the specific information you need from the raw HTML.",
+      "days": [
+        {
+          "number": 1,
+          "title": "How web scraping works",
+          "summary": "HTML, requests, BeautifulSoup — the three pieces.",
+          "items": [
+            { "kind": "exercise", "title": "Install and first scrape", "body": "Run: pip install requests beautifulsoup4\n\nCreate scrape.py:\n\nimport requests\nfrom bs4 import BeautifulSoup\n\nurl = 'https://news.ycombinator.com'\nresponse = requests.get(url)\nsoup = BeautifulSoup(response.text, 'html.parser')\n\ntitles = soup.select('.titleline > a')\nfor i, t in enumerate(titles[:5]):\n    print(f'{i+1}. {t.text}')\n\nRun it. You should see the top 5 Hacker News headlines." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Extract structured data from a page",
+          "summary": "Pull prices, titles, dates from any page.",
+          "items": [
+            { "kind": "exercise", "title": "Scrape a product listing", "body": "Create product_scrape.py:\n\nimport requests\nfrom bs4 import BeautifulSoup\n\nurl = 'https://books.toscrape.com'\nresponse = requests.get(url)\nsoup = BeautifulSoup(response.text, 'html.parser')\n\nbooks = soup.select('article.product_pod')\nfor book in books[:5]:\n    title = book.h3.a['title']\n    price = book.select_one('.price_color').text\n    rating = book.p['class'][1]  # One, Two, Three, etc.\n    print(f'{title} | {price} | {rating} stars')\n\nbookscrape.com is a practice site designed for scraping — no legal issues." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "AI-powered extraction",
+          "summary": "Paste messy HTML into GPT — let it extract what you need.",
+          "items": [
+            { "kind": "exercise", "title": "AI extracts from raw HTML", "body": "Create ai_extract.py:\n\nimport requests\nfrom bs4 import BeautifulSoup\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os, json\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\n# Get a Wikipedia page\nurl = 'https://en.wikipedia.org/wiki/The_Gambia'\nhtml = requests.get(url).text\nsoup = BeautifulSoup(html, 'html.parser')\ntext = soup.get_text()[:3000]  # first 3000 chars\n\nresponse = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[\n        {'role':'system','content':'Extract key facts as JSON: {\"capital\": string, \"population\": string, \"official_language\": string, \"currency\": string}. Return JSON only.'},\n        {'role':'user','content':text}\n    ]\n)\n\ndata = json.loads(response.choices[0].message.content)\nprint(data)" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Scraping JavaScript pages with Playwright",
+          "summary": "Some sites only work with a real browser — Playwright handles them.",
+          "items": [
+            { "kind": "exercise", "title": "Install and use Playwright", "body": "Run:\n  pip install playwright\n  playwright install chromium\n\nCreate playwright_scrape.py:\n\nfrom playwright.sync_api import sync_playwright\n\nwith sync_playwright() as p:\n    browser = p.chromium.launch(headless=True)\n    page = browser.new_page()\n    page.goto('https://news.ycombinator.com')\n    titles = page.locator('.titleline > a').all_text_contents()\n    for t in titles[:5]:\n        print(t)\n    browser.close()\n\nThis works even on pages that use JavaScript to load their content." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build: price monitor bot",
+          "summary": "Scrape a product price daily and alert you if it drops.",
+          "items": [
+            { "kind": "exercise", "title": "Price monitor script", "body": "Create price_monitor.py:\n\nimport requests\nfrom bs4 import BeautifulSoup\nimport json, os\nfrom datetime import date\n\nURL = 'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html'\nHISTORY_FILE = 'price_history.json'\nTARGET_PRICE = 55.0\n\nresponse = requests.get(URL)\nsoup = BeautifulSoup(response.text, 'html.parser')\nprice_str = soup.select_one('.price_color').text.replace('Â£','').replace('£','')\nprice = float(price_str)\n\nhistory = json.load(open(HISTORY_FILE)) if os.path.exists(HISTORY_FILE) else []\nhistory.append({'date': str(date.today()), 'price': price})\njson.dump(history, open(HISTORY_FILE,'w'))\n\nprint(f'Today: £{price}')\nif price < TARGET_PRICE:\n    print('ALERT: Price is below target!')\nelse:\n    print('Price still above target.')\n\nSchedule this with cron/Task Scheduler from Week 3." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Document processing with AI",
+      "phase": "Core Skills",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "PyMuPDF docs", "url": "https://pymupdf.readthedocs.io", "note": "Best Python PDF library" },
+        { "label": "python-docx docs", "url": "https://python-docx.readthedocs.io", "note": "Read and write Word documents" },
+        { "label": "OpenAI — vision guide", "url": "https://platform.openai.com/docs/guides/vision", "note": "For extracting data from image-based PDFs" }
+      ],
+      "context": "Businesses are drowning in documents — invoices, contracts, reports, forms. This week you build scripts that read PDFs and Word docs, extract key data with AI, and output structured results.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Read PDFs with Python",
+          "summary": "Extract text from any PDF in three lines.",
+          "items": [
+            { "kind": "exercise", "title": "PDF text extraction", "body": "Run: pip install pymupdf\n\nCreate read_pdf.py:\n\nimport fitz  # PyMuPDF\n\npdf = fitz.open('your_document.pdf')  # any PDF on your computer\nfor page in pdf:\n    print(page.get_text())\n\nIf you don't have a PDF, download any PDF from the web and put it in the same folder." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "AI extracts data from a PDF",
+          "summary": "Feed extracted PDF text to GPT — get structured data back.",
+          "items": [
+            { "kind": "exercise", "title": "Invoice extractor", "body": "Create invoice_extractor.py:\n\nimport fitz\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os, json\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\npdf = fitz.open('invoice.pdf')  # use any invoice PDF\ntext = ''.join(page.get_text() for page in pdf)\n\nresponse = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[\n        {'role':'system','content':'Extract invoice data as JSON: {\"vendor\": string, \"invoice_number\": string, \"date\": string, \"total_amount\": string, \"line_items\": [{\"description\": string, \"amount\": string}]}. Return JSON only.'},\n        {'role':'user','content':text}\n    ]\n)\n\ndata = json.loads(response.choices[0].message.content)\nprint(json.dumps(data, indent=2))" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Read and write Word documents",
+          "summary": "Open a .docx, extract text, or fill in a template.",
+          "items": [
+            { "kind": "exercise", "title": "Read + fill a Word template", "body": "Run: pip install python-docx\n\nCreate fill_template.py:\n\nfrom docx import Document\n\n# Read\ndoc = Document('template.docx')  # any Word doc\nfor para in doc.paragraphs:\n    print(para.text)\n\n# Fill a template\nnew_doc = Document()\nnew_doc.add_heading('Invoice', 0)\nnew_doc.add_paragraph('Date: 2026-05-23')\nnew_doc.add_paragraph('Amount: $500')\nnew_doc.save('output_invoice.docx')\nprint('Invoice created.')" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Batch document processing",
+          "summary": "Process a whole folder of documents automatically.",
+          "items": [
+            { "kind": "exercise", "title": "Batch PDF summariser", "body": "Create batch_summarise.py:\n\nimport fitz, os, json\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\npdf_folder = 'pdfs'  # put several PDFs in this folder\nresults = []\n\nfor filename in os.listdir(pdf_folder):\n    if not filename.endswith('.pdf'):\n        continue\n    pdf = fitz.open(os.path.join(pdf_folder, filename))\n    text = ''.join(page.get_text() for page in pdf)[:3000]\n    r = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[{'role':'system','content':'Summarise in 2 sentences.'},{'role':'user','content':text}]\n    )\n    summary = r.choices[0].message.content\n    results.append({'file': filename, 'summary': summary})\n    print(f'Done: {filename}')\n\njson.dump(results, open('summaries.json','w'), indent=2)\nprint('All summaries saved to summaries.json')" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build: contract analyser",
+          "summary": "Upload a contract PDF — get key clauses, dates, and risks extracted.",
+          "items": [
+            { "kind": "exercise", "title": "Contract analysis script", "body": "Create contract_analyser.py:\n\nimport fitz\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os, json\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\ndef analyse_contract(pdf_path):\n    pdf = fitz.open(pdf_path)\n    text = ''.join(page.get_text() for page in pdf)[:6000]\n    r = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[\n            {'role':'system','content':'Analyse this contract. Return JSON: {\"parties\": [string], \"start_date\": string, \"end_date\": string, \"key_obligations\": [string], \"termination_clauses\": [string], \"red_flags\": [string]}'},\n            {'role':'user','content':text}\n        ]\n    )\n    return json.loads(r.choices[0].message.content)\n\nresult = analyse_contract('contract.pdf')\nfor key, val in result.items():\n    print(f'\\n{key.upper()}:')\n    if isinstance(val, list):\n        for item in val: print(f'  • {item}')\n    else:\n        print(f'  {val}')" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Email and communication automation",
+      "phase": "Core Skills",
+      "commitment_hours": "6–8",
+      "resources": [
+        { "label": "Gmail API Python quickstart", "url": "https://developers.google.com/gmail/api/quickstart/python", "note": "Official guide" },
+        { "label": "smtplib docs", "url": "https://docs.python.org/3/library/smtplib.html", "note": "Built into Python — no install needed" },
+        { "label": "Twilio Python docs", "url": "https://www.twilio.com/docs/libraries/python", "note": "For WhatsApp and SMS automation" }
+      ],
+      "context": "Email is the highest-value automation target for most businesses. This week you read, classify, and send emails with Python — and build a triage bot that processes your inbox automatically.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Send emails with Python",
+          "summary": "smtplib + Gmail — send an email in 15 lines.",
+          "items": [
+            { "kind": "exercise", "title": "Send your first automated email", "body": "Create send_email.py:\n\nimport smtplib\nfrom email.mime.text import MIMEText\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\n\nSENDER = os.getenv('GMAIL_ADDRESS')\nPASSWORD = os.getenv('GMAIL_APP_PASSWORD')  # Gmail App Password, not your main password\nRECIPIENT = 'your@email.com'\n\nmsg = MIMEText('This email was sent automatically by Python!')\nmsg['Subject'] = 'Automated Email Test'\nmsg['From'] = SENDER\nmsg['To'] = RECIPIENT\n\nwith smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:\n    server.login(SENDER, PASSWORD)\n    server.sendmail(SENDER, RECIPIENT, msg.as_string())\n\nprint('Email sent!')\n\nNote: You need a Gmail App Password. Go to Google Account → Security → 2-Step Verification → App passwords. Create one for 'Mail'." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Read emails with IMAP",
+          "summary": "Pull your inbox into Python and process it.",
+          "items": [
+            { "kind": "exercise", "title": "Read latest emails", "body": "Create read_email.py:\n\nimport imaplib, email\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\n\nmail = imaplib.IMAP4_SSL('imap.gmail.com')\nmail.login(os.getenv('GMAIL_ADDRESS'), os.getenv('GMAIL_APP_PASSWORD'))\nmail.select('inbox')\n\n_, data = mail.search(None, 'UNSEEN')\nemail_ids = data[0].split()[-5:]  # last 5 unread\n\nfor eid in email_ids:\n    _, msg_data = mail.fetch(eid, '(RFC822)')\n    msg = email.message_from_bytes(msg_data[0][1])\n    print('From:', msg['From'])\n    print('Subject:', msg['Subject'])\n    if msg.is_multipart():\n        body = msg.get_payload(0).get_payload(decode=True).decode()\n    else:\n        body = msg.get_payload(decode=True).decode()\n    print('Body:', body[:200])\n    print('---')" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "AI email triage",
+          "summary": "Classify, summarise, and draft replies automatically.",
+          "items": [
+            { "kind": "exercise", "title": "Triage bot", "body": "Combine yesterday's reader with AI:\n\nFor each unread email:\n1. Extract From, Subject, Body.\n2. Send to GPT with prompt: 'Classify this email. Return JSON: {\"priority\": \"urgent\"|\"normal\"|\"low\", \"category\": \"support\"|\"sales\"|\"spam\"|\"internal\"|\"other\", \"suggested_reply\": string}'\n3. Print the result.\n\nBy end of this exercise, your Python script reads your inbox and tells you exactly how to handle each email — without you reading them." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Auto-reply bot",
+          "summary": "Automatically send replies to specific types of emails.",
+          "items": [
+            { "kind": "exercise", "title": "Auto-reply to support emails", "body": "Extend your triage bot:\n\nif classification['category'] == 'support' and classification['priority'] == 'low':\n    # Draft a reply using AI\n    reply_response = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[\n            {'role':'system','content':'Write a professional, friendly auto-reply email. Max 3 sentences. Sign off as The FORGE Support Team.'},\n            {'role':'user','content':f'Original email:\\n{body}'}\n        ]\n    )\n    reply_text = reply_response.choices[0].message.content\n    # Send the reply using smtplib from Day 1\n    send_reply(original_sender, reply_text)\n    print(f'Auto-replied to: {subject}')\n\nAdd a safety check: only send if you have tested for at least a week." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "WhatsApp/SMS notifications",
+          "summary": "Send yourself a WhatsApp or SMS when something important happens.",
+          "items": [
+            { "kind": "exercise", "title": "Twilio WhatsApp alert", "body": "Run: pip install twilio\n\nSign up at https://www.twilio.com (free trial gives you $15 credit).\n\nCreate whatsapp_alert.py:\n\nfrom twilio.rest import Client\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = Client(os.getenv('TWILIO_SID'), os.getenv('TWILIO_TOKEN'))\n\ndef send_whatsapp(message):\n    client.messages.create(\n        from_='whatsapp:+14155238886',  # Twilio sandbox number\n        to=f'whatsapp:{os.getenv(\"MY_PHONE\")}',\n        body=message\n    )\n\nsend_whatsapp('FORGE bot: you have 3 URGENT emails in your inbox!')\n\nCombine with your triage bot: urgent emails → WhatsApp alert." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Database and spreadsheet automation",
+      "phase": "Core Skills",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "SQLite Python tutorial", "url": "https://docs.python.org/3/library/sqlite3.html", "note": "Built into Python" },
+        { "label": "openpyxl docs", "url": "https://openpyxl.readthedocs.io", "note": "Read/write Excel files" },
+        { "label": "Google Sheets API Python", "url": "https://developers.google.com/sheets/api/quickstart/python", "note": "For Google Sheets automation" }
+      ],
+      "context": "This is the capstone week of Phase 2. You will store data in SQLite, process it with AI, and output polished spreadsheets. By Friday you will have built the automation from your Week 1 brief.",
+      "days": [
+        {
+          "number": 1,
+          "title": "SQLite — your automation's memory",
+          "summary": "Store results, avoid reprocessing, track history.",
+          "items": [
+            { "kind": "exercise", "title": "Create and query a SQLite database", "body": "Create db.py:\n\nimport sqlite3\n\nconn = sqlite3.connect('automation.db')\ncursor = conn.cursor()\n\ncursor.execute('''\n    CREATE TABLE IF NOT EXISTS processed_emails (\n        id INTEGER PRIMARY KEY,\n        sender TEXT,\n        subject TEXT,\n        priority TEXT,\n        processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n    )\n''')\n\ncursor.execute(\"INSERT INTO processed_emails (sender, subject, priority) VALUES (?,?,?)\",\n               ('boss@company.com', 'Q3 Review', 'urgent'))\nconn.commit()\n\nfor row in cursor.execute('SELECT * FROM processed_emails'):\n    print(row)\n\nconn.close()" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Write Excel reports with openpyxl",
+          "summary": "Generate formatted Excel files automatically.",
+          "items": [
+            { "kind": "exercise", "title": "Auto-generate an Excel report", "body": "Create excel_report.py:\n\nimport openpyxl\nfrom openpyxl.styles import Font, PatternFill\nfrom datetime import date\n\nwb = openpyxl.Workbook()\nws = wb.active\nws.title = 'Email Report'\n\n# Header\nheaders = ['Date', 'Sender', 'Subject', 'Priority', 'Category']\nfor col, header in enumerate(headers, 1):\n    cell = ws.cell(row=1, column=col, value=header)\n    cell.font = Font(bold=True)\n    cell.fill = PatternFill('solid', fgColor='2563EB')\n\n# Sample data\nrows = [\n    [str(date.today()), 'boss@co.com', 'Server down', 'URGENT', 'support'],\n    [str(date.today()), 'hr@co.com', 'Team lunch', 'LOW', 'internal'],\n]\nfor row_data in rows:\n    ws.append(row_data)\n\nwb.save('email_report.xlsx')\nprint('Report saved.')" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Google Sheets integration",
+          "summary": "Read and write a live Google Sheet from Python.",
+          "items": [
+            { "kind": "reading", "title": "Google Sheets API Python quickstart", "url": "https://developers.google.com/sheets/api/quickstart/python", "why": "Follow this to set up credentials. Takes about 20 minutes." },
+            { "kind": "exercise", "title": "Append a row to a Google Sheet", "body": "After setting up credentials per the guide above:\n\npip install google-api-python-client google-auth\n\nCreate sheets.py:\n\nfrom googleapiclient.discovery import build\nfrom google.oauth2 import service_account\n\ncreds = service_account.Credentials.from_service_account_file('credentials.json')\nservice = build('sheets', 'v4', credentials=creds)\n\nSHEET_ID = 'your_spreadsheet_id'\n\nservice.spreadsheets().values().append(\n    spreadsheetId=SHEET_ID,\n    range='Sheet1!A:E',\n    valueInputOption='RAW',\n    body={'values': [['2026-05-23', 'boss@co.com', 'Server down', 'URGENT', 'support']]}\n).execute()\n\nprint('Row appended to Google Sheet.')" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "AI data analysis on spreadsheet data",
+          "summary": "Load a spreadsheet, have AI find patterns and anomalies.",
+          "items": [
+            { "kind": "exercise", "title": "AI spreadsheet analyser", "body": "Create analyse_sheet.py:\n\nimport openpyxl\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\nwb = openpyxl.load_workbook('email_report.xlsx')\nws = wb.active\n\nrows = []\nfor row in ws.iter_rows(values_only=True):\n    rows.append(' | '.join(str(c) for c in row))\n\ntable_text = '\\n'.join(rows)\n\nr = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[\n        {'role':'system','content':'You are a data analyst. Find 3 actionable insights from this email report table. Be specific.'},\n        {'role':'user','content':table_text}\n    ]\n)\nprint(r.choices[0].message.content)" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build the automation from Week 1",
+          "summary": "Build the real automation you designed in Week 1, Day 5.",
+          "items": [
+            { "kind": "exercise", "title": "Your Week 1 automation — built", "body": "Go back to your Week 1 Day 5 brief. Build it now.\n\nYou have all the pieces:\n- Triggers: schedule (cron), webhooks, email IMAP\n- Data in: HTTP requests, PDF reading, scraping\n- AI step: OpenAI API with reliable prompts\n- Storage: SQLite\n- Output: email, WhatsApp, Excel, Google Sheets\n\nAssemble them. It does not have to be perfect — it has to work.\n\nWhen it runs successfully once end-to-end, take a screenshot. That is your Phase 2 portfolio piece." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "LangChain basics",
+      "phase": "Building Agents",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "LangChain Python docs", "url": "https://python.langchain.com/docs/introduction/", "note": "Official, well-structured" },
+        { "label": "LangChain crash course (Greg Kamradt, 1 hr)", "url": "https://www.youtube.com/watch?v=_v_fgW2SkkQ", "duration_min": 60, "note": "Best single video intro" },
+        { "label": "LangChain cookbook", "url": "https://github.com/langchain-ai/langchain/tree/master/cookbook", "note": "Copy-paste examples on GitHub" }
+      ],
+      "context": "LangChain is the most popular framework for building AI applications. It gives you ready-made components for chains, memory, tools, and agents. This week you learn the core abstractions.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Install LangChain and make your first chain",
+          "summary": "A chain is a sequence of steps. Today you build the simplest one.",
+          "items": [
+            { "kind": "exercise", "title": "First LangChain chain", "body": "Run: pip install langchain langchain-openai python-dotenv\n\nCreate chain1.py:\n\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\nllm = ChatOpenAI(model='gpt-4o-mini')\n\nprompt = ChatPromptTemplate.from_messages([\n    ('system', 'You are a helpful assistant.'),\n    ('user', '{input}')\n])\n\nchain = prompt | llm\n\nresult = chain.invoke({'input': 'What is the capital of Senegal?'})\nprint(result.content)" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Output parsers",
+          "summary": "Parse AI output into structured Python objects automatically.",
+          "items": [
+            { "kind": "exercise", "title": "JSON output parser", "body": "Create parser_chain.py:\n\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import JsonOutputParser\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\nllm = ChatOpenAI(model='gpt-4o-mini')\nparser = JsonOutputParser()\n\nprompt = ChatPromptTemplate.from_messages([\n    ('system', 'Extract name and age from text. Return JSON: {{\"name\": string, \"age\": number}}. Return JSON only.'),\n    ('user', '{input}')\n])\n\nchain = prompt | llm | parser\n\nresult = chain.invoke({'input': 'My name is Abdoulie and I am 28 years old.'})\nprint(result)        # {'name': 'Abdoulie', 'age': 28}\nprint(type(result))  # <class 'dict'>" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Memory — giving your chain a short-term memory",
+          "summary": "Maintain conversation history across multiple turns.",
+          "items": [
+            { "kind": "exercise", "title": "Chain with conversation memory", "body": "Create memory_chain.py:\n\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.chat_history import InMemoryChatMessageHistory\nfrom langchain_core.runnables.history import RunnableWithMessageHistory\nfrom langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\nllm = ChatOpenAI(model='gpt-4o-mini')\n\nprompt = ChatPromptTemplate.from_messages([\n    ('system', 'You are a helpful assistant.'),\n    MessagesPlaceholder('history'),\n    ('human', '{input}')\n])\n\nstore = {}\ndef get_history(session_id):\n    if session_id not in store:\n        store[session_id] = InMemoryChatMessageHistory()\n    return store[session_id]\n\nchain = RunnableWithMessageHistory(prompt | llm, get_history, input_messages_key='input', history_messages_key='history')\n\nconfig = {'configurable': {'session_id': 'user1'}}\nprint(chain.invoke({'input': 'My name is Abdoulie'}, config=config).content)\nprint(chain.invoke({'input': 'What is my name?'}, config=config).content)  # remembers" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "LangChain tools",
+          "summary": "Attach tools to your chain so it can take actions.",
+          "items": [
+            { "kind": "exercise", "title": "Chain with a custom tool", "body": "Create tool_chain.py:\n\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.tools import tool\nfrom langchain.agents import create_tool_calling_agent, AgentExecutor\nfrom langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\n@tool\ndef get_word_count(text: str) -> int:\n    '''Count the number of words in a text.'''\n    return len(text.split())\n\n@tool\ndef reverse_text(text: str) -> str:\n    '''Reverse a string of text.'''\n    return text[::-1]\n\nllm = ChatOpenAI(model='gpt-4o-mini')\ntools = [get_word_count, reverse_text]\n\nprompt = ChatPromptTemplate.from_messages([\n    ('system', 'You are a helpful assistant with tools.'),\n    ('human', '{input}'),\n    MessagesPlaceholder('agent_scratchpad')\n])\n\nagent = create_tool_calling_agent(llm, tools, prompt)\nexecutor = AgentExecutor(agent=agent, tools=tools, verbose=True)\n\nresult = executor.invoke({'input': 'How many words are in the phrase hello world today?'})\nprint(result['output'])" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Sequential chains — multi-step pipelines",
+          "summary": "Chain multiple LLM calls where output of one feeds the next.",
+          "items": [
+            { "kind": "exercise", "title": "Two-step research chain", "body": "Create sequential_chain.py:\n\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom dotenv import load_dotenv\n\nload_dotenv()\nllm = ChatOpenAI(model='gpt-4o-mini')\nparser = StrOutputParser()\n\n# Step 1: generate outline\noutline_prompt = ChatPromptTemplate.from_messages([\n    ('system', 'Generate a 3-point outline for a blog post on this topic. Be concise.'),\n    ('user', '{topic}')\n])\n\n# Step 2: write intro from outline\nintro_prompt = ChatPromptTemplate.from_messages([\n    ('system', 'Write a punchy 2-sentence blog intro based on this outline.'),\n    ('user', '{outline}')\n])\n\n# Chain them\noutline_chain = outline_prompt | llm | parser\nintro_chain = intro_prompt | llm | parser\n\nfull_chain = outline_chain | (lambda outline: {'outline': outline}) | intro_chain\n\nresult = full_chain.invoke({'topic': 'AI automation for small businesses in Africa'})\nprint(result)" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Building your first autonomous agent",
+      "phase": "Building Agents",
+      "commitment_hours": "8–10",
+      "resources": [
+        { "label": "LangGraph docs", "url": "https://langchain-ai.github.io/langgraph/", "note": "Framework for stateful agents" },
+        { "label": "AutoGen docs", "url": "https://microsoft.github.io/autogen/", "note": "Microsoft's multi-agent framework" },
+        { "label": "Building LLM agents (Lilian Weng blog)", "url": "https://lilianweng.github.io/posts/2023-06-23-agent/", "note": "Best deep-dive technical read on agents" }
+      ],
+      "context": "An autonomous agent runs without a human in the loop for multiple steps. This week you build one that can research a topic, write a report, and save it to disk — all on its own.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Design your agent",
+          "summary": "Plan before you code. What tools does it need? What is its goal?",
+          "items": [
+            { "kind": "exercise", "title": "Agent design document", "body": "Write a short design doc (in a text file) for a Research Agent:\n\nGOAL: Given a topic, research it and produce a 1-page summary report saved as a .txt file.\n\nTOOLS NEEDED:\n1. search_web(query) — returns search results\n2. read_url(url) — returns page text\n3. save_file(filename, content) — saves to disk\n\nSTEPS THE AGENT WILL TAKE:\n1. Search for the topic\n2. Pick the top 3 results\n3. Read each one\n4. Synthesise into a report\n5. Save the report\n\nWRITE THIS DOWN before coding." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Implement the tools",
+          "summary": "Build the three functions the agent will call.",
+          "items": [
+            { "kind": "exercise", "title": "Build agent tools", "body": "Create research_tools.py:\n\nimport requests\nfrom bs4 import BeautifulSoup\nfrom langchain_core.tools import tool\n\n@tool\ndef search_web(query: str) -> str:\n    '''Search the web using DuckDuckGo and return top result URLs.'''\n    url = f'https://html.duckduckgo.com/html/?q={query.replace(\" \", \"+\")}'\n    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})\n    soup = BeautifulSoup(r.text, 'html.parser')\n    links = soup.select('.result__url')[:3]\n    return '\\n'.join(l.text.strip() for l in links)\n\n@tool\ndef read_url(url: str) -> str:\n    '''Read the text content of a webpage. Returns first 2000 characters.'''\n    try:\n        r = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})\n        soup = BeautifulSoup(r.text, 'html.parser')\n        return soup.get_text()[:2000]\n    except Exception as e:\n        return f'Could not read page: {e}'\n\n@tool\ndef save_file(filename: str, content: str) -> str:\n    '''Save content to a file in the current directory.'''\n    with open(filename, 'w') as f:\n        f.write(content)\n    return f'File saved: {filename}'" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Wire up the agent",
+          "summary": "Give the tools to LangChain and let it run.",
+          "items": [
+            { "kind": "exercise", "title": "Research agent script", "body": "Create research_agent.py:\n\nfrom langchain_openai import ChatOpenAI\nfrom langchain.agents import create_tool_calling_agent, AgentExecutor\nfrom langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder\nfrom research_tools import search_web, read_url, save_file\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\nllm = ChatOpenAI(model='gpt-4o-mini', temperature=0)\ntools = [search_web, read_url, save_file]\n\nprompt = ChatPromptTemplate.from_messages([\n    ('system', '''You are a research agent. When given a topic:\n1. Search the web for it\n2. Read at least 2 URLs from the results\n3. Write a clear 1-page summary report\n4. Save it as {topic}_report.txt\nBe thorough. Always save the file at the end.'''),\n    ('human', '{input}'),\n    MessagesPlaceholder('agent_scratchpad')\n])\n\nagent = create_tool_calling_agent(llm, tools, prompt)\nexecutor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=10)\n\nresult = executor.invoke({'input': 'Research: AI automation trends in 2026', 'topic': 'ai_automation_2026'})\nprint('\\nFINAL ANSWER:', result['output'])" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Add error handling and limits",
+          "summary": "Agents can loop forever or crash. Guard against both.",
+          "items": [
+            { "kind": "exercise", "title": "Safe agent wrapper", "body": "Update your AgentExecutor with safety settings:\n\nexecutor = AgentExecutor(\n    agent=agent,\n    tools=tools,\n    verbose=True,\n    max_iterations=8,           # never more than 8 tool calls\n    max_execution_time=60,      # stop after 60 seconds\n    handle_parsing_errors=True, # don't crash on bad output\n    early_stopping_method='generate'  # force a final answer if stuck\n)\n\nThen wrap the invoke call:\ntry:\n    result = executor.invoke({'input': topic, 'topic': 'report'})\nexcept Exception as e:\n    print(f'Agent failed: {e}')\n    # Fall back to a simple summarise call here" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Test on 3 different topics",
+          "summary": "Run your agent 3 times. Observe where it succeeds and where it fails.",
+          "items": [
+            { "kind": "exercise", "title": "Agent stress test", "body": "Run your research agent on 3 topics:\n1. 'AI automation trends in Africa 2026'\n2. 'Python web scraping best practices'\n3. 'How to price freelance automation services'\n\nFor each run, note:\n- How many steps did the agent take?\n- Did it save the file correctly?\n- Was the report accurate?\n- Did it loop or get confused anywhere?\n\nWrite a short 'agent evaluation' doc. This is how you improve agents in production." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Multi-step workflows and orchestration",
+      "phase": "Building Agents",
+      "commitment_hours": "8–10",
+      "resources": [
+        { "label": "LangGraph — intro", "url": "https://langchain-ai.github.io/langgraph/tutorials/introduction/", "note": "Graph-based agent orchestration" },
+        { "label": "Prefect docs", "url": "https://docs.prefect.io", "note": "Workflow orchestration for production" },
+        { "label": "Celery docs", "url": "https://docs.celeryq.dev", "note": "Distributed task queue" }
+      ],
+      "context": "Real automation pipelines have multiple stages, parallel steps, retries, and conditional branches. This week you build pipelines that are more than a single agent — they are coordinated systems.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Workflow graphs with LangGraph",
+          "summary": "Model your pipeline as a graph of nodes and edges.",
+          "items": [
+            { "kind": "exercise", "title": "First LangGraph workflow", "body": "Run: pip install langgraph\n\nCreate graph_workflow.py:\n\nfrom langgraph.graph import StateGraph, END\nfrom typing import TypedDict\n\nclass State(TypedDict):\n    text: str\n    summary: str\n    label: str\n\ndef summarise(state: State) -> State:\n    # Call GPT to summarise state['text']\n    state['summary'] = 'This is a summary.'\n    return state\n\ndef classify(state: State) -> State:\n    state['label'] = 'URGENT'\n    return state\n\nworkflow = StateGraph(State)\nworkflow.add_node('summarise', summarise)\nworkflow.add_node('classify', classify)\nworkflow.set_entry_point('summarise')\nworkflow.add_edge('summarise', 'classify')\nworkflow.add_edge('classify', END)\n\napp = workflow.compile()\nresult = app.invoke({'text': 'Server is down', 'summary': '', 'label': ''})\nprint(result)" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Conditional branching",
+          "summary": "Route the workflow differently based on intermediate results.",
+          "items": [
+            { "kind": "exercise", "title": "Workflow with routing", "body": "Extend yesterday's graph with conditional routing:\n\ndef route_by_priority(state: State) -> str:\n    if state['label'] == 'URGENT':\n        return 'escalate'\n    return 'archive'\n\ndef escalate(state: State) -> State:\n    print('ESCALATING: sending WhatsApp alert')\n    return state\n\ndef archive(state: State) -> State:\n    print('Archiving low-priority item')\n    return state\n\nworkflow.add_node('escalate', escalate)\nworkflow.add_node('archive', archive)\nworkflow.add_conditional_edges('classify', route_by_priority, {'escalate': 'escalate', 'archive': 'archive'})\nworkflow.add_edge('escalate', END)\nworkflow.add_edge('archive', END)\n\nNow the graph takes different paths based on classification." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Parallel steps",
+          "summary": "Run two steps at the same time to cut pipeline duration.",
+          "items": [
+            { "kind": "exercise", "title": "Parallel AI calls with asyncio", "body": "Create parallel_pipeline.py:\n\nimport asyncio\nfrom openai import AsyncOpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = AsyncOpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\nasync def summarise(text):\n    r = await client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[{'role':'system','content':'Summarise in one sentence.'},{'role':'user','content':text}]\n    )\n    return r.choices[0].message.content\n\nasync def classify(text):\n    r = await client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[{'role':'system','content':'Reply URGENT, NORMAL, or LOW only.'},{'role':'user','content':text}]\n    )\n    return r.choices[0].message.content\n\nasync def process(text):\n    summary, label = await asyncio.gather(summarise(text), classify(text))\n    return {'summary': summary, 'label': label}\n\nresult = asyncio.run(process('Our database crashed and all users are offline.'))\nprint(result)  # Both calls ran simultaneously" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Retry and fallback logic",
+          "summary": "What happens when a step fails? The pipeline must recover.",
+          "items": [
+            { "kind": "exercise", "title": "Pipeline with retry + fallback", "body": "Create resilient_pipeline.py:\n\nimport time\n\ndef with_retry(fn, max_retries=3, delay=2):\n    '''Retry a function up to max_retries times with delay between attempts.'''\n    for attempt in range(max_retries):\n        try:\n            return fn()\n        except Exception as e:\n            if attempt == max_retries - 1:\n                raise\n            print(f'Attempt {attempt+1} failed: {e}. Retrying in {delay}s...')\n            time.sleep(delay)\n\ndef with_fallback(fn, fallback_fn):\n    '''Try fn. If it fails, run fallback_fn instead.'''\n    try:\n        return fn()\n    except Exception as e:\n        print(f'Primary failed: {e}. Running fallback.')\n        return fallback_fn()\n\n# Example: try gpt-4o, fall back to gpt-4o-mini\nprimary = lambda: call_ai('gpt-4o', text)\nfallback = lambda: call_ai('gpt-4o-mini', text)\n\nresult = with_fallback(primary, fallback)" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build a multi-stage content pipeline",
+          "summary": "Scrape a URL → summarise → translate → post to Slack (or save).",
+          "items": [
+            { "kind": "exercise", "title": "Full content pipeline", "body": "Create content_pipeline.py that chains:\n\nSTEP 1 — Scrape: requests + BeautifulSoup → get article text from any news URL\nSTEP 2 — Summarise: GPT → 3-bullet summary\nSTEP 3 — Translate: GPT → translate summary to French (or any language)\nSTEP 4 — Format: build a clean message string\nSTEP 5 — Deliver: save to a file, OR send via email from Week 9\n\nRun it on 3 different news URLs. The pipeline should handle each one end-to-end with no manual steps." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "RAG — retrieval augmented generation",
+      "phase": "Building Agents",
+      "commitment_hours": "8–10",
+      "resources": [
+        { "label": "LangChain RAG tutorial", "url": "https://python.langchain.com/docs/tutorials/rag/", "note": "Official step-by-step" },
+        { "label": "FAISS — Facebook AI Similarity Search", "url": "https://faiss.ai", "note": "Fast local vector search" },
+        { "label": "What is RAG? (IBM, 8 min)", "url": "https://www.youtube.com/watch?v=T-D1OfcDW1M", "duration_min": 8, "note": "Best short explanation" }
+      ],
+      "context": "RAG lets your agent answer questions about YOUR documents — not just what the AI was trained on. This is how you build a custom knowledge base, a document chatbot, or a company Q&A bot.",
+      "days": [
+        {
+          "number": 1,
+          "title": "What is RAG and why does it matter",
+          "summary": "Understand the retrieve-then-generate loop.",
+          "items": [
+            { "kind": "video", "title": "What is RAG? (IBM, 8 min)", "url": "https://www.youtube.com/watch?v=T-D1OfcDW1M", "duration_min": 8, "creator": "IBM", "why": "Start here — cleanest explanation of the concept." },
+            { "kind": "reflection", "title": "Your RAG use case", "body": "Write: which of YOUR documents would be most useful to be able to query with AI?\n- Company policy PDFs?\n- Research papers?\n- Legal documents?\n- Product manuals?\n- Your own notes?\n\nYou will build a RAG system on this by Day 5." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Embeddings — turning text into numbers",
+          "summary": "Embeddings are how AI searches for meaning, not keywords.",
+          "items": [
+            { "kind": "exercise", "title": "Generate and compare embeddings", "body": "Create embeddings.py:\n\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\nimport numpy as np\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\ndef embed(text):\n    r = client.embeddings.create(model='text-embedding-3-small', input=text)\n    return np.array(r.data[0].embedding)\n\ndef similarity(a, b):\n    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))\n\ne1 = embed('The cat sat on the mat')\ne2 = embed('A feline rested on a rug')\ne3 = embed('The stock market crashed today')\n\nprint('Similar sentences:', similarity(e1, e2))   # ~0.9\nprint('Different topics:', similarity(e1, e3))    # ~0.2\n\nNearly identical meaning = high similarity. Different topics = low similarity." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Build a vector store with FAISS",
+          "summary": "Index your documents so AI can search them in milliseconds.",
+          "items": [
+            { "kind": "exercise", "title": "FAISS document index", "body": "Run: pip install faiss-cpu langchain-openai langchain-community\n\nCreate vector_store.py:\n\nfrom langchain_openai import OpenAIEmbeddings\nfrom langchain_community.vectorstores import FAISS\nfrom langchain.text_splitter import RecursiveCharacterTextSplitter\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\n# Sample documents\ndocs = [\n    'The Gambia is the smallest country in mainland Africa.',\n    'The Gambia River runs through the centre of the country.',\n    'Banjul is the capital city of The Gambia.',\n    'The Gambia gained independence from Britain in 1965.',\n    'The official language of The Gambia is English.',\n]\n\nembeddings = OpenAIEmbeddings(model='text-embedding-3-small')\ndb = FAISS.from_texts(docs, embeddings)\ndb.save_local('my_vector_store')\nprint('Vector store saved.')\n\n# Search it\nresults = db.similarity_search('What is the capital?', k=2)\nfor r in results:\n    print(r.page_content)" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "RAG chain — retrieve then answer",
+          "summary": "Combine the vector store with GPT to answer questions about your docs.",
+          "items": [
+            { "kind": "exercise", "title": "Full RAG pipeline", "body": "Create rag_chain.py:\n\nfrom langchain_openai import OpenAIEmbeddings, ChatOpenAI\nfrom langchain_community.vectorstores import FAISS\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\ndb = FAISS.load_local('my_vector_store', OpenAIEmbeddings(model='text-embedding-3-small'), allow_dangerous_deserialization=True)\nretriever = db.as_retriever(search_kwargs={'k': 3})\nllm = ChatOpenAI(model='gpt-4o-mini')\n\nprompt = ChatPromptTemplate.from_messages([\n    ('system', 'Answer using only this context:\\n\\n{context}\\n\\nIf the answer is not in the context, say \"I don\\'t know\".'),\n    ('human', '{question}')\n])\n\ndef rag(question):\n    docs = retriever.invoke(question)\n    context = '\\n'.join(d.page_content for d in docs)\n    return (prompt | llm | StrOutputParser()).invoke({'context': context, 'question': question})\n\nprint(rag('What language do people speak in The Gambia?'))\nprint(rag('What is the population of France?'))  # should say I don't know" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build: RAG chatbot on your own PDFs",
+          "summary": "Index your own documents and chat with them.",
+          "items": [
+            { "kind": "exercise", "title": "PDF RAG chatbot", "body": "Create pdf_rag.py:\n\nimport fitz\nfrom langchain_openai import OpenAIEmbeddings, ChatOpenAI\nfrom langchain_community.vectorstores import FAISS\nfrom langchain.text_splitter import RecursiveCharacterTextSplitter\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\n\n# Load all PDFs in a folder\npdf_folder = 'my_docs'\nall_text = []\nfor fname in os.listdir(pdf_folder):\n    if fname.endswith('.pdf'):\n        pdf = fitz.open(os.path.join(pdf_folder, fname))\n        text = ''.join(p.get_text() for p in pdf)\n        all_text.append(text)\n\nsplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)\nchunks = splitter.create_documents(all_text)\n\ndb = FAISS.from_documents(chunks, OpenAIEmbeddings(model='text-embedding-3-small'))\nretriever = db.as_retriever()\nllm = ChatOpenAI(model='gpt-4o-mini')\nprompt = ChatPromptTemplate.from_messages([('system','Answer from context only:\\n{context}'),('human','{q}')])\n\nwhile True:\n    q = input('Ask: ')\n    if q == 'quit': break\n    ctx = '\\n'.join(d.page_content for d in retriever.invoke(q))\n    print(StrOutputParser().invoke((prompt | llm).invoke({'context': ctx, 'q': q})))" }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Browser automation and computer use",
+      "phase": "Building Agents",
+      "commitment_hours": "8–10",
+      "resources": [
+        { "label": "Playwright Python — official docs", "url": "https://playwright.dev/python/docs/intro", "note": "Full browser control" },
+        { "label": "Selenium docs", "url": "https://selenium-python.readthedocs.io", "note": "Older but widely used" },
+        { "label": "Anthropic computer use demo", "url": "https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo", "note": "Claude controlling a computer" }
+      ],
+      "context": "Some tasks cannot be done through an API — you need to click, type, and scroll like a human. This week you automate real browser interactions: fill forms, log in, download files, and extract data from pages that block scrapers.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Playwright — navigate and click",
+          "summary": "Open a browser, go to a URL, click a button.",
+          "items": [
+            { "kind": "exercise", "title": "Playwright click and screenshot", "body": "Create browser1.py:\n\nfrom playwright.sync_api import sync_playwright\n\nwith sync_playwright() as p:\n    browser = p.chromium.launch(headless=False)  # headless=False so you can watch\n    page = browser.new_page()\n    page.goto('https://example.com')\n    print('Title:', page.title())\n    page.screenshot(path='screenshot.png')\n    browser.close()\n\nprint('Done. Check screenshot.png')" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Fill forms automatically",
+          "summary": "Type into inputs, select dropdowns, submit forms.",
+          "items": [
+            { "kind": "exercise", "title": "Automate a search form", "body": "Create form_fill.py:\n\nfrom playwright.sync_api import sync_playwright\n\nwith sync_playwright() as p:\n    browser = p.chromium.launch(headless=False)\n    page = browser.new_page()\n    page.goto('https://duckduckgo.com')\n    \n    # Type in the search box\n    page.fill('[name=q]', 'AI automation Africa')\n    page.press('[name=q]', 'Enter')\n    \n    # Wait for results\n    page.wait_for_selector('.result')\n    \n    # Extract result titles\n    titles = page.locator('.result__title').all_text_contents()\n    for t in titles[:5]:\n        print(t)\n    \n    browser.close()" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Handle login walls",
+          "summary": "Automate logging into a site (use a test site — never automate sites that forbid it).",
+          "items": [
+            { "kind": "exercise", "title": "Login automation with cookie saving", "body": "Create login.py:\n\nfrom playwright.sync_api import sync_playwright\nimport json\n\nwith sync_playwright() as p:\n    browser = p.chromium.launch(headless=False)\n    context = browser.new_context()\n    page = context.new_page()\n    \n    # Use a test login site\n    page.goto('https://the-internet.herokuapp.com/login')\n    page.fill('#username', 'tomsmith')\n    page.fill('#password', 'SuperSecretPassword!')\n    page.click('button[type=submit]')\n    \n    # Save cookies for reuse\n    cookies = context.cookies()\n    json.dump(cookies, open('cookies.json', 'w'))\n    print('Logged in and cookies saved.')\n    \n    browser.close()\n\n# Next run: load cookies and skip login\nwith sync_playwright() as p:\n    browser = p.chromium.launch()\n    context = browser.new_context()\n    context.add_cookies(json.load(open('cookies.json')))\n    page = context.new_page()\n    page.goto('https://the-internet.herokuapp.com/secure')\n    print('Logged in via cookies:', page.locator('h2').text_content())\n    browser.close()" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "AI-guided browser automation",
+          "summary": "Let GPT decide what to click and type based on the page content.",
+          "items": [
+            { "kind": "exercise", "title": "AI browser agent", "body": "Create ai_browser.py:\n\nfrom playwright.sync_api import sync_playwright\nfrom openai import OpenAI\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\nclient = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))\n\ndef ask_ai_what_to_do(page_text, goal):\n    r = client.chat.completions.create(\n        model='gpt-4o-mini',\n        messages=[\n            {'role':'system','content':'You are controlling a browser. Given page content and a goal, output ONE action as JSON: {\"action\": \"click\"|\"fill\"|\"navigate\", \"selector\": string, \"value\": string}. Output JSON only.'},\n            {'role':'user','content':f'GOAL: {goal}\\n\\nPAGE TEXT:\\n{page_text[:1000]}'}\n        ]\n    )\n    import json\n    return json.loads(r.choices[0].message.content)\n\nwith sync_playwright() as p:\n    browser = p.chromium.launch(headless=False)\n    page = browser.new_page()\n    page.goto('https://duckduckgo.com')\n    text = page.locator('body').text_content()\n    action = ask_ai_what_to_do(text, 'Search for AI automation')\n    print('AI decided:', action)\n    # Execute the action manually based on the JSON\n    browser.close()" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build: automated data collection bot",
+          "summary": "Collect data from a website daily, save to spreadsheet.",
+          "items": [
+            { "kind": "exercise", "title": "Data collection bot", "body": "Create data_bot.py:\n\nfrom playwright.sync_api import sync_playwright\nimport openpyxl\nfrom datetime import date\nimport os\n\nOUTPUT_FILE = 'collected_data.xlsx'\n\ndef collect():\n    with sync_playwright() as p:\n        browser = p.chromium.launch(headless=True)\n        page = browser.new_page()\n        page.goto('https://books.toscrape.com')\n        page.wait_for_selector('article.product_pod')\n        \n        books = page.locator('article.product_pod').all()\n        rows = []\n        for book in books[:10]:\n            title = book.locator('h3 a').get_attribute('title')\n            price = book.locator('.price_color').text_content()\n            rows.append([str(date.today()), title, price])\n        browser.close()\n        return rows\n\n# Load or create workbook\nwb = openpyxl.load_workbook(OUTPUT_FILE) if os.path.exists(OUTPUT_FILE) else openpyxl.Workbook()\nws = wb.active\nif ws.max_row == 1 and ws.cell(1,1).value is None:\n    ws.append(['Date', 'Title', 'Price'])\n\nfor row in collect():\n    ws.append(row)\n\nwb.save(OUTPUT_FILE)\nprint(f'Collected {len(collect())} rows. Saved to {OUTPUT_FILE}')\n\nSchedule with cron to run daily." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Deploying automation pipelines",
+      "phase": "Production & Business",
+      "commitment_hours": "7–9",
+      "resources": [
+        { "label": "Railway.app — deploy Python apps", "url": "https://railway.app", "note": "Easiest platform for Python bots" },
+        { "label": "Render.com", "url": "https://render.com", "note": "Free tier, great for background workers" },
+        { "label": "Docker getting started", "url": "https://docs.docker.com/get-started/", "note": "Container your app for any server" }
+      ],
+      "context": "Your automations are useless if they only run on your laptop. This week you deploy pipelines to the cloud so they run 24/7 without you.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Prepare your app for deployment",
+          "summary": "requirements.txt, .env, and project structure.",
+          "items": [
+            { "kind": "exercise", "title": "Production-ready project structure", "body": "Organise your best automation into this structure:\n\nmy_automation/\n  main.py          ← entry point\n  pipeline.py      ← your core logic\n  tools.py         ← helper functions\n  requirements.txt ← all dependencies\n  .env             ← secrets (NEVER commit this)\n  .gitignore       ← list .env here\n  README.md        ← what it does and how to run it\n\nGenerate requirements.txt:\n  pip freeze > requirements.txt\n\nAdd .gitignore:\n  echo '.env' > .gitignore\n  echo '__pycache__/' >> .gitignore" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Deploy to Railway",
+          "summary": "Push your code to GitHub, connect Railway, it runs.",
+          "items": [
+            { "kind": "exercise", "title": "Deploy a Python bot to Railway", "body": "STEP 1 — Push to GitHub:\n  git init\n  git add . (check .gitignore is in place first)\n  git commit -m 'initial commit'\n  Create a repo on github.com, follow the push commands.\n\nSTEP 2 — Connect Railway:\n  Go to railway.app → New Project → Deploy from GitHub repo\n  Select your repo.\n  Railway auto-detects Python and installs requirements.txt.\n\nSTEP 3 — Add environment variables:\n  In Railway dashboard → Variables → add all your .env keys.\n\nSTEP 4 — Set start command:\n  In Railway → Settings → Start Command: python main.py\n\nSTEP 5 — Deploy. Your bot now runs on a server 24/7." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Containerise with Docker",
+          "summary": "Docker makes your app run identically on any machine.",
+          "items": [
+            { "kind": "exercise", "title": "Write a Dockerfile", "body": "Create Dockerfile in your project root:\n\nFROM python:3.12-slim\n\nWORKDIR /app\n\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\n\nCOPY . .\n\nCMD [\"python\", \"main.py\"]\n\nBuild and run locally:\n  docker build -t my-automation .\n  docker run --env-file .env my-automation\n\nIf it works in Docker locally, it will work anywhere." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Scheduled jobs in the cloud",
+          "summary": "Run your script on a cron schedule in the cloud.",
+          "items": [
+            { "kind": "exercise", "title": "Railway cron job", "body": "In Railway:\n1. In your project → Add Service → Cron Job\n2. Set schedule (e.g. '0 9 * * *' for 9am daily)\n3. Set command: python main.py\n4. Set environment variables.\n5. Deploy.\n\nAlternative (free): use GitHub Actions:\n  Create .github/workflows/daily.yml:\n\n  name: Daily Run\n  on:\n    schedule:\n      - cron: '0 9 * * *'\n  jobs:\n    run:\n      runs-on: ubuntu-latest\n      steps:\n        - uses: actions/checkout@v3\n        - uses: actions/setup-python@v4\n          with: { python-version: '3.12' }\n        - run: pip install -r requirements.txt\n        - run: python main.py\n          env:\n            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Environment management and secrets",
+          "summary": "Keep secrets out of your code. Always.",
+          "items": [
+            { "kind": "exercise", "title": "Secrets audit", "body": "Run this check on your project:\n\n1. Search your entire project for hardcoded keys:\n   grep -r 'sk-' . --include='*.py'\n   grep -r 'OPENAI' . --include='*.py'\n   If any results show a real key value (not os.getenv), fix it now.\n\n2. Verify .gitignore covers:\n   .env\n   *.key\n   credentials.json\n   cookies.json\n   *_secret*\n\n3. Check your GitHub repo — no secrets in any file or commit history.\n\n4. In production: every secret lives in Railway/Render variables or GitHub Secrets — NEVER in code." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Monitoring, logging, and error handling",
+      "phase": "Production & Business",
+      "commitment_hours": "6–8",
+      "resources": [
+        { "label": "Python logging docs", "url": "https://docs.python.org/3/library/logging.html", "note": "Built in — no install needed" },
+        { "label": "Sentry.io — error monitoring", "url": "https://sentry.io", "note": "Free tier, catches crashes automatically" },
+        { "label": "Better Stack (Logtail)", "url": "https://betterstack.com/logtail", "note": "Beautiful log management" }
+      ],
+      "context": "An automation that silently fails is worse than no automation. This week you add proper logging, error alerts, and monitoring so you know immediately when something breaks.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Python logging — the right way",
+          "summary": "Replace print() with proper logging.",
+          "items": [
+            { "kind": "exercise", "title": "Set up logging in your pipeline", "body": "Create logger.py:\n\nimport logging\nfrom datetime import datetime\n\ndef get_logger(name):\n    logger = logging.getLogger(name)\n    logger.setLevel(logging.DEBUG)\n    \n    # Console handler\n    ch = logging.StreamHandler()\n    ch.setLevel(logging.INFO)\n    \n    # File handler\n    fh = logging.FileHandler(f'logs/{datetime.now().strftime(\"%Y-%m-%d\")}.log')\n    fh.setLevel(logging.DEBUG)\n    \n    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')\n    ch.setFormatter(formatter)\n    fh.setFormatter(formatter)\n    \n    logger.addHandler(ch)\n    logger.addHandler(fh)\n    return logger\n\n# Usage in main.py:\n# logger = get_logger('pipeline')\n# logger.info('Pipeline started')\n# logger.error('Email send failed', exc_info=True)\n# logger.debug('Full response: %s', response)" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Structured logging",
+          "summary": "Log JSON — easier to search and analyse.",
+          "items": [
+            { "kind": "exercise", "title": "JSON log format", "body": "Create structured_logger.py:\n\nimport logging, json\nfrom datetime import datetime\n\nclass JSONFormatter(logging.Formatter):\n    def format(self, record):\n        log_data = {\n            'timestamp': datetime.utcnow().isoformat(),\n            'level': record.levelname,\n            'message': record.getMessage(),\n            'module': record.module,\n        }\n        if record.exc_info:\n            log_data['error'] = self.formatException(record.exc_info)\n        return json.dumps(log_data)\n\nlogger = logging.getLogger('pipeline')\nhandler = logging.StreamHandler()\nhandler.setFormatter(JSONFormatter())\nlogger.addHandler(handler)\nlogger.setLevel(logging.DEBUG)\n\nlogger.info('Pipeline started')\ntry:\n    1/0\nexcept Exception:\n    logger.error('Division failed', exc_info=True)" }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Error alerts — notify yourself when things break",
+          "summary": "When the pipeline crashes, get a WhatsApp or email immediately.",
+          "items": [
+            { "kind": "exercise", "title": "Crash notification decorator", "body": "Create alert_on_crash.py:\n\nimport functools, traceback\nfrom send_email import send_email  # from Week 9\n\ndef alert_on_crash(fn):\n    @functools.wraps(fn)\n    def wrapper(*args, **kwargs):\n        try:\n            return fn(*args, **kwargs)\n        except Exception as e:\n            error_msg = traceback.format_exc()\n            send_email(\n                subject=f'FORGE ALERT: {fn.__name__} crashed',\n                body=f'Error:\\n{error_msg}'\n            )\n            raise  # re-raise so the error still propagates\n    return wrapper\n\n# Usage:\n@alert_on_crash\ndef run_pipeline():\n    # your automation code here\n    pass" }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Health checks",
+          "summary": "Expose a /health endpoint so external monitors can check your bot is alive.",
+          "items": [
+            { "kind": "exercise", "title": "Simple health check server", "body": "Run: pip install flask\n\nCreate health.py:\n\nfrom flask import Flask, jsonify\nfrom datetime import datetime\nimport threading\n\napp = Flask(__name__)\n\nstatus = {'last_run': None, 'last_error': None, 'runs_today': 0}\n\n@app.route('/health')\ndef health():\n    return jsonify({\n        'status': 'ok' if not status['last_error'] else 'degraded',\n        'last_run': status['last_run'],\n        'last_error': status['last_error'],\n        'runs_today': status['runs_today']\n    })\n\ndef run_health_server():\n    app.run(host='0.0.0.0', port=8080)\n\nthreading.Thread(target=run_health_server, daemon=True).start()\n\n# In your main pipeline, update status:\n# status['last_run'] = datetime.utcnow().isoformat()\n# status['runs_today'] += 1" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Sentry — automatic crash reporting",
+          "summary": "Sentry catches every error and shows you the full context.",
+          "items": [
+            { "kind": "exercise", "title": "Integrate Sentry", "body": "Run: pip install sentry-sdk\n\nSign up at sentry.io — free tier is plenty.\nCreate a Python project, copy the DSN.\n\nAdd to the TOP of main.py (before anything else):\n\nimport sentry_sdk\nfrom dotenv import load_dotenv\nimport os\n\nload_dotenv()\n\nsentry_sdk.init(\n    dsn=os.getenv('SENTRY_DSN'),\n    traces_sample_rate=1.0,\n)\n\nThat's it. Now every unhandled exception is automatically reported to your Sentry dashboard with the full stack trace, the values of variables, and the environment details.\n\nTest it by deliberately raising an error:\n  raise Exception('test sentry integration')\n\nCheck your Sentry dashboard." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Selling automation services",
+      "phase": "Production & Business",
+      "commitment_hours": "5–7",
+      "resources": [
+        { "label": "Upwork — freelance platform", "url": "https://www.upwork.com", "note": "Largest platform for automation freelancers" },
+        { "label": "Indie Hackers", "url": "https://www.indiehackers.com", "note": "Community of developers building products" },
+        { "label": "How to price your services — Brennan Dunn", "url": "https://doubleyourfreelancing.com/rate/", "note": "Best article on freelance pricing strategy" }
+      ],
+      "context": "The skills you have built over 17 weeks are genuinely valuable to businesses. This week you learn how to package, price, and sell them.",
+      "days": [
+        {
+          "number": 1,
+          "title": "What businesses will pay for",
+          "summary": "Automation that saves time or makes money is sellable. Understand which category your skills fit.",
+          "items": [
+            { "kind": "reading", "title": "How to price your services", "url": "https://doubleyourfreelancing.com/rate/", "why": "Read the whole thing. The value-based pricing section is especially important." },
+            { "kind": "reflection", "title": "Your sellable automations", "body": "List 5 automations you can now build (from your project work in this course).\nFor each, estimate:\n1. How many hours per week does it save a business?\n2. What is that time worth in money?\n3. What would you charge to build it once?\n4. What would you charge as a monthly maintenance fee?" }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Your automation portfolio",
+          "summary": "You need proof. Three solid projects beat a beautiful CV.",
+          "items": [
+            { "kind": "exercise", "title": "Build your portfolio page", "body": "Create a simple portfolio — a single GitHub README or a free Notion page with:\n\n1. WHO YOU ARE (2 sentences)\n2. WHAT YOU BUILD (AI automations, Python pipelines, n8n workflows)\n3. THREE PROJECTS with:\n   - What it does\n   - What technologies it uses\n   - The measurable result (saves X hours, processes Y documents/day)\n4. CONTACT\n\nUse projects from this course. If you do not have 3 yet, finish them this week." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Upwork profile and first proposals",
+          "summary": "A good profile gets views. A good proposal gets replies.",
+          "items": [
+            { "kind": "exercise", "title": "Write your Upwork profile', \"body\": \"Create or update your Upwork profile:\\n\\nTITLE: 'AI Automation Engineer — Python, n8n, LangChain'\\n\\nOVERVIEW (first 3 lines matter most — these show in search):\\n'I build automations that save businesses 10–40 hours per week. From email triage bots to document processing pipelines to AI agents, I turn repetitive work into automated workflows using Python, OpenAI, LangChain, and n8n.\\n\\nRecent builds:\\n• Email classification bot: processes 200+ emails/day, zero manual sorting\\n• PDF invoice extractor: 10 seconds per invoice vs 5 minutes manual\\n• Research agent: delivers 1-page summaries from 10 web sources in 60 seconds\\n\\nHiring me = more time for your team to do work that actually matters.'\\n\\nSPECIALTIES: Python, OpenAI API, LangChain, n8n, web scraping, document processing, workflow automation", "body": "Create or update your Upwork profile:\n\nTITLE: 'AI Automation Engineer — Python, n8n, LangChain'\n\nOVERVIEW:\n'I build automations that save businesses 10–40 hours per week. From email triage bots to document processing pipelines to AI agents, I turn repetitive work into automated workflows using Python, OpenAI, LangChain, and n8n.'\n\nRecent builds:\n• Email classification bot: processes 200+ emails/day\n• PDF invoice extractor: 10 seconds per invoice vs 5 minutes manual\n• Research agent: 10 web sources → 1-page summary in 60 seconds\n\nSend 3 proposals this week. Focus on jobs that match things you have already built." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Discovery calls and scoping projects",
+          "summary": "How to turn an inquiry into a paid project.",
+          "items": [
+            { "kind": "exercise", "title": "Prepare your discovery call script", "body": "Write a short script for your first call with a potential client:\n\n1. UNDERSTAND THE PROBLEM (10 min)\n   'Walk me through the task as it works today.'\n   'How long does it take? How often?'\n   'What would you do with the time if it was automated?'\n\n2. ASSESS FEASIBILITY (5 min)\n   'What systems does this touch? (email, spreadsheet, website, software?)'\n   'Do those systems have APIs or can we access them via browser?'\n\n3. SCOPE THE PROJECT (5 min)\n   'I can build V1 that handles the 80% common case. We can add edge cases in V2.'\n   'Timeline: roughly X weeks. Price: $Y.'\n\n4. NEXT STEPS\n   'I will send a 1-page scope document by tomorrow. If it looks right, we start.'" }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Productise — turn one project into a product",
+          "summary": "The fastest way to scale: sell the same automation to many clients.",
+          "items": [
+            { "kind": "reflection", "title": "Your micro-SaaS idea", "body": "Look at your best automation from this course. Ask:\n1. Would OTHER businesses in the same industry need this?\n2. Can I make it configurable with a simple settings file or form?\n3. Can I charge $50–200/month for ongoing access?\n\nIf yes to all three — you have a micro-SaaS idea.\n\nWrite a one-paragraph pitch:\n'[NAME] helps [WHO] automatically [WHAT] so they can [BENEFIT]. It costs $[X]/month. It takes [Y] minutes to set up.'\n\nThis becomes your focus in Week 20." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "title": "Client project — build a real automation",
+      "phase": "Production & Business",
+      "commitment_hours": "10–15",
+      "resources": [
+        { "label": "All previous weeks", "url": "#", "note": "This week is synthesis — use everything" }
+      ],
+      "context": "This is your most important week. You will build one complete, production-quality automation for a real or realistic client scenario. This is your portfolio centrepiece.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Choose your project",
+          "summary": "Pick one of these three options — or bring your own.",
+          "items": [
+            { "kind": "exercise", "title": "Select your capstone project", "body": "Choose ONE:\n\nOPTION A — LEAD QUALIFICATION BOT\nTrigger: new form submission (webhook)\nProcess: AI reads the submission, scores the lead 1-10, drafts a personalised reply\nOutput: email reply sent + row added to Google Sheets CRM\n\nOPTION B — DAILY INTELLIGENCE BRIEF\nTrigger: every morning at 7am (cron)\nProcess: scrape 5 news sources, extract relevant articles, AI summarises, translates if needed\nOutput: formatted email brief delivered to your inbox\n\nOPTION C — INVOICE PROCESSING PIPELINE\nTrigger: new PDF in a watched folder\nProcess: extract invoice data with AI, validate totals, flag anomalies\nOutput: row added to accounting spreadsheet + alert email for anomalies\n\nWrite your choice and a 5-step plan before writing any code." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Build — day 1",
+          "summary": "Set up the project structure and implement the trigger and data ingestion.",
+          "items": [
+            { "kind": "exercise", "title": "Trigger + data in", "body": "STEPS:\n1. Create the project folder with proper structure (see Week 16, Day 1)\n2. Implement the trigger (webhook / cron / file watcher)\n3. Implement the data ingestion (parse the incoming data)\n4. Log the raw input\n5. Test the trigger fires and the data arrives correctly\n\nDo not touch the AI step until the data pipeline works." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Build — day 2",
+          "summary": "Implement the AI processing step.",
+          "items": [
+            { "kind": "exercise", "title": "AI step", "body": "STEPS:\n1. Design the prompt (use the Week 5 patterns: system prompt, few-shot, JSON output)\n2. Test the prompt in the OpenAI Playground first\n3. Implement the API call with retry logic (Week 5, Day 5)\n4. Validate the output — what if GPT returns unexpected JSON?\n5. Log both the input and the AI output\n\nTest with at least 5 different real inputs." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Build — day 3",
+          "summary": "Implement the output step and end-to-end test.",
+          "items": [
+            { "kind": "exercise", "title": "Output + end-to-end test", "body": "STEPS:\n1. Implement the output step (email, spreadsheet, file, WhatsApp)\n2. Run the pipeline end-to-end with a real test input\n3. Fix whatever breaks\n4. Run it 5 more times with different inputs\n5. Add error handling for each step that can fail\n\nBy end of today: one clean end-to-end run with no manual steps." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Deploy and document",
+          "summary": "Put it on a server. Write the README.",
+          "items": [
+            { "kind": "exercise", "title": "Ship it", "body": "STEPS:\n1. Deploy to Railway or Render (Week 16)\n2. Set up environment variables in the cloud\n3. Run one full test from the cloud — not your laptop\n4. Write a README:\n   - What it does (one sentence)\n   - How to set it up (step by step)\n   - Environment variables needed\n   - How to trigger it manually\n   - Known limitations\n5. Take a screenshot of it running in production\n\nThis is your portfolio piece. Link it in your portfolio page from Week 18." }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "title": "Portfolio and what's next",
+      "phase": "Production & Business",
+      "commitment_hours": "5–7",
+      "resources": [
+        { "label": "GitHub — showcase your projects", "url": "https://github.com", "note": "Polish your repos this week" },
+        { "label": "Product Hunt — launch your micro-SaaS", "url": "https://www.producthunt.com", "note": "For when you're ready to go public" },
+        { "label": "Anthropic API docs", "url": "https://docs.anthropic.com", "note": "What's next: Claude, computer use, extended thinking" }
+      ],
+      "context": "You have built real automations. This final week you package everything into a portfolio, reflect on what you have learned, and map out where to go next.",
+      "days": [
+        {
+          "number": 1,
+          "title": "Polish your GitHub",
+          "summary": "Clean repos are the difference between a client replying and ignoring you.",
+          "items": [
+            { "kind": "exercise", "title": "GitHub cleanup", "body": "For each project from this course:\n\n1. README.md must have:\n   - A one-line description\n   - A screenshot or GIF of it working\n   - Installation steps\n   - Usage example\n   - Technologies used\n\n2. Code must have:\n   - No print() where logger.info() should be\n   - No hardcoded API keys\n   - No dead code (commented-out blocks)\n   - A proper .gitignore\n\n3. Pin your 3 best repos on your GitHub profile page." }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Write 3 case studies",
+          "summary": "A case study turns a project into a sales document.",
+          "items": [
+            { "kind": "exercise", "title": "Case study template", "body": "For your 3 best projects, write a short case study using this template:\n\nTITLE: [What it does in 6 words or less]\n\nTHE PROBLEM:\n[What was being done manually? How long did it take?]\n\nTHE SOLUTION:\n[What you built. Technologies used. How it works at a high level.]\n\nTHE RESULT:\n[Time saved per day/week. Cost saved. Error rate reduced. Be specific with numbers.]\n\nTECH STACK:\n[Python + OpenAI + LangChain + Railway, etc.]\n\nPost these on your portfolio page, LinkedIn, and GitHub." }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Reflect on the 20 weeks",
+          "summary": "What changed? What do you know now that you did not know before?",
+          "items": [
+            { "kind": "reflection", "title": "Week 1 vs Week 20', \"body\": \"Go back to your Week 1 Day 1 reflection (the three sentences you wrote in notes.txt).\\n\\nNow write:\\n1. How has your understanding of LLMs changed?\\n2. What is the most valuable thing you built?\\n3. What was the hardest moment? What got you through it?\\n4. What tool do you wish you had spent more time on?\\n5. What are you going to build next?\\n\\nThis reflection is for you — no one else will read it.", "body": "Go back to your Week 1 Day 1 reflection (the three sentences you wrote in notes.txt).\n\nNow write:\n1. How has your understanding of AI changed?\n2. What is the most valuable thing you built?\n3. What was the hardest moment? What got you through it?\n4. What tool do you wish you had spent more time on?\n5. What are you going to build next?\n\nThis reflection is for you." }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Your 30-day plan",
+          "summary": "The momentum from this course is real. Do not let it die.",
+          "items": [
+            { "kind": "exercise", "title": "Write your 30-day plan", "body": "Choose ONE of these paths and write 30 specific days:\n\nPATH A — FREELANCER\nWeek 1: Send 20 Upwork proposals\nWeek 2: Land first paid call\nWeek 3: Deliver first paid project\nWeek 4: Get testimonial, raise rate\n\nPATH B — PRODUCT BUILDER\nWeek 1: Validate your micro-SaaS idea (5 customer conversations)\nWeek 2: Build MVP\nWeek 3: Get 3 beta users\nWeek 4: Launch on Product Hunt\n\nPATH C — EMPLOYMENT\nWeek 1: Apply to 10 automation/AI engineer roles\nWeek 2: Portfolio review + interview prep\nWeek 3-4: First round interviews\n\nWrite the specific DAILY actions, not just the weekly goals." }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "What to learn next",
+          "summary": "You are not done — you are just getting started.",
+          "items": [
+            { "kind": "reading", "title": "What to explore next", "url": "https://docs.anthropic.com/en/docs/about-claude/models/overview", "why": "The frontier moves fast. These are the next areas to explore." },
+            { "kind": "reflection", "title": "Your next skill", "body": "From this list, pick ONE area to focus on in the next 3 months:\n\n1. MULTI-AGENT SYSTEMS — AutoGen, CrewAI, multiple AI agents working together\n2. FINE-TUNING — train a custom model on your own data\n3. COMPUTER USE — Claude/GPT controlling a full computer desktop\n4. VOICE AGENTS — AI that speaks and listens (ElevenLabs, Whisper, Twilio Voice)\n5. VISION PIPELINES — extract data from images and video\n6. VECTOR DATABASES — Pinecone, Weaviate, Qdrant for large-scale RAG\n\nWrite: which one, and why. That is your next roadmap.\n\nYou have gone from zero to building production AI automations in 20 weeks. The rest is practice." }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+
+

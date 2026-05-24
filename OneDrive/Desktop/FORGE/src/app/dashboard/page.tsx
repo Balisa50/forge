@@ -110,10 +110,15 @@ export default async function DashboardPage() {
   // your weeks". Auto-close any task whose deadline has passed since last load.
   const mentorLinks = await prisma.mentorLink.findMany({
     where: { menteeId: userId, isActive: true },
-    include: { mentor: { select: { id: true, name: true } } },
+    include: { mentor: { select: { id: true, name: true, mentorDisplayName: true } } },
   });
   const hasMentor = mentorLinks.length > 0;
-  const primaryMentor = mentorLinks[0]?.mentor ?? null;
+  // Mentees see the mentor's persona name (mentorDisplayName) if set, never
+  // the real account name - keeps personal channels separate from FORGE.
+  const rawMentor = mentorLinks[0]?.mentor ?? null;
+  const primaryMentor = rawMentor
+    ? { id: rawMentor.id, name: rawMentor.mentorDisplayName ?? rawMentor.name }
+    : null;
 
   if (hasMentor && activeRoadmap) {
     const now = new Date();

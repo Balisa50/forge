@@ -8,7 +8,7 @@
  * When you add a new roadmap JSON, add a matching entry here too.
  */
 
-import { Bot, BrainCircuit, Globe, Smartphone, Cloud, Shield, FlaskConical, TrendingUp, PieChart, type LucideIcon } from "lucide-react";
+import { Bot, BrainCircuit, Globe, Smartphone, Cloud, Shield, FlaskConical, TrendingUp, PieChart, Workflow, type LucideIcon } from "lucide-react";
 
 export interface CuratedRoadmapPickerEntry {
   slug: string;
@@ -121,5 +121,16 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
     Icon: PieChart,
     accent: "#fb923c",
     gradient: "from-amber-500 via-orange-500 to-rose-600",
+  },
+  {
+    slug: "ai-automation",
+    title: "AI Automation",
+    tagline: "Build the workflows that run businesses without human hands",
+    outcome: "Ship 3 production automations with Make and n8n that include real AI: clients pay you, workflows run 24/7",
+    weeks: 20,
+    phases: 6,
+    Icon: Workflow,
+    accent: "#a3e635",
+    gradient: "from-lime-400 via-green-500 to-emerald-600",
   },
 ];

@@ -12,7 +12,7 @@ export default async function SettingsPage() {
       id: true, name: true, email: true, timezone: true, tier: true,
       integrityScore: true, createdAt: true,
       bio: true, github: true, linkedin: true, isPublic: true,
-      role: true, isAlsoLearning: true,
+      role: true, isAlsoLearning: true, mentorDisplayName: true,
     },
   });
 

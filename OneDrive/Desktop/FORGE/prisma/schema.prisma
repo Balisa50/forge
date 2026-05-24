@@ -108,6 +108,11 @@ model User {
   resourcesReceived MentorResource[] @relation("MentorResourceMentee")
   aiMentorInteractions AIMentorInteraction[]
   forgePact         ForgePact?
+  /// The name MENTEES see for this mentor everywhere in-app (dashboard,
+  /// suspension letter, notes). Lets a mentor mentor under a persona so
+  /// mentees use in-app messaging instead of personal channels. Falls
+  /// back to `name` when null.
+  mentorDisplayName String?
   mentorInvites     MentorInvite[]   @relation("MentorInviteMentor")
   mentorQuestions   MentorQuestion[] @relation("MentorQuestionMentor")
   certificates      Certificate[]
@@ -434,6 +439,10 @@ model MentorLink {
   /// who set it is the only one who can lift it (set bannedAt back to null).
   bannedAt   DateTime?
   banReason  String?
+  /// One-time appeal message the suspended mentee can send. Null = no appeal
+  /// sent yet. Once set it cannot be overwritten — the mentee gets one shot.
+  banAppeal   String?
+  banAppealAt DateTime?
   createdAt DateTime @default(now())
 
   mentor    User          @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)
@@ -621,4 +630,30 @@ model PodMember {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([podId, userId])
+}
+
+/// A learning application. Someone interested in FORGE applies via the public
+/// /apply page; a mentor reviews it and either approves (which generates a
+/// name-locked MentorInvite code for them) or rejects it. The act of applying
+/// is itself the first commitment - selectivity is on-brand for FORGE.
+model MentorApplication {
+  id             String    @id @default(cuid())
+  applicantName  String
+  applicantEmail String
+  /// Curated roadmap slug they want to learn (nullable - undecided is allowed).
+  trackSlug      String?
+  /// Why they want this - their motivation, in their own words.
+  motivation     String
+  /// How much time per week they can commit.
+  commitment     String?
+  /// "pending" | "approved" | "rejected"
+  status         String    @default("pending")
+  /// Mentor user id who reviewed it.
+  reviewedById   String?
+  /// The MentorInvite code generated when approved - the mentor hands this over.
+  inviteCode     String?
+  createdAt      DateTime  @default(now())
+  reviewedAt     DateTime?
+
+  @@index([status, createdAt])
 }
