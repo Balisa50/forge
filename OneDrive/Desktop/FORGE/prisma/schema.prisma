@@ -118,6 +118,7 @@ model User {
   certificates      Certificate[]
   cohortEnrollments CohortEnrollment[]
   podMemberships    PodMember[]
+  notifications     Notification[]
 }
 
 model Account {
@@ -568,6 +569,24 @@ model MentorInvite {
   mentor      User      @relation("MentorInviteMentor", fields: [mentorId], references: [id], onDelete: Cascade)
 
   @@index([mentorId, isActive])
+}
+
+/// In-app notification. Created whenever a significant event happens
+/// (week released, message sent, etc.). Shown in the nav bell.
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  kind      String
+  title     String
+  body      String?
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, readAt])
 }
 
 /// An extra resource a mentor grants to one mentee for a specific task.

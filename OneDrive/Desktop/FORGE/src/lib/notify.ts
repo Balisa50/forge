@@ -29,8 +29,6 @@ interface Args {
 
 export async function sendNotification(kind: NotificationKind, args: Args): Promise<void> {
   try {
-    if (!process.env.RESEND_API_KEY) return;
-
     const [recipient, actor] = await Promise.all([
       prisma.user.findUnique({
         where: { id: args.recipientId },
@@ -38,20 +36,33 @@ export async function sendNotification(kind: NotificationKind, args: Args): Prom
       }),
       prisma.user.findUnique({
         where: { id: args.actorId },
-        select: { name: true },
+        select: { name: true, mentorDisplayName: true },
       }),
     ]);
 
     if (!recipient || recipient.isGuest) return;
+
+    const actorName = actor?.mentorDisplayName ?? actor?.name ?? "Your mentor";
+    const taskTitle = args.taskTitle ?? "your roadmap";
+    const { subject, body } = renderTemplate(kind, { actorName, taskTitle, ...args.payload });
+    const href = resolveHref(kind);
+
+    // ── Always create in-app notification ─────────────────────────
+    await prisma.notification.create({
+      data: {
+        userId: args.recipientId,
+        kind,
+        title: subject,
+        body: typeof args.payload?.body === "string" ? args.payload.body.slice(0, 300) : undefined,
+        href,
+      },
+    });
+
+    // ── Email — only if domain is configured (no-op without one) ──
+    if (!process.env.RESEND_API_KEY) return;
     if (!recipient.email || recipient.email.endsWith("@forge.guest")) return;
 
-    const actorName = actor?.name ?? "Your partner on the FORGE";
-    const taskTitle = args.taskTitle ?? "your roadmap";
-
-    const { subject, body } = renderTemplate(kind, { actorName, taskTitle, ...args.payload });
-    const link = `${BASE_URL}/dashboard/notes`;
-
-    // Lazy import — only fires when we actually intend to send.
+    const link = `${BASE_URL}${href}`;
     const { Resend } = await import("resend");
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
@@ -61,8 +72,20 @@ export async function sendNotification(kind: NotificationKind, args: Args): Prom
       html: wrapHtml(body + `<p style="margin-top:24px"><a href="${link}" style="background:#f59e0b;color:#000;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600">Open in The Forge</a></p>`),
     });
   } catch (err) {
-    // Don't surface notification failures to the caller.
     console.warn("[notify] failed:", err instanceof Error ? err.message : err);
+  }
+}
+
+function resolveHref(kind: NotificationKind): string {
+  switch (kind) {
+    case "mentor-left-note":
+    case "mentee-replied":
+      return "/dashboard/notes";
+    case "mentee-requested-unlock":
+      return "/dashboard/mentor";
+    case "mentor-action":
+    default:
+      return "/dashboard";
   }
 }
 

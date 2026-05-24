@@ -28,6 +28,7 @@ import {
   X,
   Award,
 } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 
 import type { VisibilityMap } from "@/lib/visibility";
 import { DEFAULT_VISIBILITY } from "@/lib/visibility";
@@ -221,6 +222,9 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
 
       {/* User + Role + Sign Out */}
       <div style={{ padding: "1.25rem 1.5rem 0", borderTop: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
+          <NotificationBell />
+        </div>
         <div style={{ marginBottom: "0.75rem" }}>
           <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.875rem", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {user.name}
@@ -292,9 +296,10 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
         >
           <Menu size={22} />
         </button>
-        <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em" }}>
+        <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em", flex: 1 }}>
           THE FORGE
         </span>
+        <NotificationBell />
       </div>
 
       {/* Mobile overlay */}
