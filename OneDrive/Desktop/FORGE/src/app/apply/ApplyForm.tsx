@@ -75,8 +75,11 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
           <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2rem", letterSpacing: "0.04em", marginBottom: "0.75rem" }}>
             Application received.
           </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.7 }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.7, marginBottom: "0.75rem" }}>
             {mentorName ? `${mentorName} will` : "A mentor will"} review it and reach out by email if you are accepted.
+          </p>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.875rem", lineHeight: 1.65 }}>
+            If accepted, you will receive an <strong style={{ color: "var(--accent)" }}>invite code</strong> by email. That is your key in.
           </p>
         </div>
       </main>
@@ -87,10 +90,10 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
 
   /* ── FORM ──────────────────────────────────────────────────────── */
   return (
-    <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)", display: "flex", flexDirection: "column", alignItems: "center", padding: "4rem 1.25rem 6rem" }}>
+    <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
 
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: "3rem", maxWidth: 520 }}>
+      {/* HERO */}
+      <div style={{ borderBottom: "1px solid var(--border)", padding: "4rem 1.25rem 3rem", textAlign: "center", background: "radial-gradient(ellipse 70% 40% at 50% 0%, rgba(245,158,11,0.07) 0%, transparent 100%)" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 999, padding: "0.25rem 0.75rem", marginBottom: "1.25rem" }}>
           <Flame size={11} color="var(--accent)" />
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--accent)" }}>
@@ -98,149 +101,180 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
           </span>
         </div>
 
-        <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(2.25rem, 5vw, 3.5rem)", letterSpacing: "0.04em", lineHeight: 1.05, marginBottom: "1rem" }}>
+        <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(2.5rem, 6vw, 4rem)", letterSpacing: "0.04em", lineHeight: 1.05, marginBottom: "1.25rem" }}>
           {mentorName ? (
-            <>Apply to train with <span style={{ color: "var(--accent)" }}>{mentorName}.</span></>
+            <>Apply to train<br />with <span style={{ color: "var(--accent)" }}>{mentorName}.</span></>
           ) : (
-            <>Apply to be <span style={{ color: "var(--accent)" }}>Forged.</span></>
+            <>Apply to be<br /><span style={{ color: "var(--accent)" }}>Forged.</span></>
           )}
         </h1>
 
-        <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.65 }}>
-          A mentor. A roadmap. Real accountability.
+        <p style={{ color: "var(--text-secondary)", fontSize: "clamp(1rem, 2vw, 1.125rem)", lineHeight: 1.7, maxWidth: 520, margin: "0 auto" }}>
+          FORGE is not a course. It is a commitment — between you and a mentor who will push you, check your work, and hold the standard.
         </p>
       </div>
 
-      {/* Form */}
-      <div style={{ width: "100%", maxWidth: 580 }} className="flex flex-col gap-5">
-
-        {/* Name + Email */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-          <div>
-            <label style={label}>Full name</label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="forge-input"
-              placeholder="Your name"
-            />
-          </div>
-          <div>
-            <label style={label}>Email</label>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="forge-input"
-              placeholder="you@email.com"
-              style={{ fontFamily: "var(--font-mono)" }}
-            />
-          </div>
+      {/* WHAT YOU GET — plain text, no cards */}
+      <div style={{ padding: "2.5rem 1.25rem", borderBottom: "1px solid var(--border)", maxWidth: 620, margin: "0 auto" }}>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "1.25rem" }}>
+          What you are signing up for
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {[
+            ["Real accountability", "Your mentor checks your work and tracks your progress. No ghost mentors."],
+            ["A structured path", "A roadmap built for your goal, released week by week. You cannot skip ahead."],
+            ["High standards", "Every check-in is reviewed. Weeks unlock only when the previous one is done."],
+            ["Invite only", "Applications are reviewed by a real person. Not everyone gets in."],
+          ].map(([title, body]) => (
+            <p key={title} style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.65 }}>
+              <strong style={{ color: "var(--text-primary)" }}>{title}. </strong>{body}
+            </p>
+          ))}
         </div>
+      </div>
 
-        {/* Track */}
-        <div>
-          <label style={label}>Path</label>
-          <select
-            value={trackSlug}
-            onChange={(e) => setTrackSlug(e.target.value)}
-            className="forge-input"
-            style={{ appearance: "none" }}
-          >
-            <option value="">Not sure yet</option>
-            {CURATED_ROADMAPS.map((r) => (
-              <option key={r.slug} value={r.slug}>{r.title}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Background */}
-        <div>
-          <label style={label}>Where you are now</label>
-          <textarea
-            value={background}
-            onChange={(e) => setBackground(e.target.value)}
-            rows={3}
-            className="forge-input"
-            placeholder="What you have tried. What you have built. Be honest."
-            style={{ resize: "vertical", lineHeight: 1.65 }}
-          />
-        </div>
-
-        {/* Motivation */}
-        <div>
-          <label style={label}>
-            Why do you want this?{" "}
-            <span style={{ textTransform: "none", letterSpacing: 0, color: motivationOk ? "var(--green)" : charCount > 0 ? "var(--red)" : "var(--text-dim)", fontSize: "0.625rem" }}>
-              {charCount} / 80
-            </span>
-          </label>
-          <textarea
-            value={motivation}
-            onChange={(e) => setMotivation(e.target.value)}
-            rows={5}
-            className="forge-input"
-            placeholder="The real reason. Vague answers get rejected."
-            style={{
-              resize: "vertical",
-              lineHeight: 1.65,
-              borderColor: charCount > 0 && !motivationOk ? "rgba(239,68,68,0.4)" : undefined,
-            }}
-          />
-        </div>
-
-        {/* Commitment */}
-        <div>
-          <label style={label}>
-            Weekly hours{" "}
-            <span style={{ textTransform: "none", letterSpacing: 0, fontSize: "0.625rem" }}>(optional)</span>
-          </label>
-          <input
-            value={commitment}
-            onChange={(e) => setCommitment(e.target.value)}
-            className="forge-input"
-            placeholder="e.g. 10 hrs, evenings and weekends"
-          />
-        </div>
-
-        {error && (
-          <div style={{ padding: "0.75rem 1rem", borderRadius: 8, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", color: "var(--red)", fontSize: "0.875rem" }}>
-            {error}
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={submit}
-          disabled={!ready || submitting}
-          className="forge-btn forge-btn-primary"
-          style={{
-            width: "100%",
-            padding: "0.9rem 1.5rem",
-            fontSize: "0.9375rem",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            opacity: ready ? 1 : 0.4,
-          }}
-        >
-          {submitting ? <Loader2 size={16} className="animate-spin" /> : <Flame size={16} />}
-          {submitting ? "Submitting..." : "Submit application"}
-        </button>
-
-        <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "-0.5rem" }}>
-          You will hear back by email.
+      {/* FORM */}
+      <div style={{ padding: "3rem 1.25rem 5rem", maxWidth: 620, margin: "0 auto" }}>
+        <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", letterSpacing: "0.03em", marginBottom: "0.5rem" }}>
+          Your application
+        </h2>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "2rem" }}>
+          A real person will read every word. Write like you mean it.
         </p>
 
-        <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.25rem", textAlign: "center" }}>
-          <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem" }}>
-            Already have an invite code?{" "}
-            <Link href="/register" style={{ color: "var(--accent)", fontWeight: 600 }}>
-              Register here →
-            </Link>
-          </p>
-        </div>
+        <div className="flex flex-col gap-5">
 
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div>
+              <label style={label}>Full name</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="forge-input"
+                placeholder="Your name"
+              />
+            </div>
+            <div>
+              <label style={label}>Email</label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="forge-input"
+                placeholder="you@email.com"
+                style={{ fontFamily: "var(--font-mono)" }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={label}>Path</label>
+            <select
+              value={trackSlug}
+              onChange={(e) => setTrackSlug(e.target.value)}
+              className="forge-input"
+              style={{ appearance: "none" }}
+            >
+              <option value="">Not sure yet — help me choose</option>
+              {CURATED_ROADMAPS.map((r) => (
+                <option key={r.slug} value={r.slug}>{r.title}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={label}>Your background</label>
+            <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "0.5rem", lineHeight: 1.5 }}>
+              Where you are now. What you have tried. What you have built, if anything.
+            </p>
+            <textarea
+              value={background}
+              onChange={(e) => setBackground(e.target.value)}
+              rows={3}
+              className="forge-input"
+              placeholder="Be honest — there is no wrong answer."
+              style={{ resize: "vertical", lineHeight: 1.65 }}
+            />
+          </div>
+
+          <div>
+            <label style={label}>
+              Why do you want this?{" "}
+              <span style={{ textTransform: "none", letterSpacing: 0, color: motivationOk ? "var(--green)" : charCount > 0 ? "var(--red)" : "var(--text-dim)", fontSize: "0.625rem" }}>
+                {charCount} / 80 min
+              </span>
+            </label>
+            <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "0.5rem", lineHeight: 1.5 }}>
+              The real reason. What does getting this right actually mean for your life?
+            </p>
+            <textarea
+              value={motivation}
+              onChange={(e) => setMotivation(e.target.value)}
+              rows={5}
+              className="forge-input"
+              placeholder="Vague answers get rejected."
+              style={{
+                resize: "vertical",
+                lineHeight: 1.65,
+                borderColor: charCount > 0 && !motivationOk ? "rgba(239,68,68,0.4)" : undefined,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={label}>
+              Weekly commitment{" "}
+              <span style={{ textTransform: "none", letterSpacing: 0, fontSize: "0.625rem" }}>(optional)</span>
+            </label>
+            <input
+              value={commitment}
+              onChange={(e) => setCommitment(e.target.value)}
+              className="forge-input"
+              placeholder="e.g. 10 hours, evenings and weekends"
+            />
+          </div>
+
+          {error && (
+            <div style={{ padding: "0.75rem 1rem", borderRadius: 8, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", color: "var(--red)", fontSize: "0.875rem" }}>
+              {error}
+            </div>
+          )}
+
+          <div>
+            <button
+              type="button"
+              onClick={submit}
+              disabled={!ready || submitting}
+              className="forge-btn forge-btn-primary"
+              style={{
+                width: "100%",
+                padding: "1rem 1.5rem",
+                fontSize: "1rem",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                opacity: ready ? 1 : 0.4,
+                letterSpacing: "0.03em",
+              }}
+            >
+              {submitting ? <Loader2 size={17} className="animate-spin" /> : <Flame size={17} />}
+              {submitting ? "Submitting..." : "Submit my application"}
+            </button>
+            <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "1rem" }}>
+              You will hear back by email.
+            </p>
+          </div>
+
+          <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.25rem", textAlign: "center" }}>
+            <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem" }}>
+              Already have an invite code?{" "}
+              <Link href="/register" style={{ color: "var(--accent)", fontWeight: 600 }}>
+                Register here →
+              </Link>
+            </p>
+          </div>
+
+        </div>
       </div>
     </main>
   );
