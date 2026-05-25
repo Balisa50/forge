@@ -276,16 +276,16 @@
         "A README listing the three findings"
       ],
       "mastery_questions": [
-        "Hunt for the busiest hour: what is the peak hour for taxi pickups in October 2023? Paste the hour and the trip count.",
-        "Tip behavior: what is the median tip percentage on trips over 5 miles vs under 1 mile? Paste both. Which is higher?",
-        "Find the priciest day: what day of week has the highest AVERAGE fare? Paste the day and the average.",
-        "Outlier hunt: find ONE trip that is clearly an outlier (very long, very expensive, or both). Paste the row.",
-        "Borough check: does the busy hour change by pickup borough? Paste the busy hour per borough.",
-        "Plot trip_minutes distribution. Describe the shape in 1 sentence (skewed left? right? bimodal?).",
-        "Build a NEW chart not in the spec: trips by month-of-day weekday vs weekend. Paste the PNG URL.",
-        "Speed test: how many trips were faster than 5 minutes? How many longer than 1 hour? Paste both counts.",
-        "Money question: what is total revenue (sum of total_amount) for the month? Paste the dollar figure.",
-        "Push the notebook + 3 charts + README to taxipulse-nyc. Paste the GitHub URL."
+        "Proof you're running: open a new notebook cell and run `import pandas as pd; print(pd.__version__)`. Paste the version number you see.",
+        "Load the data: run `df = pd.read_csv('your-file.csv')` then `df.shape`. Paste the result — how many rows and columns does the raw dataset have?",
+        "First look: run `df.dtypes`. Which column holds the pickup timestamp? What data type is it?",
+        "Null check: run `df.isnull().sum()`. Which column has the most missing values and how many?",
+        "After cleaning (dropping rows where fare_amount ≤ 0, trip_distance ≤ 0, or passenger_count ≤ 0), how many rows remain? Paste the number.",
+        "What is the average trip distance in the cleaned dataset? Run `df['trip_distance'].mean()` and paste the result rounded to 2 decimal places.",
+        "Hunt for the busiest hour: group by pickup hour and count trips. What is the peak hour and how many trips happened in it?",
+        "Tipping: what is the median tip percentage on trips over 5 miles vs under 1 mile? Paste both numbers. Which is higher?",
+        "Priciest day: which day of the week has the highest average fare_amount? Paste the day name and the average.",
+        "Push your finished notebook + 3 chart PNGs + README to taxipulse-nyc. Paste the GitHub repo URL."
       ],
       "ai_assist": "Paste any pandas error into Claude with the surrounding code - you'll get the fix faster than Googling. Ask it to explain a method you don't recognize (like .resample('H')). Use it to draft your README opening paragraph."
     },

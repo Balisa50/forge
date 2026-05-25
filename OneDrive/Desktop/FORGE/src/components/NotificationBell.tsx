@@ -14,7 +14,7 @@ interface Notif {
   createdAt: string;
 }
 
-export default function NotificationBell() {
+export default function NotificationBell({ align = "right" }: { align?: "left" | "right" }) {
   const router = useRouter();
   const [notifs, setNotifs]   = useState<Notif[]>([]);
   const [unread, setUnread]   = useState(0);
@@ -115,7 +115,7 @@ export default function NotificationBell() {
         <div style={{
           position: "absolute",
           top: "calc(100% + 0.5rem)",
-          right: 0,
+          ...(align === "left" ? { left: 0 } : { right: 0 }),
           width: 320,
           maxHeight: 420,
           overflowY: "auto",
