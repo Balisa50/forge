@@ -19,6 +19,7 @@ import {
   UserPlus,
   GraduationCap,
   User as UserIcon,
+  Flame,
   Users,
   FolderOpen,
   Layers,
@@ -27,7 +28,6 @@ import {
   X,
   Award,
 } from "lucide-react";
-import Image from "next/image";
 import NotificationBell from "./NotificationBell";
 
 import type { VisibilityMap } from "@/lib/visibility";
@@ -156,27 +156,20 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
       {/* Logo */}
       <div style={{ padding: "0 1.5rem", marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link href="/dashboard" style={{ textDecoration: "none" }} onClick={closeMobile}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-            <div style={{
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              overflow: "hidden",
-              background: "#fff",
-              flexShrink: 0,
-            }}>
-              <Image src="/logo.png" alt="The Forge" width={36} height={36} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
-            </div>
-            <span style={{
+          <span
+            style={{
               fontFamily: "var(--font-headline)",
               color: "var(--accent)",
-              fontSize: "1.25rem",
+              fontSize: "1.375rem",
               fontWeight: 700,
-              letterSpacing: "0.08em",
-            }}>
-              THE FORGE
-            </span>
-          </div>
+              letterSpacing: "0.05em",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <Flame size={20} /> THE FORGE
+          </span>
         </Link>
         {/* Close button on mobile */}
         <button
@@ -303,14 +296,9 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
         >
           <Menu size={22} />
         </button>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: 1 }}>
-          <div style={{ width: 28, height: 28, borderRadius: "50%", overflow: "hidden", background: "#fff", flexShrink: 0 }}>
-            <Image src="/logo.png" alt="The Forge" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
-          </div>
-          <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em" }}>
-            THE FORGE
-          </span>
-        </div>
+        <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em", flex: 1 }}>
+          THE FORGE
+        </span>
         <NotificationBell />
       </div>
 
