@@ -13,27 +13,26 @@ export default function Loading() {
         zIndex: 9999,
       }}
     >
-      {/* Logo — SVG, no background box, glows naturally against dark */}
-      <div style={{ position: "relative", width: 148, height: 148 }}>
-        {/* Amber glow behind */}
+      <div style={{ position: "relative", width: 160, height: 160 }}>
+        {/* Amber glow behind logo */}
         <div style={{
           position: "absolute",
-          inset: -16,
+          inset: -20,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%)",
           animation: "forge-glow 2s ease-in-out infinite",
         }} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/icon.svg"
+          src="/logo.png"
           alt="The Forge"
           style={{
-            width: 148,
-            height: 148,
+            width: 160,
+            height: 160,
             display: "block",
             position: "relative",
             zIndex: 1,
-            borderRadius: 26,
+            objectFit: "contain",
           }}
         />
       </div>
