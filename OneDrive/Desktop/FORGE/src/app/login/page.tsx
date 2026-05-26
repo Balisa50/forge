@@ -31,8 +31,12 @@ export default function LoginPage() {
       if (result?.ok) {
         window.location.href = "/dashboard";
       } else {
-        setError("That Personal ID didn't match any mentee account. Check spelling, or use 'Forgot my code' below.");
+        setError("That Personal ID didn't match any account. Make sure you include the FORGE- prefix (example: FORGE-2K7R-SAW4). If you've lost your code, use 'Forgot my Personal ID' below.");
         setMenteeLoading(false);
+        // Scroll error into view on mobile so the mentee actually sees it
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }, 50);
       }
     } catch {
       setError("Couldn't sign you in. Try again.");
@@ -162,6 +166,12 @@ export default function LoginPage() {
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
         </div>
 
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginBottom: "0.5rem", lineHeight: 1.5 }}>
+          Type your full Personal ID, including the <strong style={{ color: "var(--accent)" }}>FORGE-</strong> prefix.
+          <br />
+          Example: <strong style={{ color: "var(--accent)" }}>FORGE-2K7R-SAW4</strong>
+        </p>
+
         <form onSubmit={handleMenteeReturn}>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <input
@@ -172,6 +182,8 @@ export default function LoginPage() {
               className="forge-input"
               style={{ flex: 1, fontFamily: "var(--font-mono)", letterSpacing: "0.08em", textTransform: "uppercase" }}
               autoComplete="off"
+              spellCheck={false}
+              autoCapitalize="characters"
             />
             <button
               type="submit"
