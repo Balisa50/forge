@@ -153,9 +153,9 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
 
   const navContent = (
     <>
-      {/* Logo */}
-      <div style={{ padding: "0 1.5rem", marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/dashboard" style={{ textDecoration: "none" }} onClick={closeMobile}>
+      {/* Logo + Bell (desktop) / Close (mobile) */}
+      <div style={{ padding: "0 1.5rem", marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+        <Link href="/dashboard" style={{ textDecoration: "none", flex: 1, minWidth: 0 }} onClick={closeMobile}>
           <span
             style={{
               fontFamily: "var(--font-headline)",
@@ -171,6 +171,12 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
             <Flame size={20} /> THE FORGE
           </span>
         </Link>
+        {/* Desktop-only bell — sits next to the logo so the panel can open
+            downward into the empty space below. Hidden on mobile because
+            the mobile top-bar already has its own bell. */}
+        <span className="nav-bell-desktop">
+          <NotificationBell align="left" direction="down" />
+        </span>
         {/* Close button on mobile */}
         <button
           onClick={closeMobile}
@@ -222,9 +228,6 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
 
       {/* User + Role + Sign Out */}
       <div style={{ padding: "1.25rem 1.5rem 0", borderTop: "1px solid var(--border)" }}>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
-          <NotificationBell align="left" direction="up" />
-        </div>
         <div style={{ marginBottom: "0.75rem" }}>
           <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.875rem", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {user.name}
@@ -339,10 +342,12 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
       </nav>
 
       <style>{`
+        .nav-bell-desktop { display: inline-flex; }
         @media (max-width: 768px) {
           .nav-hamburger-bar { display: flex !important; }
           .nav-overlay { display: block !important; }
           .nav-close-btn { display: block !important; }
+          .nav-bell-desktop { display: none !important; }
           .dashboard-sidebar {
             transform: translateX(-100%);
           }

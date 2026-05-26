@@ -124,7 +124,7 @@ export default function NotificationBell({
             ? { bottom: "calc(100% + 0.5rem)" }
             : { top: "calc(100% + 0.5rem)" }),
           ...(align === "left" ? { left: 0 } : { right: 0 }),
-          width: 320,
+          width: "min(320px, calc(100vw - 1.5rem))",
           maxHeight: 420,
           overflowY: "auto",
           background: "var(--bg-panel)",
