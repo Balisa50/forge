@@ -24,7 +24,12 @@ export async function GET() {
     orderBy: { completedAt: "desc" },
     include: {
       checkin: {
-        include: {
+        select: {
+          id: true,
+          description: true,
+          evidenceType: true,
+          evidenceUrl: true,
+          evidenceData: true,
           user: { select: { id: true, name: true, email: true } },
           task: { select: { id: true, title: true } },
         },

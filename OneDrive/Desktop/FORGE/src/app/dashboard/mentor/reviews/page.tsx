@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, XCircle, Loader2, ShieldCheck, Camera, AlertTriangle } from "lucide-react";
+import SubmissionViewer from "@/components/SubmissionViewer";
+import { type EvidenceData } from "@/lib/submission-types";
 
 interface TranscriptEntry {
   role: "assistant" | "user" | "proctor";
@@ -25,7 +27,9 @@ interface Review {
   completedAt: string | null;
   checkin: {
     description: string;
+    evidenceType: string;
     evidenceUrl: string | null;
+    evidenceData: EvidenceData | null;
     user: { id: string; name: string | null; email: string };
     task: { id: string; title: string };
   };
@@ -146,11 +150,11 @@ export default function MentorReviewsPage() {
           <div style={{ marginBottom: "1rem", padding: "0.75rem", background: "var(--bg-card)", borderRadius: 8 }}>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: "0.375rem" }}>What they built</p>
             <p style={{ fontSize: "0.875rem", whiteSpace: "pre-wrap" }}>{active.checkin.description}</p>
-            {active.checkin.evidenceUrl?.startsWith("http") && (
-              <a href={active.checkin.evidenceUrl} target="_blank" rel="noreferrer noopener" style={{ display: "inline-block", marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--blue)" }}>
-                {active.checkin.evidenceUrl}
-              </a>
-            )}
+            <SubmissionViewer
+              evidenceType={active.checkin.evidenceType}
+              evidenceUrl={active.checkin.evidenceUrl}
+              evidenceData={active.checkin.evidenceData}
+            />
           </div>
 
           {/* Camera snapshots */}
