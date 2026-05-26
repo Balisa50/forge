@@ -54,6 +54,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
   const [mentorDisplayName, setMentorDisplayName] = useState(user.mentorDisplayName ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [savedMentorName, setSavedMentorName] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [copiedProfile, setCopiedProfile] = useState(false);
   const [dialog, setDialog] = useState<DialogConfig | null>(null);
@@ -82,8 +83,10 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
         body: JSON.stringify({ name, timezone, bio, github, linkedin, isPublic, learningStyle, mentorDisplayName }),
       });
       if (res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSavedMentorName(typeof d?.mentorDisplayName === "string" ? d.mentorDisplayName : null);
         setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
+        setTimeout(() => { setSaved(false); setSavedMentorName(null); }, 6000);
       } else {
         const d = await res.json();
         setError(d.error ?? "Save failed.");
@@ -182,8 +185,19 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
             </div>
           )}
           {saved && (
-            <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid var(--green)", borderRadius: "6px", padding: "0.625rem 1rem", color: "var(--green)", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <CheckCircle2 size={14} /> Settings saved.
+            <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid var(--green)", borderRadius: "6px", padding: "0.625rem 1rem", color: "var(--green)", fontSize: "0.875rem", display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+              <CheckCircle2 size={14} style={{ marginTop: 2, flexShrink: 0 }} />
+              <span>
+                Settings saved.
+                {savedMentorName !== null && (
+                  <>
+                    {" "}
+                    {savedMentorName
+                      ? <>Your mentees will now see you as <strong>{savedMentorName}</strong>.</>
+                      : <>Your mentees will now see your real name.</>}
+                  </>
+                )}
+              </span>
             </div>
           )}
 
