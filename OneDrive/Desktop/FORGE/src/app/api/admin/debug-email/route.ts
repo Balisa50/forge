@@ -13,6 +13,7 @@
  * digging through Vercel logs.
  */
 import { NextRequest, NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 
@@ -49,14 +50,46 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // ── Gmail SMTP diagnostic (the channel notify.ts + /api/mentee/recovery use) ──
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailPass = process.env.GMAIL_APP_PASSWORD;
+  const gmailConfigured = !!gmailUser && !!gmailPass;
+  let gmailSendResult: unknown = "not attempted (vars missing)";
+  if (gmailConfigured) {
+    try {
+      const transport = nodemailer.createTransport({
+        service: "gmail",
+        auth: { user: gmailUser, pass: gmailPass },
+      });
+      const info = await transport.sendMail({
+        from: `The Forge <${gmailUser}>`,
+        replyTo: "theforgelearn@proton.me",
+        to: email,
+        subject: "FORGE Gmail SMTP diagnostic test",
+        html: "<p>If you see this, Gmail SMTP works. This is the channel that delivers Personal ID recovery + mentor notifications.</p>",
+      });
+      gmailSendResult = { accepted: info.accepted, rejected: info.rejected, messageId: info.messageId, response: info.response };
+    } catch (e) {
+      gmailSendResult = { error: e instanceof Error ? e.message : String(e) };
+    }
+  }
+
   return NextResponse.json({
     diagnostics: {
       userExists: !!user,
       user: user ?? null,
-      resendApiKeyConfigured: hasKey,
-      from,
-      replyTo,
-      testSendResult: sendResult,
+      resend: {
+        apiKeyConfigured: hasKey,
+        from,
+        replyTo,
+        testSendResult: sendResult,
+      },
+      gmail: {
+        userConfigured: !!gmailUser,
+        passwordConfigured: !!gmailPass,
+        userValue: gmailUser ? gmailUser.replace(/(.{2}).*(@.*)/, "$1***$2") : null,
+        testSendResult: gmailSendResult,
+      },
     },
   });
 }
