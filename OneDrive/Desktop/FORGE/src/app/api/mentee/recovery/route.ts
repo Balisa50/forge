@@ -11,6 +11,7 @@
  *    they submit. Returns just first-name to avoid leaking accounts.
  */
 import { NextRequest, NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 import { prisma } from "@/lib/prisma";
 
 /** Loose name-match used in invite redeem too. */
@@ -86,5 +87,54 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  // ── Notify the mentor: in-app bell + email ─────────────────────────
+  // We do this directly (instead of via sendNotification) so we can write
+  // a recovery-specific title/body and embed the actual personal ID for
+  // the mentor to forward to the mentee.
+  const notifTitle = `🔑 ${match.mentee.name} forgot their Personal ID`;
+  const notifBody = match.mentee.personalId
+    ? `Personal ID on file: ${match.mentee.personalId}. Send it to them privately.`
+    : `No Personal ID on file — you'll need to regenerate one for them.`;
+
+  try {
+    await prisma.notification.create({
+      data: {
+        userId: mentor.id,
+        kind: "mentee-requested-recovery",
+        title: notifTitle,
+        body: notifBody,
+        href: `/dashboard/mentor/${match.mentee.id}`,
+      },
+    });
+  } catch (e) {
+    console.warn("[recovery] notification create failed:", e instanceof Error ? e.message : e);
+  }
+
+  // Email the mentor — best effort, never blocks the response
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailPass = process.env.GMAIL_APP_PASSWORD;
+  if (gmailUser && gmailPass && mentor.email && !mentor.email.endsWith("@forge.guest") && !mentor.email.endsWith("@forge.local")) {
+    try {
+      const transport = nodemailer.createTransport({ service: "gmail", auth: { user: gmailUser, pass: gmailPass } });
+      const baseUrl = process.env.NEXTAUTH_URL ?? process.env.AUTH_URL ?? "https://forge-ab.vercel.app";
+      const link = `${baseUrl}/dashboard/mentor/${match.mentee.id}`;
+      await transport.sendMail({
+        from: `The Forge <${gmailUser}>`,
+        replyTo: "theforgelearn@proton.me",
+        to: mentor.email,
+        subject: notifTitle,
+        html: `<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#fafafa;padding:24px;color:#111"><div style="max-width:520px;margin:0 auto;background:#fff;padding:24px;border-radius:8px;border:1px solid #eaeaea"><p><strong>${escapeHtml(match.mentee.name ?? "Your mentee")}</strong> used the "Forgot my Personal ID" form on the login page.</p><p style="background:#fff7ed;border-left:3px solid #f59e0b;padding:12px 14px;border-radius:4px;margin:16px 0"><strong>Personal ID on file:</strong><br><code style="font-family:'SF Mono',Menlo,monospace;font-size:1.05em;color:#111">${escapeHtml(match.mentee.personalId ?? "(none — please regenerate)")}</code></p><p style="font-size:0.9em;color:#444">Send this to them through a private channel they trust — text, WhatsApp, in person. Don't post it publicly.</p><p style="margin-top:24px"><a href="${link}" style="background:#f59e0b;color:#000;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600">Open their dashboard</a></p></div></body></html>`,
+      });
+    } catch (e) {
+      console.warn("[recovery] mentor email send failed:", e instanceof Error ? e.message : e);
+    }
+  } else {
+    console.warn("[recovery] mentor email skipped — GMAIL_USER/GMAIL_APP_PASSWORD not set or mentor email is internal");
+  }
+
   return NextResponse.json({ success: true, mentorFirstName: mentor.name?.split(" ")[0] ?? null });
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

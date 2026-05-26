@@ -223,7 +223,7 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
       {/* User + Role + Sign Out */}
       <div style={{ padding: "1.25rem 1.5rem 0", borderTop: "1px solid var(--border)" }}>
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
-          <NotificationBell align="left" />
+          <NotificationBell align="left" direction="up" />
         </div>
         <div style={{ marginBottom: "0.75rem" }}>
           <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.875rem", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>

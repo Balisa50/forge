@@ -14,7 +14,13 @@ interface Notif {
   createdAt: string;
 }
 
-export default function NotificationBell({ align = "right" }: { align?: "left" | "right" }) {
+export default function NotificationBell({
+  align = "right",
+  direction = "down",
+}: {
+  align?: "left" | "right";
+  direction?: "up" | "down";
+}) {
   const router = useRouter();
   const [notifs, setNotifs]   = useState<Notif[]>([]);
   const [unread, setUnread]   = useState(0);
@@ -114,7 +120,9 @@ export default function NotificationBell({ align = "right" }: { align?: "left" |
       {open && (
         <div style={{
           position: "absolute",
-          top: "calc(100% + 0.5rem)",
+          ...(direction === "up"
+            ? { bottom: "calc(100% + 0.5rem)" }
+            : { top: "calc(100% + 0.5rem)" }),
           ...(align === "left" ? { left: 0 } : { right: 0 }),
           width: 320,
           maxHeight: 420,
@@ -122,7 +130,7 @@ export default function NotificationBell({ align = "right" }: { align?: "left" |
           background: "var(--bg-panel)",
           border: "1px solid var(--border)",
           borderRadius: 12,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+          boxShadow: direction === "up" ? "0 -8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.4)",
           zIndex: 9999,
         }}>
           {/* Header */}
