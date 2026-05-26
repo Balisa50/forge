@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus, Send, Inbox, ClipboardCheck } from "lucide-react";
 import MentorOnboardingCard from "@/components/MentorOnboardingCard";
+import AutoRefresh from "@/components/AutoRefresh";
+
+// Always render fresh — stats here drive operational decisions.
+export const dynamic = "force-dynamic";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -32,6 +36,7 @@ export default async function MentorDashboardPage() {
   if (mentorLinks.length === 0) {
     return (
       <div>
+        <AutoRefresh />
         <MentorOnboardingCard mentorName={mentor?.name ?? null} />
         {/* Header */}
         <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
@@ -133,6 +138,7 @@ export default async function MentorDashboardPage() {
 
   return (
     <div>
+      <AutoRefresh />
       <MentorOnboardingCard mentorName={mentor?.name ?? null} />
       {/* Header */}
       <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>

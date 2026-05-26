@@ -10,8 +10,6 @@ export default function ForgotCodePage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [mentorFirstName, setMentorFirstName] = useState<string | null>(null);
-  const [menteeEmailSent, setMenteeEmailSent] = useState(false);
-  const [menteeEmailObfuscated, setMenteeEmailObfuscated] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const submit = async (e: React.FormEvent) => {
@@ -32,8 +30,6 @@ export default function ForgotCodePage() {
         return;
       }
       setMentorFirstName(data.mentorFirstName ?? null);
-      setMenteeEmailSent(!!data.menteeEmailSent);
-      setMenteeEmailObfuscated(data.menteeEmailObfuscated ?? null);
       setSubmitted(true);
     } catch {
       setError("Network error. Try again.");
@@ -55,20 +51,11 @@ export default function ForgotCodePage() {
                 <CheckCircle2 size={26} color="var(--green)" />
               </div>
               <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-                {menteeEmailSent ? "Check your inbox" : "Request sent"}
+                Mentor pinged
               </h1>
-              {menteeEmailSent ? (
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                  We just emailed your Personal ID to <strong style={{ color: "var(--accent)", fontFamily: "var(--font-mono)" }}>{menteeEmailObfuscated}</strong>.
-                  Check your inbox (and spam folder) in the next minute or two.
-                  {mentorFirstName ? ` ${mentorFirstName} was also notified.` : ""}
-                </p>
-              ) : (
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                  {mentorFirstName ?? "Your mentor"} got a notification with your Personal ID and will send it to you privately
-                  (text, WhatsApp, or wherever you usually talk). We couldn&apos;t email you directly because there&apos;s no personal email on your account.
-                </p>
-              )}
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                {mentorFirstName ?? "Your mentor"} got a notification. The fastest path: message them on WhatsApp / SMS too — they&apos;ll Copy your Personal ID from their dashboard and send it back in seconds.
+              </p>
               <Link href="/login" className="forge-btn forge-btn-primary" style={{ display: "inline-block", padding: "0.625rem 1.25rem" }}>
                 Back to sign in
               </Link>

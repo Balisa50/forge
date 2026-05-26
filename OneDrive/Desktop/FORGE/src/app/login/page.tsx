@@ -1,11 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, KeyRound, UserCheck, X } from "lucide-react";
+
+// LocalStorage keys. Scoped to the forge-ab.vercel.app origin only; nothing
+// in here is sensitive enough to need encryption — anyone who can read the
+// browser's localStorage can already act as the user via the session cookie.
+const REMEMBER_PID_KEY = "forge_remembered_personal_id";
+const REMEMBER_NAME_KEY = "forge_remembered_name";
+
+function maskPersonalId(pid: string): string {
+  // FORGE-2K7R-SAW4 -> FORGE-2K7R-•••• (mask last 4 chars)
+  if (pid.length <= 5) return pid;
+  return pid.slice(0, pid.length - 4) + "••••";
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +29,57 @@ export default function LoginPage() {
   // Mentee return via personal ID
   const [personalId, setPersonalId] = useState("");
   const [menteeLoading, setMenteeLoading] = useState(false);
+  // Remembered identity (per-device, localStorage)
+  const [rememberedPid, setRememberedPid] = useState<string | null>(null);
+  const [rememberedName, setRememberedName] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Read remembered identity AFTER mount (avoids SSR/CSR mismatch)
+  useEffect(() => {
+    try {
+      const pid = localStorage.getItem(REMEMBER_PID_KEY);
+      const name = localStorage.getItem(REMEMBER_NAME_KEY);
+      if (pid) setRememberedPid(pid);
+      if (name) setRememberedName(name);
+    } catch {
+      // localStorage blocked (private mode, third-party cookies off) — ignore
+    }
+    setHydrated(true);
+  }, []);
+
+  const clearRemembered = () => {
+    try {
+      localStorage.removeItem(REMEMBER_PID_KEY);
+      localStorage.removeItem(REMEMBER_NAME_KEY);
+    } catch { /* noop */ }
+    setRememberedPid(null);
+    setRememberedName(null);
+  };
+
+  // One-tap return: use the remembered ID without typing
+  const handleQuickReturn = async () => {
+    if (!rememberedPid) return;
+    setMenteeLoading(true);
+    setError("");
+    try {
+      const result = await signIn("mentee-return", {
+        personalId: rememberedPid,
+        redirect: false,
+      });
+      if (result?.ok) {
+        window.location.href = "/dashboard";
+      } else {
+        // The remembered ID is stale (e.g., mentor rotated it). Forget it
+        // and let the user type the new one.
+        clearRemembered();
+        setError("This device's saved Personal ID no longer works — your mentor may have issued you a new one. Type the new ID below or use 'Forgot my Personal ID'.");
+        setMenteeLoading(false);
+      }
+    } catch {
+      setError("Couldn't sign you in. Try again.");
+      setMenteeLoading(false);
+    }
+  };
 
   const handleMenteeReturn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +87,20 @@ export default function LoginPage() {
     setMenteeLoading(true);
     setError("");
     try {
+      const cleaned = personalId.trim().toUpperCase();
       const result = await signIn("mentee-return", {
-        personalId: personalId.trim().toUpperCase(),
+        personalId: cleaned,
         redirect: false,
       });
       if (result?.ok) {
+        // Remember this device — next visit, one-tap continue
+        try {
+          localStorage.setItem(REMEMBER_PID_KEY, cleaned);
+          // We don't have the user's display name client-side yet; the
+          // dashboard will fill it in on first load via a small effect.
+          // For now, store nothing for the name and let the welcome card
+          // say "Welcome back" generically until the dashboard caches it.
+        } catch { /* noop */ }
         window.location.href = "/dashboard";
       } else {
         setError("That Personal ID didn't match any account. Make sure you include the FORGE- prefix (example: FORGE-XXXX-XXXX). If you've lost your code, use 'Forgot my Personal ID' below.");
@@ -108,6 +180,46 @@ export default function LoginPage() {
         {error && (
           <div style={{ background: "rgba(255,45,45,0.1)", border: "1px solid var(--red)", borderRadius: "4px", padding: "0.75rem 1rem", marginBottom: "1.5rem", color: "var(--red)", fontSize: "0.875rem" }}>
             {error}
+          </div>
+        )}
+
+        {/* Remembered identity — one-tap continue. Only renders after hydration
+            to avoid SSR/CSR text mismatch. */}
+        {hydrated && rememberedPid && (
+          <div style={{ marginBottom: "1.75rem", padding: "1rem 1.125rem", background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.35)", borderRadius: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.75rem" }}>
+              <UserCheck size={16} style={{ color: "var(--accent)" }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
+                  Welcome back{rememberedName ? `, ${rememberedName.split(" ")[0]}` : ""}
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginTop: 2 }}>
+                  {maskPersonalId(rememberedPid)}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={clearRemembered}
+                title="Forget this device"
+                aria-label="Forget this device"
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem", display: "flex", alignItems: "center", borderRadius: 4 }}
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={handleQuickReturn}
+              disabled={menteeLoading}
+              className="forge-btn forge-btn-primary"
+              style={{ width: "100%", padding: "0.625rem", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
+            >
+              <KeyRound size={14} />
+              {menteeLoading ? "Signing in..." : "Continue"}
+            </button>
+            <p style={{ fontSize: "0.6875rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", textAlign: "center", marginTop: "0.75rem", marginBottom: 0 }}>
+              Not you? <button type="button" onClick={clearRemembered} style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer", padding: 0, fontFamily: "inherit", fontSize: "inherit" }}>Sign in with a different ID</button>
+            </p>
           </div>
         )}
 

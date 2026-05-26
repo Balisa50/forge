@@ -12,6 +12,7 @@ import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 import SubmissionViewer from "@/components/SubmissionViewer";
+import MenteeRecoveryCard from "@/components/MenteeRecoveryCard";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import { type EvidenceData } from "@/lib/submission-types";
 
@@ -142,6 +143,10 @@ export default function MenteeDrilldownPage() {
 
   useEffect(() => {
     load();
+    // Real-time refresh — silently re-fetch every 30s so check-in/task
+    // status numbers stay current while the mentor sits on this page.
+    const id = setInterval(load, 30_000);
+    return () => clearInterval(id);
   }, [load]);
 
   const handlePost = async (task: MenteeTask) => {
@@ -547,6 +552,8 @@ export default function MenteeDrilldownPage() {
           )}
         </div>
       )}
+
+      <MenteeRecoveryCard menteeId={menteeId} menteeName={mentee.name} />
 
       <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
 

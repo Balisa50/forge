@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import DashboardNav from "@/components/DashboardNav";
 import SuspensionLetter from "@/components/SuspensionLetter";
 import InviteRequired from "@/components/InviteRequired";
+import ClientRememberName from "@/components/ClientRememberName";
 import { effectiveVisibility } from "@/lib/visibility";
 import { soloModeEnabled } from "@/lib/modes";
 
@@ -103,6 +104,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           hasMentor={hasMentor}
         />
         <main className="dashboard-main">
+          <ClientRememberName name={dbUser.name ?? null} />
           {children}
         </main>
       </div>
