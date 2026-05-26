@@ -235,7 +235,12 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
               <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "0.5rem" }}>This affects your daily check-in deadlines</p>
             )}
             <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="forge-input" style={{ appearance: "none" }}>
-              {TIMEZONES.map((tz) => (<option key={tz} value={tz}>{tz}</option>))}
+              {/* Always include the user's current value, even if it's not in the
+                  hardcoded list — prevents a silent mismatch where the select
+                  visually shows the first option but state holds something else. */}
+              {(TIMEZONES.includes(timezone) ? TIMEZONES : [timezone, ...TIMEZONES]).map((tz) => (
+                <option key={tz} value={tz}>{tz}</option>
+              ))}
             </select>
           </div>
 

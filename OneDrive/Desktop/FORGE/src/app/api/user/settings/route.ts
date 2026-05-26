@@ -17,9 +17,15 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Name must be at least 2 characters." }, { status: 400 });
   }
 
-  const VALID_TIMEZONES = Intl.supportedValuesOf?.("timeZone") ?? [];
-  if (timezone && VALID_TIMEZONES.length > 0 && !VALID_TIMEZONES.includes(timezone)) {
-    return NextResponse.json({ error: "Invalid timezone." }, { status: 400 });
+  // Validate timezone via Intl.DateTimeFormat — works on every runtime,
+  // accepts the full IANA list rather than the limited supportedValuesOf set
+  // that some Node/edge versions return.
+  if (timezone && typeof timezone === "string") {
+    try {
+      new Intl.DateTimeFormat("en-US", { timeZone: timezone }).format(new Date());
+    } catch {
+      return NextResponse.json({ error: `Invalid timezone: "${timezone}". Pick one from the list.` }, { status: 400 });
+    }
   }
   if (learningStyle && !VALID_LEARNING_STYLES.includes(learningStyle)) {
     return NextResponse.json({ error: "Invalid learning style." }, { status: 400 });
