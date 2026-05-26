@@ -11,13 +11,16 @@ import {
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
+import SubmissionViewer from "@/components/SubmissionViewer";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+import { type EvidenceData } from "@/lib/submission-types";
 
 interface Checkin {
   id: string;
   description: string;
   evidenceType: string;
   evidenceUrl: string | null;
+  evidenceData: EvidenceData | null;
   status: string;
   attemptNum: number;
   createdAt: string;
@@ -807,13 +810,11 @@ export default function MenteeDrilldownPage() {
                                       </span>
                                     </div>
                                     <p style={{ color: "var(--text-primary)" }}>{c.description}</p>
-                                    {c.evidenceUrl && (
-                                      <a href={c.evidenceUrl} target="_blank" rel="noreferrer noopener"
-                                         className="inline-flex items-center gap-1 mt-1"
-                                         style={{ color: "var(--accent)", fontSize: "0.75rem" }}>
-                                        <ExternalLink size={11} /> evidence
-                                      </a>
-                                    )}
+                                    <SubmissionViewer
+                                      evidenceType={c.evidenceType}
+                                      evidenceUrl={c.evidenceUrl}
+                                      evidenceData={c.evidenceData}
+                                    />
                                   </li>
                                 ))}
                               </ul>

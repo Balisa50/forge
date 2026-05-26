@@ -58,6 +58,7 @@ export async function GET(
                       description: true,
                       evidenceType: true,
                       evidenceUrl: true,
+                      evidenceData: true,
                       status: true,
                       attemptNum: true,
                       createdAt: true,
