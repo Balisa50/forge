@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Shield, AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus, Send, Inbox } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus, Send, Inbox, ClipboardCheck } from "lucide-react";
 import MentorOnboardingCard from "@/components/MentorOnboardingCard";
 
 export default async function MentorDashboardPage() {
@@ -24,7 +24,6 @@ export default async function MentorDashboardPage() {
           name: true,
           email: true,
           image: true,
-          integrityScore: true,
         },
       },
     },
@@ -118,10 +117,19 @@ export default async function MentorDashboardPage() {
   // Aggregate stats
   const totalMentees = mentees.length;
   const activeToday = mentees.filter((m) => m.checkedInToday).length;
-  const atRisk = mentees.filter((m) => m.user.integrityScore < 60).length;
-  const avgIntegrity = Math.round(mentees.reduce((s, m) => s + m.user.integrityScore, 0) / totalMentees);
-  const avgStreak = 0; // removed streak tracking
   const avgProgress = Math.round(mentees.reduce((s, m) => s + m.progress, 0) / totalMentees);
+
+  // "Awaiting review" total across all this mentor's mentees — checkins
+  // whose mentor-async interrogation has completed but mentor hasn't graded
+  // yet. This is the inbox count that drives clicks into /dashboard/mentor/reviews.
+  const awaitingReview = await prisma.interrogation.count({
+    where: {
+      mode: "mentor_async",
+      mentorReviewerId: session.user.id,
+      mentorReviewedAt: null,
+      completedAt: { not: null },
+    },
+  });
 
   return (
     <div>
@@ -149,27 +157,12 @@ export default async function MentorDashboardPage() {
         </div>
       </div>
 
-      {/* At-risk alert */}
-      {atRisk > 0 && (
-        <div className="forge-panel" style={{ padding: "1rem 1.5rem", marginBottom: "1.5rem", borderColor: "var(--red)", background: "rgba(255,45,45,0.05)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <AlertTriangle size={18} color="var(--red)" />
-          <div>
-            <span style={{ fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--red)", fontSize: "0.9375rem" }}>
-              {atRisk} student{atRisk !== 1 ? "s" : ""} at risk
-            </span>
-            <span style={{ color: "var(--text-secondary)", fontSize: "0.875rem", marginLeft: "0.5rem" }}>
-              — integrity score below 60. They may need your attention.
-            </span>
-          </div>
-        </div>
-      )}
-
       {/* Aggregate Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
           { label: "Total Mentees", value: totalMentees, icon: Users, color: "var(--blue)" },
           { label: "Active Today", value: `${activeToday}/${totalMentees}`, icon: Eye, color: activeToday === totalMentees ? "var(--green)" : "var(--yellow)" },
-          { label: "Avg Integrity", value: avgIntegrity, icon: Shield, color: avgIntegrity >= 20 ? "var(--green)" : "var(--yellow)" },
+          { label: "Awaiting Review", value: awaitingReview, icon: ClipboardCheck, color: awaitingReview > 0 ? "var(--yellow)" : "var(--text-dim)" },
           { label: "Avg Progress", value: `${avgProgress}%`, icon: TrendingUp, color: "var(--green)" },
         ].map((stat) => (
           <div key={stat.label} className="forge-panel" style={{ padding: "1.25rem 1.5rem" }}>
@@ -180,16 +173,6 @@ export default async function MentorDashboardPage() {
             <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", color: stat.color, lineHeight: 1 }}>{stat.value}</div>
           </div>
         ))}
-      </div>
-
-      {/* Avg Integrity bar */}
-      <div className="forge-panel" style={{ padding: "1rem 1.5rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
-        <Shield size={16} color={avgIntegrity >= 80 ? "var(--green)" : avgIntegrity >= 50 ? "var(--yellow)" : "var(--red)"} />
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em", flexShrink: 0 }}>Avg Integrity</div>
-        <div style={{ flex: 1, height: "6px", background: "var(--border)", borderRadius: "3px" }}>
-          <div style={{ height: "100%", width: `${avgIntegrity}%`, background: avgIntegrity >= 80 ? "var(--green)" : avgIntegrity >= 50 ? "var(--yellow)" : "var(--red)", borderRadius: "3px", transition: "width 0.5s" }} />
-        </div>
-        <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", color: avgIntegrity >= 80 ? "var(--green)" : avgIntegrity >= 50 ? "var(--yellow)" : "var(--red)", flexShrink: 0 }}>{avgIntegrity}</div>
       </div>
 
       {/* Section title */}
@@ -234,10 +217,6 @@ export default async function MentorDashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  <Shield size={14} color={m.user.integrityScore >= 80 ? "var(--green)" : m.user.integrityScore >= 50 ? "var(--yellow)" : "var(--red)"} />
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.875rem", fontWeight: 600, color: m.user.integrityScore >= 80 ? "var(--green)" : m.user.integrityScore >= 50 ? "var(--yellow)" : "var(--red)" }}>{m.user.integrityScore}</span>
-                </div>
                 <div style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.6875rem",

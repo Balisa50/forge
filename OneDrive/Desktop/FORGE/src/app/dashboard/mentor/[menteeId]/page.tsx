@@ -84,7 +84,6 @@ interface Mentee {
   name: string | null;
   email: string;
   image: string | null;
-  integrityScore: number;
   createdAt: string;
 }
 
@@ -367,6 +366,7 @@ export default function MenteeDrilldownPage() {
 
   const stats = useMemo(() => {
     let total = 0, verified = 0, failed = 0, pending = 0;
+    let mostRecentCheckin: Date | null = null;
     for (const r of roadmaps) {
       for (const t of r.tracks) {
         for (const p of t.phases) {
@@ -375,11 +375,26 @@ export default function MenteeDrilldownPage() {
             if (task.status === "verified") verified++;
             else if (task.status === "failed") failed++;
             else if (task.status === "pending_verification") pending++;
+            for (const c of task.checkins) {
+              const d = new Date(c.createdAt);
+              if (!mostRecentCheckin || d > mostRecentCheckin) mostRecentCheckin = d;
+            }
           }
         }
       }
     }
-    return { total, verified, failed, pending };
+    let daysSinceLastCheckin: number | null = null;
+    let lastCheckinLabel: string | null = null;
+    if (mostRecentCheckin) {
+      const diffMs = Date.now() - (mostRecentCheckin as Date).getTime();
+      daysSinceLastCheckin = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      if (daysSinceLastCheckin === 0) lastCheckinLabel = "today";
+      else if (daysSinceLastCheckin === 1) lastCheckinLabel = "yesterday";
+      else lastCheckinLabel = `${daysSinceLastCheckin} days ago`;
+    } else {
+      lastCheckinLabel = "never";
+    }
+    return { total, verified, failed, pending, daysSinceLastCheckin, lastCheckinLabel };
   }, [roadmaps]);
 
   if (loading) {
@@ -430,8 +445,12 @@ export default function MenteeDrilldownPage() {
           <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem" }}>{mentee.name ?? mentee.email}</h1>
           <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}>{mentee.email}</p>
           <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-            <span>Integrity score <strong style={{ color: "var(--text-primary)" }}>{mentee.integrityScore}</strong></span>
             <span>Tasks {stats.total} · {stats.verified} passed · {stats.failed} failed · {stats.pending} awaiting</span>
+            {stats.lastCheckinLabel && (
+              <span style={{ color: stats.daysSinceLastCheckin !== null && stats.daysSinceLastCheckin >= 3 ? "var(--yellow)" : "var(--text-secondary)" }}>
+                Last check-in <strong style={{ color: stats.daysSinceLastCheckin !== null && stats.daysSinceLastCheckin >= 3 ? "var(--yellow)" : "var(--text-primary)" }}>{stats.lastCheckinLabel}</strong>
+              </span>
+            )}
           </div>
         </div>
         {!suspension && (

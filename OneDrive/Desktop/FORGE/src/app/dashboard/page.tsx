@@ -441,21 +441,6 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* Integrity Score (for students) */}
-      {isStudent && user && user.integrityScore < 80 && (
-        <div className="forge-panel" style={{ padding: "1rem 1.5rem", marginBottom: "1.5rem", borderColor: user.integrityScore < 50 ? "var(--red)" : "var(--yellow)", background: user.integrityScore < 50 ? "rgba(255,45,45,0.04)" : "rgba(234,179,8,0.04)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Shield size={16} color={user.integrityScore < 50 ? "var(--red)" : "var(--yellow)"} />
-          <div style={{ flex: 1 }}>
-            <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.875rem", color: user.integrityScore < 50 ? "var(--red)" : "var(--yellow)" }}>
-              Integrity: {user.integrityScore}%
-            </span>
-            <span style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginLeft: "0.5rem" }}>
-              {user.integrityScore < 50 ? "Your mentor and org can see this." : "Keep proving your work to raise it."}
-            </span>
-          </div>
-          <Link href="/dashboard/analytics" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--blue)", textDecoration: "none" }}>View</Link>
-        </div>
-      )}
 
       {!activeRoadmap && (
         <div className="forge-panel" style={{ padding: "3rem", marginBottom: "1.5rem", textAlign: "center" }}>
