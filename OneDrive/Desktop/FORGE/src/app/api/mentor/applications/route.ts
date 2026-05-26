@@ -53,6 +53,39 @@ export async function GET() {
   return NextResponse.json({ applications, mentorId: session.user.id });
 }
 
+/**
+ * DELETE /api/mentor/applications?id=<applicationId>
+ *   Permanently removes a reviewed (approved/rejected) application from the
+ *   mentor's list. Pending applications cannot be deleted — reject them first.
+ */
+export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await requireMentor(session.user.id))) {
+    return NextResponse.json({ error: "Mentors only" }, { status: 403 });
+  }
+  const mentorId = session.user.id;
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  // Only allow deleting applications THIS mentor reviewed (or that were
+  // scoped to them). Global pending applications are off-limits.
+  const application = await prisma.mentorApplication.findUnique({
+    where: { id },
+    select: { id: true, status: true, mentorId: true, reviewedById: true },
+  });
+  if (!application) return NextResponse.json({ error: "Application not found" }, { status: 404 });
+  if (application.status === "pending") {
+    return NextResponse.json({ error: "Reject or approve this application before removing it" }, { status: 400 });
+  }
+  if (application.mentorId !== mentorId && application.reviewedById !== mentorId) {
+    return NextResponse.json({ error: "Not yours to remove" }, { status: 403 });
+  }
+
+  await prisma.mentorApplication.delete({ where: { id } });
+  return NextResponse.json({ deleted: true });
+}
+
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

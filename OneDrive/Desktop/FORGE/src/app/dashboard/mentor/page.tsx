@@ -2,12 +2,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, XCircle, Users, TrendingUp, Eye, ArrowRight, MessageSquare, UserPlus, Send, Inbox, ClipboardCheck } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle, Users, ArrowRight, MessageSquare, UserPlus, Send, Inbox } from "lucide-react";
 import MentorOnboardingCard from "@/components/MentorOnboardingCard";
-import AutoRefresh from "@/components/AutoRefresh";
-
-// Always render fresh — stats here drive operational decisions.
-export const dynamic = "force-dynamic";
+import MentorStatRow from "@/components/MentorStatRow";
 
 export default async function MentorDashboardPage() {
   const session = await auth();
@@ -36,7 +33,6 @@ export default async function MentorDashboardPage() {
   if (mentorLinks.length === 0) {
     return (
       <div>
-        <AutoRefresh />
         <MentorOnboardingCard mentorName={mentor?.name ?? null} />
         {/* Header */}
         <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
@@ -119,10 +115,9 @@ export default async function MentorDashboardPage() {
     })
   ));
 
-  // Aggregate stats
+  // Aggregate stats — collapsible row at the top of the page
   const totalMentees = mentees.length;
   const activeToday = mentees.filter((m) => m.checkedInToday).length;
-  const avgProgress = Math.round(mentees.reduce((s, m) => s + m.progress, 0) / totalMentees);
 
   // "Awaiting review" total across all this mentor's mentees — checkins
   // whose mentor-async interrogation has completed but mentor hasn't graded
@@ -138,7 +133,6 @@ export default async function MentorDashboardPage() {
 
   return (
     <div>
-      <AutoRefresh />
       <MentorOnboardingCard mentorName={mentor?.name ?? null} />
       {/* Header */}
       <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
@@ -163,23 +157,11 @@ export default async function MentorDashboardPage() {
         </div>
       </div>
 
-      {/* Aggregate Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Total Mentees", value: totalMentees, icon: Users, color: "var(--blue)" },
-          { label: "Active Today", value: `${activeToday}/${totalMentees}`, icon: Eye, color: activeToday === totalMentees ? "var(--green)" : "var(--yellow)" },
-          { label: "Awaiting Review", value: awaitingReview, icon: ClipboardCheck, color: awaitingReview > 0 ? "var(--yellow)" : "var(--text-dim)" },
-          { label: "Avg Progress", value: `${avgProgress}%`, icon: TrendingUp, color: "var(--green)" },
-        ].map((stat) => (
-          <div key={stat.label} className="forge-panel" style={{ padding: "1.25rem 1.5rem" }}>
-            <div className="flex items-center gap-2 mb-2">
-              <stat.icon size={14} color={stat.color} />
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.15em", textTransform: "uppercase" }}>{stat.label}</div>
-            </div>
-            <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", color: stat.color, lineHeight: 1 }}>{stat.value}</div>
-          </div>
-        ))}
-      </div>
+      <MentorStatRow
+        totalMentees={totalMentees}
+        activeToday={activeToday}
+        awaitingReview={awaitingReview}
+      />
 
       {/* Section title */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", gap: "0.75rem", flexWrap: "wrap" }}>

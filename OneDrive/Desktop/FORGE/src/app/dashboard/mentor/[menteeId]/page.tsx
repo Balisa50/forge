@@ -143,10 +143,6 @@ export default function MenteeDrilldownPage() {
 
   useEffect(() => {
     load();
-    // Real-time refresh — silently re-fetch every 30s so check-in/task
-    // status numbers stay current while the mentor sits on this page.
-    const id = setInterval(load, 30_000);
-    return () => clearInterval(id);
   }, [load]);
 
   const handlePost = async (task: MenteeTask) => {

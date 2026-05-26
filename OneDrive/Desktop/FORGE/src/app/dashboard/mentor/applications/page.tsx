@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2, ChevronDown, ChevronUp, CheckSquare } from "lucide-react";
+import { ArrowLeft, Loader2, Check, X, Copy, CheckCheck, Inbox, Link2, ChevronDown, ChevronUp, CheckSquare, Trash2 } from "lucide-react";
 
 interface Application {
   id: string;
@@ -98,6 +98,24 @@ export default function ApplicationsPage() {
       setSelected(new Set());
     } else {
       setSelected(new Set(pending.map((a) => a.id)));
+    }
+  };
+
+  const removeReviewed = async (id: string) => {
+    if (!confirm("Remove this application from your list? This cannot be undone.")) return;
+    setActing(id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/mentor/applications?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Delete failed");
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Delete failed");
+    } finally {
+      setActing(null);
     }
   };
 
@@ -329,9 +347,21 @@ export default function ApplicationsPage() {
               <div className="flex flex-col gap-2">
                 {reviewed.map((a) => (
                   <div key={a.id} className="forge-panel" style={{ padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "0.875rem" }}>{a.applicantName} <span style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>· {a.applicantEmail}</span></span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: a.status === "approved" ? "var(--green)" : "var(--red)" }}>
-                      {a.status}{a.status === "approved" && a.inviteCode ? ` · ${a.inviteCode}` : ""}
+                    <span style={{ fontSize: "0.875rem", flex: 1, minWidth: 0 }}>{a.applicantName} <span style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>· {a.applicantEmail}</span></span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.625rem", flexShrink: 0 }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: a.status === "approved" ? "var(--green)" : "var(--red)" }}>
+                        {a.status}{a.status === "approved" && a.inviteCode ? ` · ${a.inviteCode}` : ""}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeReviewed(a.id)}
+                        disabled={acting === a.id}
+                        title="Remove from list"
+                        aria-label="Remove from list"
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem", display: "inline-flex", alignItems: "center", borderRadius: 4 }}
+                      >
+                        {acting === a.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                      </button>
                     </span>
                   </div>
                 ))}

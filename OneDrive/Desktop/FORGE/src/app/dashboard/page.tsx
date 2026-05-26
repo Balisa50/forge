@@ -9,10 +9,7 @@ import AskTheProfessor from "@/components/AskTheProfessor";
 import ForgePactCard from "@/components/ForgePactCard";
 import WeekIntention from "@/components/WeekIntention";
 import ShippedChain from "@/components/ShippedChain";
-import AutoRefresh from "@/components/AutoRefresh";
 import { soloModeEnabled } from "@/lib/modes";
-
-export const dynamic = "force-dynamic";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
 const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
@@ -200,7 +197,6 @@ export default async function DashboardPage() {
   if (hasMentor) {
     return (
       <div>
-        <AutoRefresh />
         <WeekVerifiedCelebration
           latestVerifiedId={latestVerified?.id ?? null}
           latestVerifiedTitle={latestVerified?.title ?? null}
@@ -352,7 +348,6 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <AutoRefresh />
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
         <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>

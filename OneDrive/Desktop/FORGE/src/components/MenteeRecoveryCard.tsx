@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { KeyRound, Copy, Check, RotateCw, AlertTriangle, Loader2, Eye, EyeOff } from "lucide-react";
+import { KeyRound, Copy, Check, RotateCw, AlertTriangle, Loader2, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Props {
   menteeId: string;
@@ -15,8 +15,10 @@ interface Props {
  * risk, no @forge.local edge cases.
  */
 export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
+  const [open, setOpen] = useState(false);            // collapsed by default
   const [personalId, setPersonalId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [shown, setShown] = useState(false);          // privacy: hidden by default
   const [copied, setCopied] = useState(false);
   const [rotating, setRotating] = useState(false);
@@ -24,6 +26,7 @@ export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
+    setLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/mentor/mentees/${menteeId}/personal-id`, { cache: "no-store" });
@@ -33,6 +36,7 @@ export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
       }
       const data = await res.json();
       setPersonalId(data.personalId ?? null);
+      setLoaded(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Couldn't load");
     } finally {
@@ -40,7 +44,11 @@ export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
     }
   }, [menteeId]);
 
-  useEffect(() => { load(); }, [load]);
+  // Lazy-fetch the Personal ID — only hit the API the first time the card
+  // is expanded. Most visits don't need it.
+  useEffect(() => {
+    if (open && !loaded && !loading) load();
+  }, [open, loaded, loading, load]);
 
   const handleCopy = async () => {
     if (!personalId) return;
@@ -84,22 +92,43 @@ export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="forge-panel" style={{ padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: "0.625rem", color: "var(--text-dim)", fontSize: "0.8125rem" }}>
-        <Loader2 size={13} className="animate-spin" /> Loading Personal ID…
-      </div>
-    );
-  }
-
   return (
-    <div className="forge-panel" style={{ padding: "1rem 1.25rem", marginBottom: "1.25rem", background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.25)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+    <div className="forge-panel" style={{ marginBottom: "1.25rem", background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.25)", overflow: "hidden" }}>
+      {/* Header — always visible, toggles expansion */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        style={{
+          width: "100%",
+          padding: "0.75rem 1.125rem",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.625rem",
+          textAlign: "left",
+        }}
+        aria-expanded={open}
+      >
         <KeyRound size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.12em", textTransform: "uppercase", flex: 1 }}>
-          Personal ID — send to {menteeName?.split(" ")[0] ?? "this mentee"} if they lost theirs
-        </div>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.12em", textTransform: "uppercase", flex: 1 }}>
+          Personal ID recovery
+        </span>
+        {open ? <ChevronUp size={14} color="var(--text-dim)" /> : <ChevronDown size={14} color="var(--text-dim)" />}
+      </button>
+
+      {!open ? null : (
+      <div style={{ padding: "0 1.125rem 1rem" }}>
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
+        Send to {menteeName?.split(" ")[0] ?? "this mentee"} if they lost theirs.
       </div>
+
+      {loading && (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-dim)", fontSize: "0.8125rem", padding: "0.5rem 0" }}>
+          <Loader2 size={13} className="animate-spin" /> Loading…
+        </div>
+      )}
 
       {error && (
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", color: "var(--red)", fontSize: "0.75rem" }}>
@@ -198,6 +227,8 @@ export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
       <p style={{ fontSize: "0.6875rem", color: "var(--text-dim)", marginTop: "0.625rem", marginBottom: 0, lineHeight: 1.55 }}>
         Send via private channel (text / WhatsApp / in person). <strong>Rotate</strong> only if you suspect the old ID was leaked — it invalidates the previous code and the mentee will need the new one to sign in.
       </p>
+      </div>
+      )}
     </div>
   );
 }

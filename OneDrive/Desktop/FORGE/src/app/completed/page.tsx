@@ -26,7 +26,7 @@ export default async function WallOfFamePage() {
           // The MentorLinks where this user is the mentee (relation "MenteeUser").
           mentees: {
             where: { isActive: true },
-            select: { mentor: { select: { name: true } } },
+            select: { mentor: { select: { name: true, mentorDisplayName: true } } },
             take: 1,
           },
         },
@@ -58,7 +58,7 @@ export default async function WallOfFamePage() {
       roadmapTitle: r.title,
       totalTasks: tasks.length,
       verifiedAt: latestVerifiedAt ?? new Date(),
-      mentorName: r.user.mentees[0]?.mentor.name ?? null,
+      mentorName: r.user.mentees[0]?.mentor.mentorDisplayName ?? r.user.mentees[0]?.mentor.name ?? null,
     });
   }
   // Most recent finishers first.

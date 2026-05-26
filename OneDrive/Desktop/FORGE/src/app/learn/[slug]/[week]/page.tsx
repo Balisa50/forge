@@ -30,7 +30,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   if (session?.user?.id) {
     const link = await prisma.mentorLink.findFirst({
       where: { menteeId: session.user.id, isActive: true },
-      include: { mentor: { select: { name: true } } },
+      include: { mentor: { select: { name: true, mentorDisplayName: true } } },
     });
     if (link) {
       // Find this user's matching Task for this week (by week number in title)
@@ -53,7 +53,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               <Lock size={36} color="var(--text-dim)" style={{ margin: "0 auto 1rem" }} />
               <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>This week is locked</h1>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                {link.mentor.name ?? "Your mentor"} hasn&apos;t released Week {wNum} of {roadmap.title} to you yet. You&apos;ll see it on your dashboard the moment they do.
+                {(link.mentor.mentorDisplayName ?? link.mentor.name) ?? "Your mentor"} hasn&apos;t released Week {wNum} of {roadmap.title} to you yet. You&apos;ll see it on your dashboard the moment they do.
               </p>
               <Link href="/dashboard" className="forge-btn forge-btn-primary" style={{ display: "inline-block", padding: "0.625rem 1.25rem" }}>
                 Go to dashboard

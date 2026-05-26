@@ -25,7 +25,7 @@ function normalise(code: string): string {
 async function findInvite(code: string) {
   return prisma.mentorInvite.findUnique({
     where: { code },
-    include: { mentor: { select: { id: true, name: true, email: true, image: true } } },
+    include: { mentor: { select: { id: true, name: true, mentorDisplayName: true, email: true, image: true } } },
   });
 }
 
@@ -57,7 +57,8 @@ export async function GET(req: NextRequest) {
   }
   return NextResponse.json({
     valid: true,
-    mentor: invite.mentor,
+    // Mentees only ever see the persona name, never the real account name
+    mentor: { ...invite.mentor, name: invite.mentor.mentorDisplayName ?? invite.mentor.name },
     roadmapSlug: invite.roadmapSlug,
     label: invite.label,
   });
@@ -131,7 +132,7 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     paired: true,
-    mentor: invite.mentor,
+    mentor: { ...invite.mentor, name: invite.mentor.mentorDisplayName ?? invite.mentor.name },
     roadmapSlug: invite.roadmapSlug,
     personalId: invite.personalIdIssued,
   });
