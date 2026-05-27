@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Award, ChevronDown, ChevronUp, Loader2, ExternalLink, Lock, AlertTriangle, Send } from "lucide-react";
+import { Award, ChevronDown, ChevronUp, Loader2, ExternalLink, Lock, AlertTriangle, Send, Maximize2 } from "lucide-react";
 import CertificateArtwork from "./CertificateArtwork";
 
 interface Props {
@@ -102,6 +102,27 @@ export default function MentorCertReleaseCard({ menteeId, menteeName, roadmapId 
         )}
         {open ? <ChevronUp size={14} color="var(--text-dim)" /> : <ChevronDown size={14} color="var(--text-dim)" />}
       </button>
+
+      {open && (
+        <div style={{ padding: "0 1.125rem 0.5rem" }}>
+          <Link
+            href={`/dashboard/mentor/${menteeId}/preview-cert?roadmapId=${encodeURIComponent(roadmapId)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "0.375rem",
+              fontFamily: "var(--font-mono)", fontSize: "0.6875rem",
+              color: "#d4af37", textDecoration: "none",
+              padding: "0.4rem 0.75rem",
+              border: "1px solid rgba(212,175,55,0.4)", borderRadius: 6,
+              background: "rgba(212,175,55,0.06)",
+              marginBottom: "0.75rem",
+            }}
+          >
+            <Maximize2 size={11} /> Open full preview (new tab)
+          </Link>
+        </div>
+      )}
 
       {open && (
         <div style={{ padding: "0 1.125rem 1.125rem" }}>
