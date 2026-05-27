@@ -12,7 +12,7 @@ export default async function CertificatesPage() {
   const userId = session!.user!.id!;
   await requireLearnerAccess(userId);
 
-  const [certificates, user, roadmaps] = await Promise.all([
+  const [certificates, user, roadmaps, mentorLink] = await Promise.all([
     prisma.certificate.findMany({
       where: { userId },
       orderBy: { issuedAt: "desc" },
@@ -36,7 +36,12 @@ export default async function CertificatesPage() {
         },
       },
     }),
+    prisma.mentorLink.findFirst({
+      where: { menteeId: userId, isActive: true },
+      include: { mentor: { select: { name: true, mentorDisplayName: true } } },
+    }),
   ]);
+  const mentorName = mentorLink ? (mentorLink.mentor.mentorDisplayName ?? mentorLink.mentor.name) : null;
 
   // Progress toward a future cert (for the blurred preview).
   let inProgressTitle: string | null = null;
@@ -129,12 +134,18 @@ export default async function CertificatesPage() {
                   <Lock size={22} color="#d4af37" />
                 </div>
                 <h3 style={{ fontFamily: "Georgia, serif", fontSize: "1.5rem", color: "#fff", marginBottom: "0.5rem" }}>
-                  {inProgressTitle ? "Unlocks when you finish" : "Pick a roadmap to begin"}
+                  {progressPct >= 100 && mentorName
+                    ? `Awaiting release by ${mentorName}`
+                    : inProgressTitle
+                      ? "Unlocks when you finish"
+                      : "Pick a roadmap to begin"}
                 </h3>
                 <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "rgba(212,175,55,0.85)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
-                  {inProgressTitle
-                    ? `${verifiedCount} / ${totalCount} weeks shipped · ${progressPct}%`
-                    : "0 / 0 weeks shipped"}
+                  {progressPct >= 100 && mentorName
+                    ? "All weeks verified — your mentor signs the cert next"
+                    : inProgressTitle
+                      ? `${verifiedCount} / ${totalCount} weeks shipped · ${progressPct}%`
+                      : "0 / 0 weeks shipped"}
                 </p>
                 {/* Progress bar */}
                 {inProgressTitle && (

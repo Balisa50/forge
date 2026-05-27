@@ -334,18 +334,25 @@ model GraceDay {
 // ─── Certificates & Verification ────────────────────────────────────────
 
 model Certificate {
-  id          String   @id @default(cuid())
-  userId      String
-  roadmapId   String
-  title       String
-  verifyCode  String   @unique @default(cuid())
-  totalTasks  Int
-  totalHours  Float
-  passRate    Float    @default(0)
+  id                 String   @id @default(cuid())
+  userId             String
+  roadmapId          String
+  title              String
+  verifyCode         String   @unique @default(cuid())
+  totalTasks         Int
+  totalHours         Float
+  passRate           Float    @default(0)
   /// HMAC-SHA256 signature over (id|userId|roadmapId|title|totalTasks|totalHours|passRate|issuedAt)
   /// using CERT_SECRET. Lets us verify a certificate without trusting the DB row alone.
-  signature   String?
-  issuedAt    DateTime @default(now())
+  signature          String?
+  /// Persona name of the mentor who released this cert (or null for self-issued
+  /// solo-learner certs). Baked in at issue time so a mentor renaming themselves
+  /// later doesn't retroactively change historical certs.
+  signedBy           String?
+  /// The User.id of the mentor who released this cert. Nullable for legacy
+  /// self-issued certs.
+  releasedByMentorId String?
+  issuedAt           DateTime @default(now())
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   roadmap     Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)

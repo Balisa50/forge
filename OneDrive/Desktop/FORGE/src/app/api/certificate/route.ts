@@ -12,6 +12,19 @@ export async function POST(req: NextRequest) {
   const { roadmapId } = await req.json();
   if (!roadmapId) return NextResponse.json({ error: "roadmapId required" }, { status: 400 });
 
+  // Mentored learners can't self-issue — only their mentor can release.
+  // Solo learners (no active mentor link) keep the original self-issue path.
+  const hasMentor = await prisma.mentorLink.findFirst({
+    where: { menteeId: userId, isActive: true },
+    select: { id: true },
+  });
+  if (hasMentor) {
+    return NextResponse.json(
+      { error: "Your mentor will release your certificate when you finish." },
+      { status: 403 },
+    );
+  }
+
   const roadmap = await prisma.roadmap.findFirst({
     where: { id: roadmapId, userId },
     include: {

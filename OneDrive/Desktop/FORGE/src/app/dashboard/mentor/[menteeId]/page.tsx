@@ -13,6 +13,7 @@ import MentorQuestionBank from "@/components/MentorQuestionBank";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 import SubmissionViewer from "@/components/SubmissionViewer";
 import MenteeRecoveryCard from "@/components/MenteeRecoveryCard";
+import MentorCertReleaseCard from "@/components/MentorCertReleaseCard";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import { type EvidenceData } from "@/lib/submission-types";
 
@@ -629,6 +630,12 @@ export default function MenteeDrilldownPage() {
       {roadmaps.map((roadmap) => (
         <div key={roadmap.id} style={{ marginBottom: "2rem" }}>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "1rem" }}>{roadmap.title}</h2>
+
+          <MentorCertReleaseCard
+            menteeId={menteeId}
+            menteeName={mentee.name ?? mentee.email}
+            roadmapId={roadmap.id}
+          />
 
           {roadmap.tracks.flatMap((t) => t.phases).map((phase) => (
             <div key={phase.id} style={{ marginBottom: "1.25rem" }}>
