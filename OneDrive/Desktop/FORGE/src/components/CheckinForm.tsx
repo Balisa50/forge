@@ -380,13 +380,29 @@ export default function CheckinForm({
         </div>
       </div>
 
-      {/* Project URL — now optional when files are attached */}
+      {/* Proof — a single section. EITHER a URL OR file(s) satisfies it.
+          A green check appears the moment one is provided so the mentee
+          knows they're done with this requirement. */}
       <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.25rem" }}>
-        <label style={{ display: "block", color: "var(--text-secondary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-          Project URL{attachments.length === 0 && <span style={{ color: "var(--red)" }}> *</span>}
-          {attachments.length > 0 && <span style={{ color: "var(--text-dim)", fontSize: "0.6875rem", marginLeft: "0.5rem" }}>(optional — you have files attached)</span>}
-        </label>
-        <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "0.875rem", lineHeight: 1.5 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem", gap: "0.5rem", flexWrap: "wrap" }}>
+          <label style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+            Proof of Your Work <span style={{ color: "var(--red)" }}>*</span>
+          </label>
+          {hasProof && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
+              <CheckCircle2 size={12} /> proof attached
+            </span>
+          )}
+        </div>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem", lineHeight: 1.5 }}>
+          Provide <strong style={{ color: "var(--text-secondary)" }}>at least one</strong> — a URL <em>or</em> a file. Some weeks (Excel spreadsheets, paper exercises, hand-drawn diagrams) won&apos;t have a repo — just upload your file.
+        </p>
+
+        {/* Sub-label for URL option */}
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+          Option A — Link
+        </div>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "0.625rem", lineHeight: 1.5 }}>
           GitHub repo, deployed app, CodeSandbox, Colab notebook, etc.
         </p>
         <div style={{ position: "relative" }}>
@@ -418,15 +434,22 @@ export default function CheckinForm({
             ✓ Valid URL
           </div>
         )}
-      </div>
 
-      {/* File upload zone */}
-      <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "2rem" }}>
-        <label style={{ display: "block", color: "var(--text-secondary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-          Attach Files{projectUrl && isValidUrl(projectUrl) && <span style={{ color: "var(--text-dim)", fontSize: "0.6875rem", marginLeft: "0.5rem" }}>(optional — you have a URL)</span>}
-        </label>
-        <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem", lineHeight: 1.55 }}>
-          Python, JavaScript, TypeScript, Go, Rust, Java, SQL, R, Jupyter notebooks, PDFs, Word docs, CSVs, Markdown, VSCode workspace files — anything you actually wrote. Max 2 MB per file, 3 MB total.
+        {/* OR divider */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", margin: "1.25rem 0 0.875rem" }}>
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.16em", textTransform: "uppercase" }}>
+            Or
+          </span>
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+        </div>
+
+        {/* Sub-label for file option */}
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+          Option B — File(s)
+        </div>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "1rem", lineHeight: 1.55 }}>
+          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 2 MB per file, 3 MB total.
         </p>
 
         {/* Drop zone */}

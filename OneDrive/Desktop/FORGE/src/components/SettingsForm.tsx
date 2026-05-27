@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getIntegrityBadge } from "@/lib/utils";
 import { CheckCircle2, Copy, Check, Eye, EyeOff } from "lucide-react";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 
@@ -68,7 +67,6 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
   const [pwSaved, setPwSaved] = useState(false);
   const [pwError, setPwError] = useState("");
 
-  const badge = getIntegrityBadge(user.integrityScore);
   const isLearner = role === "learner" || role === "student" || (role === "mentor" && isAlsoLearning);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -154,15 +152,6 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
               <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9375rem" }}>{item.value}</span>
             </div>
           ))}
-
-          {isLearner && (
-            <div className="flex justify-between items-center">
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Integrity</span>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.875rem", color: badge.color, fontWeight: 700 }}>
-                +{user.integrityScore} · {badge.label}
-              </span>
-            </div>
-          )}
 
           {role === "mentor" && isAlsoLearning && (
             <div className="flex justify-between items-center">
