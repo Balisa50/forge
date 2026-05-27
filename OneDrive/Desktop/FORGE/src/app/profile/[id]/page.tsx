@@ -3,6 +3,13 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Shield, Award, ExternalLink, Globe, CheckCircle2 } from "lucide-react";
 
+function normalizeProfileUrl(value: string, hostPath: string): string {
+  const v = value.trim();
+  if (/^https?:\/\//i.test(v)) return v;
+  if (v.startsWith(hostPath.split("/")[0])) return `https://${v.replace(/^\/+/, "")}`;
+  return `https://${hostPath}/${v.replace(/^\/+/, "")}`;
+}
+
 export default async function PublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -73,12 +80,12 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               {user.bio && <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "0.75rem" }}>{user.bio}</p>}
               <div className="flex items-center gap-3">
                 {user.github && (
-                  <a href={user.github} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-dim)", display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.75rem", fontFamily: "var(--font-mono)", textDecoration: "none" }}>
+                  <a href={normalizeProfileUrl(user.github, "github.com")} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-dim)", display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.75rem", fontFamily: "var(--font-mono)", textDecoration: "none" }}>
                     <Globe size={14} /> GitHub
                   </a>
                 )}
                 {user.linkedin && (
-                  <a href={user.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-dim)", display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.75rem", fontFamily: "var(--font-mono)", textDecoration: "none" }}>
+                  <a href={normalizeProfileUrl(user.linkedin, "linkedin.com/in")} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-dim)", display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.75rem", fontFamily: "var(--font-mono)", textDecoration: "none" }}>
                     <ExternalLink size={14} /> LinkedIn
                   </a>
                 )}

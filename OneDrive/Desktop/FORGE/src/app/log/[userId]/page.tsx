@@ -3,6 +3,21 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Flame, CheckCircle2, XCircle, ExternalLink, Shield, Calendar } from "lucide-react";
 
+/**
+ * Normalize whatever the user typed into a real, openable URL.
+ * Accepts: "Balisa50", "github.com/Balisa50", "https://github.com/Balisa50",
+ * and the same shapes with leading slashes / trailing slashes / whitespace.
+ * Always returns an absolute https:// URL pointing at the right host.
+ */
+function normalizeProfileUrl(value: string, hostPath: string): string {
+  const v = value.trim();
+  if (/^https?:\/\//i.test(v)) return v;            // already absolute, use as-is
+  if (v.startsWith(hostPath.split("/")[0])) {       // e.g. "github.com/Balisa50"
+    return `https://${v.replace(/^\/+/, "")}`;
+  }
+  return `https://${hostPath}/${v.replace(/^\/+/, "")}`;
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true, isPublic: true } });
@@ -101,13 +116,13 @@ export default async function BuildLogPage({ params }: { params: Promise<{ userI
                   </div>
                 )}
                 {user.github && (
-                  <a href={`https://github.com/${user.github}`} target="_blank" rel="noopener noreferrer"
+                  <a href={normalizeProfileUrl(user.github, "github.com")} target="_blank" rel="noopener noreferrer"
                     style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--blue)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                     GitHub <ExternalLink size={10} />
                   </a>
                 )}
                 {user.linkedin && (
-                  <a href={`https://linkedin.com/in/${user.linkedin}`} target="_blank" rel="noopener noreferrer"
+                  <a href={normalizeProfileUrl(user.linkedin, "linkedin.com/in")} target="_blank" rel="noopener noreferrer"
                     style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--blue)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                     LinkedIn <ExternalLink size={10} />
                   </a>
