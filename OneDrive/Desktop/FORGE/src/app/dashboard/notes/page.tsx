@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { Loader2, MessageSquare, CheckCheck, Link2, Send, Sparkles, Unlock } from "lucide-react";
+import { Loader2, MessageSquare, CheckCheck, Link2, Send, Sparkles, Unlock, Trash2 } from "lucide-react";
 
 interface MentorAuthor {
   id: string;
@@ -85,6 +85,18 @@ export default function MentorNotesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ commentId: id }),
     });
+  };
+
+  const deleteNote = async (id: string) => {
+    if (!confirm("Remove this note from your inbox? Your mentor will still see it in their history.")) return;
+    // Optimistic: drop locally first, restore on failure
+    const prev = comments;
+    setComments((p) => p.filter((c) => c.id !== id));
+    const res = await fetch(`/api/mentor-notes?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    if (!res.ok) {
+      alert("Couldn't remove. Try again.");
+      setComments(prev);
+    }
   };
 
   const sendReply = async (taskId: string, kind: "note" | "request_unlock" = "note") => {
@@ -235,13 +247,20 @@ export default function MentorNotesPage() {
                           {isAction ? "System" : fromMentor ? (c.mentor.name ?? "Your mentor") : isRequest ? "You · unlock request" : "You"}
                         </p>
                         <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{c.body}</p>
-                        <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)" }}>
+                        <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", alignItems: "center" }}>
                           <span>{new Date(c.createdAt).toLocaleString()}</span>
                           {fromMentor && !c.readAt && (
                             <button onClick={() => markRead(c.id)} style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
                               <CheckCheck size={11} /> Mark read
                             </button>
                           )}
+                          <button
+                            onClick={() => deleteNote(c.id)}
+                            title="Remove from your inbox"
+                            style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: 0, marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
+                          >
+                            <Trash2 size={11} />
+                          </button>
                         </div>
                       </li>
                     );

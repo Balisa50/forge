@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { requireLearnerAccess } from "@/lib/role-guard";
 import Link from "next/link";
-import { Award, ExternalLink, Clock, CheckCircle2, Fingerprint, Target } from "lucide-react";
+import { Award, ExternalLink, Clock, CheckCircle2, Fingerprint, Target, Lock } from "lucide-react";
 import CertShareButton from "@/components/CertShareButton";
 
 export const dynamic = "force-dynamic";
@@ -12,10 +12,48 @@ export default async function CertificatesPage() {
   const userId = session!.user!.id!;
   await requireLearnerAccess(userId);
 
-  const certificates = await prisma.certificate.findMany({
-    where: { userId },
-    orderBy: { issuedAt: "desc" },
-  });
+  const [certificates, user, roadmaps] = await Promise.all([
+    prisma.certificate.findMany({
+      where: { userId },
+      orderBy: { issuedAt: "desc" },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true },
+    }),
+    prisma.roadmap.findMany({
+      where: { userId },
+      select: {
+        title: true,
+        tracks: {
+          select: {
+            phases: {
+              select: {
+                tasks: { select: { status: true } },
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
+
+  // Progress toward a future cert (for the blurred preview).
+  let inProgressTitle: string | null = null;
+  let verifiedCount = 0;
+  let totalCount = 0;
+  for (const r of roadmaps) {
+    const tasks = r.tracks.flatMap((t) => t.phases.flatMap((p) => p.tasks));
+    if (tasks.length === 0) continue;
+    const v = tasks.filter((t) => t.status === "verified").length;
+    if (v < tasks.length) {
+      inProgressTitle = r.title;
+      verifiedCount = v;
+      totalCount = tasks.length;
+      break;
+    }
+  }
+  const progressPct = totalCount > 0 ? Math.round((verifiedCount / totalCount) * 100) : 0;
 
   return (
     <div>
@@ -31,13 +69,93 @@ export default async function CertificatesPage() {
       </div>
 
       {certificates.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center", marginTop: "1rem" }}>
-          <div style={{ color: "var(--accent)", marginBottom: "1rem" }}><Award size={48} strokeWidth={1.5} /></div>
-          <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.75rem" }}>No certificates yet</h2>
-          <p style={{ color: "var(--text-secondary)", maxWidth: "360px", margin: "0 auto 2rem" }}>
-            Complete all tasks in a roadmap and pass the interrogations to earn a certificate.
-          </p>
-          <Link href="/dashboard/roadmap" className="forge-btn forge-btn-primary">View Roadmap</Link>
+        <div style={{ marginTop: "1rem" }}>
+          {/* Blurred preview — the cert they're working toward, with their own
+              name + roadmap baked in. Stays heavily blurred until 100% verified. */}
+          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", marginBottom: "1.5rem", border: "1px solid var(--border)" }}>
+            {/* The "future cert" art */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, #1a1410 0%, #2a1f15 50%, #1a1410 100%)",
+                padding: "3rem 2.5rem",
+                filter: progressPct >= 100 ? "none" : "blur(7px)",
+                transform: progressPct >= 100 ? "none" : "scale(1.02)",
+                transition: "filter 0.4s, transform 0.4s",
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+            >
+              <div style={{
+                border: "2px solid #d4af37",
+                borderRadius: 10,
+                padding: "2rem 1.5rem",
+                background: "linear-gradient(180deg, rgba(212,175,55,0.04), transparent)",
+                textAlign: "center",
+                boxShadow: "inset 0 0 0 1px rgba(212,175,55,0.25)",
+              }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.35em", color: "#d4af37", marginBottom: "0.75rem" }}>
+                  ★ ★ ★  THE FORGE  ★ ★ ★
+                </div>
+                <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: "0.875rem", color: "#c9b178", marginBottom: "1.5rem" }}>
+                  Certificate of Completion
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", color: "rgba(212,175,55,0.7)", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                  This certifies that
+                </div>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: "2rem", fontWeight: 700, color: "#fff", letterSpacing: "0.04em", margin: "0.5rem 0 1rem" }}>
+                  {user?.name ?? "Your Name"}
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", color: "rgba(212,175,55,0.7)", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                  has successfully completed
+                </div>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: "1.25rem", color: "#d4af37", marginBottom: "1.5rem" }}>
+                  {inProgressTitle ?? "Your Roadmap"}
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-around", marginTop: "2rem", paddingTop: "1.25rem", borderTop: "1px solid rgba(212,175,55,0.2)" }}>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", color: "rgba(212,175,55,0.6)" }}>
+                    Verified by AI Interrogation
+                  </div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", color: "rgba(212,175,55,0.6)" }}>
+                    Cryptographically Signed
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Overlay — only shows while blurred */}
+            {progressPct < 100 && (
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "2rem", background: "rgba(0,0,0,0.35)" }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(212,175,55,0.15)", border: "2px solid rgba(212,175,55,0.6)", display: "grid", placeItems: "center", marginBottom: "1rem" }}>
+                  <Lock size={22} color="#d4af37" />
+                </div>
+                <h3 style={{ fontFamily: "Georgia, serif", fontSize: "1.5rem", color: "#fff", marginBottom: "0.5rem" }}>
+                  {inProgressTitle ? "Unlocks when you finish" : "Pick a roadmap to begin"}
+                </h3>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "rgba(212,175,55,0.85)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  {inProgressTitle
+                    ? `${verifiedCount} / ${totalCount} weeks shipped · ${progressPct}%`
+                    : "0 / 0 weeks shipped"}
+                </p>
+                {/* Progress bar */}
+                {inProgressTitle && (
+                  <div style={{ width: "min(280px, 70%)", height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden", marginBottom: "1.5rem" }}>
+                    <div style={{ width: `${progressPct}%`, height: "100%", background: "linear-gradient(90deg, #d4af37, #f0c75c)", borderRadius: 3, transition: "width 0.5s" }} />
+                  </div>
+                )}
+                <Link href="/dashboard/roadmap" className="forge-btn" style={{ background: "#d4af37", color: "#000", border: "none", fontWeight: 700, padding: "0.625rem 1.5rem" }}>
+                  {inProgressTitle ? "Open my roadmap" : "Pick a roadmap"}
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div className="forge-panel" style={{ padding: "1.5rem", textAlign: "center" }}>
+            <div style={{ color: "var(--accent)", marginBottom: "0.75rem", display: "flex", justifyContent: "center" }}><Award size={32} strokeWidth={1.5} /></div>
+            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>What you&apos;re working toward</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", maxWidth: "440px", margin: "0 auto", lineHeight: 1.55 }}>
+              Every week you verify, the cert sharpens. Finish all of them, pass the interrogations, and the full certificate above unlocks — with a public verify link anyone can check.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-4">

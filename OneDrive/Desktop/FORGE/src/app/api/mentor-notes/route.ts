@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   const [rawComments, rawResources] = await Promise.all([
     prisma.mentorComment.findMany({
-      where: { menteeId, ...(taskId ? { taskId } : {}) },
+      where: { menteeId, hiddenByMentee: false, ...(taskId ? { taskId } : {}) },
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
@@ -87,3 +87,28 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ updated: updated.count });
 }
+
+/**
+ * DELETE /api/mentor-notes?id=...
+ *   Mentee-side soft-delete. Removes the note from the mentee's inbox but
+ *   keeps it visible to the mentor for audit. Only the mentee themselves
+ *   can hide their own notes.
+ */
+export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  const result = await prisma.mentorComment.updateMany({
+    where: { id, menteeId: session.user.id },
+    data: { hiddenByMentee: true },
+  });
+  if (result.count === 0) {
+    return NextResponse.json({ error: "Note not found" }, { status: 404 });
+  }
+  return NextResponse.json({ hidden: true });
+}
+

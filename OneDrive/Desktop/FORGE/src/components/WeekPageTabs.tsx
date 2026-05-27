@@ -41,15 +41,61 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
 
   const storageKey = `forge:progress:${slug}:w${week.number}`;
   const [done, setDone] = useState<Record<string, boolean>>({});
+
+  // Hydrate from server. Falls back to localStorage if briefly offline.
+  // Any local keys the server doesn't yet have are pushed up (one-time
+  // migration from the previous localStorage-only world).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    try { setDone(JSON.parse(window.localStorage.getItem(storageKey) ?? "{}")); } catch { /* */ }
-  }, [storageKey]);
-  const persist = (next: Record<string, boolean>) => {
+    let cancelled = false;
+    (async () => {
+      let local: Record<string, boolean> = {};
+      try { local = JSON.parse(window.localStorage.getItem(storageKey) ?? "{}"); } catch { /* */ }
+      try {
+        const res = await fetch(`/api/learn/progress?slug=${encodeURIComponent(slug)}&week=${week.number}`);
+        if (res.ok) {
+          const data = await res.json();
+          const server: Record<string, boolean> = {};
+          for (const k of (data.items ?? []) as string[]) server[k] = true;
+          const localOnly = Object.keys(local).filter((k) => local[k] && !server[k]);
+          if (localOnly.length > 0) {
+            const sync: Record<string, boolean> = {};
+            for (const k of localOnly) { sync[k] = true; server[k] = true; }
+            void fetch("/api/learn/progress", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ slug, week: week.number, items: sync }),
+            });
+          }
+          if (!cancelled) {
+            setDone(server);
+            window.localStorage.setItem(storageKey, JSON.stringify(server));
+          }
+          return;
+        }
+      } catch { /* offline — fall back to local */ }
+      if (!cancelled) setDone(local);
+    })();
+    return () => { cancelled = true; };
+  }, [storageKey, slug, week.number]);
+
+  const syncToServer = (items: Record<string, boolean>) => {
+    void fetch("/api/learn/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug, week: week.number, items }),
+    });
+  };
+
+  const persist = (next: Record<string, boolean>, changed: Record<string, boolean>) => {
     setDone(next);
     if (typeof window !== "undefined") window.localStorage.setItem(storageKey, JSON.stringify(next));
+    if (Object.keys(changed).length > 0) syncToServer(changed);
   };
-  const toggle = (key: string) => persist({ ...done, [key]: !done[key] });
+  const toggle = (key: string) => {
+    const newVal = !done[key];
+    persist({ ...done, [key]: newVal }, { [key]: newVal });
+  };
 
   // Mark every item on a day done (or undo it). Used by the big primary button
   // at the bottom of the current day so the learner doesn't have to click each
@@ -59,8 +105,13 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
     const d = week.days.find((x) => x.number === dayNumber);
     if (!d) return;
     const next = { ...done };
-    d.items.forEach((_, i) => { next[`d${dayNumber}-i${i}`] = allDoneTarget; });
-    persist(next);
+    const changed: Record<string, boolean> = {};
+    d.items.forEach((_, i) => {
+      const k = `d${dayNumber}-i${i}`;
+      next[k] = allDoneTarget;
+      changed[k] = allDoneTarget;
+    });
+    persist(next, changed);
   };
 
   // Toast for clicking a locked day. Self-clearing after 2.4s.
@@ -282,7 +333,14 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                             {clickable && (
                               <button
                                 type="button"
-                                onClick={() => openItem(item.url!, item.title)}
+                                onClick={() => {
+                                  openItem(item.url!, item.title);
+                                  // Opening a resource auto-ticks the item — engagement
+                                  // proof. Mentee can still untick if it was a mis-click.
+                                  if (!done[key]) {
+                                    persist({ ...done, [key]: true }, { [key]: true });
+                                  }
+                                }}
                                 style={{
                                   marginTop: "0.5rem",
                                   display: "inline-flex", alignItems: "center", gap: "0.375rem",
@@ -323,23 +381,38 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                     >
                       Undo · re-do Day {d.number}
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => markDay(d.number, true)}
-                      style={{
-                        display: "inline-flex", alignItems: "center", gap: "0.375rem",
-                        background: "var(--accent)", color: "#000",
-                        border: "none", borderRadius: 6,
-                        padding: "0.5rem 1rem", cursor: "pointer",
-                        fontFamily: "var(--font-body)", fontSize: "0.8125rem", letterSpacing: "0.02em",
-                        fontWeight: 700,
-                      }}
-                    >
-                      <CheckCircle2 size={14} />
-                      Mark Day {d.number} done
-                      {idx + 1 < (week.days?.length ?? 0) && <ArrowRight size={14} />}
-                    </button>
-                  )}
+                  ) : (() => {
+                    // Engagement gate: the Mark-done button is ONLY enabled
+                    // once every item on the day is individually ticked.
+                    // No more bulk-bypass.
+                    const allItemsTicked = d.items.every((_, i) => done[`d${d.number}-i${i}`]);
+                    const missing = d.items.length - d.items.filter((_, i) => done[`d${d.number}-i${i}`]).length;
+                    return (
+                      <button
+                        onClick={() => allItemsTicked && markDay(d.number, true)}
+                        disabled={!allItemsTicked}
+                        title={allItemsTicked ? "" : `Tick every item above first (${missing} left). Open the links — they auto-tick when you do.`}
+                        style={{
+                          display: "inline-flex", alignItems: "center", gap: "0.375rem",
+                          background: allItemsTicked ? "var(--accent)" : "var(--bg-card)",
+                          color: allItemsTicked ? "#000" : "var(--text-dim)",
+                          border: allItemsTicked ? "none" : "1px solid var(--border)",
+                          borderRadius: 6,
+                          padding: "0.5rem 1rem",
+                          cursor: allItemsTicked ? "pointer" : "not-allowed",
+                          fontFamily: "var(--font-body)", fontSize: "0.8125rem", letterSpacing: "0.02em",
+                          fontWeight: 700,
+                          opacity: allItemsTicked ? 1 : 0.7,
+                        }}
+                      >
+                        {allItemsTicked ? <CheckCircle2 size={14} /> : <Lock size={14} />}
+                        {allItemsTicked
+                          ? `Mark Day ${d.number} done`
+                          : `${missing} item${missing === 1 ? "" : "s"} left to tick`}
+                        {allItemsTicked && idx + 1 < (week.days?.length ?? 0) && <ArrowRight size={14} />}
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             )}

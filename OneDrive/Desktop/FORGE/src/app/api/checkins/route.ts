@@ -3,6 +3,46 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyProjectUrl } from "@/lib/verify-url";
 import { type FileAttachment, MAX_TOTAL_BYTES, MAX_FILE_BYTES, getFileExtension, isAcceptedExtension } from "@/lib/submission-types";
+import { loadRoadmap } from "@/lib/roadmaps";
+import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+
+/**
+ * Engagement gate: a mentee can't submit a check-in for Week N until they've
+ * gone through every day's items on /learn/[slug]/N. Returns null when the
+ * week is complete, or an error message naming what's missing.
+ */
+async function engagementBlockerFor(userId: string, roadmapTitle: string, taskTitle: string): Promise<string | null> {
+  // taskTitle looks like "Week 7: Build the dashboard" — pull the number out.
+  const m = taskTitle.match(/^Week\s+(\d+)\s*[:\-]/i);
+  if (!m) return null; // not a weekly task, skip the gate
+  const weekNumber = parseInt(m[1], 10);
+
+  // Map the roadmap.title back to its curated slug (these stay in sync).
+  const entry = CURATED_ROADMAPS.find((r) => r.title === roadmapTitle);
+  if (!entry) return null; // custom / non-curated roadmap — no gate
+  const slug = entry.slug;
+
+  const curriculum = loadRoadmap(slug);
+  if (!curriculum) return null;
+  const week = curriculum.weeks.find((w) => w.number === weekNumber);
+  if (!week || !week.days || week.days.length === 0) return null; // nothing to gate
+
+  const requiredKeys: string[] = [];
+  for (const d of week.days) {
+    d.items.forEach((_, i) => requiredKeys.push(`d${d.number}-i${i}`));
+  }
+  if (requiredKeys.length === 0) return null;
+
+  const completed = await prisma.learningProgress.findMany({
+    where: { userId, slug, week: weekNumber, itemKey: { in: requiredKeys } },
+    select: { itemKey: true },
+  });
+  const completedSet = new Set(completed.map((c) => c.itemKey));
+  const missingCount = requiredKeys.length - completedSet.size;
+  if (missingCount === 0) return null;
+
+  return `You haven't worked through this week yet — ${missingCount} of ${requiredKeys.length} items are unticked on /learn/${slug}/${weekNumber}. Open the resources and tick each item before submitting.`;
+}
 
 function validateFileAttachments(files: unknown[]): { valid: FileAttachment[]; error?: string } {
   const valid: FileAttachment[] = [];
@@ -178,6 +218,14 @@ export async function POST(req: NextRequest) {
     where: { id: taskId, phase: { trackId, track: { roadmapId } } },
   });
   if (!task) return NextResponse.json({ error: "Task not found" }, { status: 404 });
+
+  // ENGAGEMENT GATE — block submission until the mentee has actually gone
+  // through every day's items for this week. Pure no-op for non-curated
+  // roadmaps or weeks that don't have day-by-day content.
+  const blocker = await engagementBlockerFor(userId, roadmap.title, task.title);
+  if (blocker) {
+    return NextResponse.json({ error: blocker, kind: "engagement-required" }, { status: 400 });
+  }
 
   const checkin = await prisma.checkin.create({
     data: {

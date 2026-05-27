@@ -119,6 +119,7 @@ model User {
   cohortEnrollments CohortEnrollment[]
   podMemberships    PodMember[]
   notifications     Notification[]
+  learningProgress  LearningProgress[]
 }
 
 model Account {
@@ -459,16 +460,19 @@ model MentorLink {
 /// "request_unlock" pings the mentee can fire.
 /// `readAt` is set when the OTHER party has seen the message.
 model MentorComment {
-  id          String    @id @default(cuid())
-  taskId      String
-  mentorId    String
-  menteeId    String
-  authorRole  String    @default("mentor") // "mentor" | "mentee"
-  kind        String    @default("note")    // "note" | "request_unlock" | "action_log"
-  body        String
-  readAt      DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id             String    @id @default(cuid())
+  taskId         String
+  mentorId       String
+  menteeId       String
+  authorRole     String    @default("mentor") // "mentor" | "mentee"
+  kind           String    @default("note")    // "note" | "request_unlock" | "action_log"
+  body           String
+  readAt         DateTime?
+  /// Mentee-side soft delete. Mentor still sees the row in their audit trail;
+  /// the mentee's /dashboard/notes filters these out.
+  hiddenByMentee Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   task      Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   mentor    User @relation("MentorCommentMentor", fields: [mentorId], references: [id], onDelete: Cascade)
@@ -476,6 +480,24 @@ model MentorComment {
 
   @@index([menteeId, taskId])
   @@index([mentorId, menteeId])
+  @@index([menteeId, hiddenByMentee])
+}
+
+/// Per-item engagement on /learn/[slug]/[week] pages. Previously this was
+/// localStorage-only, so the server couldn't gate submissions on actual
+/// engagement. Now every link-click and radio-tick is persisted as a row.
+model LearningProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  slug        String
+  week        Int
+  itemKey     String
+  completedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slug, week, itemKey])
+  @@index([userId, slug, week])
 }
 
 /// AI Mentor interaction log. Every release / verification / question / warning
