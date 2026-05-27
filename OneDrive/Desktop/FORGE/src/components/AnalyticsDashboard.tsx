@@ -3,10 +3,7 @@
 import { useMemo } from "react";
 import {
   BarChart3,
-  Target,
   TrendingUp,
-  Clock,
-  Shield,
   CheckCircle2,
   Brain,
 } from "lucide-react";
@@ -25,22 +22,10 @@ interface CheckinData {
   } | null;
 }
 
-interface IntegrityLogData {
-  id: string;
-  event: string;
-  description: string;
-  delta: number;
-  scoreAfter: number;
-  createdAt: string;
-}
-
 interface Props {
   checkins: CheckinData[];
-  integrityScore: number;
-  integrityLogs: IntegrityLogData[];
   verifiedTasks: number;
   totalTasks: number;
-  totalStudyHours: number;
 }
 
 /* ------------------------------------------------------------------ */
@@ -287,11 +272,8 @@ function StatCard({ icon, label, value, unit, color }: { icon: React.ReactNode; 
 
 export default function AnalyticsDashboard({
   checkins,
-  integrityScore,
-  integrityLogs,
   verifiedTasks,
   totalTasks,
-  totalStudyHours,
 }: Props) {
   const scoreTrendPoints = useMemo(
     () =>
@@ -318,8 +300,6 @@ export default function AnalyticsDashboard({
   }, [checkins]);
 
   const totalCheckins = checkins.length;
-  const passedCheckins = checkins.filter((c) => c.status === "passed").length;
-  const passRate = totalCheckins > 0 ? Math.round((passedCheckins / totalCheckins) * 100) : 0;
   const avgScore = useMemo(() => {
     const scored = checkins.filter((c) => c.interrogation);
     if (scored.length === 0) return 0;
@@ -335,13 +315,10 @@ export default function AnalyticsDashboard({
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4" style={{ marginBottom: "2rem" }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ marginBottom: "2rem" }}>
         <StatCard icon={<BarChart3 size={16} strokeWidth={1.5} />} label="Total Check-ins" value={totalCheckins} color="var(--accent)" />
-        <StatCard icon={<Target size={16} strokeWidth={1.5} />} label="Pass Rate" value={passRate} unit="%" color={passRate >= 70 ? "var(--green)" : passRate >= 50 ? "var(--yellow)" : "var(--red)"} />
         <StatCard icon={<Brain size={16} strokeWidth={1.5} />} label="Avg Score" value={avgScore} unit="/10" color={scoreColor(avgScore)} />
-        <StatCard icon={<Shield size={16} strokeWidth={1.5} />} label="Integrity" value={integrityScore} color={integrityScore >= 20 ? "var(--green)" : "var(--yellow)"} />
         <StatCard icon={<CheckCircle2 size={16} strokeWidth={1.5} />} label="Tasks Done" value={`${verifiedTasks}/${totalTasks}`} color="var(--blue)" />
-        <StatCard icon={<Clock size={16} strokeWidth={1.5} />} label="Study Hours" value={Math.round(totalStudyHours * 10) / 10} unit="hrs" color="var(--purple)" />
       </div>
 
       {/* Score Trend */}
@@ -362,33 +339,6 @@ export default function AnalyticsDashboard({
         <YearHeatmap checkinMap={checkinMap} />
       </div>
 
-      {/* Integrity Log */}
-      {integrityLogs.length > 0 && (
-        <div className="forge-panel" style={{ padding: "1.5rem" }}>
-          <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.25rem", letterSpacing: "0.05em", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Shield size={18} strokeWidth={1.5} color="var(--accent)" />
-            Integrity Log
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {integrityLogs.map((log) => (
-              <div key={log.id} className="forge-card" style={{ padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem", fontWeight: 500, color: "var(--text-primary)", marginBottom: "0.125rem" }}>{log.description}</div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
-                    {new Date(log.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                  </div>
-                </div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.875rem", fontWeight: 600, color: log.delta >= 0 ? "var(--green)" : "var(--red)", whiteSpace: "nowrap" }}>
-                  {log.delta >= 0 ? "+" : ""}{log.delta}
-                </div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", whiteSpace: "nowrap" }}>
-                  {log.scoreAfter} pts
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
