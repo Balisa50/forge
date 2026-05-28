@@ -255,15 +255,75 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                     Finish Day {d.number - 1} to unlock
                   </p>
                 )}
-                {!isLocked && isCurrent && (
-                  <p style={{ color: "var(--accent)", fontSize: "0.75rem", marginTop: "0.25rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                    Today
-                  </p>
-                )}
-                {!isLocked && isDone && !isCurrent && (
-                  <p style={{ color: "var(--green)", fontSize: "0.75rem", marginTop: "0.25rem", fontFamily: "var(--font-mono)" }}>
-                    Done
-                  </p>
+                {!isLocked && (
+                  <>
+                    {/* Per-day progress bar — visible at all times for active/done days */}
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      marginTop: "0.4rem",
+                    }}>
+                      <div style={{
+                        flex: 1,
+                        maxWidth: 220,
+                        height: 4,
+                        borderRadius: 2,
+                        background: "var(--bg-card)",
+                        overflow: "hidden",
+                      }}>
+                        <div style={{
+                          width: `${pct}%`,
+                          height: "100%",
+                          background: isDone
+                            ? "linear-gradient(90deg, #22c55e, #16a34a)"
+                            : isCurrent
+                              ? "linear-gradient(90deg, var(--accent), #f0c75c)"
+                              : "var(--accent)",
+                          transition: "width 0.45s cubic-bezier(.16,1,.3,1)",
+                          borderRadius: 2,
+                        }} />
+                      </div>
+                      <span style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.6875rem",
+                        color: isDone ? "var(--green)" : isCurrent ? "var(--accent)" : "var(--text-dim)",
+                        letterSpacing: "0.06em",
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                      }}>
+                        {d.items.filter((_, i) => done[`d${d.number}-i${i}`]).length}/{d.items.length}
+                        {isDone && (
+                          <span style={{
+                            marginLeft: 6,
+                            padding: "1px 6px",
+                            borderRadius: 999,
+                            background: "rgba(34,197,94,0.12)",
+                            border: "1px solid rgba(34,197,94,0.3)",
+                            fontSize: "0.5625rem",
+                            letterSpacing: "0.18em",
+                            textTransform: "uppercase",
+                          }}>
+                            Sealed
+                          </span>
+                        )}
+                        {isCurrent && !isDone && (
+                          <span style={{
+                            marginLeft: 6,
+                            padding: "1px 6px",
+                            borderRadius: 999,
+                            background: "rgba(245,158,11,0.1)",
+                            border: "1px solid rgba(245,158,11,0.3)",
+                            fontSize: "0.5625rem",
+                            letterSpacing: "0.18em",
+                            textTransform: "uppercase",
+                          }}>
+                            Today
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -296,17 +356,46 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                           border: checked ? "1px solid rgba(34,197,94,0.22)" : "1px solid var(--border)",
                           borderRadius: 8,
                           padding: "0.75rem 0.875rem",
+                          transition: "background 0.3s, border-color 0.3s",
                         }}
                       >
                         <div style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
                           <button
                             onClick={() => toggle(key)}
-                            style={{ background: "none", border: "none", padding: 0, cursor: "pointer", flexShrink: 0, marginTop: "0.125rem" }}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              padding: 0,
+                              cursor: "pointer",
+                              flexShrink: 0,
+                              marginTop: "0.125rem",
+                              position: "relative",
+                              width: 20, height: 20,
+                            }}
                             aria-label={checked ? "Mark not done" : "Mark done"}
                           >
-                            {checked
-                              ? <CheckCircle2 size={20} style={{ color: "var(--green)" }} />
-                              : <Circle size={20} style={{ color: "var(--text-dim)" }} />}
+                            <span style={{
+                              position: "absolute",
+                              inset: 0,
+                              display: "grid",
+                              placeItems: "center",
+                              transform: checked ? "scale(1)" : "scale(0)",
+                              opacity: checked ? 1 : 0,
+                              transition: "transform 0.32s cubic-bezier(.22,1.4,.36,1), opacity 0.2s",
+                            }}>
+                              <CheckCircle2 size={20} style={{ color: "var(--green)" }} />
+                            </span>
+                            <span style={{
+                              position: "absolute",
+                              inset: 0,
+                              display: "grid",
+                              placeItems: "center",
+                              transform: checked ? "scale(0)" : "scale(1)",
+                              opacity: checked ? 0 : 1,
+                              transition: "transform 0.2s, opacity 0.15s",
+                            }}>
+                              <Circle size={20} style={{ color: "var(--text-dim)" }} />
+                            </span>
                           </button>
 
                           <span style={{ width: 26, height: 26, borderRadius: 6, background: `${accent}1f`, color: accent, display: "grid", placeItems: "center", flexShrink: 0, marginTop: "0.0625rem" }}>

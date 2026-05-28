@@ -9,6 +9,8 @@ import AskTheProfessor from "@/components/AskTheProfessor";
 import ForgePactCard from "@/components/ForgePactCard";
 import WeekIntention from "@/components/WeekIntention";
 import ShippedChain from "@/components/ShippedChain";
+import BuildFeed from "@/components/BuildFeed";
+import MentorReplay from "@/components/MentorReplay";
 import { soloModeEnabled } from "@/lib/modes";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
@@ -191,6 +193,23 @@ export default async function DashboardPage() {
     else break;
   }
 
+  // Position of the latest verified task within the ordered task list (1-indexed)
+  // — feeds the celebration's "Week N of T" chain line.
+  const latestVerifiedIdx = latestVerified
+    ? orderedTasks.findIndex((t) => t.id === latestVerified.id)
+    : -1;
+  const latestVerifiedWeekNumber = latestVerifiedIdx >= 0 ? latestVerifiedIdx + 1 : null;
+
+  // Pull the mentor's "note" comment from the most-recently-verified task —
+  // surfaced as MentorReplay at the top of the *current* released week.
+  const previousVerifiedNote = latestVerified && hasMentor
+    ? await prisma.mentorComment.findFirst({
+        where: { taskId: latestVerified.id, kind: "note", authorRole: "mentor" },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, body: true },
+      })
+    : null;
+
   // Not used — analytics page handles detailed scores
 
   // ── MENTEE MODE: mentor controls every week release ────────────────
@@ -202,6 +221,9 @@ export default async function DashboardPage() {
           latestVerifiedTitle={latestVerified?.title ?? null}
           streakWeeks={streakWeeks}
           menteeFirstName={user?.name?.split(" ")[0] ?? "You"}
+          weekNumber={latestVerifiedWeekNumber}
+          totalWeeks={totalTasks}
+          verifyingMentor={primaryMentor?.name ?? null}
         />
         <div style={{ marginBottom: "2rem" }}>
           <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2.5rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
@@ -214,7 +236,21 @@ export default async function DashboardPage() {
 
         <ForgePactCard />
 
+        {/* Mentor Replay — only when there's a previous verified week note and
+            the learner has a currently-released week (so the timing lands right). */}
+        {releasedWeek && previousVerifiedNote && primaryMentor && (
+          <MentorReplay
+            noteId={previousVerifiedNote.id}
+            mentorName={primaryMentor.name}
+            noteBody={previousVerifiedNote.body}
+            previousWeekTitle={latestVerified?.title ?? null}
+            scopeKey={releasedWeek.id}
+          />
+        )}
+
         <ShippedChain shipped={verifiedTasks} total={totalTasks} streak={streakWeeks} />
+
+        <BuildFeed />
 
         {/* Current released week */}
         {releasedWeek && (() => {

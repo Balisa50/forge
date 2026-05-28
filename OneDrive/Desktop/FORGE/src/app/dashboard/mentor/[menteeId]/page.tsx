@@ -209,9 +209,36 @@ export default function MenteeDrilldownPage() {
   };
 
   const handleAction = (task: MenteeTask, action: "unlock" | "verify" | "reopen" | "close") => {
-    const meta: Record<typeof action, { title: string; message: string; confirmText: string; danger?: boolean }> = {
+    // Verify gets its own dialog with the 1-5 depth rating selector.
+    if (action === "verify") {
+      setDialog({
+        kind: "verify",
+        taskTitle: task.title,
+        onSubmit: async (depthRating) => {
+          setPosting(task.id);
+          try {
+            const res = await fetch(`/api/mentor/tasks/${task.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "verify", menteeId, depthRating }),
+            });
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({}));
+              throw new Error(data.error || "Could not verify");
+            }
+            await load();
+          } catch (e) {
+            setDialog({ kind: "alert", title: "Verify failed", message: e instanceof Error ? e.message : "Something went wrong" });
+          } finally {
+            setPosting(null);
+          }
+        },
+      });
+      return;
+    }
+
+    const meta: Record<"unlock" | "reopen" | "close", { title: string; message: string; confirmText: string; danger?: boolean }> = {
       unlock:  { title: "Unlock without a deadline?", message: "Legacy bypass — gives the mentee access to this week with no closing date. Prefer 'Release with deadline' for normal use.", confirmText: "Unlock anyway" },
-      verify:  { title: "Mark this week as passed?",  message: "This will count it as verified for the mentee. They'll see it green on their roadmap.", confirmText: "Mark verified" },
       reopen:  { title: "Reopen this week for redo?", message: "The mentee will be able to check in on this week again — useful if they need another attempt.", confirmText: "Reopen" },
       close:   { title: "Close this week now?",       message: "The mentee will lose access to this week until you extend or reopen it.", confirmText: "Close now", danger: true },
     };

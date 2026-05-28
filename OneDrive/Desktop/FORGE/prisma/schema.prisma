@@ -75,6 +75,10 @@ model User {
   learningStyle    LearningStyle @default(balanced)
   onboardingDone   Boolean   @default(false)
   isPublic         Boolean   @default(true)
+  /// Opt-in: when true, the learner's first name appears in the public
+  /// Build Feed alongside their verified weeks. Default false — anonymous
+  /// participation by default, named participation by choice.
+  showInFeed       Boolean   @default(false)
   isGuest          Boolean   @default(false)
   /// True when the account was created via mentor join code (no password
   /// signup). These users sign in via their stored recoveryToken or via
@@ -221,6 +225,10 @@ model Task {
   sortOrder      Int        @default(0)
   status         TaskStatus @default(locked)
   verifiedAt     DateTime?
+  /// Mentor's 1–5 depth rating set at verification time. Powers the
+  /// future Forge Score. Null for unverified tasks and for legacy
+  /// verifications that pre-date the rating UI.
+  mentorRating   Int?
   /// Implementation intention (Gollwitzer) - the student commits to WHEN,
   /// WHERE, and WHAT FIRST before the week opens. Highest-ROI behavioural
   /// lever in the research. Set once when the week is released.

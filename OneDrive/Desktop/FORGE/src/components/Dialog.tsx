@@ -48,6 +48,12 @@ export type DialogConfig =
       /** Minimum characters required before the confirm button enables. */
       minLength?: number;
       onSubmit: (value: string) => void | Promise<void>;
+    }
+  | {
+      kind: "verify";
+      taskTitle: string;
+      /** Called with the 1–5 depth rating the mentor picked. Null = skipped. */
+      onSubmit: (depthRating: number | null) => void | Promise<void>;
     };
 
 interface Props {
@@ -59,11 +65,13 @@ export default function Dialog({ config, onClose }: Props) {
   const [busy, setBusy] = useState(false);
   const [date, setDate] = useState("");
   const [note, setNote] = useState("");
+  const [rating, setRating] = useState<number | null>(null);
   const firstFocusRef = useRef<HTMLButtonElement | HTMLInputElement | null>(null);
 
   // Reset form state every time the dialog opens with a new config
   useEffect(() => {
     setBusy(false);
+    setRating(null);
     if (config?.kind === "release") {
       setDate(config.defaultDate);
       setNote("");
@@ -113,6 +121,16 @@ export default function Dialog({ config, onClose }: Props) {
       setBusy(true);
       try {
         await config.onSubmit(note.trim());
+        onClose();
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+    if (config.kind === "verify") {
+      setBusy(true);
+      try {
+        await config.onSubmit(rating);
         onClose();
       } finally {
         setBusy(false);
@@ -201,7 +219,9 @@ export default function Dialog({ config, onClose }: Props) {
           >
             {config.kind === "release"
               ? `${config.mode === "release" ? "Release" : "Extend"} — ${config.taskTitle}`
-              : config.title}
+              : config.kind === "verify"
+                ? `Verify week — ${config.taskTitle}`
+                : config.title}
           </h2>
           <button
             type="button"
@@ -256,6 +276,68 @@ export default function Dialog({ config, onClose }: Props) {
                   style={{ resize: "vertical", lineHeight: 1.55 }}
                   autoFocus
                 />
+              </div>
+            </div>
+          ) : config.kind === "verify" ? (
+            <div className="flex flex-col gap-3">
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55 }}>
+                Mark this week as passed. Rate the depth of the work — a single
+                signal you can&apos;t fake later, and the only one that makes the
+                Forge Score meaningful.
+              </p>
+              <div>
+                <label style={{
+                  display: "block",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.6875rem",
+                  color: "var(--text-dim)",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  marginBottom: "0.5rem",
+                }}>
+                  Depth rating <span style={{ color: "var(--text-dim)", textTransform: "none", letterSpacing: 0 }}>— optional</span>
+                </label>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  {[1, 2, 3, 4, 5].map((n) => {
+                    const selected = rating === n;
+                    return (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setRating(selected ? null : n)}
+                        aria-label={`Rate ${n} of 5`}
+                        style={{
+                          flex: 1,
+                          padding: "0.625rem 0.5rem",
+                          background: selected ? "rgba(212,175,55,0.18)" : "var(--bg-card)",
+                          border: selected ? "1px solid var(--accent)" : "1px solid var(--border)",
+                          borderRadius: 8,
+                          color: selected ? "var(--accent)" : "var(--text-secondary)",
+                          fontFamily: "var(--font-headline)",
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          transition: "all 0.15s",
+                        }}
+                      >
+                        {n}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "0.4rem",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  color: "var(--text-dim)",
+                  letterSpacing: "0.08em",
+                }}>
+                  <span>1 · surface</span>
+                  <span>3 · solid</span>
+                  <span>5 · exceptional</span>
+                </div>
               </div>
             </div>
           ) : (
@@ -361,7 +443,9 @@ export default function Dialog({ config, onClose }: Props) {
                 ? config.mode === "release"
                   ? "Release week"
                   : "Update deadline"
-                : config.confirmText ?? "Confirm"}
+                : config.kind === "verify"
+                  ? (rating !== null ? `Verify · ${rating}/5` : "Verify (skip rating)")
+                  : config.confirmText ?? "Confirm"}
           </button>
         </div>
       </div>

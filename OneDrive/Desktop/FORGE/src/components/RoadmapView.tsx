@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import { parseTaskDetail } from "@/lib/parse-task-detail";
 import ResourceViewer from "@/components/ResourceViewer";
 import WeekPageTabs from "@/components/WeekPageTabs";
+import RoadmapNodeMap, { type NodeMapWeek } from "@/components/RoadmapNodeMap";
 import type { RoadmapWeek } from "@/lib/roadmaps";
 
 interface Task {
@@ -238,8 +239,33 @@ export default function RoadmapView({
 
   const track = roadmap.tracks.find((t) => t.id === activeTrack);
 
+  // Build the flat node-map list across ALL tracks so the journey reads end-to-end,
+  // not per-track. Each task is one week.
+  const nodeMapWeeks: NodeMapWeek[] = roadmap.tracks.flatMap((tr) =>
+    tr.phases.flatMap((p) =>
+      p.tasks.map((t, idx) => ({
+        id: t.id,
+        // Try to parse "Week N: ..." from title, else fall back to position
+        number: (() => {
+          const m = t.title.match(/^Week\s+(\d+)/i);
+          return m ? parseInt(m[1], 10) : idx + 1;
+        })(),
+        title: t.title,
+        trackTitle: roadmap.tracks.length > 1 ? tr.title : undefined,
+        status: t.status as NodeMapWeek["status"],
+        verifiedAt: t.verifiedAt,
+        // The Task type at this file is local — closedAt + deadline + releasedAt
+        // may exist on the prisma side but aren't on the local interface. We
+        // pass undefined which the NodeMap renders gracefully.
+      })),
+    ),
+  );
+
   return (
     <div>
+      {/* Linear vertical node map — the journey itself */}
+      <RoadmapNodeMap weeks={nodeMapWeeks} />
+
       {/* Track tabs */}
       {roadmap.tracks.length > 1 && (
         <div className="flex gap-2 mb-6" style={{ flexWrap: "wrap" }}>

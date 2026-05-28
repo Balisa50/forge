@@ -46,6 +46,13 @@ export async function PATCH(
   const menteeId = body.menteeId as string | undefined;
   const deadlineRaw = body.deadlineAt as string | undefined;
   const customNote = (body.note as string | undefined)?.trim();
+  const depthRatingRaw = body.depthRating;
+  // 1–5 mentor rating, only meaningful on "verify". Clamp + accept null.
+  let depthRating: number | null = null;
+  if (action === "verify" && typeof depthRatingRaw === "number") {
+    const n = Math.round(depthRatingRaw);
+    if (n >= 1 && n <= 5) depthRating = n;
+  }
 
   if (!action || !ALLOWED.includes(action)) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -98,6 +105,7 @@ export async function PATCH(
     releasedBy?: string | null;
     closedAt?: Date | null;
     verifiedAt?: Date | null;
+    mentorRating?: number | null;
   };
   let updates: Updates = {};
   let note = "";
@@ -129,7 +137,10 @@ export async function PATCH(
       break;
     case "verify":
       updates = { status: "verified", verifiedAt: new Date(), closedAt: null };
-      note = "Mentor signed off on your work for this week. Verified.";
+      if (depthRating !== null) updates.mentorRating = depthRating;
+      note = depthRating !== null
+        ? `Mentor signed off on your work for this week. Verified · depth ${depthRating}/5.`
+        : "Mentor signed off on your work for this week. Verified.";
       break;
     case "reopen":
       updates = { status: "available", verifiedAt: null, closedAt: null };
