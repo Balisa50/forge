@@ -487,7 +487,10 @@ export default function MenteeDrilldownPage() {
             )}
           </div>
         </div>
-        {!suspension && (
+        {/* Suspend only appears on the default Roadmap view — tool drilldowns
+            (Recovery / Visibility / Certificate) hide it so each tool page
+            has a single clear concern. */}
+        {!suspension && !activeTool && (
           <button
             type="button"
             onClick={handleBan}
