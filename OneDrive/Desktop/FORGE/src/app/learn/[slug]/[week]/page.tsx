@@ -105,23 +105,123 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         <WeekPageTabs week={w} slug={roadmap.slug} />
       </section>
 
-      <nav className="mx-auto max-w-5xl px-6 pb-14 grid grid-cols-2 gap-3">
-        <div>
-          {prev && (
-            <Link href={`/learn/${roadmap.slug}/${prev.number}`} className="block rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-3.5 transition hover:border-[color:var(--accent)]">
-              <p className="flex items-center gap-1 text-xs" style={{ fontFamily: "var(--font-mono)", color: "var(--text-dim)" }}><ArrowLeft size={11} /> previous</p>
-              <p className="mt-1 line-clamp-1 text-sm font-medium">Week {prev.number}: {prev.title}</p>
-            </Link>
-          )}
-        </div>
-        <div>
-          {next && (
-            <Link href={`/learn/${roadmap.slug}/${next.number}`} className="block rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-3.5 text-right transition hover:border-[color:var(--accent)]">
-              <p className="flex items-center justify-end gap-1 text-xs" style={{ fontFamily: "var(--font-mono)", color: "var(--text-dim)" }}>next <ArrowRight size={11} /></p>
-              <p className="mt-1 line-clamp-1 text-sm font-medium">Week {next.number}: {next.title}</p>
-            </Link>
-          )}
-        </div>
+      <nav
+        aria-label="Week navigation"
+        style={{
+          maxWidth: "64rem",
+          margin: "0 auto",
+          padding: "0 1.5rem 3.5rem",
+          display: "flex",
+          alignItems: "stretch",
+          gap: "0.75rem",
+        }}
+      >
+        {/* Previous — always present in the layout so spacing is balanced
+            even on Week 1. Empty placeholder keeps the next-card on the right
+            instead of stretching to full width. */}
+        {prev ? (
+          <Link
+            href={`/learn/${roadmap.slug}/${prev.number}`}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              padding: "0.75rem 1rem",
+              borderRadius: 10,
+              border: "1px solid var(--border)",
+              background: "var(--bg-panel)",
+              color: "var(--text-primary)",
+              textDecoration: "none",
+              transition: "border-color 0.15s, background 0.15s",
+            }}
+          >
+            <ArrowLeft size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />
+            <span style={{ flex: 1, minWidth: 0, display: "block" }}>
+              <span style={{
+                display: "block",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.625rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "var(--text-dim)",
+                lineHeight: 1,
+                marginBottom: "0.25rem",
+              }}>
+                Previous
+              </span>
+              <span style={{
+                display: "block",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                lineHeight: 1.25,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                color: "var(--text-primary)",
+              }}>
+                Week {prev.number}: {prev.title}
+              </span>
+            </span>
+          </Link>
+        ) : (
+          <span style={{ flex: 1 }} aria-hidden />
+        )}
+
+        {/* Next */}
+        {next ? (
+          <Link
+            href={`/learn/${roadmap.slug}/${next.number}`}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              padding: "0.75rem 1rem",
+              borderRadius: 10,
+              border: "1px solid var(--border)",
+              background: "var(--bg-panel)",
+              color: "var(--text-primary)",
+              textDecoration: "none",
+              textAlign: "right",
+              transition: "border-color 0.15s, background 0.15s",
+            }}
+          >
+            <span style={{ flex: 1, minWidth: 0, display: "block", textAlign: "right" }}>
+              <span style={{
+                display: "block",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.625rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "var(--text-dim)",
+                lineHeight: 1,
+                marginBottom: "0.25rem",
+              }}>
+                Next
+              </span>
+              <span style={{
+                display: "block",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                lineHeight: 1.25,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                color: "var(--text-primary)",
+              }}>
+                Week {next.number}: {next.title}
+              </span>
+            </span>
+            <ArrowRight size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
+          </Link>
+        ) : (
+          <span style={{ flex: 1 }} aria-hidden />
+        )}
       </nav>
     </main>
   );
