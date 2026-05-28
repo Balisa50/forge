@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { type User } from "next-auth";
 import {
@@ -27,6 +27,9 @@ import {
   Menu,
   X,
   Award,
+  Key,
+  Eye,
+  ChevronLeft,
 } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 
@@ -151,6 +154,17 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
 
   const closeMobile = () => setMobileOpen(false);
 
+  // Contextual nav: when the mentor is on a specific mentee's drilldown,
+  // surface the per-mentee tools (Recovery, Visibility) here instead of as
+  // stacked cards on the page itself. Active tool is reflected via ?tool=...
+  // — the page only renders the matching panel. Active state highlights in the bar.
+  const menteeMatch = pathname.match(/^\/dashboard\/mentor\/([^/]+)(?:\/.*)?$/);
+  const menteeId = menteeMatch && !["applications", "invite", "reviews"].includes(menteeMatch[1])
+    ? menteeMatch[1]
+    : null;
+  const searchParams = useSearchParams();
+  const activeTool = searchParams?.get("tool") ?? null;
+
   const navContent = (
     <>
       {/* Logo + Bell (desktop) / Close (mobile) */}
@@ -224,6 +238,116 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
             </Link>
           );
         })}
+
+        {/* ── Contextual: mentee drilldown tools ── */}
+        {menteeId && (
+          <>
+            <div style={{
+              marginTop: "1rem",
+              padding: "0 0.75rem 0.4rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.625rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--text-dim)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.4rem",
+            }}>
+              <span style={{ flex: 1, height: 1, background: "var(--border)" }} />
+              <span>Mentee tools</span>
+              <span style={{ flex: 1, height: 1, background: "var(--border)" }} />
+            </div>
+
+            {/* Back to mentees */}
+            <Link
+              href="/dashboard/mentor"
+              onClick={closeMobile}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                padding: "0.5rem 0.75rem",
+                borderRadius: 6,
+                fontFamily: "var(--font-body)",
+                fontSize: "0.8125rem",
+                color: "var(--text-dim)",
+                textDecoration: "none",
+              }}
+            >
+              <ChevronLeft size={14} /> Back to all mentees
+            </Link>
+
+            {/* Tool: Roadmap (default view) */}
+            <Link
+              href={`/dashboard/mentor/${menteeId}`}
+              onClick={closeMobile}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                padding: "0.5rem 0.75rem",
+                borderRadius: 6,
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+                fontSize: "0.875rem",
+                color: !activeTool ? "var(--text-primary)" : "var(--text-secondary)",
+                background: !activeTool ? "rgba(245,158,11,0.08)" : "transparent",
+                borderLeft: !activeTool ? "2px solid var(--accent)" : "2px solid transparent",
+                textDecoration: "none",
+              }}
+            >
+              <Map size={16} strokeWidth={!activeTool ? 2.5 : 2} />
+              Roadmap
+            </Link>
+
+            {/* Tool: Recovery */}
+            <Link
+              href={`/dashboard/mentor/${menteeId}?tool=recovery`}
+              onClick={closeMobile}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                padding: "0.5rem 0.75rem",
+                borderRadius: 6,
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+                fontSize: "0.875rem",
+                color: activeTool === "recovery" ? "var(--text-primary)" : "var(--text-secondary)",
+                background: activeTool === "recovery" ? "rgba(245,158,11,0.08)" : "transparent",
+                borderLeft: activeTool === "recovery" ? "2px solid var(--accent)" : "2px solid transparent",
+                textDecoration: "none",
+              }}
+            >
+              <Key size={16} strokeWidth={activeTool === "recovery" ? 2.5 : 2} />
+              Personal ID Recovery
+            </Link>
+
+            {/* Tool: Visibility */}
+            <Link
+              href={`/dashboard/mentor/${menteeId}?tool=visibility`}
+              onClick={closeMobile}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                padding: "0.5rem 0.75rem",
+                borderRadius: 6,
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+                fontSize: "0.875rem",
+                color: activeTool === "visibility" ? "var(--text-primary)" : "var(--text-secondary)",
+                background: activeTool === "visibility" ? "rgba(245,158,11,0.08)" : "transparent",
+                borderLeft: activeTool === "visibility" ? "2px solid var(--accent)" : "2px solid transparent",
+                textDecoration: "none",
+              }}
+            >
+              <Eye size={16} strokeWidth={activeTool === "visibility" ? 2.5 : 2} />
+              What they can see
+            </Link>
+          </>
+        )}
       </div>
 
       {/* User + Role + Sign Out */}

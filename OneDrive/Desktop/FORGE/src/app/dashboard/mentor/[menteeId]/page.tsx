@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, MessageSquare, CheckCircle2, AlertTriangle, Lock,
@@ -110,6 +110,11 @@ const STATUS_LABEL: Record<string, string> = {
 export default function MenteeDrilldownPage() {
   const params = useParams<{ menteeId: string }>();
   const menteeId = params.menteeId;
+  // ?tool=recovery|visibility — driven from the contextual sidebar. When
+  // set, only that tool's panel renders at the top of the page. When null,
+  // the page shows the roadmap view normally.
+  const searchParams = useSearchParams();
+  const activeTool = searchParams.get("tool");
 
   const [mentee, setMentee] = useState<Mentee | null>(null);
   const [roadmaps, setRoadmaps] = useState<MenteeRoadmap[]>([]);
@@ -577,9 +582,15 @@ export default function MenteeDrilldownPage() {
         </div>
       )}
 
-      <MenteeRecoveryCard menteeId={menteeId} menteeName={mentee.name} />
-
-      <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
+      {/* Mentor tools — controlled from the contextual sidebar. Only the
+          requested tool renders on the page, eliminating the stacked-card
+          clutter. Default state (no ?tool) shows nothing here. */}
+      {activeTool === "recovery" && (
+        <MenteeRecoveryCard menteeId={menteeId} menteeName={mentee.name} />
+      )}
+      {activeTool === "visibility" && (
+        <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
+      )}
 
       {/* Roadmaps — empty state lets the mentor PICK one on their behalf */}
       {roadmaps.length === 0 && (

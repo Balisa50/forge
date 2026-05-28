@@ -70,14 +70,25 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   const hours = w.commitment_hours ? w.commitment_hours.replace(/—|--/g, "–").trim() : "";
 
+  // Mentees navigate from their dashboard ("Open this week" button) — the
+  // roadmap browse page isn't useful to them since they're gated to the
+  // released week anyway. Route the back-arrow back to their dashboard
+  // instead of the curriculum index.
+  const isMentee = await prisma.mentorLink.findFirst({
+    where: { menteeId: session.user.id, isActive: true },
+    select: { id: true },
+  });
+  const backHref = isMentee ? "/dashboard" : `/learn/${roadmap.slug}`;
+  const backLabel = isMentee ? "Dashboard" : roadmap.title;
+
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
       {/* Slim banner */}
       <section className={`border-b border-[color:var(--border)] bg-gradient-to-r ${meta?.gradient ?? "from-cyan-500 to-blue-600"}`} style={{ color: "white" }}>
         <div className="mx-auto max-w-5xl px-6 py-5">
           <div className="flex items-center justify-between gap-3 text-xs opacity-90">
-            <Link href={`/learn/${roadmap.slug}`} className="inline-flex items-center gap-1.5 hover:opacity-100" style={{ fontFamily: "var(--font-mono)" }}>
-              <ArrowLeft size={12} /> {roadmap.title}
+            <Link href={backHref} className="inline-flex items-center gap-1.5 hover:opacity-100" style={{ fontFamily: "var(--font-mono)" }}>
+              <ArrowLeft size={12} /> {backLabel}
             </Link>
             {hours && (<span className="inline-flex items-center gap-1.5"><Clock size={12} /> {hours} hrs</span>)}
           </div>
