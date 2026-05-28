@@ -42,7 +42,8 @@ export interface CertificateCardProps {
 // ─── Palette ──────────────────────────────────────────────────────────────────
 
 const GOLD     = "#B8952A";
-const GOLD_DIM = "rgba(184,149,42,0.26)";
+const GOLD_RICH = "#9c7d21";
+const GOLD_DIM = "rgba(184,149,42,0.35)";
 const PAPER    = "#FAF8F3";
 const INK      = "#1A1A1A";
 const MUTED    = "#6B6B6B";
@@ -76,21 +77,38 @@ function CornerMark({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
   const deg = { tl: 0, tr: 90, br: 180, bl: 270 }[pos];
   const style: React.CSSProperties = {
     position: "absolute",
-    ...(pos === "tl" || pos === "tr" ? { top: "1.25%" } : { bottom: "1.25%" }),
-    ...(pos === "tl" || pos === "bl" ? { left: "0.75%" } : { right: "0.75%" }),
+    ...(pos === "tl" || pos === "tr" ? { top: "2.4%" } : { bottom: "2.4%" }),
+    ...(pos === "tl" || pos === "bl" ? { left: "2%" } : { right: "2%" }),
     transform: `rotate(${deg}deg)`,
     pointerEvents: "none",
+    zIndex: 1,
   };
   return (
-    <svg width="30" height="30" viewBox="0 0 30 30" style={style} aria-hidden>
+    <svg width="48" height="48" viewBox="0 0 48 48" style={style} aria-hidden>
+      {/* Outer L bracket */}
       <path
-        d="M 4 4 L 26 4 M 4 4 L 4 26 M 14 4 L 14 11 L 4 11"
+        d="M 2 2 L 44 2 M 2 2 L 2 44"
         stroke={GOLD}
-        strokeWidth="1.1"
+        strokeWidth="1.6"
         fill="none"
-        opacity="0.75"
       />
-      <circle cx="4" cy="4" r="1.8" fill={GOLD} opacity="0.75" />
+      {/* Inner parallel rule */}
+      <path
+        d="M 8 8 L 38 8 M 8 8 L 8 38"
+        stroke={GOLD}
+        strokeWidth="0.6"
+        fill="none"
+        opacity="0.55"
+      />
+      {/* Corner anchor */}
+      <circle cx="2" cy="2" r="2.4" fill={GOLD} />
+      {/* Hairline detail */}
+      <path
+        d="M 18 2 L 18 5 M 24 2 L 24 5 M 30 2 L 30 5 M 2 18 L 5 18 M 2 24 L 5 24 M 2 30 L 5 30"
+        stroke={GOLD}
+        strokeWidth="0.8"
+        opacity="0.7"
+      />
     </svg>
   );
 }
@@ -100,39 +118,66 @@ function CornerMark({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
 function ForgeSeal() {
   // Full clockwise circle starting at W (9 o'clock).
   // 75% offset = 12 o'clock (top). textAnchor="middle" centres text there.
-  // Text reads left→right across the top ring with a natural gap at the bottom.
   const sealPath = "M 50 50 m -42,0 a 42,42 0 1,1 84,0 a 42,42 0 1,1 -84,0";
+  const innerArc = "M 50 50 m -34,0 a 34,34 0 1,1 68,0 a 34,34 0 1,1 -68,0";
   return (
-    <svg width="92" height="92" viewBox="0 0 100 100" aria-label="The Forge seal">
-      {/* Paper fill so background bleeds through correctly */}
-      <circle cx="50" cy="50" r="48" fill={PAPER} />
+    <svg width="120" height="120" viewBox="0 0 100 100" aria-label="The Forge seal">
+      {/* Outer disc — very faint gold tint, NOT pure paper, so it reads as a stamp */}
+      <circle cx="50" cy="50" r="48" fill="rgba(184,149,42,0.06)" />
       {/* Outer ring */}
-      <circle cx="50" cy="50" r="46" fill="none" stroke={GOLD} strokeWidth="1.2" />
+      <circle cx="50" cy="50" r="46.5" fill="none" stroke={GOLD} strokeWidth="1.4" />
       {/* Hairline inner ring */}
-      <circle cx="50" cy="50" r="38.5" fill="none" stroke={GOLD} strokeWidth="0.5" opacity="0.45" />
+      <circle cx="50" cy="50" r="38.5" fill="none" stroke={GOLD} strokeWidth="0.6" opacity="0.55" />
+      {/* Innermost emblem disc */}
+      <circle cx="50" cy="50" r="22" fill="rgba(184,149,42,0.08)" stroke={GOLD} strokeWidth="0.5" opacity="0.7" />
 
-      {/* 5-pointed star (mathematically correct) */}
-      {/* Outer r=15, inner r=6.5, centered at (50,50), first point at 12 o'clock */}
+      {/* Decorative tick marks around the ring (12 ticks) */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
+        const r1 = 41, r2 = 44;
+        const x1 = 50 + r1 * Math.cos(angle), y1 = 50 + r1 * Math.sin(angle);
+        const x2 = 50 + r2 * Math.cos(angle), y2 = 50 + r2 * Math.sin(angle);
+        return (
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke={GOLD} strokeWidth="0.7" opacity="0.55" />
+        );
+      })}
+
+      {/* 5-pointed star (the forge mark) */}
       <path
-        d="M50 35 L52.9 43.9 L62.3 43.9 L55.1 49.3 L57.8 58.1 L50 52.8 L42.2 58.1 L44.9 49.3 L37.7 43.9 L47.1 43.9 Z"
+        d="M50 36.5 L52.4 44 L60.3 44 L53.95 48.6 L56.35 56.1 L50 51.5 L43.65 56.1 L46.05 48.6 L39.7 44 L47.6 44 Z"
         fill={GOLD}
-        opacity="0.9"
       />
 
-      {/* Circular text at 75% offset = centered at top */}
+      {/* Circular text — clockwise path, 25% offset = TOP (N) so it reads right-side-up. */}
       <defs>
         <path id="sealRing" d={sealPath} />
+        <path id="sealInner" d={innerArc} />
       </defs>
       <text
         fontFamily="'Inter', sans-serif"
-        fontSize="5.4"
-        letterSpacing="2.8"
+        fontSize="5"
+        letterSpacing="3"
+        fill={GOLD}
+        fontWeight="700"
+      >
+        <textPath href="#sealRing" startOffset="25%" textAnchor="middle">
+          ★  THE FORGE  ·  VERIFIED  ·  AUTHENTIC  ★
+        </textPath>
+      </text>
+      {/* "EST 2026" sits inside the ring, plain text, not on the arc — guaranteed legible. */}
+      <text
+        x="50"
+        y="72"
+        textAnchor="middle"
+        fontFamily="'Inter', sans-serif"
+        fontSize="3.6"
+        letterSpacing="2.5"
         fill={GOLD}
         fontWeight="600"
+        opacity="0.8"
       >
-        <textPath href="#sealRing" startOffset="75%" textAnchor="middle">
-          THE FORGE  ·  VERIFIED  ·  2026  ·
-        </textPath>
+        EST · 2026
       </text>
     </svg>
   );
@@ -190,10 +235,16 @@ export default function CertificateCard({
           outline: `1px solid ${GOLD_DIM}`,
         }}
       >
-        {/* ── Single thin border rule ── */}
+        {/* ── Double border rule for depth ── */}
         <div style={{
           position: "absolute",
           inset: "1.4%",
+          border: `1.5px solid ${GOLD}`,
+          pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute",
+          inset: "2.4%",
           border: `1px solid ${GOLD_DIM}`,
           pointerEvents: "none",
         }} />
@@ -221,32 +272,43 @@ export default function CertificateCard({
           ───────────────────────────────────────── */}
           <div style={{ textAlign: "center", width: "100%" }}>
             <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "0.6rem",
-              fontWeight: 600,
-              letterSpacing: "0.52em",
-              color: GOLD,
-              textTransform: "uppercase",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.875rem",
               marginBottom: "0.625rem",
             }}>
-              The Forge
+              {/* Left ornament */}
+              <div style={{ width: 32, height: 1, background: GOLD }} />
+              <svg width="14" height="14" viewBox="0 0 24 24">
+                <path d="M12 2 L14.5 9.5 L22 9.5 L15.75 14 L18.25 21.5 L12 17 L5.75 21.5 L8.25 14 L2 9.5 L9.5 9.5 Z" fill={GOLD} />
+              </svg>
+              <span style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: "0.6875rem",
+                fontWeight: 700,
+                letterSpacing: "0.55em",
+                color: GOLD_RICH,
+                textTransform: "uppercase",
+                paddingLeft: "0.55em",
+              }}>
+                The Forge
+              </span>
+              <svg width="14" height="14" viewBox="0 0 24 24">
+                <path d="M12 2 L14.5 9.5 L22 9.5 L15.75 14 L18.25 21.5 L12 17 L5.75 21.5 L8.25 14 L2 9.5 L9.5 9.5 Z" fill={GOLD} />
+              </svg>
+              {/* Right ornament */}
+              <div style={{ width: 32, height: 1, background: GOLD }} />
             </div>
-            {/* Gold rule */}
-            <div style={{
-              width: "20%",
-              height: 1,
-              background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)`,
-              margin: "0 auto 0.75rem",
-            }} />
             {/* Certificate of Completion */}
             <div style={{
               fontFamily: "'Cormorant Garamond', Georgia, 'Times New Roman', serif",
               fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: "1.8rem",
+              fontWeight: 500,
+              fontSize: "2.125rem",
               color: INK,
-              letterSpacing: "0.025em",
+              letterSpacing: "0.015em",
               lineHeight: 1,
+              marginTop: "0.5rem",
             }}>
               Certificate of Completion
             </div>
@@ -303,10 +365,10 @@ export default function CertificateCard({
             <div style={{
               fontFamily: "'Cormorant Garamond', Georgia, serif",
               fontStyle: "italic",
-              fontWeight: 600,
-              fontSize: "1.625rem",
-              color: GOLD,
-              letterSpacing: "0.03em",
+              fontWeight: 700,
+              fontSize: "2rem",
+              color: GOLD_RICH,
+              letterSpacing: "0.02em",
               lineHeight: 1.1,
             }}>
               {programName}
@@ -494,28 +556,26 @@ export default function CertificateCard({
 
         </div>{/* /content column */}
 
-        {/* ── PREVIEW watermark ── */}
+        {/* ── PREVIEW stamp — small, top-right, like a real "DRAFT" stamp ── */}
         {preview && (
           <div style={{
             position: "absolute",
-            inset: 0,
-            display: "grid",
-            placeItems: "center",
+            top: "5%",
+            right: "5%",
+            transform: "rotate(-8deg)",
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "0.75rem",
+            fontWeight: 800,
+            color: "rgba(180,30,30,0.55)",
+            letterSpacing: "0.3em",
+            border: "2px solid rgba(180,30,30,0.45)",
+            padding: "0.3rem 0.85rem",
+            borderRadius: 4,
             pointerEvents: "none",
+            background: "rgba(180,30,30,0.04)",
+            zIndex: 2,
           }}>
-            <div style={{
-              transform: "rotate(-22deg)",
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "4.5rem",
-              fontWeight: 800,
-              color: "rgba(220,38,38,0.11)",
-              letterSpacing: "0.4em",
-              border: "5px solid rgba(220,38,38,0.11)",
-              padding: "0.35em 1.5em",
-              borderRadius: 14,
-            }}>
-              PREVIEW
-            </div>
+            PREVIEW
           </div>
         )}
 
