@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Link2, Clock, Loader2, CheckCircle2, Send,
-  Upload, X, FileCode2, FileText, File, AlertCircle,
+  Upload, X, FileCode2, FileText, File, AlertCircle, Lock, ExternalLink,
 } from "lucide-react";
 import {
   type FileAttachment,
@@ -78,12 +79,48 @@ export default function CheckinForm({
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  // Engagement preflight — server tells us whether the selected week is
+  // ready to submit (every learn-item ticked). null until a task is picked
+  // or while loading.
+  interface Preflight {
+    gated: boolean;
+    complete?: boolean;
+    missing?: number;
+    total?: number;
+    learnUrl?: string;
+  }
+  const [preflight, setPreflight] = useState<Preflight | null>(null);
+  const [preflightLoading, setPreflightLoading] = useState(false);
+
   const selectedTrack = roadmap.tracks.find((t) => t.id === selectedTrackId);
   const availableTasks = selectedTrack?.phases
     .flatMap((p) => p.tasks.filter((t) => t.status === "available" || t.status === "in_progress"))
     ?? [];
 
   const selectedTask = availableTasks.find((t) => t.id === selectedTaskId);
+
+  // Re-run preflight every time the task changes
+  useEffect(() => {
+    if (!selectedTaskId) { setPreflight(null); return; }
+    setPreflightLoading(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/checkins/preflight?taskId=${encodeURIComponent(selectedTaskId)}`);
+        if (!res.ok) throw new Error("preflight failed");
+        const data = (await res.json()) as Preflight;
+        if (!cancelled) setPreflight(data);
+      } catch {
+        if (!cancelled) setPreflight({ gated: false }); // fail open — server will still gate
+      } finally {
+        if (!cancelled) setPreflightLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [selectedTaskId]);
+
+  // Submit is blocked if the week is gated AND incomplete.
+  const engagementBlocked = !!preflight?.gated && preflight.complete === false;
 
   const isValidUrl = (url: string) => {
     try {
@@ -199,6 +236,10 @@ export default function CheckinForm({
 
     if (!selectedTaskId) { setError("Select a task."); return; }
     if (description.trim().length < 50) { setError("Description must be at least 50 characters."); return; }
+    if (engagementBlocked) {
+      setError(`Tick every day item on the week page first — ${preflight?.missing}/${preflight?.total} unticked. Open ${preflight?.learnUrl ?? "the week page"}.`);
+      return;
+    }
     if (!hasProof) {
       setError("Add at least one piece of proof — a URL, a code file, or a document.");
       return;
@@ -334,6 +375,46 @@ export default function CheckinForm({
           </div>
         )}
       </div>
+
+      {/* Engagement preflight banner — fires the moment a task is picked */}
+      {selectedTask && preflightLoading && (
+        <div style={{ marginBottom: "1.25rem", padding: "0.75rem 1rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-dim)", fontSize: "0.8125rem" }}>
+          <Loader2 size={13} className="animate-spin" /> Checking your day-by-day progress…
+        </div>
+      )}
+      {selectedTask && !preflightLoading && engagementBlocked && (
+        <div style={{
+          marginBottom: "1.25rem", padding: "1rem 1.125rem",
+          background: "rgba(234,179,8,0.06)", border: "1px solid var(--yellow)",
+          borderRadius: 8,
+        }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem", marginBottom: "0.5rem" }}>
+            <Lock size={15} style={{ color: "var(--yellow)", flexShrink: 0, marginTop: 2 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--yellow)", fontSize: "0.9375rem", marginBottom: "0.25rem" }}>
+                Finish the days first
+              </div>
+              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5, margin: 0 }}>
+                You haven&apos;t ticked <strong style={{ color: "var(--text-primary)" }}>{preflight?.missing} of {preflight?.total}</strong> items
+                on this week&apos;s daily breakdown. Open every link, tick every box — then submit.
+              </p>
+            </div>
+          </div>
+          {preflight?.learnUrl && (
+            <Link
+              href={preflight.learnUrl}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", color: "var(--yellow)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", textDecoration: "none", paddingLeft: "1.625rem" }}
+            >
+              <ExternalLink size={11} /> Open this week&apos;s days
+            </Link>
+          )}
+        </div>
+      )}
+      {selectedTask && !preflightLoading && preflight?.gated && preflight.complete && (
+        <div style={{ marginBottom: "1.25rem", padding: "0.625rem 1rem", background: "rgba(34,197,94,0.06)", border: "1px solid var(--green)", borderRadius: 8, display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--green)", fontSize: "0.8125rem" }}>
+          <CheckCircle2 size={13} /> All {preflight.total} day items ticked. You&apos;re cleared to submit.
+        </div>
+      )}
 
       {/* Description */}
       <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.25rem" }}>
@@ -561,7 +642,7 @@ export default function CheckinForm({
         type="submit"
         className="forge-btn forge-btn-primary"
         style={{ width: "100%", maxWidth: "480px", padding: "1rem", fontSize: "1rem" }}
-        disabled={submitting || !selectedTaskId || description.length < 50 || !hasProof}
+        disabled={submitting || !selectedTaskId || description.length < 50 || !hasProof || engagementBlocked}
       >
         {submitting
           ? <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
