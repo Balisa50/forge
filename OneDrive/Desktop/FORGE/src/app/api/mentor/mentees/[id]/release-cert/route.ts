@@ -120,11 +120,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Certificate already issued", verifyCode: existing.verifyCode }, { status: 409 });
   }
 
+  // Accept an optional `signedBy` override in the body — this is the cursive
+  // signature the mentor confirmed in the release dialog. Falls back to their
+  // mentor persona (mentorDisplayName) if not supplied. Trimmed + capped.
+  const body = await req.json().catch(() => ({} as Record<string, unknown>));
+  const customSignature = typeof body.signedBy === "string" ? body.signedBy.trim().slice(0, 60) : "";
+
   const interrogations = roadmap.checkins.filter((c) => c.interrogation).map((c) => c.interrogation!);
   const passedCount = interrogations.filter((i) => i.passed).length;
   const passRate = interrogations.length > 0 ? passedCount / interrogations.length : 0;
   const totalHours = allTasks.reduce((s, t) => s + (t.estimatedHours ?? 0), 0);
-  const signedBy = mentor?.mentorDisplayName ?? mentor?.name ?? null;
+  const signedBy = customSignature || mentor?.mentorDisplayName || mentor?.name || null;
 
   const cert = await prisma.certificate.create({
     data: {

@@ -19,7 +19,7 @@
  *   MentorCertReleaseCard                     — inline preview in drilldown
  */
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 export interface CertificateCardProps {
   learnerName: string;
@@ -54,13 +54,12 @@ const STYLES = `
 .cert-container {
   width: 100%;
   max-width: 900px;
-  container-type: inline-size;
-  /* Design unit. On screen, 1u = 1% of container width (responsive).
-     In print (see @media print below), 1u flips to 2.97mm — which is
-     exactly 1% of A4 landscape width (297mm). This keeps the same
-     proportions everywhere without depending on container queries
-     during the print rendering pass (where they don't reliably resolve). */
-  --u: 1cqi;
+  /* Design unit. Set initially as a sane fallback; the React effect below
+     measures the actual rendered width via ResizeObserver and overwrites
+     --u to (width / 100)px every time it changes. This is bulletproof
+     across browsers — container queries had inconsistent resolution in
+     Firefox + nested flex containers, which was deforming the seal. */
+  --u: 9px;
 }
 
 #cert-card {
@@ -321,8 +320,7 @@ const STYLES = `
     width: 297mm !important;
     height: 210mm !important;
     /* Swap the unit base: 1u = 2.97mm = 1% of A4 landscape width.
-       This makes every cqi-based dimension resolve to fixed mm without
-       depending on container queries in the print pipeline. */
+       Overrides the JS-measured value during print rendering. */
     --u: 2.97mm !important;
   }
   #cert-card {
@@ -378,13 +376,31 @@ export default function CertificateCard({
   preview,
 }: CertificateCardProps) {
   const showCohort = cohort.trim().length > 0;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Measure the actual rendered width and write 1% of it back as the --u
+  // CSS variable. This is the single source of truth for every dimension
+  // on the cert — text, padding, borders, seal, corners. Updates on every
+  // resize. Cleaned up on unmount.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w > 0) el.style.setProperty("--u", `${w / 100}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
       <div className="cert-wrap">
-        <div className="cert-container">
+        <div className="cert-container" ref={containerRef}>
           <div id="cert-card">
 
             {/* Borders */}
@@ -457,13 +473,14 @@ export default function CertificateCard({
                     stroke="#BF9A30" strokeWidth="0.6" opacity="0.55" />;
                 })}
 
-                {/* Circular text */}
+                {/* Circular text — clockwise path from W; 25% offset = top of
+                    ring where the text reads right-side-up. */}
                 <defs>
                   <path id="rp" d="M48,48 m-32,0 a32,32 0 1,1 64,0 a32,32 0 1,1 -64,0" />
                 </defs>
-                <text fontFamily="Inter,sans-serif" fontSize="6.5" fontWeight="500" letterSpacing="3.5" fill="#8B6410">
-                  <textPath href="#rp" startOffset="50%" textAnchor="middle">
-                    THE FORGE · VERIFIED · MMXXVI ·
+                <text fontFamily="Inter,sans-serif" fontSize="6" fontWeight="600" letterSpacing="3" fill="#8B6410">
+                  <textPath href="#rp" startOffset="25%" textAnchor="middle">
+                    ★  THE FORGE  ·  VERIFIED  ★
                   </textPath>
                 </text>
 
@@ -482,7 +499,6 @@ export default function CertificateCard({
 
               <div className="cert-fr">
                 <p className="cert-fsig">{mentorName}</p>
-                <p className="cert-fname">{mentorName}</p>
                 <p className="cert-flbl" style={{ textAlign: "right" }}>{mentorTitle}</p>
               </div>
             </div>
