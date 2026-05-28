@@ -44,23 +44,26 @@ const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600&display=swap');
 
 .cert-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* Block layout intentionally — flex/grid centering on the wrap was
+     letting the cert escape its max-width in some parent contexts.
+     Using margin: 0 auto on the container below is the most predictable
+     centering across every nested layout (flex panel, grid panel, modal, etc.). */
+  display: block;
   padding: 2rem 0;
   width: 100%;
+  box-sizing: border-box;
+  text-align: initial;
 }
 
 .cert-container {
+  display: block;
   width: 100%;
   max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  box-sizing: border-box;
   /* Design unit. Set initially as a sane fallback; the React effect below
      measures the actual rendered width via ResizeObserver and overwrites
-     --u to (width / 100)px every time it changes. This is bulletproof
-     across browsers — container queries had inconsistent resolution in
-     Firefox + nested flex containers, which was deforming the seal. */
+     --u to (width / 100)px every time it changes. */
   --u: 9px;
 }
 
@@ -498,7 +501,8 @@ export default function CertificateCard({
                 <line x1="33" y1="55" x2="63" y2="55" stroke="#BF9A30" strokeWidth="0.75" />
                 <line x1="38" y1="58" x2="58" y2="58" stroke="#BF9A30" strokeWidth="0.4" opacity="0.5" />
 
-                {/* EST. MMXXVI */}
+                {/* EST. MMXXVI — kept Roman numerals at user's request; reads
+                  as more institutional/credible (like a college seal). */}
                 <text x="48" y="69" fontFamily="Inter,sans-serif" fontSize="6" fontWeight="500" letterSpacing="2" fill="#9B8050" textAnchor="middle">
                   EST. MMXXVI
                 </text>

@@ -81,10 +81,14 @@ export default async function VerifyCertPage({ params }: { params: Promise<{ cod
           </div>
         </div>
 
-        {/* ── The certificate ── */}
+        {/* ── The certificate ──
+            Explicit preview={false} — this is the public verification page
+            for a cert that has been issued. The watermark must NEVER appear
+            here regardless of how any future prop default changes. */}
         <CertificateCard
           learnerName={learnerName}
           {...cardProps}
+          preview={false}
         />
 
         {/* ── Actions bar ── */}
