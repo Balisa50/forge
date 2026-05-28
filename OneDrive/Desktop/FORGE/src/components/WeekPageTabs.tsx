@@ -187,22 +187,35 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
     );
   }
 
+  // Concept primer fallback — every week with a substantial `context` paragraph
+  // automatically gets the new visual primer treatment, even if no hand-authored
+  // `concept_primer` exists in the JSON. This way the new aesthetic ships across
+  // all 240 weeks of all 10 paths immediately, without 240 stub backfills.
+  //
+  // Authored primer takes precedence (mentors can override the fallback by
+  // writing `concept_primer` in the week JSON). Sparse weeks (< 80 chars of
+  // context) skip the card and render inline.
+  const effectivePrimer = week.concept_primer
+    || (week.context && week.context.trim().length >= 80 ? week.context : null);
+  const showInlineContext = !effectivePrimer && week.context;
+
   return (
     <div className="flex flex-col gap-3">
-      {/* Visual-first concept primer — image + short markdown explanation,
-          rendered above everything else when present. */}
-      {week.concept_primer && (
-        <ConceptPrimer primer={week.concept_primer} imageUrl={week.concept_image_url} />
+      {/* Visual-first concept primer — uses authored content if present,
+          otherwise promotes the week's `context` paragraph. */}
+      {effectivePrimer && (
+        <ConceptPrimer primer={effectivePrimer} imageUrl={week.concept_image_url} />
       )}
 
-      {/* Intro: one paragraph, no headings, no repetition */}
-      {week.context && (
+      {/* Fallback inline intro for sparse-context weeks */}
+      {showInlineContext && (
         <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.65, marginBottom: "0.5rem" }}>
           {week.context}
         </p>
       )}
 
-      {/* 3-question warm-up — low stakes, flags confusion before dropout */}
+      {/* 3-question warm-up — opt-in per week. Only renders when the mentor
+          has authored concept_check questions in the JSON. */}
       {week.concept_check && week.concept_check.length > 0 && (
         <ConceptCheck slug={slug} week={week.number} questions={week.concept_check} />
       )}
