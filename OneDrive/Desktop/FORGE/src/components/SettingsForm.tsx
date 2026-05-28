@@ -25,6 +25,7 @@ interface Props {
     github: string | null;
     linkedin: string | null;
     isPublic: boolean;
+    showInFeed?: boolean;
     learningStyle?: string;
     mentorDisplayName?: string | null;
     createdAt: string;
@@ -49,6 +50,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
   const [github, setGithub] = useState(user.github ?? "");
   const [linkedin, setLinkedin] = useState(user.linkedin ?? "");
   const [isPublic, setIsPublic] = useState(user.isPublic);
+  const [showInFeed, setShowInFeed] = useState(user.showInFeed ?? false);
   const [learningStyle, setLearningStyle] = useState(user.learningStyle ?? "balanced");
   const [mentorDisplayName, setMentorDisplayName] = useState(user.mentorDisplayName ?? "");
   const [saving, setSaving] = useState(false);
@@ -78,7 +80,7 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
       const res = await fetch("/api/user/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, timezone, bio, github, linkedin, isPublic, learningStyle, mentorDisplayName }),
+        body: JSON.stringify({ name, timezone, bio, github, linkedin, isPublic, showInFeed, learningStyle, mentorDisplayName }),
       });
       if (res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -267,11 +269,11 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
               {isPublic && (
                 <div style={{ marginTop: "0.75rem" }}>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginBottom: "0.375rem", letterSpacing: "0.05em" }}>
-                    Your public build log:
+                    Your public portfolio:
                   </div>
                   <div className="flex items-center gap-2">
                     <div style={{ flex: 1, fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--blue)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      /log/{user.id}
+                      /portfolio/{user.id}
                     </div>
                     <button type="button" onClick={copyProfileLink} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "0.25rem" }}>
                       {copiedProfile ? <Check size={14} color="var(--green)" /> : <Copy size={14} />}
@@ -279,6 +281,31 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Build Feed visibility — opt-in to show name; anonymous otherwise */}
+          {isLearner && (
+            <div style={{ background: "var(--bg-card)", borderRadius: "8px", padding: "1rem", border: "1px solid var(--border)" }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9375rem", marginBottom: "0.125rem" }}>
+                    Show name in Build Feed
+                  </div>
+                  <div style={{ color: "var(--text-dim)", fontSize: "0.75rem" }}>
+                    When on, your first name appears in the live feed every time a week
+                    gets verified. Off = anonymous learner.
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowInFeed(!showInFeed)}
+                  aria-label="Toggle Build Feed name visibility"
+                  style={{ width: "44px", height: "24px", borderRadius: "12px", background: showInFeed ? "var(--accent)" : "var(--border)", border: "none", cursor: "pointer", position: "relative", transition: "background 0.2s", flexShrink: 0, marginLeft: "1rem" }}
+                >
+                  <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#fff", position: "absolute", top: "3px", left: showInFeed ? "23px" : "3px", transition: "left 0.2s" }} />
+                </button>
+              </div>
             </div>
           )}
 

@@ -11,7 +11,7 @@ export default async function SettingsPage() {
     select: {
       id: true, name: true, email: true, timezone: true, tier: true,
       integrityScore: true, createdAt: true,
-      bio: true, github: true, linkedin: true, isPublic: true,
+      bio: true, github: true, linkedin: true, isPublic: true, showInFeed: true,
       role: true, isAlsoLearning: true, mentorDisplayName: true,
     },
   });

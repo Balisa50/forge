@@ -38,12 +38,33 @@ export interface RoadmapDay {
   items: DayItem[];          // 1-4 cards per day
 }
 
+/** A single concept check question — short multiple-choice prompt shown
+ *  at the start of a week as a low-stakes warm-up. */
+export interface ConceptCheckQuestion {
+  /** The prompt itself. */
+  q: string;
+  /** 2–4 answer choices. */
+  choices: string[];
+  /** Zero-indexed position of the correct answer. */
+  correct: number;
+  /** Optional 1-line debrief shown after the learner answers. */
+  explain?: string;
+}
+
 export interface RoadmapWeek {
   number: number;
   title: string;
   phase: string;
   commitment_hours: string;
   context: string;
+  /** Optional visual-first concept primer — short markdown explanation
+   *  rendered as a card at the top of the week, BEFORE the day list.
+   *  Pair with concept_image_url for the illustration above the text. */
+  concept_primer?: string;
+  concept_image_url?: string;
+  /** Optional 3-question warm-up at the start of the week. Low stakes,
+   *  not graded — just flags confusion before it becomes dropout. */
+  concept_check?: ConceptCheckQuestion[];
   /** NEW: optional day-by-day breakdown. When present, the UI defaults to
    *  the day-by-day view. When absent, falls back to the Overview tab. */
   days?: RoadmapDay[];
@@ -61,6 +82,19 @@ export interface RoadmapWeek {
   ai_assist?: string;
   /** Who reads this week's deliverable + what they want (deliverable weeks). */
   stakeholder_moment?: string;
+  /** Things to do BEFORE writing any code - predictions, hypotheses, pen+paper
+   *  guesses the student checks at the end of the week. The single highest-ROI
+   *  habit in analysis. */
+  pre_flight?: string;
+  /** Mistakes beginners reliably make this week - listed so they recognise the
+   *  shape of the error when it happens to them, instead of feeling stupid. */
+  common_mistakes?: string[];
+  /** Mentor-voice paragraph on how to read errors / debug calmly THIS week.
+   *  Reduces the panic spiral that makes beginners quit. */
+  debug_help?: string;
+  /** Optional stretch challenges for students who finish early and want to
+   *  push further without skipping ahead. */
+  stretch?: string[];
 }
 
 export interface Roadmap {

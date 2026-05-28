@@ -11,7 +11,7 @@ export async function PATCH(req: Request) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const { name, timezone, bio, github, linkedin, isPublic, learningStyle, mentorDisplayName } = body;
+  const { name, timezone, bio, github, linkedin, isPublic, showInFeed, learningStyle, mentorDisplayName } = body;
 
   if (!name || typeof name !== "string" || name.trim().length < 2) {
     return NextResponse.json({ error: "Name must be at least 2 characters." }, { status: 400 });
@@ -42,6 +42,7 @@ export async function PATCH(req: Request) {
       ...(typeof github === "string" ? { github: github.trim().slice(0, 200) || null } : {}),
       ...(typeof linkedin === "string" ? { linkedin: linkedin.trim().slice(0, 200) || null } : {}),
       ...(typeof isPublic === "boolean" ? { isPublic } : {}),
+      ...(typeof showInFeed === "boolean" ? { showInFeed } : {}),
       ...(learningStyle ? { learningStyle } : {}),
       // The persona name mentees see. Empty string clears it (falls back to name).
       ...(typeof mentorDisplayName === "string"

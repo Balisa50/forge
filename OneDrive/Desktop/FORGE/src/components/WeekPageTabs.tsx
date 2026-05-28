@@ -7,6 +7,9 @@ import {
 } from "lucide-react";
 import type { RoadmapWeek } from "@/lib/roadmaps";
 import ResourceViewer from "@/components/ResourceViewer";
+import ConceptPrimer from "@/components/ConceptPrimer";
+import ConceptCheck from "@/components/ConceptCheck";
+import VideoEmbed from "@/components/VideoEmbed";
 
 /**
  * Single linear week flow — no tabs, no repetition.
@@ -186,11 +189,22 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Visual-first concept primer — image + short markdown explanation,
+          rendered above everything else when present. */}
+      {week.concept_primer && (
+        <ConceptPrimer primer={week.concept_primer} imageUrl={week.concept_image_url} />
+      )}
+
       {/* Intro: one paragraph, no headings, no repetition */}
       {week.context && (
         <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.65, marginBottom: "0.5rem" }}>
           {week.context}
         </p>
+      )}
+
+      {/* 3-question warm-up — low stakes, flags confusion before dropout */}
+      {week.concept_check && week.concept_check.length > 0 && (
+        <ConceptCheck slug={slug} week={week.number} questions={week.concept_check} />
       )}
 
       {/* Day stream */}
@@ -419,7 +433,21 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                                 {item.body}
                               </p>
                             )}
-                            {clickable && (
+                            {/* Inline VideoEmbed for video items with YouTube/Loom URLs.
+                                Other resources (readings, exercises) keep the Open button.
+                                Video URLs that aren't embeddable (e.g. /search?...) fall
+                                through to the VideoEmbed's own external-link fallback. */}
+                            {clickable && item.kind === "video" && (
+                              <div
+                                style={{ marginTop: "0.625rem" }}
+                                onClick={() => {
+                                  if (!done[key]) persist({ ...done, [key]: true }, { [key]: true });
+                                }}
+                              >
+                                <VideoEmbed url={item.url!} title={undefined} bare lazy />
+                              </div>
+                            )}
+                            {clickable && item.kind !== "video" && (
                               <button
                                 type="button"
                                 onClick={() => {
@@ -440,8 +468,8 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                                   fontWeight: 600,
                                 }}
                               >
-                                {item.kind === "video" ? <Play size={11} /> : <ExternalLink size={11} />}
-                                {item.kind === "video" ? "Play video" : "Open"}
+                                <ExternalLink size={11} />
+                                Open
                               </button>
                             )}
                           </div>
