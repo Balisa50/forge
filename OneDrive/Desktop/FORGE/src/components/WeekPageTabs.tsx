@@ -613,7 +613,7 @@ function ShipItSection({ week }: { week: RoadmapWeek }) {
         </div>
       )}
 
-      {week.exercises.length > 0 && (
+      {(week.exercises?.length ?? 0) > 0 && week.exercises && (
         <div>
           <h4 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Code2 size={16} style={{ color: "#38bdf8" }} /> Practice
@@ -631,7 +631,7 @@ function ShipItSection({ week }: { week: RoadmapWeek }) {
         </div>
       )}
 
-      {week.questions.length > 0 && (
+      {(week.questions?.length ?? 0) > 0 && week.questions && (
         <div>
           <h4 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <HelpCircle size={16} style={{ color: "#f472b6" }} /> Reflect
@@ -647,7 +647,7 @@ function ShipItSection({ week }: { week: RoadmapWeek }) {
         </div>
       )}
 
-      {week.outputs.length > 0 && (
+      {(week.outputs?.length ?? 0) > 0 && week.outputs && (
         <div>
           <h4 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <CheckCircle2 size={16} style={{ color: "#fbbf24" }} /> By the end you have

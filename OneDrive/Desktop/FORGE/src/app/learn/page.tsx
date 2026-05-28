@@ -40,7 +40,9 @@ export default async function LearnIndexPage() {
         <div className="grid gap-5 md:grid-cols-3">
           {roadmaps.map((r) => {
             const meta = ROADMAP_META[r.slug];
-            const totalTopics = r.weeks.reduce((s, w) => s + w.topics.length, 0);
+            // Defensive: some roadmaps (e.g. AI Automation) ship with days-only
+            // content and omit topics/tasks/outputs. Treat missing as empty.
+            const totalTopics = r.weeks.reduce((s, w) => s + (w.topics?.length ?? 0), 0);
             const totalProjects = r.weeks.filter((w) => w.project).length;
             const phases = Array.from(new Set(r.weeks.map((w) => w.phase).filter(Boolean)));
             return (

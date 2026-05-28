@@ -90,12 +90,12 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
     lines.push(clean(week.context));
     lines.push("");
   }
-  if (week.topics.length) {
+  if (week.topics && week.topics.length) {
     lines.push("TOPICS TO STUDY");
     week.topics.forEach((t) => lines.push(`- ${clean(t)}`));
     lines.push("");
   }
-  if (week.tasks.length) {
+  if (week.tasks && week.tasks.length) {
     lines.push("TASKS AND DELIVERABLES");
     week.tasks.forEach((t, i) => lines.push(`${i + 1}. ${clean(t)}`));
     lines.push("");
@@ -105,6 +105,29 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
     lines.push(clean(week.project));
     lines.push("");
   }
+  // Pre-flight - predict-before-you-look prompts. Highest-ROI analyst habit:
+  // catch your assumptions before the data does.
+  const preFlight = (week as { pre_flight?: string }).pre_flight;
+  if (preFlight) {
+    lines.push("BEFORE YOU TOUCH ANY CODE");
+    lines.push(clean(preFlight));
+    lines.push("");
+  }
+  // Common mistakes - reduces "I'm stupid, I'm quitting" by normalising the
+  // exact shapes of error beginners reliably hit.
+  const mistakes = (week as { common_mistakes?: string[] }).common_mistakes;
+  if (mistakes?.length) {
+    lines.push("COMMON MISTAKES THIS WEEK");
+    mistakes.forEach((m) => lines.push(`- ${clean(m)}`));
+    lines.push("");
+  }
+  // Debug help - mentor voice on how to read THIS week's errors calmly.
+  const debug = (week as { debug_help?: string }).debug_help;
+  if (debug) {
+    lines.push("WHEN THINGS BREAK");
+    lines.push(clean(debug));
+    lines.push("");
+  }
   // AI assist - threaded through every week. Tells the student EXACTLY how to
   // use Cursor / Claude / ChatGPT on THIS week's work. No more "AI is a one-week
   // module" - it's a permanent part of the workflow.
@@ -112,6 +135,13 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
   if (aiAssist) {
     lines.push("AI ASSIST");
     lines.push(clean(aiAssist));
+    lines.push("");
+  }
+  // Stretch - optional challenges for students finishing early.
+  const stretch = (week as { stretch?: string[] }).stretch;
+  if (stretch?.length) {
+    lines.push("IF YOU FINISH EARLY");
+    stretch.forEach((s) => lines.push(`- ${clean(s)}`));
     lines.push("");
   }
   // Stakeholder moment - who reads this week's deliverable, what they want,
@@ -137,7 +167,7 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
 
 /** Flatten the rich resource objects into a string array the DB expects. */
 export function weekToTaskResources(week: RoadmapWeek): string[] {
-  return week.resources.map((r) => {
+  return (week.resources ?? []).map((r) => {
     const label = clean(r.label);
     const note = r.note ? clean(r.note) : undefined;
     if (r.url) return note ? `${label} - ${r.url} (${note})` : `${label} - ${r.url}`;
@@ -153,7 +183,7 @@ export function weekToTaskWhy(week: RoadmapWeek): string {
 
 /** Outputs become the "milestone" text. */
 export function weekToTaskMilestone(week: RoadmapWeek): string {
-  return week.outputs.length
+  return week.outputs && week.outputs.length
     ? "Demonstrable outputs: " + week.outputs.map(clean).join(" · ")
     : "Submit a write-up demonstrating you completed the week's work.";
 }

@@ -68,13 +68,16 @@ export interface RoadmapWeek {
   /** NEW: optional day-by-day breakdown. When present, the UI defaults to
    *  the day-by-day view. When absent, falls back to the Overview tab. */
   days?: RoadmapDay[];
-  topics: string[];
-  tasks: string[];
-  project: string;
-  resources: RoadmapResource[];
-  questions: string[];
-  exercises: string[];
-  outputs: string[];
+  /** All "long-form" sections below are optional because the newer
+   *  day-only roadmaps (e.g. AI Automation) omit them entirely and rely on
+   *  the day stream alone. The /learn pages must handle them being absent. */
+  topics?: string[];
+  tasks?: string[];
+  project?: string;
+  resources?: RoadmapResource[];
+  questions?: string[];
+  exercises?: string[];
+  outputs?: string[];
   /** 10 hands-on mastery checkpoints, hand-curated per week. Optional on the
    *  type for backward-compat; in practice every shipped week now has them. */
   mastery_questions?: string[];

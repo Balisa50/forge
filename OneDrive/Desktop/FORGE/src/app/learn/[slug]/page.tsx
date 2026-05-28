@@ -94,10 +94,10 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
                         {w.context.slice(0, 140)}{w.context.length > 140 ? "…" : ""}
                       </p>
                       <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1" style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
-                        <span>{w.topics.length} topics</span>
-                        <span>{w.tasks.length} tasks</span>
-                        <span>{w.resources.length} resources</span>
-                        <span>{w.exercises.length} exercises</span>
+                        <span>{w.topics?.length ?? w.days?.length ?? 0} topics</span>
+                        <span>{w.tasks?.length ?? 0} tasks</span>
+                        <span>{w.resources?.length ?? 0} resources</span>
+                        <span>{w.exercises?.length ?? 0} exercises</span>
                         {w.commitment_hours && <span>{w.commitment_hours.replace(/--/g, "–")} hrs</span>}
                       </p>
                     </div>
