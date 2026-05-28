@@ -112,20 +112,22 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           margin: "0 auto",
           padding: "0 1.5rem 3.5rem",
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "stretch",
           gap: "0.75rem",
+          flexWrap: "wrap",
         }}
       >
-        {/* Previous — always present in the layout so spacing is balanced
-            even on Week 1. Empty placeholder keeps the next-card on the right
-            instead of stretching to full width. */}
+        {/* Previous — sized to content. flex: 0 1 auto means: don't grow,
+            shrink if necessary, base width = content. So the card hugs its
+            title instead of stretching to half the page. */}
         {prev ? (
           <Link
             href={`/learn/${roadmap.slug}/${prev.number}`}
             style={{
-              flex: 1,
-              minWidth: 0,
-              display: "flex",
+              flex: "0 1 auto",
+              maxWidth: "22rem",
+              display: "inline-flex",
               alignItems: "center",
               gap: "0.75rem",
               padding: "0.75rem 1rem",
@@ -135,10 +137,11 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               color: "var(--text-primary)",
               textDecoration: "none",
               transition: "border-color 0.15s, background 0.15s",
+              minWidth: 0,
             }}
           >
-            <ArrowLeft size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />
-            <span style={{ flex: 1, minWidth: 0, display: "block" }}>
+            <ArrowLeft size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
+            <span style={{ minWidth: 0, display: "block" }}>
               <span style={{
                 display: "block",
                 fontFamily: "var(--font-mono)",
@@ -166,18 +169,16 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               </span>
             </span>
           </Link>
-        ) : (
-          <span style={{ flex: 1 }} aria-hidden />
-        )}
+        ) : <span aria-hidden />}
 
         {/* Next */}
         {next ? (
           <Link
             href={`/learn/${roadmap.slug}/${next.number}`}
             style={{
-              flex: 1,
-              minWidth: 0,
-              display: "flex",
+              flex: "0 1 auto",
+              maxWidth: "22rem",
+              display: "inline-flex",
               alignItems: "center",
               gap: "0.75rem",
               padding: "0.75rem 1rem",
@@ -186,11 +187,12 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               background: "var(--bg-panel)",
               color: "var(--text-primary)",
               textDecoration: "none",
-              textAlign: "right",
               transition: "border-color 0.15s, background 0.15s",
+              minWidth: 0,
+              marginLeft: prev ? 0 : "auto",
             }}
           >
-            <span style={{ flex: 1, minWidth: 0, display: "block", textAlign: "right" }}>
+            <span style={{ minWidth: 0, display: "block", textAlign: "right" }}>
               <span style={{
                 display: "block",
                 fontFamily: "var(--font-mono)",
@@ -219,9 +221,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             </span>
             <ArrowRight size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
           </Link>
-        ) : (
-          <span style={{ flex: 1 }} aria-hidden />
-        )}
+        ) : null}
       </nav>
     </main>
   );
