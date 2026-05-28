@@ -205,14 +205,25 @@ const STYLES = `
   width: 100%;
   gap: calc(2.67 * var(--u));
 }
-.cert-fl { display: flex; flex-direction: column; gap: calc(0.56 * var(--u)); }
+.cert-fl {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* keeps the date inline-block hugged to the left edge — not stretched */
+  gap: calc(0.56 * var(--u));
+}
 .cert-fdate {
+  display: inline-block;
   font-size: calc(1.67 * var(--u));
   font-weight: 400;
   color: #1A1208;
   margin: 0;
-  padding-bottom: calc(0.67 * var(--u));
+  padding-bottom: calc(0.44 * var(--u));
   border-bottom: max(0.4px, calc(0.06 * var(--u))) solid #BF9A30;
+  /* Mirror the signature line on the right — same width, same alignment.
+     Both footer lines now read as a matched pair. */
+  min-width: calc(17.78 * var(--u));
+  text-align: center;
+  line-height: 1.1;
 }
 .cert-flbl {
   font-family: 'Inter', sans-serif;
