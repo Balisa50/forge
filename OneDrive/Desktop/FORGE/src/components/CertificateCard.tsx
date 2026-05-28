@@ -55,6 +55,12 @@ const STYLES = `
   width: 100%;
   max-width: 900px;
   container-type: inline-size;
+  /* Design unit. On screen, 1u = 1% of container width (responsive).
+     In print (see @media print below), 1u flips to 2.97mm — which is
+     exactly 1% of A4 landscape width (297mm). This keeps the same
+     proportions everywhere without depending on container queries
+     during the print rendering pass (where they don't reliably resolve). */
+  --u: 1cqi;
 }
 
 #cert-card {
@@ -66,8 +72,7 @@ const STYLES = `
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  /* 48px 68px 38px @ 900 → cqi */
-  padding: 5.33cqi 7.55cqi 4.22cqi;
+  padding: calc(5.33 * var(--u)) calc(7.55 * var(--u)) calc(4.22 * var(--u));
   box-sizing: border-box;
   font-family: 'Cormorant Garamond', serif;
 }
@@ -75,55 +80,55 @@ const STYLES = `
 /* ── Double border ── */
 .cert-b1 {
   position: absolute;
-  inset: 1.11cqi;
-  border: max(0.5px, 0.17cqi) solid #BF9A30;
+  inset: calc(1.11 * var(--u));
+  border: max(0.5px, calc(0.17 * var(--u))) solid #BF9A30;
   pointer-events: none;
 }
 .cert-b2 {
   position: absolute;
-  inset: 1.78cqi;
-  border: max(0.4px, 0.06cqi) solid #BF9A30;
+  inset: calc(1.78 * var(--u));
+  border: max(0.4px, calc(0.06 * var(--u))) solid #BF9A30;
   opacity: 0.4;
   pointer-events: none;
 }
 
 /* ── Corner brackets ── */
-.cert-corner { position: absolute; width: 3.56cqi; height: 3.56cqi; pointer-events: none; }
+.cert-corner { position: absolute; width: calc(3.56 * var(--u)); height: calc(3.56 * var(--u)); pointer-events: none; }
 .cert-corner svg { width: 100%; height: 100%; }
-.cert-tl { top: 0.44cqi; left: 0.44cqi; }
-.cert-tr { top: 0.44cqi; right: 0.44cqi; transform: scaleX(-1); }
-.cert-bl { bottom: 0.44cqi; left: 0.44cqi; transform: scaleY(-1); }
-.cert-br { bottom: 0.44cqi; right: 0.44cqi; transform: scale(-1, -1); }
+.cert-tl { top: calc(0.44 * var(--u)); left: calc(0.44 * var(--u)); }
+.cert-tr { top: calc(0.44 * var(--u)); right: calc(0.44 * var(--u)); transform: scaleX(-1); }
+.cert-bl { bottom: calc(0.44 * var(--u)); left: calc(0.44 * var(--u)); transform: scaleY(-1); }
+.cert-br { bottom: calc(0.44 * var(--u)); right: calc(0.44 * var(--u)); transform: scale(-1, -1); }
 
 /* ── Header ── */
-.cert-top { display: flex; flex-direction: column; align-items: center; gap: 0.56cqi; width: 100%; }
+.cert-top { display: flex; flex-direction: column; align-items: center; gap: calc(0.56 * var(--u)); width: 100%; }
 .cert-wordmark {
   font-family: 'Inter', sans-serif;
-  font-size: 1.06cqi;
+  font-size: calc(1.06 * var(--u));
   font-weight: 500;
   letter-spacing: 0.4em;
   color: #7A5C10;
   text-transform: uppercase;
   margin: 0;
 }
-.cert-rule { display: flex; align-items: center; gap: 1.33cqi; width: 100%; justify-content: center; }
+.cert-rule { display: flex; align-items: center; gap: calc(1.33 * var(--u)); width: 100%; justify-content: center; }
 .cert-rule-line {
-  height: max(0.4px, 0.06cqi);
+  height: max(0.4px, calc(0.06 * var(--u)));
   flex: 1;
-  max-width: 11.11cqi;
+  max-width: calc(11.11 * var(--u));
   background: #BF9A30;
   opacity: 0.5;
 }
 .cert-rule-diamond {
-  width: 0.56cqi;
-  height: 0.56cqi;
+  width: calc(0.56 * var(--u));
+  height: calc(0.56 * var(--u));
   background: #BF9A30;
   transform: rotate(45deg);
 }
-.cert-rule-line-sm { max-width: 5.33cqi; }
-.cert-rule-diamond-sm { width: 0.44cqi; height: 0.44cqi; opacity: 0.6; }
+.cert-rule-line-sm { max-width: calc(5.33 * var(--u)); }
+.cert-rule-diamond-sm { width: calc(0.44 * var(--u)); height: calc(0.44 * var(--u)); opacity: 0.6; }
 .cert-title {
-  font-size: 3.33cqi;
+  font-size: calc(3.33 * var(--u));
   font-weight: 400;
   font-style: italic;
   color: #1A1208;
@@ -132,10 +137,10 @@ const STYLES = `
 }
 
 /* ── Body ── */
-.cert-mid { display: flex; flex-direction: column; align-items: center; gap: 0.89cqi; width: 100%; }
+.cert-mid { display: flex; flex-direction: column; align-items: center; gap: calc(0.89 * var(--u)); width: 100%; }
 .cert-bikt {
   font-family: 'Inter', sans-serif;
-  font-size: 0.83cqi;
+  font-size: calc(0.83 * var(--u));
   font-weight: 400;
   letter-spacing: 0.32em;
   color: #9B8050;
@@ -143,7 +148,7 @@ const STYLES = `
   margin: 0;
 }
 .cert-name {
-  font-size: 6.89cqi;
+  font-size: calc(6.89 * var(--u));
   font-weight: 700;
   color: #0D0800;
   margin: 0;
@@ -153,7 +158,7 @@ const STYLES = `
   word-break: break-word;
 }
 .cert-stmt {
-  font-size: 1.44cqi;
+  font-size: calc(1.44 * var(--u));
   font-weight: 300;
   font-style: italic;
   color: #5C4820;
@@ -162,7 +167,7 @@ const STYLES = `
   text-align: center;
 }
 .cert-prog {
-  font-size: 3.33cqi;
+  font-size: calc(3.33 * var(--u));
   font-weight: 600;
   font-style: italic;
   color: #8B6410;
@@ -172,7 +177,7 @@ const STYLES = `
 }
 .cert-curr {
   font-family: 'Inter', sans-serif;
-  font-size: 0.83cqi;
+  font-size: calc(0.83 * var(--u));
   font-weight: 400;
   letter-spacing: 0.3em;
   color: #9B8050;
@@ -186,42 +191,42 @@ const STYLES = `
   grid-template-columns: 1fr auto 1fr;
   align-items: end;
   width: 100%;
-  gap: 2.67cqi;
+  gap: calc(2.67 * var(--u));
 }
-.cert-fl { display: flex; flex-direction: column; gap: 0.56cqi; }
+.cert-fl { display: flex; flex-direction: column; gap: calc(0.56 * var(--u)); }
 .cert-fdate {
-  font-size: 1.67cqi;
+  font-size: calc(1.67 * var(--u));
   font-weight: 400;
   color: #1A1208;
   margin: 0;
-  padding-bottom: 0.67cqi;
-  border-bottom: max(0.4px, 0.06cqi) solid #BF9A30;
+  padding-bottom: calc(0.67 * var(--u));
+  border-bottom: max(0.4px, calc(0.06 * var(--u))) solid #BF9A30;
 }
 .cert-flbl {
   font-family: 'Inter', sans-serif;
-  font-size: 0.78cqi;
+  font-size: calc(0.78 * var(--u));
   font-weight: 400;
   letter-spacing: 0.25em;
   color: #9B8050;
   text-transform: uppercase;
   margin: 0;
 }
-.cert-fr { display: flex; flex-direction: column; align-items: flex-end; gap: 0.56cqi; }
+.cert-fr { display: flex; flex-direction: column; align-items: flex-end; gap: calc(0.56 * var(--u)); }
 .cert-fsig {
   font-family: 'Dancing Script', cursive;
-  font-size: 2.89cqi;
+  font-size: calc(2.89 * var(--u));
   font-weight: 700;
   color: #1A1208;
   margin: 0;
-  padding-bottom: 0.44cqi;
-  border-bottom: max(0.4px, 0.06cqi) solid #BF9A30;
-  min-width: 17.78cqi;
+  padding-bottom: calc(0.44 * var(--u));
+  border-bottom: max(0.4px, calc(0.06 * var(--u))) solid #BF9A30;
+  min-width: calc(17.78 * var(--u));
   text-align: right;
   line-height: 1.1;
 }
 .cert-fname {
   font-family: 'Inter', sans-serif;
-  font-size: 0.78cqi;
+  font-size: calc(0.78 * var(--u));
   font-weight: 500;
   letter-spacing: 0.2em;
   color: #5C4820;
@@ -231,7 +236,7 @@ const STYLES = `
 }
 
 /* ── Seal ── */
-.cert-seal { width: 10.67cqi; height: 10.67cqi; }
+.cert-seal { width: calc(10.67 * var(--u)); height: calc(10.67 * var(--u)); }
 
 /* ── Base strip ── */
 .cert-base {
@@ -239,53 +244,53 @@ const STYLES = `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: max(0.4px, 0.06cqi) solid rgba(191,154,48,0.25);
-  padding-top: 0.89cqi;
-  margin-top: 0.22cqi;
-  gap: 1.33cqi;
+  border-top: max(0.4px, calc(0.06 * var(--u))) solid rgba(191,154,48,0.25);
+  padding-top: calc(0.89 * var(--u));
+  margin-top: calc(0.22 * var(--u));
+  gap: calc(1.33 * var(--u));
 }
 .cert-bid {
   display: flex;
   align-items: center;
-  gap: 0.56cqi;
+  gap: calc(0.56 * var(--u));
   font-family: 'Inter', sans-serif;
-  font-size: 0.78cqi;
+  font-size: calc(0.78 * var(--u));
   font-weight: 500;
   letter-spacing: 0.15em;
   color: #8B6410;
 }
-.cert-bid svg { width: 1cqi; height: 1.22cqi; flex-shrink: 0; }
+.cert-bid svg { width: calc(1 * var(--u)); height: calc(1.22 * var(--u)); flex-shrink: 0; }
 .cert-bv {
   font-family: 'Inter', sans-serif;
-  font-size: 0.72cqi;
+  font-size: calc(0.72 * var(--u));
   color: #9B8050;
   letter-spacing: 0.06em;
 }
 .cert-bc {
   font-family: 'Inter', sans-serif;
-  font-size: 0.72cqi;
+  font-size: calc(0.72 * var(--u));
   color: #9B8050;
   letter-spacing: 0.06em;
   display: flex;
   align-items: center;
-  gap: 0.44cqi;
+  gap: calc(0.44 * var(--u));
 }
-.cert-bc svg { width: 0.89cqi; height: 0.89cqi; flex-shrink: 0; }
+.cert-bc svg { width: calc(0.89 * var(--u)); height: calc(0.89 * var(--u)); flex-shrink: 0; }
 
 /* ── Preview stamp ── */
 .cert-preview-stamp {
   position: absolute;
-  top: 3.11cqi;
-  right: 3.33cqi;
+  top: calc(3.11 * var(--u));
+  right: calc(3.33 * var(--u));
   transform: rotate(-9deg);
   font-family: 'Inter', sans-serif;
-  font-size: 1.11cqi;
+  font-size: calc(1.11 * var(--u));
   font-weight: 800;
   color: rgba(180,30,30,0.55);
   letter-spacing: 0.32em;
-  border: max(0.5px, 0.17cqi) solid rgba(180,30,30,0.45);
-  padding: 0.56cqi 1.33cqi;
-  border-radius: 0.33cqi;
+  border: max(0.5px, calc(0.17 * var(--u))) solid rgba(180,30,30,0.45);
+  padding: calc(0.56 * var(--u)) calc(1.33 * var(--u));
+  border-radius: calc(0.33 * var(--u));
   pointer-events: none;
   background: rgba(180,30,30,0.04);
   z-index: 3;
@@ -294,15 +299,38 @@ const STYLES = `
 /* ── Print override (A4 landscape) ── */
 @media print {
   @page { size: A4 landscape; margin: 0; }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
   body * { visibility: hidden !important; }
   .cert-wrap, .cert-wrap * { visibility: visible !important; }
-  .cert-wrap { position: fixed !important; inset: 0 !important; padding: 0 !important; margin: 0 !important; }
-  .cert-container { max-width: none !important; width: 297mm !important; }
+  .cert-wrap {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+  .cert-container {
+    max-width: none !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    /* Swap the unit base: 1u = 2.97mm = 1% of A4 landscape width.
+       This makes every cqi-based dimension resolve to fixed mm without
+       depending on container queries in the print pipeline. */
+    --u: 2.97mm !important;
+  }
   #cert-card {
     width: 297mm !important;
     height: 210mm !important;
     aspect-ratio: unset !important;
     box-shadow: none !important;
+    page-break-inside: avoid;
   }
 }
 `;
@@ -384,7 +412,7 @@ export default function CertificateCard({
                 <div className="cert-rule-line" />
               </div>
               <p className="cert-title">Certificate of Completion</p>
-              <div className="cert-rule" style={{ marginTop: "0.22cqi" }}>
+              <div className="cert-rule" style={{ marginTop: "calc(0.22 * var(--u))" }}>
                 <div className="cert-rule-line cert-rule-line-sm" />
                 <div className="cert-rule-diamond cert-rule-diamond-sm" />
                 <div className="cert-rule-line cert-rule-line-sm" />
