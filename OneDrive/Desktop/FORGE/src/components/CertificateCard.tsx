@@ -50,15 +50,20 @@ const STYLES = `
      centering across every nested layout (flex panel, grid panel, modal, etc.). */
   display: block;
   padding: 2rem 0;
-  width: 100%;
+  width: min(100%, 900px);
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
   text-align: initial;
 }
 
 .cert-container {
   display: block;
-  width: 100%;
-  max-width: 900px;
+  /* min() is a stronger guarantee than width:100% + max-width — some
+     flex/grid parents were ignoring max-width in earlier builds, so the
+     cert was spilling across the viewport. min() forces the width to be
+     the smaller of (100% of parent, 900px) every render. */
+  width: min(100%, 900px);
   margin: 0 auto;
   box-sizing: border-box;
   /* Design unit. Set initially as a sane fallback; the React effect below
@@ -228,7 +233,9 @@ const STYLES = `
   padding-bottom: calc(0.44 * var(--u));
   border-bottom: max(0.4px, calc(0.06 * var(--u))) solid #BF9A30;
   min-width: calc(17.78 * var(--u));
-  text-align: right;
+  /* Centered on the signature line so short names ("Allen") and long names
+     ("A. Balisa de Silva") both sit visually at the middle of the line. */
+  text-align: center;
   line-height: 1.1;
 }
 .cert-fname {
@@ -379,10 +386,14 @@ export default function CertificateCard({
   mentorTitle,
   verifyUrl,
   cohort,
-  curriculumYear,
+  curriculumYear: _curriculumYear,
   cryptoHash,
   preview,
 }: CertificateCardProps) {
+  // curriculumYear is intentionally accepted but unused — the cert no
+  // longer displays a separate year line. Year info lives on the date
+  // stamp and the cert ID. Kept in the prop interface for API stability
+  // so the helper certToCardProps and existing callers don't have to change.
   const showCohort = cohort.trim().length > 0;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -451,9 +462,11 @@ export default function CertificateCard({
                 has, through rigorous mentorship and demonstrated work, completed the programme in
               </p>
               <p className="cert-prog">{programName}</p>
-              <p className="cert-curr">
-                {curriculumYear} Curriculum{showCohort && <> &nbsp;·&nbsp; {cohort}</>}
-              </p>
+              {/* Cohort line — only renders when there's a cohort to show.
+                  Year/curriculum-version info is redundant (it's already on
+                  the date stamp and the cert ID), so it was dropped. Solo
+                  learners get nothing here, keeping the cert clean. */}
+              {showCohort && <p className="cert-curr">{cohort}</p>}
             </div>
 
             {/* Footer */}
