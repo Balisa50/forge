@@ -54,6 +54,8 @@ const STYLES = `
 .cert-container {
   width: 100%;
   max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
   /* Design unit. Set initially as a sane fallback; the React effect below
      measures the actual rendered width via ResizeObserver and overwrites
      --u to (width / 100)px every time it changes. This is bulletproof
@@ -64,6 +66,7 @@ const STYLES = `
 
 #cert-card {
   width: 100%;
+  max-width: 900px;       /* belt-and-suspenders with .cert-container — never exceed design width on screen */
   aspect-ratio: 1.415 / 1;
   background: #FDFBF5;
   position: relative;
@@ -74,6 +77,8 @@ const STYLES = `
   padding: calc(5.33 * var(--u)) calc(7.55 * var(--u)) calc(4.22 * var(--u));
   box-sizing: border-box;
   font-family: 'Cormorant Garamond', serif;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ── Double border ── */
@@ -474,13 +479,15 @@ export default function CertificateCard({
                 })}
 
                 {/* Circular text — clockwise path from W; 25% offset = top of
-                    ring where the text reads right-side-up. */}
+                    ring where the text reads right-side-up. Sized so the
+                    string fits comfortably across the top arc only (no
+                    bleeding into the bottom where letters would invert). */}
                 <defs>
                   <path id="rp" d="M48,48 m-32,0 a32,32 0 1,1 64,0 a32,32 0 1,1 -64,0" />
                 </defs>
-                <text fontFamily="Inter,sans-serif" fontSize="6" fontWeight="600" letterSpacing="3" fill="#8B6410">
+                <text fontFamily="Inter,sans-serif" fontSize="4.6" fontWeight="600" letterSpacing="2" fill="#8B6410">
                   <textPath href="#rp" startOffset="25%" textAnchor="middle">
-                    ★  THE FORGE  ·  VERIFIED  ★
+                    THE FORGE  ·  VERIFIED
                   </textPath>
                 </text>
 
