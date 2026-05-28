@@ -1,232 +1,165 @@
 "use client";
 
 /**
- * CertificateCard — The Forge's certificate artwork. V2.
+ * CertificateCard — The Forge's certificate artwork. Final design.
  *
- * The earlier version was technically correct and visually anemic. This
- * one is heavier, more anchored, more deliberate — closer to an actual
- * engraved diploma than a templated PDF.
+ * Renders identically on screen and in print. Every value is driven by
+ * props (which come from the DB via `certToCardProps`); nothing in this
+ * file is learner-specific or mentor-specific.
  *
- * Anchors of the composition:
- *   1. A real TF monogram crest at the top — not a generic star
- *   2. "Certificate of Completion" as the formal title (Cormorant Garamond)
- *   3. The recipient name as the visual centerpiece
- *   4. The program name treated with weight + scale matching the name
- *   5. A LARGE central wax-style SVG seal (160px) — Allen's name on the
- *      signature line, sits below the seal not next to it
- *   6. Date stamp left, verify info right, anchored on a footer ribbon
- *
- * Hard rules retained from the brief: warm cream paper, restrained gold,
- * no shadows, no gradients, no raster textures. All visual interest comes
- * from typography weight, vector ornament, and proportion.
+ * Used by:
+ *   /verify/cert/[code]                       — the public cert page
+ *   /dashboard/mentor/[id]/preview-cert       — mentor preview
+ *   MentorCertReleaseCard                     — inline preview in drilldown
  */
 
-import { QRCodeSVG } from "qrcode.react";
-
-// ─── Props ────────────────────────────────────────────────────────────────────
+import React from "react";
 
 export interface CertificateCardProps {
   learnerName: string;
   programName: string;
-  issueDate: string;        // pre-formatted "May 28, 2026"
-  certId: string;           // "TF-2026-A3F9C281"
+  /** Pre-formatted: "May 28, 2026" */
+  issueDate: string;
+  /** "TF-2026-A3F9C281" */
+  certId: string;
+  /** Mentor persona — what the mentee sees on the cert. The cert never
+   *  shows the mentor's real account name; only `mentorDisplayName`. */
   mentorName: string;
   mentorTitle: string;
-  verifyUrl: string;        // no https://
+  /** No https://, e.g. "forge-ab.vercel.app/verify/cert/xyz" */
+  verifyUrl: string;
   cohort: string;
   curriculumYear: string;
   cryptoHash: string;
   preview?: boolean;
 }
 
-// ─── Palette ──────────────────────────────────────────────────────────────────
+const STYLES = `
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600&display=swap');
 
-const PAPER     = "#FAF8F3";
-const PAPER_DEEP = "#F4EFE2";
-const INK       = "#1A1410";
-const INK_SOFT  = "#3a2f24";
-const GOLD      = "#B8952A";
-const GOLD_DEEP = "#8a6f1f";
-const GOLD_LIGHT = "#d9b850";
-const MUTED     = "#7a6a55";
+.cert-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+}
 
-// ─── Fonts & Print CSS ────────────────────────────────────────────────────────
+#cert-card {
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 1.415 / 1;
+  background: #FDFBF5;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48px 68px 38px;
+  box-sizing: border-box;
+  font-family: 'Cormorant Garamond', serif;
+}
 
-const FONTS_CSS = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Cinzel:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap');`;
+.cert-b1 { position: absolute; inset: 10px; border: 1.5px solid #BF9A30; pointer-events: none; }
+.cert-b2 { position: absolute; inset: 16px; border: 0.5px solid #BF9A30; opacity: 0.4; pointer-events: none; }
 
-const PRINT_CSS = `
+.cert-corner { position: absolute; width: 32px; height: 32px; pointer-events: none; }
+.cert-corner svg { width: 32px; height: 32px; }
+.cert-tl { top: 4px; left: 4px; }
+.cert-tr { top: 4px; right: 4px; transform: scaleX(-1); }
+.cert-bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+.cert-br { bottom: 4px; right: 4px; transform: scale(-1, -1); }
+
+.cert-top { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
+.cert-wordmark { font-family: 'Inter', sans-serif; font-size: 9.5px; font-weight: 500; letter-spacing: 0.4em; color: #7A5C10; text-transform: uppercase; margin: 0; }
+.cert-rule { display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center; }
+.cert-rule-line { height: 0.5px; flex: 1; max-width: 100px; background: #BF9A30; opacity: 0.5; }
+.cert-rule-diamond { width: 5px; height: 5px; background: #BF9A30; transform: rotate(45deg); }
+.cert-title { font-size: 30px; font-weight: 400; font-style: italic; color: #1A1208; margin: 0; letter-spacing: 0.02em; }
+
+.cert-mid { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.cert-bikt { font-family: 'Inter', sans-serif; font-size: 7.5px; font-weight: 400; letter-spacing: 0.32em; color: #9B8050; text-transform: uppercase; margin: 0; }
+.cert-name { font-size: 62px; font-weight: 700; color: #0D0800; margin: 0; line-height: 1; letter-spacing: -0.01em; text-align: center; word-break: break-word; }
+.cert-stmt { font-size: 13px; font-weight: 300; font-style: italic; color: #5C4820; margin: 0; letter-spacing: 0.01em; text-align: center; }
+.cert-prog { font-size: 30px; font-weight: 600; font-style: italic; color: #8B6410; margin: 0; letter-spacing: 0.02em; text-align: center; }
+.cert-curr { font-family: 'Inter', sans-serif; font-size: 7.5px; font-weight: 400; letter-spacing: 0.3em; color: #9B8050; text-transform: uppercase; margin: 0; }
+
+.cert-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; width: 100%; gap: 24px; }
+.cert-fl { display: flex; flex-direction: column; gap: 5px; }
+.cert-fdate { font-size: 15px; font-weight: 400; color: #1A1208; margin: 0; padding-bottom: 6px; border-bottom: 0.5px solid #BF9A30; }
+.cert-flbl { font-family: 'Inter', sans-serif; font-size: 7px; font-weight: 400; letter-spacing: 0.25em; color: #9B8050; text-transform: uppercase; margin: 0; }
+.cert-fr { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.cert-fsig { font-family: 'Dancing Script', cursive; font-size: 26px; font-weight: 700; color: #1A1208; margin: 0; padding-bottom: 4px; border-bottom: 0.5px solid #BF9A30; min-width: 160px; text-align: right; line-height: 1.1; }
+.cert-fname { font-family: 'Inter', sans-serif; font-size: 7px; font-weight: 500; letter-spacing: 0.2em; color: #5C4820; text-transform: uppercase; margin: 0; text-align: right; }
+
+.cert-base { width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 0.5px solid rgba(191,154,48,0.25); padding-top: 8px; margin-top: 2px; gap: 12px; }
+.cert-bid { display: flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif; font-size: 7px; font-weight: 500; letter-spacing: 0.15em; color: #8B6410; }
+.cert-bv { font-family: 'Inter', sans-serif; font-size: 6.5px; color: #9B8050; letter-spacing: 0.06em; }
+.cert-bc { font-family: 'Inter', sans-serif; font-size: 6.5px; color: #9B8050; letter-spacing: 0.06em; display: flex; align-items: center; gap: 4px; }
+
+.cert-preview-stamp {
+  position: absolute;
+  top: 28px;
+  right: 30px;
+  transform: rotate(-9deg);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(180,30,30,0.55);
+  letter-spacing: 0.32em;
+  border: 1.5px solid rgba(180,30,30,0.45);
+  padding: 5px 12px;
+  border-radius: 3px;
+  pointer-events: none;
+  background: rgba(180,30,30,0.04);
+  z-index: 3;
+}
+
 @media print {
   @page { size: A4 landscape; margin: 0; }
   body * { visibility: hidden !important; }
-  #cert-card, #cert-card * { visibility: visible !important; }
+  .cert-wrap, .cert-wrap * { visibility: visible !important; }
+  .cert-wrap { position: fixed !important; inset: 0 !important; padding: 0 !important; margin: 0 !important; }
   #cert-card {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: none !important;
-    margin: 0 !important;
-    aspect-ratio: auto !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    max-width: 297mm !important;
+    aspect-ratio: unset !important;
+    padding: 20mm 28mm 16mm !important;
     box-shadow: none !important;
-    outline: none !important;
   }
-}`;
-
-// ─── TF Monogram (crest at top) ───────────────────────────────────────────────
-
-function TFMonogram({ size = 56 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden>
-      {/* Outer wreath ring (laurel-like) */}
-      <circle cx="32" cy="32" r="29" fill="none" stroke={GOLD} strokeWidth="1.4" />
-      <circle cx="32" cy="32" r="25" fill="none" stroke={GOLD} strokeWidth="0.5" opacity="0.6" />
-
-      {/* Laurel leaves — 8 small marks around the perimeter */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const a = (i / 8) * 2 * Math.PI;
-        const x = 32 + 27 * Math.cos(a);
-        const y = 32 + 27 * Math.sin(a);
-        return <circle key={i} cx={x} cy={y} r="1.4" fill={GOLD} />;
-      })}
-
-      {/* "TF" interlocking monogram */}
-      {/* T crossbar */}
-      <path d="M16 22 L48 22" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
-      {/* T stem */}
-      <path d="M32 22 L32 48" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
-      {/* F top bar (offset right, overlapping T) */}
-      <path d="M27 22 L42 22" stroke={GOLD_DEEP} strokeWidth="2.4" strokeLinecap="round" />
-      {/* F middle bar */}
-      <path d="M27 33 L40 33" stroke={GOLD_DEEP} strokeWidth="2.2" strokeLinecap="round" />
-      {/* F stem (offset slightly to read as separate letter) */}
-      <path d="M27 22 L27 48" stroke={GOLD_DEEP} strokeWidth="2.4" strokeLinecap="round" />
-    </svg>
-  );
 }
+`;
 
-// ─── Corner brackets ──────────────────────────────────────────────────────────
+// ─── Flame icon for the seal (replaces the "TF" placeholder) ──────────────────
 
-function CornerOrnament({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
-  const deg = { tl: 0, tr: 90, br: 180, bl: 270 }[pos];
-  const style: React.CSSProperties = {
-    position: "absolute",
-    ...(pos === "tl" || pos === "tr" ? { top: "2.6%" } : { bottom: "2.6%" }),
-    ...(pos === "tl" || pos === "bl" ? { left: "2.2%" } : { right: "2.2%" }),
-    transform: `rotate(${deg}deg)`,
-    pointerEvents: "none",
-    zIndex: 1,
-  };
+function FlameMark() {
   return (
-    <svg width="58" height="58" viewBox="0 0 58 58" style={style} aria-hidden>
-      {/* Heavy outer L bracket */}
-      <path d="M 0 0 L 50 0 M 0 0 L 0 50" stroke={GOLD} strokeWidth="2" fill="none" />
-      {/* Filigree flourish */}
-      <path d="M 8 0 L 8 8 L 0 8 M 18 0 L 18 4 M 26 0 L 26 4 M 0 18 L 4 18 M 0 26 L 4 26" stroke={GOLD} strokeWidth="0.9" fill="none" opacity="0.85" />
-      <path d="M 14 0 L 14 14 L 0 14" stroke={GOLD} strokeWidth="0.6" fill="none" opacity="0.55" />
-      {/* Anchor diamond */}
-      <path d="M 0 0 L 3 3 L 6 0 L 3 -3 Z" fill={GOLD} transform="translate(2 2)" />
-    </svg>
-  );
-}
-
-// ─── Decorative divider (filigree line) ───────────────────────────────────────
-
-function Filigree({ width = 180 }: { width?: number }) {
-  return (
-    <svg width={width} height="12" viewBox={`0 0 ${width} 12`} aria-hidden>
-      <line x1="0" y1="6" x2={width / 2 - 16} y2="6" stroke={GOLD} strokeWidth="0.7" />
-      <line x1={width / 2 + 16} y1="6" x2={width} y2="6" stroke={GOLD} strokeWidth="0.7" />
-      {/* Center diamond + flanking dots */}
-      <circle cx={width / 2 - 12} cy="6" r="1.4" fill={GOLD} />
-      <path d={`M ${width / 2} 1 L ${width / 2 + 6} 6 L ${width / 2} 11 L ${width / 2 - 6} 6 Z`} fill={GOLD} />
-      <circle cx={width / 2 + 12} cy="6" r="1.4" fill={GOLD} />
-    </svg>
-  );
-}
-
-// ─── The Forge Seal (big) ─────────────────────────────────────────────────────
-
-function ForgeSeal({ size = 160 }: { size?: number }) {
-  // Clockwise full circle path starting at W (9 o'clock).
-  // Quarters: 0%=W, 25%=N (top), 50%=E, 75%=S (bottom).
-  const ring = "M 50 50 m -42,0 a 42,42 0 1,1 84,0 a 42,42 0 1,1 -84,0";
-
-  return (
-    <svg width={size} height={size} viewBox="0 0 100 100" aria-label="The Forge seal">
-      {/* Faint disc fill */}
-      <circle cx="50" cy="50" r="48" fill={PAPER_DEEP} />
-
-      {/* Outer heavy ring */}
-      <circle cx="50" cy="50" r="46.5" fill="none" stroke={GOLD} strokeWidth="1.6" />
-      {/* Thin double ring */}
-      <circle cx="50" cy="50" r="44" fill="none" stroke={GOLD} strokeWidth="0.5" opacity="0.55" />
-      {/* Inner ring containing the emblem */}
-      <circle cx="50" cy="50" r="30" fill="none" stroke={GOLD} strokeWidth="0.7" opacity="0.7" />
-
-      {/* 24 decorative ticks around the outer band */}
-      {Array.from({ length: 24 }).map((_, i) => {
-        const a = (i / 24) * 2 * Math.PI - Math.PI / 2;
-        const isMajor = i % 6 === 0;
-        const r1 = isMajor ? 38 : 39.5;
-        const r2 = isMajor ? 42 : 41.5;
-        const x1 = 50 + r1 * Math.cos(a), y1 = 50 + r1 * Math.sin(a);
-        const x2 = 50 + r2 * Math.cos(a), y2 = 50 + r2 * Math.sin(a);
-        return (
-          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke={GOLD} strokeWidth={isMajor ? "1" : "0.5"} opacity={isMajor ? 0.85 : 0.5} />
-        );
-      })}
-
-      {/* Anvil + flame emblem inside the inner ring */}
-      {/* Anvil base */}
-      <path d="M30 60 L70 60 L67 64 L33 64 Z" fill={INK} />
-      {/* Anvil body */}
-      <path d="M35 52 L65 52 L67 58 L33 58 Z" fill={INK} />
-      {/* Anvil horn (left point) */}
-      <path d="M35 52 L28 50 L28 55 L35 57 Z" fill={INK} />
-      {/* Flame on top of anvil */}
+    <g transform="translate(48 32)">
+      {/* Outer flame outline */}
       <path
-        d="M50 48 C50 48 46 44 47 39 C48 36 50 35 50 35 C50 35 51 38 53 39 C54 40 55 43 54 46 C53 48 50 48 50 48 Z"
-        fill={GOLD}
+        d="M 0 -8
+           C 5 -4, 9 1, 9 7
+           C 9 13, 5 17, 0 17
+           C -5 17, -9 13, -9 7
+           C -9 1, -5 -4, 0 -8 Z"
+        fill="#BF9A30"
+        opacity="0.95"
       />
+      {/* Inner flame highlight */}
       <path
-        d="M50 46 C50 46 48 43 48.5 41 C49 39 50 38.5 50 38.5 C50 38.5 51 40 51.5 41 C52 42.5 51 45 50 46 Z"
-        fill={GOLD_LIGHT}
+        d="M 0 -2
+           C 3 1, 5 5, 5 9
+           C 5 12, 3 14, 0 14
+           C -3 14, -5 12, -5 9
+           C -5 5, -3 1, 0 -2 Z"
+        fill="#FDFBF5"
+        opacity="0.5"
       />
-
-      {/* Circular text — TOP (25% offset on clockwise path = 12 o'clock, right-side-up) */}
-      <defs>
-        <path id="sealRingTop" d={ring} />
-      </defs>
-      <text fontFamily="'Cinzel', 'Cormorant Garamond', serif" fontSize="5.4" letterSpacing="2.2" fill={INK} fontWeight="600">
-        <textPath href="#sealRingTop" startOffset="25%" textAnchor="middle">
-          ★ &nbsp; THE FORGE &nbsp;·&nbsp; VERIFIED &nbsp; ★
-        </textPath>
-      </text>
-
-      {/* "EST 2026" centered inside the inner ring */}
-      <text x="50" y="76" textAnchor="middle"
-        fontFamily="'Cinzel', serif" fontSize="3.6" letterSpacing="2.6"
-        fill={GOLD_DEEP} fontWeight="600">
-        EST · MMXXVI
-      </text>
-    </svg>
+    </g>
   );
 }
 
-// ─── Lock icon ────────────────────────────────────────────────────────────────
-
-function LockIcon() {
-  return (
-    <svg width="10" height="12" viewBox="0 0 10 12" fill="none" aria-hidden style={{ flexShrink: 0 }}>
-      <rect x="1" y="5" width="8" height="6.5" rx="1" stroke={GOLD} strokeWidth="1" />
-      <path d="M2.8 5V3.5C2.8 2.3 3.7 1.3 5 1.3C6.3 1.3 7.2 2.3 7.2 3.5V5" stroke={GOLD} strokeWidth="1" />
-      <circle cx="5" cy="8.2" r="1.1" fill={GOLD} />
-    </svg>
-  );
-}
-
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function CertificateCard({
   learnerName,
@@ -245,355 +178,151 @@ export default function CertificateCard({
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: FONTS_CSS }} />
-      <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
+      <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
-      <div
-        id="cert-card"
-        style={{
-          position: "relative",
-          aspectRatio: "297 / 210",
-          width: "100%",
-          maxWidth: 1100,
-          margin: "0 auto",
-          background: PAPER,
-          color: INK,
-          overflow: "hidden",
-          fontFamily: "'Inter', sans-serif",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* ── Outer heavy border ── */}
-        <div style={{
-          position: "absolute",
-          inset: "1.2%",
-          border: `2px solid ${GOLD}`,
-          pointerEvents: "none",
-        }} />
-        {/* ── Inner hairline border ── */}
-        <div style={{
-          position: "absolute",
-          inset: "2.3%",
-          border: `1px solid ${GOLD}`,
-          opacity: 0.5,
-          pointerEvents: "none",
-        }} />
+      <div className="cert-wrap">
+        <div id="cert-card">
 
-        {/* ── Corner ornaments ── */}
-        <CornerOrnament pos="tl" />
-        <CornerOrnament pos="tr" />
-        <CornerOrnament pos="bl" />
-        <CornerOrnament pos="br" />
+          {/* Borders */}
+          <div className="cert-b1" />
+          <div className="cert-b2" />
 
-        {/* ── Content ── */}
-        <div style={{
-          position: "relative",
-          height: "100%",
-          padding: "2.6% 7.5% 3.2%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          boxSizing: "border-box",
-        }}>
-
-          {/* ─────────────────────── HEADER ─────────────────────── */}
-          <div style={{ textAlign: "center", marginBottom: "0.4rem" }}>
-            <TFMonogram size={56} />
-            <div style={{
-              fontFamily: "'Cinzel', 'Cormorant Garamond', serif",
-              fontSize: "0.875rem",
-              fontWeight: 700,
-              letterSpacing: "0.45em",
-              color: INK,
-              marginTop: "0.4rem",
-              paddingLeft: "0.45em",
-            }}>
-              THE FORGE
+          {/* Corners */}
+          {(["tl", "tr", "bl", "br"] as const).map((pos) => (
+            <div key={pos} className={`cert-corner cert-${pos}`}>
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M3 29L3 3L29 3" stroke="#BF9A30" strokeWidth="1.2" />
+                <path d="M7 25L7 7L25 7" stroke="#BF9A30" strokeWidth="0.5" opacity="0.45" />
+                <circle cx="3" cy="3" r="1.8" fill="#BF9A30" />
+                <circle cx="7" cy="7" r="1" fill="#BF9A30" opacity="0.5" />
+              </svg>
             </div>
-            <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "0.5rem",
-              fontWeight: 500,
-              letterSpacing: "0.32em",
-              color: MUTED,
-              textTransform: "uppercase",
-              marginTop: "0.2rem",
-            }}>
-              — Independent Mentorship Programme —
+          ))}
+
+          {/* Header */}
+          <div className="cert-top">
+            <p className="cert-wordmark">The Forge</p>
+            <div className="cert-rule">
+              <div className="cert-rule-line" />
+              <div className="cert-rule-diamond" />
+              <div className="cert-rule-line" />
+            </div>
+            <p className="cert-title">Certificate of Completion</p>
+            <div className="cert-rule" style={{ marginTop: "2px" }}>
+              <div className="cert-rule-line" style={{ maxWidth: "48px" }} />
+              <div className="cert-rule-diamond" style={{ width: "4px", height: "4px", opacity: 0.6 }} />
+              <div className="cert-rule-line" style={{ maxWidth: "48px" }} />
             </div>
           </div>
 
-          {/* ────────────────── CERTIFICATE TITLE ────────────────── */}
-          <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
-            <div style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
-              fontWeight: 500,
-              fontSize: "2.25rem",
-              color: INK,
-              letterSpacing: "0.015em",
-              lineHeight: 1,
-            }}>
-              Certificate of Completion
+          {/* Body */}
+          <div className="cert-mid">
+            <p className="cert-bikt">This is to certify that</p>
+            <p className="cert-name">{learnerName}</p>
+            <p className="cert-stmt">
+              has, through rigorous mentorship and demonstrated work, completed the programme in
+            </p>
+            <p className="cert-prog">{programName}</p>
+            <p className="cert-curr">
+              {curriculumYear} Curriculum {showCohort && <>&nbsp;·&nbsp; {cohort}</>}
+            </p>
+          </div>
+
+          {/* Footer */}
+          <div className="cert-foot">
+            <div className="cert-fl">
+              <p className="cert-fdate">{issueDate}</p>
+              <p className="cert-flbl">Date of Issue</p>
             </div>
-            <div style={{ marginTop: "0.65rem" }}>
-              <Filigree width={200} />
+
+            {/* Seal */}
+            <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+              {/* Rings */}
+              <circle cx="48" cy="48" r="45" stroke="#BF9A30" strokeWidth="1" />
+              <circle cx="48" cy="48" r="38" stroke="#BF9A30" strokeWidth="0.5" opacity="0.4" />
+
+              {/* Decorative ticks around the band (12, every 30°) */}
+              {Array.from({ length: 12 }).map((_, i) => {
+                const a = (i / 12) * 2 * Math.PI - Math.PI / 2;
+                const r1 = 40, r2 = 43;
+                const x1 = 48 + r1 * Math.cos(a);
+                const y1 = 48 + r1 * Math.sin(a);
+                const x2 = 48 + r2 * Math.cos(a);
+                const y2 = 48 + r2 * Math.sin(a);
+                return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="#BF9A30" strokeWidth="0.6" opacity="0.55" />;
+              })}
+
+              {/* Circular text on the band */}
+              <defs>
+                <path id="rp" d="M48,48 m-32,0 a32,32 0 1,1 64,0 a32,32 0 1,1 -64,0" />
+              </defs>
+              <text fontFamily="Inter,sans-serif" fontSize="6.5" fontWeight="500" letterSpacing="3.5" fill="#8B6410">
+                <textPath href="#rp" startOffset="50%" textAnchor="middle">
+                  THE FORGE · VERIFIED · MMXXVI ·
+                </textPath>
+              </text>
+
+              {/* Flame mark */}
+              <FlameMark />
+
+              {/* Twin rules under the flame */}
+              <line x1="33" y1="55" x2="63" y2="55" stroke="#BF9A30" strokeWidth="0.75" />
+              <line x1="38" y1="58" x2="58" y2="58" stroke="#BF9A30" strokeWidth="0.4" opacity="0.5" />
+
+              {/* "EST. MMXXVI" inside the inner ring */}
+              <text x="48" y="69" fontFamily="Inter,sans-serif" fontSize="6" fontWeight="500" letterSpacing="2" fill="#9B8050" textAnchor="middle">
+                EST. MMXXVI
+              </text>
+            </svg>
+
+            <div className="cert-fr">
+              <p className="cert-fsig">{mentorName}</p>
+              <p className="cert-fname">{mentorName}</p>
+              <p className="cert-flbl" style={{ textAlign: "right" }}>{mentorTitle}</p>
             </div>
           </div>
 
-          {/* ──────────────────── HERO BLOCK ────────────────────── */}
-          <div style={{
-            textAlign: "center",
-            marginTop: "0.65rem",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}>
-            <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "0.55rem",
-              fontWeight: 500,
-              letterSpacing: "0.42em",
-              color: MUTED,
-              textTransform: "uppercase",
-              marginBottom: "0.55rem",
-            }}>
-              Be it known that
+          {/* Base strip */}
+          <div className="cert-base">
+            <div className="cert-bid">
+              <svg width="9" height="11" viewBox="0 0 9 11" fill="none">
+                <rect x="1" y="4" width="7" height="6.5" rx="1" stroke="#8B6410" strokeWidth="0.8" />
+                <path d="M3 4V2.8a1.5 1.5 0 013 0V4" stroke="#8B6410" strokeWidth="0.8" />
+                <circle cx="4.5" cy="7.5" r=".8" fill="#8B6410" />
+              </svg>
+              {certId}
             </div>
-
-            {/* THE NAME — engraved heavy serif */}
-            <div style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontWeight: 700,
-              fontSize: "3.6rem",
-              color: INK,
-              letterSpacing: "0.005em",
-              lineHeight: 1,
-              wordBreak: "break-word",
-              padding: "0 0.5rem",
-            }}>
-              {learnerName}
-            </div>
-
-            <div style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
-              fontSize: "0.95rem",
-              fontWeight: 400,
-              color: INK_SOFT,
-              marginTop: "0.7rem",
-              marginBottom: "0.35rem",
-              maxWidth: "70%",
-              lineHeight: 1.35,
-            }}>
-              has, through rigorous mentorship and demonstrated work,
-              completed the programme in
-            </div>
-
-            {/* PROGRAM NAME — same weight class as learner name */}
-            <div style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontWeight: 700,
-              fontSize: "2.5rem",
-              color: GOLD_DEEP,
-              letterSpacing: "0.018em",
-              lineHeight: 1.05,
-              marginTop: "0.2rem",
-            }}>
-              {programName}
-            </div>
-
-            {/* Cohort line */}
-            <div style={{
-              fontFamily: "'Cinzel', serif",
-              fontSize: "0.5625rem",
-              fontWeight: 600,
-              color: MUTED,
-              letterSpacing: "0.35em",
-              textTransform: "uppercase",
-              marginTop: "0.6rem",
-            }}>
-              {showCohort ? `${cohort} · ${curriculumYear} Curriculum` : `${curriculumYear} Curriculum`}
+            <p className="cert-bv">{verifyUrl}</p>
+            <div className="cert-bc">
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <circle cx="4" cy="4" r="3.5" stroke="#9B8050" strokeWidth="0.6" />
+                <path d="M2.5 4l1 1 2-2" stroke="#9B8050" strokeWidth="0.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Signed · {cryptoHash}
             </div>
           </div>
 
-          {/* ────────────────── FOOTER STRIP ────────────────── */}
-          <div style={{
-            width: "100%",
-            marginTop: "auto",
-            paddingTop: "0.5rem",
-          }}>
-            {/* Filigree separator */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.6rem" }}>
-              <Filigree width={260} />
-            </div>
+          {/* PREVIEW stamp — only when the cert hasn't been released yet */}
+          {preview && (
+            <div className="cert-preview-stamp">PREVIEW</div>
+          )}
 
-            {/* Three columns: date | seal | signature */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr auto 1fr",
-              alignItems: "end",
-              gap: "1.5rem",
-              width: "100%",
-            }}>
-              {/* LEFT — Date */}
-              <div style={{ textAlign: "left" }}>
-                <div style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontStyle: "italic",
-                  fontSize: "1.1rem",
-                  fontWeight: 500,
-                  color: INK,
-                  paddingBottom: "0.25rem",
-                  borderBottom: `1.5px solid ${INK}`,
-                  display: "inline-block",
-                  minWidth: "10rem",
-                  letterSpacing: "0.015em",
-                }}>
-                  {issueDate}
-                </div>
-                <div style={{
-                  fontFamily: "'Cinzel', sans-serif",
-                  fontSize: "0.5rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.36em",
-                  color: MUTED,
-                  textTransform: "uppercase",
-                  marginTop: "0.35rem",
-                }}>
-                  Date of Issue
-                </div>
-              </div>
-
-              {/* CENTER — Seal */}
-              <div style={{ flexShrink: 0, alignSelf: "end", paddingBottom: "0.3rem" }}>
-                <ForgeSeal size={132} />
-              </div>
-
-              {/* RIGHT — Signature */}
-              <div style={{ textAlign: "right" }}>
-                <div style={{
-                  fontFamily: "'Dancing Script', 'Brush Script MT', cursive",
-                  fontSize: "1.95rem",
-                  fontWeight: 700,
-                  color: INK,
-                  lineHeight: 1,
-                  paddingBottom: "0.15rem",
-                  borderBottom: `1.5px solid ${INK}`,
-                  display: "inline-block",
-                  minWidth: "11rem",
-                  textAlign: "center",
-                }}>
-                  {mentorName}
-                </div>
-                <div style={{
-                  fontFamily: "'Cinzel', sans-serif",
-                  fontSize: "0.5rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.22em",
-                  color: MUTED,
-                  textTransform: "uppercase",
-                  marginTop: "0.35rem",
-                }}>
-                  {mentorTitle}
-                </div>
-              </div>
-            </div>
-
-            {/* Verification strip */}
-            <div style={{
-              marginTop: "1rem",
-              paddingTop: "0.55rem",
-              borderTop: `0.5px solid ${GOLD}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "0.75rem",
-              opacity: 0.95,
-            }}>
-              {/* Left: cert id */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flex: 1 }}>
-                <LockIcon />
-                <span style={{
-                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                  fontSize: "0.5rem",
-                  fontWeight: 700,
-                  color: GOLD_DEEP,
-                  letterSpacing: "0.16em",
-                }}>
-                  {certId}
-                </span>
-              </div>
-
-              {/* Center: QR */}
-              <div style={{ flexShrink: 0 }}>
-                <QRCodeSVG
-                  value={`https://${verifyUrl}`}
-                  size={46}
-                  bgColor={PAPER}
-                  fgColor={INK}
-                  level="M"
-                />
-              </div>
-
-              {/* Right: hash + url */}
-              <div style={{ flex: 1, textAlign: "right" }}>
-                <div style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: "0.4375rem",
-                  fontWeight: 600,
-                  color: MUTED,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                }}>
-                  Cryptographically signed · {cryptoHash}
-                </div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: "0.4375rem",
-                  color: MUTED,
-                  letterSpacing: "0.06em",
-                  marginTop: "0.18rem",
-                }}>
-                  {verifyUrl}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-
-        {/* ── PREVIEW stamp — small corner badge ── */}
-        {preview && (
-          <div style={{
-            position: "absolute",
-            top: "5.5%",
-            right: "5.5%",
-            transform: "rotate(-9deg)",
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "0.65rem",
-            fontWeight: 800,
-            color: "rgba(180,30,30,0.55)",
-            letterSpacing: "0.32em",
-            border: "2px solid rgba(180,30,30,0.45)",
-            padding: "0.3rem 0.8rem",
-            borderRadius: 3,
-            pointerEvents: "none",
-            background: "rgba(180,30,30,0.04)",
-            zIndex: 2,
-          }}>
-            PREVIEW
-          </div>
-        )}
       </div>
     </>
   );
 }
 
-// ─── Companion exports ────────────────────────────────────────────────────────
+// ─── Companion exports (used by verify + preview pages) ───────────────────────
 
+/**
+ * Drop <CertificatePrintStyles/> in any page that has a <CertificateCard/>
+ * so window.print() produces the right output even if the component hasn't
+ * mounted yet at SSR time.
+ */
 export function CertificatePrintStyles() {
-  return <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />;
+  return <style dangerouslySetInnerHTML={{ __html: STYLES }} />;
 }
 
 export function DownloadCertButton({ label = "Download / Print" }: { label?: string; verifyCode?: string }) {
@@ -606,7 +335,7 @@ export function DownloadCertButton({ label = "Download / Print" }: { label?: str
         alignItems: "center",
         gap: "0.5rem",
         padding: "0.625rem 1.125rem",
-        background: GOLD,
+        background: "#BF9A30",
         color: "#000",
         border: "none",
         borderRadius: 6,
@@ -627,8 +356,12 @@ export function DownloadCertButton({ label = "Download / Print" }: { label?: str
   );
 }
 
-// ─── Helper: build props from a Certificate DB row ────────────────────────────
-
+/**
+ * Derive display fields from a Certificate DB row. Pass the result as
+ * spread props to <CertificateCard/>. The mentor persona (signedBy)
+ * was frozen at issue time — renaming a mentor later won't retroactively
+ * change historical certs.
+ */
 export function certToCardProps(cert: {
   id: string;
   verifyCode: string;
@@ -642,7 +375,9 @@ export function certToCardProps(cert: {
   const issuedAt = cert.issuedAt instanceof Date ? cert.issuedAt : new Date(cert.issuedAt);
   const year = issuedAt.getFullYear();
   const certId = `TF-${year}-${cert.verifyCode.slice(-8).toUpperCase()}`;
-  const cryptoHash = cert.signature ? cert.signature.slice(0, 7) + "…" + cert.signature.slice(-4) : "—";
+  const cryptoHash = cert.signature
+    ? cert.signature.slice(0, 7) + "…" + cert.signature.slice(-4)
+    : "—";
   const verifyUrl = `forge-ab.vercel.app/verify/cert/${cert.verifyCode}`;
 
   return {
@@ -650,7 +385,7 @@ export function certToCardProps(cert: {
     issueDate: issuedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
     certId,
     mentorName: cert.signedBy ?? "The Forge",
-    mentorTitle: "Program Director, The Forge",
+    mentorTitle: "Programme Director, The Forge",
     verifyUrl,
     cohort: cert.cohort ?? "",
     curriculumYear: String(year),
