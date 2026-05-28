@@ -100,6 +100,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     prisma.roadmap.findFirst({
       where: { id: roadmapId, userId: menteeId },
       include: {
+        cohort: { select: { name: true } },
         tracks: { include: { phases: { include: { tasks: { select: { status: true, estimatedHours: true } } } } } },
         checkins: { where: { status: "passed" }, include: { interrogation: { select: { overallScore: true, passed: true } } } },
       },
@@ -135,6 +136,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       passRate: Number(passRate.toFixed(2)),
       signedBy,
       releasedByMentorId: mentorId,
+      cohort: roadmap.cohort?.name ?? null,
     },
   });
 

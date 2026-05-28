@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Award, ChevronDown, ChevronUp, Loader2, ExternalLink, Lock, AlertTriangle, Send, Maximize2 } from "lucide-react";
-import CertificateArtwork from "./CertificateArtwork";
+import CertificateCard from "./CertificateCard";
 
 interface Props {
   menteeId: string;
@@ -21,6 +21,7 @@ interface Status {
   passRate?: number;
   totalHours?: number;
   signedBy?: string | null;
+  cohort?: string | null;
 }
 
 /**
@@ -185,17 +186,26 @@ export default function MentorCertReleaseCard({ menteeId, menteeName, roadmapId 
               )}
 
               {/* The actual cert preview */}
-              <CertificateArtwork
-                recipientName={menteeName}
-                roadmapTitle={status.title ?? ""}
-                issuedAt={new Date().toISOString()}
-                totalTasks={status.total ?? 0}
-                totalHours={status.totalHours ?? 0}
-                passRate={status.passRate ?? 0}
-                verifyCode={status.verifyCode ?? "preview-not-yet-issued"}
-                signedBy={status.signedBy ?? null}
-                preview={!status.alreadyIssued}
-              />
+              {(() => {
+                const now = new Date();
+                const year = now.getFullYear();
+                const verifyCode = status.verifyCode ?? "preview";
+                return (
+                  <CertificateCard
+                    learnerName={menteeName}
+                    programName={status.title ?? ""}
+                    issueDate={now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                    certId={status.alreadyIssued ? `TF-${year}-${verifyCode.slice(-8).toUpperCase()}` : `TF-${year}-PREVIEW`}
+                    mentorName={status.signedBy ?? "The Forge"}
+                    mentorTitle="Program Director, The Forge"
+                    verifyUrl={`forge-ab.vercel.app/verify/cert/${verifyCode}`}
+                    cohort={status.cohort ?? ""}
+                    curriculumYear={String(year)}
+                    cryptoHash={status.alreadyIssued ? "verified" : "—"}
+                    preview={!status.alreadyIssued}
+                  />
+                );
+              })()}
             </>
           )}
         </div>

@@ -352,6 +352,8 @@ model Certificate {
   /// The User.id of the mentor who released this cert. Nullable for legacy
   /// self-issued certs.
   releasedByMentorId String?
+  /// Cohort name at time of issue, e.g. "Cohort 4". Null for individual / solo learners.
+  cohort             String?
   issuedAt           DateTime @default(now())
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
