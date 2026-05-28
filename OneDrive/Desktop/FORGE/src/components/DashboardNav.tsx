@@ -346,6 +346,29 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
               <Eye size={16} strokeWidth={activeTool === "visibility" ? 2.5 : 2} />
               What they can see
             </Link>
+
+            {/* Tool: Certificate */}
+            <Link
+              href={`/dashboard/mentor/${menteeId}?tool=certificate`}
+              onClick={closeMobile}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                padding: "0.5rem 0.75rem",
+                borderRadius: 6,
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+                fontSize: "0.875rem",
+                color: activeTool === "certificate" ? "var(--text-primary)" : "var(--text-secondary)",
+                background: activeTool === "certificate" ? "rgba(245,158,11,0.08)" : "transparent",
+                borderLeft: activeTool === "certificate" ? "2px solid var(--accent)" : "2px solid transparent",
+                textDecoration: "none",
+              }}
+            >
+              <Award size={16} strokeWidth={activeTool === "certificate" ? 2.5 : 2} />
+              Certificate
+            </Link>
           </>
         )}
       </div>

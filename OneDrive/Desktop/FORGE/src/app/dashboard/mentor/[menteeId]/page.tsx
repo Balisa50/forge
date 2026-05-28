@@ -584,12 +584,38 @@ export default function MenteeDrilldownPage() {
 
       {/* Mentor tools — controlled from the contextual sidebar. Only the
           requested tool renders on the page, eliminating the stacked-card
-          clutter. Default state (no ?tool) shows nothing here. */}
+          clutter. Default state (no ?tool) shows nothing here — page goes
+          straight to the mentee's roadmap. */}
       {activeTool === "recovery" && (
         <MenteeRecoveryCard menteeId={menteeId} menteeName={mentee.name} />
       )}
       {activeTool === "visibility" && (
         <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
+      )}
+      {activeTool === "certificate" && roadmaps.length > 0 && (
+        <div style={{ marginBottom: "1.5rem" }}>
+          {roadmaps.map((roadmap) => (
+            <div key={roadmap.id} style={{ marginBottom: "0.75rem" }}>
+              {roadmaps.length > 1 && (
+                <p style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "var(--text-dim)",
+                  marginBottom: "0.5rem",
+                }}>
+                  {roadmap.title}
+                </p>
+              )}
+              <MentorCertReleaseCard
+                menteeId={menteeId}
+                menteeName={mentee.name ?? mentee.email}
+                roadmapId={roadmap.id}
+              />
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Roadmaps — empty state lets the mentor PICK one on their behalf */}
@@ -665,15 +691,11 @@ export default function MenteeDrilldownPage() {
         </div>
       )}
 
-      {roadmaps.map((roadmap) => (
+      {/* Roadmap view — hidden when any tool is active so the sidebar drill
+          is a true full-screen replacement, not a layered panel. */}
+      {!activeTool && roadmaps.map((roadmap) => (
         <div key={roadmap.id} style={{ marginBottom: "2rem" }}>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "1rem" }}>{roadmap.title}</h2>
-
-          <MentorCertReleaseCard
-            menteeId={menteeId}
-            menteeName={mentee.name ?? mentee.email}
-            roadmapId={roadmap.id}
-          />
 
           {roadmap.tracks.flatMap((t) => t.phases).map((phase) => (
             <div key={phase.id} style={{ marginBottom: "1.25rem" }}>
