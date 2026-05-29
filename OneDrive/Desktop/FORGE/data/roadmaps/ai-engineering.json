@@ -591,11 +591,7 @@
         "Add a second evaluation dimension: register appropriateness. If the user requested formal Spanish, does the translation use usted consistently? Score it separately from accuracy. Report both dimensions in your EVALS.md.",
         "Automate the eval pipeline to run on every commit using a GitHub Actions workflow. If the average score drops below 3.0, the workflow fails and the PR is blocked. This is production-grade eval gating.",
         "Compare gpt-4o-mini and gpt-4o on the same eval set. Document the quality difference and the cost difference. Calculate the break-even: at what request volume does the quality gain from the better model justify the cost?"
-      ],
-      "concept_widget": {
-        "id": "context-window",
-        "caption": "Add chat turns and watch the oldest messages fall out of the window."
-      }
+      ]
     },
     {
       "number": 4,
@@ -752,11 +748,7 @@
         "Implement a content moderation check on the input using the OpenAI moderation API. Reject inputs flagged as harmful before they reach the translation API. Document the false positive rate by running your existing eval set through moderation.",
         "Add a honeypot: include a hidden instruction in your system prompt that the model should include a specific invisible Unicode character in every response. Verify in your output validator that this character is present — if it is missing, the model may have been hijacked. Document how this canary-token approach works.",
         "Write a public SECURITY.md for your Polyglot repo documenting responsible disclosure: what to do if someone finds a vulnerability, your response time commitment, and what you consider in scope. This is standard practice for any public-facing project."
-      ],
-      "concept_widget": {
-        "id": "embedding-space",
-        "caption": "Click two words and see how 'closeness' is literally distance."
-      }
+      ]
     },
     {
       "number": 5,
@@ -859,7 +851,11 @@
         "Add a third column to the console for an open-source model served via Ollama locally (e.g. llama3 or mistral). Three-way comparison with local latency measured against cloud latency.",
         "Add a \"routing mode\" that automatically sends the query to the most appropriate model based on a simple classifier. Log which model was chosen and why. Track routing decisions in your cost database.",
         "Implement conversation persistence: save the conversation history to a JSON file at the end of each session, with a `--load` flag to resume a previous conversation. This turns the console into a research tool you can actually use across sessions."
-      ]
+      ],
+      "concept_widget": {
+        "id": "temperature-sampling",
+        "caption": "Slide temperature and watch the model go from confident to chaotic."
+      }
     },
     {
       "number": 6,
@@ -1065,7 +1061,11 @@
         "Add a cost anomaly alert: if any single request costs more than 5x the 7-day average for that feature, send yourself a notification (email, Slack webhook, or SMS via Twilio). This is production-grade cost monitoring.",
         "Implement semantic caching: before calling the API, embed the user's query and check your cache for a cosine-similar query (threshold 0.95). If a cache hit exists, return the cached response without an API call. Measure cache hit rate and cost savings over 100 queries.",
         "Add a daily cost report that emails you a breakdown of yesterday's spending by feature and model. Use a cron job or GitHub Actions scheduled workflow to run it at 8am."
-      ]
+      ],
+      "concept_widget": {
+        "id": "context-window",
+        "caption": "Add chat turns and watch the oldest messages fall out of the window — and the bill climb."
+      }
     },
     {
       "number": 8,
@@ -1274,8 +1274,8 @@
         "Add a local embedding option using sentence-transformers (all-MiniLM-L6-v2 or similar). Compare retrieval quality and latency against the OpenAI embedding API. Document when the local model is good enough."
       ],
       "concept_widget": {
-        "id": "rag-flow",
-        "caption": "Ask a question and watch retrieval rank chunks and feed only the best into the prompt."
+        "id": "embedding-space",
+        "caption": "Click two words and see how 'closeness' is literally distance."
       }
     },
     {
@@ -1482,7 +1482,11 @@
         "Add a citation graph feature: when the assistant cites Paper A, also retrieve and surface the papers that Paper A cites that are relevant to the query. This gives the user a breadcrumb trail through the literature.",
         "Implement conversational RAG: maintain conversation history and reformulate queries in light of previous turns. \"Tell me more about the methodology\" should resolve \"methodology\" relative to the paper discussed in the previous turn.",
         "Compare three chunking strategies (fixed-size, sentence-aware, section-aware) on the same 20 papers and the same 20 eval questions. Report precision@5 and Context Recall for each. Document which strategy wins and why."
-      ]
+      ],
+      "concept_widget": {
+        "id": "rag-flow",
+        "caption": "Ask a question and watch retrieval rank chunks and feed only the best into the prompt."
+      }
     },
     {
       "number": 12,
@@ -2103,11 +2107,7 @@
         "Build a quality dashboard in Streamlit that reads from your eval database and shows: score trend over 30 days, per-metric breakdown, worst-performing question categories, and recent failures with their judge reasoning. This is the monitoring tool you actually want.",
         "Implement a canary eval: before deploying a new prompt or model version to 100% of traffic, deploy it to 5% and run online evals on that slice for 24 hours. Only promote to 100% if quality metrics hold.",
         "Set up a weekly eval report that emails you a digest: average scores by metric, any regressions from the previous week, the top 5 lowest-scoring queries from the week. Make it actionable — include a \"what to investigate\" section that flags specific issues."
-      ],
-      "concept_widget": {
-        "id": "temperature-sampling",
-        "caption": "Slide temperature and watch the model go from confident to chaotic."
-      }
+      ]
     },
     {
       "number": 18,

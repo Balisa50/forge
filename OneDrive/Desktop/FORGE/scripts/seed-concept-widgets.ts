@@ -1,109 +1,105 @@
 /**
- * Seed `concept_widget` refs onto the best-matching week of each roadmap.
+ * Seed `concept_widget` refs onto specific weeks of each roadmap.
  *
- * Placement is WEEK-LEVEL by design: the widget renders at the top of the week,
- * before the day-by-day plan, so the learner plays with the concept first and
- * then goes day-by-day to get their hands dirty. The daily items are for doing;
- * the week-top sim is the conceptual anchor that already covers the week's idea.
+ * Placement is EXPLICIT and WEEK-LEVEL. Each widget is pinned by week NUMBER to
+ * the week where its concept is actually introduced — never a project-iteration
+ * week ("v0.2", "v0.3") that merely name-drops a tool, and never an intro week
+ * that mentions a technology the learner hasn't met yet.
  *
- * For each path we list the widgets that belong to it, each with keywords and a
- * caption. The script scans the path's weeks in order and attaches the widget to
- * the first week whose title/phase/context/topics/day-headlines match a keyword
- * and doesn't already carry a widget. Distinctive widgets are listed first so
- * they claim their week before broader ones.
+ * Why not keyword matching? The earlier auto-matcher scanned week text for
+ * keywords and stamped widgets onto the first week that mentioned them. That
+ * dropped a *pandas* DataFrame sim onto the Excel week (it matched "spreadsheet"
+ * / "PivotTables" / "filter"), a SQL sim onto a React week, a JOIN sim onto a
+ * LoRA fine-tuning week, and so on — jargon before introduction, in widget form.
+ * Explicit placement is the only thing that guarantees the sim matches the week.
+ *
+ * The widget renders at the top of the week, before the day-by-day plan: the
+ * learner plays with the concept first, then goes day-by-day to get their hands
+ * dirty. The daily items are for doing; the week-top sim is the conceptual anchor.
  *
  * Idempotent: a cleanup pass first strips every script-managed widget — both
- * week-level `concept_widget` and any leftover `kind:"widget"` day items from
- * the earlier day-level experiment — so re-running never duplicates.
+ * week-level `concept_widget` and any leftover `kind:"widget"` day items from an
+ * earlier day-level experiment — so re-running never duplicates.
  *
  * Run: npx tsx scripts/seed-concept-widgets.ts
  */
 import * as fs from "fs";
 import * as path from "path";
 
-type Placement = { id: string; kw: string[]; caption: string };
+type Placement = { week: number; id: string; caption: string };
 
 const DIR = path.join(process.cwd(), "data", "roadmaps");
 
 const PLAN: Record<string, Placement[]> = {
   "data-science": [
-    { id: "df-inspector", kw: ["pandas", "dataframe", "data frame", "filter", "series", "selecting", "indexing"], caption: "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet." },
-    { id: "regression-slider", kw: ["linear regression", "regression", "line of best fit", "slope", "least squares"], caption: "Drag the slope and intercept by hand, then let least-squares snap the line into place." },
-    { id: "distribution-stats", kw: ["distribution", "descriptive", "central tendency", "mean", "median", "summary statistic", "spread", "variance"], caption: "Shift and skew a distribution and watch the mean get pulled while the median holds." },
-    { id: "correlation-scatter", kw: ["correlation", "scatter", "relationship between variables"], caption: "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten." },
-    { id: "groupby-aggregator", kw: ["groupby", "group by", "aggregat", "pivot"], caption: "Pick an aggregation and watch many rows collapse into one per group." },
-    { id: "join-visualiser", kw: ["join", "merge", "relational", "combining data"], caption: "Switch join types and watch which rows survive and where NULLs appear." },
+    { week: 1, id: "df-inspector", caption: "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet." },
+    { week: 2, id: "distribution-stats", caption: "Shift and skew a distribution and watch the mean get pulled while the median holds." },
+    { week: 3, id: "groupby-aggregator", caption: "Pick an aggregation and watch many rows collapse into one per group — the borough breakdown, live." },
+    { week: 4, id: "join-visualiser", caption: "Switch join types and watch which rows survive and where NULLs appear." },
+    { week: 5, id: "regression-slider", caption: "Drag the slope and intercept by hand, then let least-squares snap the line into place." },
+    { week: 6, id: "correlation-scatter", caption: "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten." },
   ],
   "data-analysis": [
-    { id: "df-inspector", kw: ["pandas", "dataframe", "data frame", "filter", "series", "selecting", "spreadsheet"], caption: "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet." },
-    { id: "sql-query", kw: ["sql", "query", "select", "database"], caption: "Toggle WHERE, ORDER BY and LIMIT and watch the result set — and the query — change." },
-    { id: "join-visualiser", kw: ["join", "merge", "relational"], caption: "Switch join types and watch which rows survive and where NULLs appear." },
-    { id: "groupby-aggregator", kw: ["groupby", "group by", "aggregat", "pivot"], caption: "Pick an aggregation and watch many rows collapse into one per group." },
-    { id: "distribution-stats", kw: ["distribution", "descriptive", "mean", "median", "statistic"], caption: "Shift and skew a distribution and watch the mean get pulled while the median holds." },
-    { id: "correlation-scatter", kw: ["correlation", "scatter", "relationship"], caption: "Drag r from −1 to +1 and watch the cloud tighten and flip." },
-    { id: "dashboard-filter", kw: ["dashboard", "visualiz", "visualis", "chart", "report"], caption: "Click a region and watch every chart recompute from the same filtered data." },
+    { week: 2, id: "df-inspector", caption: "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet." },
+    { week: 3, id: "correlation-scatter", caption: "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten — discount vs profit, live." },
+    { week: 4, id: "join-visualiser", caption: "Switch join types and watch which rows survive and where NULLs appear." },
+    { week: 5, id: "sql-query", caption: "Toggle WHERE, ORDER BY and LIMIT and watch the result set — and the query — change." },
+    { week: 6, id: "distribution-stats", caption: "Shift and skew a distribution and watch the mean get pulled while the median holds." },
+    { week: 11, id: "groupby-aggregator", caption: "Pick an aggregation and watch many rows collapse into one per cohort." },
+    { week: 20, id: "dashboard-filter", caption: "Click a region and watch every chart recompute from the same filtered data." },
   ],
   "ml-engineering": [
-    { id: "ml-task-types", kw: ["what is machine learning", "supervised", "types of", "fundamentals", "intro to ml", "landscape"], caption: "Same dots, three questions — see how regression, classification and clustering differ." },
-    { id: "kmeans-stepper", kw: ["k-means", "kmeans", "clustering", "unsupervised"], caption: "Click Step to alternate assign → re-centre until the clusters lock in." },
-    { id: "knn-boundary", kw: ["knn", "k-nearest", "nearest neighbor", "nearest neighbour"], caption: "Move the query point and change k to watch the vote flip near the border." },
-    { id: "train-test-overfit", kw: ["overfit", "train/test", "train test", "generaliz", "bias", "variance", "validation", "cross-validation"], caption: "Crank model complexity and watch test error turn back up — the overfitting U." },
-    { id: "gradient-descent", kw: ["gradient descent", "optimization", "optimisation", "loss function", "training loop", "backprop"], caption: "Set a learning rate and watch the ball roll to the minimum — or overshoot." },
-    { id: "confusion-matrix", kw: ["confusion matrix", "precision", "recall", "evaluation metric", "f1", "classification metric"], caption: "Slide the threshold and watch precision trade off against recall." },
+    { week: 1, id: "ml-task-types", caption: "Same dots, three questions — see how regression, classification and clustering differ." },
+    { week: 3, id: "train-test-overfit", caption: "Crank model complexity and watch test error turn back up — the overfitting U that tuning has to dodge." },
+    { week: 5, id: "gradient-descent", caption: "Set a learning rate and watch the ball roll to the minimum — or overshoot." },
+    { week: 6, id: "confusion-matrix", caption: "Slide the threshold and watch precision trade off against recall." },
+    { week: 7, id: "kmeans-stepper", caption: "Click Step to alternate assign → re-centre until the clusters lock in." },
   ],
   "ai-engineering": [
-    { id: "tokenizer", kw: ["token", "tokeniz"], caption: "Type anything and watch it split into the chunks a model actually bills and reads." },
-    { id: "temperature-sampling", kw: ["temperature", "sampling", "decoding", "generation parameter", "top-p", "top_p"], caption: "Slide temperature and watch the model go from confident to chaotic." },
-    { id: "embedding-space", kw: ["embedding", "vector", "semantic search"], caption: "Click two words and see how 'closeness' is literally distance." },
-    { id: "rag-flow", kw: ["rag", "retrieval", "retrieval-augmented", "vector database", "vector db"], caption: "Ask a question and watch retrieval rank chunks and feed only the best into the prompt." },
-    { id: "context-window", kw: ["context window", "context length", "prompt engineering", "prompting"], caption: "Add chat turns and watch the oldest messages fall out of the window." },
+    { week: 1, id: "tokenizer", caption: "Type anything and watch it split into the chunks a model actually bills and reads." },
+    { week: 5, id: "temperature-sampling", caption: "Slide temperature and watch the model go from confident to chaotic." },
+    { week: 7, id: "context-window", caption: "Add chat turns and watch the oldest messages fall out of the window — and the bill climb." },
+    { week: 9, id: "embedding-space", caption: "Click two words and see how 'closeness' is literally distance." },
+    { week: 11, id: "rag-flow", caption: "Ask a question and watch retrieval rank chunks and feed only the best into the prompt." },
   ],
   "full-stack-web": [
-    { id: "box-model", kw: ["css", "box model", "styling", "html and css"], caption: "Slide margin, border, and padding to see the four nested layers." },
-    { id: "flexbox-playground", kw: ["flexbox", "flex", "layout", "responsive"], caption: "Flip the flex properties and watch the boxes — and the CSS — react." },
-    { id: "http-inspector", kw: ["http", "request", "rest", "api", "fetch"], caption: "Pick a method and read the real request and response, line by line." },
-    { id: "react-state-flow", kw: ["react", "state", "usestate", "component", "hooks"], caption: "Change state and watch exactly which parts of the UI re-run." },
-    { id: "sql-query", kw: ["sql", "database", "query", "postgres", "prisma"], caption: "Toggle WHERE, ORDER BY and LIMIT and watch the result set change." },
+    { week: 1, id: "box-model", caption: "Slide margin, border, and padding to see the four nested layers." },
+    { week: 5, id: "react-state-flow", caption: "Change state and watch exactly which parts of the UI re-run." },
+    { week: 7, id: "flexbox-playground", caption: "Flip the flex properties and watch the boxes — and the CSS — react." },
+    { week: 9, id: "http-inspector", caption: "Pick a method and read the real request and response, line by line." },
+    { week: 10, id: "sql-query", caption: "Toggle WHERE, ORDER BY and LIMIT and watch the result set change." },
   ],
   "mobile-engineering": [
-    { id: "rn-flexbox", kw: ["layout", "flex", "style", "styling"], caption: "See why React Native stacks vertically by default and what flex:1 really does." },
-    { id: "component-lifecycle", kw: ["lifecycle", "useeffect", "hooks", "state", "effect"], caption: "Drive a component through mount → update → unmount and see when effects fire." },
-    { id: "nav-stack", kw: ["navigation", "navigat", "routing", "screens", "stack"], caption: "Push and pop screens to feel how back-navigation is just a stack." },
+    { week: 1, id: "rn-flexbox", caption: "See why React Native stacks vertically by default and what flex:1 really does." },
+    { week: 2, id: "component-lifecycle", caption: "Drive a component through mount → update → unmount and see when effects fire." },
+    { week: 3, id: "nav-stack", caption: "Push and pop screens to feel how back-navigation is just a stack." },
   ],
   "devops-cloud": [
-    { id: "container-vs-vm", kw: ["container", "docker", "virtual machine", "containeriz"], caption: "Toggle between the two stacks to see what each one duplicates." },
-    { id: "load-balancer", kw: ["load balanc", "horizontal scal", "high availability"], caption: "Fire requests and watch round-robin fan them across backends — then kill one." },
-    { id: "cicd-pipeline", kw: ["ci/cd", "cicd", "pipeline", "continuous integration", "continuous deployment", "github actions"], caption: "Run the pipeline and watch a failing test halt the deploy." },
-    { id: "autoscaling", kw: ["autoscal", "auto-scal", "kubernetes", "scaling", "orchestrat"], caption: "Crank the traffic and watch instances spin up to hold latency steady." },
-    { id: "dns-resolution", kw: ["dns", "domain", "networking", "name resolution"], caption: "Step a lookup through resolver → root → TLD → authoritative." },
+    { week: 1, id: "container-vs-vm", caption: "Toggle between the two stacks to see what each one duplicates." },
+    { week: 2, id: "dns-resolution", caption: "Step a lookup through resolver → root → TLD → authoritative." },
+    { week: 9, id: "load-balancer", caption: "Fire requests and watch round-robin fan them across backends — then kill one." },
+    { week: 10, id: "autoscaling", caption: "Crank the traffic and watch instances spin up to hold latency steady." },
+    { week: 17, id: "cicd-pipeline", caption: "Run the pipeline and watch a failing test halt the deploy." },
   ],
   "cybersecurity": [
-    { id: "cia-triad", kw: ["cia", "confidentiality", "security fundamentals", "security principles", "intro", "foundations"], caption: "Pick a breach and see which security pillar it actually violates." },
-    { id: "sql-injection", kw: ["sql injection", "injection", "owasp", "web vulnerab", "web app"], caption: "Type into a login field and watch unsanitised input rewrite the query." },
-    { id: "xss-sandbox", kw: ["xss", "cross-site", "scripting"], caption: "Toggle escaping and see why raw HTML insertion is dangerous." },
-    { id: "hashing-vs-encryption", kw: ["hash", "encrypt", "cryptograph", "crypto"], caption: "Type a secret and see why one transform is reversible and one isn't." },
-    { id: "tls-handshake", kw: ["tls", "ssl", "https", "certificate", "pki"], caption: "Step through how two strangers agree on a secret over an open wire." },
+    { week: 1, id: "cia-triad", caption: "Pick a breach and see which security pillar it actually violates." },
+    { week: 5, id: "xss-sandbox", caption: "Toggle escaping and see why raw HTML insertion is dangerous." },
+    { week: 6, id: "sql-injection", caption: "Type into a login field and watch unsanitised input rewrite the query." },
+    { week: 7, id: "tls-handshake", caption: "Step through how two strangers agree on a secret over an open wire." },
+    { week: 20, id: "hashing-vs-encryption", caption: "Type a secret and see why one transform is reversible and one isn't." },
   ],
   "bi-analytics": [
-    { id: "dashboard-filter", kw: ["dashboard", "filter", "interactiv", "report", "visualiz", "visualis"], caption: "Click a region and watch every chart on the page recompute." },
-    { id: "star-schema", kw: ["star schema", "data model", "dimension", "fact table", "warehouse", "modeling", "modelling"], caption: "Click a foreign key in the fact table and see it light up its dimension." },
-    { id: "kpi-threshold", kw: ["kpi", "metric", "threshold", "scorecard", "rag status"], caption: "Drag the metric and watch it cross red / amber / green bands." },
-    { id: "cohort-retention", kw: ["cohort", "retention", "churn"], caption: "Read a retention heatmap down a column to compare cohorts at the same age." },
+    { week: 5, id: "dashboard-filter", caption: "Click a region and watch every chart on the page recompute." },
+    { week: 8, id: "star-schema", caption: "Click a foreign key in the fact table and see it light up its dimension." },
+    { week: 9, id: "cohort-retention", caption: "Read a retention heatmap down a column to compare cohorts at the same age." },
+    { week: 11, id: "kpi-threshold", caption: "Drag the metric and watch it cross red / amber / green bands." },
   ],
   "ai-automation": [
-    { id: "workflow-builder", kw: ["workflow", "automation", "trigger", "n8n", "zapier", "make.com", "first automation"], caption: "Fire a trigger and watch data flow node-to-node down the chain." },
-    { id: "webhook-transform", kw: ["webhook", "api", "integrat", "transform", "data mapping"], caption: "Toggle field mappings and watch the output JSON rebuild live." },
-    { id: "branch-sim", kw: ["conditional", "logic", "branch", "routing", "if/else", "if else", "decision"], caption: "Change the input and watch the workflow take a different path." },
+    { week: 1, id: "workflow-builder", caption: "Fire a trigger and watch data flow node-to-node down the chain." },
+    { week: 2, id: "webhook-transform", caption: "Toggle field mappings and watch the output JSON rebuild live." },
+    { week: 3, id: "branch-sim", caption: "Change the input and watch the workflow take a different path." },
   ],
 };
-
-function weekText(w: any): string {
-  const dayHeadlines = (w.days || []).flatMap((d: any) => [d.title, d.summary]);
-  return [w.title, w.phase, w.context, ...(w.topics || []), ...(w.tasks || []), ...dayHeadlines]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-}
 
 let totalPlaced = 0;
 for (const [slug, placements] of Object.entries(PLAN)) {
@@ -125,31 +121,20 @@ for (const [slug, placements] of Object.entries(PLAN)) {
     }
   }
 
-  const used = new Set<number>();
   const placed: string[] = [];
   for (const p of placements) {
-    let target: any = null;
-    for (const w of r.weeks) {
-      if (used.has(w.number)) continue;
-      if (w.concept_widget) continue;
-      const txt = weekText(w);
-      if (p.kw.some((k) => txt.includes(k.toLowerCase()))) {
-        target = w;
-        break;
-      }
-    }
-    // Fallback: if nothing matched, drop it on the earliest week without one.
+    const target = r.weeks.find((w: any) => w.number === p.week);
     if (!target) {
-      target = r.weeks.find((w: any) => !used.has(w.number) && !w.concept_widget) || null;
+      placed.push(`(MISSING w${p.week})→${p.id}`);
+      continue;
     }
-    if (target) {
-      target.concept_widget = { id: p.id, caption: p.caption };
-      used.add(target.number);
-      placed.push(`w${target.number}→${p.id}`);
-      totalPlaced++;
-    } else {
-      placed.push(`(no slot)→${p.id}`);
+    if (target.concept_widget) {
+      placed.push(`(w${p.week} TAKEN)→${p.id}`);
+      continue;
     }
+    target.concept_widget = { id: p.id, caption: p.caption };
+    placed.push(`w${p.week}→${p.id}`);
+    totalPlaced++;
   }
   fs.writeFileSync(file, JSON.stringify(r, null, 2) + "\n", "utf8");
   console.log(`${slug}: ${placed.join(", ")}`);

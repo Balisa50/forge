@@ -519,8 +519,8 @@
         "Read the Wikipedia page for \"Central Limit Theorem\" and write a 3-sentence summary in your notebook. Then verify it on your data: take 100 random samples of 30 trips each, compute the mean of each sample, plot the distribution of those 100 means. The shape should be approximately normal even though the underlying fare distribution is heavily skewed. That is the central limit theorem in action — and it is why most of statistics actually works."
       ],
       "concept_widget": {
-        "id": "regression-slider",
-        "caption": "Drag the slope and intercept by hand, then let least-squares snap the line into place."
+        "id": "distribution-stats",
+        "caption": "Shift and skew a distribution and watch the mean get pulled while the median holds."
       }
     },
     {
@@ -716,8 +716,8 @@
         "Find the day with the LOWEST trip count across all three months. Look up what happened in NYC on that day. Real-world events show up in time-series data, and learning to read them is a senior-analyst skill."
       ],
       "concept_widget": {
-        "id": "distribution-stats",
-        "caption": "Shift and skew a distribution and watch the mean get pulled while the median holds."
+        "id": "groupby-aggregator",
+        "caption": "Pick an aggregation and watch many rows collapse into one per group — the borough breakdown, live."
       }
     },
     {
@@ -907,8 +907,8 @@
         "Write the same \"top N per group\" query (mastery #3) using a correlated subquery instead of a window function. Both work. The window function version is faster and more readable, but knowing both lets you read old codebases."
       ],
       "concept_widget": {
-        "id": "groupby-aggregator",
-        "caption": "Pick an aggregation and watch many rows collapse into one per group."
+        "id": "join-visualiser",
+        "caption": "Switch join types and watch which rows survive and where NULLs appear."
       }
     },
     {
@@ -1093,7 +1093,11 @@
         "Add a one-hot encoded \"borough\" feature and retrain XGBoost. Did MAE improve? By how much? Each feature you add should be justified by a measurable accuracy gain.",
         "Use sklearn's GridSearchCV to tune XGBoost's max_depth and n_estimators. Show the test MAE before and after tuning. Hyperparameter tuning is a real skill and worth seeing it in action once.",
         "Pick a single trip from the test set, print its features, then walk through (by hand if necessary) how the linear regression model arrived at its prediction. Being able to do this for at least the linear model is what makes ML stop being a black box for you."
-      ]
+      ],
+      "concept_widget": {
+        "id": "regression-slider",
+        "caption": "Drag the slope and intercept by hand, then let least-squares snap the line into place."
+      }
     },
     {
       "number": 6,
@@ -1286,7 +1290,11 @@
         "Run a power analysis: how many rows of data would you need to detect a 1% difference in tipping behaviour between two boroughs with 80% power at alpha=0.05? This is what real analysts compute BEFORE running an experiment to decide if it is worth running.",
         "Replicate one finding from your TaxiPulse on September 2023 data (a different month). Does the finding hold? If yes, that is a real pattern. If not, you over-fit to October. Out-of-sample replication is the gold standard of empirical work.",
         "Read about the \"garden of forking paths\" (Andrew Gelman's term). Write 3 sentences in your notebook about why running many tests on the same data is risky even if each individual test is valid. This is a senior-level concept that almost no online course teaches."
-      ]
+      ],
+      "concept_widget": {
+        "id": "correlation-scatter",
+        "caption": "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten."
+      }
     },
     {
       "number": 7,
@@ -4019,11 +4027,7 @@
         "Download a second utility's data from the same dataset (PJME or DAYTON) and compare the seasonality profiles side-by-side. Different grid operators in different geographies show meaningfully different daily and seasonal patterns. The comparison takes about 10 minutes and is a useful calibration.",
         "Compute the Fourier periodogram of the series. It shows which frequencies carry the most power -- 24-hour and 168-hour periods should dominate. This is the mathematical reason why ARIMA seasonal periods of 24 and 7 are the right starting point.",
         "Look up how ISO New England publishes its public load forecasts (isonenglane.com). Compare their reported error metrics to your persistence baseline MAE. The gap between your baseline and their production system is roughly what a professional forecasting system achieves -- useful context for what ARIMA will and will not buy you."
-      ],
-      "concept_widget": {
-        "id": "correlation-scatter",
-        "caption": "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten."
-      }
+      ]
     },
     {
       "number": 22,
@@ -5974,11 +5978,7 @@
         "Merge the adapter into the base model and push the merged model to Hugging Face Hub. Now anyone can load your fine-tuned model with AutoModelForCausalLM.from_pretrained(\"yourname/model-name\"). That is a published LLM -- not a research paper, an actual artefact.",
         "Try the same task with a different base model (Mistral vs Llama, for example) and compare fine-tuned performance. Base model choice matters more than LoRA hyperparameters for most tasks. Knowing this saves you from spending hours tuning rank when switching the base model would be the right move.",
         "Read \"LoRA: Low-Rank Adaptation of Large Language Models\" (Hu et al., 2021). It is 9 pages. The math in Section 4 is worth understanding: why rank decomposition works, and why the rank hyperparameter controls the trade-off between adapter expressiveness and parameter efficiency. Knowing the paper is knowing why the defaults are the defaults."
-      ],
-      "concept_widget": {
-        "id": "join-visualiser",
-        "caption": "Switch join types and watch which rows survive and where NULLs appear."
-      }
+      ]
     },
     {
       "number": 33,

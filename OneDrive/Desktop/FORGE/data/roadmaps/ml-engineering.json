@@ -252,8 +252,8 @@
         "Build a simple Streamlit app that takes flight details as input and returns the probability of delay. This is a preview of v0.4 — good practice for the deployment week."
       ],
       "concept_widget": {
-        "id": "knn-boundary",
-        "caption": "Move the query point and change k to watch the vote flip near the border."
+        "id": "ml-task-types",
+        "caption": "Same dots, three questions — see how regression, classification and clustering differ."
       }
     },
     {
@@ -420,11 +420,7 @@
         "Add a carrier historical on-time rate feature: for each airline, compute the average on-time rate in the training data and merge it as a feature. Verify it is computed on training data only and applied as a static lookup.",
         "Build a feature importance dashboard using SHAP: plot the SHAP summary plot showing the contribution of each feature to individual predictions. Identify which features push predictions toward \"late\" and which push toward \"on time.\"",
         "Test whether your feature engineering helps more on logistic regression (which cannot capture interactions) than on XGBoost (which discovers interactions automatically). Write a 3-sentence interpretation of what the comparison tells you about when feature engineering matters most."
-      ],
-      "concept_widget": {
-        "id": "train-test-overfit",
-        "caption": "Crank model complexity and watch test error turn back up — the overfitting U."
-      }
+      ]
     },
     {
       "number": 3,
@@ -590,8 +586,8 @@
         "Add the hyperparameter importance visualization after the study completes. Which hyperparameter has the highest importance? Does this match your intuition about what drives XGBoost performance on this dataset?"
       ],
       "concept_widget": {
-        "id": "ml-task-types",
-        "caption": "Same dots, three questions — see how regression, classification and clustering differ."
+        "id": "train-test-overfit",
+        "caption": "Crank model complexity and watch test error turn back up — the overfitting U that tuning has to dodge."
       }
     },
     {
@@ -972,7 +968,11 @@
         "Compare the three gradient boosting libraries — XGBoost, LightGBM, and CatBoost — on the same dataset with default hyperparameters. Report: ROC AUC, training time, inference time for 10k predictions. Document which you would choose as a default and why.",
         "Implement a stacked ensemble: train XGBoost and LightGBM on the training data, use their predictions as features for a logistic regression meta-learner, and evaluate on the test set. Does the stack outperform either individual model?",
         "Use sklearn's PermutationImportance to evaluate feature importance post-training: randomly shuffle each feature one at a time and measure the performance drop. Compare permutation importance to XGBoost's built-in importance. Where do they disagree and what might that tell you?"
-      ]
+      ],
+      "concept_widget": {
+        "id": "confusion-matrix",
+        "caption": "Slide the threshold and watch precision trade off against recall."
+      }
     },
     {
       "number": 7,
@@ -1662,11 +1662,7 @@
         "Set up a wandb Sweep for hyperparameter optimisation of FlightWise. Define the search space, run 20 trials, and compare the sweep results against your earlier manual Optuna tuning. Did the wandb Sweep find a better configuration?",
         "Implement model versioning with MLflow Model Registry: register your best FlightWise model as version 1, retrain with updated data to produce version 2, transition version 2 to Production, and update your Flask serving code to load from the registry rather than a hardcoded file path.",
         "Build a training reproducibility test: given a wandb run ID, write a script that retrieves the run's hyperparameters, loads the exact data version, sets all random seeds, and re-runs training. Verify that the reproduced run achieves the same final validation loss within 0.001."
-      ],
-      "concept_widget": {
-        "id": "confusion-matrix",
-        "caption": "Slide the threshold and watch precision trade off against recall."
-      }
+      ]
     },
     {
       "number": 14,

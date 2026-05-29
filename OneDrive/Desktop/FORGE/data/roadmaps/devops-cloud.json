@@ -580,11 +580,7 @@
         "Add a staging environment. Your pipeline deploys to staging on every push to main, and to production only on version tags. The staging server is identical to production in configuration but uses a staging database and subdomain (staging.yourdomain.com). This gives you a place to test the full deployed application before it goes to real users.",
         "Implement deployment notifications. After a successful deploy, your workflow posts a message to a Slack channel or sends an email: \"Deployed v1.2.3 to production at 14:32 UTC. Commit: fix rate limiting on login.\" After a failed deploy: \"Deploy failed at step 'SSH to server'. Check GitHub Actions logs.\" Use the Slack webhook action from the GitHub Marketplace.",
         "Add a smoke test step to the workflow. After deployment, run a simple HTTP request against the production URL and check that the response code is 200. If the smoke test fails, trigger an automatic rollback (run the rollback SSH command). This catches cases where the deploy succeeds but the app crashes on startup."
-      ],
-      "concept_widget": {
-        "id": "cicd-pipeline",
-        "caption": "Run the pipeline and watch a failing test halt the deploy."
-      }
+      ]
     },
     {
       "number": 4,
@@ -953,11 +949,7 @@
         "Add pgAdmin to your Docker Compose stack as a service for database management. Mount the pgAdmin config directory as a volume so your server connection is pre-configured. This pattern (adding developer tools as Docker Compose services) is standard — it eliminates per-developer tool installation.",
         "Set up a Makefile (or package.json scripts) that wraps Docker Compose commands: make dev (docker compose up), make down (docker compose down), make logs (docker compose logs -f), make shell-app (docker compose exec app sh), make shell-db (docker compose exec postgres psql -U postgres). This gives your team a consistent, documented interface to the development environment.",
         "Run a full Docker Compose stack on a DigitalOcean server in \"production\" mode (no volume mounts, no nodemon, restart: always). Use docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d. This demonstrates the pattern of a base compose file with environment-specific overrides."
-      ],
-      "concept_widget": {
-        "id": "autoscaling",
-        "caption": "Crank the traffic and watch instances spin up to hold latency steady."
-      }
+      ]
     },
     {
       "number": 7,
@@ -1260,7 +1252,11 @@
         "Deploy a complete multi-tier application (web app + PostgreSQL + Redis) to your local minikube cluster. Use a Deployment for the web app, a StatefulSet for PostgreSQL, a Deployment for Redis, Services connecting them, ConfigMaps for non-sensitive config, and Secrets for passwords. Expose the web app with a NodePort Service and access it in your browser.",
         "Learn the Kubernetes RBAC system. Create a service account for a hypothetical CI system. Grant it permission to: get, list, watch Deployments in the production namespace, and update images in those Deployments. Restrict it from accessing Secrets. Test that it can update the Deployment but not read secrets with kubectl auth can-i.",
         "Set up cluster monitoring on minikube: deploy the kube-prometheus-stack using Helm (covered next week). Access the Grafana dashboard and explore the default dashboards — node CPU/memory, Pod status, and the number of API server requests. This is a preview of W19's observability content."
-      ]
+      ],
+      "concept_widget": {
+        "id": "load-balancer",
+        "caption": "Fire requests and watch round-robin fan them across backends — then kill one."
+      }
     },
     {
       "number": 10,
@@ -1361,7 +1357,11 @@
         "Implement Vertical Pod Autoscaler (VPA) alongside HPA. VPA recommends and optionally adjusts resource requests based on actual usage. Run it in recommendation mode (updateMode: Off) for one week and see what resource requests it recommends. This gives you data-driven resource sizing instead of guessing.",
         "Deploy a chaos engineering experiment using chaos-mesh or litmus. Configure a pod failure experiment that randomly kills pods in your Deployment at 5-minute intervals. Verify that your HPA and pod restart policies keep the application serving traffic during the failures. This proves your resilience configuration works.",
         "Set up cluster autoscaling in minikube using minikube's autoscaler profile. Configure the Cluster Autoscaler to add nodes when pods are unschedulable and remove empty nodes. Observe the full autoscaling chain: load spikes → HPA adds pods → pods are unschedulable → Cluster Autoscaler adds a node → pods schedule."
-      ]
+      ],
+      "concept_widget": {
+        "id": "autoscaling",
+        "caption": "Crank the traffic and watch instances spin up to hold latency steady."
+      }
     },
     {
       "number": 11,
@@ -1664,11 +1664,7 @@
         "Implement Terraform CI/CD with Atlantis (the open-source tool for Terraform pull request automation). Atlantis runs on a server and comments on PRs with terraform plan output. Merging the PR automatically runs terraform apply. This gives your team a peer-reviewed, audited infrastructure change process.",
         "Write a Terratest (go test-based infrastructure testing) for your Terraform module. The test applies the module, verifies the created resources are accessible (HTTP check on the EC2 instance, connection check on the database), and destroys the resources. This is infrastructure TDD.",
         "Migrate your Edge Portfolio infrastructure (server, DNS, SSL) to Terraform. Write resources for: DigitalOcean Droplet, Cloudflare DNS records, and a null_resource that configures nginx and SSL via SSH. Verify that terraform destroy and terraform apply recreate the identical infrastructure from scratch."
-      ],
-      "concept_widget": {
-        "id": "load-balancer",
-        "caption": "Fire requests and watch round-robin fan them across backends — then kill one."
-      }
+      ]
     },
     {
       "number": 14,
@@ -2073,7 +2069,11 @@
         "Implement a full deployment pipeline with automated canary analysis using Argo Rollouts and Prometheus. Set up a Prometheus metric for HTTP error rate. Configure an AnalysisTemplate that queries Prometheus during the canary step and automatically aborts the rollout if error rate exceeds 1%. Test by deploying a version that returns 500 errors for 5% of requests.",
         "Set up Dagger as a portable CI/CD engine. Dagger runs your CI pipeline as containers — the same pipeline runs locally (dagger run .) and in GitHub Actions (with the Dagger GitHub Action). This eliminates the \"works in CI but not locally\" debugging problem. Migrate your application's CI workflow to Dagger.",
         "Implement GitOps for your Terraform infrastructure using Atlantis. Atlantis listens for PR events, runs terraform plan on every PR, posts the plan as a PR comment, and runs terraform apply when the PR is merged. Add a policy check (Open Policy Agent) that rejects Terraform plans that remove certain resource types without a specific label."
-      ]
+      ],
+      "concept_widget": {
+        "id": "cicd-pipeline",
+        "caption": "Run the pipeline and watch a failing test halt the deploy."
+      }
     },
     {
       "number": 18,

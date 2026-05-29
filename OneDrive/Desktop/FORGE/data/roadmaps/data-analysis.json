@@ -293,11 +293,7 @@
         "Add a sparkline column to the pivot table showing monthly revenue trend for each product category. Sparklines in Excel are a one-click addition that add significant visual information density with no extra chart real estate.",
         "Compute the Pareto distribution of revenue: which 20% of products drive 80% of revenue? Sort by revenue descending, add a cumulative revenue column, and find the row where it crosses 80%. The answer is almost always surprising and is usually the first question a category manager asks.",
         "Write the XLOOKUP version of the analysis: build a lookup table of State to Region, and use XLOOKUP to add a Region column to the orders data rather than relying on a pivot to handle it. The ability to add derived columns with lookup functions is the difference between an analyst who knows Excel and one who can work with messy real-world data."
-      ],
-      "concept_widget": {
-        "id": "df-inspector",
-        "caption": "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet."
-      }
+      ]
     },
     {
       "number": 2,
@@ -545,8 +541,8 @@
         "Compare pandas .groupby().agg() to pd.pivot_table on the same data. They can produce identical results -- understand when you would choose each. The pivot_table interface is closer to Excel's mental model; groupby + agg is more flexible for complex multi-step pipelines."
       ],
       "concept_widget": {
-        "id": "groupby-aggregator",
-        "caption": "Pick an aggregation and watch many rows collapse into one per group."
+        "id": "df-inspector",
+        "caption": "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet."
       }
     },
     {
@@ -729,7 +725,7 @@
       ],
       "concept_widget": {
         "id": "correlation-scatter",
-        "caption": "Drag r from −1 to +1 and watch the cloud tighten and flip."
+        "caption": "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten — discount vs profit, live."
       }
     },
     {
@@ -1507,11 +1503,7 @@
         "Build a two-turn prompt loop for memo critique: first turn generates the draft, second turn critiques it (\"identify any claims in this memo that are not supported by the numbers provided\"). The second turn often catches overstatements that the first turn confidently wrote.",
         "Test whether AI can identify Simpson's paradox from a description. Describe a scenario where the overall correlation reverses within subgroups, without calling it Simpson's paradox. Ask AI to diagnose the pattern. Note whether it correctly identifies the reversal and uses the correct terminology.",
         "Write a \"verification checklist\" prompt: \"Given this analyst memo, list five specific claims that should be verified against the underlying data.\" Use it on a memo you wrote. Does it surface the claims you would have flagged yourself? Add the useful items to prompts.md."
-      ],
-      "concept_widget": {
-        "id": "dashboard-filter",
-        "caption": "Click a region and watch every chart recompute from the same filtered data."
-      }
+      ]
     },
     {
       "number": 8,
@@ -2207,7 +2199,11 @@
         "Add the Manager relationship as a predictor. Compute attrition rate by YearsWithCurrManager (bucket into 0-1, 2-4, 5+). Do employees who have been with their current manager for less than 1 year have higher attrition? In most datasets, manager transitions are a leading indicator of attrition.",
         "Compute a simple \"attrition risk score\" per employee: the sum of three binary flags (tenure in danger zone, salary in bottom band, promotion gap above 1 year). An employee with all three flags is high risk; with none, low risk. Compute the attrition rate for each score level (0, 1, 2, 3). Does the risk score discriminate well?",
         "Research the Glassdoor employee satisfaction data for a company in the HR dataset's industry. Does the sentiment on Glassdoor align with the attrition patterns you found? This connection between internal data and external signals is the kind of analysis a senior HR analyst or people analytics team does."
-      ]
+      ],
+      "concept_widget": {
+        "id": "groupby-aggregator",
+        "caption": "Pick an aggregation and watch many rows collapse into one per cohort."
+      }
     },
     {
       "number": 12,
@@ -3777,7 +3773,11 @@
         "Add a Parameter to the dashboard: a slider that lets the user set the minimum profit margin threshold for highlighting. Any Sub-Category below the threshold turns red. Parameters in Tableau are the equivalent of input cells in a financial model -- they make the dashboard interactive for scenario analysis.",
         "Rebuild one of the Tableau worksheets using a Calculated Field that uses FIXED LOD: [Profit Margin by Category] = {FIXED [Category]: SUM([Profit]) / SUM([Sales])}. This computes the category margin for every row, regardless of the current view filter. Understanding FIXED LOD is the single most useful advanced Tableau skill.",
         "Compare the Tableau dashboard load time to the Excel dashboard load time for the same user task (finding the worst Sub-Category by margin). Measure the time from opening the file to having the answer. For a local Excel file with a user who knows Excel well, Excel usually wins for simple lookups. For a remote shared Tableau dashboard accessible by a non-technical stakeholder, Tableau wins. Document your observation."
-      ]
+      ],
+      "concept_widget": {
+        "id": "dashboard-filter",
+        "caption": "Click a region and watch every chart recompute from the same filtered data."
+      }
     },
     {
       "number": 21,
