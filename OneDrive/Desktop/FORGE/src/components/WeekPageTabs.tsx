@@ -9,6 +9,7 @@ import type { RoadmapWeek } from "@/lib/roadmaps";
 import ResourceViewer from "@/components/ResourceViewer";
 import ConceptPrimer from "@/components/ConceptPrimer";
 import ConceptCheck from "@/components/ConceptCheck";
+import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
 
 /**
@@ -178,9 +179,17 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
 
   // ─── Fallback when no days[] exist yet (weeks 2+) ──────────────────────
   if (!hasDays || !week.days) {
+    const fbPrimer = week.concept_primer
+      || (week.context && week.context.trim().length >= 80 ? week.context : null);
     return (
       <div className="flex flex-col gap-6">
-        {week.context && <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.65 }}>{week.context}</p>}
+        {fbPrimer && <ConceptPrimer primer={fbPrimer} imageUrl={week.concept_image_url} />}
+        {!fbPrimer && week.context && <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.65 }}>{week.context}</p>}
+        {/* Interactive concept widget renders even on day-less weeks so the
+            simulations reach every week of every path. */}
+        {week.concept_widget && (
+          <ConceptWidget id={week.concept_widget.id} params={week.concept_widget.params} caption={week.concept_widget.caption} />
+        )}
         <ShipItSection week={week} />
         {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
       </div>
@@ -205,6 +214,17 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
           otherwise promotes the week's `context` paragraph. */}
       {effectivePrimer && (
         <ConceptPrimer primer={effectivePrimer} imageUrl={week.concept_image_url} />
+      )}
+
+      {/* Interactive concept widget — the living simulation for this week.
+          Sits right under the primer so the learner plays with the idea
+          before reading the day-by-day plan. */}
+      {week.concept_widget && (
+        <ConceptWidget
+          id={week.concept_widget.id}
+          params={week.concept_widget.params}
+          caption={week.concept_widget.caption}
+        />
       )}
 
       {/* Fallback inline intro for sparse-context weeks */}
@@ -371,9 +391,9 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                   {d.items.map((item, i) => {
                     const key = `d${d.number}-i${i}`;
                     const checked = !!done[key];
-                    const Icon = item.kind === "video" ? Play : item.kind === "reading" ? FileText : item.kind === "exercise" ? Code2 : PenLine;
-                    const accent = item.kind === "video" ? "#fb7185" : item.kind === "reading" ? "#60a5fa" : item.kind === "exercise" ? "#34d399" : "#c084fc";
-                    const kindLabel = item.kind === "video" ? "Watch" : item.kind === "reading" ? "Read" : item.kind === "exercise" ? "Build" : "Reflect";
+                    const Icon = item.kind === "video" ? Play : item.kind === "reading" ? FileText : item.kind === "exercise" ? Code2 : item.kind === "widget" ? Sparkles : PenLine;
+                    const accent = item.kind === "video" ? "#fb7185" : item.kind === "reading" ? "#60a5fa" : item.kind === "exercise" ? "#34d399" : item.kind === "widget" ? "#D4AF37" : "#c084fc";
+                    const kindLabel = item.kind === "video" ? "Watch" : item.kind === "reading" ? "Read" : item.kind === "exercise" ? "Build" : item.kind === "widget" ? "Explore" : "Reflect";
                     const clickable = !!item.url;
 
                     return (
@@ -445,6 +465,18 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                               <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
                                 {item.body}
                               </p>
+                            )}
+                            {/* Inline interactive widget for widget-kind items.
+                                Ticking the item happens via the normal checkbox —
+                                playing with it is the engagement, no Open button. */}
+                            {item.kind === "widget" && item.widget && (
+                              <div style={{ marginTop: "0.625rem" }}>
+                                <ConceptWidget
+                                  id={item.widget.id}
+                                  params={item.widget.params}
+                                  caption={item.widget.caption}
+                                />
+                              </div>
                             )}
                             {/* Inline VideoEmbed for video items with YouTube/Loom URLs.
                                 Other resources (readings, exercises) keep the Open button.

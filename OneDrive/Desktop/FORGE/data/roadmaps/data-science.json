@@ -296,7 +296,11 @@
         "Compare October 2023 to October 2022 (same parquet pattern, swap the year). What changed? Is total trip volume up or down? Tip percentages? Average distance? This is your first taste of comparative analysis — the question every real business asks is \"compared to what?\".",
         "Plot pickup density on a map using folium. Hint: each row has pickup_longitude and pickup_latitude — well, in older datasets it does; the 2023 data uses location ID, which you can join to the TLC zone lookup table. Worth the detour if you want a real \"wow\" deliverable for the portfolio.",
         "Find the median trip rather than the mean, and explain in two sentences why the difference matters for fare data. (Hint: a $400 airport ride pulls the mean up but barely moves the median. Most real reporting uses median for exactly this reason.)"
-      ]
+      ],
+      "concept_widget": {
+        "id": "df-inspector",
+        "caption": "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet."
+      }
     },
     {
       "number": 2,
@@ -513,7 +517,11 @@
         "Compute the covariance matrix of three columns (fare_amount, trip_distance, tip_amount) by hand using NumPy. Now do the same calculation with np.cov() and verify they match. This is the building block of PCA, which you will meet in a few weeks.",
         "Take your linear regression coefficients from question 4 and use them to predict the fare for a hypothetical 5-mile trip. Compare your prediction to the actual mean fare of 5-mile trips in your data. How close did you get? The gap between them is called RESIDUAL — and the next month of ML is basically about shrinking it.",
         "Read the Wikipedia page for \"Central Limit Theorem\" and write a 3-sentence summary in your notebook. Then verify it on your data: take 100 random samples of 30 trips each, compute the mean of each sample, plot the distribution of those 100 means. The shape should be approximately normal even though the underlying fare distribution is heavily skewed. That is the central limit theorem in action — and it is why most of statistics actually works."
-      ]
+      ],
+      "concept_widget": {
+        "id": "regression-slider",
+        "caption": "Drag the slope and intercept by hand, then let least-squares snap the line into place."
+      }
     },
     {
       "number": 3,
@@ -706,7 +714,11 @@
         "Add a fourth month (September 2023) and see if your seasonality story changes. Three months of data feels solid until you look at four and realise you were over-interpreting noise.",
         "Plot trips per day per borough as five small-multiple charts (one per borough) instead of one combined chart. Compare the two visualisations side by side. Which is more honest? Which is more dramatic? Designers fight about this constantly.",
         "Find the day with the LOWEST trip count across all three months. Look up what happened in NYC on that day. Real-world events show up in time-series data, and learning to read them is a senior-analyst skill."
-      ]
+      ],
+      "concept_widget": {
+        "id": "distribution-stats",
+        "caption": "Shift and skew a distribution and watch the mean get pulled while the median holds."
+      }
     },
     {
       "number": 4,
@@ -893,7 +905,11 @@
         "Set up a free Postgres database (Supabase or Neon — both free tier) and upload your TaxiPulse data to it. Re-run your queries against the real Postgres. Postgres is what every job uses; SQLite is what you learn on.",
         "Write a CTE-based query that calculates the day-over-day change in trip volume. (Hint: LAG() window function.) This pattern shows up in every business dashboard you will ever see — sales today vs sales yesterday.",
         "Write the same \"top N per group\" query (mastery #3) using a correlated subquery instead of a window function. Both work. The window function version is faster and more readable, but knowing both lets you read old codebases."
-      ]
+      ],
+      "concept_widget": {
+        "id": "groupby-aggregator",
+        "caption": "Pick an aggregation and watch many rows collapse into one per group."
+      }
     },
     {
       "number": 5,
@@ -4003,7 +4019,11 @@
         "Download a second utility's data from the same dataset (PJME or DAYTON) and compare the seasonality profiles side-by-side. Different grid operators in different geographies show meaningfully different daily and seasonal patterns. The comparison takes about 10 minutes and is a useful calibration.",
         "Compute the Fourier periodogram of the series. It shows which frequencies carry the most power -- 24-hour and 168-hour periods should dominate. This is the mathematical reason why ARIMA seasonal periods of 24 and 7 are the right starting point.",
         "Look up how ISO New England publishes its public load forecasts (isonenglane.com). Compare their reported error metrics to your persistence baseline MAE. The gap between your baseline and their production system is roughly what a professional forecasting system achieves -- useful context for what ARIMA will and will not buy you."
-      ]
+      ],
+      "concept_widget": {
+        "id": "correlation-scatter",
+        "caption": "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten."
+      }
     },
     {
       "number": 22,
@@ -5954,7 +5974,11 @@
         "Merge the adapter into the base model and push the merged model to Hugging Face Hub. Now anyone can load your fine-tuned model with AutoModelForCausalLM.from_pretrained(\"yourname/model-name\"). That is a published LLM -- not a research paper, an actual artefact.",
         "Try the same task with a different base model (Mistral vs Llama, for example) and compare fine-tuned performance. Base model choice matters more than LoRA hyperparameters for most tasks. Knowing this saves you from spending hours tuning rank when switching the base model would be the right move.",
         "Read \"LoRA: Low-Rank Adaptation of Large Language Models\" (Hu et al., 2021). It is 9 pages. The math in Section 4 is worth understanding: why rank decomposition works, and why the rank hyperparameter controls the trade-off between adapter expressiveness and parameter efficiency. Knowing the paper is knowing why the defaults are the defaults."
-      ]
+      ],
+      "concept_widget": {
+        "id": "join-visualiser",
+        "caption": "Switch join types and watch which rows survive and where NULLs appear."
+      }
     },
     {
       "number": 33,

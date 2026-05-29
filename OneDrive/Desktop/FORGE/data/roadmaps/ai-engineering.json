@@ -247,7 +247,11 @@
         "Add support for three additional languages via a CLI argument: `--lang` accepting 'es', 'fr', 'pt', 'de'. The system prompt changes per language. This teaches you how prompt variables drive behaviour.",
         "Log every translation to a SQLite database with columns: timestamp, source_text, target_language, translated_text, model, prompt_tokens, completion_tokens, cost_usd. This becomes your cost dashboard data source in W7.",
         "Add a confidence check: after translating, make a second API call asking the model to rate the translation quality from 1-10 and explain any concerns. Print the rating alongside the translation. Measure the extra cost. Decide whether it is worth it."
-      ]
+      ],
+      "concept_widget": {
+        "id": "tokenizer",
+        "caption": "Type anything and watch it split into the chunks a model actually bills and reads."
+      }
     },
     {
       "number": 2,
@@ -587,7 +591,11 @@
         "Add a second evaluation dimension: register appropriateness. If the user requested formal Spanish, does the translation use usted consistently? Score it separately from accuracy. Report both dimensions in your EVALS.md.",
         "Automate the eval pipeline to run on every commit using a GitHub Actions workflow. If the average score drops below 3.0, the workflow fails and the PR is blocked. This is production-grade eval gating.",
         "Compare gpt-4o-mini and gpt-4o on the same eval set. Document the quality difference and the cost difference. Calculate the break-even: at what request volume does the quality gain from the better model justify the cost?"
-      ]
+      ],
+      "concept_widget": {
+        "id": "context-window",
+        "caption": "Add chat turns and watch the oldest messages fall out of the window."
+      }
     },
     {
       "number": 4,
@@ -744,7 +752,11 @@
         "Implement a content moderation check on the input using the OpenAI moderation API. Reject inputs flagged as harmful before they reach the translation API. Document the false positive rate by running your existing eval set through moderation.",
         "Add a honeypot: include a hidden instruction in your system prompt that the model should include a specific invisible Unicode character in every response. Verify in your output validator that this character is present — if it is missing, the model may have been hijacked. Document how this canary-token approach works.",
         "Write a public SECURITY.md for your Polyglot repo documenting responsible disclosure: what to do if someone finds a vulnerability, your response time commitment, and what you consider in scope. This is standard practice for any public-facing project."
-      ]
+      ],
+      "concept_widget": {
+        "id": "embedding-space",
+        "caption": "Click two words and see how 'closeness' is literally distance."
+      }
     },
     {
       "number": 5,
@@ -1260,7 +1272,11 @@
         "Add BM25 keyword search alongside the semantic search and implement a simple reciprocal rank fusion to combine both result sets. Compare precision@5 of semantic alone, keyword alone, and the hybrid on 20 test queries.",
         "Build an incremental indexer that watches the notes directory with watchdog and re-indexes changed files automatically. The search engine should reflect changes within 10 seconds of a file being saved.",
         "Add a local embedding option using sentence-transformers (all-MiniLM-L6-v2 or similar). Compare retrieval quality and latency against the OpenAI embedding API. Document when the local model is good enough."
-      ]
+      ],
+      "concept_widget": {
+        "id": "rag-flow",
+        "caption": "Ask a question and watch retrieval rank chunks and feed only the best into the prompt."
+      }
     },
     {
       "number": 10,
@@ -2087,7 +2103,11 @@
         "Build a quality dashboard in Streamlit that reads from your eval database and shows: score trend over 30 days, per-metric breakdown, worst-performing question categories, and recent failures with their judge reasoning. This is the monitoring tool you actually want.",
         "Implement a canary eval: before deploying a new prompt or model version to 100% of traffic, deploy it to 5% and run online evals on that slice for 24 hours. Only promote to 100% if quality metrics hold.",
         "Set up a weekly eval report that emails you a digest: average scores by metric, any regressions from the previous week, the top 5 lowest-scoring queries from the week. Make it actionable — include a \"what to investigate\" section that flags specific issues."
-      ]
+      ],
+      "concept_widget": {
+        "id": "temperature-sampling",
+        "caption": "Slide temperature and watch the model go from confident to chaotic."
+      }
     },
     {
       "number": 18,

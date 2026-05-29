@@ -19,7 +19,20 @@ export interface RoadmapResource {
 
 /** Item inside a single day of a week. The richer interface that
  *  replaces the wall-of-text "topics" list. */
-export type DayItemKind = "video" | "reading" | "exercise" | "reflection";
+export type DayItemKind = "video" | "reading" | "exercise" | "reflection" | "widget";
+
+/** Reference to an interactive concept widget. The heavy HTML/JS lives in the
+ *  server-side registry (src/lib/conceptWidgets); JSON only points at it by
+ *  `id` and passes small params. Keeps the roadmap files readable and lets one
+ *  widget serve many weeks. */
+export interface ConceptWidgetRef {
+  /** Registry key — see src/lib/conceptWidgets/index.ts */
+  id: string;
+  /** Optional tuning params forwarded into the widget's html() builder. */
+  params?: Record<string, string | number | boolean>;
+  /** One-line caption shown under the "Interactive" chip. */
+  caption?: string;
+}
 
 export interface DayItem {
   kind: DayItemKind;
@@ -29,6 +42,7 @@ export interface DayItem {
   creator?: string;          // for video — channel/author
   why?: string;              // one-line "why this matters"
   body?: string;             // for exercise + reflection — the prompt
+  widget?: ConceptWidgetRef; // for kind === "widget" — the interactive sim
 }
 
 export interface RoadmapDay {
@@ -62,6 +76,10 @@ export interface RoadmapWeek {
    *  Pair with concept_image_url for the illustration above the text. */
   concept_primer?: string;
   concept_image_url?: string;
+  /** Optional interactive concept widget shown at the top of the week, under
+   *  the primer. The living simulation that makes the concept click —
+   *  e.g. a regression slider, a DataFrame inspector, a k-means stepper. */
+  concept_widget?: ConceptWidgetRef;
   /** Optional 3-question warm-up at the start of the week. Low stakes,
    *  not graded — just flags confusion before it becomes dropout. */
   concept_check?: ConceptCheckQuestion[];

@@ -23,7 +23,12 @@
         },
         {
           "q": "Which Excel function is closest to 'look up the customer's region given their ID'?",
-          "choices": ["SUMIFS", "XLOOKUP", "COUNTIF", "INDEX alone"],
+          "choices": [
+            "SUMIFS",
+            "XLOOKUP",
+            "COUNTIF",
+            "INDEX alone"
+          ],
           "correct": 1,
           "explain": "XLOOKUP is the modern, cleaner replacement for VLOOKUP — give it a value, a lookup array, and a return array, done."
         },
@@ -288,7 +293,11 @@
         "Add a sparkline column to the pivot table showing monthly revenue trend for each product category. Sparklines in Excel are a one-click addition that add significant visual information density with no extra chart real estate.",
         "Compute the Pareto distribution of revenue: which 20% of products drive 80% of revenue? Sort by revenue descending, add a cumulative revenue column, and find the row where it crosses 80%. The answer is almost always surprising and is usually the first question a category manager asks.",
         "Write the XLOOKUP version of the analysis: build a lookup table of State to Region, and use XLOOKUP to add a Region column to the orders data rather than relying on a pivot to handle it. The ability to add derived columns with lookup functions is the difference between an analyst who knows Excel and one who can work with messy real-world data."
-      ]
+      ],
+      "concept_widget": {
+        "id": "groupby-aggregator",
+        "caption": "Pick an aggregation and watch many rows collapse into one per group."
+      }
     },
     {
       "number": 2,
@@ -534,7 +543,11 @@
         "Schedule monthly_report.py to run automatically using cron (Mac/Linux) or Task Scheduler (Windows). Run it on the 1st of each month. Automating the report is the point -- doing it once proves the concept.",
         "Add an argparse argument --year that filters the analysis to a specific year: python monthly_report.py --year 2017. The script should work with or without the flag, defaulting to all years. Parameterised scripts are more useful than hardcoded ones.",
         "Compare pandas .groupby().agg() to pd.pivot_table on the same data. They can produce identical results -- understand when you would choose each. The pivot_table interface is closer to Excel's mental model; groupby + agg is more flexible for complex multi-step pipelines."
-      ]
+      ],
+      "concept_widget": {
+        "id": "df-inspector",
+        "caption": "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet."
+      }
     },
     {
       "number": 3,
@@ -713,7 +726,11 @@
         "Compute the profit impact of your recommended cap: if all orders above the 20% Furniture discount threshold had been capped at 20%, what would the change in total Furniture profit be? This calculation -- \"how much does the recommendation change the outcome?\" -- is the analysis that makes a memo a business case.",
         "Plot a line chart of average margin by discount bucket for all three categories on the same axes. The visual separation between how Furniture and Technology respond to discounting makes the category-specific policy recommendation obvious.",
         "Run a simple linear regression of Profit Margin on Discount in Python (from scipy.stats import linregress). Report the slope, intercept, and R². The slope is the most interpretable number: \"each additional percentage point of discount is associated with a X percentage point reduction in margin.\""
-      ]
+      ],
+      "concept_widget": {
+        "id": "correlation-scatter",
+        "caption": "Drag r from −1 to +1 and watch the cloud tighten and flip."
+      }
     },
     {
       "number": 4,
@@ -896,7 +913,11 @@
         "Compute the retention rate by segment: of customers who placed an order in 2016, what percentage placed at least one order in 2017? Compute separately for VIPs and Low Value customers. The retention rate difference by segment is one of the strongest arguments for differential treatment of customer groups.",
         "Map the VIP customers by State using a geographic pivot table. Are the VIP customers concentrated in specific states? If so, does the regional concentration match the high-performing regions from week 1? Connecting the customer analysis to the geographic analysis is the kind of multi-dimensional insight that distinguishes a senior analyst's work.",
         "Compute RFM scores (Recency, Frequency, Monetary) for the customer base as an alternative segmentation approach. Score each customer 1-5 on each dimension, then combine the scores. Compare the RFM segments to the profit-based segments. Where do they agree and where do they disagree? The disagreements are the most instructive cases."
-      ]
+      ],
+      "concept_widget": {
+        "id": "join-visualiser",
+        "caption": "Switch join types and watch which rows survive and where NULLs appear."
+      }
     },
     {
       "number": 5,
@@ -1090,7 +1111,11 @@
         "Translate the queries to BigQuery SQL syntax (free tier available). The main differences: backtick quoting is the same, but date functions use DATE_TRUNC instead of strftime, and CAST uses a different syntax. Running the same queries in BigQuery proves they work against a production-grade engine.",
         "Write a query that identifies customers who placed orders in 2016 but not in 2017 (churned customers) using a NOT EXISTS or LEFT JOIN ... WHERE IS NULL pattern. Churn identification in SQL is a standard analyst skill and this dataset is a clean example.",
         "Write one stored view: CREATE VIEW customer_segments AS (your segment query). Then write a query on top of the view: SELECT * FROM customer_segments WHERE segment = 'VIP'. Views are the SQL equivalent of a named range in Excel -- they hide complexity and make downstream queries readable."
-      ]
+      ],
+      "concept_widget": {
+        "id": "sql-query",
+        "caption": "Toggle WHERE, ORDER BY and LIMIT and watch the result set — and the query — change."
+      }
     },
     {
       "number": 6,
@@ -1297,7 +1322,11 @@
         "Run a one-way ANOVA to test whether mean Profit Margin differs significantly across the four Regions. Excel's Data Analysis ToolPak has a built-in ANOVA function. Report the F-statistic and p-value. If significant, run Tukey post-hoc tests to identify which specific pairs of regions differ significantly.",
         "Compute the Spearman rank correlation between Discount and Profit as a robustness check on the Pearson correlation. If Spearman and Pearson give very different results, the outliers in the data are driving the Pearson correlation and the Spearman result is more reliable.",
         "Read \"Statistics Done Wrong\" by Alex Reinhart (free online, 3 hours). Chapter 4 on p-values and Chapter 5 on data snooping are the two most relevant to business analysis. The book makes the case that most published statistics are overstated, and the reasons are exactly the errors listed in common mistakes above."
-      ]
+      ],
+      "concept_widget": {
+        "id": "distribution-stats",
+        "caption": "Shift and skew a distribution and watch the mean get pulled while the median holds."
+      }
     },
     {
       "number": 7,
@@ -1478,7 +1507,11 @@
         "Build a two-turn prompt loop for memo critique: first turn generates the draft, second turn critiques it (\"identify any claims in this memo that are not supported by the numbers provided\"). The second turn often catches overstatements that the first turn confidently wrote.",
         "Test whether AI can identify Simpson's paradox from a description. Describe a scenario where the overall correlation reverses within subgroups, without calling it Simpson's paradox. Ask AI to diagnose the pattern. Note whether it correctly identifies the reversal and uses the correct terminology.",
         "Write a \"verification checklist\" prompt: \"Given this analyst memo, list five specific claims that should be verified against the underlying data.\" Use it on a memo you wrote. Does it surface the claims you would have flagged yourself? Add the useful items to prompts.md."
-      ]
+      ],
+      "concept_widget": {
+        "id": "dashboard-filter",
+        "caption": "Click a region and watch every chart recompute from the same filtered data."
+      }
     },
     {
       "number": 8,

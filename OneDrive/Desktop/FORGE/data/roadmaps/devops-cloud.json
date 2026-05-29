@@ -239,7 +239,11 @@
         "Set up a second server and configure nginx as a load balancer between the two application servers. The upstream block in nginx distributes requests round-robin. Test by stopping one server and verifying requests still succeed. This is horizontal scaling in its simplest form.",
         "Configure log rotation for your application logs. Without rotation, log files grow until they fill the disk. logrotate is the standard tool — configure it to rotate daily, keep 7 days of logs, and compress old logs.",
         "Set up a simple monitoring script: a cron job that pings your website every 5 minutes and sends an email (via sendmail or a simple SMTP library) if the response code is not 200. This is primitive uptime monitoring — the concept you will replace with Prometheus and Grafana in W19."
-      ]
+      ],
+      "concept_widget": {
+        "id": "container-vs-vm",
+        "caption": "Toggle between the two stacks to see what each one duplicates."
+      }
     },
     {
       "number": 2,
@@ -405,7 +409,11 @@
         "Set up Cloudflare in front of your server. Change your A record to Cloudflare's proxy mode (the orange cloud). Cloudflare now sits between your users and your server — it provides DDoS protection, CDN caching for static assets, and hides your server's real IP. Configure Cloudflare's SSL mode to \"Full (strict)\" to require a valid certificate between Cloudflare and your server.",
         "Configure automated SSL certificate monitoring. Write a script (or use a service like SSL Labs' API) that checks your certificate expiry date weekly and sends a notification if it is less than 30 days away. This is a redundant layer on top of Certbot's auto-renewal.",
         "Implement Certificate Transparency monitoring. CT logs record every certificate issued for your domain. Set up an alert (via Facebook's Cert Transparency Monitoring, or crt.sh) that notifies you when any certificate is issued for your domain. This catches certificate mis-issuance or phishing attempts."
-      ]
+      ],
+      "concept_widget": {
+        "id": "dns-resolution",
+        "caption": "Step a lookup through resolver → root → TLD → authoritative."
+      }
     },
     {
       "number": 3,
@@ -572,7 +580,11 @@
         "Add a staging environment. Your pipeline deploys to staging on every push to main, and to production only on version tags. The staging server is identical to production in configuration but uses a staging database and subdomain (staging.yourdomain.com). This gives you a place to test the full deployed application before it goes to real users.",
         "Implement deployment notifications. After a successful deploy, your workflow posts a message to a Slack channel or sends an email: \"Deployed v1.2.3 to production at 14:32 UTC. Commit: fix rate limiting on login.\" After a failed deploy: \"Deploy failed at step 'SSH to server'. Check GitHub Actions logs.\" Use the Slack webhook action from the GitHub Marketplace.",
         "Add a smoke test step to the workflow. After deployment, run a simple HTTP request against the production URL and check that the response code is 200. If the smoke test fails, trigger an automatic rollback (run the rollback SSH command). This catches cases where the deploy succeeds but the app crashes on startup."
-      ]
+      ],
+      "concept_widget": {
+        "id": "cicd-pipeline",
+        "caption": "Run the pipeline and watch a failing test halt the deploy."
+      }
     },
     {
       "number": 4,
@@ -941,7 +953,11 @@
         "Add pgAdmin to your Docker Compose stack as a service for database management. Mount the pgAdmin config directory as a volume so your server connection is pre-configured. This pattern (adding developer tools as Docker Compose services) is standard — it eliminates per-developer tool installation.",
         "Set up a Makefile (or package.json scripts) that wraps Docker Compose commands: make dev (docker compose up), make down (docker compose down), make logs (docker compose logs -f), make shell-app (docker compose exec app sh), make shell-db (docker compose exec postgres psql -U postgres). This gives your team a consistent, documented interface to the development environment.",
         "Run a full Docker Compose stack on a DigitalOcean server in \"production\" mode (no volume mounts, no nodemon, restart: always). Use docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d. This demonstrates the pattern of a base compose file with environment-specific overrides."
-      ]
+      ],
+      "concept_widget": {
+        "id": "autoscaling",
+        "caption": "Crank the traffic and watch instances spin up to hold latency steady."
+      }
     },
     {
       "number": 7,
@@ -1648,7 +1664,11 @@
         "Implement Terraform CI/CD with Atlantis (the open-source tool for Terraform pull request automation). Atlantis runs on a server and comments on PRs with terraform plan output. Merging the PR automatically runs terraform apply. This gives your team a peer-reviewed, audited infrastructure change process.",
         "Write a Terratest (go test-based infrastructure testing) for your Terraform module. The test applies the module, verifies the created resources are accessible (HTTP check on the EC2 instance, connection check on the database), and destroys the resources. This is infrastructure TDD.",
         "Migrate your Edge Portfolio infrastructure (server, DNS, SSL) to Terraform. Write resources for: DigitalOcean Droplet, Cloudflare DNS records, and a null_resource that configures nginx and SSL via SSH. Verify that terraform destroy and terraform apply recreate the identical infrastructure from scratch."
-      ]
+      ],
+      "concept_widget": {
+        "id": "load-balancer",
+        "caption": "Fire requests and watch round-robin fan them across backends — then kill one."
+      }
     },
     {
       "number": 14,

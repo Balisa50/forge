@@ -250,7 +250,11 @@
         "Add a calibration plot (reliability diagram) to your analysis. Logistic regression is generally well-calibrated but your specific dataset and preprocessing may produce miscalibrated probabilities. A calibrated model's predicted probability of 0.7 means 70% of such flights are actually late.",
         "Compare your logistic regression model against a random forest with default parameters. Report the ROC AUC difference. Is the complexity of random forest worth it at this stage? Document your conclusion.",
         "Build a simple Streamlit app that takes flight details as input and returns the probability of delay. This is a preview of v0.4 — good practice for the deployment week."
-      ]
+      ],
+      "concept_widget": {
+        "id": "knn-boundary",
+        "caption": "Move the query point and change k to watch the vote flip near the border."
+      }
     },
     {
       "number": 2,
@@ -416,7 +420,11 @@
         "Add a carrier historical on-time rate feature: for each airline, compute the average on-time rate in the training data and merge it as a feature. Verify it is computed on training data only and applied as a static lookup.",
         "Build a feature importance dashboard using SHAP: plot the SHAP summary plot showing the contribution of each feature to individual predictions. Identify which features push predictions toward \"late\" and which push toward \"on time.\"",
         "Test whether your feature engineering helps more on logistic regression (which cannot capture interactions) than on XGBoost (which discovers interactions automatically). Write a 3-sentence interpretation of what the comparison tells you about when feature engineering matters most."
-      ]
+      ],
+      "concept_widget": {
+        "id": "train-test-overfit",
+        "caption": "Crank model complexity and watch test error turn back up — the overfitting U."
+      }
     },
     {
       "number": 3,
@@ -580,7 +588,11 @@
         "Implement pruning in Optuna: use the XGBoostPruningCallback to report intermediate validation scores and prune unpromising trials early. Measure how much faster the search becomes with pruning versus without.",
         "Compare TPE sampler (Optuna default) against Random sampler on the same 50-trial budget. Plot both optimization histories. Document which converges faster and whether they find the same best hyperparameters.",
         "Add the hyperparameter importance visualization after the study completes. Which hyperparameter has the highest importance? Does this match your intuition about what drives XGBoost performance on this dataset?"
-      ]
+      ],
+      "concept_widget": {
+        "id": "ml-task-types",
+        "caption": "Same dots, three questions — see how regression, classification and clustering differ."
+      }
     },
     {
       "number": 4,
@@ -858,7 +870,11 @@
         "Build a SHAP explanation for a single loan applicant: given their features, show a waterfall chart of how each feature pushed the prediction toward or away from default. Compare the SHAP explanation against the logistic regression coefficient interpretation — do they tell the same story?",
         "Implement a fairness check: measure the model's performance (accuracy, false positive rate, false negative rate) separately for different demographic groups in the dataset. Document any disparate impact. This is required for regulatory compliance in credit.",
         "Add confidence intervals to your logistic regression coefficients using bootstrapping: resample the training data 1000 times, fit the model each time, and compute the 2.5th and 97.5th percentile of each coefficient. Present coefficients with their confidence intervals in the report."
-      ]
+      ],
+      "concept_widget": {
+        "id": "gradient-descent",
+        "caption": "Set a learning rate and watch the ball roll to the minimum — or overshoot."
+      }
     },
     {
       "number": 6,
@@ -1054,7 +1070,11 @@
         "Implement HDBSCAN (hierarchical DBSCAN) and compare its cluster assignments against K-Means and DBSCAN on the same dataset. HDBSCAN automatically selects the number of clusters and handles varying cluster densities better than DBSCAN.",
         "Build a customer segmentation report using K-Means on a real transaction dataset. Profile each cluster: average spend, frequency, product categories, demographic distribution. Present the clusters as actionable customer personas with recommended marketing approaches.",
         "Apply PCA and UMAP to the MNIST handwritten digit dataset. Visualise the 10-digit clusters in 2D. Measure the degree of overlap between digit clusters in each representation. Document which digits are most confused (likely 3/8, 4/9, 5/6) and why."
-      ]
+      ],
+      "concept_widget": {
+        "id": "kmeans-stepper",
+        "caption": "Click Step to alternate assign → re-centre until the clusters lock in."
+      }
     },
     {
       "number": 8,
@@ -1642,7 +1662,11 @@
         "Set up a wandb Sweep for hyperparameter optimisation of FlightWise. Define the search space, run 20 trials, and compare the sweep results against your earlier manual Optuna tuning. Did the wandb Sweep find a better configuration?",
         "Implement model versioning with MLflow Model Registry: register your best FlightWise model as version 1, retrain with updated data to produce version 2, transition version 2 to Production, and update your Flask serving code to load from the registry rather than a hardcoded file path.",
         "Build a training reproducibility test: given a wandb run ID, write a script that retrieves the run's hyperparameters, loads the exact data version, sets all random seeds, and re-runs training. Verify that the reproduced run achieves the same final validation loss within 0.001."
-      ]
+      ],
+      "concept_widget": {
+        "id": "confusion-matrix",
+        "caption": "Slide the threshold and watch precision trade off against recall."
+      }
     },
     {
       "number": 14,
