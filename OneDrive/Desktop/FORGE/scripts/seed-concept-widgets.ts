@@ -1,11 +1,20 @@
 /**
  * Seed `concept_widget` refs onto the best-matching week of each roadmap.
  *
- * For each path we list the widgets that belong to it, each with keywords and
- * a caption. The script scans the path's weeks in order and attaches the
- * widget to the first week whose title/phase/context/topics match a keyword
+ * Placement is WEEK-LEVEL by design: the widget renders at the top of the week,
+ * before the day-by-day plan, so the learner plays with the concept first and
+ * then goes day-by-day to get their hands dirty. The daily items are for doing;
+ * the week-top sim is the conceptual anchor that already covers the week's idea.
+ *
+ * For each path we list the widgets that belong to it, each with keywords and a
+ * caption. The script scans the path's weeks in order and attaches the widget to
+ * the first week whose title/phase/context/topics/day-headlines match a keyword
  * and doesn't already carry a widget. Distinctive widgets are listed first so
  * they claim their week before broader ones.
+ *
+ * Idempotent: a cleanup pass first strips every script-managed widget — both
+ * week-level `concept_widget` and any leftover `kind:"widget"` day items from
+ * the earlier day-level experiment — so re-running never duplicates.
  *
  * Run: npx tsx scripts/seed-concept-widgets.ts
  */
@@ -89,7 +98,8 @@ const PLAN: Record<string, Placement[]> = {
 };
 
 function weekText(w: any): string {
-  return [w.title, w.phase, w.context, ...(w.topics || []), ...(w.tasks || [])]
+  const dayHeadlines = (w.days || []).flatMap((d: any) => [d.title, d.summary]);
+  return [w.title, w.phase, w.context, ...(w.topics || []), ...(w.tasks || []), ...dayHeadlines]
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
@@ -103,6 +113,18 @@ for (const [slug, placements] of Object.entries(PLAN)) {
     continue;
   }
   const r = JSON.parse(fs.readFileSync(file, "utf8"));
+
+  // Cleanup — strip every script-managed widget so re-runs don't duplicate,
+  // including any leftover day-level widget items from the day-level experiment.
+  for (const w of r.weeks) {
+    delete w.concept_widget;
+    if (Array.isArray(w.days)) {
+      for (const d of w.days) {
+        d.items = (d.items || []).filter((it: any) => it.kind !== "widget");
+      }
+    }
+  }
+
   const used = new Set<number>();
   const placed: string[] = [];
   for (const p of placements) {
