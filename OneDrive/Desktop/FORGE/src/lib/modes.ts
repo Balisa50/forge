@@ -2,7 +2,7 @@
  * Learning-mode feature flags.
  *
  * FORGE has two learning modes:
- *   - SOLO    : self-paced, no human mentor (AI Professor companions them)
+ *   - SOLO    : self-paced, no human mentor (AI companions them)
  *   - MENTEE  : mentor-controlled weekly releases, real human accountability
  *
  * Solo mode is gated behind a flag so FORGE can launch mentor-required

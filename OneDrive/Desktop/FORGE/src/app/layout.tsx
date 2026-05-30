@@ -10,12 +10,12 @@ export const metadata: Metadata = {
     template: "%s | THE FORGE",
   },
   description:
-    "AI-powered accountability platform that forces you to actually learn what you claim to be learning. Daily AI interrogations. Real consequences. Verified certificates.",
+    "AI-powered accountability platform that forces you to actually learn what you claim to be learning. Daily proof-of-work check-ins. Real consequences. Verified certificates.",
   keywords: ["accountability", "learning", "AI", "study", "productivity", "bootcamp", "mentor", "coding"],
   metadataBase: new URL(BASE_URL),
   openGraph: {
     title: "THE FORGE",
-    description: "The app that doesn't believe you until you prove it. Daily AI interrogations. Real consequences. Verified mastery.",
+    description: "The app that doesn't believe you until you prove it. Daily proof-of-work check-ins. Real consequences. Verified mastery.",
     url: BASE_URL,
     siteName: "THE FORGE",
     locale: "en_US",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "THE FORGE",
-    description: "The app that doesn't believe you until you prove it. Daily AI interrogations. Real consequences.",
+    description: "The app that doesn't believe you until you prove it. Daily proof-of-work check-ins. Real consequences.",
     images: ["/og-image.png"],
   },
   robots: {

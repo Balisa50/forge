@@ -55,7 +55,7 @@ export default async function CheckinPage() {
       <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
         <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✅</div>
         <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", marginBottom: "1rem" }}>Already Checked In Today</h2>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>You passed today&apos;s interrogation. Come back tomorrow.</p>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>You&apos;ve checked in today. Come back tomorrow.</p>
         <Link href="/dashboard" className="forge-btn forge-btn-ghost">Back to Dashboard</Link>
       </div>
     );
@@ -64,7 +64,7 @@ export default async function CheckinPage() {
   return (
     <div>
       <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Daily Check-In</h1>
-      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Submit your proof of work and face The Professor.</p>
+      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Submit your proof of work for today.</p>
       <CheckinForm roadmap={roadmap} userId={userId} userName={session!.user!.name ?? "Student"} />
     </div>
   );

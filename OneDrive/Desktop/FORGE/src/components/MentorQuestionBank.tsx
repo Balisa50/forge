@@ -81,7 +81,7 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
     setDialog({
       kind: "confirm",
       title: "Remove this question?",
-      message: "It won't appear in your mentee's interrogation for this week anymore.",
+      message: "It won't appear in your mentee's mastery checks for this week anymore.",
       confirmText: "Remove",
       danger: true,
       onConfirm: async () => {
@@ -126,8 +126,8 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
       ) : (
         <>
           <p style={{ fontSize: "0.75rem", color: "var(--text-dim)", margin: "0.625rem 0 0.75rem", lineHeight: 1.55 }}>
-            When you author questions here, the mentee takes <strong>your interrogation</strong> instead of the AI Professor.
-            After they submit, you review and grade each answer. Skip this whole section if you want to use the AI Professor.
+            When you author questions here, the mentee answers <strong>your questions</strong> instead of the AI&apos;s.
+            After they submit, you review and grade each answer. Skip this whole section if you want to use the AI&apos;s questions.
           </p>
           {questions.length > 0 && (
             <ul className="flex flex-col gap-2 mb-3">

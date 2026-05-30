@@ -8,10 +8,10 @@ import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 
 const FEATURES = [
   { Icon: Map,          title: "9 Hand-Curated Roadmaps",  desc: "Data Analysis, Data Science, AI Engineering, ML Engineering, Full Stack Web, Mobile, DevOps + Cloud, Cybersecurity, BI Analytics. Each one is 17 to 43 weeks of mentor-controlled releases with 10 mastery checkpoints per week. Validated YouTube resources, no dead links, all under 30 minutes." },
-  { Icon: FlaskConical, title: "THE PROFESSOR",   desc: "One AI mentor with the standards of a Harvard professor. It releases your week, reads your actual GitHub commits, inspects your deployed projects, interrogates you on what you built, and signs off only when you have genuinely earned it. It does not flatter. It cannot be fooled." },
+  { Icon: FlaskConical, title: "PROOF-OF-WORK VERIFICATION",   desc: "Every session is checked against your real GitHub commits and deployed projects. The system confirms your work is real, non-empty, and updated before it counts. No self-reporting, no placeholder repos, no faking it." },
   { Icon: Flame,        title: "Verified Project Evidence", desc: "Submit your GitHub repo or live URL with every session. The system checks it's real, non-empty, and updated. No placeholder repos. No recycled links." },
   { Icon: Users,        title: "Accountability Pods",       desc: "Auto-matched with 4 people on similar paths. See who checked in today. Track each other's progress. No chat, no noise — just the shared weight of showing up." },
-  { Icon: BarChart3,    title: "Public Build Log",          desc: "A verified, chronological record of every session you've completed. Shareable link, real project URLs, interrogation scores. Show employers what grinding actually looks like." },
+  { Icon: BarChart3,    title: "Public Build Log",          desc: "A verified, chronological record of every session you've completed. Shareable link, real project URLs, daily check-ins. Show employers what grinding actually looks like." },
   { Icon: Trophy,       title: "Verified Certificate",      desc: "Finish your roadmap and earn a cryptographically signed certificate with your pass rate and hours logged. Employers can verify it with a public link. It cannot be faked." },
 ];
 
@@ -146,13 +146,13 @@ export default function LandingPage() {
               Your proof of work. Publicly verified.
             </h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.75, maxWidth: "560px", margin: "0 auto 2rem" }}>
-              Every session you complete gets a permanent entry on your public build log — with the project URL, the interrogation score, and the date.
+              Every session you complete gets a permanent entry on your public build log — with the project URL, your verified proof, and the date.
               Share it with employers. Show it to recruiters. Prove you didn&apos;t just watch videos.
             </p>
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
               {[
                 "GitHub repo verified ✓",
-                "Interrogation score: 24/30",
+                "Proof: live URL + commits",
                 "Task: Build a REST API with auth",
                 "Date: Apr 19, 2026",
               ].map((tag) => (

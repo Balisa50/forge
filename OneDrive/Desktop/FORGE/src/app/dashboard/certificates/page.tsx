@@ -118,7 +118,7 @@ export default async function CertificatesPage() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-around", marginTop: "2rem", paddingTop: "1.25rem", borderTop: "1px solid rgba(212,175,55,0.2)" }}>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", color: "rgba(212,175,55,0.6)" }}>
-                    Verified by AI Interrogation
+                    Verified by AI
                   </div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", color: "rgba(212,175,55,0.6)" }}>
                     Cryptographically Signed
@@ -164,7 +164,7 @@ export default async function CertificatesPage() {
             <div style={{ color: "var(--accent)", marginBottom: "0.75rem", display: "flex", justifyContent: "center" }}><Award size={32} strokeWidth={1.5} /></div>
             <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>What you&apos;re working toward</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", maxWidth: "440px", margin: "0 auto", lineHeight: 1.55 }}>
-              Every week you verify, the cert sharpens. Finish all of them, pass the interrogations, and the full certificate above unlocks — with a public verify link anyone can check.
+              Every week you verify, the cert sharpens. Finish all of them, pass every check, and the full certificate above unlocks — with a public verify link anyone can check.
             </p>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default async function CertificatesPage() {
                   </div>
                   <div className="flex items-center gap-1.5" style={{ fontSize: "0.8125rem" }}>
                     <CheckCircle2 size={13} color="var(--accent)" strokeWidth={2} />
-                    <span style={{ color: "var(--text-secondary)" }}>Verified by AI interrogation</span>
+                    <span style={{ color: "var(--text-secondary)" }}>Verified by AI</span>
                   </div>
                   <div className="flex items-center gap-1.5" style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginLeft: "auto" }}>
                     <Fingerprint size={12} /> {cert.verifyCode.slice(0, 16)}…

@@ -20,7 +20,7 @@ export default function CertShareButton({ certTitle, verifyCode, passRate, total
   const verifyUrl = `${BASE_URL}/verify/cert/${verifyCode}`;
   const pct = Math.round(passRate * 100);
 
-  const shareText = `I just earned a verified certificate on The Forge ⚡\n\n📜 ${certTitle}\n✅ ${totalTasks} tasks · ${totalHours.toFixed(0)}h · ${pct}% pass rate\n\nEvery task was interrogation-verified by AI — no self-reporting.\n\nVerify it: ${verifyUrl}`;
+  const shareText = `I just earned a verified certificate on The Forge ⚡\n\n📜 ${certTitle}\n✅ ${totalTasks} tasks · ${totalHours.toFixed(0)}h · ${pct}% pass rate\n\nEvery task was verified by AI — no self-reporting.\n\nVerify it: ${verifyUrl}`;
 
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
 

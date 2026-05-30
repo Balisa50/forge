@@ -84,7 +84,7 @@ export default function OGImage() {
           marginBottom: 56,
         }}>
           The app that doesn't believe you until you prove it.
-          Daily AI interrogations. Verified mastery. Real consequences.
+          Daily proof-of-work check-ins. Verified mastery. Real consequences.
         </div>
 
         {/* Stats row */}

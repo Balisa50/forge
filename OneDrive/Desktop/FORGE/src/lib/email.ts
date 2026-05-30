@@ -102,7 +102,7 @@ export function welcomeEmailHtml(name: string): string {
         <ul style="margin:0;padding:0 0 0 1.25rem;color:#adadb5;font-size:0.875rem;line-height:1.8;">
           <li>Pick a roadmap (38 curated paths from roadmap.sh, or describe your own)</li>
           <li>Set your check-in schedule</li>
-          <li>Show up. Submit proof. Answer the Professor.</li>
+          <li>Show up. Submit proof. Pass the mastery checks.</li>
           <li>Build a verified public record of your work</li>
         </ul>
       </div>
@@ -150,7 +150,7 @@ export function interrogationResultEmailHtml(
 
   return `
     <div style="${BASE_STYLE}">
-      ${header(`Interrogation ${label}`)}
+      ${header(`Check-In ${label}`)}
       <p style="color:${color};margin:0 0 1.5rem;font-family:monospace;font-size:0.75rem;letter-spacing:0.15em;">${taskTitle}</p>
 
       <div style="text-align:center;padding:1.5rem;background:#0c0c12;border:1px solid ${color}30;border-radius:10px;margin-bottom:1.5rem;">
@@ -161,7 +161,7 @@ export function interrogationResultEmailHtml(
 
       ${verdict ? `
         <div style="background:#0c0c12;border:1px solid #1a1d2a;border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;">
-          <p style="margin:0 0 0.5rem;font-family:monospace;font-size:0.6875rem;color:#3b82f6;letter-spacing:0.2em;text-transform:uppercase;">⚡ THE PROFESSOR</p>
+          <p style="margin:0 0 0.5rem;font-family:monospace;font-size:0.6875rem;color:#3b82f6;letter-spacing:0.2em;text-transform:uppercase;">⚡ VERDICT</p>
           <p style="margin:0;color:#adadb5;font-size:0.9375rem;line-height:1.7;">${verdict}</p>
         </div>
       ` : ""}
@@ -174,7 +174,7 @@ export function interrogationResultEmailHtml(
       ${!passed ? `
         <p style="margin:1rem 0 0;font-size:0.8125rem;color:#6b7084;line-height:1.6;">
           Failed sessions don't count against you. Review what you built, try again tomorrow.
-          The Professor will ask different questions.
+          You'll get different questions.
         </p>
       ` : ""}
       ${footer()}
@@ -330,7 +330,7 @@ export async function sendInterrogationResultEmail(
   try {
     await sendMail(
       to,
-      passed ? `✅ You passed today's interrogation — The Forge` : `❌ Interrogation failed — The Forge`,
+      passed ? `✅ You passed today's check-in — The Forge` : `❌ Check-in failed — The Forge`,
       interrogationResultEmailHtml(name, passed, score, maxScore, verdict, taskTitle),
     );
   } catch (e) {

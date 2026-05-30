@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ userId: s
   if (!user || !user.isPublic) return { title: "Build Log — The Forge" };
   return {
     title: `${user.name}'s Build Log — The Forge`,
-    description: `Follow ${user.name}'s learning journey on The Forge — verified daily check-ins, AI interrogations, and real project evidence.`,
+    description: `Follow ${user.name}'s learning journey on The Forge — verified daily check-ins and real project evidence.`,
   };
 }
 

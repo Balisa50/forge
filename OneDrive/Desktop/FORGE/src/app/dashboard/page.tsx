@@ -5,13 +5,11 @@ import Link from "next/link";
 import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass, BookOpen, Send } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
-import AskTheProfessor from "@/components/AskTheProfessor";
 import ForgePactCard from "@/components/ForgePactCard";
 import WeekIntention from "@/components/WeekIntention";
 import ShippedChain from "@/components/ShippedChain";
 import BuildFeed from "@/components/BuildFeed";
 import MentorReplay from "@/components/MentorReplay";
-import { soloModeEnabled } from "@/lib/modes";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
 const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
@@ -395,10 +393,6 @@ export default async function DashboardPage() {
       </div>
 
       <ForgePactCard />
-
-      {/* Solo learner companion: Ask THE PROFESSOR. Only shown when Solo
-          mode is enabled - the panel is a solo-learner feature. */}
-      {soloModeEnabled() && <AskTheProfessor />}
 
       {/* Re-entry: Welcome back after 3+ days absence */}
       {isReturning && !checkedInToday && (

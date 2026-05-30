@@ -17,7 +17,7 @@ const PLANS = [
     tagline: "Self-paced learners with no mentor",
     features: [
       { text: "1 self-paced roadmap (no mentor)", included: true },
-      { text: "AI Professor interrogation (3 questions per session)", included: true },
+      { text: "AI mastery checks (3 questions per session)", included: true },
       { text: "10 mastery checkpoints per week", included: true },
       { text: "All 9 curated tracks accessible", included: true },
       { text: "Public Wall of Fame eligibility", included: true },
@@ -41,7 +41,7 @@ const PLANS = [
       { text: "Paired with a real human mentor", included: true },
       { text: "Mentor-controlled weekly releases with personal notes", included: true },
       { text: "1:1 mentor messaging", included: true },
-      { text: "Mentor-authored custom interrogations", included: true },
+      { text: "Mentor-authored custom mastery checks", included: true },
       { text: "Verified completion certificate (signed by mentor + FORGE)", included: true },
       { text: "Job placement help on graduation", included: true },
       { text: "Priority access to new tracks", included: true },
@@ -59,7 +59,7 @@ const PLANS = [
     features: [
       { text: "Unlimited active mentees", included: true },
       { text: "Bulk-release a week to multiple mentees in one click", included: true },
-      { text: "Mentor question bank (your interrogation, not the AI's)", included: true },
+      { text: "Mentor question bank (your questions, not the AI's)", included: true },
       { text: "Custom roadmaps (build your own track)", included: true },
       { text: "Branded certificates with your name + your org logo", included: true },
       { text: "Mentor analytics dashboard (cohort-wide progress)", included: true },
