@@ -8,7 +8,6 @@ import {
 import type { RoadmapWeek } from "@/lib/roadmaps";
 import ResourceViewer from "@/components/ResourceViewer";
 import ConceptPrimer from "@/components/ConceptPrimer";
-import ConceptCheck from "@/components/ConceptCheck";
 import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
 
@@ -242,12 +241,6 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
         <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.65, marginBottom: "0.5rem" }}>
           {week.context}
         </p>
-      )}
-
-      {/* 3-question warm-up — opt-in per week. Only renders when the mentor
-          has authored concept_check questions in the JSON. */}
-      {week.concept_check && week.concept_check.length > 0 && (
-        <ConceptCheck slug={slug} week={week.number} questions={week.concept_check} />
       )}
 
       {/* Day stream */}
