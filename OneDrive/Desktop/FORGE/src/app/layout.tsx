@@ -40,8 +40,10 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
+    // Favicon is the lightweight SVG; the PNG is reserved for the
+    // apple-touch-icon (iOS home-screen) only. Listing logo.png as both
+    // was redundant and pulled the full-size PNG on every page load.
     icon: [
-      { url: "/logo.png", type: "image/png" },
       { url: "/icon.svg", type: "image/svg+xml" },
     ],
     apple: [
