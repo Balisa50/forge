@@ -148,6 +148,10 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
   }, [dayPct]);
 
   // Fire celebration toast when a new day gets completed (current advances).
+  // NOTE: only set state here — do NOT start the dismiss timer in this effect.
+  // setMaxDoneIdx changes a dependency, so React would run this effect's
+  // cleanup (clearing the timer) on the very next render, leaving the toast
+  // stuck on screen forever. The auto-dismiss lives in its own effect below.
   useEffect(() => {
     const newlyDone = currentDayIdx - 1; // last index that just hit 100%
     if (newlyDone >= 0 && newlyDone > maxDoneIdx) {
@@ -155,11 +159,17 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
       // Only celebrate if we've actually loaded progress (avoid first-load fire).
       if (Object.keys(done).length > 0) {
         setJustUnlockedDay(newlyDone + 1); // 1-based day number
-        const t = setTimeout(() => setJustUnlockedDay(null), 3200);
-        return () => clearTimeout(t);
       }
     }
   }, [currentDayIdx, maxDoneIdx, done]);
+
+  // Auto-dismiss the celebration toast. Keyed only on justUnlockedDay so the
+  // timer survives unrelated re-renders (mirrors the lockedToast pattern).
+  useEffect(() => {
+    if (justUnlockedDay === null) return;
+    const t = setTimeout(() => setJustUnlockedDay(null), 3200);
+    return () => clearTimeout(t);
+  }, [justUnlockedDay]);
 
   // Allow the user to manually expand a completed day to revisit it.
   const [manuallyOpen, setManuallyOpen] = useState<Record<number, boolean>>({});
@@ -608,6 +618,7 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
             color: "var(--text-primary)", fontSize: "0.8125rem",
             display: "flex", alignItems: "center", gap: "0.5rem",
             boxShadow: "0 8px 24px rgba(0,0,0,0.4)", zIndex: 9999,
+            pointerEvents: "none",
           }}
         >
           <Lock size={14} style={{ color: "var(--accent)" }} />
@@ -627,6 +638,7 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
             color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 600,
             display: "flex", alignItems: "center", gap: "0.5rem",
             boxShadow: "0 8px 32px rgba(34,197,94,0.25)", zIndex: 9999,
+            pointerEvents: "none",
           }}
         >
           <Sparkles size={16} style={{ color: "var(--green)" }} />
