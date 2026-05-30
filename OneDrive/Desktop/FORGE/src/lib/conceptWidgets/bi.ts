@@ -38,8 +38,15 @@ var bw=document.getElementById("rbtns");
 regions.forEach(function(r){var b=document.createElement("button");b.className="w-btn"+(r===cur?"":" alt");b.textContent=r;
   b.onclick=function(){cur=r;[].forEach.call(bw.children,function(c,i){c.className="w-btn"+(regions[i]===cur?"":" alt");});draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "You click a region filter and three charts update. What did the filter actually change?",
+        options: ["Each chart, edited one at a time", "The underlying dataset that every chart re-queries", "Only the chart you clicked on"],
+        answer: 1,
+        reveal: "Filters narrow the <b>underlying dataset</b>, and every visual re-queries it — that's why one click updates the KPI, the bars, and the table together. Get the data model right and interactivity is free.",
+      },
     ),
+  bridge: "In Power BI or Tableau, drop two charts off one table, add a slicer, and click a value — both recompute at once because they share the same filtered source.",
 };
 
 /** Star schema explorer. */
@@ -85,8 +92,15 @@ document.getElementById("sv").addEventListener("click",function(e){var k=e.targe
   document.getElementById("lab").innerHTML="<b>"+k+"</b> in the fact table is a foreign key into <b>"+(d?d.name:"?")+"</b>. The fact table stores <i>measurements</i> (quantity, amount) + keys; the dimensions store the <i>descriptions</i> you slice by.";
   draw();});
 draw();
-`
+`,
+      {
+        question: "In a star schema, what lives in the centre fact table?",
+        options: ["The descriptive text you slice by", "The measurements plus foreign keys to the dimensions", "A full copy of every dimension"],
+        answer: 1,
+        reveal: "The <b>fact table</b> stores measurements (quantity, amount) plus foreign keys; the <b>dimensions</b> hold the descriptions (product name, region, date) you slice by. That hub-and-spoke shape is the 'star'.",
+      },
     ),
+  bridge: "Sketch a fact table for orders — keep only keys and numeric measures in it, push every descriptive attribute out to its own dimension, and you've built a star.",
 };
 
 /** KPI threshold / RAG status. */
@@ -115,8 +129,15 @@ function draw(){
 }
 document.getElementById("m").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "On-time delivery reads 88%. Is that good?",
+        options: ["Yes — it's a high number", "It depends entirely on where the thresholds sit", "No — anything below 100% is bad"],
+        answer: 1,
+        reveal: "A raw number means little. <b>Thresholds</b> turn it into Red / Amber / Green — 88% might be amber here but green elsewhere. The bands, not the number, drive the action.",
+      },
     ),
+  bridge: "Pick one KPI you care about, set explicit red/amber/green cutoffs, then colour last month's values against them — the colour tells the story faster than the digits.",
 };
 
 /** Cohort retention heatmap. */
@@ -145,8 +166,15 @@ function draw(){
 }
 document.getElementById("grid").addEventListener("mouseover",function(e){var v=e.target.getAttribute&&e.target.getAttribute("data-v");if(v&&+v>0)document.getElementById("lab").innerHTML="<b>"+v+"%</b> of that cohort were still active. Falling fast across a row = leaky retention; a later cohort holding higher than an earlier one at the same M = you improved something.";});
 draw();
-`
+`,
+      {
+        question: "To tell whether a product change improved retention, how do you read a cohort heatmap?",
+        options: ["Across a row, left to right", "Down a column — compare cohorts at the same age", "Just the top-left cell"],
+        answer: 1,
+        reveal: "Read <b>down a column</b>: it compares different signup cohorts at the <i>same</i> age (M2 vs M2). A later cohort holding higher than an earlier one at the same month means something you changed worked.",
+      },
     ),
+  bridge: "Build a cohort table from real signups (rows = signup month, columns = months-since), then scan one column top-to-bottom to see if newer cohorts retain better.",
 };
 
 export const biWidgets: ConceptWidgetDef[] = [

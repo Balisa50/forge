@@ -39,8 +39,15 @@ function render(){
 }
 document.getElementById("in").addEventListener("input",render);
 render();
-`
+`,
+      {
+        question: "Does the word \"isn't\" count as a single token?",
+        options: ["Yes — one word, one token", "No — it usually splits into several tokens", "Only when the text is long"],
+        answer: 1,
+        reveal: "Tokenizers split on common word-pieces, so contractions, rare words, and even spaces become separate tokens. That's why token count ≠ word count — and why you're billed per token, not per word.",
+      },
     ),
+  bridge: "Paste a paragraph into a real tokenizer (tiktoken in Python, or the OpenAI/Anthropic web tool) and compare token count to word count — the ratio is usually ~1.3 tokens per word.",
 };
 
 /** Slide temperature; the next-token probability bars sharpen or flatten. */
@@ -76,8 +83,15 @@ function draw(){
 }
 document.getElementById("t").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "You set temperature near 0. What does the output look like?",
+        options: ["Wild and creative", "Almost always the single most likely token — repetitive but safe", "Completely random noise"],
+        answer: 1,
+        reveal: "Low temp sharpens the probabilities so the top token wins nearly every time — great for code and extraction. High temp flattens them, giving unlikely tokens a real shot.",
+      },
     ),
+  bridge: "Call the same prompt twice at temperature 0 and twice at 1.5 — the low-temp pair comes back near-identical, the high-temp pair won't.",
 };
 
 /** Embedding 2D space: hover words, see cosine similarity. */
@@ -124,8 +138,15 @@ document.getElementById("sv").addEventListener("click",function(e){
   draw();
 });
 draw();
-`
+`,
+      {
+        question: "Two words sit very close together in embedding space. That means…",
+        options: ["They're spelled similarly", "They have similar meaning", "They appear equally often in text"],
+        answer: 1,
+        reveal: "Distance in embedding space encodes <b>meaning</b>, not spelling. 'king' and 'queen' land near each other; 'king' and 'banana' don't — which is exactly what powers semantic search.",
+      },
     ),
+  bridge: "Embed a handful of sentences with a real model (sentence-transformers) and compute cosine similarity — the closest pair should be the ones that mean the same thing.",
 };
 
 /** RAG flow: a query retrieves the top chunks and stuffs the prompt. */
@@ -173,8 +194,15 @@ var bw=document.getElementById("qbtns");
 queries.forEach(function(q,i){var b=document.createElement("button");b.className="w-btn"+(i===cur?"":" alt");b.textContent=q.q;
   b.onclick=function(){cur=i;[].forEach.call(bw.children,function(c,j){c.className="w-btn"+(j===cur?"":" alt");});draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "In RAG, how much of your knowledge base does the model actually read to answer?",
+        options: ["The entire knowledge base", "Only the top few retrieved chunks", "Nothing — it answers from memory"],
+        answer: 1,
+        reveal: "Retrieval ranks chunks by similarity and pastes only the <b>top few</b> into the prompt. The model answers from those — which is why RAG cuts hallucination and lets you cite sources.",
+      },
     ),
+  bridge: "Build a tiny RAG loop: embed 5 docs, embed a question, retrieve the top-2 by cosine, paste only those into the prompt — confirm the answer comes from the retrieved text.",
 };
 
 /** Context window budget: add messages, watch the window fill and evict. */
@@ -211,8 +239,15 @@ function draw(){
 document.getElementById("add").onclick=function(){if(idx<pool.length){msgs.push(pool[idx++]);draw();}};
 document.getElementById("reset").onclick=function(){idx=0;msgs=[];draw();};
 draw();
-`
+`,
+      {
+        question: "A chat grows longer than the context window. What happens to the earliest messages?",
+        options: ["The model summarises them automatically", "They're dropped — the model can't see them anymore", "They're saved to disk and reloaded later"],
+        answer: 1,
+        reveal: "The window is a fixed token budget. Once it's full, the oldest messages fall out and the model literally can't see them — that's why long chats 'lose the plot' and why the system prompt is pinned first.",
+      },
     ),
+  bridge: "Count the tokens in a long conversation and compare to the model's context limit — anything past the limit is invisible to the model on the next turn.",
 };
 
 export const aiWidgets: ConceptWidgetDef[] = [

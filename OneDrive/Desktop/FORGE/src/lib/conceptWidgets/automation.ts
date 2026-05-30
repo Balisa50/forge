@@ -40,8 +40,15 @@ function run(){
 document.getElementById("run").onclick=run;
 document.getElementById("reset").onclick=function(){active=-1;draw();document.getElementById("payload").textContent="";};
 draw();
-`
+`,
+      {
+        question: "A node lowercases an email, then passes to 'Add to CRM'. What does the CRM node receive?",
+        options: ["The original raw form data", "The data as transformed by every node before it", "Nothing until the workflow finishes"],
+        answer: 1,
+        reveal: "Each node transforms the payload and <b>passes it on</b>, so the CRM node sees the already-lowercased email. Data flows down the chain, each step building on the last.",
+      },
     ),
+  bridge: "In n8n or Zapier, chain two steps where the second references the first's output — change the first and watch the second's input update automatically.",
 };
 
 /** Webhook payload → transform → output. */
@@ -79,8 +86,15 @@ var bw=document.getElementById("maps");
 maps.forEach(function(m){var b=document.createElement("button");b.className="w-btn"+(m.on?"":" alt");b.textContent=(m.on?"− ":"+ ")+m.to;
   b.onclick=function(){m.on=!m.on;b.className="w-btn"+(m.on?"":" alt");b.textContent=(m.on?"− ":"+ ")+m.to;draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "A webhook field has no mapping to your output. What happens to that field?",
+        options: ["It's passed through unchanged", "It simply doesn't arrive in the output", "It makes the workflow error out"],
+        answer: 1,
+        reveal: "No mapping = the field <b>just doesn't arrive</b>. The transform step is also where you fix units (cents → dollars), formats, and names between the two systems.",
+      },
     ),
+  bridge: "Wire a real webhook into a transform node, map only two of its fields, and confirm the unmapped ones vanish — then add a unit conversion on a numeric field.",
 };
 
 /** If/else branch simulator. */
@@ -108,8 +122,15 @@ function draw(){
 }
 document.getElementById("amt").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "A workflow branches on 'order total ≥ $200'. An $80 order comes in. Which path runs?",
+        options: ["The VIP path", "The else / standard path", "Both paths run"],
+        answer: 1,
+        reveal: "$80 fails the ≥ $200 test, so only the <b>else</b> branch runs — standard confirmation, no VIP. A condition routes each item down exactly one path.",
+      },
     ),
+  bridge: "Add an if/else (filter or switch) node to a real automation keyed on a numeric field, send two test items either side of the threshold, and confirm each takes a different branch.",
 };
 
 export const automationWidgets: ConceptWidgetDef[] = [

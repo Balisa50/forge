@@ -47,9 +47,9 @@ export function renderWidgetHtml(id: string, params?: WidgetParams): string | nu
   return w ? w.html(params) : null;
 }
 
-export function widgetMeta(id: string): { title: string; blurb: string } | null {
+export function widgetMeta(id: string): { title: string; blurb: string; bridge?: string } | null {
   const w = REGISTRY[id];
-  return w ? { title: w.title, blurb: w.blurb } : null;
+  return w ? { title: w.title, blurb: w.blurb, bridge: w.bridge } : null;
 }
 
 /** Every registered widget id — handy for seeding scripts and audits. */

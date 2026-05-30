@@ -29,8 +29,15 @@ function draw(){
 document.getElementById("u").addEventListener("input",draw);
 document.getElementById("attack").onclick=function(){document.getElementById("u").value="' OR 1=1 --";draw();};
 draw();
-`
+`,
+      {
+        question: "An app glues the username straight into its SQL string. A user types: ' OR 1=1 --  . What happens?",
+        options: ["The login is rejected as invalid", "The quote closes the string early and the logic is rewritten to match everyone", "Nothing — it's treated as plain text"],
+        answer: 1,
+        reveal: "The lone quote ends the string early and <code>OR 1=1 --</code> rewrites the logic, matching every row and commenting out the rest. <b>Fix:</b> parameterised queries keep input as <i>data</i>, never code.",
+      },
     ),
+  bridge: "In your language of choice, run the same payload against a parameterised query (WHERE name = ?) and a string-concatenated one — only the concatenated version breaks.",
 };
 
 /** XSS sandbox: safe demo of escaped vs unescaped rendering. */
@@ -60,8 +67,15 @@ var bw=document.getElementById("btns");
 [["esc","Escape output (safe)",true],["raw","Insert as raw HTML",false]].forEach(function(m){var b=document.createElement("button");b.className="w-btn"+(m[2]===escaped?"":" alt");b.textContent=m[1];
   b.onclick=function(){escaped=m[2];[].forEach.call(bw.children,function(c,i){c.className="w-btn"+(([true,false][i])===escaped?"":" alt");});draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "A comment contains <img src=x onerror=...>. The app inserts it as raw HTML. What runs?",
+        options: ["Nothing — browsers ignore broken images", "The onerror script fires in every visitor's session", "Only the image tries to load"],
+        answer: 1,
+        reveal: "Inserted as raw HTML, the browser parses it as a real element and the <code>onerror</code> handler <b>executes</b> for every visitor. <b>Fix:</b> escape on output — frameworks like React do it by default.",
+      },
     ),
+  bridge: "In a scratch HTML file, set an element's innerHTML to text containing a tag, then set textContent to the same string — only innerHTML parses it as live markup.",
 };
 
 /** Hashing vs encryption. */
@@ -98,8 +112,15 @@ function draw(){
 }
 document.getElementById("in").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "A site stores your password. If their database is stolen, which method keeps it unrecoverable?",
+        options: ["Encryption", "Hashing", "Both equally"],
+        answer: 1,
+        reveal: "<b>Hashing</b> is one-way — there's no key to run it backwards, so a stolen hash database doesn't hand over passwords. Encryption is reversible with the key, which is exactly why passwords are hashed, not encrypted.",
+      },
     ),
+  bridge: "Hash the same string twice with bcrypt or argon2 in a notebook — note that verifying a login means hashing the input and comparing, never decrypting the stored value.",
 };
 
 /** TLS handshake stepper. */
@@ -132,8 +153,15 @@ function draw(){
 document.getElementById("step").onclick=function(){if(i<steps.length)i++;draw();};
 document.getElementById("reset").onclick=function(){i=0;draw();};
 draw();
-`
+`,
+      {
+        question: "Client and server agree on a shared key over a wire an eavesdropper can read. How does the watcher NOT learn the key?",
+        options: ["The whole handshake is encrypted from the very start", "A key exchange (e.g. ECDHE) lets both sides derive a secret the watcher can't compute", "The server hides its IP address"],
+        answer: 1,
+        reveal: "A <b>key exchange</b> like ECDHE lets the two sides derive a shared secret from public messages — an eavesdropper sees the exchange but can't compute the result. The certificate proves the server is who it claims.",
+      },
     ),
+  bridge: "Run `openssl s_client -connect example.com:443` and read the handshake — you'll see the cipher chosen, the certificate chain, and the negotiated key parameters.",
 };
 
 /** CIA triad risk explorer. */
@@ -172,8 +200,15 @@ function draw(){
 }
 document.getElementById("scen").addEventListener("click",function(e){var el=e.target.closest("[data-i]");if(!el)return;cur=+el.getAttribute("data-i");draw();});
 draw();
-`
+`,
+      {
+        question: "A DDoS flood knocks your site offline for an hour. Which pillar of the CIA triad broke?",
+        options: ["Confidentiality", "Integrity", "Availability"],
+        answer: 2,
+        reveal: "Legit users can't reach the service → <b>Availability</b>. Confidentiality is about secrets staying secret; Integrity is about data not being tampered with. Each control defends one pillar.",
+      },
     ),
+  bridge: "Take three recent breach headlines and sort each into C, I, or A — most map cleanly to one pillar, which tells you which control failed.",
 };
 
 export const securityWidgets: ConceptWidgetDef[] = [

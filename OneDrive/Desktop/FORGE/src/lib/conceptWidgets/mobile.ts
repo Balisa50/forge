@@ -28,8 +28,15 @@ function draw(){
 }
 ["dir","f"].forEach(function(id){document.getElementById(id).addEventListener("change",draw);document.getElementById(id).addEventListener("input",draw);});
 draw();
-`
+`,
+      {
+        question: "You stack three views in React Native with no flexDirection set. How do they lay out?",
+        options: ["Side by side, left to right", "Stacked top to bottom", "Overlapping in one spot"],
+        answer: 1,
+        reveal: "React Native defaults to <b>flexDirection: 'column'</b> — the opposite of the web's row default. Views stack vertically until you say otherwise.",
+      },
     ),
+  bridge: "In a real RN screen, drop three <View>s with background colours and no styles — they stack vertically. Add flexDirection:'row' to the parent to flip them sideways.",
 };
 
 /** Component lifecycle: mount → update → unmount with effect timing. */
@@ -50,8 +57,15 @@ document.getElementById("mount").onclick=function(){if(mounted){log("already mou
 document.getElementById("update").onclick=function(){if(!mounted){log("mount it first","#8a7c63");return;}log("→ re-render() (prop changed)","#60a5fa");log("→ cleanup of previous effect","#fbbf24");log("→ useEffect runs again (dep changed)","#22c55e");};
 document.getElementById("unmount").onclick=function(){if(!mounted){log("nothing mounted","#8a7c63");return;}mounted=false;log("→ cleanup runs (cancel timers, unsubscribe)","#fb7185");log("→ component removed","#8a7c63");};
 log("idle — click Mount","#8a7c63");
-`
+`,
+      {
+        question: "When does a component's useEffect(()=>{...}, []) run?",
+        options: ["Before the first render", "Once, just after the first render paints", "On every single render"],
+        answer: 1,
+        reveal: "An empty dependency array means the effect runs <b>once, after the first paint</b> — perfect for fetching data or subscribing. Its cleanup runs on unmount.",
+      },
     ),
+  bridge: "Add a useEffect with an empty deps array and a console.log to a real component — confirm it logs exactly once on mount, even as the component re-renders.",
 };
 
 /** Navigation stack: push/pop screens. */
@@ -82,8 +96,15 @@ document.getElementById("push").onclick=function(){stack.push("Details");draw();
 document.getElementById("push2").onclick=function(){stack.push("Profile");draw();};
 document.getElementById("pop").onclick=function(){if(stack.length>1)stack.pop();draw();};
 draw();
-`
+`,
+      {
+        question: "You push Details, then push Profile, then hit back once. Which screen shows?",
+        options: ["Home", "Details", "Profile"],
+        answer: 1,
+        reveal: "Navigation is a <b>stack</b>: push adds on top, back pops the top off. After pushing Details then Profile, popping once reveals <b>Details</b> underneath.",
+      },
     ),
+  bridge: "In a real navigator, push two screens and log the route stack on each transition — it grows on push and shrinks on back, exactly like an array.",
 };
 
 export const mobileWidgets: ConceptWidgetDef[] = [rnFlexbox, componentLifecycle, navStack];

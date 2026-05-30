@@ -52,8 +52,15 @@ document.getElementById("step").onclick=function(){
 };
 document.getElementById("reset").onclick=init;
 init();
-`
+`,
+      {
+        question: "k-means repeats two steps until it settles. What are they?",
+        options: ["Split the data, then sort it", "Assign each point to its nearest centre, then move centres to the middle", "Pick k, then draw a boundary line"],
+        answer: 1,
+        reveal: "Assign → re-centre, over and over. Each pass can only lower the total distance, so it always converges — but <b>where</b> it lands depends on the random starting centres.",
+      },
     ),
+  bridge: "Run sklearn's KMeans(n_clusters=3) on a real 2-D dataset and plot the labels — then re-run with a different random_state and watch the clusters sometimes land differently.",
 };
 
 /** KNN: change k, classify the moving query point. */
@@ -105,8 +112,15 @@ svg.addEventListener("mousedown",pos);
 svg.addEventListener("touchmove",function(e){e.preventDefault();pos(e);});
 document.getElementById("k").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "You raise k from 1 to 9. What happens to the decision boundary?",
+        options: ["It gets jagged and follows every single point", "It gets smoother and ignores lone outliers", "It disappears entirely"],
+        answer: 1,
+        reveal: "More neighbours voting means a single odd point gets outvoted. Small k <b>overfits</b> to noise; large k smooths — but can blur real structure too.",
+      },
     ),
+  bridge: "Fit KNeighborsClassifier for k=1 and k=15 on the same data and compare the boundaries — small k memorises, large k generalises.",
 };
 
 /** Slide model complexity; train error falls but test error U-turns. */
@@ -154,8 +168,15 @@ function draw(){
 }
 document.getElementById("c").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "As you crank model complexity up, what does the TEST error do?",
+        options: ["Falls forever, just like training error", "Falls, then turns back up", "Stays flat the whole time"],
+        answer: 1,
+        reveal: "Training error keeps dropping, but test error is <b>U-shaped</b>: too simple underfits, too complex chases noise. The bottom of the U is the model you actually want.",
+      },
     ),
+  bridge: "Plot train vs validation error against complexity (polynomial degree or tree depth) on a real split — find the point where validation error bottoms out.",
 };
 
 /** Gradient descent ball rolling down a loss curve; tune learning rate. */
@@ -199,8 +220,15 @@ document.getElementById("step").onclick=function(){
 document.getElementById("reset").onclick=function(){x=0.06;hist=[x];document.getElementById("lab").textContent="Click Step to take one gradient step.";draw();};
 document.getElementById("lr").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "Set a very large learning rate. What happens to the ball?",
+        options: ["It reaches the minimum faster", "It overshoots and the loss can grow", "It freezes in place"],
+        answer: 1,
+        reveal: "Too big a step jumps past the minimum and climbs the other side — the loss <b>diverges</b>. Too small and it crawls. The learning rate is the dial between the two.",
+      },
     ),
+  bridge: "In a notebook, run gradient descent on a simple quadratic with lr = 0.01, 0.3, and 1.1 — log the loss each step and watch one of them blow up.",
 };
 
 /** Slide the decision threshold; confusion matrix + precision/recall update. */
@@ -243,8 +271,15 @@ function draw(){
 }
 document.getElementById("t").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "You raise the decision threshold. What happens to precision and recall?",
+        options: ["Both rise together", "Precision rises, recall falls", "Both fall together"],
+        answer: 1,
+        reveal: "A higher cut-off flags only the most confident positives — so you're right more often (<b>precision↑</b>) but miss borderline real ones (<b>recall↓</b>). You can't max both at once.",
+      },
     ),
+  bridge: "On a real classifier's predict_proba output, sweep the threshold and plot precision and recall — pick the point that matches which error is costlier for your problem.",
 };
 
 /** Side-by-side: same points seen by regression / classification / clustering. */
@@ -288,8 +323,15 @@ var bw=document.getElementById("btns");
 modes.forEach(function(m){var b=document.createElement("button");b.className="w-btn"+(m.k===cur?"":" alt");b.textContent=m.label;
   b.onclick=function(){cur=m.k;[].forEach.call(bw.children,function(c,i){c.className="w-btn"+(modes[i].k===cur?"":" alt");});draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "You have data with NO labels and want to find natural groups. Which task is that?",
+        options: ["Regression", "Classification", "Clustering"],
+        answer: 2,
+        reveal: "No labels + 'which things group together' = <b>clustering</b>. Regression predicts a number and classification predicts a known category — both need labelled examples to learn from.",
+      },
     ),
+  bridge: "Take one dataset and frame all three: predict a numeric column, predict a category column, then drop the labels and cluster — same rows, three different questions.",
 };
 
 export const mlWidgets: ConceptWidgetDef[] = [

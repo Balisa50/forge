@@ -15,7 +15,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { renderWidgetHtml, widgetMeta, type WidgetParams } from "@/lib/conceptWidgets";
 
 interface Props {
@@ -166,6 +166,38 @@ export default function ConceptWidget({ id, params, caption }: Props) {
           }}
         >
           loading interactive…
+        </div>
+      )}
+
+      {meta.bridge && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "0.5rem",
+            padding: "0.625rem 0.875rem 0.75rem",
+            borderTop: "1px solid rgba(212,175,55,0.15)",
+          }}
+        >
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.3rem",
+              flexShrink: 0,
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.5625rem",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "var(--accent)",
+              paddingTop: "0.1rem",
+            }}
+          >
+            <ArrowRight size={11} /> Now do it for real
+          </span>
+          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+            {meta.bridge}
+          </span>
         </div>
       )}
     </div>

@@ -25,8 +25,15 @@ function apply(){
 }
 ["dir","jc","ai"].forEach(function(id){document.getElementById(id).addEventListener("change",apply);});
 apply();
-`
+`,
+      {
+        question: "In a row-direction flex container, which property centres the boxes left-to-right?",
+        options: ["align-items", "justify-content", "text-align"],
+        answer: 1,
+        reveal: "<b>justify-content</b> works along the main axis (horizontal in a row); <b>align-items</b> works across it. Switch direction to column and the two swap jobs.",
+      },
     ),
+  bridge: "In a real CSS file, make a flex row and toggle justify-content between flex-start, center, and space-between — then switch to column and watch the same property move things vertically instead.",
 };
 
 /** HTTP request/response inspector: click a method, see the full exchange. */
@@ -61,8 +68,15 @@ var bw=document.getElementById("mbtns");
 keys.forEach(function(k){var b=document.createElement("button");b.className="w-btn"+(k===cur?"":" alt");b.textContent=k;
   b.onclick=function(){cur=k;[].forEach.call(bw.children,function(c,i){c.className="w-btn"+(keys[i]===cur?"":" alt");});draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "A server returns 404. What does that actually tell you?",
+        options: ["The server crashed", "The server understood you fine — that resource just doesn't exist", "Your internet connection is down"],
+        answer: 1,
+        reveal: "<b>404</b> means the request was understood but the resource isn't there. A <b>500</b> means the server itself broke. The status code is the server's one-line summary of what happened.",
+      },
     ),
+  bridge: "Open your browser devtools Network tab, reload a page, and read the method + status code of each request — you'll see GETs, maybe a POST, and the exact codes coming back.",
 };
 
 /** Box model: slide margin/border/padding and watch the layers. */
@@ -98,8 +112,15 @@ function draw(){
 }
 ["m","b","p"].forEach(function(id){document.getElementById(id).addEventListener("input",draw);});
 draw();
-`
+`,
+      {
+        question: "You add 20px of padding to a box. What grows?",
+        options: ["The gap pushing neighbours away", "The element's own background area, inside the border", "Nothing visible changes"],
+        answer: 1,
+        reveal: "<b>padding</b> grows the element's own area inside the border, so its background extends. <b>margin</b> is the outside gap that pushes neighbours away — that's the distinction people trip on.",
+      },
     ),
+  bridge: "Inspect any element in devtools and open the box-model diagram in the styles panel — hover content, padding, border, margin and watch each layer highlight on the page.",
 };
 
 /** React state: click to setState, see re-render flash + render count. */
@@ -134,8 +155,15 @@ document.getElementById("inc").onclick=function(){
   document.getElementById("rc").textContent=renders;
   var r=document.getElementById("render");r.classList.remove("flash");void r.offsetWidth;r.classList.add("flash");
 };
-`
+`,
+      {
+        question: "You call setCount. How does the number on screen actually update?",
+        options: ["You manually edit the DOM text yourself", "React re-runs the component and repaints what changed", "The browser auto-refreshes the whole page"],
+        answer: 1,
+        reveal: "You never touch the DOM. setCount marks the component dirty; React <b>re-runs the function</b>, diffs the new JSX against the old, and patches only what changed.",
+      },
     ),
+  bridge: "Build a useState counter in a real React app, put a console.log at the top of the component, and click the button — watch it log once per render, proving the function re-runs.",
 };
 
 /** SQL query builder: toggle clauses, see the result table filter/sort. */
@@ -176,8 +204,15 @@ var bw=document.getElementById("cl");
 clauses.forEach(function(c){var b=document.createElement("button");b.className="w-btn alt";b.textContent="+ "+c.l;
   b.onclick=function(){st[c.k]=!st[c.k];b.className="w-btn"+(st[c.k]?"":" alt");b.textContent=(st[c.k]?"− ":"+ ")+c.l;draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "Which clause decides WHICH rows come back (not their order)?",
+        options: ["ORDER BY", "WHERE", "LIMIT"],
+        answer: 1,
+        reveal: "<b>WHERE</b> filters which rows qualify. <b>ORDER BY</b> only sorts what survived; <b>LIMIT</b> just caps the count. Each clause does exactly one job.",
+      },
     ),
+  bridge: "On a real table, run the same SELECT three times — add WHERE, then ORDER BY, then LIMIT one at a time — and watch the result set change at each step.",
 };
 
 export const webWidgets: ConceptWidgetDef[] = [

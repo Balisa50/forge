@@ -69,8 +69,15 @@ modes.forEach(function(m){
   bw.appendChild(b);
 });
 render();
-`
+`,
+      {
+        question: 'df["qty"]==2 — what does pandas hand back?',
+        options: ["The 2 matching rows", "A True/False for every row", "Just the number 2"],
+        answer: 1,
+        reveal: "It's a <b>boolean mask</b> — same length as the column, all True/False. It marks which rows match; it hasn't filtered anything yet.",
+      },
     ),
+  bridge: "Open a notebook, build a 4-row DataFrame, and run all four expressions yourself — then check df['qty'].dtype is int and the mask's dtype is bool.",
 };
 
 /** Drag slope + intercept; the line moves and the squared error updates live. */
@@ -129,8 +136,15 @@ document.getElementById("best").addEventListener("click",function(){
   draw();
 });
 draw();
-`
+`,
+      {
+        question: "To fit best, least-squares makes which quantity as small as possible?",
+        options: ["The total distance to the points", "The sum of the squared misses", "The count of points above the line"],
+        answer: 1,
+        reveal: "It minimises the <b>sum of squared residuals</b>. Squaring punishes big misses far more than small ones — which is why a single outlier can swing the whole line.",
+      },
     ),
+  bridge: "Fit the same points with sklearn's LinearRegression in a notebook and confirm .coef_ and .intercept_ match what 'Snap to best fit' found.",
 };
 
 /** Drag mean + spread; histogram + mean/median/std update. */
@@ -191,8 +205,15 @@ function draw(){
 }
 ["c","s","k"].forEach(function(id){document.getElementById(id).addEventListener("input",draw);});
 draw();
-`
+`,
+      {
+        question: "Skew the data hard to the right. What happens to the mean and median?",
+        options: ["Both slide right together", "The mean gets pulled right; the median barely moves", "The median moves; the mean stays put"],
+        answer: 1,
+        reveal: "The <b>mean</b> chases the long tail while the <b>median</b> just counts to the middle. That gap is exactly why incomes and house prices are reported as medians.",
+      },
     ),
+  bridge: "Load a skewed real column (salaries, prices) in pandas and compare .mean() to .median() — the wider the gap, the more skew.",
 };
 
 /** Drag correlation; scatter cloud morphs from -1 to +1. */
@@ -226,8 +247,15 @@ function draw(){
 }
 document.getElementById("r").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "A correlation of r = 0 between two variables means…",
+        options: ["They are completely unrelated", "No straight-line link — they could still curve together", "One must cause the other"],
+        answer: 1,
+        reveal: "r only measures <b>linear</b> association. A perfect U-shape can sit at r≈0 while being tightly related — and a high r never proves causation.",
+      },
     ),
+  bridge: "Run df.corr() on a real dataset, then scatter-plot the strongest pair — check the number actually matches the shape your eyes see.",
 };
 
 /** Pick an aggregation; see groupby collapse rows. */
@@ -276,8 +304,15 @@ aggs.forEach(function(a){
 });
 document.getElementById("raw").innerHTML=rawTable();
 render();
-`
+`,
+      {
+        question: "df.groupby('city')['qty'].sum() gives you back…",
+        options: ["One row per original order", "One row per city", "A single grand total"],
+        answer: 1,
+        reveal: "groupby <b>collapses</b> each group to one row: split by the key, apply the function per group, combine into one row per city.",
+      },
     ),
+  bridge: "In pandas, groupby a real dataset by a category and try .sum(), .mean(), .count() — watch the row count fall to the number of groups.",
 };
 
 /** Toggle join type; see which rows survive. */
@@ -324,8 +359,15 @@ joins.forEach(function(j){
   bw.appendChild(b);
 });
 build();
-`
+`,
+      {
+        question: "A customer with no orders. After an INNER join of customers→orders, that customer…",
+        options: ["Stays, with NULL for the order columns", "Disappears from the result", "Triggers an error"],
+        answer: 1,
+        reveal: "<b>INNER</b> keeps only ids found on both sides, so the order-less customer vanishes. Switch to <b>LEFT</b> to keep her with NULL totals.",
+      },
     ),
+  bridge: "Join two real tables with SQL or pandas .merge(how=...), then count rows after each type — you'll see INNER ≤ LEFT ≤ OUTER.",
 };
 
 export const dataWidgets: ConceptWidgetDef[] = [

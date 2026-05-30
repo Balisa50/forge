@@ -24,8 +24,15 @@ var bw=document.getElementById("btns");
 [["ctr","Container"],["vm","Virtual Machine"]].forEach(function(m){var b=document.createElement("button");b.className="w-btn"+(m[0]===cur?"":" alt");b.textContent=m[1];
   b.onclick=function(){cur=m[0];[].forEach.call(bw.children,function(c,i){c.className="w-btn"+(([ "ctr","vm"][i])===cur?"":" alt");});draw();};bw.appendChild(b);});
 draw();
-`
+`,
+      {
+        question: "Run 10 apps as containers vs 10 as VMs. What's the big difference in what gets duplicated?",
+        options: ["Containers each ship a full OS; VMs share one", "VMs each ship a full OS; containers share the host kernel", "They duplicate exactly the same thing"],
+        answer: 1,
+        reveal: "Each VM carries its <b>own full guest OS</b> — gigabytes, slow to boot. Containers <b>share the host kernel</b>, so they're megabytes and boot in milliseconds. That's why you can pack far more on one box.",
+      },
     ),
+  bridge: "Run `docker run` on an image and time how fast it starts, then compare to booting a VM of the same app — the container is up in under a second.",
 };
 
 /** Load balancer: send requests, see them spread across backends. */
@@ -62,8 +69,15 @@ document.getElementById("send").onclick=send;
 document.getElementById("burst").onclick=function(){for(var i=0;i<10;i++)send();};
 document.getElementById("reset").onclick=function(){servers.forEach(function(s){s.c=0;s.up=true;});rr=0;draw();};
 draw();
-`
+`,
+      {
+        question: "A load balancer round-robins traffic, then one backend goes down. What happens to new requests?",
+        options: ["They fail until the server is back", "The health check skips it and routes to the healthy ones", "They all pile onto one server"],
+        answer: 1,
+        reveal: "The balancer's <b>health check</b> takes the dead backend out of rotation, so new requests only hit healthy servers. Users never notice — that's the point of horizontal scaling.",
+      },
     ),
+  bridge: "Put two app instances behind nginx or a cloud LB, kill one, and curl the endpoint repeatedly — every response still succeeds, served by the survivor.",
 };
 
 /** CI/CD pipeline stepper. */
@@ -103,8 +117,15 @@ function run(){
 document.getElementById("run").onclick=function(){willFail=false;run();};
 document.getElementById("break").onclick=function(){willFail=true;run();};
 draw([]);
-`
+`,
+      {
+        question: "A unit test fails in stage 3 of a 5-stage pipeline. What happens to the deploy stage?",
+        options: ["It runs anyway with a warning", "It never runs — the pipeline halts at the failure", "It runs, then rolls back later"],
+        answer: 1,
+        reveal: "A failing stage <b>halts the pipeline</b> — deploy never executes. That's the entire point of CI: the broken commit is caught before it can reach users.",
+      },
     ),
+  bridge: "Add a deliberately failing test to a repo with CI and push — watch the pipeline go red and block the merge/deploy in the Actions/CI tab.",
 };
 
 /** Autoscaling under load. */
@@ -138,8 +159,15 @@ function draw(){
 }
 document.getElementById("t").addEventListener("input",draw);
 draw();
-`
+`,
+      {
+        question: "Traffic doubles past what your instances can handle. What does an autoscaler do?",
+        options: ["Drops the extra requests", "Adds instances until CPU drops back to target", "Slows every request equally"],
+        answer: 1,
+        reveal: "When average CPU crosses the threshold the scaler <b>adds instances</b> to share the load and pull CPU back toward target; when traffic falls it removes them so you stop paying.",
+      },
     ),
+  bridge: "Set a CPU-based scaling policy on a cloud instance group, run a load test (k6 or hey), and watch the instance count climb then shrink as load rises and falls.",
 };
 
 /** DNS resolution walk. */
@@ -176,8 +204,15 @@ function draw(){
 document.getElementById("step").onclick=function(){if(i<steps.length)i++;draw();};
 document.getElementById("reset").onclick=function(){i=0;draw();};
 draw();
-`
+`,
+      {
+        question: "Your browser needs the IP for forge.app and nothing is cached. Who does the resolver ask FIRST?",
+        options: ["The authoritative nameserver directly", "A root server, to find who runs .app", "The website's own server"],
+        answer: 1,
+        reveal: "With an empty cache the resolver starts at a <b>root server</b> to learn who runs the .app TLD, then asks the TLD server, then the authoritative nameserver — top down, one level at a time.",
+      },
     ),
+  bridge: "Run `dig +trace forge.app` (or any domain) and read the output — you'll see the exact root → TLD → authoritative walk this sim steps through.",
 };
 
 export const devopsWidgets: ConceptWidgetDef[] = [
