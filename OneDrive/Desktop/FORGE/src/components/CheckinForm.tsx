@@ -70,7 +70,6 @@ export default function CheckinForm({
 
   const [selectedTrackId, setSelectedTrackId] = useState(roadmap.tracks[0]?.id ?? "");
   const [selectedTaskId, setSelectedTaskId] = useState("");
-  const [description, setDescription] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [dragOver, setDragOver] = useState(false);
@@ -235,7 +234,6 @@ export default function CheckinForm({
     setError("");
 
     if (!selectedTaskId) { setError("Select a task."); return; }
-    if (description.trim().length < 50) { setError("Description must be at least 50 characters."); return; }
     if (engagementBlocked) {
       setError(`Tick every day item on the week page first — ${preflight?.missing}/${preflight?.total} unticked. Open ${preflight?.learnUrl ?? "the week page"}.`);
       return;
@@ -259,7 +257,6 @@ export default function CheckinForm({
           roadmapId: roadmap.id,
           trackId: selectedTrackId,
           taskId: selectedTaskId,
-          description,
           projectUrl: projectUrl.trim() || null,
           files: attachments.length > 0 ? attachments : undefined,
         }),
@@ -415,51 +412,6 @@ export default function CheckinForm({
           <CheckCircle2 size={13} /> All {preflight.total} day items ticked. You&apos;re cleared to submit.
         </div>
       )}
-
-      {/* Description */}
-      <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.25rem" }}>
-        <label style={{ display: "block", color: "var(--text-secondary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-          What Did You Build? <span style={{ color: "var(--red)" }}>*</span>
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="forge-input"
-          style={{ minHeight: "140px", resize: "vertical" }}
-          placeholder="Describe exactly what you built, learned, or accomplished. Be specific — The Professor will ask you about this. Min 50 characters."
-          required
-          minLength={50}
-        />
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.5rem" }}>
-          <div style={{ flex: 1, height: "3px", background: "var(--border)", borderRadius: "2px", marginRight: "0.75rem", overflow: "hidden" }}>
-            <div style={{
-              height: "100%",
-              borderRadius: "2px",
-              transition: "width 0.2s, background 0.2s",
-              width: `${Math.min(100, (description.length / 200) * 100)}%`,
-              background: description.length < 50 ? "var(--red)"
-                : description.length < 100 ? "var(--yellow)"
-                : "var(--green)",
-            }} />
-          </div>
-          <span style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.6875rem",
-            color: description.length < 50 ? "var(--red)"
-              : description.length < 100 ? "var(--yellow)"
-              : "var(--green)",
-            transition: "color 0.2s",
-            flexShrink: 0,
-          }}>
-            {description.length < 50
-              ? `${50 - description.length} more to go`
-              : description.length >= 150
-              ? "✓ Detailed"
-              : `${description.length} chars`
-            }
-          </span>
-        </div>
-      </div>
 
       {/* Proof — a single section. EITHER a URL OR file(s) satisfies it.
           A green check appears the moment one is provided so the mentee
@@ -642,7 +594,7 @@ export default function CheckinForm({
         type="submit"
         className="forge-btn forge-btn-primary"
         style={{ width: "100%", maxWidth: "480px", padding: "1rem", fontSize: "1rem" }}
-        disabled={submitting || !selectedTaskId || description.length < 50 || !hasProof || engagementBlocked}
+        disabled={submitting || !selectedTaskId || !hasProof || engagementBlocked}
       >
         {submitting
           ? <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>

@@ -105,7 +105,6 @@ export async function POST(req: NextRequest) {
   let roadmapId: string | undefined;
   let trackId: string | undefined;
   let taskId: string | undefined;
-  let description: string | undefined;
   let projectUrl: string | null = null;
   let screenshotFile: File | null = null;
   let incomingFiles: unknown[] = [];
@@ -115,7 +114,6 @@ export async function POST(req: NextRequest) {
     roadmapId = body.roadmapId as string | undefined;
     trackId = body.trackId as string | undefined;
     taskId = body.taskId as string | undefined;
-    description = body.description as string | undefined;
     projectUrl = ((body.projectUrl as string | null | undefined) ?? "").trim() || null;
     if (Array.isArray(body.files)) incomingFiles = body.files;
   } else {
@@ -123,17 +121,12 @@ export async function POST(req: NextRequest) {
     roadmapId = formData.get("roadmapId") as string | undefined;
     trackId = formData.get("trackId") as string | undefined;
     taskId = formData.get("taskId") as string | undefined;
-    description = formData.get("description") as string | undefined;
     projectUrl = ((formData.get("projectUrl") as string | null) ?? "").trim() || null;
     screenshotFile = formData.get("screenshot") as File | null;
   }
 
-  if (!roadmapId || !trackId || !taskId || !description) {
+  if (!roadmapId || !trackId || !taskId) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
-
-  if (description.trim().length < 50) {
-    return NextResponse.json({ error: "Description too short (min 50 characters)" }, { status: 400 });
   }
 
   // Validate file attachments if provided
@@ -233,7 +226,7 @@ export async function POST(req: NextRequest) {
       roadmapId,
       trackId,
       taskId,
-      description,
+      description: "",
       evidenceType,
       evidenceUrl,
       evidenceData: evidenceData as object,
