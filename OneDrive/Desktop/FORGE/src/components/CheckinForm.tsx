@@ -78,6 +78,50 @@ export default function CheckinForm({
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  // Draft persistence: the whole submission (track, task, URL, and any
+  // uploaded files) survives a refresh or navigating away. The only things
+  // that clear it are the owner removing files / editing fields, or a
+  // successful submit. Scoped per-roadmap so different roadmaps don't collide.
+  const DRAFT_KEY = `forge:checkin-draft:${roadmap.id}`;
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydrate the saved draft once, on mount.
+  useEffect(() => {
+    if (typeof window === "undefined") { setHydrated(true); return; }
+    try {
+      const raw = window.localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const d = JSON.parse(raw) as {
+          trackId?: string; taskId?: string; projectUrl?: string; attachments?: FileAttachment[];
+        };
+        if (d.trackId && roadmap.tracks.some((t) => t.id === d.trackId)) setSelectedTrackId(d.trackId);
+        if (typeof d.taskId === "string") setSelectedTaskId(d.taskId);
+        if (typeof d.projectUrl === "string") setProjectUrl(d.projectUrl);
+        if (Array.isArray(d.attachments)) setAttachments(d.attachments);
+      }
+    } catch { /* corrupt draft — ignore */ }
+    setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist the draft on every change, but only after hydration so the
+  // initial empty state never clobbers a saved draft.
+  useEffect(() => {
+    if (!hydrated || typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ trackId: selectedTrackId, taskId: selectedTaskId, projectUrl, attachments }),
+      );
+    } catch { /* quota exceeded (large files) — skip persisting this change */ }
+  }, [hydrated, DRAFT_KEY, selectedTrackId, selectedTaskId, projectUrl, attachments]);
+
+  const clearDraft = () => {
+    if (typeof window !== "undefined") {
+      try { window.localStorage.removeItem(DRAFT_KEY); } catch { /* */ }
+    }
+  };
+
   // Engagement preflight — server tells us whether the selected week is
   // ready to submit (every learn-item ticked). null until a task is picked
   // or while loading.
@@ -271,6 +315,7 @@ export default function CheckinForm({
       }
 
       setSubmitted(true);
+      clearDraft();
       setTimeout(() => router.push("/dashboard"), 1500);
     } catch {
       setError("Something went wrong. Please try again.");
