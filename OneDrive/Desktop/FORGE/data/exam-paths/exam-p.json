@@ -592,6 +592,18 @@
               "answer": "$c = \\tfrac{3}{8}$, and $P(X \\le 1) = 0.125$"
             },
             {
+              "kind": "worked",
+              "title": "From CDF back to density",
+              "body": "A continuous variable has CDF $F(x) = x^2$ for $0 \\le x \\le 1$ (and $0$ below, $1$ above). Find the density $f(x)$ and the probability $P(0.2 \\le X \\le 0.5)$.",
+              "steps": [
+                "Density is the *slope* of the accumulated probability: $f(x) = F'(x) = 2x$ on $[0,1]$.",
+                "Sanity-check it is a valid pdf: $f(x) = 2x \\ge 0$ on $[0,1]$, and $\\int_0^1 2x\\,dx = x^2\\big|_0^1 = 1$. ✓",
+                "Probability over an interval is just the jump in the CDF: $P(0.2 \\le X \\le 0.5) = F(0.5) - F(0.2) = 0.25 - 0.04 = 0.21$.",
+                "Cross-check by integrating the density: $\\int_{0.2}^{0.5} 2x\\,dx = x^2\\big|_{0.2}^{0.5} = 0.25 - 0.04 = 0.21$ — differentiating then re-integrating returns the same answer. ✓"
+              ],
+              "answer": "$f(x) = 2x$; $P(0.2 \\le X \\le 0.5) = 0.21$"
+            },
+            {
               "kind": "trick",
               "title": "First move on any pdf: set the area to 1",
               "body": "Whenever a density has an unknown constant, your first line is always $\\int f = 1$ — that single equation solves for the constant. And to get any probability, integrate the density (or subtract two CDF values). Density questions are integration questions in disguise."
@@ -604,9 +616,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Difference between $p(x)$ and $f(x)$?", "back": "pmf $p(x)$ is an actual probability and sums to 1; pdf $f(x)$ is a density and integrates to 1." },
-                { "front": "For continuous $X$, what is $P(X = a)$?", "back": "Zero — a single point has no width, so no area under the density." },
-                { "front": "How do you get $P(a\\le X\\le b)$ from the CDF?", "back": "$F(b) - F(a)$." }
+                { "front": "Why can a density $f(x)$ exceed 1 while a pmf $p(x)$ never can?", "back": "A pmf value *is* a probability, so it lives in $[0,1]$ and the values sum to 1. A pdf value is a *density* — probability per unit length — so it only has to integrate to 1. A tall narrow pdf can hit $f(x)=5$ over a width of $0.1$ and still enclose area 1. Probability is the area under $f$, never its height, which is why $P(X=a)=0$ for continuous $X$." },
+                { "front": "How do the pdf and CDF connect, and why does $P(a\\le X\\le b)=F(b)-F(a)$?", "back": "The CDF accumulates probability up to a point, $F(x)=P(X\\le x)$, so the density is its slope: $f(x)=F'(x)$. Probability on $[a,b]$ is the *amount accumulated by $b$ minus the amount already accumulated by $a$* — i.e. $F(b)-F(a)$ — which by the fundamental theorem of calculus equals $\\int_a^b f$." }
               ]
             }
           ],
@@ -684,6 +695,18 @@
               "answer": "$E[X] = 2.1$, $\\mathrm{Var}(X) = 0.49$"
             },
             {
+              "kind": "worked",
+              "title": "Continuous mean, variance, and a linear transform",
+              "body": "A continuous variable has density $f(x) = 2x$ on $[0,1]$. Find $E[X]$ and $\\mathrm{Var}(X)$, then use them to get $\\mathrm{Var}(2X + 5)$ without re-integrating.",
+              "steps": [
+                "Mean by LOTUS: $E[X] = \\int_0^1 x\\cdot 2x\\,dx = \\int_0^1 2x^2\\,dx = \\tfrac{2}{3}$.",
+                "Second moment, same machinery: $E[X^2] = \\int_0^1 x^2\\cdot 2x\\,dx = \\int_0^1 2x^3\\,dx = \\tfrac{1}{2}$.",
+                "Variance via the shortcut, *not* by integrating squared deviations: $\\mathrm{Var}(X) = E[X^2] - (E[X])^2 = \\tfrac{1}{2} - \\left(\\tfrac{2}{3}\\right)^2 = \\tfrac{1}{2} - \\tfrac{4}{9} = \\tfrac{1}{18} \\approx 0.0556$.",
+                "Linear transform: the shift $+5$ contributes nothing and the scale $2$ enters squared, so $\\mathrm{Var}(2X+5) = 2^2\\,\\mathrm{Var}(X) = 4 \\cdot \\tfrac{1}{18} = \\tfrac{2}{9} \\approx 0.222$. (As a check, the mean *does* move: $E[2X+5] = 2(\\tfrac23)+5 = \\tfrac{19}{3}$.)"
+              ],
+              "answer": "$E[X]=\\tfrac23$, $\\mathrm{Var}(X)=\\tfrac1{18}$, $\\mathrm{Var}(2X+5)=\\tfrac29$"
+            },
+            {
               "kind": "trick",
               "title": "Never integrate variance directly",
               "body": "Computing $\\int (x - \\mu)^2 f(x)\\,dx$ by hand is slow and error-prone. Always use $\\mathrm{Var}(X) = E[X^2] - \\mu^2$: find $E[X]$ and $E[X^2]$ with the same machinery, then subtract. And remember the constant $b$ vanishes from variance — only the scale $a$ survives, squared."
@@ -696,9 +719,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "State the variance shortcut.", "back": "$\\mathrm{Var}(X) = E[X^2] - (E[X])^2$." },
-                { "front": "$\\mathrm{Var}(aX+b) = ?$", "back": "$a^2\\,\\mathrm{Var}(X)$ — the shift $b$ drops out, the scale is squared." },
-                { "front": "What is $E[g(X)]$ for continuous $X$?", "back": "$\\int g(x) f(x)\\,dx$ — weight each $g$ value by the density (LOTUS)." }
+                { "front": "Why does $\\mathrm{Var}(X) = E[X^2] - (E[X])^2$, and why prefer it to integrating squared deviations?", "back": "Expand the definition: $\\mathrm{Var}(X)=E[(X-\\mu)^2]=E[X^2-2\\mu X+\\mu^2]=E[X^2]-2\\mu E[X]+\\mu^2=E[X^2]-\\mu^2$. So the two forms are *identical* — but $E[X^2]$ uses the same summation/integration machinery as $E[X]$, so you compute two ordinary moments and subtract, instead of doing the messy $(x-\\mu)^2$ integral." },
+                { "front": "Why does $\\mathrm{Var}(aX+b)=a^2\\mathrm{Var}(X)$ — the shift gone, the scale squared?", "back": "Variance measures spread around the mean, and sliding the whole distribution by $b$ moves the mean with it, leaving every distance from center unchanged — so $b$ drops out. Scaling by $a$ stretches each deviation by $a$; since variance averages *squared* deviations, that scales it by $a^2$. (Hence doubling a variable quadruples its variance.)" }
               ]
             }
           ],
@@ -776,6 +798,19 @@
               "answer": "$\\approx 0.1008$"
             },
             {
+              "kind": "worked",
+              "title": "Binomial recognition and 'at least'",
+              "body": "A student guesses on a 10-question multiple-choice quiz, each question correct with probability $0.25$ independently. Find the probability of **at least 2** correct, plus the mean and standard deviation of the score.",
+              "steps": [
+                "Identify the story: a *fixed* number of independent trials ($n=10$) with constant success probability ($p=0.25$), counting successes → Binomial$(10, 0.25)$.",
+                "'At least 2' is cheapest via the complement: $P(X\\ge 2) = 1 - P(X=0) - P(X=1)$.",
+                "$P(X=0) = (0.75)^{10} = 0.0563$; $P(X=1) = \\binom{10}{1}(0.25)(0.75)^9 = 10(0.25)(0.0751) = 0.1877$.",
+                "$P(X\\ge 2) = 1 - 0.0563 - 0.1877 = 0.7560$.",
+                "Moments straight from the formulas: mean $= np = 10(0.25) = 2.5$; variance $= np(1-p) = 10(0.25)(0.75) = 1.875$, so SD $= \\sqrt{1.875} \\approx 1.37$. (Mean $\\ne$ variance here — that rules out Poisson and confirms binomial.)"
+              ],
+              "answer": "$P(X\\ge 2) \\approx 0.756$; mean $2.5$, SD $\\approx 1.37$"
+            },
+            {
               "kind": "trick",
               "title": "Poisson's signature: mean equals variance",
               "body": "If a problem hands you a mean and a variance that are *equal*, suspect Poisson immediately. Also: a binomial with large $n$ and small $p$ is well-approximated by Poisson with $\\lambda = np$ — handy when $n$ is too big to compute $\\binom{n}{k}$ comfortably."
@@ -788,9 +823,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Binomial mean and variance?", "back": "Mean $np$, variance $np(1-p)$." },
-                { "front": "Poisson mean and variance?", "back": "Both equal $\\lambda$ — equal mean and variance is the Poisson fingerprint." },
-                { "front": "Geometric (trials until 1st success) mean?", "back": "$1/p$ — e.g. $p=0.2$ means on average 5 trials." }
+                { "front": "Why identify the *story* before reaching for a discrete formula?", "back": "Each family answers a distinct counting question: binomial counts successes in a *fixed* number of trials; geometric/negative-binomial count *trials until* the 1st/$r$-th success; Poisson counts rare events in an interval at a known rate; hypergeometric is binomial *without replacement*. The stem's structure ('how many in $n$' vs 'how long until' vs 'with/without replacement') picks the family — then the formula and moments are automatic." },
+                { "front": "Why does the Poisson have mean = variance, and when does it approximate the binomial?", "back": "Both equal $\\lambda$, so seeing an equal mean and variance is the Poisson fingerprint. It arises as the limit of Binomial$(n,p)$ when $n$ is large and $p$ small with $\\lambda = np$ held fixed: the binomial's variance $np(1-p)\\to np=\\lambda$ as $p\\to 0$, collapsing mean and variance together. That makes Poisson$(\\lambda=np)$ a fast stand-in when $n$ is too big for $\\binom{n}{k}$." }
               ]
             }
           ],
@@ -868,6 +902,19 @@
               "answer": "$\\approx 0.670$"
             },
             {
+              "kind": "worked",
+              "title": "Normal standardization with the Z-table",
+              "body": "Claim sizes are Normal with mean $\\mu = 1000$ and standard deviation $\\sigma = 200$. Find $P(X > 1300)$ and $P(900 < X < 1300)$.",
+              "steps": [
+                "Convert each raw value to a $Z$-score by *how many SDs it sits from the mean*: $Z = \\dfrac{X-\\mu}{\\sigma}$ — divide by $\\sigma = 200$, never by the variance $40{,}000$.",
+                "Upper bound: $Z = \\dfrac{1300-1000}{200} = 1.5$, so $P(X>1300) = 1 - \\Phi(1.5) = 1 - 0.9332 = 0.0668$.",
+                "Lower bound: $Z = \\dfrac{900-1000}{200} = -0.5$, so $\\Phi(-0.5) = 0.3085$.",
+                "Probability between them is the difference of CDFs: $P(900<X<1300) = \\Phi(1.5) - \\Phi(-0.5) = 0.9332 - 0.3085 = 0.6247$.",
+                "Sanity check against the empirical rule: $1300$ is $1.5$ SD above the mean (upper tail a few percent) and $900$ is $0.5$ SD below — a middle chunk around 62% is exactly what you'd expect. ✓"
+              ],
+              "answer": "$P(X>1300) = 0.0668$; $P(900<X<1300) = 0.6247$"
+            },
+            {
               "kind": "trick",
               "title": "Memorylessness kills the conditioning",
               "body": "For an exponential, $P(X > s + t \\mid X > s) = P(X > t)$ — always. The moment you see *given it has already survived...*, drop the elapsed time entirely and compute the fresh tail probability. And for the normal, the empirical rule (68–95–99.7 within 1–2–3 SDs) lets you eyeball many answers without a table."
@@ -880,9 +927,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Exponential mean and survival function?", "back": "Mean $1/\\lambda$; $P(X>x) = e^{-\\lambda x}$." },
-                { "front": "What makes the exponential special?", "back": "Memorylessness: $P(X>s+t\\mid X>s)=P(X>t)$." },
-                { "front": "How do you standardize a normal?", "back": "$Z = \\frac{X-\\mu}{\\sigma}$ — divide by the SD, then use the $Z$-table." }
+                { "front": "Why is the exponential memoryless — where does the elapsed time go?", "back": "Its survival function is $P(X>x)=e^{-\\lambda x}$, which multiplies: $P(X>s+t\\mid X>s)=\\dfrac{e^{-\\lambda(s+t)}}{e^{-\\lambda s}}=e^{-\\lambda t}=P(X>t)$. The already-survived time $s$ cancels exactly, so a used component is *as good as new*. That is why 'given it has lasted $s$' lets you discard $s$ and compute a fresh tail." },
+                { "front": "Why standardize a normal by $\\sigma$ (not $\\sigma^2$), and what does $Z$ measure?", "back": "$Z = \\frac{X-\\mu}{\\sigma}$ rescales the variable to *how many standard deviations* it lies from the mean — a pure, unitless distance. That only works if you divide by the SD, which shares $X$'s units; dividing by the variance $\\sigma^2$ leaves the wrong units and a wrong $Z$. Once in $Z$ units, every normal collapses to the single standard table." }
               ]
             }
           ],
@@ -961,6 +1007,18 @@
               "answer": "Mean $1000$, variance $250\\,000$"
             },
             {
+              "kind": "worked",
+              "title": "Turning a sum of independents into a product",
+              "body": "$X \\sim \\text{Normal}(2, 9)$ and $Y \\sim \\text{Normal}(1, 16)$ are independent. Use MGFs to find the distribution of $X + Y$.",
+              "steps": [
+                "Write each MGF from the normal form $e^{\\mu t + \\sigma^2 t^2/2}$: $M_X(t) = e^{2t + 9t^2/2}$ and $M_Y(t) = e^{t + 16t^2/2}$.",
+                "Independence means the sum's MGF is the *product*: $M_{X+Y}(t) = M_X(t)\\,M_Y(t) = e^{(2+1)t + (9+16)t^2/2} = e^{3t + 25t^2/2}$.",
+                "Pattern-match the result back to $e^{\\mu t + \\sigma^2 t^2/2}$: $\\mu = 3$, $\\sigma^2 = 25$. By uniqueness, $X+Y \\sim \\text{Normal}(3, 25)$.",
+                "Cross-check: for independent variables means add ($2+1=3$) and variances add ($9+16=25$). The MGF does more — it *proves the sum is still normal*, not merely that the first two moments add. ✓"
+              ],
+              "answer": "$X+Y \\sim \\text{Normal}(3, 25)$"
+            },
+            {
               "kind": "trick",
               "title": "Match the form, skip the calculus",
               "body": "Memorize the canonical MGFs and you often never differentiate. Poisson$(\\lambda)$: $e^{\\lambda(e^t-1)}$. Normal$(\\mu,\\sigma^2)$: $e^{\\mu t + \\sigma^2 t^2/2}$. Gamma$(\\alpha,\\theta)$: $(1-\\theta t)^{-\\alpha}$. Exponential$(\\lambda)$ is Gamma with $\\alpha=1$: $(1-t/\\lambda)^{-1} = \\frac{\\lambda}{\\lambda-t}$. When an MGF appears, try to read off its parameters by pattern-matching — then quote the mean and variance from memory."
@@ -973,11 +1031,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "How do you get $E[X^k]$ from the MGF?", "back": "$E[X^k] = M^{(k)}(0)$, the $k$-th derivative evaluated at $t=0$." },
-                { "front": "Variance from the MGF?", "back": "$\\mathrm{Var}(X) = M''(0) - [M'(0)]^2$." },
-                { "front": "MGF of a sum of independent variables?", "back": "The product: $M_{X+Y}(t) = M_X(t)M_Y(t)$." },
-                { "front": "MGF of $aX+b$?", "back": "$e^{bt}M_X(at)$." },
-                { "front": "Normal$(\\mu,\\sigma^2)$ MGF?", "back": "$e^{\\mu t + \\sigma^2 t^2/2}$." }
+                { "front": "Why does the $k$-th derivative of $M(t)$ at $0$ produce $E[X^k]$ — and why must you still subtract for variance?", "back": "Expanding $M(t)=E[e^{tX}] = 1 + tE[X] + \\frac{t^2}{2!}E[X^2] + \\cdots$ makes the coefficient of $t^k$ equal $E[X^k]/k!$, so differentiating $k$ times and setting $t=0$ isolates $E[X^k]$. But $M''(0)=E[X^2]$ is the *raw* second moment, so variance still needs $M''(0) - [M'(0)]^2$ — forgetting that subtraction is the classic MGF error." },
+                { "front": "Why does an independent sum multiply MGFs, and what does the uniqueness property buy you?", "back": "$M_{X+Y}(t)=E[e^{t(X+Y)}]=E[e^{tX}e^{tY}]$, and independence factors the expectation into $M_X(t)M_Y(t)$. Uniqueness says an MGF fingerprints exactly one distribution, so after multiplying you can pattern-match the product to a known form and *identify* the sum's distribution — proving, e.g., that independent normals sum to a normal, not just that their moments add." }
               ]
             }
           ],
@@ -1056,6 +1111,18 @@
               "answer": "$f_Y(y) = \\frac{1}{2\\sqrt{y}}$, $0<y<1$"
             },
             {
+              "kind": "worked",
+              "title": "A monotone transform via the Jacobian",
+              "body": "Let $X \\sim \\text{Exponential}(1)$, so $f_X(x) = e^{-x}$ for $x > 0$. Find the density of $Y = \\sqrt{X}$.",
+              "steps": [
+                "Here $g(x)=\\sqrt{x}$ *is* monotone increasing on $x>0$, so the Jacobian shortcut applies. Invert: $x = g^{-1}(y) = y^2$.",
+                "Jacobian (the stretch factor): $\\dfrac{d}{dy}g^{-1}(y) = \\dfrac{d}{dy}y^2 = 2y$, and $|2y| = 2y$ for $y>0$.",
+                "Assemble: $f_Y(y) = f_X(y^2)\\,|2y| = e^{-y^2}\\cdot 2y = 2y\\,e^{-y^2}$ for $y>0$ (a Rayleigh density).",
+                "Update the support and cross-check it integrates to 1: $x>0 \\Rightarrow y>0$, and $\\int_0^\\infty 2y\\,e^{-y^2}\\,dy = \\big[-e^{-y^2}\\big]_0^\\infty = 1$. ✓ The Jacobian rescaled the density so the total area is preserved."
+              ],
+              "answer": "$f_Y(y) = 2y\\,e^{-y^2}$, $y>0$"
+            },
+            {
               "kind": "trick",
               "title": "Probability integral transform",
               "body": "Two universal facts the exam exploits: (1) If $U \\sim \\text{Uniform}(0,1)$ then $X = F^{-1}(U)$ has CDF $F$ — this is how you *simulate* any distribution. (2) Going the other way, if $X$ has continuous CDF $F$, then $F(X) \\sim \\text{Uniform}(0,1)$. So a transform like $Y = 1 - e^{-\\lambda X}$ applied to an exponential is *exactly* its own CDF, making $Y$ uniform on $(0,1)$ instantly — no integration needed."
@@ -1068,10 +1135,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "The method that always works for $Y=g(X)$?", "back": "The CDF method: $F_Y(y)=P(g(X)\\le y)$, then differentiate." },
-                { "front": "Jacobian formula for monotone $g$?", "back": "$f_Y(y)=f_X(g^{-1}(y))\\,|\\frac{d}{dy}g^{-1}(y)|$." },
-                { "front": "Distribution of $F(X)$ when $F$ is continuous?", "back": "Uniform$(0,1)$ — the probability integral transform." },
-                { "front": "Why can't you use the Jacobian for $Y=X^2$ on $(-1,1)$?", "back": "$x^2$ isn't monotone there; two $x$ values map to each $y$. Use the CDF method." }
+                { "front": "Why does the CDF method work for *any* transform when the Jacobian doesn't?", "back": "Events keep their probability even after $g$ reshapes the density, so $F_Y(y)=P(g(X)\\le y)$ just rewrites the question in terms of $X$, solves the inequality, and reads off the known $F_X$ — then differentiate for $f_Y$. It never assumes $g$ is one-to-one, so it handles folds like $x^2$ that map two $x$'s to one $y$, where the Jacobian would silently miss half the mass." },
+                { "front": "What does the Jacobian $|\\frac{d}{dy}g^{-1}(y)|$ do, and why must you restate the support of $Y$?", "back": "For a monotone $g$ the Jacobian is the local stretch factor: it rescales $f_X$ so that probability is conserved when the axis is stretched or compressed, keeping the total area at 1. You must also map the support — the range of $g$ over $X$'s support sets where $f_Y$ is nonzero; skip that and the 'density' won't integrate to 1." }
               ]
             }
           ],
@@ -1150,6 +1215,18 @@
               "answer": "$\\pi_{0.9} \\approx 1151$"
             },
             {
+              "kind": "worked",
+              "title": "Mean vs median vs mode on a skewed density",
+              "body": "A variable has density $f(x) = 2(1-x)$ on $[0,1]$ (it slopes down from a peak at the left). Find the mode, median, and mean, and confirm how they line up.",
+              "steps": [
+                "**Mode** — where the density is tallest: $f(x)=2(1-x)$ decreases across $[0,1]$, so its maximum is at the left edge, $x = 0$. Mode $= 0$.",
+                "**Median** — splits the area in half. CDF: $F(x)=\\int_0^x 2(1-t)\\,dt = 2x - x^2$. Set $2m - m^2 = 0.5 \\Rightarrow m^2 - 2m + 0.5 = 0 \\Rightarrow m = 1 - \\tfrac{\\sqrt{2}}{2} \\approx 0.293$.",
+                "**Mean** — the balance point: $E[X]=\\int_0^1 x\\cdot 2(1-x)\\,dx = \\int_0^1 (2x - 2x^2)\\,dx = 1 - \\tfrac{2}{3} = \\tfrac{1}{3} \\approx 0.333$.",
+                "Line them up: mode $0 <$ median $0.293 <$ mean $0.333$. The long right tail pulls the mean highest — exactly the right-skew ordering mode $<$ median $<$ mean. ✓"
+              ],
+              "answer": "Mode $0$, median $\\approx 0.293$, mean $\\tfrac13$ (right-skewed)"
+            },
+            {
               "kind": "trick",
               "title": "Mean > median > mode for right skew",
               "body": "For a right-skewed distribution (long upper tail — lognormal, exponential, most loss models), the ordering is **mean $>$ median $>$ mode**. The rare large values inflate the mean most, the median less, and leave the mode (the peak) alone. If a question shows mean far above median, you are looking at right skew — and the mean is *not* a typical value. This single fact answers many qualitative questions instantly."
@@ -1162,10 +1239,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "How do you find the $p$-th percentile?", "back": "Solve $F(\\pi_p)=p$ for $\\pi_p$." },
-                { "front": "Median of an exponential$(\\lambda)$?", "back": "$\\frac{\\ln 2}{\\lambda}$ — always less than the mean $1/\\lambda$." },
-                { "front": "How do you find the mode?", "back": "Maximize the density $f(x)$: solve $f'(x)=0$, confirm a max." },
-                { "front": "Ordering for a right-skewed distribution?", "back": "Mean $>$ median $>$ mode." }
+                { "front": "What exactly is the $p$-th percentile — and what's the classic wrong answer?", "back": "It's the *$x$-value* $\\pi_p$ at which the accumulated probability reaches $p$: solve $F(\\pi_p)=p$. The classic slip is reporting $p$ itself (e.g. 0.90) when asked for the 90th percentile — the answer is the dollar/time/loss amount $\\pi_p$, not the probability." },
+                { "front": "Why do mean, median, and mode coincide when symmetric but separate under skew?", "back": "Each measures a different 'center': median halves the area, mode is the density's peak, mean is the balance point. Symmetry makes all three land at the axis of symmetry. A long right tail adds rare large values that pull the *balance point* (mean) outward most, the area-splitting median less, and leave the peak (mode) put — giving mode $<$ median $<$ mean for right skew (reversed for left)." }
               ]
             }
           ],
@@ -1244,6 +1319,18 @@
               "answer": "$\\approx 0.520$"
             },
             {
+              "kind": "worked",
+              "title": "Gamma as a sum of waits",
+              "body": "Claims arrive in a Poisson process; the time between successive claims is exponential with mean $\\theta = 2$ hours. Find the mean and standard deviation of the waiting time until the **4th** claim, and name the distribution.",
+              "steps": [
+                "The 4th-arrival time is the sum of 4 independent exponential waits, which is exactly Gamma$(\\alpha, \\theta) = \\text{Gamma}(4, 2)$ — that is the Gamma's origin story.",
+                "Mean straight from the formula: $E[X] = \\alpha\\theta = 4(2) = 8$ hours.",
+                "Variance: $\\mathrm{Var}(X) = \\alpha\\theta^2 = 4(2^2) = 16$, so SD $= 4$ hours.",
+                "Cross-check via the sum: each exponential has mean $2$ and variance $\\theta^2 = 4$; for independent variables means and variances add, giving mean $4(2)=8$ and variance $4(4)=16$. ✓ Same answer, confirming Gamma is just stacked exponentials."
+              ],
+              "answer": "$X \\sim \\text{Gamma}(4,2)$: mean $8$ h, SD $4$ h"
+            },
+            {
               "kind": "trick",
               "title": "Take logs first for anything lognormal",
               "body": "Every lognormal *probability* question reduces to a normal one: turn $X$ into $\\ln X$, standardize, hit the $Z$-table. Never integrate the lognormal density. And for the Gamma, remember it is just a sum of exponentials — if you see 'time until the 3rd claim' with exponential interarrivals, that total is Gamma$(3,\\theta)$ and you can quote mean $3\\theta$ and variance $3\\theta^2$ without setup."
@@ -1256,11 +1343,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Gamma$(\\alpha,\\theta)$ mean and variance?", "back": "Mean $\\alpha\\theta$, variance $\\alpha\\theta^2$." },
-                { "front": "What is a Gamma, intuitively?", "back": "The sum of $\\alpha$ independent exponentials with mean $\\theta$." },
-                { "front": "Beta$(\\alpha,\\beta)$ mean?", "back": "$\\frac{\\alpha}{\\alpha+\\beta}$, on the interval $[0,1]$." },
-                { "front": "Lognormal mean if $\\ln X\\sim N(\\mu,\\sigma^2)$?", "back": "$e^{\\mu+\\sigma^2/2}$ — not $e^\\mu$ (that's the median)." },
-                { "front": "How do you compute a lognormal probability?", "back": "Take logs, standardize, use the normal table." }
+                { "front": "How does each family's *story* tell you to pick it on sight?", "back": "Gamma is the *sum of $\\alpha$ exponential waits* — use it for 'time until the $\\alpha$-th event' (mean $\\alpha\\theta$, variance $\\alpha\\theta^2$). Beta lives on $[0,1]$ — use it for a random *proportion or fraction*. Lognormal is what you get when many effects *multiply* (so $\\ln X$ is normal) — use it for asset prices and loss sizes with a long right tail. Match the mechanism, then quote the moments." },
+                { "front": "Why is the lognormal mean $e^{\\mu+\\sigma^2/2}$ rather than $e^\\mu$, and how do you get its probabilities?", "back": "$e^\\mu$ is the *median* (the point where $\\ln X = \\mu$); the right skew drags the mean above it by the factor $e^{\\sigma^2/2}$, so $E[X]=e^{\\mu+\\sigma^2/2}$ — dropping that term understates the mean every time. For any lognormal *probability*, don't integrate the density: take logs to convert to $\\ln X \\sim N(\\mu,\\sigma^2)$, standardize, and read the normal table." }
               ]
             }
           ],
