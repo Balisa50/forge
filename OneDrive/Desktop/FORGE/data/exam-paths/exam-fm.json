@@ -26,53 +26,71 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Every FM problem is a tug-of-war between dollars at different times. To compare them you must move them all to the **same date** — accumulate forward or discount back. Master that single move and the entire exam becomes bookkeeping on a timeline."
+              "body": "Here is the one sentence the whole exam rests on: **a dollar is only meaningful once you say *when* it is paid.** Money at different dates lives in different worlds, and you cannot add, compare, or equate amounts until you drag them all onto the *same* date. Accumulating pushes a dollar forward in time; discounting pulls a future dollar back to today. Every annuity, loan, bond, and immunization problem you will ever see is this single move, repeated. Spend real effort here and the rest of FM stops being a list of formulas and becomes one idea wearing different costumes."
             },
             {
               "kind": "intuition",
-              "title": "Simple interest is a line; compound is a curve",
-              "body": "**Simple** interest pays only on the original principal — a straight line. **Compound** interest pays interest on interest — an accelerating curve. Over short horizons they barely differ; over decades the compound curve leaves the simple line far behind. Almost all of FM uses compound interest, because that is how real money behaves."
+              "title": "Why money grows at all — and why it grows as a curve",
+              "body": "Lending a dollar means giving up the chance to use it. Interest is the rent the borrower pays for that year of use. So far that explains a straight line: charge the same rent every year and you get **simple interest**. But real money does something sneakier. After one year your dollar has *become* $1+i$ dollars — and that whole amount, interest included, can now be lent out. The next year's rent is charged on the larger pile. Interest starts earning interest. That feedback loop is **compound interest**, and feedback loops do not grow in straight lines — they curve upward, faster and faster.\n\nHold that picture: simple interest is a *line* because the principal never changes; compound interest is a *curve* because the principal quietly grows under you every year. Over one year they are identical. Over a career they are not even close — and every actuarial cash flow assumes the compound curve, because that is how invested money actually behaves."
             },
             {
               "kind": "formula",
-              "title": "Accumulate, discount, and the discount factor",
-              "body": "Accumulate $t$ years at effective rate $i$: $$A(t) = A(0)(1+i)^t$$ Discount a future amount back to today: $$PV = \\frac{FV}{(1+i)^t} = FV\\cdot v^t, \\quad v = \\frac{1}{1+i}$$ The discount factor $v$ is the price today of \\$1 paid in one year — the single most reused quantity on the exam."
+              "title": "Building the accumulation formula one year at a time",
+              "body": "Do not memorize $(1+i)^t$ — *watch it assemble itself.* Start with \\$1 and an effective annual rate $i$ (effective means: the actual fraction your money grows in one year, no fine print).\n\nAfter **year 1** you have your dollar plus its rent: $1 + i = (1+i)$.\n\nAfter **year 2** that entire amount earns another year's rent. You do not add $i$ again — you *scale* the whole pile by $(1+i)$: $$(1+i)\\times(1+i) = (1+i)^2.$$\n\nAfter **year 3**, scale again: $(1+i)^2\\times(1+i) = (1+i)^3$. The pattern is now undeniable — each year multiplies by one more factor of $(1+i)$ — so after $t$ years: $$A(t) = A(0)\\,(1+i)^t.$$\n\nThe exponent counts *how many times the pile got rescaled*. That is the entire content of compound interest. Compare it with simple interest, where only the original principal earns: $A(t) = A(0)(1 + it)$ — addition, not multiplication, which is exactly why it stays a line."
+            },
+            {
+              "kind": "formula",
+              "title": "Discounting is just accumulation run backwards",
+              "body": "If multiplying by $(1+i)$ moves a dollar *forward* one year, then **dividing** by $(1+i)$ must move it *backward* one year — undoing the growth. The present value of \\$1 due in one year is therefore $$v = \\frac{1}{1+i},$$ the **discount factor** — the single most reused number on the exam. It answers: *what is one future dollar worth to me right now?* Less than a dollar, because I lose a year of growth.\n\nPull a payment back $t$ years by dividing $t$ times, i.e. multiplying by $v^t$: $$PV = \\frac{FV}{(1+i)^t} = FV\\cdot v^t.$$\n\nAccumulating and discounting are perfect inverses: $(1+i)^t$ and $v^t$ are reciprocals, so pushing a dollar forward five years and then back five years lands you exactly where you started. Once you *feel* that $v$ is just 'one step backward in time,' present-value algebra stops being a formula to recall and becomes a direction to walk."
             },
             {
               "kind": "widget",
-              "title": "Watch the curves separate",
+              "title": "See the line and the curve pull apart",
               "widget": {
                 "id": "tvm-growth",
-                "caption": "Start \\$1000 and compare simple, compound, and continuous growth. Push the rate to 8% and the horizon to 20 years — predict first, then see how far compound pulls ahead of simple. That gap is the whole reason compound interest matters."
+                "caption": "Start \\$1000. First set the rate low (2%) and short (3 years) — simple and compound nearly overlap, which is why people underrate compounding. Now push the rate to 8% and the horizon to 30 years and watch the compound curve tear away from the simple line. The growing gap *is* interest-on-interest made visible. The continuous curve (force of interest) is the same idea taken to its smooth limit — the ceiling compounding approaches as you compound ever more often."
               }
             },
             {
               "kind": "worked",
-              "title": "Move money across time",
-              "body": "At an effective annual rate of 6%, find the value at time 5 of \\$1000 paid today, and the value today of \\$1000 paid at time 5.",
+              "title": "Worked example 1 — move one payment both directions",
+              "body": "At an effective annual rate of 6%, find (a) the value at time 5 of \\$1000 paid today, and (b) the value today of \\$1000 paid at time 5. Doing both on one number shows accumulation and discounting are mirror images.",
               "steps": [
-                "Accumulate forward: $1000(1.06)^5 = 1000(1.33823) = 1338.23$.",
-                "Discount back: $1000\\,v^5 = 1000/(1.06)^5 = 1000(0.74726) = 747.26$.",
-                "Notice the two factors are reciprocals — accumulating and discounting undo each other."
+                "**Set up the direction.** Part (a) moves money *forward* 5 years → multiply by $(1+i)^5$. Part (b) moves money *backward* 5 years → multiply by $v^5$.",
+                "**Accumulate (a):** $1000(1.06)^5$. Build $(1.06)^5$: $1.06^2 = 1.1236$, square that for $1.06^4 = 1.26248$, times $1.06$ gives $1.33823$. So $1000(1.33823) = \\$1338.23$.",
+                "**Discount (b):** $1000\\,v^5 = 1000/(1.06)^5 = 1000/1.33823 = \\$747.26$.",
+                "**Sanity check the mirror:** $1338.23 \\times 0.74726 \\approx 1000$ and $747.26 \\times 1.33823 \\approx 1000$. Forward then backward returns the original dollar — the two factors are reciprocals, exactly as the theory promised."
               ],
               "answer": "FV $= \\$1338.23$; PV $= \\$747.26$"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — solve for the unknown rate",
+              "body": "Exam questions rarely hand you $i$. More often you know where money started and ended and must *back out* the rate. An investment of \\$2000 grows to \\$2800 in 4 years under compound interest. Find the effective annual rate $i$.",
+              "steps": [
+                "**Write the accumulation equation:** $2000(1+i)^4 = 2800$.",
+                "**Isolate the growth factor:** $(1+i)^4 = 2800/2000 = 1.4$.",
+                "**Undo the exponent with a root** (the inverse of raising to the 4th power): $1+i = 1.4^{1/4} = 1.4^{0.25}$.",
+                "**Compute:** $1.4^{0.25} = e^{0.25\\ln 1.4} = e^{0.25(0.33647)} = e^{0.08412} = 1.08776$.",
+                "**Read off the rate:** $i = 0.08776 \\approx 8.78\\%$. Always solving for a rate follows this same arc: isolate $(1+i)^t$, then take the $t$-th root."
+              ],
+              "answer": "$i \\approx 8.78\\%$ per year"
+            },
+            {
               "kind": "trick",
-              "title": "Rule of 72 for a sanity check",
-              "body": "Money roughly doubles in $72/(100i)$ years. At 6%, that is about 12 years; at 8%, about 9. Use it to gut-check any accumulation answer in seconds — if your computed growth is wildly off the Rule-of-72 estimate, you mis-keyed an exponent or a rate."
+              "title": "The Rule of 72 — and the proof that makes it trustworthy",
+              "body": "The shortcut: **money doubles in roughly $72/(100i)$ years.** At 6% that is $72/6 = 12$ years; at 8%, $72/8 = 9$ years. But a shortcut you cannot derive is a shortcut you cannot trust at the edges — so here is exactly where the 72 comes from.\n\n**Derivation.** Doubling means $(1+i)^t = 2$. Take natural logs of both sides: $t\\,\\ln(1+i) = \\ln 2$, so $$t = \\frac{\\ln 2}{\\ln(1+i)} = \\frac{0.693}{\\ln(1+i)}.$$ For the small rates on the exam, $\\ln(1+i)\\approx i$ (e.g. $\\ln 1.08 = 0.0770$ vs $i = 0.08$). Substituting gives $t \\approx 0.693/i = 69.3/(100i)$ — the **Rule of 69.3**, which is *exactly* right for continuous compounding.\n\n**So why 72, not 69.3?** Two reasons stacked. First, $\\ln(1+i)$ is slightly *smaller* than $i$, which makes the true doubling time slightly *longer* than $69.3/(100i)$ predicts — bumping the numerator up corrects for it. Second, 72 is divisible by 2, 3, 4, 6, 8, 9, 12 — clean mental arithmetic. The 72 is a deliberate fudge that happens to be most accurate right in the 6%–10% band the exam loves. Use it to *gut-check*, never to answer: if your computed accumulation implies a doubling time wildly off the Rule-of-72 estimate, you mis-keyed a rate or an exponent."
             },
             {
               "kind": "trap",
-              "title": "Mixing rate and period units",
-              "body": "The rate and the time exponent must use the **same** period. If interest is 6% effective annual but payments are monthly, you cannot use $t$ in months with the annual rate — convert one to match the other first. Unit mismatch between the rate and the exponent is the most common TVM error on the exam."
+              "title": "The rate and the exponent must speak the same time unit",
+              "body": "This is the single most common TVM mistake, and it is always the same shape: the rate is quoted *per year* but the clock is ticking in *months* (or vice versa). You cannot write $(1+0.06)^{24}$ for 24 months at 6% annual — that compounds 6% **twenty-four times**, a wildly wrong answer. Two legal fixes: (1) keep time in years, $(1.06)^{2}$ for 24 months; or (2) convert the rate to a monthly effective rate $1.06^{1/12}-1$ first, *then* use the exponent 24. Whichever you pick, **one** conversion, and the rate's period and the exponent's period must match before you press a key. When a problem mixes annual rates with monthly cash flows, stop and pick a single time unit on purpose before touching the calculator."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "What is the discount factor $v$?", "back": "$v = 1/(1+i)$ — the present value of \\$1 paid one period from now." },
-                { "front": "Accumulate \\$1 for $t$ years at effective rate $i$.", "back": "$(1+i)^t$." },
-                { "front": "Rule of 72?", "back": "Money doubles in about $72/(100i)$ years — a fast sanity check." }
+                { "front": "Why is compound growth a curve while simple growth is a line?", "back": "Compound interest charges next year's interest on the *grown* balance (multiply by $(1+i)$ each year → exponential curve); simple interest only ever pays on the fixed original principal (add $i$ each year → straight line)." },
+                { "front": "What does the discount factor $v=1/(1+i)$ actually *mean*?", "back": "The value today of \\$1 paid one year from now — one step backward in time. Discounting is accumulation run in reverse, so $v^t$ and $(1+i)^t$ are reciprocals." }
               ]
             }
           ],
