@@ -1328,47 +1328,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Every investment decision comes down to two numbers. **Net present value** asks: at my required rate, is this project worth more than it costs? **Internal rate of return** asks: what rate would make it exactly break even? Together they are how actuaries and analysts rank competing cash-flow streams — and the exam tests both, plus the traps that make IRR misbehave."
+              "body": "Strip every capital-budgeting decision down and you find two questions. **Net present value** asks: *at the rate I demand, does this project add value or destroy it?* **Internal rate of return** asks: *what rate would make this project exactly break even?* They're two views of the same NPV curve — one reads off the height at your hurdle rate, the other reads off where the curve crosses zero. Master that picture and you'll also see *why* IRR misbehaves on certain cash flows, which is precisely where the exam lays its traps."
             },
             {
               "kind": "intuition",
-              "title": "NPV is value created; IRR is the break-even rate",
-              "body": "Discount every cash flow — outflows negative, inflows positive — back to today and add them up: that sum is the **NPV** at your chosen rate. Positive means the project earns more than your hurdle rate; you accept it. The **IRR** is the special discount rate at which the NPV is exactly zero — the project's own internal earning rate. Compare it to your required return: if IRR exceeds the hurdle, the project clears the bar."
+              "title": "NPV is value created; IRR is where that value hits zero",
+              "body": "Picture NPV as a function of the discount rate. Sign every cash flow (money out negative, money in positive), discount each back to today, and add: that's $\\text{NPV}(i)$. At a low rate, future inflows are barely discounted, so a good project's NPV is high and positive. Crank the rate up and those inflows shrink, dragging NPV down. Somewhere it crosses zero — *that crossing rate is the IRR*, the project's own internal earning rate.\n\nSo the two tools are the same curve: **NPV at your required rate** tells you the dollar value created (positive → accept); the **IRR** is the rate where that value vanishes. Comparing IRR to your hurdle is just asking 'are we to the left of the crossing?' — if IRR > hurdle, NPV at the hurdle is still positive."
             },
             {
               "kind": "formula",
-              "title": "NPV and the IRR condition",
-              "body": "$$\\text{NPV}(i) = \\sum_{t} \\frac{CF_t}{(1+i)^t}$$ Accept if NPV $> 0$ at the required rate. The **IRR** is the rate $i^*$ solving $$\\text{NPV}(i^*) = \\sum_t \\frac{CF_t}{(1+i^*)^t} = 0$$ For ranking mutually exclusive projects, NPV at the cost of capital is the reliable criterion — IRR can mislead."
+              "title": "NPV, the IRR condition, and why IRR can break",
+              "body": "**NPV** at rate $i$: $$\\text{NPV}(i) = \\sum_{t} \\frac{CF_t}{(1+i)^t}.$$ Accept a standalone project when $\\text{NPV} > 0$ at the required rate. **IRR** is the rate $i^*$ that zeroes it: $$\\text{NPV}(i^*) = \\sum_t \\frac{CF_t}{(1+i^*)^t} = 0.$$\n\nWhy can IRR misbehave? Substitute $x = \\frac{1}{1+i}$ and the NPV becomes a *polynomial* in $x$: $\\sum_t CF_t\\,x^t$. A polynomial can have several positive real roots — and by **Descartes' rule of signs**, the number of positive IRRs is at most the number of times the cash-flow sequence *changes sign*. One sign change (the normal 'pay once, receive thereafter' project) → exactly one IRR, clean. Two sign changes (pay, receive, pay again) → possibly two IRRs or none, and the single-rate story collapses. This is not a quirk to memorize — it's just what polynomials do."
             },
             {
               "kind": "worked",
-              "title": "NPV of a simple project",
-              "body": "A project costs \\$1000 now and returns \\$600 at year 1 and \\$600 at year 2. At a required rate of 10%, find the NPV and decide.",
+              "title": "Worked example 1 — NPV decision and locating the IRR",
+              "body": "A project costs \\$1000 now and returns \\$600 at year 1 and \\$600 at year 2. At a required rate of 10%, find the NPV, decide, and bracket the IRR.",
               "steps": [
-                "Discount the inflows: $600/1.1 + 600/1.1^2 = 545.45 + 495.87 = 1041.32$.",
-                "Subtract the cost: NPV $= 1041.32 - 1000 = 41.32$.",
-                "NPV $> 0$, so the project earns more than 10% — accept it.",
-                "(Its IRR is the rate where these balance, a bit above 13%.)"
+                "**Discount the inflows:** $600/1.1 + 600/1.1^2 = 545.45 + 495.87 = 1041.32$.",
+                "**Net against the cost:** NPV $= 1041.32 - 1000 = +\\$41.32$ → positive → **accept**.",
+                "**What does that imply about IRR?** NPV is positive at 10%, so the zero-crossing lies *above* 10%.",
+                "**Pin it down:** set $-1000 + 600x + 600x^2 = 0$ with $x = 1/(1+i)$. Solving the quadratic, $x = 0.8844$, so $i^* = 1/0.8844 - 1 = 13.07\\%$ — comfortably above the 10% hurdle, consistent with NPV > 0."
               ],
-              "answer": "NPV $\\approx \\$41.32$ → accept"
+              "answer": "NPV $\\approx +\\$41.32$ → accept; IRR $\\approx 13.1\\%$"
+            },
+            {
+              "kind": "worked",
+              "title": "Worked example 2 — the NPV-vs-IRR conflict on scale",
+              "body": "Two *mutually exclusive* projects at a 10% cost of capital. A: invest \\$100, get \\$150 in one year. B: invest \\$1000, get \\$1300 in one year. Show why IRR and NPV disagree and which wins.",
+              "steps": [
+                "**IRRs:** A breaks even at $150/100 - 1 = 50\\%$; B at $1300/1000 - 1 = 30\\%$. By IRR, A looks better.",
+                "**NPVs at 10%:** A $= 150/1.1 - 100 = +\\$36.4$; B $= 1300/1.1 - 1000 = +\\$181.8$.",
+                "**The conflict:** A has the higher *rate* but B creates five times the *value*. IRR ignores scale — a fabulous return on a tiny base.",
+                "**Resolution:** for mutually exclusive choices, pick the higher **NPV** → choose B. You can't deposit a percentage in the bank; you deposit dollars, and B delivers \\$181.8 of them."
+              ],
+              "answer": "Choose B (higher NPV \\$181.8), despite A's higher IRR"
             },
             {
               "kind": "trick",
-              "title": "NPV beats IRR for ranking",
-              "body": "When choosing among mutually exclusive projects, rank by **NPV at the cost of capital**, not by IRR. IRR ignores scale (a tiny project can have a huge IRR but create little value) and can give multiple or no answers when cash flows change sign more than once. NPV always gives one clear, value-based ranking. Reach for IRR only when a single break-even rate is what's asked."
+              "title": "Rank by NPV; reach for IRR only for a break-even rate",
+              "body": "When projects compete for the same dollar (mutually exclusive), rank by **NPV at the cost of capital** — full stop. IRR ignores scale (Worked Example 2), and when cash-flow signs flip more than once it can spit out multiple roots or none. NPV always returns one clean, value-denominated answer. Use IRR when the question genuinely asks 'what single rate does this earn?' or to compare against a hurdle for a *standalone* accept/reject — not to rank alternatives."
             },
             {
               "kind": "trap",
-              "title": "Multiple IRRs and the reinvestment assumption",
-              "body": "If the cash-flow signs flip more than once (out, in, out again), Descartes' rule warns there may be **multiple IRRs** — or none — and the single-rate interpretation collapses. Also, IRR implicitly assumes interim cash flows are reinvested *at the IRR itself*, which is often unrealistic; NPV assumes reinvestment at the cost of capital. Quoting a 40% IRR as if you can redeploy cash at 40% is the classic overstatement."
+              "title": "Multiple IRRs and the reinvestment fantasy",
+              "body": "Two classic snares. **(1) Multiple/no IRR:** if the signs change more than once (out, in, out), Descartes warns of up to that many IRRs — quoting 'the' IRR is meaningless; fall back to NPV. **(2) The reinvestment assumption:** IRR implicitly assumes every interim cash flow is *reinvested at the IRR itself*. A project boasting a 40% IRR is only worth 40% if you can actually redeploy its cash at 40% — usually you can't. NPV makes the honest assumption (reinvest at the cost of capital), which is another reason it's the trustworthy ranking tool."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "What is NPV?", "back": "The sum of all signed cash flows discounted at the required rate; accept if positive." },
-                { "front": "What is the IRR?", "back": "The discount rate that makes NPV equal zero — the project's break-even rate." },
-                { "front": "Which criterion ranks mutually exclusive projects?", "back": "NPV at the cost of capital — IRR can mislead on scale and sign changes." },
-                { "front": "When can multiple IRRs occur?", "back": "When the cash-flow signs change more than once." }
+                { "front": "How are NPV and IRR two readings of the same curve?", "back": "NPV($i$) is a downward-sloping curve in the rate; its height at your hurdle rate is the value created, and the rate where it crosses zero is the IRR. NPV>0 at the hurdle ⟺ IRR>hurdle." },
+                { "front": "Why can a cash-flow stream have multiple IRRs?", "back": "NPV is a polynomial in $x=1/(1+i)$; by Descartes' rule the number of positive roots is bounded by the number of sign changes in the cash flows. More than one sign change → possibly multiple IRRs." }
               ]
             }
           ],
@@ -1422,34 +1432,46 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "A fund earns a return — but *whose* return? If a big deposit landed right before a great quarter, was that skill or luck? **Dollar-weighted** yield rewards (or blames) the timing and size of cash flows; **time-weighted** yield strips timing out to isolate the manager's performance. Knowing which to compute, and why they differ, is a guaranteed exam question."
+              "body": "A fund posts a return — but *whose* return is it really? Suppose a client dumped in a big deposit right before a roaring quarter. Did the *manager* suddenly get good, or did the *client* just get lucky with timing? These are different questions, and they need different yardsticks. **Dollar-weighted** yield credits (or blames) the timing and size of cash flows — it grades the investor. **Time-weighted** yield surgically removes timing to expose the manager's raw skill. Knowing which is which, and *why* they diverge, is a near-guaranteed exam question."
             },
             {
               "kind": "intuition",
-              "title": "Whose decision are you measuring?",
-              "body": "The **dollar-weighted** return is just the IRR of the fund's actual cash flows — it is heavily influenced by *when* money was added or withdrawn, because more dollars present during good periods lift the result. That measures the *investor's* timing. The **time-weighted** return chains together the growth factor of each sub-period between cash flows, so the size and timing of deposits cancel out — it measures the *manager's* skill, the return on a single dollar left untouched."
+              "title": "One measures the investor's timing, the other the manager's skill",
+              "body": "**Dollar-weighted** return is nothing more than the **IRR of the fund's actual cash flows.** Because IRR weights each period by how many dollars were present, a fat deposit sitting through a good stretch *inflates* the figure — and a deposit before a bad stretch drags it down. So dollar-weighting answers 'how did the *money* do,' which is really a verdict on the *investor's timing decisions.*\n\n**Time-weighted** return refuses to let deposits matter. It chops the year into sub-periods at each cash-flow date, measures the pure growth factor *within* each sub-period (where the dollar amount is fixed), and chains those factors together. A deposit changes the base going into the next sub-period but never counts as 'performance.' The result is the return on a single dollar left untouched all year — a clean grade for the *manager.*"
             },
             {
               "kind": "formula",
-              "title": "Both yields",
-              "body": "**Dollar-weighted (IRR):** solve for $i$ in the equation of value $$A + \\sum C_t (1+i)^{1-t} = B$$ where $A$ is the start balance, $B$ the end balance, and $C_t$ the deposits/withdrawals. A common simple approximation: $i \\approx \\frac{I}{A + \\sum C_t(1-t)}$. **Time-weighted:** chain the period factors $$1 + i_{tw} = \\prod_k \\frac{B_k}{B_{k-1}^{+}}$$ multiplying each sub-period's growth (balance before the next deposit over balance just after the last)."
+              "title": "Building both yields from the equation of value",
+              "body": "**Dollar-weighted = IRR.** Write the fund's equation of value over the year: start balance $A$ grows, deposits/withdrawals $C_t$ are accumulated to year-end, and it must reconcile to the end balance $B$: $$A(1+i) + \\sum_t C_t (1+i)^{1-t} = B.$$ Solve for $i$ — that's the dollar-weighted yield. When the exam wants speed, use the simple-interest approximation (deposits earn interest only for the fraction of the year they're present): $$i \\approx \\frac{I}{A + \\sum_t C_t(1-t)},$$ where $I$ is total interest earned and $t$ is the fraction of the year *elapsed* before deposit $C_t$.\n\n**Time-weighted = chained growth.** Split at every cash flow and multiply the sub-period factors: $$1 + i_{tw} = \\prod_k \\frac{B_k^{-}}{B_{k-1}^{+}},$$ each factor being the balance *just before* the next cash flow over the balance *just after* the previous one. The deposits live in the denominators as new bases, never in the numerators as gains."
             },
             {
               "kind": "worked",
-              "title": "Time-weighted return with a mid-year deposit",
-              "body": "A fund starts at \\$100. After 6 months it is worth \\$110; you then deposit \\$50 (balance \\$160). At year-end it is worth \\$180. Find the time-weighted yield.",
+              "title": "Worked example 1 — time-weighted with a mid-year deposit",
+              "body": "A fund starts at \\$100. After 6 months it is worth \\$110; you then deposit \\$50 (balance jumps to \\$160). At year-end it is worth \\$180. Find the time-weighted yield.",
               "steps": [
-                "First sub-period factor: $110/100 = 1.10$.",
-                "Second sub-period factor: $180/160 = 1.125$ (deposit excluded from the return — it raised the base, not the performance).",
-                "Chain them: $1 + i_{tw} = 1.10 \\times 1.125 = 1.2375$.",
-                "Time-weighted yield $= 23.75\\%$."
+                "**Sub-period 1 (before the deposit):** growth factor $= 110/100 = 1.10$.",
+                "**Sub-period 2 (after the deposit):** growth factor $= 180/160 = 1.125$. The \\$50 deposit raised the *base* to 160 — it is *not* counted as a gain, which is why we divide by 160, not 110.",
+                "**Chain the factors:** $1 + i_{tw} = 1.10 \\times 1.125 = 1.2375$.",
+                "**Time-weighted yield** $= 23.75\\%$ — the manager's per-dollar performance, untouched by the deposit's timing."
               ],
               "answer": "$i_{tw} = 23.75\\%$"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — dollar-weighted on the same fund",
+              "body": "Same fund (\\$100 start, \\$50 deposited at mid-year, \\$180 end). Compute the dollar-weighted yield with the simple-interest approximation and compare it to the 23.75% time-weighted figure.",
+              "steps": [
+                "**Total interest earned:** end minus start minus net deposits $= 180 - 100 - 50 = \\$30$.",
+                "**Exposure base:** the \\$100 is present all year; the \\$50 deposit is present only the second half ($1-t = 0.5$). Base $= 100 + 50(0.5) = 125$.",
+                "**Approximate dollar-weighted yield:** $i \\approx \\dfrac{30}{125} = 0.24 = 24.0\\%$.",
+                "**Compare:** dollar-weighted (24.0%) slightly exceeds time-weighted (23.75%). The deposit landed *before* the strong second half, so extra dollars were present for the gain — the investor's timing helped, and only the dollar-weighted figure rewards it."
+              ],
+              "answer": "$i_{dw} \\approx 24.0\\%$ (vs $i_{tw} = 23.75\\%$)"
+            },
+            {
               "kind": "trick",
-              "title": "Deposit before a gain → dollar-weighted is higher",
-              "body": "Use the relationship as a sanity check: if large deposits arrive *just before* strong performance, the **dollar-weighted** return exceeds the time-weighted one (more money was present to enjoy the gain). If big money arrives before a *poor* stretch, dollar-weighted is lower. Time-weighted is indifferent to all of this — so comparing the two tells you whether the investor's timing helped or hurt."
+              "title": "Compare the two to grade the investor's timing",
+              "body": "The *gap* between the yields is itself the answer to 'did the client's timing help?' If big deposits arrived just **before** strong performance, dollar-weighted > time-weighted (more money enjoyed the gain). If money arrived before a **weak** stretch, dollar-weighted < time-weighted. Time-weighted is deliberately blind to all of it. So a quick sanity move on any problem: predict the *sign* of (dollar-weighted − time-weighted) from when the cash flows landed relative to the good/bad periods — if your computed numbers contradict that prediction, recheck."
             },
             {
               "kind": "trap",
@@ -1459,10 +1481,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What is the dollar-weighted yield?", "back": "The IRR of the fund's actual cash flows — sensitive to deposit timing and size (measures the investor)." },
-                { "front": "What is the time-weighted yield?", "back": "The product of each sub-period's growth factor — removes cash-flow timing (measures the manager)." },
-                { "front": "When does dollar-weighted exceed time-weighted?", "back": "When large deposits arrive just before strong performance." },
-                { "front": "How are deposits handled in time-weighting?", "back": "Excluded from the return: split sub-periods at each cash flow and use the post-deposit balance as the next base." }
+                { "front": "Why does the time-weighted return divide by the post-deposit balance (180/160), never 180/110?", "back": "Because a deposit is new money, not investment gain. Time-weighting splits the year at each cash flow and resets the base to the post-deposit balance, so the growth factor measures only what the manager earned on the dollars actually invested." },
+                { "front": "Two funds report identical time-weighted returns but different dollar-weighted returns. What does that tell you?", "back": "The manager performed equally well in both; the investors timed their deposits differently. The higher dollar-weighted figure belongs to the fund whose large contributions happened to land just before the strong stretch — that is investor timing, not manager skill." }
               ]
             }
           ],
@@ -1548,6 +1568,19 @@
               "answer": "$f \\approx 6.01\\%$"
             },
             {
+              "kind": "worked",
+              "title": "A multi-year forward locked in today",
+              "body": "The 1-year spot is 4% and the 3-year spot is 6%. Find the *2-year* forward rate covering years 2 and 3 — the single annual rate you could lock in today to grow money from end of year 1 to end of year 3.",
+              "steps": [
+                "Split the 3-year path: grow 1 year at $s_1$, then 2 years at the forward $f$. No-arbitrage: $(1+s_3)^3 = (1+s_1)(1+f)^2$.",
+                "Plug in: $(1.06)^3 = (1.04)(1+f)^2 \\Rightarrow 1.191016 = 1.04(1+f)^2$.",
+                "Isolate the 2-year factor: $(1+f)^2 = \\frac{1.191016}{1.04} = 1.145208$.",
+                "Take the square root (it covers *two* years): $1+f = \\sqrt{1.145208} = 1.070144$, so $f \\approx 7.01\\%$.",
+                "Cross-check: the forward 7.01% sits *above* the 3-year spot 6%, exactly as a rising curve demands — the marginal future rate must exceed the cumulative average."
+              ],
+              "answer": "$f \\approx 7.01\\%$ per year"
+            },
+            {
               "kind": "trick",
               "title": "Forwards exaggerate the curve's slope",
               "body": "A reliable intuition: when the spot curve **rises**, each forward rate lies *above* the spot for that maturity; when it **falls** (inverted), forwards lie *below*. The forward is the marginal rate for one specific future year, so it must overshoot the cumulative average that the spot represents. If your computed forward sits between two rising spots, you made an arithmetic error."
@@ -1560,10 +1593,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Spot–forward no-arbitrage relation?", "back": "$(1+s_t)^t = (1+s_{t-1})^{t-1}(1+f_{[t-1,t]})$." },
-                { "front": "How do you price a cash flow under a term structure?", "back": "Discount each $CF_t$ at its own $t$-year spot rate: $CF_t/(1+s_t)^t$." },
-                { "front": "Rising spot curve — where are forwards?", "back": "Above the spot rates (forwards exaggerate the slope)." },
-                { "front": "What is a forward rate?", "back": "The interest rate for a future period locked in by today's spot curve." }
+                { "front": "Why must a forward rate equal $\\frac{(1+s_t)^t}{(1+s_{t-1})^{t-1}}-1$ rather than something you choose?", "back": "Because two paths to the same maturity must accumulate identically or a riskless profit exists. Growing $t$ years at $s_t$ has to match growing $(t-1)$ years at $s_{t-1}$ then one year at the forward — solving that equality *forces* the forward; it is not a market quote you can set freely." },
+                { "front": "On a rising spot curve, why does every forward sit above the spot for its maturity?", "back": "The spot is the cumulative *average* rate to that point; the forward is the *marginal* rate for one specific later year. To pull a rising average upward, each new year's marginal rate must overshoot it — so forwards exaggerate the curve's slope." }
               ]
             }
           ],
@@ -1642,6 +1673,18 @@
               "answer": "Swap rate $\\approx 4.98\\%$"
             },
             {
+              "kind": "worked",
+              "title": "What actually changes hands each period",
+              "body": "A company is the *fixed payer* on a swap with notional \\$10 million and the fixed rate locked at 4.98% from the example above. For the coming year the floating reference rate sets at 6%. What is the net settlement, and who pays whom?",
+              "steps": [
+                "The fixed payer owes fixed and is owed floating. Fixed leg this period $= 4.98\\% \\times 10{,}000{,}000 = \\$498{,}000$.",
+                "Floating leg this period $= 6\\% \\times 10{,}000{,}000 = \\$600{,}000$.",
+                "Net the two — **principal never moves**: the fixed payer receives $600{,}000 - 498{,}000 = \\$102{,}000$.",
+                "Direction check: floating (6%) came in above the locked fixed (4.98%), so the fixed payer — who bet rates would rise — wins this period and collects the difference."
+              ],
+              "answer": "Fixed payer receives \\$102{,}000 net"
+            },
+            {
               "kind": "trick",
               "title": "Swap rate is a discount-factor-weighted average of forwards",
               "body": "The swap rate always lands *between* the spot/forward rates across the term — it is essentially their present-value-weighted average. So a quick sanity check: a 2-year swap rate must sit between $s_1$ and $s_2$. If your answer falls outside that range, you inverted a discount factor. The numerator $1 - P(0,n)$ is also exactly the value of receiving all the floating payments — memorize that shortcut."
@@ -1654,10 +1697,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What is an interest rate swap?", "back": "An exchange of fixed-rate for floating-rate interest payments on a notional, with no principal exchanged." },
-                { "front": "Swap rate formula?", "back": "$R = \\frac{1-P(0,n)}{\\sum_{t=1}^n P(0,t)}$ with $P(0,t)=(1+s_t)^{-t}$." },
-                { "front": "Why is a swap a strip of FRAs?", "back": "Each period swaps fixed for that period's forward (floating) rate." },
-                { "front": "Value of a swap at inception?", "back": "Zero — the fixed and floating legs have equal present value by construction." }
+                { "front": "Why does the swap rate equal $\\frac{1-P(0,n)}{\\sum P(0,t)}$ instead of just averaging the spot rates?", "back": "Because the fair fixed rate is the level rate whose discounted payments match the floating leg. The floating leg is worth exactly $1-P(0,n)$ today, and a level rate paid over the term is worth that rate times the annuity of discount factors $\\sum P(0,t)$ — set them equal and the rate falls out. It is a present-value match, so it weights each period by its discount factor, not equally." },
+                { "front": "Why is a brand-new swap worth zero, yet worth something a year later?", "back": "The swap rate is *chosen* at inception to make the two legs' present values equal — zero by construction. Once rates move, the locked fixed leg no longer matches the revalued floating leg at the new spot curve, so the swap drifts to a positive value for one side and negative for the other." }
               ]
             }
           ],
@@ -1735,6 +1776,19 @@
               "answer": "$D_{mac} \\approx 1.48$ years"
             },
             {
+              "kind": "worked",
+              "title": "Building an immunized portfolio",
+              "body": "A liability of \\$1000 (present value) comes due with duration 6 years. You can buy two assets: stream A with duration 4 and stream B with duration 9. How do you split \\$1000 so a small rate move can't dent your surplus?",
+              "steps": [
+                "Condition 1 — match present value: invest the full \\$1000, so $PV_{assets} = PV_{liability}$ automatically.",
+                "Condition 2 — match duration: let $w$ be the fraction in A. Portfolio duration is the PV-weighted average $4w + 9(1-w)$, and we need it to equal the liability's 6.",
+                "Solve: $4w + 9 - 9w = 6 \\Rightarrow 9 - 5w = 6 \\Rightarrow w = 0.6$. So **\\$600 in A and \\$400 in B**.",
+                "Condition 3 — convexity: spreading the assets to durations 4 and 9 around the liability's 6 (a 'barbell') gives the asset side *more* spread in time than the single liability, so asset convexity exceeds liability convexity — Redington's third condition is met.",
+                "Cross-check: $0.6(4) + 0.4(9) = 2.4 + 3.6 = 6.0$ years. Durations match, so a small rate shock moves assets and liability by the same first-order amount — the surplus is protected."
+              ],
+              "answer": "\\$600 in the 4-year asset, \\$400 in the 9-year asset"
+            },
+            {
               "kind": "trick",
               "title": "Estimate price moves with one multiplication",
               "body": "Once you have modified duration, a rate change's price impact is a single product: $\\Delta P/P \\approx -D_{mod}\\,\\Delta i$. A bond with $D_{mod} = 7$ loses about 7% if rates rise 1%. This linear estimate is exam-fast; convexity only matters when they ask for a refined answer on a large rate move."
@@ -1747,9 +1801,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What does Macaulay duration represent?", "back": "The PV-weighted average time until cash flows are received — the timeline's center of gravity." },
-                { "front": "Relationship between modified and Macaulay duration?", "back": "$D_{mod} = D_{mac}/(1+i)$." },
-                { "front": "The three Redington immunization conditions?", "back": "PV of assets = PV of liabilities; durations equal; asset convexity > liability convexity." }
+                { "front": "Why does longer duration mean a bond is more rate-sensitive?", "back": "Duration is the PV-weighted average time you wait to be paid. Cash that arrives later is discounted by a higher power of $v$, so a change in the rate compounds over more periods — its present value swings more. A long-duration bond has its weight far out in time, so the same rate move hits it harder: $\\Delta P/P \\approx -D_{mod}\\,\\Delta i$." },
+                { "front": "Why isn't matching present values enough to immunize — what do the duration and convexity conditions add?", "back": "Equal PVs only protect against *no* rate change. Matching duration makes assets and liabilities move by the same *first-order* amount when rates shift, so the surplus stays flat to first order. Requiring asset convexity to exceed liability convexity makes the second-order term work in your favor, so the surplus can only improve — never fall — for any small move in either direction." }
               ]
             }
           ],
@@ -1828,6 +1881,18 @@
               "answer": "$\\approx -13.6\\%$ (vs $-16\\%$ duration-only)"
             },
             {
+              "kind": "worked",
+              "title": "Dedicating assets to liabilities (exact matching)",
+              "body": "You owe \\$1000 at the end of year 1 and \\$1000 at the end of year 2. Two assets are available: a 1-year zero (pays its face at year 1) and a 2-year bond with a 5% annual coupon (pays 5% of face at year 1 and 105% at year 2). Find the face amounts that fund the liabilities *exactly*, with no rate risk.",
+              "steps": [
+                "Always work from the **last** liability backward, because only the long bond reaches year 2. Let $F_B$ be the face of the 2-year bond. Its year-2 payment is $1.05\\,F_B$, which must equal \\$1000: $F_B = 1000/1.05 = \\$952.38$.",
+                "That bond also throws off a year-1 coupon: $0.05 \\times 952.38 = \\$47.62$.",
+                "The remaining year-1 need is $1000 - 47.62 = \\$952.38$, funded by the 1-year zero: buy face $F_A = \\$952.38$.",
+                "Cross-check year 1: $952.38$ (zero) $+ 47.62$ (coupon) $= \\$1000$. Year 2: $1.05(952.38) = \\$1000$. Both dates land exactly — and because each cash flow is matched at its own date, **no rate move can ever create a shortfall**, and nothing needs rebalancing."
+              ],
+              "answer": "Buy \\$952.38 face of each bond"
+            },
+            {
               "kind": "trick",
               "title": "Convexity always helps the holder",
               "body": "The convexity term is $+\\tfrac12 C(\\Delta i)^2$ — and since $(\\Delta i)^2 \\ge 0$ and $C > 0$ for ordinary bonds, it is **always positive**, whether rates rise or fall. So for two bonds with equal duration, the more convex one is strictly preferable: it falls less and rises more. This is exactly why Redington immunization demands asset convexity *greater* than liability convexity — the surplus stays non-negative for moves in either direction."
@@ -1840,10 +1905,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What does convexity measure?", "back": "The curvature of the price-rate relationship — the second-order term duration misses." },
-                { "front": "Sign of the convexity price adjustment?", "back": "Always positive ($+\\tfrac12 C(\\Delta i)^2$): it helps the holder either way rates move." },
-                { "front": "Exact (dedicated) cash-flow matching?", "back": "Assets whose cash flows equal each liability at every date — immune to any rate move, no rebalancing." },
-                { "front": "Why must immunization be rebalanced?", "back": "Durations and PVs drift with time and rate changes, so the match degrades and must be reset." }
+                { "front": "Why does positive convexity help the holder whether rates rise OR fall?", "back": "The correction term is $+\\tfrac12 C(\\Delta i)^2$. Since $(\\Delta i)^2$ is positive for any non-zero move and $C>0$ for ordinary bonds, the term is always positive. So the true price beats the duration line in both directions — bigger gain when rates fall, smaller loss when they rise. That free cushion is why two equal-duration bonds aren't equal: pick the more convex one." },
+                { "front": "Exact matching needs no rebalancing but immunization does — why the difference?", "back": "Exact (dedicated) matching funds each liability with a cash flow of the same amount on the same date, so the match is locked in regardless of rates and time. Immunization only matches PV, duration and convexity *today*; as time passes and rates move, durations drift apart and the match degrades — so it must be periodically rebalanced to stay protective." }
               ]
             }
           ],
@@ -1922,6 +1985,18 @@
               "answer": "Real rate $\\approx 4.85\\%$"
             },
             {
+              "kind": "worked",
+              "title": "Building a quoted rate from its parts",
+              "body": "A lender prices a loan to a moderately risky, somewhat illiquid borrower. The real risk-free rate is 2%, expected inflation is 3%, the default premium is 1.5%, and the liquidity premium is 0.5%. What nominal rate should they quote?",
+              "steps": [
+                "Combine the real rate and inflation exactly via Fisher: $(1.02)(1.03) = 1.0506$, a risk-free nominal of $\\approx 5.06\\%$.",
+                "Stack the risk premiums on top: default $1.5\\%$ + liquidity $0.5\\% = 2.0\\%$.",
+                "Quoted nominal $\\approx 5.06\\% + 2.0\\% = 7.06\\%$.",
+                "Cross-check with the fast additive form: $2 + 3 + 1.5 + 0.5 = 7.0\\%$ — within a few basis points, the gap being the dropped $r\\pi$ cross-term. Each piece is a distinct demand the lender makes; strip one away (say the loan becomes risk-free) and the quote drops by exactly that premium."
+              ],
+              "answer": "Quote $\\approx 7.06\\%$"
+            },
+            {
               "kind": "trick",
               "title": "Approximate, then refine with Fisher",
               "body": "For a fast estimate use $r \\approx i - \\pi$; it is within a few basis points for ordinary rates. When precision matters, switch to the exact $1+r = \\frac{1+i}{1+\\pi}$, which always gives a *slightly lower* real rate than the subtraction (the dropped $r\\pi$ term is positive). Knowing the direction of the error lets you sanity-check multiple-choice answers instantly."
@@ -1934,10 +2009,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Components of a nominal interest rate?", "back": "Real rate + inflation premium + default + liquidity + maturity/term premiums." },
-                { "front": "Fisher equation?", "back": "$(1+i) = (1+r)(1+\\pi)$; approximately $i \\approx r + \\pi$." },
-                { "front": "Exact real rate from nominal and inflation?", "back": "$1+r = \\frac{1+i}{1+\\pi}$ — slightly below $i-\\pi$." },
-                { "front": "What does a default premium compensate for?", "back": "The risk the borrower fails to repay (credit risk)." }
+                { "front": "Why does the exact real rate always come out a touch below the $i-\\pi$ approximation?", "back": "Fisher says $(1+i)=(1+r)(1+\\pi)=1+r+\\pi+r\\pi$. The quick subtraction $r\\approx i-\\pi$ throws away the positive cross-term $r\\pi$, so it overstates the real rate slightly. Solving exactly, $1+r=\\frac{1+i}{1+\\pi}$, restores that term and lands just under the approximation — handy for ruling out the too-high multiple-choice answer." },
+                { "front": "Why does higher expected inflation raise the nominal rate but leave the real rate roughly unchanged?", "back": "Inflation compensation is a *separate layer* in the rate stack from the real return. Lenders add a bigger inflation premium so repayment keeps its purchasing power — that lifts the quoted nominal rate — but the real reward for waiting (and the default/liquidity premiums) is unaffected. Mixing up the inflation layer with a risk premium is the classic conceptual slip." }
               ]
             }
           ],
