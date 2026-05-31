@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import {
-  ExternalLink, FileCode2, FileText, File, Image,
+  ExternalLink, FileCode2, FileText, File, Image, Film,
   Download, ChevronDown, ChevronUp, Link2,
 } from "lucide-react";
 import {
@@ -13,6 +13,8 @@ import {
   formatFileSize,
   getFileCategory,
   fileHref,
+  isVideo,
+  isAudio,
 } from "@/lib/submission-types";
 
 interface SubmissionViewerProps {
@@ -29,6 +31,9 @@ function fileIcon(ext: string, size = 15) {
   if (cat === "document") {
     return <FileText size={size} style={{ color: "var(--accent)", flexShrink: 0 }} />;
   }
+  if (cat === "media") {
+    return <Film size={size} style={{ color: "#a78bfa", flexShrink: 0 }} />;
+  }
   return <File size={size} style={{ color: "var(--text-dim)", flexShrink: 0 }} />;
 }
 
@@ -38,6 +43,8 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
   const canPreview = isTextRenderable(file.extension);
   const isPdf = file.extension === "pdf";
   const isImage = ["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(file.extension);
+  const isVid = isVideo(file.extension);
+  const isAud = isAudio(file.extension);
   const href = fileHref(file);
 
   // Load text content lazily on first expand. Blob-URL files are fetched;
@@ -92,7 +99,7 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
           borderBottom: expanded ? "1px solid var(--border)" : "none",
           cursor: canPreview || isPdf || isImage ? "pointer" : "default",
         }}
-        onClick={() => (canPreview || isPdf || isImage) && setExpanded((v) => !v)}
+        onClick={() => (canPreview || isPdf || isImage || isVid || isAud) && setExpanded((v) => !v)}
       >
         {fileIcon(file.extension)}
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -141,7 +148,7 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
           </button>
 
           {/* Expand toggle */}
-          {(canPreview || isPdf || isImage) && (
+          {(canPreview || isPdf || isImage || isVid || isAud) && (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setExpanded((v) => !v); }}
@@ -183,6 +190,21 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
                 style={{ width: "100%", height: "500px", border: "none", borderRadius: "4px" }}
                 title={file.filename}
               />
+            </div>
+          )}
+          {isVid && (
+            <div style={{ padding: "0.5rem", display: "flex", justifyContent: "center" }}>
+              <video
+                src={href}
+                controls
+                preload="metadata"
+                style={{ maxWidth: "100%", maxHeight: "480px", borderRadius: "4px", background: "#000" }}
+              />
+            </div>
+          )}
+          {isAud && (
+            <div style={{ padding: "0.75rem" }}>
+              <audio src={href} controls preload="metadata" style={{ width: "100%" }} />
             </div>
           )}
           {canPreview && !isImage && !isPdf && (

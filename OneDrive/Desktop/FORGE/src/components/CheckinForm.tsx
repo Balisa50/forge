@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Link2, Clock, Loader2, CheckCircle2, Send,
-  Upload, X, FileCode2, FileText, File, AlertCircle, Lock, ExternalLink,
+  Upload, X, FileCode2, FileText, File, Film, AlertCircle, Lock, ExternalLink,
 } from "lucide-react";
 import {
   type FileAttachment,
@@ -56,6 +56,9 @@ function fileIcon(ext: string) {
   if (cat === "document") {
     return <FileText size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />;
   }
+  if (cat === "media") {
+    return <Film size={15} style={{ color: "#a78bfa", flexShrink: 0 }} />;
+  }
   return <File size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />;
 }
 
@@ -76,6 +79,7 @@ export default function CheckinForm({
   const [dragOver, setDragOver] = useState(false);
   const [fileError, setFileError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -192,6 +196,7 @@ export default function CheckinForm({
       access: "public",
       handleUploadUrl: "/api/upload",
       contentType: file.type || undefined,
+      onUploadProgress: (e) => setProgress(Math.round(e.percentage)),
     });
     return {
       filename: file.name,
@@ -249,6 +254,7 @@ export default function CheckinForm({
       }
     } finally {
       setUploading(false);
+      setProgress(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attachments, totalBytes]);
@@ -534,7 +540,7 @@ export default function CheckinForm({
           Option B — File(s)
         </div>
         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "1rem", lineHeight: 1.55 }}>
-          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 10 MB per file, 25 MB total.
+          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · <strong style={{ color: "#a78bfa" }}>video / audio (.mp4 .mov .webm .mp3)</strong> · whatever proves your work. Max 150 MB per file, 300 MB total.
         </p>
 
         {/* Drop zone */}
@@ -558,10 +564,10 @@ export default function CheckinForm({
             ? <Loader2 size={24} className="animate-spin" style={{ color: "var(--accent)", margin: "0 auto 0.5rem", display: "block" }} />
             : <Upload size={24} style={{ color: dragOver ? "var(--accent)" : "var(--text-dim)", margin: "0 auto 0.5rem", display: "block" }} />}
           <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, color: dragOver || uploading ? "var(--accent)" : "var(--text-secondary)", fontSize: "0.9375rem" }}>
-            {uploading ? "Uploading…" : dragOver ? "Drop it" : "Drop files here or click to browse"}
+            {uploading ? (progress !== null ? `Uploading… ${progress}%` : "Uploading…") : dragOver ? "Drop it" : "Drop files here or click to browse"}
           </div>
           <div style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
-            .py .js .ts .go .rs .java .sql .r .ipynb .pdf .docx .md .csv + more
+            .py .js .pdf .docx .xlsx .csv .ipynb · .mp4 .mov .mp3 · + more
           </div>
           <input
             ref={fileInputRef}

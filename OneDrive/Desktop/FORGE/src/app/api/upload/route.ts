@@ -33,6 +33,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           maximumSizeInBytes: MAX_FILE_BYTES,
           allowedContentTypes: [
             "image/*",
+            "video/*",
+            "audio/*",
             "text/*",
             "application/pdf",
             "application/json",

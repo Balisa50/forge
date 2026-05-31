@@ -34,12 +34,13 @@ export interface EvidenceData {
 // Files now upload directly to Vercel Blob (browser -> blob), so the old
 // ~4.5 MB serverless request-body ceiling no longer applies. These are the
 // product limits we choose, enforced client-side, in the upload route's
-// token, and at check-in time.
-// Maximum total size across all attached files (25 MB)
-export const MAX_TOTAL_BYTES = 25 * 1024 * 1024;
+// token, and at check-in time. Sized to allow short video/audio evidence
+// (a few-minute phone clip) without letting storage run away.
+// Maximum total size across all attached files (300 MB)
+export const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
 
-// Maximum size per individual file (10 MB)
-export const MAX_FILE_BYTES = 10 * 1024 * 1024;
+// Maximum size per individual file (150 MB — covers a short explainer video)
+export const MAX_FILE_BYTES = 150 * 1024 * 1024;
 
 // File type categories and their accepted extensions
 export const FILE_CATEGORIES = {
@@ -69,6 +70,11 @@ export const FILE_CATEGORIES = {
     "env", "gitignore", "dockerignore", "editorconfig",
     "prettierrc", "eslintrc", "babelrc",
   ],
+  // Video / audio evidence — a recorded walkthrough or spoken explanation.
+  media: [
+    "mp4", "mov", "webm", "m4v", "avi", "mkv", "ogv",
+    "mp3", "m4a", "wav", "ogg", "aac",
+  ],
 } as const;
 
 // All accepted extensions as a flat set (for fast lookup)
@@ -78,6 +84,7 @@ export const ALL_ACCEPTED_EXTENSIONS: Set<string> = new Set([
   ...FILE_CATEGORIES.vscode,
   ...FILE_CATEGORIES.notebook,
   ...FILE_CATEGORIES.config,
+  ...FILE_CATEGORIES.media,
 ]);
 
 // Human-readable accept string for <input type="file" accept="...">
@@ -109,9 +116,18 @@ export const ACCEPTED_MIME_TYPES = [
   "text/x-sh",
   "text/x-r",
   "application/x-ipynb+json",
+  // Video / audio evidence
+  "video/*",
+  "audio/*",
   // Catch-all text
   "text/*",
 ].join(",");
+
+// Video / audio extensions, for picking the right inline player in the viewer.
+export const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "webm", "m4v", "avi", "mkv", "ogv"]);
+export const AUDIO_EXTENSIONS = new Set(["mp3", "m4a", "wav", "ogg", "aac"]);
+export const isVideo = (ext: string): boolean => VIDEO_EXTENSIONS.has(ext);
+export const isAudio = (ext: string): boolean => AUDIO_EXTENSIONS.has(ext);
 
 export function getFileExtension(filename: string): string {
   const parts = filename.split(".");
