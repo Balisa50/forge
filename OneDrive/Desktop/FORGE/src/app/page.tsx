@@ -57,7 +57,7 @@ export default function LandingPage() {
           </h1>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1rem, 2.5vw, 1.25rem)", color: "var(--text-secondary)", maxWidth: "580px", margin: "0 auto 1.25rem", lineHeight: 1.7 }}>
             You set a goal. You commit to a schedule.<br />
-            Every day you prove you worked — with a real project URL and 3 questions from an AI that has no mercy.
+            Every day you prove you worked — with a real project URL and GitHub commits the system actually checks.
           </p>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(0.9375rem, 2vw, 1.0625rem)", color: "var(--text-primary)", maxWidth: "500px", margin: "0 auto 3rem", lineHeight: 1.6 }}>
             No tutorials counted. No half-finished repos. No excuses.
@@ -91,7 +91,7 @@ export default function LandingPage() {
           <p style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.85 }}>
             Tutorial hell is real. You consume, you nod along, you close the tab and immediately forget.<br /><br />
             <span style={{ color: "var(--text-primary)" }}>The Forge breaks the cycle. Every day you submit a real project, answer questions about it, and prove — to yourself and to a public record — that you actually understood what you built.</span><br /><br />
-            No self-reporting. No honor system. Verified by AI, tracked on a public timeline, held by a pod of peers who can see if you went quiet.
+            No self-reporting. No honor system. Verified against your real GitHub commits and live projects, tracked on a public timeline, held by a pod of peers who can see if you went quiet.
           </p>
         </motion.div>
       </section>
@@ -254,6 +254,49 @@ export default function LandingPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Actuarial exam prep - display only preview. The real concept-mastery
+          system opens at /learn/exam/* after sign-in. */}
+      <section style={{ borderTop: "1px solid var(--border)", background: "linear-gradient(180deg, rgba(245,158,11,0.04), transparent)" }} className="py-20 px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", letterSpacing: "0.32em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "0.75rem" }}>
+              ~/forge/actuarial
+            </p>
+            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.1 }}>
+              Exam P &amp; FM. <span style={{ color: "var(--accent)" }}>Concept by concept.</span>
+            </h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "1rem", maxWidth: 600, margin: "0 auto", lineHeight: 1.6 }}>
+              Not a roadmap — a concept-mastery system. Every idea is taught from intuition to formula to the exact trap that
+              catches people, then locked in with a timed, SOA-style quiz. Opens after you sign up.
+            </p>
+          </div>
+          <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", maxWidth: 720, margin: "0 auto" }}>
+            {[
+              { code: "P", title: "Probability", meta: "20 concepts · 3 modules" },
+              { code: "FM", title: "Financial Mathematics", meta: "19 concepts · 5 modules" },
+            ].map((e) => (
+              <div
+                key={e.code}
+                aria-disabled
+                style={{ padding: "1.25rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 12, cursor: "default", userSelect: "none" }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.625rem" }}>
+                  <span style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(245,158,11,0.13)", color: "var(--accent)", border: "1px solid rgba(245,158,11,0.3)", display: "grid", placeItems: "center", flexShrink: 0, fontFamily: "var(--font-mono)", fontWeight: 700 }}>
+                    {e.code}
+                  </span>
+                  <h3 style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1rem", color: "var(--text-primary)" }}>
+                    Exam {e.code} — {e.title}
+                  </h3>
+                </div>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                  {e.meta} · timed mastery gates
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
