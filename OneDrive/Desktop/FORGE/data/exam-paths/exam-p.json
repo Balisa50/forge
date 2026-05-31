@@ -1,0 +1,1155 @@
+{
+  "slug": "exam-p",
+  "exam": "P",
+  "title": "Exam P — Probability",
+  "subtitle": "Build probability into a reflex. Every concept is taught to the point where the SOA question feels like recognizing an old friend.",
+  "intro": "This is not a formula sheet with a pulse. Each concept walks the same arc — the stakes, the plain-language intuition before any symbol, the formula, a fully worked SOA-style example, a speed trick, the exact trap that catches most students, an interactive sim where it helps, and active-recall cards. Then a timed mastery gate decides whether it has actually stuck. Miss the bar and the concept resurfaces on a spaced schedule until recall is automatic. Probability rewards pattern recognition under time pressure — so we drill the patterns until they are reflexes.",
+  "format": {
+    "questions": 30,
+    "minutes": 180,
+    "choices": 5,
+    "passing": "Grade 6 or higher on the SOA 0–10 scale — roughly 70% of questions correct. You get 3 hours for 30 questions, so about 6 minutes each, but the easy ones should take 90 seconds so you can spend 8+ on the hard ones."
+  },
+  "gradient": "from-amber-400 to-yellow-600",
+  "modules": [
+    {
+      "id": "general-probability",
+      "title": "General Probability",
+      "weight": "23–30%",
+      "blurb": "Sample spaces, the axioms, counting, conditional probability, Bayes, and independence. This is the grammar of the entire exam — every later topic is built on it, and roughly a quarter of your questions live right here.",
+      "concepts": [
+        {
+          "id": "sample-spaces-and-events",
+          "title": "Sample Spaces & Events",
+          "tagline": "Every probability question is secretly a set question. Learn to see the sets and half the work disappears.",
+          "minutes": 18,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Before you can compute a probability you have to know **what you are counting over**. Get the sample space wrong and every later step is exactly wrong. Most missed P questions are not algebra mistakes — they are set-up mistakes made in the first ten seconds."
+            },
+            {
+              "kind": "intuition",
+              "title": "Think of it as a room of outcomes",
+              "body": "The **sample space** $S$ is the complete list of everything that could happen — the whole room. An **event** is any group of those outcomes — a roped-off section of the room. Probability is just *what fraction of the room* an event occupies (when outcomes are equally likely). Union $A \\cup B$ = in either section. Intersection $A \\cap B$ = in both at once. Complement $A^c$ = everything outside the section. That is the entire vocabulary."
+            },
+            {
+              "kind": "formula",
+              "title": "The identities you actually reuse",
+              "body": "Inclusion–exclusion: $$P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$$ Complement: $$P(A^c) = 1 - P(A)$$ De Morgan, the most under-used pair on the exam: $$(A \\cup B)^c = A^c \\cap B^c, \\qquad (A \\cap B)^c = A^c \\cup B^c$$"
+            },
+            {
+              "kind": "worked",
+              "title": "Inclusion–exclusion in the wild",
+              "body": "In a group, $P(\\text{coffee}) = 0.7$, $P(\\text{tea}) = 0.5$, and $P(\\text{both}) = 0.3$. Find the probability a person drinks **neither**.",
+              "steps": [
+                "Drinks at least one: $P(C \\cup T) = 0.7 + 0.5 - 0.3 = 0.9$.",
+                "Neither is the complement of at least one: $P((C \\cup T)^c) = 1 - 0.9$.",
+                "So $0.10$."
+              ],
+              "answer": "$P(\\text{neither}) = 0.10$"
+            },
+            {
+              "kind": "trick",
+              "title": "Draw the two-circle Venn, fill the middle first",
+              "body": "Always place $P(A \\cap B)$ in the overlap **first**, then subtract it from each circle so the *only-A* and *only-B* regions are correct. Once the three regions and the outside sum to 1, you can read off any compound probability by eye — no formula recall under pressure."
+            },
+            {
+              "kind": "trap",
+              "title": "Adding probabilities that overlap",
+              "body": "$P(A \\cup B) = P(A) + P(B)$ is **only** true when $A$ and $B$ are mutually exclusive (no overlap). If they can both happen, you double-count the middle. When a problem says *or* and the events can co-occur, you must subtract $P(A \\cap B)$. Forgetting this single subtraction is the most common General-Probability error."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What does $A \\cap B$ mean in words?", "back": "Both $A$ and $B$ happen at the same time — the overlap of the two events." },
+                { "front": "De Morgan: rewrite $(A \\cup B)^c$.", "back": "$A^c \\cap B^c$ — *not (A or B)* equals *not-A and not-B*." },
+                { "front": "When is $P(A \\cup B) = P(A) + P(B)$ valid?", "back": "Only when $A$ and $B$ are mutually exclusive, i.e. $P(A \\cap B) = 0$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 90,
+            "questions": [
+              {
+                "q": "If $P(A) = 0.6$, $P(B) = 0.5$, and $P(A \\cup B) = 0.8$, what is $P(A \\cap B)$?",
+                "choices": ["$0.1$", "$0.2$", "$0.3$", "$0.4$", "$0.5$"],
+                "correct": 2,
+                "explain": "Rearrange inclusion–exclusion: $P(A \\cap B) = P(A) + P(B) - P(A \\cup B) = 0.6 + 0.5 - 0.8 = 0.3$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Events $A$ and $B$ satisfy $P(A) = 0.4$ and $P(B) = 0.3$, and they are mutually exclusive. What is $P(A^c \\cap B^c)$?",
+                "choices": ["$0.12$", "$0.30$", "$0.58$", "$0.70$", "$0.88$"],
+                "correct": 1,
+                "explain": "By De Morgan, $P(A^c \\cap B^c) = P((A \\cup B)^c) = 1 - P(A \\cup B)$. Mutually exclusive means $P(A \\cup B) = 0.4 + 0.3 = 0.7$, so the answer is $1 - 0.7 = 0.30$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A survey finds $P(\\text{news}) = 0.55$, $P(\\text{sports}) = 0.45$, and $P(\\text{neither}) = 0.20$. What fraction read both?",
+                "choices": ["$0.10$", "$0.15$", "$0.20$", "$0.25$", "$0.30$"],
+                "correct": 2,
+                "explain": "At least one $= 1 - 0.20 = 0.80$. Then $P(\\text{both}) = P(N) + P(S) - P(N \\cup S) = 0.55 + 0.45 - 0.80 = 0.20$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Which statement is always true for any two events?",
+                "choices": ["$P(A \\cup B) \\ge P(A)$", "$P(A \\cap B) \\ge P(A)$", "$P(A \\cup B) = P(A) + P(B)$", "$P(A^c) = P(A)$", "$P(A \\cap B) = P(A)P(B)$"],
+                "correct": 0,
+                "explain": "A union can only add outcomes, so $P(A \\cup B) \\ge P(A)$ always. The intersection is a subset of $A$, so it is $\\le P(A)$. The additive and multiplicative identities need extra conditions (mutual exclusivity, independence).",
+                "difficulty": "core"
+              },
+              {
+                "q": "If $P(A \\cup B) = 0.9$, $P(A) = 0.5$, and $A,B$ are independent, find $P(B)$.",
+                "choices": ["$0.40$", "$0.50$", "$0.67$", "$0.80$", "$0.90$"],
+                "correct": 3,
+                "explain": "Independence gives $P(A \\cap B) = 0.5\\,P(B)$. Inclusion–exclusion: $0.9 = 0.5 + P(B) - 0.5P(B) = 0.5 + 0.5P(B)$, so $0.5P(B) = 0.4$ and $P(B) = 0.8$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "counting-and-axioms",
+          "title": "Counting & the Axioms",
+          "tagline": "Permutations vs combinations decided by one question: does order matter? Get that reflex and counting problems stop being scary.",
+          "minutes": 20,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "When outcomes are equally likely, probability collapses to **counting**: favorable over total. The entire difficulty is counting correctly — and 90% of that is one decision: *does order matter?*"
+            },
+            {
+              "kind": "intuition",
+              "title": "Order matters → permutation. Order does not → combination.",
+              "body": "Picking a **president, VP, treasurer** from a club: order matters, the roles are different — that is a permutation. Picking a **committee of 3**: order does not matter, a group is a group — that is a combination. The number of combinations is always smaller, because you stop counting the same group in different seat orders."
+            },
+            {
+              "kind": "formula",
+              "title": "The three counting tools",
+              "body": "Multiplication rule: independent stages multiply. Permutations of $k$ from $n$: $$P(n,k) = \\frac{n!}{(n-k)!}$$ Combinations of $k$ from $n$: $$\\binom{n}{k} = \\frac{n!}{k!\\,(n-k)!}$$ The three Kolmogorov axioms everything rests on: $P(A) \\ge 0$, $P(S) = 1$, and for disjoint events $P(\\bigcup A_i) = \\sum P(A_i)$."
+            },
+            {
+              "kind": "worked",
+              "title": "A classic equally-likely count",
+              "body": "From a standard deck, draw 5 cards. What is the probability of exactly 2 aces?",
+              "steps": [
+                "Total hands: $\\binom{52}{5}$.",
+                "Choose 2 of the 4 aces: $\\binom{4}{2} = 6$.",
+                "Choose the other 3 cards from the 48 non-aces: $\\binom{48}{3}$.",
+                "Probability $= \\dfrac{\\binom{4}{2}\\binom{48}{3}}{\\binom{52}{5}} = \\dfrac{6 \\cdot 17296}{2598960} \\approx 0.0399$."
+              ],
+              "answer": "$\\approx 0.0399$"
+            },
+            {
+              "kind": "trick",
+              "title": "Build the count as choose-this-then-that",
+              "body": "Every hypergeometric-style count is *choose the good ones $\\times$ choose the rest, over choose everything*. Write the denominator first ($\\binom{N}{n}$ — choose your whole sample), then split the numerator into the groups the problem cares about. The structure writes itself."
+            },
+            {
+              "kind": "trap",
+              "title": "Using a permutation when order is irrelevant",
+              "body": "If you count a 3-person committee with $P(n,3)$ instead of $\\binom{n}{3}$, you over-count by $3! = 6$. The tell: if swapping two chosen items gives a *different* outcome you care about, order matters; if it gives the *same* outcome, divide out the $k!$."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Quick test: permutation or combination?", "back": "Ask *does order matter?* Yes → permutation $\\frac{n!}{(n-k)!}$. No → combination $\\binom{n}{k}$." },
+                { "front": "Relationship between $P(n,k)$ and $\\binom{n}{k}$?", "back": "$P(n,k) = \\binom{n}{k}\\cdot k!$ — the permutation counts every combination in all $k!$ orders." },
+                { "front": "State the three probability axioms.", "back": "Non-negativity $P(A)\\ge 0$; total mass $P(S)=1$; countable additivity for disjoint events." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 110,
+            "questions": [
+              {
+                "q": "How many ways can a committee of 3 be chosen from 10 people?",
+                "choices": ["$30$", "$120$", "$720$", "$1000$", "$5040$"],
+                "correct": 1,
+                "explain": "Order does not matter, so $\\binom{10}{3} = \\frac{10!}{3!7!} = 120$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "How many distinct 4-letter arrangements use the letters of the word $\\textbf{BOOK}$?",
+                "choices": ["$6$", "$12$", "$24$", "$48$", "$120$"],
+                "correct": 1,
+                "explain": "There are $4!$ arrangements but the two O's are identical, so divide by $2!$: $24/2 = 12$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A box has 6 red and 4 blue balls. Drawing 3 without replacement, what is $P(\\text{all red})$?",
+                "choices": ["$0.10$", "$0.167$", "$0.20$", "$0.25$", "$0.30$"],
+                "correct": 1,
+                "explain": "$\\dfrac{\\binom{6}{3}}{\\binom{10}{3}} = \\dfrac{20}{120} = \\tfrac{1}{6} \\approx 0.167$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A 4-digit PIN allows digits 0–9 with repetition. How many PINs have no two adjacent digits equal?",
+                "choices": ["$10 \\cdot 9^3$", "$10^4$", "$10 \\cdot 9 \\cdot 8 \\cdot 7$", "$9^4$", "$10!/6!$"],
+                "correct": 0,
+                "explain": "First digit: 10 choices. Each later digit just needs to differ from the one immediately before it: 9 choices each. So $10 \\cdot 9 \\cdot 9 \\cdot 9 = 10\\cdot 9^3$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "From 5 men and 4 women, a committee of 4 with exactly 2 women is formed. How many committees?",
+                "choices": ["$40$", "$60$", "$90$", "$120$", "$126$"],
+                "correct": 1,
+                "explain": "Choose 2 of 4 women and 2 of 5 men: $\\binom{4}{2}\\binom{5}{2} = 6 \\cdot 10 = 60$.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "conditional-probability",
+          "title": "Conditional Probability",
+          "tagline": "New information shrinks the room. Conditioning is just zooming the sample space into the part you now know is true.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Almost every hard P question hides a *given that* — and the moment you condition, you are working in a **smaller world**. Students who picture that shrinking world get these right fast; students who memorize the formula blind get tangled in which probability goes on the bottom."
+            },
+            {
+              "kind": "intuition",
+              "title": "Conditioning = restrict, then renormalize",
+              "body": "$P(A \\mid B)$ asks: *given we already landed inside $B$, how much of $B$ is also $A$?* You throw away everything outside $B$ (the new world is $B$), then ask what fraction of that world is $A \\cap B$. That is why $B$ sits in the denominator — it is the new total."
+            },
+            {
+              "kind": "formula",
+              "title": "Definition, multiplication, total probability",
+              "body": "Definition: $$P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)}, \\quad P(B) > 0$$ Multiplication rule (rearranged): $$P(A \\cap B) = P(A \\mid B)\\,P(B)$$ Law of total probability over a partition $B_1,\\dots,B_n$: $$P(A) = \\sum_i P(A \\mid B_i)\\,P(B_i)$$"
+            },
+            {
+              "kind": "worked",
+              "title": "Total probability across two factories",
+              "body": "Factory 1 makes 60% of units at a 2% defect rate; Factory 2 makes 40% at a 5% defect rate. What fraction of all units are defective?",
+              "steps": [
+                "Condition on factory: $P(D) = P(D\\mid F_1)P(F_1) + P(D\\mid F_2)P(F_2)$.",
+                "$= (0.02)(0.6) + (0.05)(0.4)$.",
+                "$= 0.012 + 0.020 = 0.032$."
+              ],
+              "answer": "$P(\\text{defective}) = 0.032$"
+            },
+            {
+              "kind": "trick",
+              "title": "The tree: branch probabilities multiply along a path",
+              "body": "Draw a tree: first branch on the condition ($F_1$ vs $F_2$), then on the outcome (defect vs not). The probability of any leaf is the **product** along its path. To get a marginal like $P(D)$, **add** every leaf where $D$ happens. Multiply along, add across — that single rule solves most conditional problems without algebra."
+            },
+            {
+              "kind": "trap",
+              "title": "Flipping the condition",
+              "body": "$P(A \\mid B) \\ne P(B \\mid A)$ in general. *The probability a defective part came from Factory 2* is **not** the same as *the defect rate at Factory 2*. Confusing these two directions is the single biggest conditional-probability mistake — and it is exactly what Bayes' theorem exists to fix."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Why is $P(B)$ in the denominator of $P(A\\mid B)$?", "back": "Conditioning makes $B$ the new sample space, so you renormalize by the size of that new total." },
+                { "front": "State the multiplication rule.", "back": "$P(A \\cap B) = P(A\\mid B)\\,P(B) = P(B\\mid A)\\,P(A)$." },
+                { "front": "When does $P(A\\mid B) = P(A)$?", "back": "Exactly when $A$ and $B$ are independent — knowing $B$ tells you nothing about $A$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 110,
+            "questions": [
+              {
+                "q": "$P(A \\cap B) = 0.2$ and $P(B) = 0.5$. Find $P(A \\mid B)$.",
+                "choices": ["$0.1$", "$0.2$", "$0.4$", "$0.5$", "$0.7$"],
+                "correct": 2,
+                "explain": "$P(A\\mid B) = \\frac{0.2}{0.5} = 0.4$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "An urn has 3 red and 2 green balls. Two are drawn without replacement. Given the first is red, what is the probability the second is red?",
+                "choices": ["$0.4$", "$0.5$", "$0.6$", "$0.667$", "$0.75$"],
+                "correct": 1,
+                "explain": "After removing one red, 2 red and 2 green remain, so $P(\\text{2nd red}\\mid\\text{1st red}) = \\frac{2}{4} = 0.5$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "30% of emails are spam. 90% of spam and 5% of non-spam contain the word 'free'. What fraction of all emails contain 'free'?",
+                "choices": ["$0.105$", "$0.270$", "$0.305$", "$0.315$", "$0.350$"],
+                "correct": 2,
+                "explain": "Total probability: $(0.9)(0.3) + (0.05)(0.7) = 0.27 + 0.035 = 0.305$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If $P(A) = 0.5$, $P(B) = 0.4$, $P(A \\mid B) = 0.5$, what is $P(A \\cup B)$?",
+                "choices": ["$0.50$", "$0.70$", "$0.74$", "$0.80$", "$0.90$"],
+                "correct": 1,
+                "explain": "$P(A\\mid B)=P(A)$ means independence, so $P(A\\cap B)=0.5\\cdot0.4=0.2$. Then $P(A\\cup B)=0.5+0.4-0.2=0.7$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "A test for a condition is taken in two independent stages; the second is taken only if the first is positive. $P(\\text{1st}+)=0.2$ and $P(\\text{2nd}+\\mid\\text{1st}+)=0.6$. What is $P(\\text{both}+)$?",
+                "choices": ["$0.08$", "$0.12$", "$0.20$", "$0.40$", "$0.80$"],
+                "correct": 1,
+                "explain": "Multiplication along the path: $P(\\text{1st}+)\\,P(\\text{2nd}+\\mid\\text{1st}+) = 0.2 \\times 0.6 = 0.12$.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "bayes-theorem",
+          "title": "Bayes' Theorem",
+          "tagline": "Reverse the conditional. The reason a 99%-accurate test can still be wrong most of the time — and why this is a probability superpower.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A disease hits 1 in 100 people. A test is 99% accurate both ways. You test positive. Most people — including doctors — guess your chance of being sick is about 99%. **It is roughly 50%.** Bayes is the tool that makes that counterintuitive truth obvious, and the SOA loves it."
+            },
+            {
+              "kind": "intuition",
+              "title": "Rare causes stay rare even after evidence",
+              "body": "The base rate dominates. If almost nobody has the disease, then the *false positives drawn from the huge healthy crowd* can rival or outnumber the *true positives from the tiny sick group*. Bayes simply weighs each path by how many people actually walk it. Always think in **counts of people**, not floating probabilities."
+            },
+            {
+              "kind": "formula",
+              "title": "Bayes' theorem",
+              "body": "$$P(B_k \\mid A) = \\frac{P(A \\mid B_k)\\,P(B_k)}{\\sum_i P(A \\mid B_i)\\,P(B_i)}$$ The numerator is one path; the denominator is the law of total probability — *all* the paths that produce the evidence $A$. The whole theorem is: this path's weight divided by every path's weight."
+            },
+            {
+              "kind": "widget",
+              "title": "See it for yourself",
+              "widget": {
+                "id": "bayes-box",
+                "caption": "Set prevalence to 1%, sensitivity and specificity to 99% each, and watch the posterior land near 50% — the false positives from the healthy majority swamp the true positives. Then push prevalence up and watch the posterior climb."
+              }
+            },
+            {
+              "kind": "worked",
+              "title": "The 99% test, by counting people",
+              "body": "Prevalence 1%, sensitivity 99%, specificity 99%. You test positive — find $P(\\text{disease} \\mid +)$.",
+              "steps": [
+                "Imagine 10,000 people. Diseased: $100$. Healthy: $9{,}900$.",
+                "True positives: $99\\% \\times 100 = 99$.",
+                "False positives: $1\\% \\times 9{,}900 = 99$.",
+                "$P(\\text{disease}\\mid +) = \\dfrac{99}{99 + 99} = \\dfrac{99}{198} = 0.5$."
+              ],
+              "answer": "$P(\\text{disease} \\mid +) = 0.50$"
+            },
+            {
+              "kind": "trick",
+              "title": "Skip the formula — use a population of 10,000",
+              "body": "Never plug into the Bayes fraction cold under time pressure. Pick a round population (10,000 or 100,000), split it by the base rate, then apply the rates to get integer counts in each cell. The answer is *favorable count / total positive count*. Faster, and you literally cannot flip the conditional by accident."
+            },
+            {
+              "kind": "trap",
+              "title": "Ignoring the base rate",
+              "body": "The base-rate fallacy: jumping from *the test is 99% accurate* to *I am 99% likely sick*. That throws away $P(B_k)$, the prior. When a condition is rare, even an excellent test produces a flood of false positives. The prior is never optional — it is half the calculation."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What goes in the denominator of Bayes?", "back": "The total probability of the evidence — the sum over every cause path: $\\sum_i P(A\\mid B_i)P(B_i)$." },
+                { "front": "Why can a 99% test give a ~50% posterior?", "back": "With a rare disease, false positives from the large healthy group match true positives from the tiny sick group." },
+                { "front": "Fastest exam approach to Bayes?", "back": "Use a population of 10,000, split by the prior, apply the rates, then take favorable / total positives." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.8,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "A factory's machines A and B make 70% and 30% of output, with defect rates 2% and 6%. A defective item is found. What is $P(\\text{from B} \\mid \\text{defective})$?",
+                "choices": ["$0.30$", "$0.44$", "$0.56$", "$0.60$", "$0.72$"],
+                "correct": 2,
+                "explain": "Defects: A contributes $0.02\\times0.7=0.014$; B contributes $0.06\\times0.3=0.018$. Posterior for B $= \\frac{0.018}{0.014+0.018}=\\frac{0.018}{0.032}=0.5625\\approx0.56$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Disease prevalence 2%. Sensitivity 95%, specificity 90%. Given a positive test, $P(\\text{disease}\\mid +)$ is closest to:",
+                "choices": ["$0.16$", "$0.32$", "$0.50$", "$0.62$", "$0.95$"],
+                "correct": 0,
+                "explain": "Per 10,000: diseased 200, healthy 9,800. True positives $0.95\\times200=190$. False positives $0.10\\times9{,}800=980$. $\\frac{190}{190+980}=\\frac{190}{1170}\\approx0.162$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "Two urns: Urn 1 has 2 red, 3 white; Urn 2 has 4 red, 1 white. An urn is picked at random and a red ball drawn. What is $P(\\text{Urn 1}\\mid \\text{red})$?",
+                "choices": ["$0.25$", "$0.33$", "$0.40$", "$0.50$", "$0.60$"],
+                "correct": 1,
+                "explain": "$P(R\\mid U_1)=0.4$, $P(R\\mid U_2)=0.8$, priors $0.5$ each. Posterior $=\\frac{0.5\\cdot0.4}{0.5\\cdot0.4+0.5\\cdot0.8}=\\frac{0.2}{0.6}=\\tfrac13\\approx0.33$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An insurer classifies drivers as low (60%, claim prob 0.05) or high risk (40%, claim prob 0.20). Given a driver filed a claim, what is the probability they are high risk?",
+                "choices": ["$0.40$", "$0.57$", "$0.62$", "$0.73$", "$0.80$"],
+                "correct": 3,
+                "explain": "Claim mass: low $0.6\\times0.05=0.03$; high $0.4\\times0.20=0.08$. Posterior high $=\\frac{0.08}{0.03+0.08}=\\frac{0.08}{0.11}\\approx0.727$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "In Bayes' theorem, increasing the prior $P(B_k)$ while holding the likelihoods fixed will:",
+                "choices": ["Decrease the posterior $P(B_k\\mid A)$", "Leave the posterior unchanged", "Increase the posterior $P(B_k\\mid A)$", "Make the posterior exceed 1", "Have an unpredictable effect"],
+                "correct": 2,
+                "explain": "A larger prior puts more weight on that cause's path in both numerator and denominator, but the net effect raises its posterior share. Priors and posteriors move together when likelihoods are fixed.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "independence",
+          "title": "Independence",
+          "tagline": "The most abused word on the exam. Independent is not the same as mutually exclusive — confusing them costs easy points.",
+          "minutes": 16,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Independence lets you **multiply** — it turns hard joint probabilities into easy products. But it is constantly confused with mutual exclusivity, which is almost its opposite. Nailing the distinction is free points."
+            },
+            {
+              "kind": "intuition",
+              "title": "Independent = no information; exclusive = total information",
+              "body": "**Independent**: learning $B$ happened tells you *nothing* about $A$ — coin flips. **Mutually exclusive**: learning $B$ happened tells you $A$ *definitely did not* — they cannot co-occur. Far from being the same, mutually exclusive events (with positive probability) are *strongly dependent*: one happening rules the other out."
+            },
+            {
+              "kind": "formula",
+              "title": "The two definitions, side by side",
+              "body": "Independent: $$P(A \\cap B) = P(A)\\,P(B) \\iff P(A \\mid B) = P(A)$$ Mutually exclusive: $$P(A \\cap B) = 0$$ For $n$ independent events the joint factorizes: $P(A_1 \\cap \\cdots \\cap A_n) = \\prod_i P(A_i)$."
+            },
+            {
+              "kind": "worked",
+              "title": "At least one success",
+              "body": "Three independent components each work with probability 0.9. Find the probability at least one works.",
+              "steps": [
+                "Complement is cleaner: at least one $= 1 - P(\\text{none work})$.",
+                "All fail (independent): $P(\\text{none}) = 0.1^3 = 0.001$.",
+                "So $P(\\text{at least one}) = 1 - 0.001 = 0.999$."
+              ],
+              "answer": "$0.999$"
+            },
+            {
+              "kind": "trick",
+              "title": "'At least one' → take the complement",
+              "body": "Whenever you see *at least one*, do not sum the messy cases — compute $1 - P(\\text{none})$. With independence, $P(\\text{none})$ is just a clean product of the individual failure probabilities. This complement move shows up on the exam constantly."
+            },
+            {
+              "kind": "trap",
+              "title": "Treating mutually exclusive as independent",
+              "body": "If $A$ and $B$ are mutually exclusive and both have positive probability, they are **dependent** — because $P(A \\mid B) = 0 \\ne P(A)$. So you cannot multiply their probabilities. Two events can be independent, or mutually exclusive, but (with positive probability) never both."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Independent vs mutually exclusive in one line each.", "back": "Independent: $P(A\\cap B)=P(A)P(B)$, no info. Mutually exclusive: $P(A\\cap B)=0$, can't co-occur." },
+                { "front": "Can two events with positive probability be both independent and mutually exclusive?", "back": "No. Mutual exclusivity forces $P(A\\mid B)=0\\ne P(A)$, so they are dependent." },
+                { "front": "Go-to move for 'at least one'?", "back": "$1 - P(\\text{none})$; under independence, $P(\\text{none})$ is a product of failure probabilities." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 100,
+            "questions": [
+              {
+                "q": "Two independent events have $P(A) = 0.3$, $P(B) = 0.4$. Find $P(A \\cap B)$.",
+                "choices": ["$0.07$", "$0.12$", "$0.58$", "$0.70$", "$0.12/0.4$"],
+                "correct": 1,
+                "explain": "Independence: $P(A\\cap B)=0.3\\times0.4=0.12$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A system has 4 independent components each failing with probability 0.2. What is the probability the system survives (all work)?",
+                "choices": ["$0.2$", "$0.41$", "$0.59$", "$0.80$", "$0.998$"],
+                "correct": 1,
+                "explain": "Each works with prob 0.8; all four: $0.8^4 = 0.4096 \\approx 0.41$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Events $A$ and $B$ are mutually exclusive with $P(A) = 0.3$, $P(B) = 0.5$. What is $P(A \\mid B)$?",
+                "choices": ["$0$", "$0.15$", "$0.30$", "$0.50$", "$0.60$"],
+                "correct": 0,
+                "explain": "Mutually exclusive means $A$ cannot occur when $B$ does, so $P(A\\mid B)=0$. This is why they are dependent, not independent.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A fair coin is flipped 5 times. What is the probability of at least one head?",
+                "choices": ["$1/32$", "$5/32$", "$1/2$", "$31/32$", "$1$"],
+                "correct": 3,
+                "explain": "$1 - P(\\text{no heads}) = 1 - (1/2)^5 = 1 - 1/32 = 31/32$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$A$, $B$, $C$ are independent with probabilities 0.5, 0.6, 0.7. Find $P(\\text{exactly one occurs})$ ... closest value:",
+                "choices": ["$0.21$", "$0.29$", "$0.36$", "$0.44$", "$0.50$"],
+                "correct": 1,
+                "explain": "Sum the three single-event products: $(0.5)(0.4)(0.3)+(0.5)(0.6)(0.3)+(0.5)(0.4)(0.7)=0.06+0.09+0.14=0.29$.",
+                "difficulty": "stretch"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "univariate-random-variables",
+      "title": "Univariate Random Variables",
+      "weight": "44–50%",
+      "blurb": "The biggest slice of the exam by far — nearly half your questions. Distributions, expectation and variance, the named discrete and continuous families, and moment generating functions. Master this module and you have mastered most of Exam P.",
+      "concepts": [
+        {
+          "id": "random-variables-and-distributions",
+          "title": "Random Variables, PMFs, PDFs & CDFs",
+          "tagline": "A distribution is just a way of spreading 1 unit of probability over the number line. Discrete sprinkles it; continuous spreads it.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Half the exam lives on top of one idea: a random variable carries a **total of 1** unit of probability, and a distribution describes exactly how that 1 is spread. Once you see every pmf and pdf as *the same single unit, distributed differently*, the named families stop being memorization."
+            },
+            {
+              "kind": "intuition",
+              "title": "Discrete sprinkles, continuous spreads",
+              "body": "A **discrete** variable drops chunks of probability on specific points — the heights $p(x)$ are actual probabilities and must sum to 1. A **continuous** variable smears probability like butter; the height $f(x)$ is a *density*, not a probability, and you get probability only by integrating over an interval (an *area*). For a continuous variable, $P(X = x) = 0$ — a single point has no width, hence no area."
+            },
+            {
+              "kind": "formula",
+              "title": "The three functions and how they connect",
+              "body": "Discrete pmf sums to 1: $\\sum_x p(x) = 1$. Continuous pdf integrates to 1: $\\int_{-\\infty}^{\\infty} f(x)\\,dx = 1$. The CDF accumulates probability up to a point: $$F(x) = P(X \\le x)$$ For continuous $X$, density is the derivative of the CDF: $f(x) = F'(x)$, and $P(a \\le X \\le b) = F(b) - F(a)$."
+            },
+            {
+              "kind": "widget",
+              "title": "Tour the named distributions",
+              "widget": {
+                "id": "dist-explorer",
+                "caption": "Switch between Binomial, Poisson, Geometric, Normal, and Exponential. Drag the parameters and watch the shape — and the mean and variance — respond. Build the visual memory now; it pays off on every distribution question."
+              }
+            },
+            {
+              "kind": "worked",
+              "title": "Find the constant, then a probability",
+              "body": "Let $f(x) = c x^2$ for $0 \\le x \\le 2$ and 0 elsewhere. Find $c$, then $P(X \\le 1)$.",
+              "steps": [
+                "Total area is 1: $\\int_0^2 c x^2\\,dx = c\\cdot \\frac{x^3}{3}\\Big|_0^2 = c\\cdot\\frac{8}{3} = 1$.",
+                "So $c = \\frac{3}{8}$.",
+                "$P(X \\le 1) = \\int_0^1 \\tfrac{3}{8} x^2\\,dx = \\tfrac{3}{8}\\cdot\\tfrac{1}{3} = \\tfrac{1}{8} = 0.125$."
+              ],
+              "answer": "$c = \\tfrac{3}{8}$, and $P(X \\le 1) = 0.125$"
+            },
+            {
+              "kind": "trick",
+              "title": "First move on any pdf: set the area to 1",
+              "body": "Whenever a density has an unknown constant, your first line is always $\\int f = 1$ — that single equation solves for the constant. And to get any probability, integrate the density (or subtract two CDF values). Density questions are integration questions in disguise."
+            },
+            {
+              "kind": "trap",
+              "title": "Reading a density as a probability",
+              "body": "$f(x)$ can exceed 1 — it is a density, not a probability. A narrow tall pdf can have $f(x) = 5$ and still integrate to 1. Never write $P(X = a) = f(a)$ for a continuous variable; that probability is 0. Probability is always an *area* under $f$, never a height."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Difference between $p(x)$ and $f(x)$?", "back": "pmf $p(x)$ is an actual probability and sums to 1; pdf $f(x)$ is a density and integrates to 1." },
+                { "front": "For continuous $X$, what is $P(X = a)$?", "back": "Zero — a single point has no width, so no area under the density." },
+                { "front": "How do you get $P(a\\le X\\le b)$ from the CDF?", "back": "$F(b) - F(a)$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 110,
+            "questions": [
+              {
+                "q": "A pdf is $f(x) = kx$ for $0 \\le x \\le 4$. Find $k$.",
+                "choices": ["$1/16$", "$1/8$", "$1/4$", "$1/2$", "$1$"],
+                "correct": 1,
+                "explain": "$\\int_0^4 kx\\,dx = k\\cdot 8 = 1 \\Rightarrow k = 1/8$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "For $f(x) = 3x^2$ on $[0,1]$, find $P(X > 0.5)$.",
+                "choices": ["$0.125$", "$0.5$", "$0.75$", "$0.875$", "$0.9375$"],
+                "correct": 3,
+                "explain": "$P(X>0.5)=\\int_{0.5}^1 3x^2dx = x^3\\big|_{0.5}^1 = 1 - 0.125 = 0.875$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A CDF is $F(x) = 1 - e^{-x/2}$ for $x \\ge 0$. Find $P(1 \\le X \\le 3)$.",
+                "choices": ["$e^{-1/2}-e^{-3/2}$", "$e^{-3/2}-e^{-1/2}$", "$1-e^{-2}$", "$e^{-1}-e^{-3}$", "$e^{-2}$"],
+                "correct": 0,
+                "explain": "$F(3)-F(1) = (1-e^{-3/2}) - (1-e^{-1/2}) = e^{-1/2} - e^{-3/2}$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Which of the following must always hold for a continuous pdf?",
+                "choices": ["$f(x) \\le 1$ everywhere", "$f(x) \\ge 0$ and $\\int f = 1$", "$\\sum f(x) = 1$", "$f$ is increasing", "$P(X=a) = f(a)$"],
+                "correct": 1,
+                "explain": "A pdf must be non-negative and integrate to 1. It may exceed 1, it need not be monotonic, and point probabilities are zero.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A discrete RV has $P(X=k) = c/2^k$ for $k = 1,2,3,\\dots$. Find $c$.",
+                "choices": ["$1/2$", "$1$", "$2$", "$e$", "$\\ln 2$"],
+                "correct": 1,
+                "explain": "$\\sum_{k\\ge1} c/2^k = c\\cdot\\frac{1/2}{1-1/2} = c = 1$, so $c=1$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "expectation-and-variance",
+          "title": "Expectation & Variance",
+          "tagline": "The center and the spread. Plus the one shortcut — Var = E[X²] − (E[X])² — that you will use on a third of the exam.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Expectation is the long-run average; variance is how violently outcomes scatter around it. Together they summarize a distribution in two numbers — and the SOA asks for one or both on a huge share of questions. The computational shortcut below is non-negotiable to memorize."
+            },
+            {
+              "kind": "intuition",
+              "title": "Balance point and spread",
+              "body": "$E[X]$ is the **balance point** of the distribution — where the probability mass would teeter on a fulcrum. Variance measures the *average squared distance* from that balance point: small variance means tightly clustered, large variance means wild. We square the distances so positives and negatives do not cancel; the standard deviation un-squares it back to the original units."
+            },
+            {
+              "kind": "formula",
+              "title": "Definitions and the shortcut",
+              "body": "Expectation: $E[X] = \\sum_x x\\,p(x)$ or $\\int x f(x)\\,dx$. Law of the unconscious statistician: $E[g(X)] = \\sum g(x)p(x)$ or $\\int g(x)f(x)\\,dx$. The variance shortcut: $$\\mathrm{Var}(X) = E[X^2] - (E[X])^2$$ Linearity, always true: $E[aX + b] = aE[X] + b$ and $\\mathrm{Var}(aX + b) = a^2\\mathrm{Var}(X)$."
+            },
+            {
+              "kind": "worked",
+              "title": "Mean and variance of a small die-like RV",
+              "body": "$X$ takes values 1, 2, 3 with probabilities 0.2, 0.5, 0.3. Find $E[X]$ and $\\mathrm{Var}(X)$.",
+              "steps": [
+                "$E[X] = 1(0.2) + 2(0.5) + 3(0.3) = 0.2 + 1.0 + 0.9 = 2.1$.",
+                "$E[X^2] = 1(0.2) + 4(0.5) + 9(0.3) = 0.2 + 2.0 + 2.7 = 4.9$.",
+                "$\\mathrm{Var}(X) = 4.9 - 2.1^2 = 4.9 - 4.41 = 0.49$."
+              ],
+              "answer": "$E[X] = 2.1$, $\\mathrm{Var}(X) = 0.49$"
+            },
+            {
+              "kind": "trick",
+              "title": "Never integrate variance directly",
+              "body": "Computing $\\int (x - \\mu)^2 f(x)\\,dx$ by hand is slow and error-prone. Always use $\\mathrm{Var}(X) = E[X^2] - \\mu^2$: find $E[X]$ and $E[X^2]$ with the same machinery, then subtract. And remember the constant $b$ vanishes from variance — only the scale $a$ survives, squared."
+            },
+            {
+              "kind": "trap",
+              "title": "Forgetting to square the scalar in variance",
+              "body": "$\\mathrm{Var}(aX + b) = a^2\\mathrm{Var}(X)$, **not** $a\\,\\mathrm{Var}(X)$, and the $+b$ contributes nothing. Doubling a random variable quadruples its variance. Equally common: $\\mathrm{Var}(X+Y) \\ne \\mathrm{Var}(X) + \\mathrm{Var}(Y)$ unless $X$ and $Y$ are uncorrelated."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "State the variance shortcut.", "back": "$\\mathrm{Var}(X) = E[X^2] - (E[X])^2$." },
+                { "front": "$\\mathrm{Var}(aX+b) = ?$", "back": "$a^2\\,\\mathrm{Var}(X)$ — the shift $b$ drops out, the scale is squared." },
+                { "front": "What is $E[g(X)]$ for continuous $X$?", "back": "$\\int g(x) f(x)\\,dx$ — weight each $g$ value by the density (LOTUS)." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 110,
+            "questions": [
+              {
+                "q": "$X$ has $E[X] = 3$ and $E[X^2] = 13$. Find $\\mathrm{Var}(X)$.",
+                "choices": ["$3$", "$4$", "$9$", "$10$", "$13$"],
+                "correct": 1,
+                "explain": "$\\mathrm{Var}(X) = 13 - 3^2 = 13 - 9 = 4$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "If $\\mathrm{Var}(X) = 5$, what is $\\mathrm{Var}(3X - 2)$?",
+                "choices": ["$5$", "$13$", "$15$", "$43$", "$45$"],
+                "correct": 4,
+                "explain": "$\\mathrm{Var}(3X-2) = 3^2\\cdot 5 = 45$; the $-2$ shift is irrelevant.",
+                "difficulty": "core"
+              },
+              {
+                "q": "For $f(x) = 2x$ on $[0,1]$, find $E[X]$.",
+                "choices": ["$1/3$", "$1/2$", "$2/3$", "$3/4$", "$1$"],
+                "correct": 2,
+                "explain": "$E[X] = \\int_0^1 x\\cdot 2x\\,dx = \\int_0^1 2x^2 dx = \\frac{2}{3}$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X$ has mean 10 and variance 4. Define $Y = 2X + 5$. Find $E[Y]$ and $\\mathrm{Var}(Y)$.",
+                "choices": ["$25, 8$", "$25, 16$", "$20, 16$", "$25, 13$", "$20, 8$"],
+                "correct": 1,
+                "explain": "$E[Y] = 2(10)+5 = 25$; $\\mathrm{Var}(Y) = 2^2\\cdot 4 = 16$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An insurance loss $X$ has $E[X]=500$, $\\mathrm{Var}(X)=10000$. The insurer pays $0.8X$. What is the standard deviation of the payment?",
+                "choices": ["$80$", "$100$", "$8000$", "$6400$", "$400$"],
+                "correct": 0,
+                "explain": "$\\mathrm{Var}(0.8X) = 0.64\\cdot 10000 = 6400$, so SD $= \\sqrt{6400} = 80$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "common-discrete-distributions",
+          "title": "The Discrete Families",
+          "tagline": "Binomial, Poisson, geometric, negative binomial, hypergeometric — recognize the story and the formula is automatic.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "You will not derive distributions on the exam — you will **recognize** them. Each named discrete family is a story: counting successes, counting trials until success, counting rare events in an interval. Learn the stories and the right formula leaps out before you finish reading the stem."
+            },
+            {
+              "kind": "intuition",
+              "title": "Each distribution answers one question",
+              "body": "**Binomial**: how many successes in $n$ fixed independent trials? **Geometric**: how many trials until the first success? **Negative binomial**: until the $r$-th success? **Poisson**: how many rare events in a fixed interval, given an average rate? **Hypergeometric**: like binomial but drawing *without* replacement from a finite pool. Match the question to the story first; reach for the formula second."
+            },
+            {
+              "kind": "formula",
+              "title": "The families and their moments",
+              "body": "Binomial$(n,p)$: $P(X=k) = \\binom{n}{k}p^k(1-p)^{n-k}$, mean $np$, variance $np(1-p)$. Geometric$(p)$ (trials until first success): $P(X=k) = (1-p)^{k-1}p$, mean $1/p$, variance $(1-p)/p^2$. Poisson$(\\lambda)$: $P(X=k) = \\dfrac{e^{-\\lambda}\\lambda^k}{k!}$, mean and variance both $\\lambda$."
+            },
+            {
+              "kind": "worked",
+              "title": "Poisson for a call center",
+              "body": "Calls arrive at a mean rate of 3 per minute. Find the probability of exactly 5 calls in one minute.",
+              "steps": [
+                "This is counting rare-ish events in a fixed interval with a known rate → Poisson with $\\lambda = 3$.",
+                "$P(X = 5) = \\dfrac{e^{-3} 3^5}{5!} = \\dfrac{e^{-3}\\cdot 243}{120}$.",
+                "$\\approx \\dfrac{0.0498 \\cdot 243}{120} \\approx 0.1008$."
+              ],
+              "answer": "$\\approx 0.1008$"
+            },
+            {
+              "kind": "trick",
+              "title": "Poisson's signature: mean equals variance",
+              "body": "If a problem hands you a mean and a variance that are *equal*, suspect Poisson immediately. Also: a binomial with large $n$ and small $p$ is well-approximated by Poisson with $\\lambda = np$ — handy when $n$ is too big to compute $\\binom{n}{k}$ comfortably."
+            },
+            {
+              "kind": "trap",
+              "title": "Geometric indexing and the binomial coefficient",
+              "body": "Two classic slips: (1) the geometric can be indexed as *trials until success* (support $1,2,3,\\dots$, mean $1/p$) or *failures before success* (support $0,1,2,\\dots$, mean $(1-p)/p$) — read which the problem wants. (2) Binomial needs the $\\binom{n}{k}$ coefficient; dropping it counts only one specific ordering of successes, undercounting badly."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Binomial mean and variance?", "back": "Mean $np$, variance $np(1-p)$." },
+                { "front": "Poisson mean and variance?", "back": "Both equal $\\lambda$ — equal mean and variance is the Poisson fingerprint." },
+                { "front": "Geometric (trials until 1st success) mean?", "back": "$1/p$ — e.g. $p=0.2$ means on average 5 trials." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "A fair die is rolled 4 times. What is the probability of exactly two 6's?",
+                "choices": ["$0.116$", "$0.155$", "$0.193$", "$0.231$", "$0.289$"],
+                "correct": 1,
+                "explain": "Binomial$(4, 1/6)$: $\\binom{4}{2}(1/6)^2(5/6)^2 = 6\\cdot\\frac{1}{36}\\cdot\\frac{25}{36} = \\frac{150}{1296}\\approx 0.1157$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Accidents occur at a mean of 2 per week (Poisson). Find $P(\\text{no accidents in a week})$.",
+                "choices": ["$0.050$", "$0.105$", "$0.135$", "$0.180$", "$0.271$"],
+                "correct": 2,
+                "explain": "$P(X=0) = e^{-2} \\approx 0.135$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A salesperson closes each call with probability 0.25, independently. What is the probability the first sale is on the 4th call?",
+                "choices": ["$0.105$", "$0.141$", "$0.158$", "$0.250$", "$0.316$"],
+                "correct": 0,
+                "explain": "Geometric: $(0.75)^3(0.25) = 0.4219\\cdot0.25 \\approx 0.1055$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X \\sim$ Poisson with $P(X=1) = P(X=2)$. Find $\\lambda$.",
+                "choices": ["$1$", "$2$", "$3$", "$1/2$", "$e$"],
+                "correct": 1,
+                "explain": "$e^{-\\lambda}\\lambda = e^{-\\lambda}\\lambda^2/2 \\Rightarrow 1 = \\lambda/2 \\Rightarrow \\lambda = 2$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "In 20 independent trials with success probability 0.1, what are the mean and variance of the number of successes?",
+                "choices": ["$2, 2$", "$2, 1.8$", "$2, 0.2$", "$0.1, 1.8$", "$2, 18$"],
+                "correct": 1,
+                "explain": "Binomial$(20, 0.1)$: mean $np = 2$, variance $np(1-p) = 20(0.1)(0.9) = 1.8$.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "common-continuous-distributions",
+          "title": "The Continuous Families",
+          "tagline": "Uniform, exponential, normal, gamma. The exponential's memorylessness and the normal's empirical rule are exam gold.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Continuous distributions carry two of the highest-yield tricks on the exam: the exponential's **memorylessness** (the past does not matter) and the normal's **standardization** (every normal question becomes one $Z$-table lookup). These come up again and again — make them reflexes."
+            },
+            {
+              "kind": "intuition",
+              "title": "Three shapes you must recognize on sight",
+              "body": "**Uniform**: flat — every value in $[a,b]$ equally likely. **Exponential**: waiting time for a Poisson event; a memoryless decay from a peak at 0. **Normal**: the symmetric bell, the limit that the CLT funnels everything toward. If you can sketch these three from memory and know roughly where their mass sits, most continuous questions are half-solved before any algebra."
+            },
+            {
+              "kind": "formula",
+              "title": "Densities and moments",
+              "body": "Uniform$(a,b)$: $f(x) = \\frac{1}{b-a}$, mean $\\frac{a+b}{2}$, variance $\\frac{(b-a)^2}{12}$. Exponential$(\\lambda)$: $f(x) = \\lambda e^{-\\lambda x}$, $F(x) = 1 - e^{-\\lambda x}$, mean $1/\\lambda$, variance $1/\\lambda^2$. Normal$(\\mu,\\sigma^2)$: standardize with $Z = \\frac{X - \\mu}{\\sigma}$, then use the standard table."
+            },
+            {
+              "kind": "worked",
+              "title": "Exponential memorylessness",
+              "body": "A component's lifetime is exponential with mean 5 years. Given it has already lasted 3 years, find the probability it lasts at least 2 more.",
+              "steps": [
+                "$\\lambda = 1/5$. Memorylessness: $P(X > 3+2 \\mid X > 3) = P(X > 2)$ — the 3 years are forgotten.",
+                "$P(X > 2) = e^{-\\lambda \\cdot 2} = e^{-2/5}$.",
+                "$\\approx e^{-0.4} \\approx 0.670$."
+              ],
+              "answer": "$\\approx 0.670$"
+            },
+            {
+              "kind": "trick",
+              "title": "Memorylessness kills the conditioning",
+              "body": "For an exponential, $P(X > s + t \\mid X > s) = P(X > t)$ — always. The moment you see *given it has already survived...*, drop the elapsed time entirely and compute the fresh tail probability. And for the normal, the empirical rule (68–95–99.7 within 1–2–3 SDs) lets you eyeball many answers without a table."
+            },
+            {
+              "kind": "trap",
+              "title": "Rate vs mean, and continuity of the normal",
+              "body": "The exponential's $\\lambda$ is a **rate**; its mean is $1/\\lambda$. A mean lifetime of 5 means $\\lambda = 0.2$, not 5. Mixing these inverts your exponents. Also: when standardizing, divide by $\\sigma$ (the SD), not $\\sigma^2$ (the variance) — a frequent, costly slip."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Exponential mean and survival function?", "back": "Mean $1/\\lambda$; $P(X>x) = e^{-\\lambda x}$." },
+                { "front": "What makes the exponential special?", "back": "Memorylessness: $P(X>s+t\\mid X>s)=P(X>t)$." },
+                { "front": "How do you standardize a normal?", "back": "$Z = \\frac{X-\\mu}{\\sigma}$ — divide by the SD, then use the $Z$-table." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "$X$ is uniform on $[2, 10]$. Find $P(X > 7)$.",
+                "choices": ["$0.30$", "$0.375$", "$0.40$", "$0.50$", "$0.70$"],
+                "correct": 1,
+                "explain": "$P(X>7) = \\frac{10-7}{10-2} = \\frac{3}{8} = 0.375$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Lifetimes are exponential with mean 4. Find $P(X > 6)$.",
+                "choices": ["$e^{-1.5}$", "$e^{-2/3}$", "$e^{-6}$", "$e^{-4}$", "$1-e^{-1.5}$"],
+                "correct": 0,
+                "explain": "$\\lambda = 1/4$, so $P(X>6) = e^{-6/4} = e^{-1.5} \\approx 0.223$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X \\sim N(100, 225)$. Find $P(X > 130)$ given $\\Phi(2) = 0.977$.",
+                "choices": ["$0.023$", "$0.046$", "$0.115$", "$0.159$", "$0.500$"],
+                "correct": 0,
+                "explain": "SD $= \\sqrt{225} = 15$. $Z = (130-100)/15 = 2$. $P(Z>2) = 1 - 0.977 = 0.023$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An exponential machine has mean time-to-failure 10 hours. Given it has run 8 hours, find $P(\\text{lasts} \\ge 5 \\text{ more})$.",
+                "choices": ["$e^{-1.3}$", "$e^{-0.5}$", "$e^{-0.8}$", "$e^{-0.3}$", "$e^{-1.5}$"],
+                "correct": 1,
+                "explain": "Memorylessness: the 8 hours vanish, so $P(X>5) = e^{-5/10} = e^{-0.5} \\approx 0.607$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "$X$ is uniform on $[0, 6]$. Find $\\mathrm{Var}(X)$.",
+                "choices": ["$1$", "$2$", "$3$", "$6$", "$12$"],
+                "correct": 2,
+                "explain": "$\\mathrm{Var} = \\frac{(6-0)^2}{12} = \\frac{36}{12} = 3$.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "multivariate-random-variables",
+      "title": "Multivariate Random Variables",
+      "weight": "23–30%",
+      "blurb": "Two or more variables at once: joint and marginal distributions, covariance and correlation, conditional expectation, sums of random variables, and the Central Limit Theorem that ties the whole exam together.",
+      "concepts": [
+        {
+          "id": "joint-and-marginal",
+          "title": "Joint & Marginal Distributions",
+          "tagline": "Two variables share one probability surface. Marginalizing is just summing or integrating out the variable you stopped caring about.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "When two random variables interact — a loss and its deductible, a claim count and its severity — they share **one joint distribution**, a surface of probability over a plane. Reading that surface (and collapsing it back to one variable) is the core skill of the final module."
+            },
+            {
+              "kind": "intuition",
+              "title": "Marginalize = sum out what you ignore",
+              "body": "The **joint** $f(x,y)$ is the full surface. To get the **marginal** of $X$ alone, you collapse the surface along the $Y$ direction — sum (discrete) or integrate (continuous) over all $y$. You are pooling together every way $X = x$ could happen, regardless of $Y$. The word *marginal* is literal: old textbooks wrote these sums in the margins."
+            },
+            {
+              "kind": "formula",
+              "title": "Marginals, independence, and joint expectation",
+              "body": "Marginal: $f_X(x) = \\int f(x,y)\\,dy$ (or $\\sum_y$). Independence holds iff the joint factors: $f(x,y) = f_X(x)\\,f_Y(y)$ for all $x,y$. Expectation of a function: $$E[g(X,Y)] = \\iint g(x,y)\\,f(x,y)\\,dx\\,dy$$"
+            },
+            {
+              "kind": "worked",
+              "title": "Marginal from a joint density",
+              "body": "Let $f(x,y) = x + y$ on the unit square $0 \\le x,y \\le 1$. Find the marginal $f_X(x)$.",
+              "steps": [
+                "Integrate out $y$ over $[0,1]$: $f_X(x) = \\int_0^1 (x + y)\\,dy$.",
+                "$= xy + \\frac{y^2}{2}\\Big|_0^1 = x + \\frac{1}{2}$.",
+                "Valid for $0 \\le x \\le 1$."
+              ],
+              "answer": "$f_X(x) = x + \\tfrac{1}{2}, \\ 0 \\le x \\le 1$"
+            },
+            {
+              "kind": "trick",
+              "title": "Test independence by trying to factor",
+              "body": "To check independence fast, see whether $f(x,y)$ splits into a pure-$x$ piece times a pure-$y$ piece **over a rectangular region**. If the support is a triangle, or the density tangles $x$ and $y$ together (like $x + y$), they are dependent — no need to compute marginals first."
+            },
+            {
+              "kind": "trap",
+              "title": "Ignoring the region of support",
+              "body": "The limits of integration come from the **support**, not always $0$ to $1$. If $X$ and $Y$ live on a triangle like $0 < x < y < 1$, the marginal of $X$ integrates $y$ from $x$ to $1$, not $0$ to $1$. Getting the bounds wrong silently corrupts every downstream answer — sketch the region first."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "How do you get $f_X(x)$ from a joint density?", "back": "Integrate (or sum) the joint over all values of $y$ — collapse the surface along $Y$." },
+                { "front": "Independence test for a joint density?", "back": "It factors as $f_X(x)f_Y(y)$ over a rectangular support; tangled densities or non-rectangular support mean dependence." },
+                { "front": "What sets the integration limits for a marginal?", "back": "The region of support of the joint distribution — sketch it first." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "For $f(x,y) = x+y$ on the unit square, find $E[X]$.",
+                "choices": ["$1/2$", "$7/12$", "$2/3$", "$3/4$", "$5/6$"],
+                "correct": 1,
+                "explain": "With $f_X(x) = x + 1/2$: $E[X] = \\int_0^1 x(x+1/2)dx = \\int_0^1 (x^2 + x/2)dx = 1/3 + 1/4 = 7/12$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "$X$ and $Y$ have joint pmf with $P(0,0)=0.1, P(0,1)=0.2, P(1,0)=0.3, P(1,1)=0.4$. Find the marginal $P(X=1)$.",
+                "choices": ["$0.3$", "$0.4$", "$0.5$", "$0.6$", "$0.7$"],
+                "correct": 4,
+                "explain": "$P(X=1) = P(1,0)+P(1,1) = 0.3+0.4 = 0.7$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A joint density is $f(x,y) = 4xy$ on the unit square. Are $X$ and $Y$ independent?",
+                "choices": ["No, the support is a triangle", "Yes, it factors as $(2x)(2y)$", "No, $x$ and $y$ are added", "Cannot be determined", "Only if $x=y$"],
+                "correct": 1,
+                "explain": "Over the rectangular unit square, $4xy = (2x)(2y) = f_X(x)f_Y(y)$, so $X$ and $Y$ are independent.",
+                "difficulty": "core"
+              },
+              {
+                "q": "For $f(x,y) = 2$ on $0 < x < y < 1$, find the marginal $f_Y(y)$.",
+                "choices": ["$2$", "$2y$", "$2(1-y)$", "$y$", "$1$"],
+                "correct": 1,
+                "explain": "Integrate $x$ from 0 to $y$: $f_Y(y) = \\int_0^y 2\\,dx = 2y$ for $0<y<1$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "covariance-and-correlation",
+          "title": "Covariance & Correlation",
+          "tagline": "How two variables move together — and the formula for the variance of a sum that the exam asks for relentlessly.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Covariance measures whether two variables rise and fall together. Its single most-tested consequence: the **variance of a sum** picks up a covariance term. Forget that term and you will systematically miss portfolio and aggregate-loss questions worth real points."
+            },
+            {
+              "kind": "intuition",
+              "title": "Do they move together or against?",
+              "body": "Positive covariance: when $X$ is above its mean, $Y$ tends to be too — they move *together*. Negative: they move *oppositely*. Zero: no linear relationship. Correlation is just covariance rescaled to $[-1, 1]$ so you can compare across different units — it strips out the magnitudes and keeps only the direction and tightness of the linear link."
+            },
+            {
+              "kind": "formula",
+              "title": "Covariance, correlation, variance of a sum",
+              "body": "$$\\mathrm{Cov}(X,Y) = E[XY] - E[X]E[Y]$$ $$\\rho = \\frac{\\mathrm{Cov}(X,Y)}{\\sigma_X \\sigma_Y}, \\quad -1 \\le \\rho \\le 1$$ The headline result: $$\\mathrm{Var}(X + Y) = \\mathrm{Var}(X) + \\mathrm{Var}(Y) + 2\\,\\mathrm{Cov}(X,Y)$$"
+            },
+            {
+              "kind": "worked",
+              "title": "Variance of a sum with covariance",
+              "body": "$\\mathrm{Var}(X) = 4$, $\\mathrm{Var}(Y) = 9$, $\\mathrm{Cov}(X,Y) = 2$. Find $\\mathrm{Var}(X + Y)$ and $\\mathrm{Var}(X - Y)$.",
+              "steps": [
+                "$\\mathrm{Var}(X+Y) = 4 + 9 + 2(2) = 17$.",
+                "For a difference the covariance term flips sign: $\\mathrm{Var}(X-Y) = 4 + 9 - 2(2) = 9$.",
+                "Note both exceed neither variance alone — covariance shifts them apart."
+              ],
+              "answer": "$\\mathrm{Var}(X+Y) = 17$, $\\mathrm{Var}(X-Y) = 9$"
+            },
+            {
+              "kind": "trick",
+              "title": "Independent → covariance is 0 → variances just add",
+              "body": "If the problem says independent (or uncorrelated), $\\mathrm{Cov} = 0$, so $\\mathrm{Var}(X \\pm Y) = \\mathrm{Var}(X) + \\mathrm{Var}(Y)$ — note it is a **plus** even for a difference, because the covariance term that would carry the sign is zero. That subtlety trips up a lot of students."
+            },
+            {
+              "kind": "trap",
+              "title": "Zero correlation does not mean independent",
+              "body": "$\\rho = 0$ rules out a *linear* relationship, but variables can be strongly dependent in a nonlinear way and still have zero covariance (e.g. $Y = X^2$ with $X$ symmetric about 0). Independence implies zero covariance; the reverse is false. Do not upgrade *uncorrelated* to *independent*."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "$\\mathrm{Cov}(X,Y) = ?$ in terms of expectations.", "back": "$E[XY] - E[X]E[Y]$." },
+                { "front": "$\\mathrm{Var}(X - Y)$ for correlated variables?", "back": "$\\mathrm{Var}(X) + \\mathrm{Var}(Y) - 2\\mathrm{Cov}(X,Y)$ — the covariance term flips to minus." },
+                { "front": "Does $\\rho = 0$ imply independence?", "back": "No — only no linear relationship. Independence implies $\\rho=0$, not the reverse." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "$E[XY] = 10$, $E[X] = 3$, $E[Y] = 2$. Find $\\mathrm{Cov}(X,Y)$.",
+                "choices": ["$2$", "$4$", "$5$", "$6$", "$10$"],
+                "correct": 1,
+                "explain": "$\\mathrm{Cov}(X,Y) = 10 - (3)(2) = 4$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "$\\mathrm{Var}(X)=5$, $\\mathrm{Var}(Y)=8$, $\\mathrm{Cov}(X,Y)=-2$. Find $\\mathrm{Var}(X+Y)$.",
+                "choices": ["$9$", "$11$", "$13$", "$15$", "$17$"],
+                "correct": 0,
+                "explain": "$5 + 8 + 2(-2) = 13 - 4 = 9$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Two uncorrelated risks each have variance 16. What is the standard deviation of their total?",
+                "choices": ["$4$", "$5.66$", "$8$", "$16$", "$32$"],
+                "correct": 1,
+                "explain": "Uncorrelated: $\\mathrm{Var}(X+Y) = 16+16 = 32$, SD $= \\sqrt{32} \\approx 5.66$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X$ and $Y$ have $\\sigma_X = 2$, $\\sigma_Y = 5$, $\\mathrm{Cov}(X,Y) = 4$. Find the correlation $\\rho$.",
+                "choices": ["$0.2$", "$0.4$", "$0.5$", "$0.8$", "$1.0$"],
+                "correct": 1,
+                "explain": "$\\rho = \\frac{4}{(2)(5)} = \\frac{4}{10} = 0.4$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A portfolio is $W = 2X + 3Y$ with $\\mathrm{Var}(X)=1$, $\\mathrm{Var}(Y)=2$, $\\mathrm{Cov}(X,Y)=0.5$. Find $\\mathrm{Var}(W)$.",
+                "choices": ["$20$", "$22$", "$24$", "$26$", "$28$"],
+                "correct": 3,
+                "explain": "$\\mathrm{Var}(2X+3Y) = 2^2\\mathrm{Var}(X) + 3^2\\mathrm{Var}(Y) + 2(2)(3)\\mathrm{Cov}(X,Y) = 4(1) + 9(2) + 12(0.5) = 4 + 18 + 6 = 28$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "clt-and-sums",
+          "title": "Sums & the Central Limit Theorem",
+          "tagline": "Add enough independent variables and the bell appears no matter where you started. The theorem that quietly powers the whole exam.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "The Central Limit Theorem is the closest thing probability has to magic: sum enough independent pieces and the total is approximately **normal**, regardless of the shape you started with. The SOA uses it to turn ugly aggregate-loss questions into a single $Z$-table lookup."
+            },
+            {
+              "kind": "intuition",
+              "title": "Averaging washes out the weirdness",
+              "body": "Each individual variable might be skewed, lumpy, discrete — anything. But when you add many independent copies, their idiosyncrasies cancel and the sum's distribution smooths into a bell centered at $n\\mu$. The more terms, the better the approximation. This is why the normal distribution shows up everywhere: most real quantities are sums of many small independent effects."
+            },
+            {
+              "kind": "formula",
+              "title": "Mean and variance of a sum, then standardize",
+              "body": "For independent $X_1,\\dots,X_n$ with mean $\\mu$ and variance $\\sigma^2$: $$E\\Big[\\sum X_i\\Big] = n\\mu, \\quad \\mathrm{Var}\\Big[\\sum X_i\\Big] = n\\sigma^2$$ The CLT says the sum is approximately $N(n\\mu,\\, n\\sigma^2)$, so $$Z = \\frac{\\sum X_i - n\\mu}{\\sigma\\sqrt{n}}$$ is approximately standard normal."
+            },
+            {
+              "kind": "worked",
+              "title": "Aggregate claims via the CLT",
+              "body": "100 independent claims each have mean 500 and SD 200. Approximate $P(\\text{total} > 53{,}000)$.",
+              "steps": [
+                "Total mean $= 100 \\times 500 = 50{,}000$. Total variance $= 100 \\times 200^2 = 4{,}000{,}000$, so total SD $= 2000$.",
+                "Standardize: $Z = \\frac{53{,}000 - 50{,}000}{2000} = 1.5$.",
+                "$P(Z > 1.5) = 1 - \\Phi(1.5) \\approx 1 - 0.933 = 0.067$."
+              ],
+              "answer": "$\\approx 0.067$"
+            },
+            {
+              "kind": "trick",
+              "title": "SD of a sum grows like √n, not n",
+              "body": "The *variance* of a sum scales with $n$, so the *standard deviation* scales with $\\sqrt{n}$. That is why averages get tighter slowly: to halve the SD of an average you need *four times* the sample. Whenever you standardize a sum, the denominator is $\\sigma\\sqrt{n}$ — never $\\sigma n$."
+            },
+            {
+              "kind": "trap",
+              "title": "Adding standard deviations directly",
+              "body": "You cannot add standard deviations — only **variances** add (for independent variables). To combine spreads, square to variance, add, then square-root back. Writing $\\mathrm{SD}(X+Y) = \\mathrm{SD}(X) + \\mathrm{SD}(Y)$ is wrong and inflates the spread badly."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What does the CLT promise?", "back": "The sum (or mean) of many independent variables is approximately normal, whatever the original shape." },
+                { "front": "Standard deviation of a sum of $n$ iid variables?", "back": "$\\sigma\\sqrt{n}$ — variance scales with $n$, SD with $\\sqrt{n}$." },
+                { "front": "Can you add standard deviations?", "back": "No — add variances (independent case), then take the square root." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "A sum of 64 iid variables each has mean 10 and SD 4. Find the mean and SD of the sum.",
+                "choices": ["$640, 4$", "$640, 16$", "$640, 32$", "$640, 256$", "$10, 32$"],
+                "correct": 2,
+                "explain": "Mean $= 64\\times10 = 640$. SD $= 4\\sqrt{64} = 4\\times8 = 32$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The average of 100 iid claims (mean 20, SD 5) is taken. What is the SD of the sample mean?",
+                "choices": ["$0.05$", "$0.5$", "$5$", "$50$", "$0.5\\sqrt{100}$"],
+                "correct": 1,
+                "explain": "SD of the mean $= \\sigma/\\sqrt{n} = 5/\\sqrt{100} = 5/10 = 0.5$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Total of 50 independent losses (each mean 100, variance 400). Approximate $P(\\text{total} < 4800)$ using $\\Phi(-1.414)=0.079$.",
+                "choices": ["$0.079$", "$0.159$", "$0.500$", "$0.841$", "$0.921$"],
+                "correct": 0,
+                "explain": "Mean $= 5000$, variance $= 50\\times400=20000$, SD $\\approx141.4$. $Z=(4800-5000)/141.4\\approx-1.414$, so $P\\approx0.079$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "Two independent variables have SDs 3 and 4. What is the SD of their sum?",
+                "choices": ["$3.5$", "$5$", "$7$", "$12$", "$25$"],
+                "correct": 1,
+                "explain": "Variances add: $9 + 16 = 25$, so SD $= \\sqrt{25} = 5$ — not $3+4=7$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "To halve the standard deviation of a sample mean, you must multiply the sample size by:",
+                "choices": ["$2$", "$3$", "$4$", "$\\sqrt{2}$", "$1/2$"],
+                "correct": 2,
+                "explain": "SD of the mean is $\\sigma/\\sqrt{n}$. Halving it needs $\\sqrt{n}$ to double, i.e. $n$ to quadruple.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

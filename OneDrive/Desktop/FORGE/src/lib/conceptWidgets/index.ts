@@ -8,6 +8,7 @@ import { devopsWidgets } from "./devops";
 import { securityWidgets } from "./security";
 import { biWidgets } from "./bi";
 import { automationWidgets } from "./automation";
+import { actuaryWidgets } from "./actuary";
 
 /**
  * The concept-widget registry. Roadmap JSON references a widget by `id`
@@ -28,6 +29,7 @@ const ALL: ConceptWidgetDef[] = [
   ...securityWidgets,
   ...biWidgets,
   ...automationWidgets,
+  ...actuaryWidgets,
 ];
 
 const REGISTRY: Record<string, ConceptWidgetDef> = {};

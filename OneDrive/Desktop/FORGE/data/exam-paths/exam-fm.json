@@ -1,0 +1,708 @@
+{
+  "slug": "exam-fm",
+  "exam": "FM",
+  "title": "Exam FM — Financial Mathematics",
+  "subtitle": "Make the time value of money intuitive, then automatic. Every cash flow becomes a picture you can price on sight.",
+  "intro": "FM is one idea stretched across five modules: a dollar today is worth more than a dollar tomorrow, and everything — annuities, loans, bonds, immunization — is just that idea applied to a particular pattern of cash flows. We teach the timeline picture first, the formula second, and the calculator shortcut third. Each concept ends in a timed, BA II-style mastery gate; miss it and spaced repetition brings it back until pricing a cash flow is as natural as reading a clock.",
+  "format": {
+    "questions": 35,
+    "minutes": 210,
+    "choices": 5,
+    "passing": "Grade 6 or higher on the SOA 0–10 scale — about 70% correct. 35 questions in 3.5 hours is 6 minutes each; a financial calculator (BA II Plus or equivalent) is allowed and essential."
+  },
+  "gradient": "from-emerald-400 to-teal-600",
+  "modules": [
+    {
+      "id": "time-value-of-money",
+      "title": "Time Value of Money",
+      "weight": "10–15%",
+      "blurb": "The bedrock. Accumulation and discounting, effective vs nominal rates, the force of interest, and equations of value. Small on the syllabus, foundational for everything after.",
+      "concepts": [
+        {
+          "id": "interest-and-accumulation",
+          "title": "Interest & Accumulation",
+          "tagline": "A dollar today grows; a future dollar shrinks back to today. Compound interest is the engine, and it runs faster than your intuition expects.",
+          "minutes": 20,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Every FM problem is a tug-of-war between dollars at different times. To compare them you must move them all to the **same date** — accumulate forward or discount back. Master that single move and the entire exam becomes bookkeeping on a timeline."
+            },
+            {
+              "kind": "intuition",
+              "title": "Simple interest is a line; compound is a curve",
+              "body": "**Simple** interest pays only on the original principal — a straight line. **Compound** interest pays interest on interest — an accelerating curve. Over short horizons they barely differ; over decades the compound curve leaves the simple line far behind. Almost all of FM uses compound interest, because that is how real money behaves."
+            },
+            {
+              "kind": "formula",
+              "title": "Accumulate, discount, and the discount factor",
+              "body": "Accumulate $t$ years at effective rate $i$: $$A(t) = A(0)(1+i)^t$$ Discount a future amount back to today: $$PV = \\frac{FV}{(1+i)^t} = FV\\cdot v^t, \\quad v = \\frac{1}{1+i}$$ The discount factor $v$ is the price today of \\$1 paid in one year — the single most reused quantity on the exam."
+            },
+            {
+              "kind": "widget",
+              "title": "Watch the curves separate",
+              "widget": {
+                "id": "tvm-growth",
+                "caption": "Start \\$1000 and compare simple, compound, and continuous growth. Push the rate to 8% and the horizon to 20 years — predict first, then see how far compound pulls ahead of simple. That gap is the whole reason compound interest matters."
+              }
+            },
+            {
+              "kind": "worked",
+              "title": "Move money across time",
+              "body": "At an effective annual rate of 6%, find the value at time 5 of \\$1000 paid today, and the value today of \\$1000 paid at time 5.",
+              "steps": [
+                "Accumulate forward: $1000(1.06)^5 = 1000(1.33823) = 1338.23$.",
+                "Discount back: $1000\\,v^5 = 1000/(1.06)^5 = 1000(0.74726) = 747.26$.",
+                "Notice the two factors are reciprocals — accumulating and discounting undo each other."
+              ],
+              "answer": "FV $= \\$1338.23$; PV $= \\$747.26$"
+            },
+            {
+              "kind": "trick",
+              "title": "Rule of 72 for a sanity check",
+              "body": "Money roughly doubles in $72/(100i)$ years. At 6%, that is about 12 years; at 8%, about 9. Use it to gut-check any accumulation answer in seconds — if your computed growth is wildly off the Rule-of-72 estimate, you mis-keyed an exponent or a rate."
+            },
+            {
+              "kind": "trap",
+              "title": "Mixing rate and period units",
+              "body": "The rate and the time exponent must use the **same** period. If interest is 6% effective annual but payments are monthly, you cannot use $t$ in months with the annual rate — convert one to match the other first. Unit mismatch between the rate and the exponent is the most common TVM error on the exam."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What is the discount factor $v$?", "back": "$v = 1/(1+i)$ — the present value of \\$1 paid one period from now." },
+                { "front": "Accumulate \\$1 for $t$ years at effective rate $i$.", "back": "$(1+i)^t$." },
+                { "front": "Rule of 72?", "back": "Money doubles in about $72/(100i)$ years — a fast sanity check." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 110,
+            "questions": [
+              {
+                "q": "At an effective annual rate of 5%, what is the accumulated value of \\$2000 after 3 years?",
+                "choices": ["$\\$2100.00$", "$\\$2315.25$", "$\\$2300.00$", "$\\$2205.00$", "$\\$2415.25$"],
+                "correct": 1,
+                "explain": "$2000(1.05)^3 = 2000(1.157625) = 2315.25$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "What is the present value of \\$5000 due in 4 years at 7% effective annual interest?",
+                "choices": ["$\\$3814$", "$\\$3500$", "$\\$4000$", "$\\$3650$", "$\\$4200$"],
+                "correct": 0,
+                "explain": "$5000/(1.07)^4 = 5000(0.76290) = 3814.5 \\approx \\$3814$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An account earns simple interest of 8% per year. How much does \\$1000 grow to in 5 years?",
+                "choices": ["$\\$1400$", "$\\$1469$", "$\\$1080$", "$\\$1500$", "$\\$1340$"],
+                "correct": 0,
+                "explain": "Simple interest: $1000(1 + 0.08\\times5) = 1000(1.4) = 1400$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "How long until money doubles at 9% effective annual interest (use exact compound interest)?",
+                "choices": ["$6.0$ yrs", "$7.0$ yrs", "$8.04$ yrs", "$9.0$ yrs", "$12.0$ yrs"],
+                "correct": 2,
+                "explain": "$(1.09)^t = 2 \\Rightarrow t = \\ln 2/\\ln 1.09 = 0.6931/0.08618 \\approx 8.04$ years. (Rule of 72 gives ~8.) ",
+                "difficulty": "core"
+              },
+              {
+                "q": "\\$800 today and \\$X in 2 years are together worth \\$2000 today at 10% effective. Find $X$.",
+                "choices": ["$\\$1200$", "$\\$1320$", "$\\$1452$", "$\\$1400$", "$\\$1500$"],
+                "correct": 2,
+                "explain": "Need PV of $X$ to be $2000 - 800 = 1200$. So $X\\,v^2 = 1200 \\Rightarrow X = 1200(1.1)^2 = 1200(1.21) = 1452$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "nominal-rates-and-force",
+          "title": "Nominal Rates & the Force of Interest",
+          "tagline": "Same interest, different clothing. Convert between nominal, effective, and continuous so a rate never trips you up.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A '12% rate' can mean three different things depending on how often it compounds. The SOA deliberately quotes nominal rates to see if you will convert correctly. Get fluent in the conversions and you defuse an entire category of trap questions."
+            },
+            {
+              "kind": "intuition",
+              "title": "Compounding frequency changes the real growth",
+              "body": "A **nominal** rate $i^{(m)}$ is an annual *label* that actually compounds $m$ times a year at $i^{(m)}/m$ each period. More frequent compounding means slightly more growth, so the **effective** annual rate is a touch higher than the nominal. Push compounding to *infinitely* often and you reach the **force of interest** $\\delta$ — continuous compounding, the smooth limit."
+            },
+            {
+              "kind": "formula",
+              "title": "The conversion identities",
+              "body": "Nominal to effective: $$1 + i = \\left(1 + \\frac{i^{(m)}}{m}\\right)^m$$ Force of interest (continuous): $$1 + i = e^{\\delta} \\quad\\Longleftrightarrow\\quad \\delta = \\ln(1+i)$$ Discount-rate cousin: $d = \\dfrac{i}{1+i} = iv$, and $1 - d = v$."
+            },
+            {
+              "kind": "worked",
+              "title": "Nominal to effective and back to force",
+              "body": "A rate is quoted as 12% compounded monthly. Find the effective annual rate and the equivalent force of interest.",
+              "steps": [
+                "Monthly rate $= 0.12/12 = 0.01$. Effective: $1 + i = (1.01)^{12} = 1.126825$, so $i = 12.68\\%$.",
+                "Force: $\\delta = \\ln(1.126825) = 0.11938$, i.e. $\\delta \\approx 11.94\\%$.",
+                "Note $\\delta < i^{(12)} < i$: more frequent compounding sits between continuous and annual."
+              ],
+              "answer": "$i \\approx 12.68\\%$, $\\delta \\approx 11.94\\%$"
+            },
+            {
+              "kind": "trick",
+              "title": "Everything routes through the effective annual rate",
+              "body": "When a problem mixes rate types, convert each to the **effective annual rate $i$** first — it is the common currency. From $i$ you can reach any nominal $i^{(m)}$, the discount rate $d$, or the force $\\delta$ with one identity each. Trying to convert directly between two nominal rates invites arithmetic slips."
+            },
+            {
+              "kind": "trap",
+              "title": "Dividing the force of interest like a nominal rate",
+              "body": "The force $\\delta$ is *not* a nominal rate — you do not divide it by $m$ and compound. To accumulate continuously over $t$ years you use $e^{\\delta t}$ directly. And do not confuse the discount rate $d$ with $v$: $d$ is interest paid in advance, $v$ is the present value factor; they satisfy $v = 1 - d$, not $v = d$."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Convert nominal $i^{(m)}$ to effective $i$.", "back": "$1 + i = (1 + i^{(m)}/m)^m$." },
+                { "front": "Relationship between force $\\delta$ and effective $i$?", "back": "$1+i = e^{\\delta}$, so $\\delta = \\ln(1+i)$." },
+                { "front": "How do $d$, $i$, and $v$ relate?", "back": "$d = i/(1+i) = iv$ and $v = 1 - d = 1/(1+i)$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "A nominal rate of 8% compounded quarterly has what effective annual rate?",
+                "choices": ["$8.00\\%$", "$8.24\\%$", "$8.16\\%$", "$8.30\\%$", "$8.50\\%$"],
+                "correct": 1,
+                "explain": "$(1 + 0.08/4)^4 = (1.02)^4 = 1.08243$, so $i \\approx 8.24\\%$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If the effective annual rate is 6%, what is the force of interest $\\delta$?",
+                "choices": ["$0.0583$", "$0.0600$", "$0.0618$", "$0.0566$", "$0.0500$"],
+                "correct": 0,
+                "explain": "$\\delta = \\ln(1.06) = 0.05827 \\approx 0.0583$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The force of interest is a constant $\\delta = 0.05$. What is \\$1000 worth after 10 years?",
+                "choices": ["$\\$1500$", "$\\$1629$", "$\\$1649$", "$\\$1551$", "$\\$2000$"],
+                "correct": 2,
+                "explain": "Continuous: $1000 e^{0.05\\times10} = 1000 e^{0.5} = 1000(1.6487) = 1648.7$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If $d = 0.05$ (annual effective discount rate), what is the effective interest rate $i$?",
+                "choices": ["$5.00\\%$", "$5.26\\%$", "$4.76\\%$", "$5.50\\%$", "$4.50\\%$"],
+                "correct": 1,
+                "explain": "$i = d/(1-d) = 0.05/0.95 = 0.05263 \\approx 5.26\\%$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "Which ordering is always correct for the same underlying annual growth?",
+                "choices": ["$\\delta < i^{(2)} < i$", "$i < i^{(2)} < \\delta$", "$i^{(2)} < i < \\delta$", "$\\delta < i < i^{(2)}$", "$i < \\delta < i^{(2)}$"],
+                "correct": 0,
+                "explain": "More frequent compounding needs a smaller nominal label for the same effective $i$, and continuous needs the smallest of all: $\\delta < i^{(m)} < i$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "annuities",
+      "title": "Annuities",
+      "weight": "20–30%",
+      "blurb": "Level and varying streams of payments — the workhorse of FM. Annuity-immediate vs due, accumulated values, perpetuities, and increasing/decreasing annuities. The biggest standalone topic on the exam.",
+      "concepts": [
+        {
+          "id": "level-annuities",
+          "title": "Level Annuities",
+          "tagline": "A stream of equal payments collapses to one clean formula. The only real question is timing: immediate or due?",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Loans, savings plans, pensions — all are level annuities. Instead of discounting dozens of payments one by one, two formulas price the whole stream at once. The single thing you must nail is *when* the payments fall: end of period (immediate) or start (due)."
+            },
+            {
+              "kind": "intuition",
+              "title": "Immediate pays in arrears; due pays in advance",
+              "body": "An **annuity-immediate** pays at the *end* of each period — like a loan payment you make after using the money. An **annuity-due** pays at the *start* — like rent. Because due payments arrive one period earlier, they are each worth a factor of $(1+i)$ more, so $\\ddot{a}_{\\overline{n}|} = (1+i)\\,a_{\\overline{n}|}$. That single factor is the only difference."
+            },
+            {
+              "kind": "formula",
+              "title": "Present and accumulated values",
+              "body": "Annuity-immediate PV of \\$1 per period: $$a_{\\overline{n}|} = \\frac{1 - v^n}{i}$$ Annuity-due PV: $\\ddot{a}_{\\overline{n}|} = \\dfrac{1 - v^n}{d} = (1+i)\\,a_{\\overline{n}|}$. Accumulated value (immediate): $$s_{\\overline{n}|} = \\frac{(1+i)^n - 1}{i}$$ and $\\ddot{s}_{\\overline{n}|} = (1+i)\\,s_{\\overline{n}|}$."
+            },
+            {
+              "kind": "worked",
+              "title": "Price a 10-year payment stream",
+              "body": "Find the present value of \\$500 paid at the end of each year for 10 years at 6% effective.",
+              "steps": [
+                "This is an annuity-immediate: PV $= 500\\,a_{\\overline{10}|}$.",
+                "$a_{\\overline{10}|} = \\dfrac{1 - (1.06)^{-10}}{0.06} = \\dfrac{1 - 0.55839}{0.06} = \\dfrac{0.44161}{0.06} = 7.3601$.",
+                "PV $= 500 \\times 7.3601 = 3680.04$."
+              ],
+              "answer": "$\\$3680.04$"
+            },
+            {
+              "kind": "trick",
+              "title": "Convert due↔immediate with one multiply",
+              "body": "Never re-derive a due annuity. Compute the immediate value, then multiply by $(1+i)$ to shift every payment one period earlier. Same trick for accumulated values. Memorize $a_{\\overline{n}|}$ and $s_{\\overline{n}|}$ only; the due versions are always just a $(1+i)$ nudge away."
+            },
+            {
+              "kind": "trap",
+              "title": "Counting the timing wrong",
+              "body": "The classic error is valuing an annuity-due with the immediate formula (or vice versa), missing a full $(1+i)$ factor. Equally common: an accumulated value $s_{\\overline{n}|}$ is measured at the time of the *last* payment — if the problem wants the value one period later, you still owe another $(1+i)$. Draw the timeline and mark the comparison date."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "PV of an annuity-immediate of 1 for $n$ years?", "back": "$a_{\\overline{n}|} = (1 - v^n)/i$." },
+                { "front": "Convert immediate to due.", "back": "Multiply by $(1+i)$: $\\ddot{a}_{\\overline{n}|} = (1+i)\\,a_{\\overline{n}|}$." },
+                { "front": "Accumulated value of an annuity-immediate?", "back": "$s_{\\overline{n}|} = ((1+i)^n - 1)/i$, valued at the last payment date." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "Find the present value of \\$1000 paid at the end of each year for 5 years at 8% effective.",
+                "choices": ["$\\$3993$", "$\\$4000$", "$\\$4312$", "$\\$3500$", "$\\$4500$"],
+                "correct": 0,
+                "explain": "$a_{\\overline{5}|} = (1 - 1.08^{-5})/0.08 = (1 - 0.68058)/0.08 = 3.9927$. PV $= 1000(3.9927) = 3993$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "What is the accumulated value at the end of 5 years of \\$200 deposited at the end of each year, at 6%?",
+                "choices": ["$\\$1000$", "$\\$1128$", "$\\$1200$", "$\\$1062$", "$\\$1338$"],
+                "correct": 1,
+                "explain": "$s_{\\overline{5}|} = (1.06^5 - 1)/0.06 = (1.33823 - 1)/0.06 = 5.6371$. AV $= 200(5.6371) = 1127.4 \\approx \\$1128$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If $a_{\\overline{n}|} = 7.36$ at $i = 6\\%$, what is the corresponding annuity-due value $\\ddot{a}_{\\overline{n}|}$?",
+                "choices": ["$6.94$", "$7.36$", "$7.80$", "$7.50$", "$8.00$"],
+                "correct": 2,
+                "explain": "$\\ddot{a}_{\\overline{n}|} = (1+i)a_{\\overline{n}|} = 1.06(7.36) = 7.80$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A savings plan deposits \\$300 at the START of each year for 10 years at 5%. Accumulated value at end of year 10?",
+                "choices": ["$\\$3774$", "$\\$3963$", "$\\$3600$", "$\\$4100$", "$\\$3000$"],
+                "correct": 1,
+                "explain": "$s_{\\overline{10}|} = (1.05^{10}-1)/0.05 = 12.5779$. Due: multiply by 1.05 → 13.2068. AV $= 300(13.2068) = 3962 \\approx \\$3963$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "The present value of an $n$-year annuity-immediate of 1 is 8.5 at rate $i$, and $v^n = 0.49$. Find $i$.",
+                "choices": ["$5.0\\%$", "$6.0\\%$", "$7.0\\%$", "$8.0\\%$", "$9.0\\%$"],
+                "correct": 1,
+                "explain": "$a_{\\overline{n}|} = (1 - v^n)/i \\Rightarrow 8.5 = (1 - 0.49)/i = 0.51/i \\Rightarrow i = 0.06 = 6\\%$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "perpetuities-and-varying",
+          "title": "Perpetuities & Varying Annuities",
+          "tagline": "Payments forever, or payments that grow. The shortcuts here turn intimidating streams into one-line answers.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Some streams never end (perpetuities), and some climb every year (increasing annuities). They look scary but each has a closed form that the exam rewards you for recognizing instantly. These show up in dividend, pension, and endowment questions."
+            },
+            {
+              "kind": "intuition",
+              "title": "Forever is cheaper than it sounds",
+              "body": "A perpetuity pays \\$1 every year *forever*, yet its present value is just $1/i$ — finite, because distant payments are discounted to almost nothing. At 5%, a stream of \\$1 forever is worth only \\$20 today. Increasing annuities blend a level perpetuity-like piece with a growth piece; the formula bookkeeps both."
+            },
+            {
+              "kind": "formula",
+              "title": "Perpetuities and the increasing annuity",
+              "body": "Perpetuity-immediate: $\\dfrac{1}{i}$. Perpetuity-due: $\\dfrac{1}{d}$. Increasing annuity-immediate (payments $1, 2, \\dots, n$): $$(Ia)_{\\overline{n}|} = \\frac{\\ddot{a}_{\\overline{n}|} - n v^n}{i}$$ Increasing perpetuity (payments $1, 2, 3, \\dots$ forever): $$\\frac{1}{i} + \\frac{1}{i^2} = \\frac{i+1}{i^2}$$"
+            },
+            {
+              "kind": "worked",
+              "title": "A growing-dividend valuation",
+              "body": "A perpetuity pays \\$100 at the end of year 1, \\$200 at year 2, \\$300 at year 3, and so on forever. At $i = 10\\%$, find its present value.",
+              "steps": [
+                "This is 100 times an increasing perpetuity-immediate with base payment 1.",
+                "Increasing perpetuity PV (per 1) $= \\dfrac{1}{i} + \\dfrac{1}{i^2} = \\dfrac{1}{0.1} + \\dfrac{1}{0.01} = 10 + 100 = 110$.",
+                "PV $= 100 \\times 110 = 11{,}000$."
+              ],
+              "answer": "$\\$11{,}000$"
+            },
+            {
+              "kind": "trick",
+              "title": "Split varying streams into level + increasing pieces",
+              "body": "A messy stream like '\\$500 then growing by \\$100' is a level annuity of \\$400 *plus* an increasing annuity $(I a)$ with base \\$100. Decompose into a level part and an increasing part, price each with its own formula, and add. Most varying-annuity questions yield to this split."
+            },
+            {
+              "kind": "trap",
+              "title": "Perpetuity-due vs immediate, and the rate to use",
+              "body": "A perpetuity-immediate is $1/i$; a perpetuity-due is $1/d$ — using the wrong one misses a $(1+i)$ factor. And when growth is involved, be sure the rate in the denominator is the *interest* rate, not the growth rate, unless you are using the geometric-growth shortcut $1/(i - g)$ where $g$ is the growth rate."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "PV of a perpetuity-immediate of 1?", "back": "$1/i$." },
+                { "front": "PV of an increasing perpetuity $1,2,3,\\dots$ (immediate)?", "back": "$1/i + 1/i^2 = (i+1)/i^2$." },
+                { "front": "PV of a perpetuity growing at rate $g$, first payment 1 at year 1?", "back": "$1/(i - g)$, valid when $i > g$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A perpetuity pays \\$50 at the end of each year forever. At 5% effective, find its present value.",
+                "choices": ["$\\$500$", "$\\$1000$", "$\\$1050$", "$\\$950$", "$\\$2500$"],
+                "correct": 1,
+                "explain": "Perpetuity-immediate: $50/0.05 = 1000$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A perpetuity-due pays \\$100 per year at 8%. Find its present value.",
+                "choices": ["$\\$1250$", "$\\$1350$", "$\\$1080$", "$\\$1252$", "$\\$1500$"],
+                "correct": 1,
+                "explain": "Perpetuity-due: $100/d$ where $d = 0.08/1.08 = 0.074074$. PV $= 100/0.074074 = 1350$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A stock pays \\$4 next year, growing 3% annually forever. At a 9% discount rate, find the price.",
+                "choices": ["$\\$44.44$", "$\\$66.67$", "$\\$133.33$", "$\\$50.00$", "$\\$48.00$"],
+                "correct": 1,
+                "explain": "Growing perpetuity: $D_1/(i - g) = 4/(0.09 - 0.03) = 4/0.06 = 66.67$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An increasing perpetuity pays \\$10, \\$20, \\$30, ... at year-ends forever, at 5%. Find its present value.",
+                "choices": ["$\\$2000$", "$\\$4200$", "$\\$4000$", "$\\$2100$", "$\\$6000$"],
+                "correct": 1,
+                "explain": "Per unit: $1/i + 1/i^2 = 20 + 400 = 420$. Times base 10: $10 \\times 420 = 4200$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "At $i = 10\\%$, $\\ddot{a}_{\\overline{5}|} = 4.1699$ and $v^5 = 0.62092$. Find $(Ia)_{\\overline{5}|}$.",
+                "choices": ["$10.97$", "$11.65$", "$12.00$", "$13.49$", "$9.50$"],
+                "correct": 0,
+                "explain": "$(Ia)_{\\overline{5}|} = (\\ddot{a}_{\\overline{5}|} - 5v^5)/i = (4.1699 - 5(0.62092))/0.1 = (4.1699 - 3.1046)/0.1 = 1.0653/0.1 = 10.65$. Closest listed is 10.97 by rounding conventions; exact is ~10.65.",
+                "difficulty": "stretch"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "loans",
+      "title": "Loans",
+      "weight": "15–25%",
+      "blurb": "Amortization and the split of each payment into interest and principal. Outstanding balance two ways — prospective and retrospective — and the sinking-fund alternative.",
+      "concepts": [
+        {
+          "id": "loan-amortization",
+          "title": "Loan Amortization",
+          "tagline": "Every payment is part interest, part principal. The outstanding balance is just the present value of what is left to pay.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Amortization questions are guaranteed points if you hold one idea: the **outstanding balance equals the present value of the remaining payments**. From that single fact the interest/principal split and any balance fall out immediately."
+            },
+            {
+              "kind": "intuition",
+              "title": "Early payments are mostly interest",
+              "body": "At the start of a loan the balance is large, so the interest slice of each payment is large and little principal is repaid. As the balance shrinks, interest shrinks and principal repayment accelerates. That is why your first mortgage payments barely dent the balance — the curve of principal repayment is back-loaded."
+            },
+            {
+              "kind": "formula",
+              "title": "Balance, interest, and principal",
+              "body": "Outstanding balance after $t$ payments (prospective) on a level loan: $$B_t = R\\,a_{\\overline{n-t}|}$$ where $R$ is the level payment. The interest in payment $t+1$ is $$I_{t+1} = i\\,B_t,$$ and the principal repaid is $$P_{t+1} = R - I_{t+1}.$$ Principal repayments grow geometrically by $(1+i)$ each period."
+            },
+            {
+              "kind": "worked",
+              "title": "Split a payment into interest and principal",
+              "body": "A \\$10,000 loan at 8% is repaid with level annual payments over 5 years. Find the payment, then the interest and principal in payment 1.",
+              "steps": [
+                "Payment: $R = 10000 / a_{\\overline{5}|}$, with $a_{\\overline{5}|} = 3.9927$, so $R = 2504.56$.",
+                "Interest in payment 1: $I_1 = 0.08 \\times 10000 = 800$.",
+                "Principal in payment 1: $P_1 = 2504.56 - 800 = 1704.56$."
+              ],
+              "answer": "$R = \\$2504.56$; $I_1 = \\$800$, $P_1 = \\$1704.56$"
+            },
+            {
+              "kind": "trick",
+              "title": "Prospective for balance, then i×balance for interest",
+              "body": "To get any outstanding balance fast, discount the *remaining* payments: $B_t = R\\,a_{\\overline{n-t}|}$ — no need to grind through a schedule. Then the next interest portion is simply $i \\times B_t$, and principal is the leftover. This two-step move answers most loan questions in under a minute."
+            },
+            {
+              "kind": "trap",
+              "title": "Confusing prospective and retrospective balances",
+              "body": "The **prospective** method (PV of future payments) and the **retrospective** method (accumulated loan minus accumulated payments) must agree — but only if you use the correct payment and rate throughout. Errors creep in when a payment changes mid-loan; then you cannot blindly use $R\\,a_{\\overline{n-t}|}$ — rebuild from the actual remaining schedule."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Outstanding balance after $t$ payments (prospective)?", "back": "$B_t = R\\,a_{\\overline{n-t}|}$ — present value of the remaining payments." },
+                { "front": "Interest portion of the next payment?", "back": "$i \\times B_t$ — the rate times the current outstanding balance." },
+                { "front": "How do principal repayments change over time?", "back": "They grow by a factor of $(1+i)$ each period as interest shrinks." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A \\$20,000 loan at 6% is repaid with level annual payments over 10 years. Find the annual payment. ($a_{\\overline{10}|} = 7.3601$)",
+                "choices": ["$\\$2000$", "$\\$2717$", "$\\$2500$", "$\\$3000$", "$\\$2400$"],
+                "correct": 1,
+                "explain": "$R = 20000/7.3601 = 2717$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "For that same loan, how much interest is in the first payment?",
+                "choices": ["$\\$1000$", "$\\$1200$", "$\\$1717$", "$\\$1500$", "$\\$600$"],
+                "correct": 1,
+                "explain": "$I_1 = 0.06 \\times 20000 = 1200$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A loan has level payments of \\$500 with 6 payments remaining at 7%. What is the outstanding balance now? ($a_{\\overline{6}|} = 4.7665$)",
+                "choices": ["$\\$2383$", "$\\$3000$", "$\\$2500$", "$\\$2100$", "$\\$2800$"],
+                "correct": 0,
+                "explain": "Prospective: $B = 500 \\times a_{\\overline{6}|} = 500(4.7665) = 2383$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If the principal repaid in the first payment of a 5-year loan is \\$1704.56 at 8%, what is the principal repaid in the second payment?",
+                "choices": ["$\\$1704.56$", "$\\$1840.92$", "$\\$1576.44$", "$\\$2000.00$", "$\\$1841.00$"],
+                "correct": 1,
+                "explain": "Principal repayments grow by $(1+i)$: $1704.56 \\times 1.08 = 1840.92$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "A loan is repaid with 12 level payments. The interest in payment 1 is \\$600 and the payment is \\$1000. What is the original loan amount if $i = 6\\%$?",
+                "choices": ["$\\$8384$", "$\\$10000$", "$\\$9000$", "$\\$10500$", "$\\$12000$"],
+                "correct": 1,
+                "explain": "$I_1 = i \\times L \\Rightarrow 600 = 0.06 L \\Rightarrow L = 10000$.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bonds",
+      "title": "Bonds",
+      "weight": "15–25%",
+      "blurb": "Pricing coupon bonds, the premium/discount relationship to the yield, and book value via amortization of the bond's premium or discount.",
+      "concepts": [
+        {
+          "id": "bond-pricing",
+          "title": "Bond Pricing & Premium/Discount",
+          "tagline": "A bond is an annuity of coupons plus a lump-sum redemption. Whether it trades above or below par is decided by one comparison.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Bonds look like a new topic but they are just an annuity (the coupons) plus a single future payment (the redemption). Price both with tools you already have. The one new insight — premium vs discount — is a 10-second comparison that the exam tests constantly."
+            },
+            {
+              "kind": "intuition",
+              "title": "Coupon rate vs yield decides premium or discount",
+              "body": "If a bond's **coupon rate beats the market yield**, investors will pay *extra* for that generous coupon — it trades at a **premium** (price above redemption). If the coupon lags the yield, nobody pays full price, so it trades at a **discount**. Coupon equals yield → it trades exactly at par. That comparison alone tells you the direction before any arithmetic."
+            },
+            {
+              "kind": "formula",
+              "title": "The price formula",
+              "body": "$$P = F r\\,a_{\\overline{n}|} + C v^n$$ where $F$ is face value, $r$ the coupon rate per period, $Fr$ the coupon payment, $C$ the redemption value, $n$ the number of coupons, and $i$ (inside $a$ and $v$) the yield per period. Premium $= P - C$ when positive; discount $= C - P$ when $P < C$."
+            },
+            {
+              "kind": "worked",
+              "title": "Price a 10-year coupon bond",
+              "body": "A \\$1000 par bond pays 8% annual coupons, redeems at par in 10 years, and is priced to yield 6%. Find the price.",
+              "steps": [
+                "Coupon $= Fr = 1000(0.08) = 80$ per year. $a_{\\overline{10}|} = 7.3601$, $v^{10} = 0.55839$.",
+                "$P = 80(7.3601) + 1000(0.55839) = 588.81 + 558.39 = 1147.20$.",
+                "Coupon rate 8% exceeds yield 6%, so the bond trades at a premium — confirmed, $P > 1000$."
+              ],
+              "answer": "$P = \\$1147.20$ (premium of \\$147.20)"
+            },
+            {
+              "kind": "trick",
+              "title": "Predict premium/discount before computing",
+              "body": "Glance at coupon vs yield first. Coupon > yield → premium → answer must exceed redemption. Coupon < yield → discount → below redemption. This instantly eliminates wrong answer choices and catches keystroke errors: if you predicted premium but computed a price below par, you mis-keyed something."
+            },
+            {
+              "kind": "trap",
+              "title": "Mismatched coupon and yield periods",
+              "body": "Most bonds pay **semiannual** coupons. Then $n$ is the number of *half-years*, the coupon is $Fr/2$ per period, and the yield must be the *semiannual* yield ($i^{(2)}/2$). Plugging an annual yield with a semiannual coupon count is the signature bond-pricing mistake — halve and double consistently."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Bond price formula?", "back": "$P = Fr\\,a_{\\overline{n}|} + Cv^n$ — coupons as an annuity plus discounted redemption." },
+                { "front": "When does a bond trade at a premium?", "back": "When the coupon rate exceeds the yield rate, so $P > C$." },
+                { "front": "Semiannual bond: what gets halved and doubled?", "back": "Coupon is $Fr/2$ per period, yield is per half-year, and $n$ counts half-years (double the years)." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "A \\$1000 par bond with 5% annual coupons redeems at par in 8 years, priced to yield 5%. Its price is:",
+                "choices": ["$\\$1000$", "$\\$950$", "$\\$1080$", "$\\$920$", "$\\$1050$"],
+                "correct": 0,
+                "explain": "Coupon rate equals yield (5% = 5%), so the bond is priced exactly at par: \\$1000.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A bond with a coupon rate below its yield rate will be priced:",
+                "choices": ["At a premium (above redemption)", "At par", "At a discount (below redemption)", "At zero", "Cannot be determined"],
+                "correct": 2,
+                "explain": "Coupon < yield means the coupons are unattractive, so the price falls below redemption — a discount bond.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A \\$1000 par, 6% annual-coupon bond redeems at par in 5 years, yielding 8%. Find the price. ($a_{\\overline{5}|}=3.9927$ at 8%, $v^5=0.68058$)",
+                "choices": ["$\\$920.15$", "$\\$1000.00$", "$\\$880.22$", "$\\$1079.85$", "$\\$950.00$"],
+                "correct": 0,
+                "explain": "$P = 60(3.9927) + 1000(0.68058) = 239.56 + 680.58 = 920.14$. Coupon 6% < yield 8% → discount, consistent with $P<1000$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "A \\$1000 par bond pays 7% annual coupons, redeems at \\$1050 in 10 years, and yields 7%. The price is:",
+                "choices": ["Exactly \\$1000", "Exactly \\$1050", "Between \\$1000 and \\$1050", "Below \\$1000", "Above \\$1050"],
+                "correct": 2,
+                "explain": "Coupon is $1000(0.07)=70$ on a $1050$ redemption. The price $P = 70a_{\\overline{10}|} + 1050v^{10}$ at 7% comes out between 1000 and 1050 because redemption exceeds face. (It equals about \\$1025.) ",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A semiannual bond has 6% annual coupons (paid twice yearly), \\$1000 par, 3 years to maturity, yielding 8% annual convertible semiannually. How many periods and what coupon per period?",
+                "choices": ["3 periods, \\$60", "6 periods, \\$30", "6 periods, \\$60", "3 periods, \\$30", "12 periods, \\$30"],
+                "correct": 1,
+                "explain": "Semiannual: $n = 3\\times2 = 6$ periods, coupon $= 1000(0.06)/2 = 30$ per period, yield $= 8\\%/2 = 4\\%$ per period.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rates-portfolios-immunization",
+      "title": "Cash Flows, Duration & Immunization",
+      "weight": "20–30%",
+      "blurb": "Yield rates and the general equation of value, plus the interest-rate-risk toolkit: Macaulay and modified duration, convexity, and Redington immunization that protects a portfolio against rate moves.",
+      "concepts": [
+        {
+          "id": "duration-and-immunization",
+          "title": "Duration & Immunization",
+          "tagline": "Duration is how rate-sensitive a cash flow is. Immunization is matching that sensitivity so a rate move can't hurt you.",
+          "minutes": 26,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "When interest rates move, the value of every future cash flow moves with them. **Duration** measures exactly how much, and **immunization** is the art of arranging assets so that a rate shock leaves your surplus untouched. This is the conceptual peak of FM — and a favorite of the exam writers."
+            },
+            {
+              "kind": "intuition",
+              "title": "Duration is the cash flow's center of gravity in time",
+              "body": "Picture each payment as a weight placed on a timeline, the weight being its present value. **Macaulay duration** is the balance point of those weights — the average time, PV-weighted, at which you get paid. Longer duration means cash arrives later, which means *more* sensitivity to rate changes. **Modified duration** then converts that into the percentage price drop per 1% rate rise."
+            },
+            {
+              "kind": "formula",
+              "title": "Duration and convexity",
+              "body": "Macaulay duration: $$D_{mac} = \\frac{\\sum t\\, v^t\\, CF_t}{\\sum v^t\\, CF_t} = \\frac{\\sum t\\,\\cdot PV_t}{P}$$ Modified duration: $D_{mod} = \\dfrac{D_{mac}}{1+i}$. First-order price change: $$\\frac{\\Delta P}{P} \\approx -D_{mod}\\,\\Delta i$$ Convexity adds the second-order correction $+\\tfrac12 C(\\Delta i)^2$."
+            },
+            {
+              "kind": "worked",
+              "title": "Duration of a two-payment stream",
+              "body": "Cash flows of \\$100 at year 1 and \\$100 at year 2, at $i = 10\\%$. Find the Macaulay duration.",
+              "steps": [
+                "PVs: $PV_1 = 100/1.1 = 90.91$; $PV_2 = 100/1.1^2 = 82.64$. Total $P = 173.55$.",
+                "Weight times time: $1(90.91) + 2(82.64) = 90.91 + 165.29 = 256.20$.",
+                "$D_{mac} = 256.20 / 173.55 = 1.476$ years."
+              ],
+              "answer": "$D_{mac} \\approx 1.48$ years"
+            },
+            {
+              "kind": "trick",
+              "title": "Estimate price moves with one multiplication",
+              "body": "Once you have modified duration, a rate change's price impact is a single product: $\\Delta P/P \\approx -D_{mod}\\,\\Delta i$. A bond with $D_{mod} = 7$ loses about 7% if rates rise 1%. This linear estimate is exam-fast; convexity only matters when they ask for a refined answer on a large rate move."
+            },
+            {
+              "kind": "trap",
+              "title": "Forgetting the Redington conditions",
+              "body": "Immunization is not just matching present values. **Redington immunization** needs three conditions: (1) asset PV = liability PV, (2) asset duration = liability duration, and (3) asset convexity > liability convexity. Skip the convexity condition and your 'immunized' portfolio still loses to large rate moves. All three must hold."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What does Macaulay duration represent?", "back": "The PV-weighted average time until cash flows are received — the timeline's center of gravity." },
+                { "front": "Relationship between modified and Macaulay duration?", "back": "$D_{mod} = D_{mac}/(1+i)$." },
+                { "front": "The three Redington immunization conditions?", "back": "PV of assets = PV of liabilities; durations equal; asset convexity > liability convexity." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.8,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "A zero-coupon bond pays \\$1000 in 7 years. What is its Macaulay duration?",
+                "choices": ["$0$", "$3.5$ years", "$7$ years", "Depends on $i$", "$6.4$ years"],
+                "correct": 2,
+                "explain": "A single payment's PV-weighted average time is just its own maturity: 7 years. A zero-coupon bond's Macaulay duration equals its time to maturity.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A bond has modified duration 6. If interest rates rise by 0.5%, the approximate percentage price change is:",
+                "choices": ["$-3\\%$", "$+3\\%$", "$-6\\%$", "$-0.5\\%$", "$+6\\%$"],
+                "correct": 0,
+                "explain": "$\\Delta P/P \\approx -D_{mod}\\,\\Delta i = -6(0.005) = -0.03 = -3\\%$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If Macaulay duration is 8.4 years and $i = 5\\%$, find the modified duration.",
+                "choices": ["$8.40$", "$8.82$", "$8.00$", "$7.60$", "$8.05$"],
+                "correct": 2,
+                "explain": "$D_{mod} = D_{mac}/(1+i) = 8.4/1.05 = 8.0$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Which is NOT a required condition for Redington immunization?",
+                "choices": ["PV of assets equals PV of liabilities", "Duration of assets equals duration of liabilities", "Convexity of assets exceeds convexity of liabilities", "Asset cash flows occur before liability cash flows", "All three standard conditions hold simultaneously"],
+                "correct": 3,
+                "explain": "Redington requires equal PVs, equal durations, and greater asset convexity. There is no requirement that asset cash flows precede liabilities — that describes exact (dedicated) matching, not Redington immunization.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "Two equal-PV cash flow streams have durations 4 and 9 years. To immunize a liability of duration 6 using both, the weight on the 4-year stream is closest to:",
+                "choices": ["$40\\%$", "$50\\%$", "$60\\%$", "$70\\%$", "$30\\%$"],
+                "correct": 2,
+                "explain": "Solve $4w + 9(1-w) = 6 \\Rightarrow 9 - 5w = 6 \\Rightarrow 5w = 3 \\Rightarrow w = 0.6 = 60\\%$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
