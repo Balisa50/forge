@@ -871,6 +871,384 @@
               }
             ]
           }
+        },
+        {
+          "id": "mgf-and-moments",
+          "title": "Moment Generating Functions",
+          "tagline": "One function that encodes every moment, identifies the distribution, and turns sums into products. The MGF is the Swiss-army knife of Exam P.",
+          "minutes": 26,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Imagine a single function that, when you take its derivatives at zero, hands you the mean, the variance, the third moment — every moment, on demand. That is the **moment generating function**, and the exam loves it because it also *uniquely fingerprints* a distribution and collapses the sum of independent variables into a simple product. Master the MGF and a whole class of questions becomes mechanical."
+            },
+            {
+              "kind": "intuition",
+              "title": "Why differentiating at zero pulls out moments",
+              "body": "The MGF is $M(t) = E[e^{tX}]$. Expand $e^{tX} = 1 + tX + \\frac{t^2X^2}{2!} + \\frac{t^3X^3}{3!} + \\cdots$ and take expectations: $M(t) = 1 + tE[X] + \\frac{t^2}{2!}E[X^2] + \\cdots$. The coefficient of $t^k$ is $E[X^k]/k!$, so the $k$-th derivative at $t=0$ peels off exactly $E[X^k]$. The MGF is a power series whose coefficients *are* the moments — differentiation is just reading off the term you want."
+            },
+            {
+              "kind": "formula",
+              "title": "The three properties you will actually use",
+              "body": "**Moments:** $E[X^k] = M^{(k)}(0)$. So $E[X] = M'(0)$ and $\\mathrm{Var}(X) = M''(0) - [M'(0)]^2$. **Uniqueness:** if two variables have the same MGF on an interval around 0, they have the same distribution — match the MGF to a known form to identify it. **Independent sums:** if $X$ and $Y$ are independent, $M_{X+Y}(t) = M_X(t)\\,M_Y(t)$; and $M_{aX+b}(t) = e^{bt}M_X(at)$."
+            },
+            {
+              "kind": "worked",
+              "title": "Reading moments off an MGF",
+              "body": "A random variable has $M(t) = (1 - 250t)^{-4}$ for $t < 1/250$. Find its mean and variance.",
+              "steps": [
+                "$M'(t) = -4(1-250t)^{-5}\\cdot(-250) = 1000(1-250t)^{-5}$. So $E[X] = M'(0) = 1000$.",
+                "$M''(t) = 1000\\cdot(-5)(1-250t)^{-6}\\cdot(-250) = 1\\,250\\,000\\,(1-250t)^{-6}$. So $E[X^2] = M''(0) = 1\\,250\\,000$.",
+                "$\\mathrm{Var}(X) = E[X^2] - (E[X])^2 = 1\\,250\\,000 - 1\\,000\\,000 = 250\\,000$.",
+                "(This is a Gamma with shape 4, scale 250: mean $= 4\\cdot250 = 1000$, variance $= 4\\cdot250^2 = 250\\,000$ — the MGF identified it.)"
+              ],
+              "answer": "Mean $1000$, variance $250\\,000$"
+            },
+            {
+              "kind": "trick",
+              "title": "Match the form, skip the calculus",
+              "body": "Memorize the canonical MGFs and you often never differentiate. Poisson$(\\lambda)$: $e^{\\lambda(e^t-1)}$. Normal$(\\mu,\\sigma^2)$: $e^{\\mu t + \\sigma^2 t^2/2}$. Gamma$(\\alpha,\\theta)$: $(1-\\theta t)^{-\\alpha}$. Exponential$(\\lambda)$ is Gamma with $\\alpha=1$: $(1-t/\\lambda)^{-1} = \\frac{\\lambda}{\\lambda-t}$. When an MGF appears, try to read off its parameters by pattern-matching — then quote the mean and variance from memory."
+            },
+            {
+              "kind": "trap",
+              "title": "Subtract the square, and respect the $e^{bt}$ shift",
+              "body": "$M''(0)$ gives $E[X^2]$, **not** the variance — you still subtract $[M'(0)]^2$. Forgetting this is the single most common MGF error. Second trap: for a linear transform $aX+b$, the MGF is $e^{bt}M_X(at)$, with the constant riding *outside* as $e^{bt}$ and the scale going *inside* the argument — do not multiply $M_X$ by $a$."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "How do you get $E[X^k]$ from the MGF?", "back": "$E[X^k] = M^{(k)}(0)$, the $k$-th derivative evaluated at $t=0$." },
+                { "front": "Variance from the MGF?", "back": "$\\mathrm{Var}(X) = M''(0) - [M'(0)]^2$." },
+                { "front": "MGF of a sum of independent variables?", "back": "The product: $M_{X+Y}(t) = M_X(t)M_Y(t)$." },
+                { "front": "MGF of $aX+b$?", "back": "$e^{bt}M_X(at)$." },
+                { "front": "Normal$(\\mu,\\sigma^2)$ MGF?", "back": "$e^{\\mu t + \\sigma^2 t^2/2}$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "$M(t) = e^{3t + 8t^2}$. What are the mean and variance of $X$?",
+                "choices": ["$3, 8$", "$3, 16$", "$6, 8$", "$3, 4$", "$8, 3$"],
+                "correct": 1,
+                "explain": "Match $e^{\\mu t + \\sigma^2 t^2/2}$: $\\mu = 3$ and $\\sigma^2/2 = 8 \\Rightarrow \\sigma^2 = 16$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X$ has MGF $M(t) = \\frac{1}{1-2t}$ for $t < 1/2$. Find $E[X^2]$.",
+                "choices": ["$2$", "$4$", "$6$", "$8$", "$12$"],
+                "correct": 3,
+                "explain": "This is exponential with mean $2$. $M'(t) = 2(1-2t)^{-2}$, $M''(t) = 8(1-2t)^{-3}$, so $E[X^2] = M''(0) = 8$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X$ and $Y$ are independent with $M_X(t) = e^{\\lambda(e^t-1)}$ and $M_Y(t) = e^{\\mu(e^t-1)}$. The distribution of $X+Y$ is:",
+                "choices": ["Poisson$(\\lambda\\mu)$", "Poisson$(\\lambda+\\mu)$", "Normal", "Gamma$(\\lambda,\\mu)$", "not determined"],
+                "correct": 1,
+                "explain": "Product of MGFs: $e^{\\lambda(e^t-1)}e^{\\mu(e^t-1)} = e^{(\\lambda+\\mu)(e^t-1)}$ — Poisson$(\\lambda+\\mu)$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If $M_X(t) = (1-3t)^{-2}$, find the MGF of $Y = 2X + 1$.",
+                "choices": ["$e^{t}(1-6t)^{-2}$", "$2(1-3t)^{-2}$", "$e^{2t}(1-3t)^{-2}$", "$(1-6t)^{-2}$", "$e^{t}(1-3t)^{-4}$"],
+                "correct": 0,
+                "explain": "$M_{aX+b}(t) = e^{bt}M_X(at)$ with $a=2,b=1$: $e^{t}(1-3(2t))^{-2} = e^{t}(1-6t)^{-2}$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "$M(t) = 0.3 + 0.7e^t$. Find $\\mathrm{Var}(X)$.",
+                "choices": ["$0.7$", "$0.21$", "$0.49$", "$0.3$", "$0.7e^t$"],
+                "correct": 1,
+                "explain": "This is Bernoulli$(0.7)$. $M'(0)=0.7=E[X]$, $M''(0)=0.7=E[X^2]$, so $\\mathrm{Var}=0.7-0.49=0.21$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "transformations-univariate",
+          "title": "Transformations of a Random Variable",
+          "tagline": "Given the distribution of $X$, find the distribution of $Y=g(X)$. The CDF method always works; the Jacobian shortcut is faster when $g$ is monotone.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "The exam rarely hands you the variable you want. It gives you $X$ and asks about $Y = X^2$, or $Y = e^X$, or $Y = \\sqrt{X}$. There is one method that *never* fails — go through the CDF — and one shortcut that is faster when the transform is one-to-one. Knowing which to reach for is the whole game."
+            },
+            {
+              "kind": "intuition",
+              "title": "Chase the probability through the CDF",
+              "body": "A transformation reshapes the density, but probabilities of *events* are preserved. So translate the question about $Y$ into an equivalent question about $X$: $F_Y(y) = P(Y \\le y) = P(g(X) \\le y)$. Solve the inequality for $X$, evaluate using the known CDF of $X$, then differentiate to get the density of $Y$. You are simply following the same probability mass to its new location on the $y$-axis."
+            },
+            {
+              "kind": "formula",
+              "title": "CDF method and the Jacobian shortcut",
+              "body": "**CDF method (always works):** $F_Y(y) = P(g(X)\\le y)$; differentiate to get $f_Y(y)$. **Jacobian (monotone $g$ only):** if $y=g(x)$ is one-to-one with inverse $x = g^{-1}(y)$, then $f_Y(y) = f_X\\!\\big(g^{-1}(y)\\big)\\left|\\frac{d}{dy}g^{-1}(y)\\right|$. The absolute value of the derivative is the **Jacobian** — it rescales the density so total area stays 1."
+            },
+            {
+              "kind": "worked",
+              "title": "A non-monotone transform: $Y = X^2$",
+              "body": "Let $X \\sim \\text{Uniform}(-1, 1)$, so $f_X(x) = \\tfrac12$ on $[-1,1]$. Find the density of $Y = X^2$.",
+              "steps": [
+                "$g(x)=x^2$ is **not** monotone on $[-1,1]$, so use the CDF method. For $0 \\le y \\le 1$: $F_Y(y) = P(X^2 \\le y) = P(-\\sqrt{y} \\le X \\le \\sqrt{y})$.",
+                "$= \\int_{-\\sqrt{y}}^{\\sqrt{y}} \\tfrac12\\,dx = \\tfrac12\\,(2\\sqrt{y}) = \\sqrt{y}$.",
+                "Differentiate: $f_Y(y) = \\frac{d}{dy}\\sqrt{y} = \\frac{1}{2\\sqrt{y}}$ for $0 < y < 1$.",
+                "Note the density blows up near 0 and the support collapsed to $[0,1]$ — exactly why you cannot just plug into the Jacobian formula here."
+              ],
+              "answer": "$f_Y(y) = \\frac{1}{2\\sqrt{y}}$, $0<y<1$"
+            },
+            {
+              "kind": "trick",
+              "title": "Probability integral transform",
+              "body": "Two universal facts the exam exploits: (1) If $U \\sim \\text{Uniform}(0,1)$ then $X = F^{-1}(U)$ has CDF $F$ — this is how you *simulate* any distribution. (2) Going the other way, if $X$ has continuous CDF $F$, then $F(X) \\sim \\text{Uniform}(0,1)$. So a transform like $Y = 1 - e^{-\\lambda X}$ applied to an exponential is *exactly* its own CDF, making $Y$ uniform on $(0,1)$ instantly — no integration needed."
+            },
+            {
+              "kind": "trap",
+              "title": "Monotonicity and the new support",
+              "body": "Never apply the Jacobian formula to a non-monotone $g$ (like $x^2$ over a symmetric interval) — you will miss half the probability. When $g$ folds the line, split into monotone pieces or use the CDF method. Second trap: always restate the **support** of $Y$. The range of $g$ over the support of $X$ sets where $f_Y$ is nonzero; forgetting to update it produces a density that does not integrate to 1."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "The method that always works for $Y=g(X)$?", "back": "The CDF method: $F_Y(y)=P(g(X)\\le y)$, then differentiate." },
+                { "front": "Jacobian formula for monotone $g$?", "back": "$f_Y(y)=f_X(g^{-1}(y))\\,|\\frac{d}{dy}g^{-1}(y)|$." },
+                { "front": "Distribution of $F(X)$ when $F$ is continuous?", "back": "Uniform$(0,1)$ — the probability integral transform." },
+                { "front": "Why can't you use the Jacobian for $Y=X^2$ on $(-1,1)$?", "back": "$x^2$ isn't monotone there; two $x$ values map to each $y$. Use the CDF method." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "$X \\sim \\text{Uniform}(0,1)$ and $Y = -\\ln X$. The distribution of $Y$ is:",
+                "choices": ["Uniform$(0,1)$", "Exponential with mean 1", "Normal", "Exponential with mean 2", "Gamma$(2,1)$"],
+                "correct": 1,
+                "explain": "$F_Y(y)=P(-\\ln X\\le y)=P(X\\ge e^{-y})=1-e^{-y}$ for $y>0$ — exponential, rate 1, mean 1.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X$ has density $f_X(x)=2x$ on $(0,1)$. Let $Y=X^2$. Find $f_Y(y)$ on $(0,1)$.",
+                "choices": ["$2y$", "$1$", "$\\frac{1}{2\\sqrt{y}}$", "$2\\sqrt{y}$", "$y$"],
+                "correct": 1,
+                "explain": "$g$ is monotone. $x=\\sqrt{y}$, $\\frac{dx}{dy}=\\frac{1}{2\\sqrt{y}}$. $f_Y=2\\sqrt{y}\\cdot\\frac{1}{2\\sqrt{y}}=1$ — uniform on $(0,1)$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X\\sim\\text{Exponential}(\\lambda)$. The distribution of $Y=1-e^{-\\lambda X}$ is:",
+                "choices": ["Exponential$(\\lambda)$", "Uniform$(0,1)$", "Normal", "Exponential$(1)$", "Gamma"],
+                "correct": 1,
+                "explain": "$1-e^{-\\lambda x}$ is the exponential CDF, so $Y=F(X)\\sim$ Uniform$(0,1)$ by the probability integral transform.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "$X\\sim N(0,1)$ and $Y=e^{X}$. The variable $Y$ is called:",
+                "choices": ["Normal", "Lognormal", "Exponential", "Gamma", "Chi-square"],
+                "correct": 1,
+                "explain": "By definition, the exponential of a normal is lognormal.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "$X\\sim\\text{Uniform}(0,2)$ and $Y=3X+1$. The density $f_Y(y)$ is constant equal to:",
+                "choices": ["$\\frac12$", "$\\frac16$", "$\\frac13$", "$\\frac{1}{7}$", "$1$"],
+                "correct": 1,
+                "explain": "Linear monotone transform: $Y$ is uniform on $(1,7)$, length 6, so $f_Y=\\frac16$.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "percentiles-and-measures",
+          "title": "Percentiles, Median & Mode",
+          "tagline": "Beyond the mean: how to find the value at a given probability, where the density peaks, and why skew separates the three centers.",
+          "minutes": 20,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "The mean is one summary of a distribution — but the exam also asks for the **median** (the 50th percentile), the **mode** (the most likely value), and arbitrary **percentiles** ('the value-at-risk such that only 5% exceeds it'). Each answers a different question, and in a skewed distribution they pull apart in a predictable order you can exploit."
+            },
+            {
+              "kind": "intuition",
+              "title": "Three different notions of 'center'",
+              "body": "The **median** splits the area under the density in half — half the probability lies on each side. The **mode** is where the density is tallest — the most likely neighborhood. The **mean** is the balance point, the center of mass. For a symmetric distribution all three coincide. Skew the distribution and they spread out: a long right tail drags the mean above the median, which sits above the mode."
+            },
+            {
+              "kind": "formula",
+              "title": "Finding each one",
+              "body": "**$p$-th percentile** $\\pi_p$: solve $F(\\pi_p) = p$. **Median** $m$: solve $F(m) = 0.5$. **Mode**: maximize $f(x)$ — for a differentiable density, solve $f'(x)=0$ and check it is a maximum. For the exponential$(\\lambda)$, setting $1-e^{-\\lambda \\pi_p} = p$ gives $\\pi_p = -\\frac{1}{\\lambda}\\ln(1-p)$, so the median is $\\frac{\\ln 2}{\\lambda}$."
+            },
+            {
+              "kind": "worked",
+              "title": "Percentile of an exponential",
+              "body": "Claim sizes are exponential with mean 500. Find the 90th percentile (the value exceeded only 10% of the time).",
+              "steps": [
+                "Mean 500 means $\\lambda = 1/500$. Solve $F(\\pi_{0.9}) = 0.90$: $1 - e^{-\\pi/500} = 0.90$.",
+                "$e^{-\\pi/500} = 0.10 \\Rightarrow -\\pi/500 = \\ln(0.10) = -2.3026$.",
+                "$\\pi_{0.9} = 500 \\times 2.3026 = 1151.3$.",
+                "So 90% of claims fall below about 1151 — a useful 'value-at-risk' style figure."
+              ],
+              "answer": "$\\pi_{0.9} \\approx 1151$"
+            },
+            {
+              "kind": "trick",
+              "title": "Mean > median > mode for right skew",
+              "body": "For a right-skewed distribution (long upper tail — lognormal, exponential, most loss models), the ordering is **mean $>$ median $>$ mode**. The rare large values inflate the mean most, the median less, and leave the mode (the peak) alone. If a question shows mean far above median, you are looking at right skew — and the mean is *not* a typical value. This single fact answers many qualitative questions instantly."
+            },
+            {
+              "kind": "trap",
+              "title": "Percentile means the value, not the probability",
+              "body": "The $p$-th percentile is the **$x$-value** $\\pi_p$ such that $F(\\pi_p)=p$ — not the probability $p$ itself. Students sometimes report 0.90 when asked for the 90th percentile; the answer is the dollar/time amount. Also: for discrete or mixed distributions the percentile may not be unique (a flat stretch of the CDF), and the median is the conventional choice in that interval."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "How do you find the $p$-th percentile?", "back": "Solve $F(\\pi_p)=p$ for $\\pi_p$." },
+                { "front": "Median of an exponential$(\\lambda)$?", "back": "$\\frac{\\ln 2}{\\lambda}$ — always less than the mean $1/\\lambda$." },
+                { "front": "How do you find the mode?", "back": "Maximize the density $f(x)$: solve $f'(x)=0$, confirm a max." },
+                { "front": "Ordering for a right-skewed distribution?", "back": "Mean $>$ median $>$ mode." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 120,
+            "questions": [
+              {
+                "q": "Losses are exponential with mean 1000. Find the median.",
+                "choices": ["$500$", "$693$", "$1000$", "$1151$", "$1386$"],
+                "correct": 1,
+                "explain": "Median $=\\frac{\\ln 2}{\\lambda}=1000\\ln 2\\approx 693$. Note it is below the mean — right skew.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X$ has CDF $F(x)=x^3$ on $(0,1)$. Find the 25th percentile.",
+                "choices": ["$0.25$", "$0.5$", "$0.63$", "$0.0156$", "$0.75$"],
+                "correct": 2,
+                "explain": "Solve $x^3=0.25\\Rightarrow x=0.25^{1/3}\\approx 0.63$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A distribution is right-skewed. Which ordering holds?",
+                "choices": ["mode $>$ median $>$ mean", "mean $>$ median $>$ mode", "mean $=$ median $=$ mode", "median $>$ mean $>$ mode", "mode $>$ mean $>$ median"],
+                "correct": 1,
+                "explain": "Right skew (long upper tail) drags the mean highest: mean $>$ median $>$ mode.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "$X$ has density $f(x)=2x$ on $(0,1)$. Find the mode.",
+                "choices": ["$0$", "$0.5$", "$\\frac{1}{\\sqrt2}$", "$1$", "$\\frac23$"],
+                "correct": 3,
+                "explain": "$f(x)=2x$ increases on $(0,1)$, so the density is tallest at the right endpoint $x=1$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "For a symmetric, unimodal distribution, the median equals:",
+                "choices": ["the mode only", "the mean only", "both the mean and the mode", "neither", "the variance"],
+                "correct": 2,
+                "explain": "Symmetry forces all three measures of center to coincide.",
+                "difficulty": "warmup"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gamma-beta-lognormal",
+          "title": "Gamma, Beta & Lognormal",
+          "tagline": "The three advanced continuous families the exam expects you to recognize: waiting-time sums, bounded proportions, and multiplicative growth.",
+          "minutes": 26,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Once you are past uniform, exponential, and normal, three more families show up with real frequency — and each has a *story* that tells you when it appears. **Gamma** is the wait for several Poisson events. **Beta** lives on $[0,1]$ and models proportions. **Lognormal** is what you get when effects multiply instead of add. Recognize the story and you have already picked the distribution."
+            },
+            {
+              "kind": "intuition",
+              "title": "Each family's origin story",
+              "body": "**Gamma$(\\alpha,\\theta)$**: add $\\alpha$ independent exponentials with mean $\\theta$ and you get a Gamma — the total time to the $\\alpha$-th arrival. Shape $\\alpha$ controls how bell-like it becomes. **Beta$(\\alpha,\\beta)$**: the natural distribution for a random *fraction* — flexible shapes on $[0,1]$, the conjugate prior for a binomial proportion. **Lognormal**: if $\\ln X$ is normal, $X$ is lognormal — the limit of many *multiplicative* shocks, so it models asset prices and loss sizes with a long right tail."
+            },
+            {
+              "kind": "formula",
+              "title": "Moments worth memorizing",
+              "body": "**Gamma$(\\alpha,\\theta)$**: mean $\\alpha\\theta$, variance $\\alpha\\theta^2$, MGF $(1-\\theta t)^{-\\alpha}$. **Beta$(\\alpha,\\beta)$**: mean $\\frac{\\alpha}{\\alpha+\\beta}$, variance $\\frac{\\alpha\\beta}{(\\alpha+\\beta)^2(\\alpha+\\beta+1)}$. **Lognormal**: if $\\ln X \\sim N(\\mu,\\sigma^2)$, then $E[X] = e^{\\mu + \\sigma^2/2}$ and $\\mathrm{Var}(X) = e^{2\\mu+\\sigma^2}\\big(e^{\\sigma^2}-1\\big)$. Probabilities for the lognormal are done by taking logs and using the normal table."
+            },
+            {
+              "kind": "worked",
+              "title": "A lognormal probability",
+              "body": "Annual losses $X$ are lognormal with $\\mu = 7$ and $\\sigma = 2$. Find $P(X > 1000)$, given $\\Phi(0.05) = 0.520$.",
+              "steps": [
+                "Take logs: $P(X > 1000) = P(\\ln X > \\ln 1000)$, and $\\ln 1000 \\approx 6.908$.",
+                "$\\ln X \\sim N(7, 4)$, so standardize: $Z = \\frac{6.908 - 7}{2} = \\frac{-0.092}{2} = -0.046 \\approx -0.05$.",
+                "$P(\\ln X > 6.908) = P(Z > -0.05) = \\Phi(0.05) = 0.520$.",
+                "So there is about a 52% chance the annual loss exceeds 1000."
+              ],
+              "answer": "$\\approx 0.520$"
+            },
+            {
+              "kind": "trick",
+              "title": "Take logs first for anything lognormal",
+              "body": "Every lognormal *probability* question reduces to a normal one: turn $X$ into $\\ln X$, standardize, hit the $Z$-table. Never integrate the lognormal density. And for the Gamma, remember it is just a sum of exponentials — if you see 'time until the 3rd claim' with exponential interarrivals, that total is Gamma$(3,\\theta)$ and you can quote mean $3\\theta$ and variance $3\\theta^2$ without setup."
+            },
+            {
+              "kind": "trap",
+              "title": "Lognormal mean is not $e^{\\mu}$",
+              "body": "The most punished lognormal error: $E[X] = e^{\\mu + \\sigma^2/2}$, **not** $e^{\\mu}$. The quantity $e^{\\mu}$ is the *median* of the lognormal; the mean is larger because of the right skew. Forgetting the $+\\sigma^2/2$ understates the mean every time. Separately, for the Gamma, $\\theta$ is the **scale** (so variance carries $\\theta^2$); some texts use rate $\\beta = 1/\\theta$ — check which convention a problem uses."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Gamma$(\\alpha,\\theta)$ mean and variance?", "back": "Mean $\\alpha\\theta$, variance $\\alpha\\theta^2$." },
+                { "front": "What is a Gamma, intuitively?", "back": "The sum of $\\alpha$ independent exponentials with mean $\\theta$." },
+                { "front": "Beta$(\\alpha,\\beta)$ mean?", "back": "$\\frac{\\alpha}{\\alpha+\\beta}$, on the interval $[0,1]$." },
+                { "front": "Lognormal mean if $\\ln X\\sim N(\\mu,\\sigma^2)$?", "back": "$e^{\\mu+\\sigma^2/2}$ — not $e^\\mu$ (that's the median)." },
+                { "front": "How do you compute a lognormal probability?", "back": "Take logs, standardize, use the normal table." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "$X\\sim\\text{Gamma}(3, 4)$ (shape 3, scale 4). Find its mean and variance.",
+                "choices": ["$12, 48$", "$12, 16$", "$7, 12$", "$12, 12$", "$3, 4$"],
+                "correct": 0,
+                "explain": "Mean $\\alpha\\theta=3\\cdot4=12$; variance $\\alpha\\theta^2=3\\cdot16=48$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$\\ln X \\sim N(0, 1)$. Find $E[X]$.",
+                "choices": ["$1$", "$e$", "$\\sqrt{e}$", "$0$", "$e^2$"],
+                "correct": 2,
+                "explain": "$E[X]=e^{\\mu+\\sigma^2/2}=e^{0+1/2}=\\sqrt{e}\\approx1.649$ — not $e^0=1$, which is the median.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "$X\\sim\\text{Beta}(2, 3)$. Find $E[X]$.",
+                "choices": ["$\\frac23$", "$\\frac25$", "$\\frac12$", "$\\frac35$", "$\\frac16$"],
+                "correct": 1,
+                "explain": "Mean $=\\frac{\\alpha}{\\alpha+\\beta}=\\frac{2}{2+3}=\\frac25$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Interarrival times are exponential with mean 2. The time until the 4th arrival has which distribution?",
+                "choices": ["Exponential$(2)$", "Gamma$(4, 2)$", "Gamma$(2, 4)$", "Normal", "Poisson$(4)$"],
+                "correct": 1,
+                "explain": "Sum of 4 independent Exponential(mean 2) is Gamma with shape 4, scale 2.",
+                "difficulty": "core"
+              },
+              {
+                "q": "For a lognormal with $\\ln X\\sim N(\\mu,\\sigma^2)$, the median equals:",
+                "choices": ["$e^{\\mu+\\sigma^2/2}$", "$e^{\\mu}$", "$\\mu$", "$e^{\\sigma^2}$", "$\\mu+\\sigma^2/2$"],
+                "correct": 1,
+                "explain": "The median is $e^{\\mu}$ (since the median of $\\ln X$ is $\\mu$); the mean is the larger $e^{\\mu+\\sigma^2/2}$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
         }
       ]
     },
@@ -1058,6 +1436,390 @@
           }
         },
         {
+          "id": "conditional-distributions",
+          "title": "Conditional Distributions",
+          "tagline": "Once you learn $Y=y$, the distribution of $X$ updates. Slice the joint surface, renormalize, and you have the conditional density.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Information changes probability. The instant you learn that a policyholder filed exactly two claims, the distribution of their *total loss* shifts. The machinery for that update — slicing the joint distribution and rescaling it — is the **conditional distribution**, and it underpins every credibility, mixture, and double-expectation question on the exam."
+            },
+            {
+              "kind": "intuition",
+              "title": "A conditional density is a renormalized slice",
+              "body": "Picture the joint surface $f(x,y)$. Fixing $Y = y$ takes a single vertical slice through it. That slice has the right *shape* for the distribution of $X$ given $Y=y$, but its area is only $f_Y(y)$, not 1. Divide by $f_Y(y)$ to rescale the slice back to a legitimate density. That is all a conditional density is: a slice, renormalized so it integrates to 1."
+            },
+            {
+              "kind": "formula",
+              "title": "Conditional density and expectation",
+              "body": "$$f_{X\\mid Y}(x\\mid y) = \\frac{f(x,y)}{f_Y(y)}$$ The conditional expectation is the mean of that slice: $$E[X \\mid Y=y] = \\int x\\,f_{X\\mid Y}(x\\mid y)\\,dx$$ If $X$ and $Y$ are independent, conditioning changes nothing: $f_{X\\mid Y}(x\\mid y) = f_X(x)$."
+            },
+            {
+              "kind": "worked",
+              "title": "Conditional density from a joint",
+              "body": "Let $f(x,y) = \\frac{x+y}{?}$… use $f(x,y) = 2$ on the triangle $0 < x < y < 1$. Find $f_{X\\mid Y}(x \\mid y)$ and $E[X \\mid Y = y]$.",
+              "steps": [
+                "Marginal of $Y$: $f_Y(y) = \\int_0^y 2\\,dx = 2y$ for $0 < y < 1$.",
+                "Conditional: $f_{X\\mid Y}(x\\mid y) = \\frac{2}{2y} = \\frac{1}{y}$ for $0 < x < y$ — i.e. $X \\mid Y=y$ is Uniform$(0,y)$.",
+                "So $E[X \\mid Y=y] = \\frac{y}{2}$ (mean of a uniform on $(0,y)$).",
+                "The conditional turned a 2-D triangle into a simple 1-D uniform once $y$ is fixed."
+              ],
+              "answer": "$f_{X\\mid Y}=\\tfrac1y$ on $(0,y)$; $E[X\\mid Y=y]=\\tfrac{y}{2}$"
+            },
+            {
+              "kind": "trick",
+              "title": "Recognize the slice as a named distribution",
+              "body": "After you divide by the marginal, the conditional density is often a *standard* distribution in disguise — uniform, exponential, beta. The moment you recognize it (as Uniform$(0,y)$ above), you can quote its mean and variance instead of integrating. This shortcut is enormous in double-expectation problems, where you need $E[X\\mid Y]$ as a function of $Y$."
+            },
+            {
+              "kind": "trap",
+              "title": "Divide by the right marginal, and keep the support",
+              "body": "$f_{X\\mid Y}(x\\mid y)$ divides by $f_Y(y)$ — the marginal of the variable you *conditioned on*, not the one you want. Swapping them is a classic error. And the conditional's support depends on $y$: above, $X$ ranges only over $(0,y)$, not $(0,1)$. Carrying the wrong support breaks the normalization and every expectation after it."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Conditional density formula?", "back": "$f_{X\\mid Y}(x\\mid y)=\\frac{f(x,y)}{f_Y(y)}$ — slice over marginal." },
+                { "front": "What is $E[X\\mid Y=y]$?", "back": "The mean of the conditional distribution — a function of $y$." },
+                { "front": "Conditional when $X,Y$ independent?", "back": "Just the marginal: $f_{X\\mid Y}(x\\mid y)=f_X(x)$." },
+                { "front": "Why divide by the marginal?", "back": "To renormalize the slice (area $f_Y(y)$) back to a density of total area 1." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "$f(x,y)=2$ on $0<x<y<1$. Find $E[X\\mid Y=0.6]$.",
+                "choices": ["$0.2$", "$0.3$", "$0.4$", "$0.6$", "$0.5$"],
+                "correct": 1,
+                "explain": "$X\\mid Y=0.6$ is Uniform$(0,0.6)$, mean $0.6/2=0.3$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If $X$ and $Y$ are independent, then $f_{X\\mid Y}(x\\mid y)$ equals:",
+                "choices": ["$f(x,y)$", "$f_X(x)$", "$f_Y(y)$", "$f_X(x)f_Y(y)$", "$1$"],
+                "correct": 1,
+                "explain": "Independence means conditioning adds no information: the conditional is just the marginal $f_X(x)$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Joint pmf: $P(X{=}1,Y{=}1)=0.2$, and the marginal $P(Y{=}1)=0.5$. Find $P(X{=}1\\mid Y{=}1)$.",
+                "choices": ["$0.1$", "$0.2$", "$0.4$", "$0.5$", "$0.7$"],
+                "correct": 2,
+                "explain": "$P(X{=}1\\mid Y{=}1)=\\frac{0.2}{0.5}=0.4$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X\\mid Y=y$ is exponential with mean $y$. Find $E[X\\mid Y=4]$.",
+                "choices": ["$1/4$", "$2$", "$4$", "$8$", "$16$"],
+                "correct": 2,
+                "explain": "An exponential with mean $y$ has $E[X\\mid Y=y]=y$, so $E[X\\mid Y=4]=4$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$f(x,y)=\\frac{1}{y}$ for $0<x<y<1$ describes $X\\mid Y=y$ as:",
+                "choices": ["Exponential(mean $y$)", "Uniform$(0,y)$", "Uniform$(0,1)$", "Normal", "Beta"],
+                "correct": 1,
+                "explain": "Constant density $1/y$ on $(0,y)$ is the Uniform$(0,y)$ distribution.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "double-expectation",
+          "title": "Double Expectation & the Variance Decomposition",
+          "tagline": "$E[X]=E[E[X\\mid Y]]$ and $\\mathrm{Var}(X)=E[\\mathrm{Var}(X\\mid Y)]+\\mathrm{Var}(E[X\\mid Y])$ — the two laws that crack every mixture problem.",
+          "minutes": 28,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Some of the highest-value questions on Exam P look impossible head-on: a Poisson number of claims, each of random size; a loss whose mean depends on an unknown risk class. The key that unlocks all of them is **conditioning** — solve the easy problem given the hidden variable, then average over it. Two laws make this airtight: the **law of total expectation** and the **law of total variance**."
+            },
+            {
+              "kind": "intuition",
+              "title": "Average the conditional answers",
+              "body": "If you knew the risk class $Y$, finding $E[X\\mid Y]$ would be easy. You do not know $Y$ — so treat $E[X\\mid Y]$ as a *random variable* (it depends on which $Y$ you land in) and average it: $E[X]=E[E[X\\mid Y]]$. Variance splits the same way but into **two** pieces: the average spread *within* each class, plus the spread *between* the class means. Total uncertainty = uncertainty inside groups + uncertainty across groups."
+            },
+            {
+              "kind": "formula",
+              "title": "The two laws",
+              "body": "**Total expectation:** $$E[X] = E\\big[E[X\\mid Y]\\big]$$ **Total variance:** $$\\mathrm{Var}(X) = \\underbrace{E\\big[\\mathrm{Var}(X\\mid Y)\\big]}_{\\text{within (expected process var)}} + \\underbrace{\\mathrm{Var}\\big(E[X\\mid Y]\\big)}_{\\text{between (variance of hypothetical means)}}$$ In credibility language these are the *expected process variance* and the *variance of the hypothetical means*."
+            },
+            {
+              "kind": "widget",
+              "widget": {
+                "id": "total-variance",
+                "caption": "Two risk classes, each with its own mean and spread. Watch how the **total** variance is always the within-class variance plus the between-class variance — and how widening the gap between the class means inflates the 'between' term while leaving the 'within' term untouched."
+              }
+            },
+            {
+              "kind": "worked",
+              "title": "A two-class mixture",
+              "body": "70% of drivers are low-risk with mean claim 1 and variance 1; 30% are high-risk with mean claim 4 and variance 9. Find $E[X]$ and $\\mathrm{Var}(X)$ for a randomly chosen driver.",
+              "steps": [
+                "$E[X] = E[E[X\\mid Y]] = 0.7(1) + 0.3(4) = 0.7 + 1.2 = 1.9$.",
+                "Within: $E[\\mathrm{Var}(X\\mid Y)] = 0.7(1) + 0.3(9) = 0.7 + 2.7 = 3.4$.",
+                "Between: $\\mathrm{Var}(E[X\\mid Y]) = 0.7(1-1.9)^2 + 0.3(4-1.9)^2 = 0.7(0.81) + 0.3(4.41) = 0.567 + 1.323 = 1.89$.",
+                "$\\mathrm{Var}(X) = 3.4 + 1.89 = 5.29$."
+              ],
+              "answer": "$E[X]=1.9$, $\\mathrm{Var}(X)=5.29$"
+            },
+            {
+              "kind": "trick",
+              "title": "Compound sums: $E[S]=E[N]E[X]$",
+              "body": "For a compound sum $S = X_1 + \\dots + X_N$ where $N$ is random and the $X_i$ are iid (mean $\\mu$, variance $\\sigma^2$), the laws give two memorizable results: $E[S] = E[N]\\,\\mu$ and $\\mathrm{Var}(S) = E[N]\\,\\sigma^2 + \\mu^2\\,\\mathrm{Var}(N)$. If $N$ is Poisson$(\\lambda)$ (so mean = variance = $\\lambda$), this collapses to the elegant $\\mathrm{Var}(S) = \\lambda\\,E[X^2]$. Memorize these — they appear every sitting."
+            },
+            {
+              "kind": "trap",
+              "title": "Don't drop the between-group term",
+              "body": "The most expensive error in this topic: computing only $E[\\mathrm{Var}(X\\mid Y)]$ and calling it the variance. That ignores the variance *between* the conditional means and **understates** total variance. Total variance is always the sum of both pieces. Symmetric warning: $E[X]$ uses only the first law, but $\\mathrm{Var}(X)$ needs both — never reuse the expectation shortcut for variance."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Law of total expectation?", "back": "$E[X]=E[E[X\\mid Y]]$ — average the conditional means." },
+                { "front": "Law of total variance?", "back": "$\\mathrm{Var}(X)=E[\\mathrm{Var}(X\\mid Y)]+\\mathrm{Var}(E[X\\mid Y])$ (within + between)." },
+                { "front": "Compound mean $E[S]$ for $S=\\sum_1^N X_i$?", "back": "$E[N]\\,E[X]$." },
+                { "front": "Compound variance $\\mathrm{Var}(S)$?", "back": "$E[N]\\mathrm{Var}(X)+(E[X])^2\\mathrm{Var}(N)$; Poisson $N$: $\\lambda E[X^2]$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "$E[X\\mid Y]=2Y$ and $E[Y]=5$. Find $E[X]$.",
+                "choices": ["$2$", "$5$", "$7$", "$10$", "$25$"],
+                "correct": 3,
+                "explain": "$E[X]=E[E[X\\mid Y]]=E[2Y]=2(5)=10$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Number of claims $N\\sim$ Poisson$(3)$; each claim has mean 100, variance 400. Find $E[S]$ for the aggregate $S$.",
+                "choices": ["$100$", "$300$", "$400$", "$1200$", "$3000$"],
+                "correct": 1,
+                "explain": "$E[S]=E[N]E[X]=3(100)=300$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Same setup: $N\\sim$ Poisson$(3)$, claim mean 100, variance 400. Find $\\mathrm{Var}(S)$.",
+                "choices": ["$1200$", "$30000$", "$31200$", "$40000$", "$120000$"],
+                "correct": 2,
+                "explain": "Poisson: $\\mathrm{Var}(S)=\\lambda E[X^2]=\\lambda(\\sigma^2+\\mu^2)=3(400+10000)=3(10400)=31200$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "A mixture: with prob 0.5, $X\\mid Y$ has mean 2; with prob 0.5, mean 6. Each conditional has variance 0. Find $\\mathrm{Var}(X)$.",
+                "choices": ["$0$", "$2$", "$4$", "$8$", "$16$"],
+                "correct": 2,
+                "explain": "Within $=0$. Overall mean $=4$. Between $=0.5(2-4)^2+0.5(6-4)^2=0.5(4)+0.5(4)=4$. Total $=0+4=4$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "Which quantity does $E[\\mathrm{Var}(X\\mid Y)]$ alone fail to capture?",
+                "choices": ["The conditional means", "The within-group spread", "The variance between the group means", "The overall mean", "Nothing — it is the full variance"],
+                "correct": 2,
+                "explain": "It is only the within-group piece; total variance also needs $\\mathrm{Var}(E[X\\mid Y])$, the between-group spread.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sums-and-convolutions",
+          "title": "Sums of Random Variables & Convolutions",
+          "tagline": "The density of $X+Y$ is a convolution. But for the named families, sums stay in the family — and that shortcut is the exam answer.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Add two independent random variables and the distribution of the total is a **convolution** — a sliding integral that blends the two densities. The exam almost never wants you to grind out that integral. Instead it rewards knowing which families are *closed under addition*: add two of the same kind and you get the same kind, with parameters that simply combine."
+            },
+            {
+              "kind": "intuition",
+              "title": "Every split that lands on the target",
+              "body": "To find $P(X+Y = s)$, you sum over every way the total can be $s$: $X=k$ and $Y=s-k$, for all $k$. That sum-over-splits *is* the convolution. Geometrically you slide one density across the other and integrate the overlap. Most of the time, though, the algebra collapses because the MGFs multiply into a recognizable form — so you skip the integral entirely."
+            },
+            {
+              "kind": "formula",
+              "title": "Convolution and the family-closure rules",
+              "body": "Discrete: $P(X+Y=s)=\\sum_k P(X=k)P(Y=s-k)$. Continuous: $f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$. **Closure shortcuts (independent):** Normal $+$ Normal $=$ Normal (means and variances add). Poisson$(\\lambda)+$Poisson$(\\mu)=$Poisson$(\\lambda+\\mu)$. Binomial$(m,p)+$Binomial$(n,p)=$Binomial$(m+n,p)$. Gamma$(\\alpha_1,\\theta)+$Gamma$(\\alpha_2,\\theta)=$Gamma$(\\alpha_1+\\alpha_2,\\theta)$ — same scale required."
+            },
+            {
+              "kind": "worked",
+              "title": "Sum of independent normals",
+              "body": "$X\\sim N(3,4)$ and $Y\\sim N(1,9)$ are independent. Find the distribution of $X+Y$ and $P(X+Y > 7)$ given $\\Phi(0.5)=0.691$.",
+              "steps": [
+                "Normals are closed under addition: $X+Y \\sim N(3+1,\\ 4+9) = N(4, 13)$.",
+                "SD $=\\sqrt{13}\\approx 3.606$. Standardize: $Z = \\frac{7-4}{3.606} \\approx 0.83$… use $\\frac{7-4}{6}$? No — SD is $\\sqrt{13}$.",
+                "$Z=\\frac{7-4}{\\sqrt{13}}\\approx 0.832$, so $P(X+Y>7)=1-\\Phi(0.83)\\approx 1-0.797=0.203$.",
+                "The whole problem reduced to one normal because the family is closed — no convolution integral."
+              ],
+              "answer": "$X+Y\\sim N(4,13)$; $P(\\cdot>7)\\approx0.203$"
+            },
+            {
+              "kind": "trick",
+              "title": "Use MGFs to prove closure instantly",
+              "body": "Closure is just MGF multiplication. Poisson MGF is $e^{\\lambda(e^t-1)}$; multiply two and the exponents add to $(\\lambda+\\mu)$ — Poisson again. Gamma MGF is $(1-\\theta t)^{-\\alpha}$; multiply and the shapes add (but only if $\\theta$ matches). If you ever forget a closure rule, multiply the MGFs and read off the result — faster and safer than recalling the convolution."
+            },
+            {
+              "kind": "trap",
+              "title": "Closure needs matching parameters and independence",
+              "body": "Binomials add only with the **same $p$**; Gammas add only with the **same scale $\\theta$**. Mismatched parameters break closure — the sum is *not* in the family, and you are back to a convolution or CLT approximation. And every closure rule assumes **independence**: dependent sums pick up covariance and the simple parameter-adding fails."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Density of $X+Y$ (independent, continuous)?", "back": "Convolution: $f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$." },
+                { "front": "Sum of independent Normals?", "back": "Normal: means add, variances add." },
+                { "front": "Sum of independent Poissons?", "back": "Poisson$(\\lambda+\\mu)$." },
+                { "front": "When do Binomials add to a Binomial?", "back": "Same success probability $p$: Binomial$(m+n,p)$." },
+                { "front": "Fast way to prove a closure rule?", "back": "Multiply the MGFs and recognize the product." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "$X\\sim N(2,5)$ and $Y\\sim N(3,4)$ independent. The distribution of $X+Y$ is:",
+                "choices": ["$N(5,3)$", "$N(5,9)$", "$N(5,20)$", "$N(6,9)$", "$N(5,4.5)$"],
+                "correct": 1,
+                "explain": "Means add: $2+3=5$. Variances add: $5+4=9$. So $N(5,9)$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X\\sim$ Poisson$(2)$, $Y\\sim$ Poisson$(5)$, independent. Find $P(X+Y=0)$.",
+                "choices": ["$e^{-2}$", "$e^{-5}$", "$e^{-7}$", "$e^{-10}$", "$0$"],
+                "correct": 2,
+                "explain": "$X+Y\\sim$ Poisson$(7)$, so $P(X+Y=0)=e^{-7}$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Sum of 5 independent Exponential(mean 3) variables has which distribution?",
+                "choices": ["Exponential(mean 15)", "Gamma$(5,3)$", "Gamma$(3,5)$", "Normal", "Poisson"],
+                "correct": 1,
+                "explain": "Exponentials are Gamma$(1,\\theta)$; five with $\\theta=3$ sum to Gamma$(5,3)$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "$X\\sim$ Bin$(4,0.3)$ and $Y\\sim$ Bin$(6,0.3)$ independent. Then $X+Y\\sim$:",
+                "choices": ["Bin$(10,0.3)$", "Bin$(10,0.6)$", "Bin$(24,0.3)$", "Poisson$(3)$", "not a binomial"],
+                "correct": 0,
+                "explain": "Same $p=0.3$, so the counts add: Bin$(4+6,0.3)=$ Bin$(10,0.3)$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X\\sim$ Bin$(4,0.3)$ and $Y\\sim$ Bin$(6,0.5)$ independent. Is $X+Y$ binomial?",
+                "choices": ["Yes, Bin$(10,0.4)$", "Yes, Bin$(10,0.8)$", "No — the success probabilities differ", "Yes, Bin$(24,0.3)$", "Only if they are dependent"],
+                "correct": 2,
+                "explain": "Binomial closure needs a common $p$. With $p=0.3$ vs $0.5$, the sum is not binomial.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "order-statistics",
+          "title": "Order Statistics: Min, Max & Range",
+          "tagline": "Sort $n$ independent draws and ask about the smallest or largest. The min and max have clean CDF shortcuts the exam tests directly.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Insurance lives at the extremes: the *largest* claim drives reinsurance, the *first* failure ends a warranty. These are **order statistics** — what you get when you sort a sample and look at the ends. The minimum and maximum have shortcut formulas so clean you should never integrate a density to find them."
+            },
+            {
+              "kind": "intuition",
+              "title": "Max via 'all below', min via 'all above'",
+              "body": "The maximum of $n$ draws is $\\le y$ exactly when **every** draw is $\\le y$ — that is one event repeated $n$ times. By independence the probabilities multiply, so the max's CDF is $[F(y)]^n$. The minimum is $> y$ exactly when **all** draws exceed $y$, giving survival $[1-F(y)]^n$. Both reduce a sorting question to raising a single CDF to the $n$-th power."
+            },
+            {
+              "kind": "formula",
+              "title": "Min and max distributions (iid sample)",
+              "body": "For $n$ iid draws with CDF $F$: **Maximum** $Y_{(n)}=\\max$: $$F_{\\max}(y)=[F(y)]^n$$ **Minimum** $Y_{(1)}=\\min$: $$P(\\min > y)=[1-F(y)]^n,\\quad F_{\\min}(y)=1-[1-F(y)]^n$$ Differentiate for densities: $f_{\\max}(y)=n[F(y)]^{n-1}f(y)$ and $f_{\\min}(y)=n[1-F(y)]^{n-1}f(y)$."
+            },
+            {
+              "kind": "worked",
+              "title": "Minimum of exponentials stays exponential",
+              "body": "$n=3$ independent components each have lifetime Exponential$(\\lambda)$. Find the distribution of the first failure, $\\min(X_1,X_2,X_3)$.",
+              "steps": [
+                "Each survival is $P(X_i>y)=e^{-\\lambda y}$.",
+                "$P(\\min > y)=[e^{-\\lambda y}]^3 = e^{-3\\lambda y}$.",
+                "That is the survival function of an Exponential with rate $3\\lambda$.",
+                "So the first of $n$ iid exponentials is Exponential$(n\\lambda)$ — the rates add. Its mean is $\\frac{1}{3\\lambda}$."
+              ],
+              "answer": "$\\min \\sim$ Exponential$(3\\lambda)$, mean $\\frac{1}{3\\lambda}$"
+            },
+            {
+              "kind": "trick",
+              "title": "The minimum of exponentials adds the rates",
+              "body": "A reflex worth owning: $\\min$ of independent exponentials with rates $\\lambda_1,\\dots,\\lambda_n$ is itself exponential with rate $\\lambda_1+\\dots+\\lambda_n$. (For equal rates, $n\\lambda$.) This is the 'competing risks / first event' shortcut — whenever several exponential clocks race, the winner's time is exponential with the summed rate. No integration, just add rates."
+            },
+            {
+              "kind": "trap",
+              "title": "Max is not symmetric to min, and don't forget the chain rule",
+              "body": "The max uses $[F(y)]^n$ (all below); the min uses the *survival* $[1-F(y)]^n$ (all above) — they are **not** mirror formulas, and swapping them is a frequent slip. When differentiating to get a density, remember the chain rule pulls down the inner $f(y)$: $f_{\\max}(y)=n[F(y)]^{n-1}f(y)$, not just $n[F(y)]^{n-1}$."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "CDF of the maximum of $n$ iid draws?", "back": "$[F(y)]^n$ — all draws below $y$." },
+                { "front": "Survival of the minimum of $n$ iid draws?", "back": "$P(\\min>y)=[1-F(y)]^n$ — all draws above $y$." },
+                { "front": "Min of independent exponentials?", "back": "Exponential with the summed rate $\\sum\\lambda_i$." },
+                { "front": "Density of the max?", "back": "$f_{\\max}(y)=n[F(y)]^{n-1}f(y)$ (chain rule keeps the $f(y)$)." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "$U_1,\\dots,U_4$ are iid Uniform$(0,1)$. Find $P(\\max \\le 0.5)$.",
+                "choices": ["$0.5$", "$0.25$", "$0.125$", "$0.0625$", "$2$"],
+                "correct": 3,
+                "explain": "$F_{\\max}(0.5)=[F(0.5)]^4=(0.5)^4=0.0625$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Three iid Exponential(rate 2) lifetimes. The minimum is exponential with rate:",
+                "choices": ["$2$", "$2/3$", "$6$", "$8$", "$1/6$"],
+                "correct": 2,
+                "explain": "Rates of the minimum add: $2+2+2=6$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "$X_1,\\dots,X_n$ iid with CDF $F$. The CDF of the minimum is:",
+                "choices": ["$[F(y)]^n$", "$1-[F(y)]^n$", "$1-[1-F(y)]^n$", "$[1-F(y)]^n$", "$nF(y)$"],
+                "correct": 2,
+                "explain": "$P(\\min\\le y)=1-P(\\min>y)=1-[1-F(y)]^n$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Two iid Uniform$(0,1)$ draws. Find $P(\\min > 0.3)$.",
+                "choices": ["$0.3$", "$0.49$", "$0.7$", "$0.09$", "$0.91$"],
+                "correct": 1,
+                "explain": "$P(\\min>0.3)=[1-0.3]^2=0.7^2=0.49$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "For $n$ iid Uniform$(0,1)$, the density of the maximum is $f_{\\max}(y)=$:",
+                "choices": ["$n y^{n-1}$", "$y^n$", "$n(1-y)^{n-1}$", "$n y^n$", "$1$"],
+                "correct": 0,
+                "explain": "$F(y)=y$, so $f_{\\max}(y)=n[F(y)]^{n-1}f(y)=n y^{n-1}\\cdot1=n y^{n-1}$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
           "id": "clt-and-sums",
           "title": "Sums & the Central Limit Theorem",
           "tagline": "Add enough independent variables and the bell appears no matter where you started. The theorem that quietly powers the whole exam.",
@@ -1097,6 +1859,13 @@
               "kind": "trap",
               "title": "Adding standard deviations directly",
               "body": "You cannot add standard deviations — only **variances** add (for independent variables). To combine spreads, square to variance, add, then square-root back. Writing $\\mathrm{SD}(X+Y) = \\mathrm{SD}(X) + \\mathrm{SD}(Y)$ is wrong and inflates the spread badly."
+            },
+            {
+              "kind": "widget",
+              "widget": {
+                "id": "clt-simulator",
+                "caption": "Pick the most non-normal source you can — exponential, bimodal, a coin flip — then raise $n$ and watch the histogram of sample means collapse into a bell. That convergence is the entire justification for the $Z$-table shortcut you use on aggregate-loss questions."
+              }
             },
             {
               "kind": "recall",

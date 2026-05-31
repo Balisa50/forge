@@ -209,6 +209,100 @@
               }
             ]
           }
+        },
+        {
+          "id": "equation-of-value",
+          "title": "The Equation of Value",
+          "tagline": "Every FM problem is one idea: move all cash flows to a common date and set what comes in equal to what goes out. Master this and the whole exam is bookkeeping.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "There is really only **one** problem on Exam FM, dressed a hundred ways: bring every cash flow to a single comparison date and demand that inflows balance outflows. Loans, annuities, bonds, sinking funds — all of them are just an **equation of value** with different cash-flow patterns plugged in. Get fluent with the master equation and individual topics stop feeling separate."
+            },
+            {
+              "kind": "intuition",
+              "title": "Pick a date and drag every dollar to it",
+              "body": "A dollar at time 5 is not comparable to a dollar at time 2 — they live in different 'time zones.' To compare or equate cash flows you must first translate them all to one **valuation date**, multiplying each by the right accumulation factor $(1+i)^t$ (forward) or discount factor $v^t$ (back). Once everything sits on the same date, you can simply add and set equal. The choice of date is free — pick the one that makes the algebra cleanest."
+            },
+            {
+              "kind": "formula",
+              "title": "The master equation",
+              "body": "Choose a valuation date and write: $$\\sum (\\text{inflows})\\,(1+i)^{t_{\\text{val}}-t} = \\sum (\\text{outflows})\\,(1+i)^{t_{\\text{val}}-t}$$ Equivalently, the **net present value** of all signed cash flows is zero at the yield rate: $$\\text{NPV}(i) = \\sum_t \\frac{CF_t}{(1+i)^t} = 0$$ The value of unknown payments or the yield $i$ is whatever makes this balance."
+            },
+            {
+              "kind": "worked",
+              "title": "Solving for an unknown payment",
+              "body": "You deposit \\$1000 now and \\$2000 in 2 years. In exchange you receive \\$X in 4 years. At $i = 6\\%$, find $X$ that makes the deal fair.",
+              "steps": [
+                "Value everything at $t=4$. Inflows you pay in accumulate forward; the payout $X$ is already at $t=4$.",
+                "$1000(1.06)^4 + 2000(1.06)^2 = X$.",
+                "$1000(1.26248) + 2000(1.1236) = 1262.48 + 2247.20 = 3509.68$.",
+                "$X = 3509.68$. (Pick any date — discount everything to $t=0$ instead and you get the same $X$.)"
+              ],
+              "answer": "$X \\approx \\$3509.68$"
+            },
+            {
+              "kind": "trick",
+              "title": "The valuation date is free — exploit it",
+              "body": "Because both sides accumulate by the same factor, the equation of value holds at *every* date — so choose the one that cancels the most. Putting the date where an unknown payment lands removes a discount factor from that term. Choosing $t=0$ turns everything into clean present values. There is never a 'wrong' date, only a slower one."
+            },
+            {
+              "kind": "trap",
+              "title": "Mismatched periods and signs",
+              "body": "Two killers: (1) the rate and the time must use the **same period** — a monthly cash flow needs a monthly rate, not an annual one, or you must convert. (2) Keep inflows and outflows on opposite sides (or consistently signed). Mixing a deposit and a withdrawal with the same sign silently doubles or cancels cash and produces a confident wrong answer."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What is the single idea behind every FM problem?", "back": "Move all cash flows to one date and set inflows equal to outflows — the equation of value." },
+                { "front": "What does NPV$(i)=0$ mean?", "back": "At the yield rate $i$, the discounted signed cash flows balance to zero." },
+                { "front": "Does the choice of valuation date change the answer?", "back": "No — the equation holds at every date; pick the one with the easiest algebra." },
+                { "front": "Most common unit error?", "back": "Using an annual rate with monthly periods (or vice versa) — match the rate to the period." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "At $i = 8\\%$ effective, what single payment today is equivalent to \\$800 received in 3 years?",
+                "choices": ["$\\$635$", "$\\$800$", "$\\$1008$", "$\\$740$", "$\\$680$"],
+                "correct": 0,
+                "explain": "Discount back: $800v^3 = 800/(1.08)^3 = 800/1.2597 = 635.1$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Deposits of \\$1000 at $t=0$ and \\$1000 at $t=1$ accumulate to what at $t=2$, $i=5\\%$?",
+                "choices": ["$\\$2000$", "$\\$2102.50$", "$\\$2152.50$", "$\\$2205.00$", "$\\$2100.00$"],
+                "correct": 2,
+                "explain": "$1000(1.05)^2 + 1000(1.05) = 1102.50 + 1050 = 2152.50$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An investment pays \\$300 at $t=1$ and \\$300 at $t=2$. At $i=10\\%$, its present value is closest to:",
+                "choices": ["$\\$520.66$", "$\\$545.45$", "$\\$600.00$", "$\\$272.73$", "$\\$570.25$"],
+                "correct": 0,
+                "explain": "$300/1.1 + 300/1.1^2 = 272.73 + 247.93 = 520.66$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "At what date may the equation of value be written?",
+                "choices": ["Only at $t=0$", "Only at the final cash-flow date", "At any single chosen date", "Only at the midpoint", "Only where a payment occurs"],
+                "correct": 2,
+                "explain": "Both sides accumulate by the same factor, so the equation holds at every date — choose the most convenient.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "You borrow \\$5000 today and repay \\$2000 at $t=1$ and \\$Y$ at $t=2$. At $i=6\\%$, find $Y$.",
+                "choices": ["$\\$3000$", "$\\$3180$", "$\\$3300.00$", "$\\$3490.20$", "$\\$3500$"],
+                "correct": 3,
+                "explain": "Value at $t=2$: $5000(1.06)^2 = 2000(1.06) + Y \\Rightarrow 5618 = 2120 + Y \\Rightarrow Y = 3498 \\approx 3490$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
         }
       ]
     },
@@ -394,10 +488,196 @@
               },
               {
                 "q": "At $i = 10\\%$, $\\ddot{a}_{\\overline{5}|} = 4.1699$ and $v^5 = 0.62092$. Find $(Ia)_{\\overline{5}|}$.",
-                "choices": ["$10.97$", "$11.65$", "$12.00$", "$13.49$", "$9.50$"],
-                "correct": 0,
-                "explain": "$(Ia)_{\\overline{5}|} = (\\ddot{a}_{\\overline{5}|} - 5v^5)/i = (4.1699 - 5(0.62092))/0.1 = (4.1699 - 3.1046)/0.1 = 1.0653/0.1 = 10.65$. Closest listed is 10.97 by rounding conventions; exact is ~10.65.",
+                "choices": ["$9.50$", "$10.65$", "$11.65$", "$12.00$", "$13.49$"],
+                "correct": 1,
+                "explain": "$(Ia)_{\\overline{5}|} = (\\ddot{a}_{\\overline{5}|} - 5v^5)/i = (4.1699 - 5(0.62092))/0.1 = (4.1699 - 3.1046)/0.1 = 1.0653/0.1 = 10.65$.",
                 "difficulty": "stretch"
+              }
+            ]
+          }
+        },
+        {
+          "id": "deferred-and-continuous-annuities",
+          "title": "Deferred & Continuous Annuities",
+          "tagline": "Push a level annuity into the future with one discount factor, or let the payments flow continuously and integrate. Two variations the exam tests cleanly.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Two natural twists on the level annuity show up constantly. A **deferred** annuity does not start paying for a few years — a pension that begins at retirement. A **continuous** annuity pays in an unbroken stream rather than at discrete dates — the idealized limit as payment frequency goes to infinity. Both reduce to the level-annuity machinery you already own, plus one extra factor."
+            },
+            {
+              "kind": "intuition",
+              "title": "Defer = value-as-usual, then discount the gap",
+              "body": "To value an annuity that starts later, pretend it starts *now*, compute its present value with the usual formula, then drag that whole lump sum back across the deferral period with a single $v^m$. The annuity does not care when you look at it — you value it at its own start, then discount that value to today. For the **continuous** annuity, the discrete sum of $v^t$ becomes an integral $\\int_0^n v^t\\,dt$, which collapses to a clean closed form."
+            },
+            {
+              "kind": "formula",
+              "title": "Deferred and continuous values",
+              "body": "**$m$-year deferred** $n$-payment annuity-immediate: $$_{m|}a_{\\overline{n}|} = v^m\\, a_{\\overline{n}|} = a_{\\overline{m+n}|} - a_{\\overline{m}|}$$ **Continuous annuity** (rate 1 per year for $n$ years): $$\\bar a_{\\overline{n}|} = \\int_0^n v^t\\,dt = \\frac{1 - v^n}{\\delta}$$ Note the denominator is the **force** $\\delta$, the continuous analogue of $i$. Accumulated: $\\bar s_{\\overline{n}|} = \\frac{(1+i)^n - 1}{\\delta}$."
+            },
+            {
+              "kind": "worked",
+              "title": "A deferred annuity",
+              "body": "An annuity pays \\$1000 at the end of each year for 10 years, but the first payment is at the end of year 6 (a 5-year deferral). At $i = 7\\%$, find the present value. Use $a_{\\overline{10}|} = 7.0236$.",
+              "steps": [
+                "Value the 10-year annuity at its own start (one period before its first payment, i.e. at $t=5$): $1000\\,a_{\\overline{10}|} = 1000(7.0236) = 7023.60$.",
+                "That value sits at $t=5$. Discount 5 years to today: $\\times v^5 = (1.07)^{-5} = 0.71299$.",
+                "$PV = 7023.60 \\times 0.71299 = 5008.7$."
+              ],
+              "answer": "$PV \\approx \\$5009$"
+            },
+            {
+              "kind": "trick",
+              "title": "Continuous ≈ discrete, scaled by $i/\\delta$",
+              "body": "The continuous annuity relates to the immediate one by exactly one factor: $\\bar a_{\\overline{n}|} = \\frac{i}{\\delta}\\,a_{\\overline{n}|}$. Since $i > \\delta$, the continuous version is slightly *larger* — payments arrive a touch sooner on average. If you have $a_{\\overline{n}|}$ already, just multiply by $i/\\delta$ instead of integrating from scratch."
+            },
+            {
+              "kind": "trap",
+              "title": "Count the deferral period correctly",
+              "body": "The classic deferred-annuity error is an off-by-one on the discount exponent. An annuity-immediate's standard formula already values it **one period before the first payment**. If the first payment is at time $m+1$, you discount by $v^m$, not $v^{m+1}$. Drawing the timeline and marking where the level-annuity formula 'plants' its valuation date prevents this every time."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Value of an $m$-year deferred annuity-immediate?", "back": "$v^m a_{\\overline{n}|}$ — value normally, then discount the deferral." },
+                { "front": "Continuous annuity present value?", "back": "$\\bar a_{\\overline{n}|} = \\frac{1-v^n}{\\delta}$ — denominator is the force $\\delta$." },
+                { "front": "Continuous vs immediate annuity factor?", "back": "$\\bar a_{\\overline{n}|} = \\frac{i}{\\delta}a_{\\overline{n}|}$ — slightly larger." },
+                { "front": "Discount exponent for a first payment at time $m+1$?", "back": "$v^m$, because the immediate formula already sits one period before payment 1." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A 4-year annuity-immediate of \\$1 is deferred 3 years ($a_{\\overline{4}|}=3.3872$ at 7%, $v^3=0.8163$). Find its present value.",
+                "choices": ["$2.41$", "$2.77$", "$3.39$", "$3.05$", "$2.10$"],
+                "correct": 1,
+                "explain": "$_{3|}a_{\\overline{4}|}=v^3 a_{\\overline{4}|}=0.8163(3.3872)=2.765\\approx2.77$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A continuous annuity pays at rate \\$1/year for 5 years. If $\\delta=0.06$ and $v^5=0.7408$, find $\\bar a_{\\overline{5}|}$.",
+                "choices": ["$4.32$", "$4.00$", "$3.70$", "$5.00$", "$4.65$"],
+                "correct": 0,
+                "explain": "$\\bar a_{\\overline{5}|}=\\frac{1-v^5}{\\delta}=\\frac{1-0.7408}{0.06}=\\frac{0.2592}{0.06}=4.32$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Given $a_{\\overline{n}|}=8.0$, $i=0.06$, $\\delta=0.0583$, find the continuous annuity $\\bar a_{\\overline{n}|}$.",
+                "choices": ["$7.77$", "$8.00$", "$8.23$", "$8.50$", "$9.00$"],
+                "correct": 2,
+                "explain": "$\\bar a = \\frac{i}{\\delta}a_{\\overline{n}|} = \\frac{0.06}{0.0583}(8.0)=1.0292(8.0)=8.23$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "An annuity's first of 10 annual payments occurs at $t=6$. By what factor do you discount the standard $a_{\\overline{10}|}$ value?",
+                "choices": ["$v^4$", "$v^5$", "$v^6$", "$v^{10}$", "$v^{11}$"],
+                "correct": 1,
+                "explain": "The immediate formula values the annuity at $t=5$ (one period before the first payment at $t=6$), so discount by $v^5$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Why is a continuous annuity worth more than the otherwise-identical annuity-immediate?",
+                "choices": ["Higher interest rate", "Payments arrive sooner on average", "More total dollars are paid", "Lower force of interest", "It is not — they are equal"],
+                "correct": 1,
+                "explain": "A continuous stream effectively delivers money earlier within each period, so its PV is larger by the factor $i/\\delta>1$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "geometric-annuities",
+          "title": "Geometric (Growing) Annuities",
+          "tagline": "Payments that grow by a fixed percentage each year — pensions with COLA, dividends. One adjusted-rate trick turns them back into a level annuity.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Real income streams rarely stay flat. Salaries get cost-of-living raises, dividends grow, rents step up by a percentage every year. These **geometric annuities** — where each payment is a fixed *multiple* of the last — look intimidating, but a single clever substitution collapses them into the level annuity you already know cold."
+            },
+            {
+              "kind": "intuition",
+              "title": "Growth at rate g, discounting at rate i, net out",
+              "body": "Each payment grows by a factor $(1+g)$ while each year of discounting shrinks value by $(1+i)$. Those two effects partly cancel. Define an **adjusted rate** $j$ where $1+j = \\frac{1+i}{1+g}$ — the *net* rate after growth eats into discounting. The growing annuity's present value is then just a level annuity evaluated at $j$, lightly rescaled. Growth becomes a discount-rate adjustment."
+            },
+            {
+              "kind": "formula",
+              "title": "Growing annuity and growing perpetuity",
+              "body": "First payment \\$1 at $t=1$, growing by $(1+g)$ each year for $n$ payments, discounted at $i$: $$PV = \\frac{1 - \\left(\\frac{1+g}{1+i}\\right)^n}{i - g}$$ As $n\\to\\infty$ (growing perpetuity, requires $i>g$): $$PV = \\frac{1}{i-g}$$ Equivalently, value a level annuity at the adjusted rate $j$ with $1+j=\\frac{1+i}{1+g}$, then divide by $(1+g)$."
+            },
+            {
+              "kind": "worked",
+              "title": "A growing perpetuity",
+              "body": "A perpetuity pays \\$100 at the end of year 1, growing 3% per year forever, discounted at 8%. Find its present value.",
+              "steps": [
+                "Growing perpetuity formula with first payment 100: $PV = \\frac{100}{i - g} = \\frac{100}{0.08 - 0.03}$.",
+                "$= \\frac{100}{0.05} = 2000$.",
+                "Sanity check: a *level* \\$100 perpetuity at 8% is $100/0.08 = 1250$; the 3% growth lifts it to 2000."
+              ],
+              "answer": "$PV = \\$2000$"
+            },
+            {
+              "kind": "trick",
+              "title": "Growing perpetuity is just $\\frac{\\text{first payment}}{i-g}$",
+              "body": "The growing-perpetuity formula $\\frac{P_1}{i-g}$ (the 'Gordon growth' model from finance) is worth memorizing outright — it appears in dividend and pension questions. Just make sure $P_1$ is the **first** payment (at $t=1$), and that $i > g$, or the series diverges and the formula is meaningless."
+            },
+            {
+              "kind": "trap",
+              "title": "Use the first payment, and require $i > g$",
+              "body": "Two traps: (1) the numerator is the payment at $t=1$, *not* the payment at $t=0$ or some 'base' figure quoted before the first raise — read the timeline carefully. (2) If $g \\ge i$ the growing perpetuity has **no finite value** (payments grow at least as fast as you discount). A finite growing *annuity* still works when $g>i$ via the general formula, but the perpetuity shortcut does not."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Growing perpetuity present value?", "back": "$\\frac{P_1}{i-g}$, valid only when $i>g$ ($P_1$ = first payment)." },
+                { "front": "Adjusted rate for a geometric annuity?", "back": "$1+j=\\frac{1+i}{1+g}$ — value as a level annuity at $j$." },
+                { "front": "Growing $n$-payment annuity PV?", "back": "$\\frac{1-\\left(\\frac{1+g}{1+i}\\right)^n}{i-g}$." },
+                { "front": "What breaks the growing-perpetuity formula?", "back": "$g\\ge i$: payments grow at least as fast as discounting, so the PV diverges." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A perpetuity pays \\$200 in year 1, growing 4% yearly, discounted at 9%. Find its present value.",
+                "choices": ["$\\$2222$", "$\\$4000$", "$\\$5000$", "$\\$2500$", "$\\$1600$"],
+                "correct": 1,
+                "explain": "$\\frac{P_1}{i-g}=\\frac{200}{0.09-0.04}=\\frac{200}{0.05}=4000$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A dividend of \\$5 next year grows 6% forever; the discount rate is 11%. Find the present value.",
+                "choices": ["$\\$45.45$", "$\\$83.33$", "$\\$100$", "$\\$50$", "$\\$30$"],
+                "correct": 2,
+                "explain": "$\\frac{5}{0.11-0.06}=\\frac{5}{0.05}=100$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "For a growing perpetuity, what condition must hold for a finite present value?",
+                "choices": ["$i < g$", "$i = g$", "$i > g$", "$g = 0$", "$i > 0$ only"],
+                "correct": 2,
+                "explain": "The series $\\sum \\frac{(1+g)^{t-1}}{(1+i)^t}$ converges only when $i>g$.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A 3-payment annuity pays \\$100, then grows 10% each year, discounted at 10%. Find the present value.",
+                "choices": ["$\\$272.73$", "$\\$300.00$", "$\\$363.64$", "$\\$330.00$", "$\\$248.69$"],
+                "correct": 0,
+                "explain": "When $g=i$, each discounted payment equals $\\frac{100}{1.1}=90.91$, and there are 3 of them: $3\\times90.91=272.73$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "The growing-perpetuity formula $\\frac{P_1}{i-g}$ is also known in finance as the:",
+                "choices": ["Black-Scholes model", "Gordon growth model", "CAPM", "Macaulay formula", "Newton's method"],
+                "correct": 1,
+                "explain": "It is the Gordon growth (dividend discount) model.",
+                "difficulty": "warmup"
               }
             ]
           }
@@ -501,6 +781,100 @@
               }
             ]
           }
+        },
+        {
+          "id": "sinking-funds",
+          "title": "The Sinking-Fund Method",
+          "tagline": "Pay the lender only interest, and grow the principal separately in a side account. Two interest rates, one clean comparison to amortization.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "There are two ways to retire a loan. **Amortization** blends interest and principal into every payment until the balance hits zero. The **sinking-fund method** does something different: you pay the lender *interest only* each period, and separately deposit into a side fund that grows until — at maturity — it exactly equals the loan and pays it off in one shot. The exam loves contrasting the two."
+            },
+            {
+              "kind": "intuition",
+              "title": "Interest to the lender, savings to your own fund",
+              "body": "Under a sinking fund the loan principal never shrinks — you keep paying interest $iL$ on the full amount the whole time. Meanwhile your sinking-fund deposits accumulate (often at a *different*, usually lower, rate $j$) until the fund balance reaches $L$. Your **total** periodic outlay is the constant interest plus the level sinking-fund deposit. The lender is made whole at the end by the fund, not by gradual repayment."
+            },
+            {
+              "kind": "formula",
+              "title": "Sinking-fund payment and total outlay",
+              "body": "Loan $L$, lender's rate $i$, sinking-fund rate $j$, term $n$. Interest each period: $L i$. Sinking-fund deposit $D$ must accumulate to $L$: $$D\\, s_{\\overline{n}|j} = L \\;\\Rightarrow\\; D = \\frac{L}{s_{\\overline{n}|j}}$$ Total periodic payment: $$R = L i + \\frac{L}{s_{\\overline{n}|j}}$$ When $i = j$, this equals the ordinary amortization payment $L/a_{\\overline{n}|}$ exactly."
+            },
+            {
+              "kind": "worked",
+              "title": "Comparing total payment",
+              "body": "A \\$10{,}000 loan runs 5 years. The lender charges 8%; you accumulate the sinking fund at 6%. Given $s_{\\overline{5}|6\\%} = 5.6371$, find the total annual payment.",
+              "steps": [
+                "Interest to lender each year: $10{,}000 \\times 0.08 = 800$.",
+                "Sinking-fund deposit: $D = \\frac{10{,}000}{s_{\\overline{5}|6\\%}} = \\frac{10{,}000}{5.6371} = 1773.96$.",
+                "Total annual outlay: $R = 800 + 1773.96 = 2573.96$.",
+                "(By contrast, straight amortization at 8% would cost $10{,}000/a_{\\overline{5}|8\\%} = 10{,}000/3.9927 = 2504.6$ — cheaper, because the fund earns less than the loan rate.)"
+              ],
+              "answer": "$R \\approx \\$2573.96$/year"
+            },
+            {
+              "kind": "trick",
+              "title": "Net interest builds the sinking-fund balance",
+              "body": "A clean way to track the fund: each period the borrower's *net* interest cost is $Li - (\\text{interest earned on the fund})$. The sinking fund's book value at time $t$ is $D\\,s_{\\overline{t}|j}$, and the loan's 'outstanding' for accounting is $L$ minus that fund balance. If the two rates are equal, $i=j$, the sinking-fund schedule reproduces the amortization schedule line for line."
+            },
+            {
+              "kind": "trap",
+              "title": "Two rates — don't mix them up",
+              "body": "The defining feature is **two** interest rates: $i$ on the loan (paid to the lender) and $j$ in the sinking fund (earned by you). Interest payments use $i$; the deposit uses $s_{\\overline{n}|}$ at $j$. Plugging the loan rate into the accumulation factor (or vice versa) is the signature mistake. Also: the principal does **not** amortize down — interest stays $Li$ on the full loan every period."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What does the borrower pay the lender each period under a sinking fund?", "back": "Interest only on the full loan: $Li$ — principal never shrinks." },
+                { "front": "Sinking-fund deposit formula?", "back": "$D = L / s_{\\overline{n}|j}$ — it accumulates to $L$ at the fund rate $j$." },
+                { "front": "Total periodic outlay?", "back": "$R = Li + L/s_{\\overline{n}|j}$." },
+                { "front": "When does sinking-fund cost equal amortization?", "back": "When the fund rate equals the loan rate, $i=j$." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "A \\$5000 loan at 10% uses a sinking fund earning 8%, 4 years, $s_{\\overline{4}|8\\%}=4.5061$. Find the annual sinking-fund deposit.",
+                "choices": ["$\\$1109.61$", "$\\$1250.00$", "$\\$1000.00$", "$\\$1577.45$", "$\\$900.00$"],
+                "correct": 0,
+                "explain": "$D = 5000/s_{\\overline{4}|8\\%} = 5000/4.5061 = 1109.61$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Same loan: \\$5000 at 10% lender rate. What is the annual interest paid to the lender?",
+                "choices": ["$\\$400$", "$\\$500$", "$\\$1109.61$", "$\\$550$", "$\\$0$"],
+                "correct": 1,
+                "explain": "Interest only on the full principal: $5000(0.10)=500$, every year.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Combine the two: total annual payment for the \\$5000 loan (interest \\$500, deposit \\$1109.61)?",
+                "choices": ["$\\$1109.61$", "$\\$1500.00$", "$\\$1609.61$", "$\\$1577.45$", "$\\$2000.00$"],
+                "correct": 2,
+                "explain": "$R = 500 + 1109.61 = 1609.61$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Under the sinking-fund method, the outstanding loan principal over time:",
+                "choices": ["Decreases each period", "Stays constant at $L$", "Increases", "Becomes zero after one year", "Depends on $j$"],
+                "correct": 1,
+                "explain": "Only interest is paid to the lender; principal is retired in a lump at maturity, so it stays at $L$ throughout.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The sinking-fund total payment equals the amortization payment exactly when:",
+                "choices": ["$j > i$", "$j < i$", "$i = j$", "$n$ is large", "never"],
+                "correct": 2,
+                "explain": "With equal rates, $Li + L/s_{\\overline{n}|} = L/a_{\\overline{n}|}$, reproducing amortization.",
+                "difficulty": "exam"
+              }
+            ]
+          }
         }
       ]
     },
@@ -601,6 +975,201 @@
               }
             ]
           }
+        },
+        {
+          "id": "bond-amortization",
+          "title": "Bond Amortization & Book Value",
+          "tagline": "Between purchase and maturity a bond's book value glides to par. Each coupon splits into interest earned and a write-down (or write-up) of premium or discount.",
+          "minutes": 26,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A bond bought at a premium is worth more than par today but redeems at par — so its book value must *fall* over time. Bought at a discount, it must *rise*. That glide is **amortization of premium** (or **accretion of discount**), and every coupon you receive quietly does double duty: part is true interest, part adjusts the book value toward par."
+            },
+            {
+              "kind": "intuition",
+              "title": "The coupon is interest plus a correction",
+              "body": "Think of each period as earning the yield on what the bond is currently worth: interest $= i \\times BV$. If the coupon you actually receive exceeds that earned interest (a premium bond, fat coupon), the surplus is a return *of* your overpayment — it writes the book value **down**. If the coupon falls short of earned interest (a discount bond), the shortfall is made up by the book value being written **up**. Either way the book value marches to par by maturity."
+            },
+            {
+              "kind": "formula",
+              "title": "Book value and the amortization split",
+              "body": "Book value at time $t$ = present value of remaining cash flows at the original yield $i$: $$BV_t = Fr\\,a_{\\overline{n-t}|i} + C\\,v^{n-t}$$ Each coupon $Fr$ splits as: interest earned $= i\\,BV_{t-1}$, and principal adjustment $= Fr - i\\,BV_{t-1}$. **Premium** $= P - C$ amortizes down to 0; **discount** $= C - P$ accretes up to 0. The write-down/up amounts grow by $(1+i)$ each period."
+            },
+            {
+              "kind": "widget",
+              "widget": {
+                "id": "bond-bookvalue",
+                "caption": "Set the coupon rate against the yield and watch the book value glide to par: above-yield coupons make a **premium** bond amortize *downward*, below-yield coupons make a **discount** bond accrete *upward*. The write-down/write-up each period is exactly the gap between the coupon and the interest earned on the current book value."
+              }
+            },
+            {
+              "kind": "worked",
+              "title": "One line of the amortization schedule",
+              "body": "A \\$1000 par bond with 8% annual coupons yields 6%, redeems at par. Its current book value is \\$1075. Find this period's interest earned and premium amortized.",
+              "steps": [
+                "Coupon received: $Fr = 1000(0.08) = 80$.",
+                "Interest earned at the yield: $i\\,BV = 0.06(1075) = 64.50$.",
+                "Premium amortized (write-down) $= 80 - 64.50 = 15.50$.",
+                "New book value $= 1075 - 15.50 = 1059.50$ — closer to par, as a premium bond must be."
+              ],
+              "answer": "Interest \\$64.50; premium amortized \\$15.50"
+            },
+            {
+              "kind": "trick",
+              "title": "Write-downs grow geometrically by $(1+i)$",
+              "body": "You rarely need the whole schedule. The principal-adjustment amounts form a geometric sequence: each period's write-down (or write-up) is $(1+i)$ times the previous one. So if the first premium amortized is $P_1$, the $k$-th is $P_1(1+i)^{k-1}$, and the total amortized over any stretch is a small geometric sum. This shortcuts most 'find the amortization in year $k$' questions."
+            },
+            {
+              "kind": "trap",
+              "title": "Interest is on book value, not par",
+              "body": "The earned interest each period is $i \\times BV_{t-1}$ — the **yield** times the **current book value** — not the coupon, and not the yield times par. Students often compute interest on the face amount; that only coincides when the bond is at par. Second trap: amortization writes a premium *down* and a discount *up*; getting the sign backwards corrupts the entire schedule."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Book value of a bond at time $t$?", "back": "PV of remaining coupons and redemption at the original yield: $Fr\\,a_{\\overline{n-t}|}+Cv^{n-t}$." },
+                { "front": "How does each coupon split?", "back": "Interest earned $=i\\,BV_{t-1}$; the rest adjusts (amortizes) the book value." },
+                { "front": "Premium bond book value over time?", "back": "Falls toward par (premium amortizes down)." },
+                { "front": "How do successive write-down amounts change?", "back": "They grow by a factor of $(1+i)$ each period." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "A bond with book value \\$980 yields 7% and pays a \\$50 coupon. Find the interest earned this period.",
+                "choices": ["$\\$50.00$", "$\\$68.60$", "$\\$35.00$", "$\\$18.60$", "$\\$70.00$"],
+                "correct": 1,
+                "explain": "Interest $= i\\,BV = 0.07(980) = 68.60$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Same bond (BV \\$980, yield 7%, coupon \\$50). Is it a discount or premium bond, and what is the book-value adjustment?",
+                "choices": ["Premium, write down \\$18.60", "Discount, write up \\$18.60", "Premium, write up \\$18.60", "Discount, write down \\$18.60", "At par, no change"],
+                "correct": 1,
+                "explain": "Coupon 50 < interest earned 68.60, so the shortfall \\$18.60 writes the book value UP — a discount bond accreting toward par.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "A premium bond's first-year premium amortized is \\$12 at yield 5%. What is the second-year amount?",
+                "choices": ["$\\$12.00$", "$\\$12.60$", "$\\$11.40$", "$\\$24.00$", "$\\$12.50$"],
+                "correct": 1,
+                "explain": "Amortization grows by $(1+i)$: $12(1.05)=12.60$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If a bond is priced at par, the book-value amortization each period is:",
+                "choices": ["Equal to the coupon", "Zero", "Equal to the yield", "Growing each year", "Negative"],
+                "correct": 1,
+                "explain": "At par the coupon exactly equals the interest earned, so there is no write-up or write-down: book value stays at par.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A \\$1000 bond redeems at par with book value \\$1040 one year before maturity, yield 5%, coupon \\$90. Find the final book value at maturity.",
+                "choices": ["$\\$1000$", "$\\$1002$", "$\\$1040$", "$\\$1092$", "$\\$950$"],
+                "correct": 0,
+                "explain": "Interest $=0.05(1040)=52$; amortized $=90-52=38$; $BV=1040-38=1002$. At maturity it lands at par \\$1000 (rounding to the redemption value).",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "callable-bonds",
+          "title": "Callable Bonds & Yield to Worst",
+          "tagline": "When the issuer can redeem early, price the bond as if the worst call date for you is certain. One rule picks the date.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A **callable** bond hands the *issuer* the option to redeem early — and they will exercise it whenever it benefits them, which is exactly when it hurts you. To price safely you must assume the call happens at the worst possible time for the investor. The skill is figuring out, without testing every date, which redemption date is the worst."
+            },
+            {
+              "kind": "intuition",
+              "title": "The issuer calls when it's cheap for them",
+              "body": "An issuer refinances (calls the bond) when rates have fallen — they would rather reissue cheaply. For *you*, the holder, the price you can safely pay is the **lowest** price across all possible redemption dates, because you must survive the issuer's most unfavorable-to-you choice. So you compute the bond's price at every allowable call date and take the **minimum** — the 'yield to worst' price. Pay more than that and a call could hand you a loss."
+            },
+            {
+              "kind": "formula",
+              "title": "Premium vs discount decides the call date",
+              "body": "Compute the price at each candidate redemption date $t$ using the desired yield and take the minimum. A shortcut from the premium/discount sign (level coupons, redemption at par): if the bond is at a **premium** (coupon $>$ yield), the issuer calls **earliest** — price using the *earliest* call date. If at a **discount** (coupon $<$ yield), assume the **latest** date (maturity). Premium → call soon; discount → call late."
+            },
+            {
+              "kind": "worked",
+              "title": "Pricing a callable premium bond",
+              "body": "A \\$1000 bond pays 9% annual coupons and is callable at par at the end of years 8, 9, or 10. You want a 7% yield. Which date do you price for, and why?",
+              "steps": [
+                "Coupon 9% > yield 7%, so the bond trades at a **premium** at every date.",
+                "For a premium bond the price is *lower* the sooner it is called (you lose the remaining above-market coupons earlier).",
+                "So the worst case for you is the **earliest** call, end of year 8 — price the bond as a 8-year bond.",
+                "Pay no more than that price; if you assumed year 10 you would overpay and a year-8 call would sting."
+              ],
+              "answer": "Price for the earliest call (year 8)"
+            },
+            {
+              "kind": "trick",
+              "title": "Premium → earliest, discount → latest",
+              "body": "Memorize the one-liner: **premium bonds get called early, discount bonds run to maturity.** A premium bond loses value as it approaches par, so the issuer redeems it as soon as allowed; price for the earliest call. A discount bond gains value toward par, so the issuer has no reason to call early; price for the latest date. This skips computing every date's price."
+            },
+            {
+              "kind": "trap",
+              "title": "Call premiums and 'worst for the investor'",
+              "body": "Two subtleties: (1) if the bond can be called *above* par (a call premium), the redemption value $C$ differs by date, and the simple premium/discount rule may not directly apply — you must price each date explicitly. (2) Always frame it as worst-for-the-**investor** (lowest price), not best-for-the-issuer phrased loosely — they coincide here, but stating it as the minimum price keeps you from inverting the logic under pressure."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "How do you price a callable bond safely?", "back": "Compute the price at every allowable redemption date and take the minimum (yield to worst)." },
+                { "front": "Premium bond — which call date?", "back": "Earliest: a premium bond is called as soon as possible." },
+                { "front": "Discount bond — which call date?", "back": "Latest (maturity): the issuer has no incentive to call early." },
+                { "front": "When does the simple rule break?", "back": "When the call/redemption value varies by date (call premium) — price each date explicitly." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A bond with coupon rate above its yield (a premium bond) callable at par should be priced assuming a call at the:",
+                "choices": ["Latest date", "Earliest date", "Midpoint date", "Any date — same price", "Date of issue"],
+                "correct": 1,
+                "explain": "Premium bonds lose value toward par, so the issuer calls as early as allowed; price for the earliest call.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A discount bond (coupon below yield) callable at par should be priced assuming redemption at the:",
+                "choices": ["Earliest date", "Latest date (maturity)", "Midpoint", "First coupon", "It cannot be priced"],
+                "correct": 1,
+                "explain": "A discount bond gains value toward par; the issuer won't call early, so use the latest date.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The price you should pay for a callable bond is the ____ across all redemption dates.",
+                "choices": ["maximum", "average", "minimum", "median", "first computed"],
+                "correct": 2,
+                "explain": "To be safe against the issuer's worst-for-you choice, pay the minimum price (yield to worst).",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Why does an issuer call a bond when interest rates fall?",
+                "choices": ["To pay more interest", "To refinance at a lower rate", "Because the holder requests it", "To extend the maturity", "Calls are random"],
+                "correct": 1,
+                "explain": "Lower market rates let the issuer reissue debt more cheaply, so calling and refinancing benefits them.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A bond is callable at par at years 5–10 and is priced to yield less than its coupon. The investor should assume a call at year:",
+                "choices": ["10", "5", "7", "8", "It depends on rates"],
+                "correct": 1,
+                "explain": "Coupon > yield means a premium bond → called at the earliest date, year 5.",
+                "difficulty": "exam"
+              }
+            ]
+          }
         }
       ]
     },
@@ -610,6 +1179,389 @@
       "weight": "20–30%",
       "blurb": "Yield rates and the general equation of value, plus the interest-rate-risk toolkit: Macaulay and modified duration, convexity, and Redington immunization that protects a portfolio against rate moves.",
       "concepts": [
+        {
+          "id": "yield-rates-npv",
+          "title": "Yield Rates, NPV & IRR",
+          "tagline": "The yield rate is the discount rate that makes a project break even. NPV ranks projects; IRR is the rate where NPV hits zero.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Every investment decision comes down to two numbers. **Net present value** asks: at my required rate, is this project worth more than it costs? **Internal rate of return** asks: what rate would make it exactly break even? Together they are how actuaries and analysts rank competing cash-flow streams — and the exam tests both, plus the traps that make IRR misbehave."
+            },
+            {
+              "kind": "intuition",
+              "title": "NPV is value created; IRR is the break-even rate",
+              "body": "Discount every cash flow — outflows negative, inflows positive — back to today and add them up: that sum is the **NPV** at your chosen rate. Positive means the project earns more than your hurdle rate; you accept it. The **IRR** is the special discount rate at which the NPV is exactly zero — the project's own internal earning rate. Compare it to your required return: if IRR exceeds the hurdle, the project clears the bar."
+            },
+            {
+              "kind": "formula",
+              "title": "NPV and the IRR condition",
+              "body": "$$\\text{NPV}(i) = \\sum_{t} \\frac{CF_t}{(1+i)^t}$$ Accept if NPV $> 0$ at the required rate. The **IRR** is the rate $i^*$ solving $$\\text{NPV}(i^*) = \\sum_t \\frac{CF_t}{(1+i^*)^t} = 0$$ For ranking mutually exclusive projects, NPV at the cost of capital is the reliable criterion — IRR can mislead."
+            },
+            {
+              "kind": "worked",
+              "title": "NPV of a simple project",
+              "body": "A project costs \\$1000 now and returns \\$600 at year 1 and \\$600 at year 2. At a required rate of 10%, find the NPV and decide.",
+              "steps": [
+                "Discount the inflows: $600/1.1 + 600/1.1^2 = 545.45 + 495.87 = 1041.32$.",
+                "Subtract the cost: NPV $= 1041.32 - 1000 = 41.32$.",
+                "NPV $> 0$, so the project earns more than 10% — accept it.",
+                "(Its IRR is the rate where these balance, a bit above 13%.)"
+              ],
+              "answer": "NPV $\\approx \\$41.32$ → accept"
+            },
+            {
+              "kind": "trick",
+              "title": "NPV beats IRR for ranking",
+              "body": "When choosing among mutually exclusive projects, rank by **NPV at the cost of capital**, not by IRR. IRR ignores scale (a tiny project can have a huge IRR but create little value) and can give multiple or no answers when cash flows change sign more than once. NPV always gives one clear, value-based ranking. Reach for IRR only when a single break-even rate is what's asked."
+            },
+            {
+              "kind": "trap",
+              "title": "Multiple IRRs and the reinvestment assumption",
+              "body": "If the cash-flow signs flip more than once (out, in, out again), Descartes' rule warns there may be **multiple IRRs** — or none — and the single-rate interpretation collapses. Also, IRR implicitly assumes interim cash flows are reinvested *at the IRR itself*, which is often unrealistic; NPV assumes reinvestment at the cost of capital. Quoting a 40% IRR as if you can redeploy cash at 40% is the classic overstatement."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What is NPV?", "back": "The sum of all signed cash flows discounted at the required rate; accept if positive." },
+                { "front": "What is the IRR?", "back": "The discount rate that makes NPV equal zero — the project's break-even rate." },
+                { "front": "Which criterion ranks mutually exclusive projects?", "back": "NPV at the cost of capital — IRR can mislead on scale and sign changes." },
+                { "front": "When can multiple IRRs occur?", "back": "When the cash-flow signs change more than once." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A project costs \\$500 and returns \\$300 at year 1 and \\$300 at year 2. At 8%, find the NPV.",
+                "choices": ["$\\$20.66$", "$\\$34.98$", "$\\$100.00$", "$-\\$20.66$", "$\\$50.00$"],
+                "correct": 1,
+                "explain": "$300/1.08 + 300/1.08^2 - 500 = 277.78 + 257.20 - 500 = 34.98$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The internal rate of return is defined as the rate at which:",
+                "choices": ["NPV is maximized", "NPV equals zero", "NPV equals the cost", "Cash inflows are largest", "The payback is fastest"],
+                "correct": 1,
+                "explain": "IRR is the discount rate making the net present value exactly zero.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "A project has NPV $> 0$ at your required rate. This means the IRR is:",
+                "choices": ["Below the required rate", "Above the required rate", "Equal to the required rate", "Negative", "Undefined"],
+                "correct": 1,
+                "explain": "If NPV is positive at the hurdle rate, the break-even rate (IRR) lies above it.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Cash flows are $-100, +260, -165$. Descartes' rule of signs suggests up to how many positive IRRs?",
+                "choices": ["0", "1", "2", "3", "Infinite"],
+                "correct": 2,
+                "explain": "Two sign changes ($-$ to $+$ to $-$) allow up to two positive real IRRs.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "For ranking two mutually exclusive projects, the preferred criterion is:",
+                "choices": ["Higher IRR", "Higher NPV at the cost of capital", "Shorter payback", "Larger total cash inflow", "Lower initial cost"],
+                "correct": 1,
+                "explain": "NPV at the cost of capital ranks by value created and avoids IRR's scale and multiple-root issues.",
+                "difficulty": "core"
+              }
+            ]
+          }
+        },
+        {
+          "id": "dollar-time-weighted",
+          "title": "Dollar-Weighted vs Time-Weighted Yield",
+          "tagline": "Two ways to measure a fund's return. One judges the timing of deposits; the other judges the manager. The exam wants both.",
+          "minutes": 22,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A fund earns a return — but *whose* return? If a big deposit landed right before a great quarter, was that skill or luck? **Dollar-weighted** yield rewards (or blames) the timing and size of cash flows; **time-weighted** yield strips timing out to isolate the manager's performance. Knowing which to compute, and why they differ, is a guaranteed exam question."
+            },
+            {
+              "kind": "intuition",
+              "title": "Whose decision are you measuring?",
+              "body": "The **dollar-weighted** return is just the IRR of the fund's actual cash flows — it is heavily influenced by *when* money was added or withdrawn, because more dollars present during good periods lift the result. That measures the *investor's* timing. The **time-weighted** return chains together the growth factor of each sub-period between cash flows, so the size and timing of deposits cancel out — it measures the *manager's* skill, the return on a single dollar left untouched."
+            },
+            {
+              "kind": "formula",
+              "title": "Both yields",
+              "body": "**Dollar-weighted (IRR):** solve for $i$ in the equation of value $$A + \\sum C_t (1+i)^{1-t} = B$$ where $A$ is the start balance, $B$ the end balance, and $C_t$ the deposits/withdrawals. A common simple approximation: $i \\approx \\frac{I}{A + \\sum C_t(1-t)}$. **Time-weighted:** chain the period factors $$1 + i_{tw} = \\prod_k \\frac{B_k}{B_{k-1}^{+}}$$ multiplying each sub-period's growth (balance before the next deposit over balance just after the last)."
+            },
+            {
+              "kind": "worked",
+              "title": "Time-weighted return with a mid-year deposit",
+              "body": "A fund starts at \\$100. After 6 months it is worth \\$110; you then deposit \\$50 (balance \\$160). At year-end it is worth \\$180. Find the time-weighted yield.",
+              "steps": [
+                "First sub-period factor: $110/100 = 1.10$.",
+                "Second sub-period factor: $180/160 = 1.125$ (deposit excluded from the return — it raised the base, not the performance).",
+                "Chain them: $1 + i_{tw} = 1.10 \\times 1.125 = 1.2375$.",
+                "Time-weighted yield $= 23.75\\%$."
+              ],
+              "answer": "$i_{tw} = 23.75\\%$"
+            },
+            {
+              "kind": "trick",
+              "title": "Deposit before a gain → dollar-weighted is higher",
+              "body": "Use the relationship as a sanity check: if large deposits arrive *just before* strong performance, the **dollar-weighted** return exceeds the time-weighted one (more money was present to enjoy the gain). If big money arrives before a *poor* stretch, dollar-weighted is lower. Time-weighted is indifferent to all of this — so comparing the two tells you whether the investor's timing helped or hurt."
+            },
+            {
+              "kind": "trap",
+              "title": "Don't let deposits inflate the time-weighted return",
+              "body": "The signature error: counting a deposit as investment *gain*. In the worked example, the balance jumped from 110 to 160, but \\$50 of that was new money — the performance factor uses $180/160$, not $180/110$. Time-weighting deliberately quarantines cash flows at sub-period boundaries. For dollar-weighting, remember it is an IRR, so a withdrawal is a *negative* cash flow in the equation of value."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What is the dollar-weighted yield?", "back": "The IRR of the fund's actual cash flows — sensitive to deposit timing and size (measures the investor)." },
+                { "front": "What is the time-weighted yield?", "back": "The product of each sub-period's growth factor — removes cash-flow timing (measures the manager)." },
+                { "front": "When does dollar-weighted exceed time-weighted?", "back": "When large deposits arrive just before strong performance." },
+                { "front": "How are deposits handled in time-weighting?", "back": "Excluded from the return: split sub-periods at each cash flow and use the post-deposit balance as the next base." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 130,
+            "questions": [
+              {
+                "q": "A fund grows \\$100 → \\$120 in H1, takes a \\$30 deposit (to \\$150), then ends H2 at \\$165. Find the time-weighted yield.",
+                "choices": ["$32.0\\%$", "$26.0\\%$", "$20.0\\%$", "$10.0\\%$", "$65.0\\%$"],
+                "correct": 0,
+                "explain": "$(120/100)(165/150)=1.20\\times1.10=1.32$, so $i_{tw}=32\\%$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The dollar-weighted yield is computed as the:",
+                "choices": ["Product of sub-period factors", "IRR of the cash flows", "Simple average of returns", "Highest sub-period return", "Coupon rate"],
+                "correct": 1,
+                "explain": "Dollar-weighted return is the internal rate of return solving the fund's equation of value.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "An investor adds a large sum just before a strong period. Compared to time-weighted, the dollar-weighted return is:",
+                "choices": ["Lower", "Higher", "Equal", "Always zero", "Negative"],
+                "correct": 1,
+                "explain": "More dollars present during the gain raises the dollar-weighted (IRR) return above the time-weighted figure.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Which return best isolates an investment manager's skill, independent of client deposits?",
+                "choices": ["Dollar-weighted", "Time-weighted", "Nominal yield", "Coupon yield", "Current yield"],
+                "correct": 1,
+                "explain": "Time-weighting removes the effect of cash-flow timing, leaving the manager's per-dollar performance.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Fund: \\$1000 start, \\$80 interest earned over the year, a \\$200 deposit at mid-year. Approximate the dollar-weighted yield via $I/(A+C(1-t))$.",
+                "choices": ["$7.3\\%$", "$8.0\\%$", "$6.7\\%$", "$5.0\\%$", "$10.0\\%$"],
+                "correct": 0,
+                "explain": "$\\frac{80}{1000+200(1-0.5)}=\\frac{80}{1100}=0.0727\\approx7.3\\%$.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "spot-forward-rates",
+          "title": "Spot Rates & Forward Rates",
+          "tagline": "The yield curve is not one rate but a term structure. Spot rates price each maturity; forward rates are the future rates locked in today.",
+          "minutes": 26,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A single interest rate is a convenient fiction. In reality, money for 1 year and money for 5 years command *different* rates — the **term structure**. **Spot rates** are today's rate for each maturity; **forward rates** are the rates for future periods that today's curve implicitly locks in. Reading one off the other is a high-frequency FM skill, and it powers swaps and bond pricing alike."
+            },
+            {
+              "kind": "intuition",
+              "title": "No-arbitrage links the long path to the short paths",
+              "body": "Investing for 2 years at the 2-year spot rate must give the *same* growth as investing 1 year at the 1-year spot and then rolling into a rate locked in today for year 2 — otherwise a riskless profit exists. That locked-in second-year rate is the **forward rate**. So the long spot rate is a geometric blend of the short spot and the forwards: the multi-year accumulation factors must agree no matter how you slice the path."
+            },
+            {
+              "kind": "formula",
+              "title": "Spot–forward relationship",
+              "body": "Let $s_t$ be the $t$-year spot rate and $f_{[t-1,t]}$ the 1-year forward covering year $t$. No-arbitrage requires: $$(1+s_t)^t = (1+s_{t-1})^{t-1}\\,(1+f_{[t-1,t]})$$ so the forward is $$f_{[t-1,t]} = \\frac{(1+s_t)^t}{(1+s_{t-1})^{t-1}} - 1$$ A cash flow at time $t$ is priced with its own spot: $PV = \\frac{CF_t}{(1+s_t)^t}$."
+            },
+            {
+              "kind": "widget",
+              "widget": {
+                "id": "spot-forward",
+                "caption": "Drag the spot rates $s_1,\\dots,s_4$ and watch the implied 1-year forward rates update via $(1+s_t)^t=(1+s_{t-1})^{t-1}(1+f)$. An upward-sloping spot curve forces forwards *above* the spots; an inverted curve pushes them below — the forwards always 'lever' the curve's slope."
+              }
+            },
+            {
+              "kind": "worked",
+              "title": "Forward rate from two spot rates",
+              "body": "The 1-year spot rate is 4% and the 2-year spot rate is 5%. Find the 1-year forward rate for year 2.",
+              "steps": [
+                "No-arbitrage: $(1.05)^2 = (1.04)(1 + f)$.",
+                "$1.1025 = 1.04(1+f) \\Rightarrow 1 + f = \\frac{1.1025}{1.04} = 1.06009$.",
+                "$f = 0.06009 \\approx 6.01\\%$.",
+                "Note the forward (6%) sits *above* both spots — the upward curve forces year 2's marginal rate higher than the average."
+              ],
+              "answer": "$f \\approx 6.01\\%$"
+            },
+            {
+              "kind": "trick",
+              "title": "Forwards exaggerate the curve's slope",
+              "body": "A reliable intuition: when the spot curve **rises**, each forward rate lies *above* the spot for that maturity; when it **falls** (inverted), forwards lie *below*. The forward is the marginal rate for one specific future year, so it must overshoot the cumulative average that the spot represents. If your computed forward sits between two rising spots, you made an arithmetic error."
+            },
+            {
+              "kind": "trap",
+              "title": "Discount each cash flow at its own spot rate",
+              "body": "The biggest term-structure error is discounting *all* cash flows at a single yield. With a term structure, a payment at time $t$ must be discounted at the **$t$-year spot rate** $s_t$, not at $s_1$ or some flat average. Mixing maturities under one rate misprices the bond. Second trap: forward-rate exponents — the $(t-1)$ and $t$ powers must match the spot maturities exactly, or the geometric link breaks."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Spot–forward no-arbitrage relation?", "back": "$(1+s_t)^t = (1+s_{t-1})^{t-1}(1+f_{[t-1,t]})$." },
+                { "front": "How do you price a cash flow under a term structure?", "back": "Discount each $CF_t$ at its own $t$-year spot rate: $CF_t/(1+s_t)^t$." },
+                { "front": "Rising spot curve — where are forwards?", "back": "Above the spot rates (forwards exaggerate the slope)." },
+                { "front": "What is a forward rate?", "back": "The interest rate for a future period locked in by today's spot curve." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.8,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "1-year spot $=3\\%$, 2-year spot $=4\\%$. Find the 1-year forward rate for year 2.",
+                "choices": ["$3.5\\%$", "$4.0\\%$", "$5.01\\%$", "$4.5\\%$", "$3.0\\%$"],
+                "correct": 2,
+                "explain": "$(1.04)^2/(1.03)-1 = 1.0816/1.03 - 1 = 1.05010-1 = 5.01\\%$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Under a term structure, a \\$1000 cash flow at year 3 with $s_3 = 6\\%$ has present value:",
+                "choices": ["$\\$1000/(1.06)$", "$\\$1000/(1.06)^3$", "$\\$1000(1.06)^3$", "$\\$1000/(1.18)$", "$\\$1000/(1.06)^2$"],
+                "correct": 1,
+                "explain": "Discount at its own 3-year spot rate: $1000/(1.06)^3$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "If the spot curve is downward-sloping (inverted), the 1-year forward rates are generally:",
+                "choices": ["Above the spot rates", "Below the spot rates", "Equal to the spot rates", "Always zero", "Always negative"],
+                "correct": 1,
+                "explain": "A falling curve pushes the marginal forward rates below the spot rates.",
+                "difficulty": "core"
+              },
+              {
+                "q": "2-year spot $=5\\%$, and the 1-year forward for year 2 is $7\\%$. Find the 1-year spot rate.",
+                "choices": ["$3.04\\%$", "$5.00\\%$", "$6.00\\%$", "$2.00\\%$", "$4.00\\%$"],
+                "correct": 0,
+                "explain": "$(1.05)^2 = (1+s_1)(1.07) \\Rightarrow 1+s_1 = 1.1025/1.07 = 1.03037 \\Rightarrow s_1\\approx3.04\\%$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "The forward rate $f_{[t-1,t]}$ represents:",
+                "choices": ["Today's $t$-year average rate", "A future 1-year rate locked in today", "The coupon rate", "The yield to maturity", "The inflation rate"],
+                "correct": 1,
+                "explain": "It is the rate for the single future year $t$, implied (locked in) by today's spot curve.",
+                "difficulty": "warmup"
+              }
+            ]
+          }
+        },
+        {
+          "id": "interest-rate-swaps",
+          "title": "Interest Rate Swaps",
+          "tagline": "Trade a floating-rate obligation for a fixed one. The swap rate is the level fixed rate with the same present value as the expected floating payments.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "A company with a floating-rate loan hates uncertainty; another with a fixed loan wants to bet on falling rates. An **interest rate swap** lets them trade payment streams: one pays fixed, receives floating; the other does the reverse. No principal changes hands — only the interest difference. The exam asks you to find the fair **swap rate** and value an existing swap, both of which reduce to the spot curve you already know."
+            },
+            {
+              "kind": "intuition",
+              "title": "A swap is a portfolio of forward rate agreements",
+              "body": "Each period of a swap exchanges a fixed payment for that period's floating rate — which, priced today, is the **forward rate**. So a swap is really a bundle of forward-rate agreements stacked across the term. The fair fixed rate (the **swap rate**) is the single level rate whose payments have the *same present value* as the whole strip of forward (floating) payments. Set the two legs' PVs equal and solve for the fixed rate."
+            },
+            {
+              "kind": "formula",
+              "title": "The swap rate",
+              "body": "Using spot rates $s_t$ and discount factors $P(0,t) = (1+s_t)^{-t}$, the level swap rate $R$ on notional 1 for $n$ years satisfies (fixed leg PV = floating leg PV): $$R = \\frac{1 - P(0,n)}{\\sum_{t=1}^{n} P(0,t)} = \\frac{1 - (1+s_n)^{-n}}{\\sum_{t=1}^n (1+s_t)^{-t}}$$ The numerator is the floating leg's value; the denominator is the annuity of discount factors."
+            },
+            {
+              "kind": "worked",
+              "title": "A two-year swap rate",
+              "body": "Spot rates are $s_1 = 4\\%$ and $s_2 = 5\\%$. Find the fixed swap rate on a 2-year swap.",
+              "steps": [
+                "Discount factors: $P(0,1) = 1/1.04 = 0.96154$; $P(0,2) = 1/(1.05)^2 = 0.90703$.",
+                "Floating leg value (numerator): $1 - P(0,2) = 1 - 0.90703 = 0.09297$.",
+                "Annuity of discount factors (denominator): $0.96154 + 0.90703 = 1.86857$.",
+                "$R = 0.09297 / 1.86857 = 0.04975 \\approx 4.98\\%$ — sensibly between the 1- and 2-year spots."
+              ],
+              "answer": "Swap rate $\\approx 4.98\\%$"
+            },
+            {
+              "kind": "trick",
+              "title": "Swap rate is a discount-factor-weighted average of forwards",
+              "body": "The swap rate always lands *between* the spot/forward rates across the term — it is essentially their present-value-weighted average. So a quick sanity check: a 2-year swap rate must sit between $s_1$ and $s_2$. If your answer falls outside that range, you inverted a discount factor. The numerator $1 - P(0,n)$ is also exactly the value of receiving all the floating payments — memorize that shortcut."
+            },
+            {
+              "kind": "trap",
+              "title": "Notional is not exchanged; net the payments",
+              "body": "Two recurring traps: (1) the **notional principal never changes hands** — only the *difference* between fixed and floating interest is settled each period, so don't add principal to either leg's cash flows. (2) To **value** an existing swap mid-life (not just find its initial rate), recompute both legs at the *current* spot curve; a swap is worth zero only at inception, then drifts as rates move."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What is an interest rate swap?", "back": "An exchange of fixed-rate for floating-rate interest payments on a notional, with no principal exchanged." },
+                { "front": "Swap rate formula?", "back": "$R = \\frac{1-P(0,n)}{\\sum_{t=1}^n P(0,t)}$ with $P(0,t)=(1+s_t)^{-t}$." },
+                { "front": "Why is a swap a strip of FRAs?", "back": "Each period swaps fixed for that period's forward (floating) rate." },
+                { "front": "Value of a swap at inception?", "back": "Zero — the fixed and floating legs have equal present value by construction." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.8,
+            "secondsPerQuestion": 150,
+            "questions": [
+              {
+                "q": "In a plain vanilla interest rate swap, what is exchanged each period?",
+                "choices": ["The full notional principal", "Only the net interest difference", "Shares of stock", "The bonds themselves", "Nothing until maturity"],
+                "correct": 1,
+                "explain": "Only the difference between the fixed and floating interest on the notional is settled; principal is never exchanged.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "Discount factors are $P(0,1)=0.95$ and $P(0,2)=0.89$. Find the 2-year swap rate.",
+                "choices": ["$5.0\\%$", "$5.98\\%$", "$6.50\\%$", "$4.50\\%$", "$11.0\\%$"],
+                "correct": 1,
+                "explain": "$R=\\frac{1-0.89}{0.95+0.89}=\\frac{0.11}{1.84}=0.0598\\approx5.98\\%$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "The value of a newly initiated (fair) interest rate swap is:",
+                "choices": ["Equal to the notional", "Zero", "The fixed rate", "The floating rate", "Negative"],
+                "correct": 1,
+                "explain": "By construction the swap rate equates the two legs' present values, so the swap is worth zero at inception.",
+                "difficulty": "core"
+              },
+              {
+                "q": "A 3-year swap has spot rates 3%, 4%, 5%. The swap rate must lie:",
+                "choices": ["Below 3%", "Between 3% and 5%", "Above 5%", "Exactly at 4%", "Cannot tell"],
+                "correct": 1,
+                "explain": "The swap rate is a discount-factor-weighted average of the term structure, so it falls within the spot range.",
+                "difficulty": "core"
+              },
+              {
+                "q": "To value an existing swap two years into its life, you should:",
+                "choices": ["Use the original swap rate's discount factors", "Recompute both legs at the current spot curve", "Assume it is still worth zero", "Use only the floating leg", "Add the notional to the fixed leg"],
+                "correct": 1,
+                "explain": "A swap is zero-value only at inception; afterward revalue both legs at the prevailing spot rates.",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
         {
           "id": "duration-and-immunization",
           "title": "Duration & Immunization",
@@ -698,6 +1650,194 @@
                 "correct": 2,
                 "explain": "Solve $4w + 9(1-w) = 6 \\Rightarrow 9 - 5w = 6 \\Rightarrow 5w = 3 \\Rightarrow w = 0.6 = 60\\%$.",
                 "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "convexity-and-matching",
+          "title": "Convexity & Cash-Flow Matching",
+          "tagline": "Duration is the straight-line estimate; convexity is the curve it misses. Exact matching sidesteps both by funding each liability directly.",
+          "minutes": 24,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Duration assumes the price-rate relationship is a straight line — but it is actually a **curve**, bowed toward the origin. **Convexity** measures that curvature, and it is always your friend: it makes bonds gain a little more when rates fall and lose a little less when they rise. The exam tests convexity as a second-order correction and contrasts immunization with its airtight cousin, **exact cash-flow matching**."
+            },
+            {
+              "kind": "intuition",
+              "title": "The price curve bows above the duration line",
+              "body": "Plot bond price against interest rate: it slopes down (higher rates, lower price) but **curves upward** — convex. Duration is the tangent line at today's rate, a decent estimate for small moves but it underestimates the price for *any* move, up or down, because the true curve lies above the tangent. Convexity quantifies that gap. More convexity means more cushion against large rate swings — a desirable, free-ish property."
+            },
+            {
+              "kind": "formula",
+              "title": "Second-order price change and matching",
+              "body": "The Taylor expansion of price in the rate adds a convexity term: $$\\frac{\\Delta P}{P} \\approx -D_{mod}\\,\\Delta i + \\tfrac{1}{2}\\,C\\,(\\Delta i)^2$$ where convexity $C = \\frac{1}{P}\\frac{d^2P}{di^2} = \\frac{\\sum t(t+1)\\,v^{t+2} CF_t}{P}$ (one common form). **Exact (dedicated) matching:** choose assets whose cash flows *equal* each liability at every date — then no rate move matters at all, no duration or convexity needed."
+            },
+            {
+              "kind": "worked",
+              "title": "Convexity-adjusted price change",
+              "body": "A bond has modified duration 8 and convexity 120. Rates rise by 2% ($\\Delta i = 0.02$). Estimate the percentage price change with and without the convexity correction.",
+              "steps": [
+                "Duration-only: $-8(0.02) = -0.16 = -16\\%$.",
+                "Convexity term: $+\\tfrac12(120)(0.02)^2 = 60 \\times 0.0004 = 0.024 = +2.4\\%$.",
+                "Adjusted estimate: $-16\\% + 2.4\\% = -13.6\\%$.",
+                "Convexity softens the loss — the true drop is smaller than duration alone predicts."
+              ],
+              "answer": "$\\approx -13.6\\%$ (vs $-16\\%$ duration-only)"
+            },
+            {
+              "kind": "trick",
+              "title": "Convexity always helps the holder",
+              "body": "The convexity term is $+\\tfrac12 C(\\Delta i)^2$ — and since $(\\Delta i)^2 \\ge 0$ and $C > 0$ for ordinary bonds, it is **always positive**, whether rates rise or fall. So for two bonds with equal duration, the more convex one is strictly preferable: it falls less and rises more. This is exactly why Redington immunization demands asset convexity *greater* than liability convexity — the surplus stays non-negative for moves in either direction."
+            },
+            {
+              "kind": "trap",
+              "title": "Matching vs immunization are different guarantees",
+              "body": "Don't conflate the two strategies. **Exact matching** funds each liability with an asset cash flow of the same amount and date — perfect protection, but often impractical or expensive. **Immunization** (Redington) only matches PV, duration, and convexity, protecting against *small* parallel rate shifts; it can still fail under large or non-parallel moves. Matching needs no rebalancing; immunization must be **rebalanced** as time passes and rates move, since durations drift."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "What does convexity measure?", "back": "The curvature of the price-rate relationship — the second-order term duration misses." },
+                { "front": "Sign of the convexity price adjustment?", "back": "Always positive ($+\\tfrac12 C(\\Delta i)^2$): it helps the holder either way rates move." },
+                { "front": "Exact (dedicated) cash-flow matching?", "back": "Assets whose cash flows equal each liability at every date — immune to any rate move, no rebalancing." },
+                { "front": "Why must immunization be rebalanced?", "back": "Durations and PVs drift with time and rate changes, so the match degrades and must be reset." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.8,
+            "secondsPerQuestion": 140,
+            "questions": [
+              {
+                "q": "A bond has modified duration 5 and convexity 80. For $\\Delta i = +0.01$, the convexity correction to $\\Delta P/P$ is:",
+                "choices": ["$+0.4\\%$", "$+0.04\\%$", "$-0.4\\%$", "$+0.8\\%$", "$+4\\%$"],
+                "correct": 0,
+                "explain": "$\\tfrac12 C(\\Delta i)^2 = \\tfrac12(80)(0.01)^2 = 40(0.0001) = 0.004 = 0.4\\%$.",
+                "difficulty": "exam"
+              },
+              {
+                "q": "The convexity adjustment to a bond's price change is:",
+                "choices": ["Always negative", "Always positive", "Zero", "Positive only if rates fall", "Negative only if rates rise"],
+                "correct": 1,
+                "explain": "$\\tfrac12 C(\\Delta i)^2 \\ge 0$ for ordinary bonds regardless of the direction of the rate move.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Two bonds have equal duration. The one with higher convexity will:",
+                "choices": ["Underperform in all scenarios", "Outperform for large rate moves either way", "Have the same price always", "Be worth less today", "Have lower yield by rule"],
+                "correct": 1,
+                "explain": "Greater convexity means it falls less and rises more, so it outperforms when rates move substantially in either direction.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Which strategy provides protection without any need to rebalance over time?",
+                "choices": ["Redington immunization", "Exact cash-flow matching", "Duration matching only", "Full immunization", "Convexity matching only"],
+                "correct": 1,
+                "explain": "Exact (dedicated) matching funds each liability directly, so it needs no rebalancing and is immune to any rate change.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Compared to the duration-only estimate, including positive convexity makes the predicted price for a rate increase:",
+                "choices": ["Lower (a bigger drop)", "Higher (a smaller drop)", "Unchanged", "Exactly zero", "Negative"],
+                "correct": 1,
+                "explain": "The positive convexity term offsets part of the duration loss, raising the predicted price (a smaller drop).",
+                "difficulty": "exam"
+              }
+            ]
+          }
+        },
+        {
+          "id": "determinants-of-interest",
+          "title": "Determinants of Interest Rates",
+          "tagline": "Where rates come from: a real return, an inflation premium, and compensation for default, liquidity, and maturity risk. The qualitative capstone.",
+          "minutes": 18,
+          "sections": [
+            {
+              "kind": "hook",
+              "body": "Every rate you have discounted with on this exam is built from parts. A lender demands a **real** return for deferring consumption, plus compensation for **inflation**, plus premiums for the chance of **default**, for tying money up (**liquidity**), and for the **term** of the loan. Understanding this decomposition is the qualitative capstone of FM — and the SOA tests it directly."
+            },
+            {
+              "kind": "intuition",
+              "title": "Stack the compensations a lender requires",
+              "body": "Start with the **real risk-free rate** — what you'd earn with no inflation and no risk, purely for waiting. Add an **inflation premium** so your repayment keeps its purchasing power. Then layer risk premiums: a **default (credit)** premium for the borrower possibly not paying, a **liquidity** premium if the asset is hard to sell, and a **maturity/term** premium for longer commitments. The quoted nominal rate is the sum of all these demands."
+            },
+            {
+              "kind": "formula",
+              "title": "Fisher equation and the rate stack",
+              "body": "The **Fisher equation** links nominal $i$, real $r$, and inflation $\\pi$: $$(1+i) = (1+r)(1+\\pi) \\;\\approx\\; i \\approx r + \\pi$$ The full nominal rate is approximately $$i \\approx r + \\pi + (\\text{default}) + (\\text{liquidity}) + (\\text{maturity premium})$$ Real rate exactly: $1 + r = \\frac{1+i}{1+\\pi}$."
+            },
+            {
+              "kind": "worked",
+              "title": "Real rate via the Fisher equation",
+              "body": "A bond yields a nominal 8% while inflation runs 3%. Find the exact real rate of return.",
+              "steps": [
+                "Fisher (exact): $1 + r = \\frac{1+i}{1+\\pi} = \\frac{1.08}{1.03}$.",
+                "$= 1.04854$, so $r = 0.04854 \\approx 4.85\\%$.",
+                "The quick approximation $r \\approx i - \\pi = 8\\% - 3\\% = 5\\%$ is close but slightly overstates it.",
+                "The gap (5% vs 4.85%) is the cross-term $r\\pi$ the approximation drops."
+              ],
+              "answer": "Real rate $\\approx 4.85\\%$"
+            },
+            {
+              "kind": "trick",
+              "title": "Approximate, then refine with Fisher",
+              "body": "For a fast estimate use $r \\approx i - \\pi$; it is within a few basis points for ordinary rates. When precision matters, switch to the exact $1+r = \\frac{1+i}{1+\\pi}$, which always gives a *slightly lower* real rate than the subtraction (the dropped $r\\pi$ term is positive). Knowing the direction of the error lets you sanity-check multiple-choice answers instantly."
+            },
+            {
+              "kind": "trap",
+              "title": "Real vs nominal, and which premium is which",
+              "body": "Keep the layers straight: a **higher inflation** expectation raises the *nominal* rate but not the real rate; a **riskier borrower** raises the *default* premium; an illiquid asset raises the *liquidity* premium. Confusing inflation compensation with a risk premium is the classic conceptual slip. And don't subtract inflation twice — the nominal rate already includes it, so the *real* return is what's left after removing it once."
+            },
+            {
+              "kind": "recall",
+              "cards": [
+                { "front": "Components of a nominal interest rate?", "back": "Real rate + inflation premium + default + liquidity + maturity/term premiums." },
+                { "front": "Fisher equation?", "back": "$(1+i) = (1+r)(1+\\pi)$; approximately $i \\approx r + \\pi$." },
+                { "front": "Exact real rate from nominal and inflation?", "back": "$1+r = \\frac{1+i}{1+\\pi}$ — slightly below $i-\\pi$." },
+                { "front": "What does a default premium compensate for?", "back": "The risk the borrower fails to repay (credit risk)." }
+              ]
+            }
+          ],
+          "mastery": {
+            "passing": 0.75,
+            "secondsPerQuestion": 110,
+            "questions": [
+              {
+                "q": "Nominal rate 10%, inflation 4%. Find the exact real rate.",
+                "choices": ["$6.00\\%$", "$5.77\\%$", "$6.25\\%$", "$5.00\\%$", "$14.0\\%$"],
+                "correct": 1,
+                "explain": "$1+r = 1.10/1.04 = 1.05769$, so $r \\approx 5.77\\%$ — just under the $6\\%$ approximation.",
+                "difficulty": "core"
+              },
+              {
+                "q": "Which premium compensates a lender for the risk that the borrower may not repay?",
+                "choices": ["Inflation premium", "Default (credit) premium", "Liquidity premium", "Real rate", "Maturity premium"],
+                "correct": 1,
+                "explain": "The default or credit risk premium covers the chance of non-repayment.",
+                "difficulty": "warmup"
+              },
+              {
+                "q": "By the Fisher equation, the approximation $i \\approx r + \\pi$ omits which term?",
+                "choices": ["$r$", "$\\pi$", "$r\\pi$", "$r/\\pi$", "$r-\\pi$"],
+                "correct": 2,
+                "explain": "$(1+r)(1+\\pi) = 1 + r + \\pi + r\\pi$; the approximation drops the cross-term $r\\pi$.",
+                "difficulty": "core"
+              },
+              {
+                "q": "All else equal, an increase in expected inflation primarily raises the:",
+                "choices": ["Real rate", "Nominal rate", "Default premium", "Liquidity premium", "Convexity"],
+                "correct": 1,
+                "explain": "Inflation expectations are passed into the nominal rate, leaving the real rate roughly unchanged.",
+                "difficulty": "core"
+              },
+              {
+                "q": "An asset that is difficult to sell quickly without a price concession commands a higher:",
+                "choices": ["Inflation premium", "Liquidity premium", "Real rate", "Coupon rate", "Time-weighted return"],
+                "correct": 1,
+                "explain": "Hard-to-trade assets carry a liquidity premium to compensate holders for that difficulty.",
+                "difficulty": "warmup"
               }
             ]
           }

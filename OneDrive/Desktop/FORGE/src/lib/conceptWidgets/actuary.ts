@@ -187,4 +187,273 @@ draw();
     ),
 };
 
-export const actuaryWidgets: ConceptWidgetDef[] = [bayesBox, distExplorer, tvmGrowth];
+/* ───────────────────── CLT simulator ───────────────────── */
+const cltSimulator: ConceptWidgetDef = {
+  id: "clt-simulator",
+  title: "The Central Limit Theorem, live",
+  blurb: "Pick a wildly non-normal source, average n draws thousands of times, and watch the bell appear anyway.",
+  bridge:
+    "On the exam you invoke the CLT to turn an aggregate-loss question into one Z-table lookup. The leap of faith — that the sum is normal whatever the pieces look like — is exactly what you just watched happen.",
+  html: () =>
+    widgetDoc(
+      `
+<div class="w-title">Sample-mean histogram</div>
+<div class="w-sub">2,000 samples · each the mean of n draws</div>
+<div class="w-row">
+  <span class="w-label">Source</span>
+  <select id="src" style="font-family:var(--mono);font-size:12px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;flex:1">
+    <option value="unif">Uniform (flat)</option>
+    <option value="expo">Exponential (skewed)</option>
+    <option value="bimod">Bimodal (two spikes)</option>
+    <option value="bern">Coin flip (0/1)</option>
+  </select>
+</div>
+<div class="w-row"><span class="w-label">Sample size n</span><input id="n" type="range" min="1" max="50" step="1" value="1"><span class="w-val" id="nV">1</span></div>
+<svg id="src-plot" viewBox="0 0 320 44" style="margin-top:2px"></svg>
+<div class="w-sub" style="margin:2px 0 0">source shape ↑ &nbsp; sample-mean shape ↓</div>
+<svg id="plot" viewBox="0 0 320 130" style="margin-top:2px"></svg>
+<div class="w-note" id="out"></div>
+`,
+      `
+var src=document.getElementById("src"),n=document.getElementById("n"),plot=document.getElementById("plot"),srcPlot=document.getElementById("src-plot"),out=document.getElementById("out");
+function draw1(){ // one draw from the chosen source, support roughly [0,1]
+  var d=src.value;
+  if(d==="unif")return Math.random();
+  if(d==="expo"){var x=-Math.log(1-Math.random())/3;return Math.min(x,1);} // mean ~1/3, clipped
+  if(d==="bimod")return Math.random()<0.5?0.15+Math.random()*0.12:0.73+Math.random()*0.12;
+  return Math.random()<0.5?0:1; // bernoulli
+}
+function srcMoments(){
+  var d=src.value;
+  if(d==="unif")return {m:0.5,v:1/12};
+  if(d==="expo")return {m:0.305,v:0.07}; // empirical for clipped version
+  if(d==="bimod")return {m:0.5,v:0.087};
+  return {m:0.5,v:0.25};
+}
+function hist(data,bins,lo,hi){
+  var h=new Array(bins).fill(0),w=(hi-lo)/bins;
+  data.forEach(function(x){var b=Math.floor((x-lo)/w);if(b<0)b=0;if(b>=bins)b=bins-1;h[b]++;});
+  return h;
+}
+function svgBars(el,h,color,H){
+  var W=320,pad=3,bw=(W-2*pad)/h.length,max=Math.max.apply(null,h)||1,s="";
+  h.forEach(function(c,i){var bh=c/max*(H-6);s+='<rect x="'+(pad+i*bw+0.4).toFixed(1)+'" y="'+(H-3-bh).toFixed(1)+'" width="'+Math.max(bw-0.8,0.8).toFixed(1)+'" height="'+bh.toFixed(1)+'" fill="'+color+'"/>';});
+  el.innerHTML=s;
+}
+function run(){
+  var N=+n.value;document.getElementById("nV").textContent=N;
+  // source preview
+  var raw=[];for(var i=0;i<3000;i++)raw.push(draw1());
+  svgBars(srcPlot,hist(raw,32,0,1),"#8a7c63",44);
+  // sample means
+  var means=[],T=2000;
+  for(var t=0;t<T;t++){var s=0;for(var k=0;k<N;k++)s+=draw1();means.push(s/N);}
+  var H=130,bins=36;
+  svgBars(plot,hist(means,bins,0,1),"#60a5fa",H);
+  // overlay theoretical normal of the sample mean
+  var mom=srcMoments(),mu=mom.m,sd=Math.sqrt(mom.v/N);
+  var W=320,pad=3,max=0,pts=[],binw=1/bins;
+  for(var i=0;i<bins;i++){var x=(i+0.5)/bins;var y=Math.exp(-0.5*Math.pow((x-mu)/sd,2));if(y>max)max=y;pts.push([x,y]);}
+  var poly=pts.map(function(p){return (pad+p[0]*(W-2*pad)).toFixed(1)+","+(H-3-p[1]/max*(H-10)).toFixed(1);}).join(" ");
+  plot.innerHTML+='<polyline points="'+poly+'" fill="none" stroke="#D4AF37" stroke-width="1.8"/>';
+  out.innerHTML="With <b>n="+N+"</b>, the average of "+(src.options[src.selectedIndex].text.toLowerCase())+" draws has SD <b>"+sd.toFixed(3)+"</b> = σ/√n. "+(N>=20?"<b style='color:#D4AF37'>Already a clean bell</b> — the source shape is gone.":(N===1?"At n=1 the histogram is just the source itself.":"Getting more bell-shaped as n climbs."));
+}
+src.addEventListener("change",run);n.addEventListener("input",run);
+run();
+`,
+      {
+        question: "You average 30 draws from a wildly skewed distribution, thousands of times, and histogram the averages. The shape is…",
+        options: ["Still skewed like the source", "A symmetric bell", "Flat / uniform"],
+        answer: 1,
+        reveal:
+          "A <b>bell</b>. The Central Limit Theorem says the sample mean tends to normal as n grows, no matter how lopsided the source — its SD shrinks like σ/√n. That is why the normal shows up everywhere.",
+      },
+    ),
+};
+
+/* ─────────────── Law of total variance / mixtures ─────────────── */
+const totalVariance: ConceptWidgetDef = {
+  id: "total-variance",
+  title: "Total variance = within + between",
+  blurb: "Split a population into two risk classes and watch overall variance break into within-group plus between-group.",
+  bridge:
+    "Double expectation and the law of total variance power every conditional-mean question. Var(X) = E[Var(X|Y)] + Var(E[X|Y]) — the within piece plus the between piece you just separated by hand.",
+  html: () =>
+    widgetDoc(
+      `
+<div class="w-title">Mixing two risk classes</div>
+<div class="w-sub">E[X]=E[E[X|Y]] &nbsp; Var(X)=E[Var(X|Y)]+Var(E[X|Y])</div>
+<div class="w-row"><span class="w-label">P(class A)</span><input id="w" type="range" min="5" max="95" step="1" value="60"><span class="w-val" id="wV">0.60</span></div>
+<div class="w-row"><span class="w-label">mean A</span><input id="ma" type="range" min="0" max="100" step="1" value="20"><span class="w-val" id="maV">20</span></div>
+<div class="w-row"><span class="w-label">mean B</span><input id="mb" type="range" min="0" max="100" step="1" value="60"><span class="w-val" id="mbV">60</span></div>
+<div class="w-row"><span class="w-label">within sd</span><input id="sd" type="range" min="2" max="30" step="1" value="8"><span class="w-val" id="sdV">8</span></div>
+<svg id="plot" viewBox="0 0 320 120" style="margin-top:6px"></svg>
+<div class="w-note" id="out"></div>
+`,
+      `
+var w=document.getElementById("w"),ma=document.getElementById("ma"),mb=document.getElementById("mb"),sd=document.getElementById("sd"),plot=document.getElementById("plot"),out=document.getElementById("out");
+function draw(){
+  var pa=+w.value/100,pb=1-pa,muA=+ma.value,muB=+mb.value,s=+sd.value,vw=s*s;
+  document.getElementById("wV").textContent=pa.toFixed(2);
+  document.getElementById("maV").textContent=muA;document.getElementById("mbV").textContent=muB;document.getElementById("sdV").textContent=s;
+  var EX=pa*muA+pb*muB;                          // E[E[X|Y]]
+  var within=pa*vw+pb*vw;                        // E[Var(X|Y)]
+  var between=pa*Math.pow(muA-EX,2)+pb*Math.pow(muB-EX,2); // Var(E[X|Y])
+  var total=within+between;
+  // draw two gaussians on a 0..100 axis scaled by class probability
+  var W=320,H=120,pad=6;
+  function gx(x){return pad+x/100*(W-2*pad);}
+  function bell(mu,p,col){var pts="";for(var i=0;i<=80;i++){var x=i/80*100;var y=p*Math.exp(-0.5*Math.pow((x-mu)/s,2));pts+=gx(x).toFixed(1)+","+y;}
+    return {pts:pts,col:col};}
+  // find max height for scaling
+  var maxH=0;[ [muA,pa],[muB,pb] ].forEach(function(g){var y=g[1]*1;if(y>maxH)maxH=y;});
+  function poly(mu,p,col){var s2="";for(var i=0;i<=80;i++){var x=i/80*100;var yy=p*Math.exp(-0.5*Math.pow((x-mu)/s,2));s2+=gx(x).toFixed(1)+","+(H-8-yy/maxH*(H-24)).toFixed(1)+" ";}
+    return '<polyline points="'+s2+'" fill="none" stroke="'+col+'" stroke-width="2"/>';}
+  var mxx=gx(EX);
+  plot.innerHTML=poly(muA,pa,"#60a5fa")+poly(muB,pb,"#fb7185")
+    +'<line x1="'+mxx.toFixed(1)+'" y1="4" x2="'+mxx.toFixed(1)+'" y2="'+(H-8)+'" stroke="#D4AF37" stroke-width="1.5" stroke-dasharray="3 2"/>'
+    +'<text x="'+gx(muA)+'" y="'+(H-1)+'" text-anchor="middle" fill="#60a5fa" font-size="8" font-family="monospace">A</text>'
+    +'<text x="'+gx(muB)+'" y="'+(H-1)+'" text-anchor="middle" fill="#fb7185" font-size="8" font-family="monospace">B</text>'
+    +'<text x="'+mxx.toFixed(1)+'" y="3" text-anchor="middle" fill="#D4AF37" font-size="8" font-family="monospace">E[X]</text>';
+  out.innerHTML="E[X] = <b style='color:#D4AF37'>"+EX.toFixed(1)+"</b><br>"
+    +"within  E[Var(X|Y)] = <b>"+within.toFixed(1)+"</b><br>"
+    +"between Var(E[X|Y]) = <b style='color:#fb7185'>"+between.toFixed(1)+"</b><br>"
+    +"total Var(X) = <b style='color:#D4AF37'>"+total.toFixed(1)+"</b> &nbsp;<span style='color:#8a7c63'>(spread the means apart → between grows)</span>";
+}
+[w,ma,mb,sd].forEach(function(el){el.addEventListener("input",draw);});
+draw();
+`,
+      {
+        question: "Two equally likely risk classes have the SAME within-class variance. You pull their means far apart. Overall variance…",
+        options: ["Stays the same", "Goes up (between-group grows)", "Goes down"],
+        answer: 1,
+        reveal:
+          "It <b>rises</b>. Total variance = within + between. Pulling the class means apart inflates the between-group term Var(E[X|Y]) while the within term is unchanged.",
+      },
+    ),
+};
+
+/* ─────────────── Bond book value / amortization ─────────────── */
+const bondBookValue: ConceptWidgetDef = {
+  id: "bond-bookvalue",
+  title: "Bond book value pulls to par",
+  blurb: "Set coupon vs yield and watch the amortized book value glide to redemption — premium down, discount up.",
+  bridge:
+    "Book value after t coupons is just the bond priced with the remaining coupons. Premium bonds amortize DOWN to redemption; discount bonds accrete UP. The pull-to-par picture is the whole amortization schedule.",
+  html: () =>
+    widgetDoc(
+      `
+<div class="w-title">Amortized book value · redemption = 100</div>
+<div class="w-sub">premium if coupon &gt; yield · discount if coupon &lt; yield</div>
+<div class="w-row"><span class="w-label">Coupon rate</span><input id="c" type="range" min="0" max="12" step="0.25" value="8"><span class="w-val" id="cV">8%</span></div>
+<div class="w-row"><span class="w-label">Yield rate</span><input id="y" type="range" min="1" max="12" step="0.25" value="6"><span class="w-val" id="yV">6%</span></div>
+<div class="w-row"><span class="w-label">Years</span><input id="n" type="range" min="2" max="20" step="1" value="10"><span class="w-val" id="nV">10</span></div>
+<svg id="plot" viewBox="0 0 320 140" style="margin-top:6px"></svg>
+<div class="w-note" id="out"></div>
+`,
+      `
+var c=document.getElementById("c"),y=document.getElementById("y"),n=document.getElementById("n"),plot=document.getElementById("plot"),out=document.getElementById("out");
+function price(coupon,i,periods){ // F=100 par, redemption 100
+  var v=1/(1+i),a=(1-Math.pow(v,periods))/i;
+  return coupon*100*a+100*Math.pow(v,periods);
+}
+function draw(){
+  var cr=+c.value/100,i=+y.value/100,N=+n.value;
+  document.getElementById("cV").textContent=(+c.value).toFixed(2)+"%";
+  document.getElementById("yV").textContent=(+y.value).toFixed(2)+"%";
+  document.getElementById("nV").textContent=N;
+  var bv=[];for(var t=0;t<=N;t++)bv.push(price(cr,i,N-t));
+  var lo=Math.min.apply(null,bv.concat([100])),hi=Math.max.apply(null,bv.concat([100]));
+  if(hi-lo<2){lo-=2;hi+=2;}
+  var W=320,H=140,pad=8,padL=30;
+  function X(t){return padL+t/N*(W-padL-pad);}
+  function Y(v){return pad+(hi-v)/(hi-lo)*(H-2*pad);}
+  var path="";bv.forEach(function(v,t){path+=(t?"L":"M")+X(t).toFixed(1)+","+Y(v).toFixed(1);});
+  var par=Y(100);
+  var col=cr>i?"#fb7185":(cr<i?"#22c55e":"#D4AF37");
+  plot.innerHTML='<line x1="'+padL+'" y1="'+par.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+par.toFixed(1)+'" stroke="#3a2f20" stroke-width="1" stroke-dasharray="3 2"/>'
+    +'<text x="'+padL+'" y="'+(par-3).toFixed(1)+'" fill="#8a7c63" font-size="8" font-family="monospace">100</text>'
+    +'<path d="'+path+'" fill="none" stroke="'+col+'" stroke-width="2.2"/>'
+    +bv.map(function(v,t){return '<circle cx="'+X(t).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="2" fill="'+col+'"/>';}).join("");
+  var P0=bv[0];
+  var label=cr>i?"premium":(cr<i?"discount":"par");
+  out.innerHTML="Price today = <b style='color:"+col+"'>"+P0.toFixed(2)+"</b> ("+label+"). "
+    +(cr>i?"Coupon beats yield, so you overpay and the book value <b>amortizes down</b> to 100.":(cr<i?"Coupon lags yield, so you pay below par and the book value <b>accretes up</b> to 100.":"Coupon equals yield, so it sits flat at 100."))
+    +"<br><span style='color:#8a7c63'>Each period: interest earned = i × book value; the difference vs the coupon writes the book value toward par.</span>";
+}
+[c,y,n].forEach(function(el){el.addEventListener("input",draw);});
+draw();
+`,
+      {
+        question: "You buy a bond at a PREMIUM (coupon rate above the yield). Over its life, its book value…",
+        options: ["Rises above the purchase price", "Declines toward redemption value", "Stays flat at the purchase price"],
+        answer: 1,
+        reveal:
+          "It <b>declines to redemption</b>. A premium is amortized away each period (write-down), so book value glides down to par by maturity. A discount bond does the reverse — accretes up.",
+      },
+    ),
+};
+
+/* ─────────────── Spot vs forward rate curve ─────────────── */
+const spotForward: ConceptWidgetDef = {
+  id: "spot-forward",
+  title: "Spot rates imply forward rates",
+  blurb: "Drag the spot-rate curve and watch the one-year forward rates the market is baking in.",
+  bridge:
+    "A forward rate is locked in today by the spot curve: (1+s_t)^t = (1+s_{t-1})^{t-1}(1+f). When the spot curve rises, forwards sit above it — exactly what you read off here.",
+  html: () =>
+    widgetDoc(
+      `
+<div class="w-title">Term structure · spot vs 1-yr forward</div>
+<div class="w-sub">gold = spot s_t · blue = implied forward f(t-1,t)</div>
+<div class="w-row"><span class="w-label">s₁</span><input id="s1" type="range" min="1" max="10" step="0.1" value="3"><span class="w-val" id="s1V">3.0%</span></div>
+<div class="w-row"><span class="w-label">s₂</span><input id="s2" type="range" min="1" max="10" step="0.1" value="4"><span class="w-val" id="s2V">4.0%</span></div>
+<div class="w-row"><span class="w-label">s₃</span><input id="s3" type="range" min="1" max="10" step="0.1" value="4.7"><span class="w-val" id="s3V">4.7%</span></div>
+<div class="w-row"><span class="w-label">s₄</span><input id="s4" type="range" min="1" max="10" step="0.1" value="5.2"><span class="w-val" id="s4V">5.2%</span></div>
+<svg id="plot" viewBox="0 0 320 140" style="margin-top:6px"></svg>
+<div class="w-note" id="out"></div>
+`,
+      `
+var ids=["s1","s2","s3","s4"],els=ids.map(function(k){return document.getElementById(k);});
+var plot=document.getElementById("plot"),out=document.getElementById("out");
+function draw(){
+  var s=els.map(function(e){return +e.value/100;});
+  ids.forEach(function(k,i){document.getElementById(k+"V").textContent=(s[i]*100).toFixed(1)+"%";});
+  // forward rates: (1+s_t)^t = (1+s_{t-1})^{t-1}(1+f_t)
+  var f=[s[0]];
+  for(var t=2;t<=4;t++){var num=Math.pow(1+s[t-1],t),den=Math.pow(1+s[t-2],t-1);f.push(num/den-1);}
+  var all=s.concat(f),lo=Math.min.apply(null,all),hi=Math.max.apply(null,all);
+  lo=Math.min(lo,0.02);hi=hi+0.005;
+  var W=320,H=140,pad=10,padL=26,padB=18;
+  function X(t){return padL+(t-1)/3*(W-padL-pad);}
+  function Y(v){return pad+(hi-v)/(hi-lo)*(H-pad-padB);}
+  function line(arr,col){var p="";arr.forEach(function(v,i){p+=(i?"L":"M")+X(i+1).toFixed(1)+","+Y(v).toFixed(1);});
+    return '<path d="'+p+'" fill="none" stroke="'+col+'" stroke-width="2"/>'+arr.map(function(v,i){return '<circle cx="'+X(i+1).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="2.4" fill="'+col+'"><title>'+(v*100).toFixed(2)+'%</title></circle>';}).join("");}
+  var ax="";for(var t=1;t<=4;t++)ax+='<text x="'+X(t).toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle" fill="#8a7c63" font-size="8" font-family="monospace">'+t+'y</text>';
+  plot.innerHTML=ax+line(s,"#D4AF37")+line(f,"#60a5fa");
+  var rising=s[3]>s[0];
+  out.innerHTML="1-yr forwards: "+f.map(function(v){return (v*100).toFixed(2)+"%";}).join(" · ")
+    +"<br><span style='color:#8a7c63'>"+(rising?"Upward-sloping spot curve → forwards sit <b style='color:#60a5fa'>above</b> spots (the market expects rates to climb).":"Flat/inverted spot curve pulls forwards at or below spots.")+"</span>";
+}
+els.forEach(function(e){e.addEventListener("input",draw);});
+draw();
+`,
+      {
+        question: "The spot-rate curve slopes upward (longer rates higher). The implied 1-year forward rates lie…",
+        options: ["Below the spot curve", "Above the spot curve", "Exactly on it"],
+        answer: 1,
+        reveal:
+          "<b>Above</b>. To make a longer, higher spot rate consistent, the marginal one-year forward must exceed the average so far — an upward spot curve implies forwards sitting above it.",
+      },
+    ),
+};
+
+export const actuaryWidgets: ConceptWidgetDef[] = [
+  bayesBox,
+  distExplorer,
+  tvmGrowth,
+  cltSimulator,
+  totalVariance,
+  bondBookValue,
+  spotForward,
+];
