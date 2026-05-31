@@ -3,6 +3,17 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
+  // The roadmap + actuary loaders read JSON from /data at runtime via
+  // fs.readdirSync(process.cwd()/data/...). Dynamic reads are NOT auto-traced
+  // into Vercel's serverless bundle, so without this the files are missing in
+  // production and loadAllExamPaths()/loadAllRoadmaps() silently return [] (the
+  // section just vanishes). Force-include the data dir for the learn routes.
+  outputFileTracingIncludes: {
+    "/learn": ["./data/**"],
+    "/learn/**": ["./data/**"],
+    "/learn/exam/[slug]": ["./data/exam-paths/**"],
+    "/learn/exam/[slug]/[concept]": ["./data/exam-paths/**"],
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**" },
