@@ -52,12 +52,14 @@ function validateFileAttachments(files: unknown[]): { valid: FileAttachment[]; e
     if (typeof f !== "object" || f === null) continue;
     const file = f as Record<string, unknown>;
 
+    const hasBlobUrl = typeof file.url === "string";
+    const hasDataUrl = typeof file.dataUrl === "string";
     if (
       typeof file.filename !== "string" ||
       typeof file.size !== "number" ||
       typeof file.mimeType !== "string" ||
       typeof file.extension !== "string" ||
-      typeof file.dataUrl !== "string"
+      (!hasBlobUrl && !hasDataUrl)
     ) {
       return { valid: [], error: "Malformed file attachment in request." };
     }
@@ -69,25 +71,42 @@ function validateFileAttachments(files: unknown[]): { valid: FileAttachment[]; e
     }
 
     if (file.size > MAX_FILE_BYTES) {
-      return { valid: [], error: `${file.filename} exceeds the 2 MB per-file limit.` };
+      return { valid: [], error: `${file.filename} exceeds the ${Math.round(MAX_FILE_BYTES / (1024 * 1024))} MB per-file limit.` };
     }
 
     totalBytes += file.size as number;
     if (totalBytes > MAX_TOTAL_BYTES) {
-      return { valid: [], error: "Total attachment size exceeds 3 MB." };
+      return { valid: [], error: `Total attachment size exceeds ${Math.round(MAX_TOTAL_BYTES / (1024 * 1024))} MB.` };
     }
 
-    // Verify the dataUrl starts with "data:" — don't let arbitrary strings through
+    // New path: a Vercel Blob URL. Pin it to the blob host so an arbitrary URL
+    // can't be passed off as an uploaded file.
+    if (hasBlobUrl) {
+      let host = "";
+      try { host = new URL(file.url as string).hostname; } catch { /* invalid */ }
+      if (!host.endsWith(".blob.vercel-storage.com")) {
+        return { valid: [], error: `Invalid file URL for ${file.filename}.` };
+      }
+      valid.push({
+        filename: file.filename,
+        size: file.size,
+        mimeType: file.mimeType,
+        extension: file.extension,
+        url: file.url as string,
+      });
+      continue;
+    }
+
+    // Legacy path: inline base64 data URL.
     if (!(file.dataUrl as string).startsWith("data:")) {
       return { valid: [], error: `Invalid file data for ${file.filename}.` };
     }
-
     valid.push({
       filename: file.filename,
       size: file.size,
       mimeType: file.mimeType,
       extension: file.extension,
-      dataUrl: file.dataUrl,
+      dataUrl: file.dataUrl as string,
     });
   }
 

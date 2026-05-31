@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ExternalLink, FileCode2, FileText, File, Image,
   Download, ChevronDown, ChevronUp, Link2,
@@ -12,6 +12,7 @@ import {
   getLanguageLabel,
   formatFileSize,
   getFileCategory,
+  fileHref,
 } from "@/lib/submission-types";
 
 interface SubmissionViewerProps {
@@ -33,26 +34,42 @@ function fileIcon(ext: string, size = 15) {
 
 function FilePreviewCard({ file }: { file: FileAttachment }) {
   const [expanded, setExpanded] = useState(false);
+  const [text, setText] = useState<string | null>(null);
   const canPreview = isTextRenderable(file.extension);
   const isPdf = file.extension === "pdf";
   const isImage = ["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(file.extension);
+  const href = fileHref(file);
 
-  // Extract raw text content from a text/* dataUrl for preview
-  const getTextContent = (): string => {
-    try {
-      const commaIdx = file.dataUrl.indexOf(",");
-      if (commaIdx === -1) return "(preview unavailable)";
-      const b64 = file.dataUrl.slice(commaIdx + 1);
-      return atob(b64);
-    } catch {
-      return "(preview unavailable)";
-    }
-  };
+  // Load text content lazily on first expand. Blob-URL files are fetched;
+  // legacy base64 data URLs are decoded inline.
+  useEffect(() => {
+    if (!expanded || !canPreview || isImage || isPdf || text !== null) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        if (file.dataUrl) {
+          const commaIdx = file.dataUrl.indexOf(",");
+          setText(commaIdx === -1 ? "(preview unavailable)" : atob(file.dataUrl.slice(commaIdx + 1)));
+        } else if (file.url) {
+          const res = await fetch(file.url);
+          const t = await res.text();
+          if (!cancelled) setText(t.slice(0, 100_000));
+        } else {
+          setText("(preview unavailable)");
+        }
+      } catch {
+        if (!cancelled) setText("(preview unavailable)");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [expanded, canPreview, isImage, isPdf, text, file]);
 
   const handleDownload = () => {
     const a = document.createElement("a");
-    a.href = file.dataUrl;
+    a.href = href;
     a.download = file.filename;
+    a.target = "_blank";
+    a.rel = "noreferrer";
     a.click();
   };
 
@@ -153,7 +170,7 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
             <div style={{ padding: "0.75rem", display: "flex", justifyContent: "center" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={file.dataUrl}
+                src={href}
                 alt={file.filename}
                 style={{ maxWidth: "100%", maxHeight: "400px", borderRadius: "4px", objectFit: "contain" }}
               />
@@ -162,7 +179,7 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
           {isPdf && (
             <div style={{ padding: "0.5rem" }}>
               <iframe
-                src={file.dataUrl}
+                src={href}
                 style={{ width: "100%", height: "500px", border: "none", borderRadius: "4px" }}
                 title={file.filename}
               />
@@ -201,7 +218,7 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
                   overflowY: "auto",
                 }}
               >
-                <code>{getTextContent()}</code>
+                <code>{text ?? "Loading…"}</code>
               </pre>
             </div>
           )}

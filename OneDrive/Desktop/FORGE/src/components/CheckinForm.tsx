@@ -18,6 +18,7 @@ import {
   getLanguageLabel,
   ACCEPTED_MIME_TYPES,
 } from "@/lib/submission-types";
+import { upload } from "@vercel/blob/client";
 
 interface Task {
   id: string;
@@ -74,6 +75,7 @@ export default function CheckinForm({
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [fileError, setFileError] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -176,72 +178,77 @@ export default function CheckinForm({
 
   const totalBytes = attachments.reduce((sum, f) => sum + f.size, 0);
 
-  // Read a browser File into a FileAttachment
-  const readFile = (file: File): Promise<FileAttachment | null> => {
-    return new Promise((resolve) => {
-      const ext = getFileExtension(file.name);
-      if (!isAcceptedExtension(ext) && file.name !== "Dockerfile" && !file.name.startsWith(".")) {
-        resolve(null);
-        return;
-      }
-      if (file.size > MAX_FILE_BYTES) {
-        resolve(null);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result as string;
-        resolve({
-          filename: file.name,
-          size: file.size,
-          mimeType: file.type || "application/octet-stream",
-          extension: ext,
-          dataUrl,
-        });
-      };
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(file);
+  // Upload a browser File straight to Vercel Blob and return its attachment
+  // (with the public blob URL). Throws on failure so the caller can surface it.
+  const readFile = async (file: File): Promise<FileAttachment | null> => {
+    const ext = getFileExtension(file.name);
+    if (!isAcceptedExtension(ext) && file.name !== "Dockerfile" && !file.name.startsWith(".")) {
+      return null;
+    }
+    if (file.size > MAX_FILE_BYTES) {
+      return null;
+    }
+    const blob = await upload(file.name, file, {
+      access: "public",
+      handleUploadUrl: "/api/upload",
+      contentType: file.type || undefined,
     });
+    return {
+      filename: file.name,
+      size: file.size,
+      mimeType: file.type || "application/octet-stream",
+      extension: ext,
+      url: blob.url,
+    };
   };
 
   const processFiles = useCallback(async (incoming: File[]) => {
     setFileError("");
     const results: FileAttachment[] = [];
     const skipped: string[] = [];
+    setUploading(true);
 
-    for (const file of incoming) {
-      const ext = getFileExtension(file.name);
-      const isSpecialFile = file.name === "Dockerfile" || file.name.startsWith(".");
+    try {
+      for (const file of incoming) {
+        const ext = getFileExtension(file.name);
+        const isSpecialFile = file.name === "Dockerfile" || file.name.startsWith(".");
 
-      if (!isAcceptedExtension(ext) && !isSpecialFile) {
-        skipped.push(file.name);
-        continue;
+        if (!isAcceptedExtension(ext) && !isSpecialFile) {
+          skipped.push(file.name);
+          continue;
+        }
+        if (file.size > MAX_FILE_BYTES) {
+          skipped.push(`${file.name} (too large — max ${formatFileSize(MAX_FILE_BYTES)} per file)`);
+          continue;
+        }
+        // Check total would exceed limit
+        const projected = totalBytes + results.reduce((s, f) => s + f.size, 0) + file.size;
+        if (projected > MAX_TOTAL_BYTES) {
+          skipped.push(`${file.name} (total limit of ${formatFileSize(MAX_TOTAL_BYTES)} reached)`);
+          continue;
+        }
+        // Check for duplicate
+        const alreadyHave = attachments.some(
+          (a) => a.filename === file.name && a.size === file.size
+        );
+        if (alreadyHave) continue;
+
+        try {
+          const attachment = await readFile(file);
+          if (attachment) results.push(attachment);
+        } catch {
+          skipped.push(`${file.name} (upload failed — try again)`);
+        }
       }
-      if (file.size > MAX_FILE_BYTES) {
-        skipped.push(`${file.name} (too large — max 2 MB per file)`);
-        continue;
-      }
-      // Check total would exceed limit
-      const projected = totalBytes + results.reduce((s, f) => s + f.size, 0) + file.size;
-      if (projected > MAX_TOTAL_BYTES) {
-        skipped.push(`${file.name} (total limit of 3 MB reached)`);
-        continue;
-      }
-      // Check for duplicate
-      const alreadyHave = attachments.some(
-        (a) => a.filename === file.name && a.size === file.size
-      );
-      if (alreadyHave) continue;
 
-      const attachment = await readFile(file);
-      if (attachment) results.push(attachment);
-    }
-
-    if (results.length > 0) {
-      setAttachments((prev) => [...prev, ...results]);
-    }
-    if (skipped.length > 0) {
-      setFileError(`Skipped: ${skipped.join(", ")}`);
+      if (results.length > 0) {
+        setAttachments((prev) => [...prev, ...results]);
+      }
+      if (skipped.length > 0) {
+        setFileError(`Skipped: ${skipped.join(", ")}`);
+      }
+    } finally {
+      setUploading(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attachments, totalBytes]);
@@ -527,7 +534,7 @@ export default function CheckinForm({
           Option B — File(s)
         </div>
         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "1rem", lineHeight: 1.55 }}>
-          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 2 MB per file, 3 MB total.
+          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 10 MB per file, 25 MB total.
         </p>
 
         {/* Drop zone */}
@@ -547,9 +554,11 @@ export default function CheckinForm({
             marginBottom: attachments.length > 0 ? "1rem" : 0,
           }}
         >
-          <Upload size={24} style={{ color: dragOver ? "var(--accent)" : "var(--text-dim)", margin: "0 auto 0.5rem", display: "block" }} />
-          <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, color: dragOver ? "var(--accent)" : "var(--text-secondary)", fontSize: "0.9375rem" }}>
-            {dragOver ? "Drop it" : "Drop files here or click to browse"}
+          {uploading
+            ? <Loader2 size={24} className="animate-spin" style={{ color: "var(--accent)", margin: "0 auto 0.5rem", display: "block" }} />
+            : <Upload size={24} style={{ color: dragOver ? "var(--accent)" : "var(--text-dim)", margin: "0 auto 0.5rem", display: "block" }} />}
+          <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, color: dragOver || uploading ? "var(--accent)" : "var(--text-secondary)", fontSize: "0.9375rem" }}>
+            {uploading ? "Uploading…" : dragOver ? "Drop it" : "Drop files here or click to browse"}
           </div>
           <div style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
             .py .js .ts .go .rs .java .sql .r .ipynb .pdf .docx .md .csv + more
@@ -639,7 +648,7 @@ export default function CheckinForm({
         type="submit"
         className="forge-btn forge-btn-primary"
         style={{ width: "100%", maxWidth: "480px", padding: "1rem", fontSize: "1rem" }}
-        disabled={submitting || !selectedTaskId || !hasProof || engagementBlocked}
+        disabled={submitting || uploading || !selectedTaskId || !hasProof || engagementBlocked}
       >
         {submitting
           ? <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>

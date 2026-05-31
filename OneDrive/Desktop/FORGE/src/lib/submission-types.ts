@@ -5,10 +5,19 @@
 
 export interface FileAttachment {
   filename: string;
-  size: number;       // raw bytes before base64 encoding
+  size: number;       // raw bytes
   mimeType: string;
   extension: string;  // lowercase, without the dot
-  dataUrl: string;    // "data:{mimeType};base64,{base64data}"
+  // New uploads store a Vercel Blob URL (file goes browser->blob directly,
+  // bypassing the 4.5 MB serverless request limit). Legacy check-ins stored
+  // the whole file inline as a base64 data URL. Exactly one is present.
+  url?: string;       // https blob URL (preferred)
+  dataUrl?: string;   // legacy "data:{mimeType};base64,{base64data}"
+}
+
+/** Where to point a link / <img> / download at — blob URL if present, else legacy data URL. */
+export function fileHref(f: FileAttachment): string {
+  return f.url ?? f.dataUrl ?? "";
 }
 
 // The evidenceData JSON blob stored in Checkin.evidenceData
@@ -22,12 +31,15 @@ export interface EvidenceData {
   files?: FileAttachment[];
 }
 
-// Maximum total raw size across all attached files (3 MB)
-// base64 adds ~33% overhead; 3 MB raw → ~4 MB encoded, within Vercel's 4.5 MB limit
-export const MAX_TOTAL_BYTES = 3 * 1024 * 1024;
+// Files now upload directly to Vercel Blob (browser -> blob), so the old
+// ~4.5 MB serverless request-body ceiling no longer applies. These are the
+// product limits we choose, enforced client-side, in the upload route's
+// token, and at check-in time.
+// Maximum total size across all attached files (25 MB)
+export const MAX_TOTAL_BYTES = 25 * 1024 * 1024;
 
-// Maximum size per individual file (2 MB raw)
-export const MAX_FILE_BYTES = 2 * 1024 * 1024;
+// Maximum size per individual file (10 MB)
+export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 // File type categories and their accepted extensions
 export const FILE_CATEGORIES = {
