@@ -160,6 +160,29 @@ async function verifyGitHubPR(owner: string, repo: string, number: string, heade
 
 // ── Generic URL reachability ─────────────────────────────────────────────────
 
+// Cloud file-storage share links (OneDrive, Google Drive, Dropbox, etc.) render
+// in a browser viewer and return 401/403 to any server-side fetch, so they can
+// never pass the reachability check. When we see one fail that way, point the
+// student at the file uploader (Option B) instead of the generic error.
+// Note: genuinely public links from these hosts (e.g. Google Sheets "Publish to
+// web", a Dropbox "?dl=1" direct link) return 200 and pass before reaching here,
+// so this only fires on the actually-restricted ones.
+const FILE_SHARE_HOSTS = [
+  "1drv.ms", "onedrive.live.com", "sharepoint.com",
+  "drive.google.com", "docs.google.com",
+  "dropbox.com", "db.tt",
+  "box.com", "icloud.com", "mega.nz", "mediafire.com", "we.tl", "wetransfer.com",
+];
+
+function isFileShareHost(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return FILE_SHARE_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
+  } catch {
+    return false;
+  }
+}
+
 async function verifyReachable(url: string): Promise<VerifyResult> {
   // Try HEAD first
   const headRes = await fetchWithTimeout(url, { method: "HEAD", redirect: "follow" });
@@ -182,6 +205,12 @@ async function verifyReachable(url: string): Promise<VerifyResult> {
 
   const status = headRes.status;
   if (status === 401 || status === 403) {
+    if (isFileShareHost(url)) {
+      return {
+        verified: false,
+        error: "That's a OneDrive / Google Drive / Dropbox share link — those load in a browser and can't be verified automatically. Scroll down to \"Option B\" and upload the file itself (.xlsx, .csv, .pdf, screenshot, etc.) instead.",
+      };
+    }
     return { verified: false, error: "Your project URL requires a login or is access-restricted. Submit a public URL." };
   }
   if (status === 404) {
