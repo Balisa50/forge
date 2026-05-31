@@ -23,7 +23,8 @@ export type NotificationKind =
   | "mentor-shared-resource"
   | "mentor-action"
   | "mentee-replied"
-  | "mentee-requested-unlock";
+  | "mentee-requested-unlock"
+  | "mentee-checked-in";
 
 interface Args {
   recipientId: string;
@@ -88,12 +89,14 @@ function resolveHref(kind: NotificationKind, args: Args): string {
     case "mentor-left-note":
     case "mentor-shared-resource":
       return "/dashboard/notes";
-    // Mentor-facing: a mentee replied or asked to unlock. Send the mentor
-    // straight to THAT mentee's page (the thread + reply box live there).
+    // Mentor-facing: a mentee replied, asked to unlock, or submitted a
+    // check-in. Send the mentor straight to THAT mentee's page (the thread,
+    // reply box, and submitted files all live there).
     // Previously "mentee-replied" pointed at /dashboard/notes, which is the
     // mentee inbox — so a mentor clicking it landed on their own empty inbox.
     case "mentee-replied":
     case "mentee-requested-unlock":
+    case "mentee-checked-in":
       return `/dashboard/mentor/${args.actorId}`;
     case "mentor-action":
     default:
@@ -129,6 +132,11 @@ function renderTemplate(kind: NotificationKind, vars: Record<string, unknown>): 
       return {
         subject: `${a} is asking you to unlock ${t}`,
         body: `<p><strong>${a}</strong> is requesting that you unlock <em>${t}</em>.</p><blockquote style="border-left:3px solid #f59e0b;margin:0;padding:8px 12px;color:#444">${escape(vars.body as string)}</blockquote>`,
+      };
+    case "mentee-checked-in":
+      return {
+        subject: `${a} checked in on ${t}`,
+        body: `<p><strong>${a}</strong> submitted a check-in for <em>${t}</em>. Open their page to review the work${vars.evidenceType === "files" || vars.evidenceType === "mixed" ? " and attached files" : ""}.</p>`,
       };
   }
 }

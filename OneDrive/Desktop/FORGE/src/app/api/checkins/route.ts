@@ -5,6 +5,7 @@ import { verifyProjectUrl } from "@/lib/verify-url";
 import { type FileAttachment, MAX_TOTAL_BYTES, MAX_FILE_BYTES, getFileExtension, isAcceptedExtension } from "@/lib/submission-types";
 import { loadRoadmap } from "@/lib/roadmaps";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+import { sendNotification } from "@/lib/notify";
 
 /**
  * Engagement gate: a mentee can't submit a check-in for Week N until they've
@@ -257,6 +258,27 @@ export async function POST(req: NextRequest) {
     where: { id: taskId },
     data: { status: "in_progress" },
   });
+
+  // Notify every active mentor of this mentee that a check-in landed, with a
+  // link straight to the mentee's page (where the submission + files show).
+  // Best-effort and non-blocking — never let a notification failure break the
+  // submission response.
+  try {
+    const mentorLinks = await prisma.mentorLink.findMany({
+      where: { menteeId: userId, isActive: true },
+      select: { mentorId: true },
+    });
+    for (const ml of mentorLinks) {
+      void sendNotification("mentee-checked-in", {
+        recipientId: ml.mentorId,
+        actorId: userId,
+        taskTitle: task.title,
+        payload: { evidenceType },
+      });
+    }
+  } catch (err) {
+    console.warn("[checkins] mentor notify failed:", err instanceof Error ? err.message : err);
+  }
 
   return NextResponse.json({ checkinId: checkin.id, passed: true }, { status: 201 });
 }
