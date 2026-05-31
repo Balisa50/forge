@@ -783,45 +783,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Amortization questions are guaranteed points if you hold one idea: the **outstanding balance equals the present value of the remaining payments**. From that single fact the interest/principal split and any balance fall out immediately."
+              "body": "Amortization questions are free points once one sentence lives in your bones: **the outstanding balance is the present value of the payments you still owe.** Not a schedule to grind through, not a balance to track row by row — just a present value of what remains. From that single anchor, every quantity the exam asks for (this month's interest, this month's principal, the balance after payment 17) falls out in two lines. We'll derive *why* each payment splits the way it does so you never have to memorize the split."
             },
             {
               "kind": "intuition",
-              "title": "Early payments are mostly interest",
-              "body": "At the start of a loan the balance is large, so the interest slice of each payment is large and little principal is repaid. As the balance shrinks, interest shrinks and principal repayment accelerates. That is why your first mortgage payments barely dent the balance — the curve of principal repayment is back-loaded."
+              "title": "Why early payments are almost all interest",
+              "body": "Each level payment $R$ does two jobs: first it pays the interest that just accrued on the balance, and whatever is left chips away at the principal. Early in the loan the balance is *huge*, so the interest it throws off is huge, and only a sliver of your payment touches principal. As principal slowly falls, the interest it generates falls too — so more of each fixed payment attacks principal, and the payoff accelerates. That's why your first mortgage payments feel like they barely move the balance: the principal-repayment curve is **back-loaded**, small at first and snowballing later. Crucially, the principal portions themselves grow by exactly $(1+i)$ each period — a fact we'll prove, and one the exam loves to test."
             },
             {
               "kind": "formula",
-              "title": "Balance, interest, and principal",
-              "body": "Outstanding balance after $t$ payments (prospective) on a level loan: $$B_t = R\\,a_{\\overline{n-t}|}$$ where $R$ is the level payment. The interest in payment $t+1$ is $$I_{t+1} = i\\,B_t,$$ and the principal repaid is $$P_{t+1} = R - I_{t+1}.$$ Principal repayments grow geometrically by $(1+i)$ each period."
+              "title": "Deriving the balance, interest, and principal split",
+              "body": "**Balance (prospective).** The lender is owed exactly the present value of the remaining payments. After $t$ payments, $n-t$ payments of $R$ remain, so $$B_t = R\\,a_{\\overline{n-t}|}.$$ That's the master equation of value applied to 'what's left' — nothing new.\n\n**Interest in the next payment.** Interest accrues on the current balance for one period: $$I_{t+1} = i\\,B_t.$$\n\n**Principal in the next payment.** Whatever the payment doesn't spend on interest: $$P_{t+1} = R - I_{t+1} = R - i\\,B_t.$$\n\n**Why principal grows by $(1+i)$.** Here's the proof. $P_{t+1} = R - iB_t$ and $P_t = R - iB_{t-1}$. Subtract: $P_{t+1} - P_t = -i(B_t - B_{t-1}) = -i(-P_t) = iP_t$ (since the balance drops by exactly the principal paid). So $P_{t+1} = P_t + iP_t = (1+i)P_t$. Each principal repayment is the previous one grown by $(1+i)$ — a geometric ladder. Combined with $P_1 = R - iB_0 = R(1 - v^n)$, you can jump to *any* principal portion: $P_{t+1} = R\\,v^{\\,n-t}$."
             },
             {
               "kind": "worked",
-              "title": "Split a payment into interest and principal",
-              "body": "A \\$10,000 loan at 8% is repaid with level annual payments over 5 years. Find the payment, then the interest and principal in payment 1.",
+              "title": "Worked example 1 — split a payment into interest and principal",
+              "body": "A \\$10{,}000 loan at 8% is repaid with level annual payments over 5 years. Find the payment, then the interest and principal in payment 1.",
               "steps": [
-                "Payment: $R = 10000 / a_{\\overline{5}|}$, with $a_{\\overline{5}|} = 3.9927$, so $R = 2504.56$.",
-                "Interest in payment 1: $I_1 = 0.08 \\times 10000 = 800$.",
-                "Principal in payment 1: $P_1 = 2504.56 - 800 = 1704.56$."
+                "**Payment from the loan-as-annuity equation:** $10{,}000 = R\\,a_{\\overline{5}|}$ with $a_{\\overline{5}|} = 3.9927$, so $R = 10{,}000/3.9927 = \\$2504.56$.",
+                "**Interest in payment 1:** interest on the full starting balance, $I_1 = 0.08 \\times 10{,}000 = \\$800$.",
+                "**Principal in payment 1:** the leftover, $P_1 = 2504.56 - 800 = \\$1704.56$.",
+                "**Check the geometric ladder:** $P_2$ should be $(1.08)P_1 = 1.08(1704.56) = \\$1840.93$ — and indeed $I_2 = 0.08(10{,}000-1704.56) = 663.64$, giving $P_2 = 2504.56 - 663.64 = 1840.92$. The ladder holds."
               ],
               "answer": "$R = \\$2504.56$; $I_1 = \\$800$, $P_1 = \\$1704.56$"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — balance after several payments, two ways",
+              "body": "For the same \\$10{,}000 / 8% / 5-year loan ($R = 2504.56$), find the outstanding balance just after payment 3, using both the prospective and retrospective methods to show they agree.",
+              "steps": [
+                "**Prospective (PV of the 2 remaining payments):** $B_3 = R\\,a_{\\overline{2}|} = 2504.56 \\times \\dfrac{1 - 1.08^{-2}}{0.08} = 2504.56 \\times 1.78326 = \\$4466.4$.",
+                "**Retrospective (accumulate the loan, subtract accumulated payments):** $B_3 = 10{,}000(1.08)^3 - R\\,s_{\\overline{3}|} = 12{,}597.1 - 2504.56(3.2464) = 12{,}597.1 - 8130.8 = \\$4466.3$.",
+                "**They match** (to rounding). Use whichever side has fewer terms — here prospective wins with only 2 payments left versus 3 behind.",
+                "**Then peel off the split if asked:** $I_4 = 0.08(4466.4) = 357.3$, $P_4 = 2504.56 - 357.3 = 2147.3$."
+              ],
+              "answer": "$B_3 \\approx \\$4466$"
+            },
+            {
               "kind": "trick",
-              "title": "Prospective for balance, then i×balance for interest",
-              "body": "To get any outstanding balance fast, discount the *remaining* payments: $B_t = R\\,a_{\\overline{n-t}|}$ — no need to grind through a schedule. Then the next interest portion is simply $i \\times B_t$, and principal is the leftover. This two-step move answers most loan questions in under a minute."
+              "title": "Prospective balance, then i×balance — the two-line solve",
+              "body": "Almost every amortization question yields to one reflex: get the balance as the PV of what's left, $B_t = R\\,a_{\\overline{n-t}|}$, then the very next interest is $i\\times B_t$ and the principal is the remainder $R - iB_t$. No row-by-row schedule, no accumulation grind. A companion shortcut for principal: since the portions form a geometric ladder, the principal in payment $t+1$ is $P_{t+1} = R\\,v^{\\,n-t}$ — letting you snipe a single year's principal without computing any balance at all."
             },
             {
               "kind": "trap",
-              "title": "Confusing prospective and retrospective balances",
-              "body": "The **prospective** method (PV of future payments) and the **retrospective** method (accumulated loan minus accumulated payments) must agree — but only if you use the correct payment and rate throughout. Errors creep in when a payment changes mid-loan; then you cannot blindly use $R\\,a_{\\overline{n-t}|}$ — rebuild from the actual remaining schedule."
+              "title": "Prospective vs retrospective — and changed payments",
+              "body": "The **prospective** balance (PV of future payments) and the **retrospective** balance (accumulated loan minus accumulated payments) must always agree — they're the same equation of value seen from opposite ends. But the shortcut $B_t = R\\,a_{\\overline{n-t}|}$ secretly assumes the payment $R$ and rate $i$ stay constant for the *whole* remaining term. The moment a loan has an irregular final payment, a payment holiday, or a rate change, that clean formula lies — you must rebuild from the actual remaining schedule. When a problem says 'the last payment is adjusted to exactly retire the loan,' that's your cue the simple formula no longer applies to the tail."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "Outstanding balance after $t$ payments (prospective)?", "back": "$B_t = R\\,a_{\\overline{n-t}|}$ — present value of the remaining payments." },
-                { "front": "Interest portion of the next payment?", "back": "$i \\times B_t$ — the rate times the current outstanding balance." },
-                { "front": "How do principal repayments change over time?", "back": "They grow by a factor of $(1+i)$ each period as interest shrinks." }
+                { "front": "Why does the outstanding balance equal $R\\,a_{\\overline{n-t}|}$?", "back": "Because the lender is owed precisely the present value of the payments still to come — it's the equation of value applied to the remaining $n-t$ payments." },
+                { "front": "Prove that successive principal repayments grow by $(1+i)$.", "back": "$P_{t+1}-P_t = -i(B_t-B_{t-1}) = -i(-P_t) = iP_t$, so $P_{t+1}=(1+i)P_t$. The principal portions form a geometric ladder; equivalently $P_{t+1}=R\\,v^{n-t}$." }
               ]
             }
           ],
@@ -875,47 +887,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "There are two ways to retire a loan. **Amortization** blends interest and principal into every payment until the balance hits zero. The **sinking-fund method** does something different: you pay the lender *interest only* each period, and separately deposit into a side fund that grows until — at maturity — it exactly equals the loan and pays it off in one shot. The exam loves contrasting the two."
+              "body": "There are two philosophies for killing a loan. **Amortization** blends interest and principal into every payment, whittling the balance to zero. The **sinking-fund method** splits those jobs apart: you pay the lender *interest only* each period — the principal never moves — while quietly feeding a separate side account that grows on its own until, at maturity, it has swollen to exactly the loan amount and extinguishes it in one lump. The exam adores pitting the two against each other, because the comparison turns on a subtle point: the fund usually earns a *different* rate than the loan charges."
             },
             {
               "kind": "intuition",
-              "title": "Interest to the lender, savings to your own fund",
-              "body": "Under a sinking fund the loan principal never shrinks — you keep paying interest $iL$ on the full amount the whole time. Meanwhile your sinking-fund deposits accumulate (often at a *different*, usually lower, rate $j$) until the fund balance reaches $L$. Your **total** periodic outlay is the constant interest plus the level sinking-fund deposit. The lender is made whole at the end by the fund, not by gradual repayment."
+              "title": "Interest goes out; savings grow on the side",
+              "body": "Two money streams run in parallel and you must not let them touch. **Stream one:** you owe the lender interest on the *whole* loan, every single period, $Li$ — and because you never repay principal until the end, that interest charge never shrinks. **Stream two:** you make level deposits $D$ into your own sinking fund, which compounds at *its* rate $j$ (usually lower than the loan rate $i$, because a safe savings vehicle pays less than what you're charged to borrow). The fund climbs until its balance hits $L$, at which instant you hand it to the lender and the debt vanishes. Your true periodic cost is the sum of the two streams: constant interest plus the level deposit."
             },
             {
               "kind": "formula",
-              "title": "Sinking-fund payment and total outlay",
-              "body": "Loan $L$, lender's rate $i$, sinking-fund rate $j$, term $n$. Interest each period: $L i$. Sinking-fund deposit $D$ must accumulate to $L$: $$D\\, s_{\\overline{n}|j} = L \\;\\Rightarrow\\; D = \\frac{L}{s_{\\overline{n}|j}}$$ Total periodic payment: $$R = L i + \\frac{L}{s_{\\overline{n}|j}}$$ When $i = j$, this equals the ordinary amortization payment $L/a_{\\overline{n}|}$ exactly."
+              "title": "Building the two-stream payment",
+              "body": "Loan $L$, lender's rate $i$, sinking-fund rate $j$, term $n$. **Interest stream:** principal stays at $L$, so each period you pay $Li$ — flat, forever, until maturity. **Deposit stream:** the deposit $D$ must accumulate to the full loan by time $n$. Since $n$ level deposits at rate $j$ grow to $D\\,s_{\\overline{n}|j}$, set that equal to $L$ and solve: $$D\\,s_{\\overline{n}|j} = L \\;\\Rightarrow\\; D = \\frac{L}{s_{\\overline{n}|j}}.$$ **Total periodic outlay:** $$R = Li + \\frac{L}{s_{\\overline{n}|j}}.$$ Beautiful fact worth proving to yourself: when the two rates coincide, $i = j$, this *exactly* reproduces the amortization payment $L/a_{\\overline{n}|}$. The reason is the identity $\\frac{1}{a_{\\overline{n}|}} = \\frac{1}{s_{\\overline{n}|}} + i$ — the level-annuity payment is secretly 'interest plus a sinking-fund deposit' all along. So amortization is just the sinking-fund method with the fund earning the loan rate."
             },
             {
               "kind": "worked",
-              "title": "Comparing total payment",
-              "body": "A \\$10{,}000 loan runs 5 years. The lender charges 8%; you accumulate the sinking fund at 6%. Given $s_{\\overline{5}|6\\%} = 5.6371$, find the total annual payment.",
+              "title": "Worked example 1 — total payment with two rates",
+              "body": "A \\$10{,}000 loan runs 5 years. The lender charges 8%; your sinking fund earns only 6%. Given $s_{\\overline{5}|6\\%} = 5.6371$, find the total annual payment, and compare to straight amortization.",
               "steps": [
-                "Interest to lender each year: $10{,}000 \\times 0.08 = 800$.",
-                "Sinking-fund deposit: $D = \\frac{10{,}000}{s_{\\overline{5}|6\\%}} = \\frac{10{,}000}{5.6371} = 1773.96$.",
-                "Total annual outlay: $R = 800 + 1773.96 = 2573.96$.",
-                "(By contrast, straight amortization at 8% would cost $10{,}000/a_{\\overline{5}|8\\%} = 10{,}000/3.9927 = 2504.6$ — cheaper, because the fund earns less than the loan rate.)"
+                "**Interest stream:** $10{,}000 \\times 0.08 = \\$800$ to the lender every year (never changes).",
+                "**Deposit stream:** $D = \\dfrac{10{,}000}{s_{\\overline{5}|6\\%}} = \\dfrac{10{,}000}{5.6371} = \\$1773.96$.",
+                "**Total outlay:** $R = 800 + 1773.96 = \\$2573.96$ per year.",
+                "**Compare to amortization at 8%:** $10{,}000/a_{\\overline{5}|8\\%} = 10{,}000/3.9927 = \\$2504.6$ — *cheaper.* The sinking fund costs more here precisely because the fund (6%) earns less than the loan rate (8%); the rate gap is the borrower's penalty."
               ],
-              "answer": "$R \\approx \\$2573.96$/year"
+              "answer": "$R \\approx \\$2573.96$/year (vs \\$2504.6 amortized)"
+            },
+            {
+              "kind": "worked",
+              "title": "Worked example 2 — net interest in a given year",
+              "body": "A favorite exam twist: the borrower's *net* cost isn't just $Li$, because the sinking fund is itself earning interest. For the same loan ($D = 1773.96$, $j = 6\\%$), find the net interest cost in year 3.",
+              "steps": [
+                "**Fund balance at the start of year 3** (just after the 2nd deposit) $= D\\,s_{\\overline{2}|6\\%} = 1773.96 \\times 2.06 = \\$3654.4$.",
+                "**Interest the fund earns in year 3:** $0.06 \\times 3654.4 = \\$219.3$ — this offsets your cost.",
+                "**Gross interest to the lender:** $Li = \\$800$ as always.",
+                "**Net interest cost in year 3:** $800 - 219.3 = \\$580.7$. As the fund grows, the interest it throws off rises, so your net cost falls year over year — mirroring how amortization's interest portion declines."
+              ],
+              "answer": "Net interest in year 3 $\\approx \\$580.7$"
             },
             {
               "kind": "trick",
-              "title": "Net interest builds the sinking-fund balance",
-              "body": "A clean way to track the fund: each period the borrower's *net* interest cost is $Li - (\\text{interest earned on the fund})$. The sinking fund's book value at time $t$ is $D\\,s_{\\overline{t}|j}$, and the loan's 'outstanding' for accounting is $L$ minus that fund balance. If the two rates are equal, $i=j$, the sinking-fund schedule reproduces the amortization schedule line for line."
+              "title": "Net cost = gross interest minus fund earnings",
+              "body": "To track the 'real' cost in any year, don't just quote $Li$ — subtract what the fund earned: net interest $= Li - j\\,(\\text{fund balance})$, where the fund balance at time $t$ is $D\\,s_{\\overline{t}|j}$. This mirrors amortization's shrinking interest column, and it's the lens that makes the $i=j$ equivalence obvious: when the fund earns the loan rate, the net cost schedule *is* the amortization schedule. Memorize the bridge identity $\\frac{1}{a_{\\overline{n}|}} = \\frac{1}{s_{\\overline{n}|}} + i$ — it converts between the two worlds in one line."
             },
             {
               "kind": "trap",
-              "title": "Two rates — don't mix them up",
-              "body": "The defining feature is **two** interest rates: $i$ on the loan (paid to the lender) and $j$ in the sinking fund (earned by you). Interest payments use $i$; the deposit uses $s_{\\overline{n}|}$ at $j$. Plugging the loan rate into the accumulation factor (or vice versa) is the signature mistake. Also: the principal does **not** amortize down — interest stays $Li$ on the full loan every period."
+              "title": "Two rates, and a principal that never moves",
+              "body": "The whole concept hinges on keeping **two rates** straight: $i$ is charged by the lender (drives the interest payment $Li$), while $j$ is earned by you (drives the accumulation $s_{\\overline{n}|j}$). Swap them — put the loan rate inside the $s$ factor, or accumulate at the loan rate — and the answer collapses. Second trap: the outstanding *principal* under a sinking fund does **not** amortize down; it sits at $L$ the entire term, so the interest payment is a flat $Li$ every period, never declining. (What declines is the *net* cost, via fund earnings — a different quantity.)"
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "What does the borrower pay the lender each period under a sinking fund?", "back": "Interest only on the full loan: $Li$ — principal never shrinks." },
-                { "front": "Sinking-fund deposit formula?", "back": "$D = L / s_{\\overline{n}|j}$ — it accumulates to $L$ at the fund rate $j$." },
-                { "front": "Total periodic outlay?", "back": "$R = Li + L/s_{\\overline{n}|j}$." },
-                { "front": "When does sinking-fund cost equal amortization?", "back": "When the fund rate equals the loan rate, $i=j$." }
+                { "front": "Why does the sinking-fund total equal the amortization payment when $i=j$?", "back": "Because of the identity $\\frac{1}{a_{\\overline{n}|}} = \\frac{1}{s_{\\overline{n}|}} + i$: the amortization payment $L/a_{\\overline{n}|}$ is literally interest $Li$ plus a sinking-fund deposit $L/s_{\\overline{n}|}$ when both use the same rate." },
+                { "front": "Under a sinking fund, what stays constant and what changes year to year?", "back": "The principal ($L$) and gross interest to the lender ($Li$) stay flat the whole term; the fund balance grows, so the *net* interest cost $Li - j(\\text{fund balance})$ falls each year." }
               ]
             }
           ],
