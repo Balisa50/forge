@@ -847,64 +847,62 @@
       "days": [
         {
           "number": 1,
-          "title": "Orient — what you're building this week",
+          "title": "The line that fits — and why",
           "summary": "",
           "items": [
             {
               "kind": "reflection",
               "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Build a Loan Default Predictor — interpretable edition.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "body": "This week you stop treating regression as a black box. By Friday you'll have implemented logistic regression's optimiser FROM SCRATCH and matched scikit-learn within 1%. Before any code: write down what 'fitting' even means — you're choosing parameters that minimise a loss. For linear regression that loss is squared error; for logistic it's log-loss. Keep that one sentence in front of you all week."
             },
             {
               "kind": "video",
-              "title": "Overview: Linear and Logistic Regression",
-              "url": "https://www.youtube.com/results?search_query=Linear%20and%20Logistic%20Regression%20%E2%80%94%20Truly%20Understanding%20the%20Workhorse%20tutorial",
+              "title": "Linear regression intuition (search)",
+              "url": "https://www.youtube.com/results?search_query=linear%20regression%20explained%20least%20squares%20intuition",
               "duration_min": 15,
               "creator": "various",
-              "why": "One solid overview to frame the week. Pick a recent, clearly-explained one — you want the shape of the idea, not a specific channel."
+              "why": "Pick a clip that shows the line moving to reduce residuals. You want the geometric picture before the algebra."
+            },
+            {
+              "kind": "reading",
+              "title": "Linear models — scikit-learn user guide",
+              "url": "https://scikit-learn.org/stable/modules/linear_model.html",
+              "why": "The reference for everything this week: OLS, Ridge, Lasso, ElasticNet, LogisticRegression. Read the OLS and Ridge sections today; you'll return to it all week."
             }
           ]
         },
         {
           "number": 2,
-          "title": "OLS regression",
+          "title": "OLS and reading residuals",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "OLS regression",
-              "url": "https://www.youtube.com/results?search_query=OLS%20regression%20%E2%80%94%20closed%20form%2C%20gradient%20descent%2C%20when%20each%20is%20preferred.%20Logistic%20regression%20%E2%80%94%20likelihood%2C%20log-odds%2C%20the%20sigmoid%20as%20a%20smooth%20indicator",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on ols regression, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "scikit-learn user guide",
-              "url": "https://scikit-learn.org/stable/user_guide.html",
-              "why": "Reference for ols regression. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "LinearRegression — scikit-learn API",
+              "url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html",
+              "why": "Know exactly what `.fit`, `.coef_`, and `.intercept_` give you. The coefficients are the story — each one is the effect of a feature holding others fixed."
             },
             {
               "kind": "exercise",
-              "title": "Build: Fit OLS on the California Housing data",
-              "body": "Fit OLS on the California Housing data; interpret coefficients in original units; plot residuals to check assumptions\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Fit OLS on California Housing and inspect residuals",
+              "body": "STEP 1 — Load California Housing (`from sklearn.datasets import fetch_california_housing`). Train/test split.\n\nSTEP 2 — Fit `LinearRegression`. Print R² on train and test, and print each coefficient next to its feature name.\n\nSTEP 3 — Compute residuals (actual − predicted) on the test set and make a residual-vs-predicted scatter plot.\n\nSTEP 4 — Read the plot. A healthy fit shows residuals scattered randomly around zero. A CURVE or a FAN shape means your linear model is missing structure (non-linearity or non-constant variance).\n\nYOU SHOULD SEE: an R² in a sensible range and a residual plot you can actually interpret. Write one sentence: does the plot look like random noise (good) or does it have a pattern (the model is leaving signal on the table)?"
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "On California Housing, what's the residual plot for your OLS model — does it show heteroskedasticity? Does fixing it (with log transform on target) improve your test R²?"
+              "title": "Normal equation vs gradient descent",
+              "body": "scikit-learn solved your OLS by linear algebra (the normal equation) — exact, one shot, but it inverts a matrix that gets expensive as features grow. Write down the alternative: gradient descent walks downhill iteratively, scaling to huge feature counts. You'll implement the descent version on Day 5 — note WHY anyone bothers when a closed form exists."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Regularisation",
+          "title": "Gradient descent, felt not memorised",
           "summary": "",
           "items": [
             {
               "kind": "widget",
-              "title": "Play with it before you read about it",
-              "body": "Tick this once it makes sense. Interacting with the model beats memorising it.",
+              "title": "Roll the ball down the loss curve",
+              "body": "Before you code an optimiser, build the intuition. Set a learning rate and watch the ball roll toward the minimum of the loss surface — or, if the rate is too high, overshoot and diverge. This is literally what your from-scratch logistic regression will do on Day 5: nudge the parameters downhill by the gradient, step after step. Find the rate that converges fastest without bouncing.",
               "widget": {
                 "id": "gradient-descent",
                 "caption": "Set a learning rate and watch the ball roll to the minimum — or overshoot."
@@ -912,119 +910,94 @@
             },
             {
               "kind": "video",
-              "title": "Regularisation",
-              "url": "https://www.youtube.com/results?search_query=Regularisation%20%E2%80%94%20L1%20(Lasso)%2C%20L2%20(Ridge)%2C%20Elastic%20Net%2C%20what%20they%20do%20to%20coefficients.%20Interaction%20and%20polynomial%20terms%20%E2%80%94%20explicit%20feature%20engineering%20for%20linear%20models",
-              "duration_min": 14,
+              "title": "Logistic regression and the sigmoid (search)",
+              "url": "https://www.youtube.com/results?search_query=logistic%20regression%20sigmoid%20log%20odds%20explained",
+              "duration_min": 16,
               "creator": "various",
-              "why": "Watch one clear explainer on regularisation, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
-              "kind": "reading",
-              "title": "scikit-learn user guide",
-              "url": "https://scikit-learn.org/stable/user_guide.html",
-              "why": "Reference for regularisation. Don't read it cover to cover — use it to answer the specific question the build raises."
-            },
-            {
-              "kind": "exercise",
-              "title": "Build: Fit logistic regression on a binary classification task",
-              "body": "Fit logistic regression on a binary classification task; compute and interpret odds ratios\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "why": "See how the sigmoid squashes a linear score into a 0–1 probability, and what 'log-odds' means. This is the bridge from linear to classification."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Add 10 polynomial features to logistic regression on a 1000-row binary classification task. Without regularisation, train accuracy → 1.0 but val accuracy collapses. With Ridge, what α value rescues val accuracy?"
+              "title": "Learning rate is a real knob",
+              "body": "From the widget: write down what happened at a tiny learning rate (crawls, may never arrive in your step budget) versus a huge one (overshoots, diverges). On Day 5 you'll pick a rate by hand — you now know the failure modes on both ends."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Multi-class extensions",
+          "title": "Logistic regression and odds ratios",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Multi-class extensions",
-              "url": "https://www.youtube.com/results?search_query=Multi-class%20extensions%20%E2%80%94%20one-vs-rest%2C%20multinomial%2C%20softmax",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on multi-class extensions, then immediately do the build below — watching without building is how this stops sticking."
+              "kind": "reading",
+              "title": "LogisticRegression — scikit-learn API",
+              "url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html",
+              "why": "Note the `C` parameter (inverse regularisation strength) and `penalty`. You'll interpret coefficients as log-odds and exponentiate them into odds ratios."
             },
             {
               "kind": "exercise",
-              "title": "Build: Compare Ridge, Lasso, Elastic Net with increasing regularisation strength",
-              "body": "Compare Ridge, Lasso, Elastic Net with increasing regularisation strength; plot how coefficients shrink\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "On your loan model, the coefficient for `debt_to_income` is positive. Increase someone's DTI by 0.1 — by how many percentage points does their default probability rise? Is that intuitive?"
+              "title": "Fit logistic, then read the coefficients as odds",
+              "body": "STEP 1 — Take any binary-target dataset (breast cancer from sklearn works: `load_breast_cancer`). Standardise features (logistic coefficients are only comparable on a common scale), then fit `LogisticRegression`.\n\nSTEP 2 — Print accuracy AND a confusion matrix on the test set — accuracy alone hides which class you're failing.\n\nSTEP 3 — Take each coefficient and exponentiate it: `np.exp(coef)`. That number is the ODDS RATIO — how the odds of the positive class multiply per one-standard-deviation increase in that feature.\n\nSTEP 4 — Rank features by absolute coefficient. Name the top 3 drivers.\n\nYOU SHOULD SEE: a fitted classifier where you can say, in English, 'a one-SD rise in feature X multiplies the odds of the positive class by ~1.8'. That sentence — not the accuracy number — is what makes logistic regression beloved in regulated industries."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Diagnostics",
+          "title": "From scratch: match sklearn within 1%",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Diagnostics",
-              "url": "https://www.youtube.com/results?search_query=Diagnostics%20%E2%80%94%20residual%20plots%2C%20leverage%2C%20Cook's%20distance%2C%20why%20they%20matter.%20Coefficient%20interpretation%20%E2%80%94%20odds%20ratios%2C%20partial%20effects%2C%20why%20they%20break%20with%20multicollinearity",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on diagnostics, then immediately do the build below — watching without building is how this stops sticking."
+              "kind": "reading",
+              "title": "Regularization (Ridge/Lasso) — scikit-learn user guide",
+              "url": "https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression-and-classification",
+              "why": "Read what L2 (Ridge, shrinks all coefficients) and L1 (Lasso, zeroes some out) actually do to the loss. You'll add a penalty term to your scratch implementation."
             },
             {
               "kind": "exercise",
-              "title": "Build: Demonstrate overfitting with high-degree polynomial features",
-              "body": "Demonstrate overfitting with high-degree polynomial features; show how regularisation rescues it\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Implement logistic regression by hand",
+              "body": "STEP 1 — Write a `fit(X, y, lr, epochs)` using ONLY numpy. Initialise weights to zeros. Each epoch: compute predictions `p = sigmoid(X @ w + b)`, the gradient `X.T @ (p - y) / n`, and step `w -= lr * grad`.\n\nSTEP 2 — Track log-loss each epoch and confirm it DECREASES. If it explodes, your learning rate is too high (remember Day 3's overshoot).\n\nSTEP 3 — Use the SAME standardised dataset as Day 4. Train your scratch model and sklearn's `LogisticRegression(penalty=None)`.\n\nSTEP 4 — Compare: your learned weights and accuracy versus sklearn's. Tune lr/epochs until you match within 1%.\n\nYOU SHOULD SEE: your hand-written optimiser converging to essentially the same coefficients sklearn found — proof you understand the algorithm, not just the API call. This is the week's keystone deliverable."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Compare your interpretable logistic model to an XGBoost on the same features. By how much does AUC improve? Is the loss of interpretability worth it for a credit-decision use case?"
+              "title": "What regularisation changed",
+              "body": "Add an L2 penalty (`+ lambda * w`) to your gradient and refit with a few lambda values. Write down what happened to the coefficient magnitudes as lambda grew. Then connect it: that shrinkage is exactly what sklearn's `C` knob controls (C = 1/lambda)."
             }
           ]
         },
         {
           "number": 6,
-          "title": "When to reach for linear",
+          "title": "Ridge, Lasso, ElasticNet, overfitting",
           "summary": "",
           "items": [
             {
               "kind": "video",
-              "title": "When to reach for linear",
-              "url": "https://www.youtube.com/results?search_query=When%20to%20reach%20for%20linear%20%E2%80%94%20sample-efficient%2C%20interpretable%2C%20fast%20inference%2C%20online%20learnable",
+              "title": "Ridge vs Lasso regularization (search)",
+              "url": "https://www.youtube.com/results?search_query=ridge%20vs%20lasso%20regression%20regularization%20explained",
               "duration_min": 14,
               "creator": "various",
-              "why": "Watch one clear explainer on when to reach for linear, then immediately do the build below — watching without building is how this stops sticking."
+              "why": "See why Lasso drives some coefficients to exactly zero (feature selection) while Ridge only shrinks. The geometry of the L1 'diamond' vs L2 'circle' is the punchline."
             },
             {
               "kind": "exercise",
-              "title": "Build: Implement Stochastic Gradient Descent for logistic regression from scratch",
-              "body": "Implement Stochastic Gradient Descent for logistic regression from scratch; match sklearn within 1% accuracy\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "exercise",
-              "title": "Stretch",
-              "body": "Use SHAP (TreeSHAP or LinearSHAP) to explain 5 individual loan predictions. Verify the linear-model explanations are exactly the per-feature × coefficient contributions."
+              "title": "Make a model overfit, then rescue it",
+              "body": "STEP 1 — Take a small regression dataset and deliberately overfit: add polynomial features up to degree 8 with plain `LinearRegression`. Plot train R² vs test R².\n\nSTEP 2 — You should see train R² near-perfect and test R² much worse — the textbook overfit gap.\n\nSTEP 3 — Now regularise: fit `Ridge`, `Lasso`, and `ElasticNet` on the same polynomial features across a range of alpha. Plot how each coefficient SHRINKS as alpha rises (the classic 'coefficient path' plot).\n\nSTEP 4 — Pick the alpha that maximises test (cross-validated) score.\n\nYOU SHOULD SEE: the train/test gap CLOSE as regularisation increases, and Lasso zeroing out the useless polynomial terms entirely. You've watched the bias–variance tradeoff happen on a plot."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship it",
+          "title": "Ship it: Loan Default Predictor",
           "summary": "",
           "items": [
             {
               "kind": "exercise",
-              "title": "Finish and ship the week's project",
-              "body": "Build a Loan Default Predictor — interpretable edition. Use the Kaggle Home Credit Default Risk dataset (or any credit dataset). Build a logistic-regression-based model with thoughtful feature engineering. Goal: ROC AUC > 0.78. Critically, your deliverable is interpretability: a report showing exactly why each prediction was made, the global feature importance, and an analysis of which sub-populations the model treats unfairly. Compare to XGBoost on the same features.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it."
+              "title": "Interpretable, fair, benchmarked",
+              "body": "STEP 1 — Use a credit/loan dataset (Kaggle Home Credit default, or any tabular default dataset). Build a logistic-regression pipeline: clean, standardise, handle categoricals, fit.\n\nSTEP 2 — Hit the bar: ROC AUC above 0.78 on a held-out test set. Report AUC, a confusion matrix at a chosen threshold, and the precision/recall tradeoff.\n\nSTEP 3 — Interpretability report: list the top default-driving features as ODDS RATIOS, in plain English a loan officer could read.\n\nSTEP 4 — Fairness check: compute your model's approval/error rates across a sensitive sub-population (e.g. by an age or gender band in the data). Note any disparity — don't hide it.\n\nSTEP 5 — Benchmark: train an XGBoost model on the same split and compare AUC. State the tradeoff: did the tree model win on accuracy, and what did you give up in interpretability?\n\nYOU SHOULD SEE: a model that's accurate ENOUGH, fully explainable, honestly audited for fairness, and benchmarked against a stronger black box. That package — not just the AUC — is professional ML."
             },
             {
               "kind": "reflection",
-              "title": "Prove you understood it",
-              "body": "Your logistic regression model has a coefficient of -2.3 on the DAYS_EMPLOYED feature (the number of days the applicant has been employed). What does this mean in practical terms? First, check the sign convention: negative DAYS_EMPLOYED means employed for many days (longer employment period). A coefficient of -2.3 means that for each one-unit increase in DAYS_EMPLOYED (one more day of employment), the log-odds of default decrease by 2.3. Converting: the odds of default are multiplied by e^(-2.3) ≈ 0.10 per additional day of employment. In plain language: people with longer employment histories are dramatically less likely to default. But you must check the scale — if DAYS_EMPLOYED is in days and ranges from -18000 to 0, a one-unit change is tiny. Scale the feature to years or use a standardised feature so the coefficient has a more interpretable magnitude."
+              "title": "When the simple model wins",
+              "body": "Answer in your README: (1) Your from-scratch optimiser matched sklearn — what did building it teach you that calling `.fit()` never would? (2) XGBoost probably beat logistic on AUC. Name a concrete situation (a regulated lender, a model you must defend to an auditor) where you'd still ship the logistic model. Knowing when NOT to use the fancy model is senior judgement."
             }
           ]
         }

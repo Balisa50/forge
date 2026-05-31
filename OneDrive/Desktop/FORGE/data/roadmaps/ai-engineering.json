@@ -832,190 +832,160 @@
       "days": [
         {
           "number": 1,
-          "title": "Orient — what you're building this week",
+          "title": "Two APIs, one mental model",
           "summary": "",
           "items": [
             {
               "kind": "reflection",
               "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Build a side-by-side chat console.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "body": "This week you build ONE chat function that can talk to OpenAI, Anthropic, and OpenRouter behind the same signature. Before any code: write down, in plain English, what the three providers have in common (a list of messages in, a stream of text out) and where they differ (endpoint shape, how the system prompt is passed, how streaming chunks are framed). Keep this note open — every task this week is closing one of those gaps."
             },
             {
               "kind": "video",
-              "title": "Overview: OpenAI and Anthropic SDKs in Depth",
-              "url": "https://www.youtube.com/results?search_query=OpenAI%20and%20Anthropic%20SDKs%20in%20Depth%20%E2%80%94%20The%20Two%20APIs%20That%20Run%20AI%20tutorial",
-              "duration_min": 15,
+              "title": "OpenAI and Anthropic API basics (search)",
+              "url": "https://www.youtube.com/results?search_query=openai%20api%20vs%20anthropic%20api%20python%20tutorial",
+              "duration_min": 18,
               "creator": "various",
-              "why": "One solid overview to frame the week. Pick a recent, clearly-explained one — you want the shape of the idea, not a specific channel."
+              "why": "Pick any clear walkthrough that shows a real request/response for both. You want the shape of the call, not a specific creator."
+            },
+            {
+              "kind": "reading",
+              "title": "Anthropic Messages API — official docs",
+              "url": "https://docs.anthropic.com/en/api/messages",
+              "why": "Read how `system` is its own top-level parameter (NOT a message with role 'system'). This single difference trips up everyone porting from OpenAI."
             }
           ]
         },
         {
           "number": 2,
-          "title": "OpenAI Responses API vs the legacy chat.completions",
+          "title": "Install, authenticate, first call",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "OpenAI Responses API vs the legacy chat.completions",
-              "url": "https://www.youtube.com/results?search_query=OpenAI%20Responses%20API%20vs%20the%20legacy%20chat.completions%20%E2%80%94%20when%20to%20use%20which.%20Anthropic%20Messages%20API%20%E2%80%94%20system%20prompt%20as%20a%20top-level%20parameter%2C%20message%20structure",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on openai responses api vs the legacy chat.completions, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "OpenAI platform docs",
-              "url": "https://platform.openai.com/docs",
-              "why": "Reference for openai responses api vs the legacy chat.completions. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "OpenAI Python SDK — chat completions reference",
+              "url": "https://platform.openai.com/docs/api-reference/chat",
+              "why": "The canonical request shape you will mirror for every other provider. Note `messages`, `model`, and the streaming flag."
             },
             {
               "kind": "exercise",
-              "title": "Build: Install `openai`, `anthropic`, and httpx",
-              "body": "Install `openai`, `anthropic`, and httpx; configure API keys via environment variables\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Get one real response from each provider",
+              "body": "STEP 1 — In a fresh folder: `python -m venv .venv` and activate it, then `pip install openai anthropic httpx python-dotenv`.\n\nSTEP 2 — Create a `.env` with `OPENAI_API_KEY=...` and `ANTHROPIC_API_KEY=...` (and `OPENROUTER_API_KEY=...` if you have one). Add `.env` to `.gitignore` NOW, before your first commit.\n\nSTEP 3 — Write `hello.py`: load the keys with python-dotenv, then make one non-streaming call to OpenAI and one to Anthropic asking each to say 'pong'.\n\nYOU SHOULD SEE: two 'pong' responses print, each tagged with its provider. If you get a 401, your key isn't loading — print `os.environ.get('OPENAI_API_KEY')[:6]` to confirm it's there. If you get a 429 immediately, you're out of quota, not broken."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Send the same prompt to GPT-5 and Claude Sonnet 4.7. How long is each response on average? How do they differ in style, structure, hedging language? Which would you trust to write production code? Which to write marketing copy?"
+              "title": "Where did the system prompt go?",
+              "body": "In your two calls, note exactly where 'You are a terse assistant' had to live: inside the `messages` list for OpenAI, but in the top-level `system=` argument for Anthropic. Write that difference down — your `chat()` wrapper on Day 3 has to hide it."
             }
           ]
         },
         {
           "number": 3,
-          "title": "OpenAI-format vs Anthropic-format conversation history",
+          "title": "One chat() to rule all three",
           "summary": "",
           "items": [
             {
               "kind": "widget",
-              "title": "Play with it before you read about it",
-              "body": "Tick this once it makes sense. Interacting with the model beats memorising it.",
+              "title": "Feel what temperature actually does",
+              "body": "Before you wire temperature into your wrapper, build intuition for it. Slide the temperature control and watch the model's next-token choice go from confident (one obvious word) to chaotic (a flat spread where anything can win). Your `chat()` function will pass this number straight through to every provider — now you know what the caller is dialling.",
               "widget": {
                 "id": "temperature-sampling",
                 "caption": "Slide temperature and watch the model go from confident to chaotic."
               }
             },
             {
-              "kind": "video",
-              "title": "OpenAI-format vs Anthropic-format conversation history",
-              "url": "https://www.youtube.com/results?search_query=OpenAI-format%20vs%20Anthropic-format%20conversation%20history%20%E2%80%94%20converting%20between%20them.%20Stop%20sequences%2C%20max_tokens%2C%20response_format%20%E2%80%94%20exact%20behaviour%20per%20provider",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on openai-format vs anthropic-format conversation history, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
-              "kind": "reading",
-              "title": "Anthropic docs",
-              "url": "https://docs.anthropic.com/en/docs/welcome",
-              "why": "Reference for openai-format vs anthropic-format conversation history. Don't read it cover to cover — use it to answer the specific question the build raises."
-            },
-            {
               "kind": "exercise",
-              "title": "Build: Write a `chat()` function with three implementations: one OpenAI-native, one Anthropic-native, one via OpenRouter — same call signature, same return shape",
-              "body": "Write a `chat()` function with three implementations: one OpenAI-native, one Anthropic-native, one via OpenRouter — same call signature, same return shape\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Build the unified chat() function",
+              "body": "STEP 1 — Create `llm.py` with one function:\n\n    def chat(messages, *, provider='openai', model=None, temperature=0.7, system=None) -> str\n\nIt takes the SAME arguments no matter the provider and returns the assistant's text.\n\nSTEP 2 — Implement three private helpers: `_openai(...)`, `_anthropic(...)`, `_openrouter(...)`. Inside each, do the provider-specific translation:\n  - OpenAI/OpenRouter: prepend `{'role':'system','content':system}` to messages if system is set.\n  - Anthropic: pass `system=system` as its own argument; never put a system role in messages.\n\nSTEP 3 — Pick sensible default models per provider when `model=None` (e.g. a current small/fast model for each).\n\nYOU SHOULD SEE: `chat([{'role':'user','content':'name three primary colours'}], provider='openai')` and the same call with `provider='anthropic'` both return a sensible answer. Same input, same output shape, two different backends. That is the whole point of the week."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Force a rate-limit on one provider deliberately. What error does the SDK raise? What does the response body include? Does your retry decorator handle it correctly?"
+              "title": "The leak test",
+              "body": "A good abstraction hides the difference. Ask yourself: can the caller of `chat()` tell which provider answered, without you telling them? If any provider-specific shape (a system message, a different return type) leaks out, fix it now — that leak will multiply when you add streaming tomorrow."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Streaming on both providers",
+          "title": "Streaming — two different wire formats",
           "summary": "",
           "items": [
             {
               "kind": "video",
-              "title": "Streaming on both providers",
-              "url": "https://www.youtube.com/results?search_query=Streaming%20on%20both%20providers%20%E2%80%94%20the%20slight%20differences%20in%20event%20format",
-              "duration_min": 14,
+              "title": "Streaming responses from LLM APIs (search)",
+              "url": "https://www.youtube.com/results?search_query=streaming%20openai%20anthropic%20api%20python%20server%20sent%20events",
+              "duration_min": 15,
               "creator": "various",
-              "why": "Watch one clear explainer on streaming on both providers, then immediately do the build below — watching without building is how this stops sticking."
+              "why": "See tokens arrive incrementally and how the loop consumes server-sent events. Watch how each provider frames a chunk."
+            },
+            {
+              "kind": "reading",
+              "title": "Anthropic streaming events — official docs",
+              "url": "https://docs.anthropic.com/en/api/messages-streaming",
+              "why": "Anthropic streams typed events (`content_block_delta` with `delta.text`). OpenAI streams `choices[0].delta.content`. You must handle both shapes."
             },
             {
               "kind": "exercise",
-              "title": "Build: Add streaming support to all three",
-              "body": "Add streaming support to all three. Use the right event handler for each provider.\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "Stream a 1000-token response. Measure time-to-first-token and time-to-last-token for each provider. What does this mean for UX in a chat app?"
+              "title": "Add streaming to all three",
+              "body": "STEP 1 — Add `stream_chat(...)` (a generator) alongside `chat()`. Same signature, but it `yield`s text fragments as they arrive.\n\nSTEP 2 — In the OpenAI/OpenRouter path: iterate the stream and yield `chunk.choices[0].delta.content` when it's not None.\n\nSTEP 3 — In the Anthropic path: iterate events and yield `event.delta.text` only on `content_block_delta` events; ignore the start/stop framing events.\n\nSTEP 4 — Write a driver that does `for piece in stream_chat(...): print(piece, end='', flush=True)`.\n\nYOU SHOULD SEE: the answer typing out character-by-character, identically, whether provider is 'openai' or 'anthropic'. The two completely different wire formats now look the same to your caller."
             }
           ]
         },
         {
           "number": 5,
-          "title": "OpenRouter as a provider-agnostic layer",
+          "title": "Failure is a feature: retries",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "OpenRouter as a provider-agnostic layer",
-              "url": "https://www.youtube.com/results?search_query=OpenRouter%20as%20a%20provider-agnostic%20layer%20%E2%80%94%20when%20it%20saves%20you%2C%20when%20it%20bites.%20Authentication%2C%20organisation%2Fproject%20IDs%2C%20rate%20limits%20per%20provider",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on openrouter as a provider-agnostic layer, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "MDN — Web security",
-              "url": "https://developer.mozilla.org/en-US/docs/Web/Security",
-              "why": "Reference for openrouter as a provider-agnostic layer. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "OpenAI error codes & rate limits — official docs",
+              "url": "https://platform.openai.com/docs/guides/error-codes",
+              "why": "Learn which errors are TRANSIENT (429, 500, 503 — retry with backoff) vs PERMANENT (401, 400, 404 — retrying just wastes time and money)."
             },
             {
               "kind": "exercise",
-              "title": "Build: Wrap each call in a retry decorator that distinguishes between transient (rate limit, 5xx) and permanent (auth, invalid model) failures",
-              "body": "Wrap each call in a retry decorator that distinguishes between transient (rate limit, 5xx) and permanent (auth, invalid model) failures\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Retry decorator that knows when to give up",
+              "body": "STEP 1 — Write a `@with_retry` decorator that wraps a provider call. On a transient error (rate limit, 5xx, connection reset) it retries with exponential backoff: wait 1s, 2s, 4s, up to 3 attempts.\n\nSTEP 2 — On a PERMANENT error (bad request, auth failure), it must re-raise IMMEDIATELY. Retrying a 401 three times just delays the inevitable.\n\nSTEP 3 — Add a tiny bit of jitter (random 0–250ms) to the backoff so parallel callers don't all retry in lockstep.\n\nSTEP 4 — Force a transient error to test it: temporarily point one provider at a model name that returns a 5xx, or use a mock that raises then succeeds.\n\nYOU SHOULD SEE: a log line like 'transient error, retrying in 2.1s (attempt 2/3)' for the retryable case, and an instant re-raise (no retries) when you feed it a bad API key."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "When would you NOT use OpenRouter? Think about: streaming reliability, structured output, latest model features, cost transparency. Write 3 reasons in your journal."
+              "title": "Transient vs permanent",
+              "body": "List every error you actually hit this week and tag each one transient or permanent. This table IS your retry policy. Getting it wrong in either direction is expensive: retrying permanent errors burns money and latency; not retrying transient ones makes your app look broken when the provider just hiccupped."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Error handling",
+          "title": "A real terminal client",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Error handling",
-              "url": "https://www.youtube.com/results?search_query=Error%20handling%20%E2%80%94%20what%20each%20SDK%20raises%2C%20the%20difference%20between%20transient%20and%20permanent",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on error handling, then immediately do the build below — watching without building is how this stops sticking."
+              "kind": "reading",
+              "title": "Rich — terminal formatting library docs",
+              "url": "https://rich.readthedocs.io/en/stable/",
+              "why": "You'll use Rich (or textual) to render a live-updating two-column console. Skim 'Live Display' and 'Columns'."
             },
             {
               "kind": "exercise",
-              "title": "Build: Build a tiny TUI (terminal chat) that lets you pick the provider with a flag (`--provider openai`) and chat live",
-              "body": "Build a tiny TUI (terminal chat) that lets you pick the provider with a flag (`--provider openai`) and chat live\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "exercise",
-              "title": "Stretch",
-              "body": "Build a 'fallback chain' helper: try Claude first, on failure try GPT, on failure try Llama via OpenRouter. Log which was used."
+              "title": "Build the --provider CLI",
+              "body": "STEP 1 — Write `cli.py` that takes `--provider openai|anthropic|openrouter` and reads prompts from stdin in a loop.\n\nSTEP 2 — Each turn: append the user message, call `stream_chat`, print the reply live, then append the assistant reply so the conversation has memory.\n\nSTEP 3 — Add a `/model <name>` command to switch model mid-session and a `/quit` to exit cleanly.\n\nSTEP 4 — After each reply, print a dim status line: model used, tokens (if the provider returns usage), and wall-clock latency you measured yourself.\n\nYOU SHOULD SEE: a working REPL where `--provider anthropic` and `--provider openai` behave identically from the user's side, both streaming, both remembering the conversation, both showing cost/latency. That's a tool you'd actually use."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship it",
+          "title": "Ship it: side-by-side chat console",
           "summary": "",
           "items": [
             {
               "kind": "exercise",
-              "title": "Finish and ship the week's project",
-              "body": "Build a side-by-side chat console. A Python TUI (using rich or textual) that renders two columns: left column is OpenAI's response, right column is Anthropic's response, streaming in real time. You type once, both respond. Below each response, show: model name, tokens consumed, cost in USD, latency. This is the single best tool you can have for picking the right model per task — and you'll use it for the rest of this roadmap.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it."
+              "title": "The two-column race",
+              "body": "STEP 1 — Build the capstone: a console that sends the SAME prompt to OpenAI and Anthropic at once and streams both replies into two side-by-side columns (Rich Live + Columns, or textual).\n\nSTEP 2 — Under each column show a live footer: model name, tokens so far, estimated cost (tokens × the provider's per-token price you hard-code), and latency.\n\nSTEP 3 — Run both calls concurrently (threads or asyncio) so neither blocks the other — the columns should fill in parallel, not one-then-the-other.\n\nSTEP 4 — Handle one provider failing gracefully: if Anthropic 500s, its column shows the error and OpenAI's keeps streaming. Your Day-5 retry decorator should already cover the transient case.\n\nYOU SHOULD SEE: type one question, watch two models answer side by side in real time, with a running cost/latency scoreboard. Record a 20-second screen capture for your portfolio."
             },
             {
               "kind": "reflection",
-              "title": "Prove you understood it",
-              "body": "You want to replay a conversation history that was built with the OpenAI format into the Anthropic API. Walk through the conversion. OpenAI format: `[{\"role\": \"system\", \"content\": \"...\"}, {\"role\": \"user\", \"content\": \"...\"}, {\"role\": \"assistant\", \"content\": \"...\"}]`. Anthropic format: system is extracted as a separate string, the remaining messages become the messages array with \"user\" and \"assistant\" roles. The \"system\" message in the OpenAI array has no equivalent Anthropic role — it must be extracted and passed as the top-level `system` parameter. What breaks if you forget this? You either lose the system prompt, or the API rejects the messages array because \"system\" is not a valid role value in Anthropic's schema."
+              "title": "What you actually learned",
+              "body": "Answer in your README: (1) Which single API difference between OpenAI and Anthropic was hardest to hide behind one function, and how did you hide it? (2) Looking at your cost scoreboard, when would you reach for the cheaper model and when is the pricier one worth it? You now have a provider-agnostic LLM layer — every later project in this track reuses it instead of hard-coding one vendor."
             }
           ]
         }

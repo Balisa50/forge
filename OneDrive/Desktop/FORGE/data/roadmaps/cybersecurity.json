@@ -814,190 +814,160 @@
       "days": [
         {
           "number": 1,
-          "title": "Orient — what you're building this week",
+          "title": "What a web proxy actually is",
           "summary": "",
           "items": [
             {
               "kind": "reflection",
               "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Build a Burp-Based Workflow on a Target.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "body": "This week your browser stops talking straight to websites — everything routes THROUGH Burp first, where you can read and rewrite it. Before installing anything, write down what that means: every request your browser sends, and every response it gets back, becomes editable text you control. The whole craft of web testing is built on that one capability. List three things you'd want to change in a request if you could (a price field? a user id? a hidden flag?)."
             },
             {
               "kind": "video",
-              "title": "Overview: Burp Suite + ZAP",
-              "url": "https://www.youtube.com/results?search_query=Burp%20Suite%20%2B%20ZAP%20%E2%80%94%20Your%20Web%20Testing%20Workbench%20tutorial",
-              "duration_min": 15,
+              "title": "Burp Suite for beginners (search)",
+              "url": "https://www.youtube.com/results?search_query=burp%20suite%20tutorial%20for%20beginners%20proxy%20intercept",
+              "duration_min": 20,
               "creator": "various",
-              "why": "One solid overview to frame the week. Pick a recent, clearly-explained one — you want the shape of the idea, not a specific channel."
+              "why": "Watch someone intercept and modify a single request end to end. You want the workflow — intercept, edit, forward — not a specific creator."
+            },
+            {
+              "kind": "reading",
+              "title": "Burp Suite — Getting started (PortSwigger)",
+              "url": "https://portswigger.net/burp/documentation/desktop/getting-started",
+              "why": "The official orientation. Read the Proxy and Repeater sections; these are the two tools you'll live in all week."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Burp Suite Proxy",
+          "title": "Install, proxy, trust the CA",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Burp Suite Proxy",
-              "url": "https://www.youtube.com/results?search_query=Burp%20Suite%20Proxy%20%E2%80%94%20intercepting%20HTTPS%2C%20installing%20the%20cert.%20Repeater%20%E2%80%94%20sending%20the%20same%20request%20100%20times%20with%20variations",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on burp suite proxy, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "Burp Suite docs",
-              "url": "https://portswigger.net/burp/documentation",
-              "why": "Reference for burp suite proxy. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Installing Burp's CA certificate (PortSwigger)",
+              "url": "https://portswigger.net/burp/documentation/desktop/external-browser-config/certificate",
+              "why": "Without trusting Burp's CA, HTTPS sites throw cert errors and you see nothing. This is the step everyone gets stuck on — do it carefully."
             },
             {
               "kind": "exercise",
-              "title": "Build: Install Burp Suite Community",
-              "body": "Install Burp Suite Community; configure Firefox/Chrome to proxy through it; install CA cert\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "See your own traffic flow through Burp",
+              "body": "STEP 1 — Install Burp Suite Community Edition (free). Launch it, start a temporary project, use the default configuration.\n\nSTEP 2 — Point a browser at Burp's proxy (127.0.0.1:8080). Easiest path: use Burp's built-in browser (Proxy tab → Open Browser), which is pre-configured.\n\nSTEP 3 — Install and trust Burp's CA certificate so HTTPS works without warnings (follow the reading).\n\nSTEP 4 — In Proxy → HTTP history, browse to a site you OWN or are authorised to test (your own app on localhost, or a deliberately-vulnerable target you're allowed to use).\n\nYOU SHOULD SEE: requests and responses populating the HTTP history table in real time. Click one — you can read the full raw request and response. If history is empty, your browser isn't actually using the proxy."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Burp intercepts your traffic. Are there any requests you do NOT want intercepted (banking, work)? How do you configure scope?"
+              "title": "Scope is consent",
+              "body": "Before you touch Intercept, set your Target → Scope to ONLY the host you're authorised to test, and tick 'show only in-scope items'. Write one sentence on why: testing anything outside an authorised scope isn't research, it's an offence. Scope is the technical expression of permission. Everything this week happens inside it."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Intruder",
+          "title": "Why intercepting is dangerous power",
           "summary": "",
           "items": [
             {
               "kind": "widget",
-              "title": "Play with it before you read about it",
-              "body": "Tick this once it makes sense. Interacting with the model beats memorising it.",
+              "title": "See why raw HTML insertion is unsafe",
+              "body": "Web testing is largely about what happens when untrusted input reaches a place that trusts it. Toggle escaping on and off in this sandbox and watch the same string switch from harmless text to executing markup. That gap — between data treated as text and data treated as code — is the root of XSS, the bug class you'll hunt with Burp all week.",
               "widget": {
                 "id": "xss-sandbox",
                 "caption": "Toggle escaping and see why raw HTML insertion is dangerous."
               }
             },
             {
-              "kind": "video",
-              "title": "Intruder",
-              "url": "https://www.youtube.com/results?search_query=Intruder%20%E2%80%94%20fuzzing%20parameters%2C%20the%20four%20attack%20types.%20Decoder%20%2B%20Comparer%20%E2%80%94%20encoding%20tricks%2C%20diff%20analysis",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on intruder, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "exercise",
-              "title": "Build: Intercept a real (your own) site's login request in Burp",
-              "body": "Intercept a real (your own) site's login request in Burp; modify before forwarding\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Intercept and modify your own login",
+              "body": "STEP 1 — On your authorised target, turn Proxy → Intercept ON.\n\nSTEP 2 — Submit a login form. Burp pauses the request before it leaves your machine.\n\nSTEP 3 — Find the username/password fields in the raw request. Change a value (e.g. flip the username) right there in the intercept window, then Forward.\n\nSTEP 4 — Watch the server's response to YOUR edited request, not what the browser sent.\n\nYOU SHOULD SEE: the application reacting to the value YOU injected, proving the client never has the final say — the server does, and you sit between them. Turn Intercept back OFF when done (leaving it on pauses all browsing and feels like the internet is broken)."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Intruder vs Repeater — when each? Sniper vs Cluster bomb attacks — what's the use case?"
+              "title": "Client-side checks are theatre",
+              "body": "You just changed a value AFTER the browser's JavaScript validated it. Write down the lesson in one line: any check that runs only in the browser can be bypassed by anyone with a proxy. This is why every real defence has to live on the server."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Burp Collaborator (Pro)",
+          "title": "Repeater — the tester's scalpel",
           "summary": "",
           "items": [
             {
               "kind": "video",
-              "title": "Burp Collaborator (Pro)",
-              "url": "https://www.youtube.com/results?search_query=Burp%20Collaborator%20(Pro)%20%E2%80%94%20out-of-band%20detection%20of%20blind%20vulns",
+              "title": "Burp Repeater walkthrough (search)",
+              "url": "https://www.youtube.com/results?search_query=burp%20suite%20repeater%20tutorial%20fuzzing%20parameters",
               "duration_min": 14,
               "creator": "various",
-              "why": "Watch one clear explainer on burp collaborator (pro), then immediately do the build below — watching without building is how this stops sticking."
+              "why": "See how one request gets sent over and over with small tweaks. Repeater is where you manually probe a single parameter."
             },
             {
               "kind": "reading",
-              "title": "Burp Suite docs",
-              "url": "https://portswigger.net/burp/documentation",
-              "why": "Reference for burp collaborator (pro). Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "SQL injection — OWASP",
+              "url": "https://owasp.org/www-community/attacks/SQL_Injection",
+              "why": "You'll fuzz a parameter for SQLi in Repeater. Read what the classic payloads (' OR 1=1, a single quote) are actually doing to the backend query."
             },
             {
               "kind": "exercise",
-              "title": "Build: Use Burp Intruder to brute-force a 4-digit PIN on a deliberate target",
-              "body": "Use Burp Intruder to brute-force a 4-digit PIN on a deliberate target\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "Burp Collaborator (Pro feature) — what kind of vulnerabilities can only be detected with it?"
+              "title": "Hand-fuzz one parameter for SQLi",
+              "body": "STEP 1 — In HTTP history, find a request with an interesting parameter (a search box, an id in the URL) on your authorised target. Right-click → Send to Repeater.\n\nSTEP 2 — In Repeater, send it once unchanged to learn the 'normal' response (status, length, body).\n\nSTEP 3 — Change the parameter to a single quote `'` and send. Watch for a 500 error, a SQL error message, or a length change — any of these is a SQLi smell.\n\nSTEP 4 — Try `' OR '1'='1` and compare the response to baseline. Note exactly what changed.\n\nYOU SHOULD SEE: a measurable difference (error, different row count, different length) between the clean request and the injected one. Document the request, the payload, and the response delta — that delta is your evidence."
             }
           ]
         },
         {
           "number": 5,
-          "title": "ZAP",
+          "title": "Intruder — automate the tedium",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "ZAP",
-              "url": "https://www.youtube.com/results?search_query=ZAP%20%E2%80%94%20when%20Pro%20Burp%20isn't%20available%3B%20the%20active%20scanner.%20Burp%20extensions%20%E2%80%94%20Logger%2B%2B%2C%20Active%20Scan%2B%2B%2C%20Autorize",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on zap, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "Burp Suite docs",
-              "url": "https://portswigger.net/burp/documentation",
-              "why": "Reference for zap. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Burp Intruder — official docs (PortSwigger)",
+              "url": "https://portswigger.net/burp/documentation/desktop/tools/intruder",
+              "why": "Intruder fires a payload list at a marked position. Read the four attack types (Sniper, Battering ram, Pitchfork, Cluster bomb) and what each is for."
             },
             {
               "kind": "exercise",
-              "title": "Build: Use Burp Repeater to fuzz a parameter for SQLi manually",
-              "body": "Use Burp Repeater to fuzz a parameter for SQLi manually\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Brute-force a 4-digit PIN (on your own target)",
+              "body": "STEP 1 — On a target you OWN that has a numeric PIN/OTP field, send the verification request to Intruder.\n\nSTEP 2 — Clear the auto-markers, then mark ONLY the PIN value as the payload position §...§. Choose Sniper attack type.\n\nSTEP 3 — Payloads → Numbers, from 0000 to 9999, step 1, with leading zeros (min 4 digits). That's the whole keyspace of a 4-digit PIN.\n\nSTEP 4 — Start the attack. Sort the results by response Length or Status to spot the one that differs.\n\nYOU SHOULD SEE: 9,999 near-identical responses and ONE outlier — the correct PIN, betrayed by a different length or status code. This is exactly why short numeric PINs without rate-limiting are indefensible. Note: Community Edition throttles Intruder; that's fine for learning the workflow."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Compare Burp Community vs ZAP for one task (active scan). Which felt more polished? Where does Pro Burp earn its $400/yr?"
+              "title": "What made the brute-force possible",
+              "body": "List the three things that let your attack succeed: a tiny keyspace, no rate limiting, and a response that leaked success via length/status. Now flip each into a defence. That flip — attacker observation to defender control — is the core habit of the whole field."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Workflow",
+          "title": "Extend Burp; cross-check with ZAP",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Workflow",
-              "url": "https://www.youtube.com/results?search_query=Workflow%20%E2%80%94%20scope%2C%20target%20tab%2C%20repeater%20discipline",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on workflow, then immediately do the build below — watching without building is how this stops sticking."
+              "kind": "reading",
+              "title": "OWASP ZAP — getting started",
+              "url": "https://www.zaproxy.org/getting-started/",
+              "why": "ZAP is the free, open-source alternative to Burp. Running both on the same target shows you that findings aren't tool-specific — they're real."
             },
             {
               "kind": "exercise",
-              "title": "Build: Install Logger++ extension to log every request your browser makes",
-              "body": "Install Logger++ extension to log every request your browser makes\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "exercise",
-              "title": "Stretch",
-              "body": "Configure Logger++ to highlight requests with custom matchers."
+              "title": "Logger++ and a ZAP active scan",
+              "body": "STEP 1 — In Burp, open the BApp Store (Extensions tab) and install Logger++. Browse your target; watch Logger++ build a searchable, filterable log of every request across all Burp tools in one table.\n\nSTEP 2 — Install OWASP ZAP. Set it to proxy your browser (or use its HUD), and let it spider your authorised target.\n\nSTEP 3 — Run ZAP's automated Active Scan against the in-scope target ONLY.\n\nSTEP 4 — Compare: does ZAP flag the same parameter you found by hand in Repeater on Day 4? Does it find anything you missed?\n\nYOU SHOULD SEE: overlap between your manual finding and at least one automated alert — confirmation your hand-analysis was real — plus a few extra leads from the scanner. Manual depth + automated breadth is the professional combo."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship it",
+          "title": "Ship it: a real testing workflow",
           "summary": "",
           "items": [
             {
               "kind": "exercise",
-              "title": "Finish and ship the week's project",
-              "body": "Build a Burp-Based Workflow on a Target. Pick one bug-bounty-eligible site (in scope). Set up Burp project file. Map the site via spidering. Identify auth flows. Use Repeater to manually probe 10 endpoints for auth bugs, parameter tampering, IDOR. Document one finding per endpoint in BURP-FINDINGS.md (even 'no issue' is a finding).\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it."
+              "title": "Run a scoped workflow on a legal target",
+              "body": "STEP 1 — Pick a target you are EXPLICITLY allowed to test: your own deployed app, a public bug-bounty program whose scope you've read, or a deliberately-vulnerable practice app (OWASP Juice Shop, DVWA) running locally.\n\nSTEP 2 — Set Burp scope precisely. Map the app: walk every page with Intercept off so HTTP history fills, then review the sitemap.\n\nSTEP 3 — Pick your top 3 most-promising requests (auth, search, anything with an id) and probe each in Repeater. Use Intruder where a list helps. Cross-check with a ZAP active scan.\n\nSTEP 4 — Write BURP-FINDINGS.md: for each issue — the request, the payload, the evidence (response delta/screenshot), severity, and a one-line fix. Even 'no issues found on X, here's what I tried' is a valid, professional entry.\n\nYOU SHOULD SEE: a clean, scoped, reproducible report a real team could act on. That document — not the tool clicks — is what the job actually is."
             },
             {
               "kind": "reflection",
-              "title": "Prove you understood it",
-              "body": "Passive scanning watches the traffic flowing through the proxy and analyses it for issues — missing security headers, cookies without HttpOnly, exposed version banners, information leakage in error messages. It generates ZERO new traffic to the target. Active scanning sends additional crafted requests to the target to test for vulnerabilities — fuzz parameters, attempt SQL injection, try XSS payloads, probe for path traversal. Active scanning can generate THOUSANDS of requests per endpoint. Which is safe to run against production? Only passive. Active scanning against production can: trigger rate limits and lock out real users, fill databases with junk data (injection payloads stored as records), crash applications with malformed input, accidentally exploit destructive operations (DELETE/PUT). Active scanning belongs in staging environments only. The compromise some teams make: run Burp's passive scanner against production continuously, then schedule active scans of a production-like staging environment weekly. Never scan production actively without explicit written permission from the system owner — it has been the cause of real outages and real lawsuits."
+              "title": "Ethics check and what's next",
+              "body": "Answer honestly in your README: (1) Every action this week stayed inside an authorised scope — confirm it. (2) Which tool fit which job: when did you reach for Repeater vs Intruder vs ZAP's automated scan? You now have a repeatable workflow; later weeks deepen the specific bug classes you smelled out here."
             }
           ]
         }

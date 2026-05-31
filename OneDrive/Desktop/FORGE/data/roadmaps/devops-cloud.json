@@ -826,193 +826,155 @@
       "days": [
         {
           "number": 1,
-          "title": "Orient — what you're building this week",
+          "title": "A container is not a tiny VM",
           "summary": "",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Containerise One Real App.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "kind": "widget",
+              "title": "Container vs VM — what's actually shared",
+              "body": "The single biggest misconception this week is that a container is a small virtual machine. It isn't. Use this panel to compare the stacks side by side: a VM ships a whole guest OS on top of a hypervisor; a container shares the host kernel and isolates only the process using namespaces and cgroups. That's why containers start in milliseconds and VMs take minutes. Hold this picture — every Docker behaviour this week follows from it.",
+              "widget": {
+                "id": "container-vs-vm",
+                "caption": "Compare what a VM duplicates versus what a container shares with the host."
+              }
             },
             {
               "kind": "video",
-              "title": "Overview: Docker",
-              "url": "https://www.youtube.com/results?search_query=Docker%20%E2%80%94%20Containers%20from%20First%20Principles%20tutorial",
-              "duration_min": 15,
+              "title": "How Docker works under the hood (search)",
+              "url": "https://www.youtube.com/results?search_query=docker%20containers%20namespaces%20cgroups%20explained",
+              "duration_min": 16,
               "creator": "various",
-              "why": "One solid overview to frame the week. Pick a recent, clearly-explained one — you want the shape of the idea, not a specific channel."
+              "why": "Find a clip that shows namespaces and cgroups, not just `docker run`. You want to know WHY isolation works, not only how to type the command."
+            },
+            {
+              "kind": "reflection",
+              "title": "Plan before you build",
+              "body": "Write down, in your own words, the difference between an IMAGE (a read-only template, built once) and a CONTAINER (a running process started from an image). Most Docker confusion is really image-vs-container confusion. You'll containerise a real app by Day 7 — sketch which app you'll pick now."
             }
           ]
         },
         {
           "number": 2,
-          "title": "What a container actually is",
+          "title": "Install and run your first container",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "What a container actually is",
-              "url": "https://www.youtube.com/results?search_query=What%20a%20container%20actually%20is%20%E2%80%94%20Linux%20namespaces%2C%20cgroups%2C%20what's%20NOT%20virtualised.%20Images%20vs%20containers%20%E2%80%94%20layers%2C%20the%20union%20filesystem",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on what a container actually is, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "Docker docs",
+              "title": "Docker — get started / install (official docs)",
               "url": "https://docs.docker.com/get-started/",
-              "why": "Reference for what a container actually is. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "why": "The canonical install + first-run guide. Follow the install for your OS and read 'What is a container?' before moving on."
             },
             {
               "kind": "exercise",
-              "title": "Build: Install Docker Desktop (or Podman on Linux)",
-              "body": "Install Docker Desktop (or Podman on Linux); run `hello-world`\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "hello-world, then poke at a real image",
+              "body": "STEP 1 — Install Docker Desktop (or Docker Engine on Linux). Verify with `docker --version` and `docker run hello-world`.\n\nSTEP 2 — Run an interactive container: `docker run -it --rm python:3.12-slim python` and confirm you get a Python REPL INSIDE the container. Type `import sys; print(sys.platform)` then exit.\n\nSTEP 3 — List images (`docker images`) and running containers (`docker ps`, then `docker ps -a`). Notice the `--rm` container is already gone.\n\nSTEP 4 — Inspect layers: `docker history python:3.12-slim`.\n\nYOU SHOULD SEE: hello-world prints its message, the Python REPL runs inside an isolated container, and `docker history` shows the image is a STACK of layers, not one blob. Those layers are the key to fast rebuilds."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Your image is 1.5GB. Where are the layers? Use `docker history` to see. Which layer is biggest? Can it be smaller?"
+              "title": "Where did the container go?",
+              "body": "Your `--rm` container vanished the moment you exited. Write one line on what that means for data: anything written inside a container's writable layer is gone when it dies. That single fact is why volumes (Day 5) exist — note the question 'where will my app's data actually live?' for later."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Dockerfile fundamentals",
+          "title": "Write a Dockerfile that builds clean",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Dockerfile fundamentals",
-              "url": "https://www.youtube.com/results?search_query=Dockerfile%20fundamentals%20%E2%80%94%20FROM%2C%20RUN%2C%20COPY%2C%20CMD%2C%20ENTRYPOINT%2C%20WORKDIR.%20Multi-stage%20builds%20%E2%80%94%20small%20final%20images%20even%20with%20heavy%20build%20tooling",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on dockerfile fundamentals, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "Docker docs",
-              "url": "https://docs.docker.com/get-started/",
-              "why": "Reference for dockerfile fundamentals. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Dockerfile reference (official docs)",
+              "url": "https://docs.docker.com/reference/dockerfile/",
+              "why": "Your lookup table for FROM, RUN, COPY, WORKDIR, CMD, ENTRYPOINT. Read the difference between CMD and ENTRYPOINT carefully — people confuse them constantly."
             },
             {
               "kind": "exercise",
-              "title": "Build: Write a Dockerfile for one of your projects",
-              "body": "Write a Dockerfile for one of your projects; iterate to get the final image under 200MB\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "Two builds in a row — second one took the same time as the first. Layer cache isn't working. Why?"
+              "title": "Containerise a small app under 200MB",
+              "body": "STEP 1 — Take a small app you have (a Flask/FastAPI/Express 'hello' is fine). Write a `Dockerfile`: pick a slim base (`FROM python:3.12-slim`), set `WORKDIR /app`, COPY requirements first, RUN install, then COPY the rest, then `CMD` to start it.\n\nSTEP 2 — Add a `.dockerignore` (exclude `.git`, `.venv`, `node_modules`, `__pycache__`). This keeps junk out of the build context.\n\nSTEP 3 — Build: `docker build -t myapp:dev .` Then run it mapping a port: `docker run -p 8000:8000 myapp:dev`.\n\nSTEP 4 — Check size with `docker images myapp:dev`.\n\nYOU SHOULD SEE: the app reachable on localhost:8000 from your host browser, and an image under ~200MB. Now change ONE line of app code and rebuild — note which layers are CACHED (reused) and which rebuild. Ordering COPY-requirements-before-COPY-code is what makes that cache work."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Image registries",
+          "title": "Multi-stage builds — ship only what runs",
           "summary": "",
           "items": [
             {
               "kind": "video",
-              "title": "Image registries",
-              "url": "https://www.youtube.com/results?search_query=Image%20registries%20%E2%80%94%20Docker%20Hub%2C%20GitHub%20Container%20Registry%2C%20AWS%20ECR",
-              "duration_min": 14,
+              "title": "Docker multi-stage builds (search)",
+              "url": "https://www.youtube.com/results?search_query=docker%20multi%20stage%20build%20tutorial%20smaller%20images",
+              "duration_min": 13,
               "creator": "various",
-              "why": "Watch one clear explainer on image registries, then immediately do the build below — watching without building is how this stops sticking."
+              "why": "See a build that compiles in one stage and copies only the artefact into a tiny final stage. This is how production images stay small and secure."
             },
             {
               "kind": "reading",
-              "title": "Docker docs",
-              "url": "https://docs.docker.com/get-started/",
-              "why": "Reference for image registries. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Multi-stage builds (official docs)",
+              "url": "https://docs.docker.com/build/building/multi-stage/",
+              "why": "The official pattern: a `builder` stage with all the toolchain, then a slim runtime stage that COPYs `--from=builder` only the finished output."
             },
             {
               "kind": "exercise",
-              "title": "Build: Use a multi-stage build to keep the final image small",
-              "body": "Use a multi-stage build to keep the final image small\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "Your container exits immediately. What's the first thing you check? What does `docker logs` show?"
+              "title": "Cut your image with a second stage",
+              "body": "STEP 1 — Rewrite your Day-3 Dockerfile with TWO stages. Stage one (`AS builder`) installs build tools and produces the artefact (compiled binary, or installed deps). Stage two starts from a minimal base and `COPY --from=builder` only what's needed at runtime.\n\nSTEP 2 — Run the final stage as a NON-ROOT user: add `RUN adduser --disabled-password appuser` and `USER appuser` before CMD.\n\nSTEP 3 — Build and compare `docker images` size against your single-stage version.\n\nSTEP 4 — Confirm it still runs and that `docker exec <id> whoami` prints `appuser`, not root.\n\nYOU SHOULD SEE: a noticeably smaller final image (build tools left behind in the discarded builder stage) AND a container running as an unprivileged user. Smaller attack surface, smaller download, same app."
             }
           ]
         },
         {
           "number": 5,
-          "title": "docker-compose for local dev",
+          "title": "Persistence and multi-container apps",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "docker-compose for local dev",
-              "url": "https://www.youtube.com/results?search_query=docker-compose%20for%20local%20dev%20%E2%80%94%20multi-service%20stacks.%20Volumes%20and%20bind%20mounts%20%E2%80%94%20where%20data%20lives",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on docker-compose for local dev, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "Docker docs",
-              "url": "https://docs.docker.com/get-started/",
-              "why": "Reference for docker-compose for local dev. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Docker Compose overview (official docs)",
+              "url": "https://docs.docker.com/compose/",
+              "why": "Compose declares a multi-container app in one YAML file. Read how `services`, `volumes`, and `depends_on` work — you'll wire three services together next."
             },
             {
               "kind": "exercise",
-              "title": "Build: Set up docker-compose for a Postgres + Redis + app stack",
-              "body": "Set up docker-compose for a Postgres + Redis + app stack; verify all start with `docker compose up`\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "App + Postgres + Redis with one command",
+              "body": "STEP 1 — Write `docker-compose.yml` with three services: your app, `postgres`, and `redis`. Give Postgres a named VOLUME so its data survives a container restart.\n\nSTEP 2 — Put DB credentials in environment variables (in the compose file or an `.env`), and have your app connect using the SERVICE NAME as the host (e.g. `postgres:5432`) — Compose gives each service a DNS name on a shared network.\n\nSTEP 3 — `docker compose up`. Watch all three start. Hit your app; confirm it can read/write Postgres and cache in Redis.\n\nSTEP 4 — `docker compose down` then `up` again. Confirm Postgres data is STILL there (proving the volume worked); then test that removing the volume wipes it.\n\nYOU SHOULD SEE: a three-service stack come up with one command, services talking to each other by name, and database data persisting across restarts. That's a realistic local dev environment."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Container runs as root. Why is that bad? How do you fix it without losing functionality?"
+              "title": "Named volume vs bind mount",
+              "body": "You used a named volume for Postgres. Write the difference between that and a bind mount (host folder mapped in): bind mounts are great for live-editing your source during dev; named volumes are how you persist a database. Note which you'd use for code vs for data."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Image best practices",
+          "title": "Registries — push so others can pull",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Image best practices",
-              "url": "https://www.youtube.com/results?search_query=Image%20best%20practices%20%E2%80%94%20layer%20caching%2C%20.dockerignore%2C%20non-root%20user",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on image best practices, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "Redis docs",
-              "url": "https://redis.io/docs/latest/",
-              "why": "Reference for image best practices. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Push & pull images / GHCR (GitHub docs)",
+              "url": "https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry",
+              "why": "An image only helps others if it's in a registry. GHCR is free and tied to your GitHub — read how to tag and push to ghcr.io."
             },
             {
               "kind": "exercise",
-              "title": "Build: Push an image to GitHub Container Registry",
-              "body": "Push an image to GitHub Container Registry; verify pulling on another machine\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "exercise",
-              "title": "Stretch",
-              "body": "Use a distroless or alpine base image to get the final image under 100MB."
+              "title": "Publish your image to GHCR",
+              "body": "STEP 1 — Tag your multi-stage image for GHCR: `docker tag myapp:dev ghcr.io/<your-username>/myapp:0.1.0`.\n\nSTEP 2 — Authenticate: create a GitHub Personal Access Token with `write:packages`, then `echo $TOKEN | docker login ghcr.io -u <your-username> --password-stdin`. (Treat the token like a password — never commit it.)\n\nSTEP 3 — `docker push ghcr.io/<your-username>/myapp:0.1.0`.\n\nSTEP 4 — Prove portability: `docker rmi` the local image, then `docker pull` it back from GHCR and run it.\n\nYOU SHOULD SEE: your image appear under Packages on your GitHub profile, and a fresh pull-and-run work on a clean machine. That round trip — build once, run anywhere — is the whole promise of containers."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship it",
+          "title": "Ship it: production-grade container",
           "summary": "",
           "items": [
             {
               "kind": "exercise",
-              "title": "Finish and ship the week's project",
-              "body": "Containerise One Real App. Take an existing application (your URL shortener from the web roadmap, or any other). Write a production-grade Dockerfile: multi-stage, non-root user, minimal base image, health check, proper signal handling. docker-compose for local dev with all dependencies. Image must be under 200MB and start in under 5 seconds.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it."
+              "title": "Containerise one real app, properly",
+              "body": "STEP 1 — Pick a real app (one of your own projects is ideal). Write a multi-stage Dockerfile that hits ALL of these: minimal base image, non-root USER, a `.dockerignore`, and a `HEALTHCHECK` instruction that probes the app.\n\nSTEP 2 — Handle signals: make sure your process is PID 1's child correctly (use the exec form `CMD [\"...\"]`, or add a tiny init) so `docker stop` shuts it down gracefully instead of waiting 10s for a kill.\n\nSTEP 3 — Provide a `docker-compose.yml` for any dependencies (DB/cache) with volumes for persistence.\n\nSTEP 4 — Measure and meet the bar: final image under ~200MB, container reaching healthy/ready in under ~5 seconds.\n\nYOU SHOULD SEE: `docker compose up` brings the whole app online; `docker ps` shows status `healthy`; `docker stop` exits fast and clean. Record the image size and start time in your README."
             },
             {
               "kind": "reflection",
-              "title": "Prove you understood it",
-              "body": "You have a Node.js application. Write the conceptual Dockerfile and explain each instruction. FROM node:20-alpine — base image (Alpine Linux is small: 5MB vs 70MB for the Debian node image). WORKDIR /app — set the working directory for all subsequent commands. COPY package*.json ./ — copy package files first (before source code) to leverage layer caching. RUN npm ci --only=production — install dependencies. This layer is cached as long as package*.json does not change (even if your source code changes). COPY . . — copy source code. RUN npm run build (if applicable). EXPOSE 3000 — document the port (does not publish it). CMD [\"node\", \"server.js\"] — the command that runs when the container starts."
+              "title": "From 'works on my machine' to shipped",
+              "body": "Answer in your README: (1) What did multi-stage + non-root + healthcheck each buy you concretely? (2) If a teammate cloned your repo with nothing but Docker installed, could they run the whole stack with one command? If not, what's missing? You now have a reproducible artefact — every deploy week after this assumes you can produce one."
             }
           ]
         }

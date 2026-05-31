@@ -793,175 +793,148 @@
       "days": [
         {
           "number": 1,
-          "title": "Orient — what you're building this week",
+          "title": "The form is where users quit",
           "summary": "",
           "items": [
             {
               "kind": "reflection",
               "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Build a Multi-Step Onboarding Flow.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "body": "Forms are where most mobile users abandon an app — a keyboard covering the field they're typing in, validation that yells too early, a 'next' button that doesn't move focus. This week you build a 4-screen onboarding flow that gets these details right. Before coding, list every form you've personally rage-quit on your phone and WHY. Those frustrations are your spec."
             },
             {
               "kind": "video",
-              "title": "Overview: Forms, Inputs, and Keyboard Handling",
-              "url": "https://www.youtube.com/results?search_query=Forms%2C%20Inputs%2C%20and%20Keyboard%20Handling%20tutorial",
-              "duration_min": 15,
+              "title": "React Native TextInput and forms (search)",
+              "url": "https://www.youtube.com/results?search_query=react%20native%20textinput%20form%20handling%20tutorial",
+              "duration_min": 16,
               "creator": "various",
-              "why": "One solid overview to frame the week. Pick a recent, clearly-explained one — you want the shape of the idea, not a specific channel."
+              "why": "Watch how TextInput is controlled and how keyboardType/returnKeyType change the on-screen keyboard. You want the prop vocabulary before you wire validation."
+            },
+            {
+              "kind": "reading",
+              "title": "TextInput — React Native docs",
+              "url": "https://reactnative.dev/docs/textinput",
+              "why": "Your reference for every input prop: keyboardType, returnKeyType, autoComplete, secureTextEntry, onSubmitEditing. Skim the whole prop list once — you'll use half of it this week."
             }
           ]
         },
         {
           "number": 2,
-          "title": "TextInput",
+          "title": "Inputs that match their data",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "TextInput",
-              "url": "https://www.youtube.com/results?search_query=TextInput%20%E2%80%94%20every%20prop%20that%20matters%3B%20keyboardType%2C%20returnKeyType%2C%20autoComplete.%20Keyboard%20avoidance%20%E2%80%94%20KeyboardAvoidingView%2C%20behavior%3D'padding'%20vs%20'height'%20vs%20'position'",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on textinput, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "exercise",
-              "title": "Build: Build a sign-up form with email, password, confirm password",
-              "body": "Build a sign-up form with email, password, confirm password; validate with Zod\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Build a sign-up form with the RIGHT keyboards",
+              "body": "STEP 1 — Create a SignUp screen with three controlled `TextInput`s: email, password, confirm-password.\n\nSTEP 2 — Configure each input for its data:\n  - email: `keyboardType='email-address'`, `autoCapitalize='none'`, `autoComplete='email'`.\n  - password & confirm: `secureTextEntry`, `autoComplete='password'` (or `'password-new'` for the first).\n\nSTEP 3 — Set `returnKeyType='next'` on email and password, and `'done'` on the last field, so the keyboard's action key reads correctly.\n\nSTEP 4 — Run on BOTH an iOS simulator and an Android emulator.\n\nYOU SHOULD SEE: tapping the email field brings up a keyboard with an '@' visible and no auto-capitalisation; the password fields hide their characters. Right keyboard for the right field is the cheapest UX win in mobile."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Your sign-up form on iPhone SE — does the password input get covered when keyboard appears? Fix it."
+              "title": "Controlled inputs and one source of truth",
+              "body": "Each input's value lives in state and updates via onChangeText. Write one line on why that matters: the component re-renders from state, so validation, formatting, and the submit button's enabled/disabled status all read from ONE place. Uncontrolled inputs scatter that truth and cause the classic 'button enables a render too late' bug."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Form state",
+          "title": "The keyboard-covers-the-field problem",
           "summary": "",
           "items": [
             {
               "kind": "video",
-              "title": "Form state",
-              "url": "https://www.youtube.com/results?search_query=Form%20state%20%E2%80%94%20react-hook-form%20on%20mobile.%20Validation%20with%20Zod%20%E2%80%94%20the%20same%20schema%20on%20client%20and%20server",
-              "duration_min": 14,
+              "title": "KeyboardAvoidingView iOS vs Android (search)",
+              "url": "https://www.youtube.com/results?search_query=react%20native%20keyboardavoidingview%20tutorial%20ios%20android",
+              "duration_min": 12,
               "creator": "various",
-              "why": "Watch one clear explainer on form state, then immediately do the build below — watching without building is how this stops sticking."
+              "why": "The single most-Googled RN layout problem. See why `behavior='padding'` is usually right on iOS and `'height'` or nothing on Android."
             },
             {
               "kind": "reading",
-              "title": "react.dev — Learn",
-              "url": "https://react.dev/learn",
-              "why": "Reference for form state. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "KeyboardAvoidingView — React Native docs",
+              "url": "https://reactnative.dev/docs/keyboardavoidingview",
+              "why": "Read the `behavior` prop table. The correct value genuinely differs by platform — this is one place you legitimately branch on Platform.OS."
             },
             {
               "kind": "exercise",
-              "title": "Build: Add KeyboardAvoidingView",
-              "body": "Add KeyboardAvoidingView; verify the input doesn't get covered by the keyboard on iOS\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "Tap outside an input field. Does the keyboard dismiss? Should it always, or depend on context?"
+              "title": "Stop the keyboard hiding the active input",
+              "body": "STEP 1 — Reproduce the bug first: put your sign-up fields near the bottom of the screen and tap the lowest one on iOS. The keyboard covers it — you can't see what you're typing.\n\nSTEP 2 — Wrap the form in `KeyboardAvoidingView`. Set `behavior={Platform.OS === 'ios' ? 'padding' : 'height'}`.\n\nSTEP 3 — Add a `keyboardVerticalOffset` if a header pushes the math off. Wrap the inner content in a `ScrollView` with `keyboardShouldPersistTaps='handled'` so taps on buttons still register while the keyboard is up.\n\nSTEP 4 — Add a dismiss: tapping outside any field hides the keyboard (`Keyboard.dismiss()` on a wrapping Pressable).\n\nYOU SHOULD SEE: the focused input stays visible ABOVE the keyboard on both platforms, and tapping blank space closes the keyboard. Test iOS and Android — the behavior values differ on purpose."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Secure text",
+          "title": "Validation that helps, not nags",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Secure text",
-              "url": "https://www.youtube.com/results?search_query=Secure%20text%20%E2%80%94%20passwords%2C%20OTP%20autofill%2C%20autoComplete%3D'one-time-code'",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on secure text, then immediately do the build below — watching without building is how this stops sticking."
-            },
-            {
               "kind": "reading",
-              "title": "MDN — Web security",
-              "url": "https://developer.mozilla.org/en-US/docs/Web/Security",
-              "why": "Reference for secure text. Don't read it cover to cover — use it to answer the specific question the build raises."
+              "title": "Zod — schema validation docs",
+              "url": "https://zod.dev/",
+              "why": "Zod defines your form's rules once as a schema and gives typed, readable error messages. You'll pair it with react-hook-form so validation and types stay in sync."
             },
             {
               "kind": "exercise",
-              "title": "Build: Implement focus-next-on-return: tap return on email, focus jumps to password",
-              "body": "Implement focus-next-on-return: tap return on email, focus jumps to password\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "reflection",
-              "title": "Think it through",
-              "body": "Compare native iOS UIDatePicker vs the cross-platform community library on iOS. Which feels more native?"
+              "title": "Wire react-hook-form + Zod",
+              "body": "STEP 1 — Install `react-hook-form`, `zod`, and `@hookform/resolvers`.\n\nSTEP 2 — Define a Zod schema: email is a valid email, password min 8 chars, and confirm must EQUAL password (use `.refine` for the cross-field match).\n\nSTEP 3 — Use `useForm({ resolver: zodResolver(schema) })`. Register each input via a `Controller` (RN inputs aren't native DOM, so you wrap them).\n\nSTEP 4 — Show each field's error message UNDER the field, and only AFTER the user has touched/blurred it — not on first render.\n\nYOU SHOULD SEE: typing a bad email shows 'Invalid email' once you leave the field; mismatched passwords show an error on the confirm field; the submit handler only fires when everything passes. Validation that appears at the right moment feels helpful; validation that fires on keystroke one feels hostile."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Focus management",
+          "title": "Focus flow and OTP autofill",
           "summary": "",
           "items": [
             {
-              "kind": "video",
-              "title": "Focus management",
-              "url": "https://www.youtube.com/results?search_query=Focus%20management%20%E2%80%94%20focus%20next%20field%20on%20submit%2C%20dismiss%20keyboard%20on%20outside%20tap.%20Multi-step%20forms%20%E2%80%94%20wizard%20pattern%2C%20progress%20indicators",
-              "duration_min": 14,
-              "creator": "various",
-              "why": "Watch one clear explainer on focus management, then immediately do the build below — watching without building is how this stops sticking."
+              "kind": "reading",
+              "title": "Keyboard API — React Native docs",
+              "url": "https://reactnative.dev/docs/keyboard",
+              "why": "For programmatic focus and dismiss. Combined with refs, this is how you make 'next' on the keyboard jump to the following field."
             },
             {
               "kind": "exercise",
-              "title": "Build: Add autoComplete='one-time-code' to an OTP input",
-              "body": "Add autoComplete='one-time-code' to an OTP input; test SMS-autofill on iOS\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
+              "title": "Focus-next on return, and one-time-code autofill",
+              "body": "STEP 1 — Give each input a ref. On the email field's `onSubmitEditing`, call `passwordRef.current.focus()`. Chain the fields so pressing the keyboard's 'next' walks down the form without the user tapping each one.\n\nSTEP 2 — Build a separate OTP screen: a single (or 6-cell) code input. Set `keyboardType='number-pad'` and `autoComplete='one-time-code'` (iOS) / `'sms-otp'` (Android) so the OS offers the code from the SMS automatically.\n\nSTEP 3 — Make the last field's return key submit the form.\n\nSTEP 4 — Test the OTP autofill on a real device if you can (simulators don't always surface SMS suggestions).\n\nYOU SHOULD SEE: 'next' hopping field to field with no taps, and on a real phone, the keyboard offering the SMS code as a one-tap suggestion. These are the touches that make a flow feel native rather than ported from a website."
             },
             {
               "kind": "reflection",
-              "title": "Think it through",
-              "body": "Your form has 6 fields. User submits with one empty. How do you indicate which? Should you scroll to it?"
+              "title": "Every tap you remove",
+              "body": "Count the taps your focus-chaining and OTP autofill removed from the sign-up flow versus a naive version. Write the number down. On mobile, each saved tap measurably raises completion rates — this is UX you can quantify."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Native input alternatives",
+          "title": "Native pickers and multi-step state",
           "summary": "",
           "items": [
             {
               "kind": "video",
-              "title": "Native input alternatives",
-              "url": "https://www.youtube.com/results?search_query=Native%20input%20alternatives%20%E2%80%94%20date%20pickers%2C%20time%20pickers%2C%20pickers",
-              "duration_min": 14,
+              "title": "React Native multi-step form / wizard (search)",
+              "url": "https://www.youtube.com/results?search_query=react%20native%20multi%20step%20form%20wizard%20state%20tutorial",
+              "duration_min": 15,
               "creator": "various",
-              "why": "Watch one clear explainer on native input alternatives, then immediately do the build below — watching without building is how this stops sticking."
+              "why": "See how a wizard holds answers across steps and validates each step before advancing. This is the architecture for Day 7's project."
             },
             {
               "kind": "exercise",
-              "title": "Build: Implement a date picker using @react-native-community/datetimepicker",
-              "body": "Implement a date picker using @react-native-community/datetimepicker\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step."
-            },
-            {
-              "kind": "exercise",
-              "title": "Stretch",
-              "body": "Build a custom Switch component styled to your app's design system."
+              "title": "Add a native date picker and a step container",
+              "body": "STEP 1 — Install `@react-native-community/datetimepicker`. Add a 'date of birth' field that opens the NATIVE picker (the iOS wheel / Android calendar) instead of a text field — never make users type a date.\n\nSTEP 2 — Build a `Wizard` container that holds an array of steps and a `formData` object lifted to the top. Each step reads/writes the shared object.\n\nSTEP 3 — Gate advancement: the 'Next' button validates the CURRENT step (its Zod sub-schema) before moving on. A failed step can't be skipped.\n\nSTEP 4 — Add a progress indicator (Step 2 of 4) so users know how far they have to go.\n\nYOU SHOULD SEE: the native date picker appear on tap, and a multi-step shell where each step's data accumulates into one object and you can't advance past invalid input. That shell is your project skeleton."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Ship it",
+          "title": "Ship it: 4-screen onboarding",
           "summary": "",
           "items": [
             {
               "kind": "exercise",
-              "title": "Finish and ship the week's project",
-              "body": "Build a Multi-Step Onboarding Flow. 4 screens: welcome, account details (email, password), profile (name, photo via camera), preferences (toggles). Progress indicator at top. Each step validates before advancing. Persists progress so user can leave and resume. Test on both platforms — especially the keyboard handling on iOS notch devices.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it."
+              "title": "Build the full onboarding wizard",
+              "body": "STEP 1 — Assemble four steps: (1) Welcome, (2) Account — email/password with Zod validation, (3) Profile — name + a photo via the camera/library, (4) Preferences — a few toggles/switches.\n\nSTEP 2 — Carry state across all four screens in one lifted object. Show a progress indicator on every step.\n\nSTEP 3 — Validate BEFORE advancing each step. Keyboard handling from Day 3 applies on every text screen; focus-chaining from Day 5 on the account step.\n\nSTEP 4 — Persist and resume: save progress (AsyncStorage) so a user who closes the app mid-onboarding returns to the step they left, with their answers intact.\n\nSTEP 5 — Test the ENTIRE flow on both an iOS simulator and an Android emulator — keyboard behaviour, the date picker, and the camera differ across them.\n\nYOU SHOULD SEE: a polished flow you'd be proud to ship — no covered inputs, validation that helps, focus that flows, progress that's visible, and a resume that actually works. Record a screen capture on each platform for your portfolio."
             },
             {
               "kind": "reflection",
-              "title": "Prove you understood it",
-              "body": "You have a form with three fields: name, email, password. How do you implement keyboard tab-through so the user can press Next to move between fields without lifting their hands? Create a ref for each field: const emailRef = useRef<TextInput>(null); const passwordRef = useRef<TextInput>(null). On the name field, set returnKeyType='next' and onSubmitEditing={() => emailRef.current?.focus()}. On the email field, set returnKeyType='next' and onSubmitEditing={() => passwordRef.current?.focus()}. On the password field, set returnKeyType='done' and onSubmitEditing={handleSubmit(onSubmit)}. Set blurOnSubmit={false} on all fields except the last to prevent the keyboard from dismissing between fields."
+              "title": "Cross-platform honesty",
+              "body": "Answer in your README: (1) Name one thing that behaved DIFFERENTLY on iOS vs Android (keyboard avoidance? date picker? OTP autofill?) and how you handled it. (2) Which single detail this week most improved how 'native' the form felt? You now have a reusable form toolkit — every later app screen reuses these patterns instead of reinventing them."
             }
           ]
         }
