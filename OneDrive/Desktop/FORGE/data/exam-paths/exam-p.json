@@ -50,6 +50,18 @@
               "answer": "$P(\\text{neither}) = 0.10$"
             },
             {
+              "kind": "worked",
+              "title": "Inclusion–exclusion for three events",
+              "body": "A student is enrolled in Math, Physics, and Chemistry with $P(M)=0.5$, $P(P)=0.4$, $P(C)=0.3$, $P(M\\cap P)=0.2$, $P(M\\cap C)=0.15$, $P(P\\cap C)=0.1$, and $P(M\\cap P\\cap C)=0.05$. Find the probability the student takes **at least one** of the three.",
+              "steps": [
+                "The three-event version adds back the triple overlap that the pairwise subtractions remove twice: $P(M\\cup P\\cup C) = \\sum P(\\text{singles}) - \\sum P(\\text{pairs}) + P(\\text{triple})$.",
+                "Singles: $0.5 + 0.4 + 0.3 = 1.2$. Pairs: $0.2 + 0.15 + 0.1 = 0.45$. Triple: $0.05$.",
+                "$P(M\\cup P\\cup C) = 1.2 - 0.45 + 0.05 = 0.80$.",
+                "Cross-check the alternating sign pattern (+singles, −pairs, +triple): each region of the Venn diagram is now counted exactly once. So $P(\\text{none}) = 1 - 0.80 = 0.20$."
+              ],
+              "answer": "$P(\\text{at least one}) = 0.80$"
+            },
+            {
               "kind": "trick",
               "title": "Draw the two-circle Venn, fill the middle first",
               "body": "Always place $P(A \\cap B)$ in the overlap **first**, then subtract it from each circle so the *only-A* and *only-B* regions are correct. Once the three regions and the outside sum to 1, you can read off any compound probability by eye — no formula recall under pressure."
@@ -62,9 +74,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What does $A \\cap B$ mean in words?", "back": "Both $A$ and $B$ happen at the same time — the overlap of the two events." },
-                { "front": "De Morgan: rewrite $(A \\cup B)^c$.", "back": "$A^c \\cap B^c$ — *not (A or B)* equals *not-A and not-B*." },
-                { "front": "When is $P(A \\cup B) = P(A) + P(B)$ valid?", "back": "Only when $A$ and $B$ are mutually exclusive, i.e. $P(A \\cap B) = 0$." }
+                { "front": "Why does inclusion–exclusion subtract $P(A\\cap B)$ — and why add the triple back for three events?", "back": "Adding $P(A)+P(B)$ counts the overlap twice, so you subtract it once to count each outcome exactly once. With three events the pairwise subtractions remove the central triple-overlap region too many times, so you add $P(A\\cap B\\cap C)$ back to restore it. It is all bookkeeping to count every region precisely once." },
+                { "front": "Why is De Morgan a probability shortcut, not just set algebra?", "back": "It converts a complement of a union into an intersection (and vice versa). A 'neither' question — $(A\\cup B)^c$ — becomes $A^c\\cap B^c$, which is often far easier to compute directly. Whenever 'at least one' is awkward, complement it and let De Morgan flip the and/or so the easy quantity is exposed." }
               ]
             }
           ],
@@ -143,6 +154,18 @@
               "answer": "$\\approx 0.0399$"
             },
             {
+              "kind": "worked",
+              "title": "When order matters: an offices problem",
+              "body": "A club of 8 members elects a president, a vice-president, and a treasurer — three *distinct* offices, one person each. In how many ways can the slate be filled, and what is the probability that a particular member, Ann, holds one of the three offices?",
+              "steps": [
+                "Order matters here (the roles differ), so use a permutation: $P(8,3) = 8 \\cdot 7 \\cdot 6 = 336$ possible slates.",
+                "Count the slates where Ann holds an office: she can take any of the 3 roles, and the remaining 2 roles are filled from the other 7: $3 \\cdot P(7,2) = 3 \\cdot (7 \\cdot 6) = 126$.",
+                "Probability $= \\dfrac{126}{336} = 0.375$.",
+                "Cross-check via the complement: $P(\\text{Ann gets nothing}) = \\dfrac{P(7,3)}{P(8,3)} = \\dfrac{7\\cdot 6\\cdot 5}{8\\cdot 7\\cdot 6} = \\dfrac{210}{336} = 0.625$, and $1 - 0.625 = 0.375$. ✓"
+              ],
+              "answer": "$336$ slates; $P(\\text{Ann in office}) = 0.375$"
+            },
+            {
               "kind": "trick",
               "title": "Build the count as choose-this-then-that",
               "body": "Every hypergeometric-style count is *choose the good ones $\\times$ choose the rest, over choose everything*. Write the denominator first ($\\binom{N}{n}$ — choose your whole sample), then split the numerator into the groups the problem cares about. The structure writes itself."
@@ -155,9 +178,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Quick test: permutation or combination?", "back": "Ask *does order matter?* Yes → permutation $\\frac{n!}{(n-k)!}$. No → combination $\\binom{n}{k}$." },
-                { "front": "Relationship between $P(n,k)$ and $\\binom{n}{k}$?", "back": "$P(n,k) = \\binom{n}{k}\\cdot k!$ — the permutation counts every combination in all $k!$ orders." },
-                { "front": "State the three probability axioms.", "back": "Non-negativity $P(A)\\ge 0$; total mass $P(S)=1$; countable additivity for disjoint events." }
+                { "front": "Why is the permutation count exactly $k!$ times the combination count?", "back": "A combination is an unordered group of $k$; a permutation is that same group with the seating order tracked. Each group of $k$ can be arranged in $k!$ orders, so $P(n,k) = \\binom{n}{k}\\cdot k!$. That is also *why* combinations are always smaller — they collapse all $k!$ orderings of a group into one count." },
+                { "front": "Why does an equally-likely probability reduce to a counting ratio, and what do the axioms guarantee?", "back": "If every outcome in $S$ is equally likely, the axiom $P(S)=1$ spreads the total mass evenly, so each outcome carries weight $1/|S|$ and an event's probability is just (favorable)/(total). Non-negativity and additivity for disjoint events then guarantee those counts combine consistently — no probability is negative and disjoint pieces simply add." }
               ]
             }
           ],
@@ -235,6 +257,18 @@
               "answer": "$P(\\text{defective}) = 0.032$"
             },
             {
+              "kind": "worked",
+              "title": "The multiplication rule in sequence (no replacement)",
+              "body": "An urn holds 5 red and 3 blue balls. You draw two balls *without replacement*. What is the probability both are red?",
+              "steps": [
+                "Chain the draws with the multiplication rule: $P(R_1 \\cap R_2) = P(R_1)\\,P(R_2 \\mid R_1)$.",
+                "First draw: $P(R_1) = 5/8$. After a red is removed, 4 reds remain of 7 balls, so $P(R_2 \\mid R_1) = 4/7$ — conditioning *shrinks the world* from 8 balls to 7.",
+                "Multiply along the path: $\\dfrac{5}{8}\\cdot\\dfrac{4}{7} = \\dfrac{20}{56} = \\dfrac{5}{14} \\approx 0.357$.",
+                "Cross-check by counting unordered pairs: $\\dfrac{\\binom{5}{2}}{\\binom{8}{2}} = \\dfrac{10}{28} = \\dfrac{5}{14}$ — the conditioning chain and the count agree. ✓"
+              ],
+              "answer": "$P(\\text{both red}) = 5/14 \\approx 0.357$"
+            },
+            {
               "kind": "trick",
               "title": "The tree: branch probabilities multiply along a path",
               "body": "Draw a tree: first branch on the condition ($F_1$ vs $F_2$), then on the outcome (defect vs not). The probability of any leaf is the **product** along its path. To get a marginal like $P(D)$, **add** every leaf where $D$ happens. Multiply along, add across — that single rule solves most conditional problems without algebra."
@@ -247,9 +281,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Why is $P(B)$ in the denominator of $P(A\\mid B)$?", "back": "Conditioning makes $B$ the new sample space, so you renormalize by the size of that new total." },
-                { "front": "State the multiplication rule.", "back": "$P(A \\cap B) = P(A\\mid B)\\,P(B) = P(B\\mid A)\\,P(A)$." },
-                { "front": "When does $P(A\\mid B) = P(A)$?", "back": "Exactly when $A$ and $B$ are independent — knowing $B$ tells you nothing about $A$." }
+                { "front": "Why does $P(B)$ sit in the denominator of $P(A\\mid B)$, and why does the law of total probability work?", "back": "Conditioning makes $B$ the entire new world, so you renormalize by $P(B)$ — the size of that new total — and keep only the $A\\cap B$ slice. The law of total probability runs this in reverse: split $S$ into disjoint conditions $B_i$, find $A$'s share inside each, and weight by how likely each $B_i$ is. Every outcome of $A$ lives in exactly one $B_i$, so the weighted pieces reassemble the whole." },
+                { "front": "Why is $P(A\\mid B)$ generally not equal to $P(B\\mid A)$?", "back": "They divide the *same* overlap $P(A\\cap B)$ by *different* totals — one by $P(B)$, the other by $P(A)$. 'The chance a defective part came from Factory 2' (condition on defective) is a different world than 'Factory 2's defect rate' (condition on Factory 2). Swapping the two is the classic error Bayes' theorem exists to correct." }
               ]
             }
           ],
@@ -336,6 +369,19 @@
               "answer": "$P(\\text{disease} \\mid +) = 0.50$"
             },
             {
+              "kind": "worked",
+              "title": "Reversing the conditional: which factory?",
+              "body": "Recall the factories: Factory 1 makes 60% of units at a 2% defect rate; Factory 2 makes 40% at a 5% defect rate, so the overall defect rate is $0.032$. A unit is found **defective** — what is the probability it came from Factory 2?",
+              "steps": [
+                "Bayes flips the known direction (defect rate *given* factory) into the wanted one (factory *given* defective): $P(F_2 \\mid D) = \\dfrac{P(D\\mid F_2)P(F_2)}{P(D)}$.",
+                "Numerator — the $F_2$ path: $P(D\\mid F_2)P(F_2) = (0.05)(0.4) = 0.020$.",
+                "Denominator — every path that yields a defect (the total probability we already found): $P(D) = 0.032$.",
+                "$P(F_2 \\mid D) = \\dfrac{0.020}{0.032} = 0.625$.",
+                "Cross-check: the other path gives $P(F_1\\mid D) = 0.012/0.032 = 0.375$, and $0.625 + 0.375 = 1$. The posteriors over all causes must sum to 1. ✓ Notice Factory 2 supplies only 40% of units but 62.5% of the defects — the evidence shifted the odds toward the riskier source."
+              ],
+              "answer": "$P(F_2 \\mid \\text{defective}) = 0.625$"
+            },
+            {
               "kind": "trick",
               "title": "Skip the formula — use a population of 10,000",
               "body": "Never plug into the Bayes fraction cold under time pressure. Pick a round population (10,000 or 100,000), split it by the base rate, then apply the rates to get integer counts in each cell. The answer is *favorable count / total positive count*. Faster, and you literally cannot flip the conditional by accident."
@@ -348,9 +394,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What goes in the denominator of Bayes?", "back": "The total probability of the evidence — the sum over every cause path: $\\sum_i P(A\\mid B_i)P(B_i)$." },
-                { "front": "Why can a 99% test give a ~50% posterior?", "back": "With a rare disease, false positives from the large healthy group match true positives from the tiny sick group." },
-                { "front": "Fastest exam approach to Bayes?", "back": "Use a population of 10,000, split by the prior, apply the rates, then take favorable / total positives." }
+                { "front": "Why is the denominator of Bayes the *sum over every cause path*, not just the one you care about?", "back": "The posterior is this cause's share of the evidence, so the denominator must be the total weight of evidence from *all* causes: $\\sum_i P(A\\mid B_i)P(B_i)$. That total is exactly the law of total probability. Dividing one path by the sum of all paths is what forces the posteriors over the causes to add to 1." },
+                { "front": "Why can a 99%-accurate test still leave you only ~50% likely to be sick?", "back": "Because the posterior weighs each path by how many people actually walk it. With a rare disease, the 1% of false positives drawn from the *huge* healthy crowd can equal the true positives from the *tiny* sick group. The prior (base rate) is half the calculation — drop it and you commit the base-rate fallacy." }
               ]
             }
           ],
@@ -428,6 +473,18 @@
               "answer": "$0.999$"
             },
             {
+              "kind": "worked",
+              "title": "Testing whether two events are independent",
+              "body": "You are told $P(A) = 0.5$, $P(B) = 0.4$, and $P(A \\cup B) = 0.7$. Are $A$ and $B$ independent?",
+              "steps": [
+                "Independence is a *checkable equation*, not a story — first recover the overlap. Inclusion–exclusion: $P(A\\cap B) = P(A) + P(B) - P(A\\cup B) = 0.5 + 0.4 - 0.7 = 0.2$.",
+                "Compare to the independence benchmark $P(A)P(B) = 0.5 \\times 0.4 = 0.20$.",
+                "The actual overlap $0.2$ equals the product $0.20$, so **yes, $A$ and $B$ are independent**.",
+                "Cross-check through the conditional form: $P(A\\mid B) = \\dfrac{0.2}{0.4} = 0.5 = P(A)$ — knowing $B$ leaves $A$'s probability unchanged, the defining signature of independence. ✓"
+              ],
+              "answer": "Independent: $P(A\\cap B) = P(A)P(B) = 0.20$"
+            },
+            {
               "kind": "trick",
               "title": "'At least one' → take the complement",
               "body": "Whenever you see *at least one*, do not sum the messy cases — compute $1 - P(\\text{none})$. With independence, $P(\\text{none})$ is just a clean product of the individual failure probabilities. This complement move shows up on the exam constantly."
@@ -440,9 +497,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Independent vs mutually exclusive in one line each.", "back": "Independent: $P(A\\cap B)=P(A)P(B)$, no info. Mutually exclusive: $P(A\\cap B)=0$, can't co-occur." },
-                { "front": "Can two events with positive probability be both independent and mutually exclusive?", "back": "No. Mutual exclusivity forces $P(A\\mid B)=0\\ne P(A)$, so they are dependent." },
-                { "front": "Go-to move for 'at least one'?", "back": "$1 - P(\\text{none})$; under independence, $P(\\text{none})$ is a product of failure probabilities." }
+                { "front": "Why are 'independent' and 'mutually exclusive' nearly opposites, not synonyms?", "back": "Independent means $B$ tells you *nothing* about $A$ ($P(A\\mid B)=P(A)$). Mutually exclusive means $B$ tells you *everything* — $A$ definitely didn't happen ($P(A\\mid B)=0$). So two positive-probability events can be one or the other but never both: exclusivity is a strong form of dependence." },
+                { "front": "Why is the complement the right move for 'at least one' under independence?", "back": "'At least one' spans many messy overlapping cases, but its complement — 'none' — is a single clean event. With independence the events don't interact, so $P(\\text{none})$ factors into a simple product of each failure probability, and $P(\\text{at least one}) = 1 - \\prod P(\\text{fail}_i)$. One subtraction replaces a sum over many cases." }
               ]
             }
           ],
