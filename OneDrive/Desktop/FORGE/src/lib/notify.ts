@@ -50,7 +50,7 @@ export async function sendNotification(kind: NotificationKind, args: Args): Prom
     const actorName = actor?.mentorDisplayName ?? actor?.name ?? "Your mentor";
     const taskTitle = args.taskTitle ?? "your roadmap";
     const { subject, body } = renderTemplate(kind, { actorName, taskTitle, ...args.payload });
-    const href = resolveHref(kind);
+    const href = resolveHref(kind, args);
 
     // ── Always create in-app notification ─────────────────────────
     await prisma.notification.create({
@@ -81,13 +81,20 @@ export async function sendNotification(kind: NotificationKind, args: Args): Prom
   }
 }
 
-function resolveHref(kind: NotificationKind): string {
+function resolveHref(kind: NotificationKind, args: Args): string {
   switch (kind) {
+    // Mentee-facing: these land on the mentee's own notes inbox, where the
+    // mentor's note / shared resource appears.
     case "mentor-left-note":
-    case "mentee-replied":
+    case "mentor-shared-resource":
       return "/dashboard/notes";
+    // Mentor-facing: a mentee replied or asked to unlock. Send the mentor
+    // straight to THAT mentee's page (the thread + reply box live there).
+    // Previously "mentee-replied" pointed at /dashboard/notes, which is the
+    // mentee inbox — so a mentor clicking it landed on their own empty inbox.
+    case "mentee-replied":
     case "mentee-requested-unlock":
-      return "/dashboard/mentor";
+      return `/dashboard/mentor/${args.actorId}`;
     case "mentor-action":
     default:
       return "/dashboard";
