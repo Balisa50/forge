@@ -999,45 +999,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Bonds look like a new topic but they are just an annuity (the coupons) plus a single future payment (the redemption). Price both with tools you already have. The one new insight — premium vs discount — is a 10-second comparison that the exam tests constantly."
+              "body": "A bond intimidates beginners and then turns out to be two old friends stapled together: a stream of equal coupons (a level **annuity**) plus one big redemption payment at the end (a single **discounted lump sum**). You already price both. Add them and you've priced the bond. The only genuinely new idea is *premium vs discount* — whether the bond costs more or less than it pays back — and that's settled by one ten-second glance at coupon-rate-versus-yield, before you touch the calculator."
             },
             {
               "kind": "intuition",
-              "title": "Coupon rate vs yield decides premium or discount",
-              "body": "If a bond's **coupon rate beats the market yield**, investors will pay *extra* for that generous coupon — it trades at a **premium** (price above redemption). If the coupon lags the yield, nobody pays full price, so it trades at a **discount**. Coupon equals yield → it trades exactly at par. That comparison alone tells you the direction before any arithmetic."
+              "title": "Why a generous coupon forces the price above par",
+              "body": "Think like a buyer. A bond's coupon rate is fixed at issue, but the market's required yield drifts. Suppose a bond pays an 8% coupon while the market only demands 6%. That coupon is *too good* — everyone wants it — so buyers bid the price *up* until the richer coupon, spread over a higher purchase price, nets out to just the 6% the market requires. The bond sells at a **premium** (above redemption value). Flip it: a coupon stingier than the market yield can't attract buyers at face value, so the price sinks to a **discount** until the bargain price compensates for the weak coupon. Coupon exactly equal to yield → no adjustment needed → it sells at **par**. So before any arithmetic, the comparison *coupon rate vs yield* already tells you which side of par the price lands on."
             },
             {
               "kind": "formula",
-              "title": "The price formula",
-              "body": "$$P = F r\\,a_{\\overline{n}|} + C v^n$$ where $F$ is face value, $r$ the coupon rate per period, $Fr$ the coupon payment, $C$ the redemption value, $n$ the number of coupons, and $i$ (inside $a$ and $v$) the yield per period. Premium $= P - C$ when positive; discount $= C - P$ when $P < C$."
+              "title": "Assembling the price from its two pieces",
+              "body": "Don't memorize the bond formula as a monolith — build it. **Piece 1, the coupons:** each period the bond pays $Fr$ (face $F$ times coupon rate $r$), for $n$ periods. That's a level annuity worth $Fr\\,a_{\\overline{n}|}$ at the yield $i$. **Piece 2, the redemption:** a single payment $C$ (usually $= F$) arriving at time $n$, worth $Cv^n$ today. Add them: $$P = Fr\\,a_{\\overline{n}|} + C v^n.$$ Everything discounts at the **yield** $i$ — that's the rate the market demands, living inside both $a_{\\overline{n}|}$ and $v^n$.\n\n**The premium/discount formula** makes the intuition exact. Substitute $a_{\\overline{n}|} = \\frac{1-v^n}{i}$ and simplify (take $C=F$): $$P = C + (Fr - Ci)\\,a_{\\overline{n}|}.$$ Read it directly: the price is redemption value $C$ *plus* the present value of the per-period 'coupon excess' $(Fr - Ci)$. If the coupon $Fr$ beats the yield-on-redemption $Ci$, that term is positive — a **premium**. If it's negative — a **discount**. The sign of $(Fr - Ci)$ *is* the premium/discount, proven."
             },
             {
               "kind": "worked",
-              "title": "Price a 10-year coupon bond",
-              "body": "A \\$1000 par bond pays 8% annual coupons, redeems at par in 10 years, and is priced to yield 6%. Find the price.",
+              "title": "Worked example 1 — price a 10-year coupon bond",
+              "body": "A \\$1000 par bond pays 8% annual coupons, redeems at par in 10 years, and is priced to yield 6%. Find the price two ways.",
               "steps": [
-                "Coupon $= Fr = 1000(0.08) = 80$ per year. $a_{\\overline{10}|} = 7.3601$, $v^{10} = 0.55839$.",
-                "$P = 80(7.3601) + 1000(0.55839) = 588.81 + 558.39 = 1147.20$.",
-                "Coupon rate 8% exceeds yield 6%, so the bond trades at a premium — confirmed, $P > 1000$."
+                "**Predict first:** coupon 8% > yield 6% → premium → expect $P > 1000$ before computing.",
+                "**Coupon and factors:** $Fr = 1000(0.08) = 80$; $a_{\\overline{10}|6\\%} = 7.3601$, $v^{10} = 0.55839$.",
+                "**Two-piece formula:** $P = 80(7.3601) + 1000(0.55839) = 588.81 + 558.39 = \\$1147.20$.",
+                "**Cross-check with the premium formula:** $P = C + (Fr - Ci)a_{\\overline{n}|} = 1000 + (80 - 60)(7.3601) = 1000 + 147.20 = \\$1147.20$. The \\$147.20 premium is exactly the PV of the \\$20/yr coupon excess — matching, and $P>1000$ as predicted."
               ],
               "answer": "$P = \\$1147.20$ (premium of \\$147.20)"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — a semiannual bond (period discipline)",
+              "body": "The exam's favorite bond is semiannual. A \\$1000 bond pays 7% coupons *convertible semiannually*, redeems at par in 5 years, yielding 8% convertible semiannually. Price it — the whole challenge is halving and doubling consistently.",
+              "steps": [
+                "**Convert everything to half-year units:** coupon per period $= \\frac{0.07}{2}\\times 1000 = \\$35$; yield per period $= \\frac{0.08}{2} = 4\\%$; number of periods $n = 5\\times 2 = 10$ half-years.",
+                "**Factors at 4% for 10 periods:** $a_{\\overline{10}|4\\%} = \\frac{1 - 1.04^{-10}}{0.04} = 8.1109$; $v^{10} = 1.04^{-10} = 0.67556$.",
+                "**Price:** $P = 35(8.1109) + 1000(0.67556) = 283.88 + 675.56 = \\$959.44$.",
+                "**Sanity:** coupon 7% < yield 8% → discount → $P < 1000$. Confirmed."
+              ],
+              "answer": "$P = \\$959.44$ (discount)"
+            },
+            {
               "kind": "trick",
-              "title": "Predict premium/discount before computing",
-              "body": "Glance at coupon vs yield first. Coupon > yield → premium → answer must exceed redemption. Coupon < yield → discount → below redemption. This instantly eliminates wrong answer choices and catches keystroke errors: if you predicted premium but computed a price below par, you mis-keyed something."
+              "title": "Call premium/discount before you compute",
+              "body": "Always glance at coupon-rate vs yield first and write down 'premium' or 'discount' before pricing. Coupon > yield → premium → the price *must* exceed redemption; coupon < yield → discount → below redemption. This does two things: it eliminates wrong multiple-choice options at a glance, and it catches keystroke errors instantly — if you predicted premium but your calculator says \\$940, you fat-fingered a rate. The prediction costs five seconds and saves the whole question."
             },
             {
               "kind": "trap",
-              "title": "Mismatched coupon and yield periods",
-              "body": "Most bonds pay **semiannual** coupons. Then $n$ is the number of *half-years*, the coupon is $Fr/2$ per period, and the yield must be the *semiannual* yield ($i^{(2)}/2$). Plugging an annual yield with a semiannual coupon count is the signature bond-pricing mistake — halve and double consistently."
+              "title": "Semiannual everything — halve and double in lockstep",
+              "body": "The signature bond mistake is a period mismatch. Most bonds pay **semiannually**, so *three* things must switch to half-year units together: the coupon becomes $Fr/2$, the yield becomes the per-half-year rate ($i^{(2)}/2$), and $n$ becomes the number of half-years (years $\\times 2$). Halve the coupon and yield but forget to double $n$ — or discount semiannual coupons at an annual yield — and the price is garbage. Decide 'this whole problem lives in half-years' up front and convert all three quantities at once, before any factor is computed."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "Bond price formula?", "back": "$P = Fr\\,a_{\\overline{n}|} + Cv^n$ — coupons as an annuity plus discounted redemption." },
-                { "front": "When does a bond trade at a premium?", "back": "When the coupon rate exceeds the yield rate, so $P > C$." },
-                { "front": "Semiannual bond: what gets halved and doubled?", "back": "Coupon is $Fr/2$ per period, yield is per half-year, and $n$ counts half-years (double the years)." }
+                { "front": "What are the two pieces of a bond price, and at what rate do they discount?", "back": "Coupons as a level annuity $Fr\\,a_{\\overline{n}|}$ plus the redemption $Cv^n$, both discounted at the market *yield* $i$ — not the coupon rate." },
+                { "front": "Prove which way a bond trades from $P = C + (Fr-Ci)a_{\\overline{n}|}$.", "back": "The price is redemption plus the PV of the coupon excess $(Fr-Ci)$: positive → premium ($P>C$), negative → discount ($P<C$), zero → par. The sign of $Fr-Ci$ decides it." }
               ]
             }
           ],
@@ -1091,17 +1103,17 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "A bond bought at a premium is worth more than par today but redeems at par — so its book value must *fall* over time. Bought at a discount, it must *rise*. That glide is **amortization of premium** (or **accretion of discount**), and every coupon you receive quietly does double duty: part is true interest, part adjusts the book value toward par."
+              "body": "Here's a small paradox that this concept resolves. You pay \\$1075 for a bond that will redeem for only \\$1000 — and yet it's a perfectly fair deal earning your required yield. How? Over the bond's life its book value must *glide down* from \\$1075 to \\$1000, and each fat coupon quietly hands back a piece of your overpayment along the way. That glide is **amortization of premium** (downhill) or **accretion of discount** (uphill), and the engine behind it is one idea you already met in loan amortization: every payment is *interest plus a correction.*"
             },
             {
               "kind": "intuition",
-              "title": "The coupon is interest plus a correction",
-              "body": "Think of each period as earning the yield on what the bond is currently worth: interest $= i \\times BV$. If the coupon you actually receive exceeds that earned interest (a premium bond, fat coupon), the surplus is a return *of* your overpayment — it writes the book value **down**. If the coupon falls short of earned interest (a discount bond), the shortfall is made up by the book value being written **up**. Either way the book value marches to par by maturity."
+              "title": "Each coupon = interest earned + a book-value correction",
+              "body": "Stop thinking of the coupon as pure income. Each period the bond genuinely *earns* the yield on whatever it's currently worth: interest $= i \\times BV$. The coupon you actually pocket is fixed at $Fr$, and it rarely equals that earned interest — so the difference has to go somewhere, and where it goes is the book value.\n\n**Premium bond** (fat coupon, $Fr >$ earned interest): you're collecting more than you truly earned, so the surplus is really a *return of your overpayment* — it writes the book value **down** toward par. **Discount bond** (skinny coupon, $Fr <$ earned interest): you're collecting less than you earned, and the shortfall is paid by the bond becoming worth **more** — the book value is written **up** toward par. Either direction, the book value is *pulled to par by maturity*, because at redemption it must equal $C$. This is the loan-amortization split (interest vs principal) wearing a bond costume."
             },
             {
               "kind": "formula",
-              "title": "Book value and the amortization split",
-              "body": "Book value at time $t$ = present value of remaining cash flows at the original yield $i$: $$BV_t = Fr\\,a_{\\overline{n-t}|i} + C\\,v^{n-t}$$ Each coupon $Fr$ splits as: interest earned $= i\\,BV_{t-1}$, and principal adjustment $= Fr - i\\,BV_{t-1}$. **Premium** $= P - C$ amortizes down to 0; **discount** $= C - P$ accretes up to 0. The write-down/up amounts grow by $(1+i)$ each period."
+              "title": "Book value and the write-down, derived",
+              "body": "**Book value** is just the bond re-priced at the *original* yield using only the cash flows that remain: $$BV_t = Fr\\,a_{\\overline{n-t}|i} + C\\,v^{n-t}.$$ It's the same two-piece price formula, with the clock advanced. **The split of coupon $t$:** interest earned $= i\\,BV_{t-1}$; book-value adjustment $= Fr - i\\,BV_{t-1}$ (positive write-down for a premium, negative — i.e. a write-up — for a discount).\n\n**Why the adjustments grow by $(1+i)$.** Let the period-$t$ write-down be $w_t = Fr - iBV_{t-1}$. The book value moves by exactly that write-down: $BV_t = BV_{t-1} - w_t$. Then $w_{t+1} - w_t = -i(BV_t - BV_{t-1}) = -i(-w_t) = iw_t$, so $$w_{t+1} = (1+i)w_t.$$ Identical algebra to the loan-principal ladder — the write-downs (or write-ups) form a geometric sequence with ratio $(1+i)$. So the $k$-th adjustment is $w_1(1+i)^{k-1}$, and you can leap to any year without building the table."
             },
             {
               "kind": "widget",
@@ -1112,33 +1124,45 @@
             },
             {
               "kind": "worked",
-              "title": "One line of the amortization schedule",
-              "body": "A \\$1000 par bond with 8% annual coupons yields 6%, redeems at par. Its current book value is \\$1075. Find this period's interest earned and premium amortized.",
+              "title": "Worked example 1 — one line of the schedule",
+              "body": "A \\$1000 par bond with 8% annual coupons yields 6%, redeems at par. Its current book value is \\$1075. Find this period's interest earned, the premium amortized, and the new book value.",
               "steps": [
-                "Coupon received: $Fr = 1000(0.08) = 80$.",
-                "Interest earned at the yield: $i\\,BV = 0.06(1075) = 64.50$.",
-                "Premium amortized (write-down) $= 80 - 64.50 = 15.50$.",
-                "New book value $= 1075 - 15.50 = 1059.50$ — closer to par, as a premium bond must be."
+                "**Coupon received:** $Fr = 1000(0.08) = 80$ (fixed).",
+                "**Interest actually earned:** yield times *current book value*, $0.06(1075) = \\$64.50$.",
+                "**Premium amortized (write-down):** the surplus coupon, $80 - 64.50 = \\$15.50$.",
+                "**New book value:** $1075 - 15.50 = \\$1059.50$ — nudged toward par, exactly as a premium bond must move."
               ],
-              "answer": "Interest \\$64.50; premium amortized \\$15.50"
+              "answer": "Interest \\$64.50; premium amortized \\$15.50; new BV \\$1059.50"
             },
             {
-              "kind": "trick",
-              "title": "Write-downs grow geometrically by $(1+i)$",
-              "body": "You rarely need the whole schedule. The principal-adjustment amounts form a geometric sequence: each period's write-down (or write-up) is $(1+i)$ times the previous one. So if the first premium amortized is $P_1$, the $k$-th is $P_1(1+i)^{k-1}$, and the total amortized over any stretch is a small geometric sum. This shortcuts most 'find the amortization in year $k$' questions."
+              "kind": "worked",
+              "title": "Worked example 2 — jump to a future year with the ladder",
+              "body": "For the same bond, suppose the *first* premium amortized (in year 1) is \\$14.61. Without building the whole schedule, find the premium amortized in year 5 and the total amortized over years 1–5.",
+              "steps": [
+                "**Use the geometric ladder** $w_k = w_1(1+i)^{k-1}$ with $w_1 = 14.61$, $i = 6\\%$.",
+                "**Year 5:** $w_5 = 14.61(1.06)^4 = 14.61(1.26248) = \\$18.44$.",
+                "**Total over years 1–5** is a geometric sum: $w_1\\,s_{\\overline{5}|6\\%}$... more directly, $14.61\\cdot\\dfrac{(1.06)^5 - 1}{0.06} = 14.61(5.6371) = \\$82.36$.",
+                "**Interpretation:** the book value fell \\$82.36 over those five years — and you never touched a coupon-by-coupon table. The ladder turns a schedule grind into one multiplication."
+              ],
+              "answer": "$w_5 \\approx \\$18.44$; total amortized $\\approx \\$82.36$"
+            },
+            {
+              "kind": "widget",
+              "widget": {
+                "id": "bond-bookvalue",
+                "caption": "Set the coupon rate against the yield and watch the book value glide to par: above-yield coupons make a **premium** bond amortize *downward*, below-yield coupons make a **discount** bond accrete *upward*. The write-down/write-up each period is exactly the gap between the coupon and the interest earned on the current book value."
+              }
             },
             {
               "kind": "trap",
-              "title": "Interest is on book value, not par",
-              "body": "The earned interest each period is $i \\times BV_{t-1}$ — the **yield** times the **current book value** — not the coupon, and not the yield times par. Students often compute interest on the face amount; that only coincides when the bond is at par. Second trap: amortization writes a premium *down* and a discount *up*; getting the sign backwards corrupts the entire schedule."
+              "title": "Interest is yield × book value — never coupon, never par",
+              "body": "The earned interest each period is $i \\times BV_{t-1}$: the **yield** times the **current book value**. Three ways students get this wrong: using the coupon as the interest (the coupon is cash received, not interest earned), using the yield times *par* (only equals book value at par), or using the *coupon rate* instead of the yield. Each only coincidentally matches at par, which is exactly why par problems lull you into the bad habit. Second trap: signs — a premium writes **down**, a discount writes **up**; invert that and your whole schedule drifts the wrong way and misses par at maturity."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "Book value of a bond at time $t$?", "back": "PV of remaining coupons and redemption at the original yield: $Fr\\,a_{\\overline{n-t}|}+Cv^{n-t}$." },
-                { "front": "How does each coupon split?", "back": "Interest earned $=i\\,BV_{t-1}$; the rest adjusts (amortizes) the book value." },
-                { "front": "Premium bond book value over time?", "back": "Falls toward par (premium amortizes down)." },
-                { "front": "How do successive write-down amounts change?", "back": "They grow by a factor of $(1+i)$ each period." }
+                { "front": "Why does each coupon split into 'interest earned' and a book-value adjustment, and what's the interest piece?", "back": "The bond earns $i\\times BV_{t-1}$ (yield on current value); the coupon $Fr$ differs from that, and the gap adjusts book value — down for a premium, up for a discount. Same idea as loan I/P split." },
+                { "front": "Prove the premium-amortized amounts grow by $(1+i)$.", "back": "With $w_t = Fr - iBV_{t-1}$ and $BV_t = BV_{t-1}-w_t$: $w_{t+1}-w_t = -i(BV_t-BV_{t-1}) = iw_t$, so $w_{t+1}=(1+i)w_t$ — a geometric ladder, $w_k=w_1(1+i)^{k-1}$." }
               ]
             }
           ],
@@ -1192,47 +1216,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "A **callable** bond hands the *issuer* the option to redeem early — and they will exercise it whenever it benefits them, which is exactly when it hurts you. To price safely you must assume the call happens at the worst possible time for the investor. The skill is figuring out, without testing every date, which redemption date is the worst."
+              "body": "A **callable** bond comes with a catch buried in the fine print: the *issuer* can hand you your money back early and stop paying coupons — and they'll do it precisely when it's good for them, which is precisely when it's bad for you. You're selling them an option, and you must price the bond as if they'll exercise it at the worst possible moment for you. The entire skill is figuring out *which* redemption date is the worst — and there's a one-line rule that beats testing them all."
             },
             {
               "kind": "intuition",
-              "title": "The issuer calls when it's cheap for them",
-              "body": "An issuer refinances (calls the bond) when rates have fallen — they would rather reissue cheaply. For *you*, the holder, the price you can safely pay is the **lowest** price across all possible redemption dates, because you must survive the issuer's most unfavorable-to-you choice. So you compute the bond's price at every allowable call date and take the **minimum** — the 'yield to worst' price. Pay more than that and a call could hand you a loss."
+              "title": "The issuer calls when it's cheap for them — so plan for your worst case",
+              "body": "Why would an issuer redeem early? When rates have fallen and they can refinance their debt more cheaply — they'd rather pay off your fat old bond and reissue at today's lower rates. That decision is made in *their* interest, never yours. So as the buyer you can't assume the rosy scenario; you must assume the issuer picks the redemption date that gives *you* the **lowest** value. Concretely: compute the price at every allowable call date and **take the minimum** — the famous 'yield to worst.' Pay any more than that minimum and, if the bond is called at the bad-for-you date, you've locked in a yield below what you wanted. The minimum price is your safe maximum bid."
             },
             {
               "kind": "formula",
-              "title": "Premium vs discount decides the call date",
-              "body": "Compute the price at each candidate redemption date $t$ using the desired yield and take the minimum. A shortcut from the premium/discount sign (level coupons, redemption at par): if the bond is at a **premium** (coupon $>$ yield), the issuer calls **earliest** — price using the *earliest* call date. If at a **discount** (coupon $<$ yield), assume the **latest** date (maturity). Premium → call soon; discount → call late."
+              "title": "Why premium calls early and discount calls late — derived",
+              "body": "The brute-force method: price the bond at each candidate redemption date and take the smallest. But you can usually *predict* the worst date with one observation. Recall the premium/discount formula $P = C + (Fr - Ci)\\,a_{\\overline{n}|}$.\n\n**Premium bond** ($Fr > Ci$): the coupon-excess term $(Fr-Ci)a_{\\overline{n}|}$ is *positive* and *grows with $n$* (longer annuity → bigger $a_{\\overline{n}|}$). So a *longer* life means a *higher* price — which means the **shortest** life gives the **lowest** price. Worst-for-you = **earliest** call date. (Intuitively: a premium bond's value is its above-market coupons; the sooner it's called, the fewer of those golden coupons you collect.)\n\n**Discount bond** ($Fr < Ci$): now $(Fr-Ci)$ is *negative*, so a longer annuity makes the price *lower* — the **longest** life gives the minimum. Worst-for-you = **latest** date (maturity). So the rule isn't memorization, it's the sign of $(Fr-Ci)$ telling you which direction stretches the price down."
             },
             {
               "kind": "worked",
-              "title": "Pricing a callable premium bond",
+              "title": "Worked example 1 — which date to price (premium)",
               "body": "A \\$1000 bond pays 9% annual coupons and is callable at par at the end of years 8, 9, or 10. You want a 7% yield. Which date do you price for, and why?",
               "steps": [
-                "Coupon 9% > yield 7%, so the bond trades at a **premium** at every date.",
-                "For a premium bond the price is *lower* the sooner it is called (you lose the remaining above-market coupons earlier).",
-                "So the worst case for you is the **earliest** call, end of year 8 — price the bond as a 8-year bond.",
-                "Pay no more than that price; if you assumed year 10 you would overpay and a year-8 call would sting."
+                "**Premium or discount?** Coupon 9% > yield 7% → premium at every date.",
+                "**Direction of price vs life:** for a premium bond, $(Fr-Ci) = (90-70) = 20 > 0$, so price *rises* with more remaining years.",
+                "**Therefore the minimum price is at the shortest life** — the **earliest** call, end of year 8. Price it as an 8-year bond.",
+                "**Why it matters:** if you naively priced for year 10 you'd pay more, and a year-8 call would crater your realized yield below 7%."
               ],
               "answer": "Price for the earliest call (year 8)"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — when a call premium breaks the rule",
+              "body": "A \\$1000, 6%-annual-coupon bond yields 7% and is callable at \\$1050 at end of year 5 or at par (\\$1000) at maturity, year 10. The shortcut says 'discount → latest,' but the varying redemption value means you must check. Show the safe approach.",
+              "steps": [
+                "**The clean rule assumes a constant redemption value** — here $C$ is \\$1050 at year 5 but \\$1000 at year 10, so the sign-of-$(Fr-Ci)$ shortcut is no longer reliable. Price both dates explicitly.",
+                "**Year 5 at \\$1050 redemption:** $P = 60\\,a_{\\overline{5}|7\\%} + 1050\\,v^5 = 60(4.1002) + 1050(0.71299) = 246.01 + 748.64 = \\$994.65$.",
+                "**Year 10 at \\$1000 redemption:** $P = 60\\,a_{\\overline{10}|7\\%} + 1000\\,v^{10} = 60(7.0236) + 1000(0.50835) = 421.42 + 508.35 = \\$929.77$.",
+                "**Take the minimum:** \\$929.77 (year 10). Pay no more — the extra call premium at year 5 wasn't enough to make the early date the worst here."
+              ],
+              "answer": "Price \\$929.77 (year 10 is worst)"
+            },
+            {
               "kind": "trick",
-              "title": "Premium → earliest, discount → latest",
-              "body": "Memorize the one-liner: **premium bonds get called early, discount bonds run to maturity.** A premium bond loses value as it approaches par, so the issuer redeems it as soon as allowed; price for the earliest call. A discount bond gains value toward par, so the issuer has no reason to call early; price for the latest date. This skips computing every date's price."
+              "title": "Premium → earliest, discount → latest (par calls only)",
+              "body": "When every call is at the *same* redemption value (usually par), skip the computation marathon: **premium bonds are priced for the earliest call, discount bonds for the latest.** A premium bond's worth is its surplus coupons, so the issuer yanks it as soon as allowed — earliest. A discount bond climbs toward par, so the issuer gains nothing by calling early — latest. One glance at coupon-vs-yield picks the date. But the instant the redemption value *varies* by date (a call premium), this one-liner can lie — fall back to pricing each date and taking the minimum."
             },
             {
               "kind": "trap",
-              "title": "Call premiums and 'worst for the investor'",
-              "body": "Two subtleties: (1) if the bond can be called *above* par (a call premium), the redemption value $C$ differs by date, and the simple premium/discount rule may not directly apply — you must price each date explicitly. (2) Always frame it as worst-for-the-**investor** (lowest price), not best-for-the-issuer phrased loosely — they coincide here, but stating it as the minimum price keeps you from inverting the logic under pressure."
+              "title": "Call premiums void the shortcut; always frame as minimum price",
+              "body": "Two things sink students. **(1) Varying redemption values:** if the bond can be called *above* par with the premium shrinking over time, the redemption $C$ changes by date and the tidy premium→early / discount→late rule no longer holds — you must price each candidate date and compare, as in Worked Example 2. **(2) Logic inversion under pressure:** always operationalize it as 'the **minimum price** over all dates,' not a fuzzy 'best for the issuer.' They coincide, but the minimum-price framing is concrete and keeps you from flipping the comparison when the clock is ticking."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "How do you price a callable bond safely?", "back": "Compute the price at every allowable redemption date and take the minimum (yield to worst)." },
-                { "front": "Premium bond — which call date?", "back": "Earliest: a premium bond is called as soon as possible." },
-                { "front": "Discount bond — which call date?", "back": "Latest (maturity): the issuer has no incentive to call early." },
-                { "front": "When does the simple rule break?", "back": "When the call/redemption value varies by date (call premium) — price each date explicitly." }
+                { "front": "Why is a callable bond priced at the *minimum* over redemption dates?", "back": "The issuer calls in their own interest (when rates fall), i.e. the date worst for you. As a buyer you must survive that, so your safe price is the lowest across all allowable dates — 'yield to worst.'" },
+                { "front": "Derive which call date is worst for a par-redemption premium bond.", "back": "Price $= C + (Fr-Ci)a_{\\overline{n}|}$ with $Fr>Ci$, so price rises with $n$; the minimum is at the shortest life → earliest call. (Discount: $Fr<Ci$ → price falls with $n$ → latest. Breaks if $C$ varies by date.)" }
               ]
             }
           ],
