@@ -1430,6 +1430,18 @@
               "answer": "$f_X(x) = x + \\tfrac{1}{2}, \\ 0 \\le x \\le 1$"
             },
             {
+              "kind": "worked",
+              "title": "Marginal over a triangular support",
+              "body": "Let $f(x,y) = 8xy$ on the triangle $0 < x < y < 1$ (and 0 elsewhere). Find the marginal $f_X(x)$ — the support is the part that trips people up.",
+              "steps": [
+                "Fix $x$ and ask which $y$ are allowed: the constraint $x < y < 1$ means $y$ runs from $x$ up to $1$, **not** from $0$ to $1$. Sketching the triangle makes this obvious.",
+                "Integrate out $y$ over those correct limits: $f_X(x) = \\int_x^1 8xy\\,dy = 8x\\cdot\\dfrac{y^2}{2}\\Big|_x^1 = 4x(1 - x^2) = 4x - 4x^3$, for $0 < x < 1$.",
+                "Cross-check it is a valid density: $\\int_0^1 (4x - 4x^3)\\,dx = 2x^2 - x^4\\big|_0^1 = 2 - 1 = 1$. ✓",
+                "Note independence fails here: the support is a triangle, so knowing $X = x$ restricts $Y$ to $(x,1)$ — the variables are dependent no matter how the density looks."
+              ],
+              "answer": "$f_X(x) = 4x - 4x^3$, $0 < x < 1$"
+            },
+            {
               "kind": "trick",
               "title": "Test independence by trying to factor",
               "body": "To check independence fast, see whether $f(x,y)$ splits into a pure-$x$ piece times a pure-$y$ piece **over a rectangular region**. If the support is a triangle, or the density tangles $x$ and $y$ together (like $x + y$), they are dependent — no need to compute marginals first."
@@ -1442,9 +1454,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "How do you get $f_X(x)$ from a joint density?", "back": "Integrate (or sum) the joint over all values of $y$ — collapse the surface along $Y$." },
-                { "front": "Independence test for a joint density?", "back": "It factors as $f_X(x)f_Y(y)$ over a rectangular support; tangled densities or non-rectangular support mean dependence." },
-                { "front": "What sets the integration limits for a marginal?", "back": "The region of support of the joint distribution — sketch it first." }
+                { "front": "Why does marginalizing mean integrating (or summing) out the other variable?", "back": "The joint $f(x,y)$ is a probability surface over the plane. The marginal $f_X(x)$ pools *every* way $X=x$ can occur regardless of $Y$, so you collapse the surface along the $Y$ direction — $\\int f(x,y)\\,dy$ (continuous) or $\\sum_y f(x,y)$ (discrete). You're adding up all the $Y$-possibilities to leave a one-variable distribution." },
+                { "front": "Why do the support region and the factoring test decide independence and the integration limits together?", "back": "The limits come from the *support*: on a triangle like $0<x<y<1$, $y$ runs from $x$ to $1$, not $0$ to $1$ — wrong bounds corrupt everything downstream. That same support also signals dependence: independence requires $f(x,y)=f_X(x)f_Y(y)$ over a *rectangular* region, so a triangular support or an $x$-and-$y$-tangled density (like $x+y$) means the variables are dependent — no marginals needed to see it." }
               ]
             }
           ],
@@ -1515,6 +1526,18 @@
               "answer": "$\\mathrm{Var}(X+Y) = 17$, $\\mathrm{Var}(X-Y) = 9$"
             },
             {
+              "kind": "worked",
+              "title": "From correlation to a weighted-portfolio variance",
+              "body": "Two risks have $\\mathrm{Var}(X) = 4$, $\\mathrm{Var}(Y) = 9$, and correlation $\\rho = 0.5$. A portfolio holds $2X + 3Y$. Find $\\mathrm{Cov}(X,Y)$ and then $\\mathrm{Var}(2X + 3Y)$.",
+              "steps": [
+                "Recover covariance from correlation by un-rescaling: $\\mathrm{Cov}(X,Y) = \\rho\\,\\sigma_X\\sigma_Y = 0.5\\,(\\sqrt{4})(\\sqrt{9}) = 0.5(2)(3) = 3$.",
+                "Use the general linear-combination rule: $\\mathrm{Var}(aX+bY) = a^2\\mathrm{Var}(X) + b^2\\mathrm{Var}(Y) + 2ab\\,\\mathrm{Cov}(X,Y)$ — the scalars enter *squared* on the variances and as $2ab$ on the covariance.",
+                "Plug $a=2$, $b=3$: $\\mathrm{Var}(2X+3Y) = 4(4) + 9(9) + 2(2)(3)(3) = 16 + 81 + 36 = 133$.",
+                "Cross-check the covariance contribution's sign: both weights are positive, so the $+36$ correctly *inflates* the variance — positively correlated risks held in the same direction compound, they don't diversify. ✓"
+              ],
+              "answer": "$\\mathrm{Cov} = 3$; $\\mathrm{Var}(2X+3Y) = 133$"
+            },
+            {
               "kind": "trick",
               "title": "Independent → covariance is 0 → variances just add",
               "body": "If the problem says independent (or uncorrelated), $\\mathrm{Cov} = 0$, so $\\mathrm{Var}(X \\pm Y) = \\mathrm{Var}(X) + \\mathrm{Var}(Y)$ — note it is a **plus** even for a difference, because the covariance term that would carry the sign is zero. That subtlety trips up a lot of students."
@@ -1527,9 +1550,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "$\\mathrm{Cov}(X,Y) = ?$ in terms of expectations.", "back": "$E[XY] - E[X]E[Y]$." },
-                { "front": "$\\mathrm{Var}(X - Y)$ for correlated variables?", "back": "$\\mathrm{Var}(X) + \\mathrm{Var}(Y) - 2\\mathrm{Cov}(X,Y)$ — the covariance term flips to minus." },
-                { "front": "Does $\\rho = 0$ imply independence?", "back": "No — only no linear relationship. Independence implies $\\rho=0$, not the reverse." }
+                { "front": "Why does $\\mathrm{Var}(X\\pm Y)$ carry a $\\pm 2\\,\\mathrm{Cov}$ term, and why does it vanish under independence?", "back": "Expanding $\\mathrm{Var}(X\\pm Y)=E[((X\\pm Y)-\\mu)^2]$ produces the two own-variances plus a cross-term $\\pm 2\\,\\mathrm{Cov}(X,Y)$ that captures how the two move together. If they're independent (or just uncorrelated) that covariance is $0$, so the variances simply add — and crucially it's a *plus* even for $X-Y$, because the sign-carrying term is gone." },
+                { "front": "Why doesn't $\\rho = 0$ imply independence?", "back": "Correlation only detects a *linear* relationship. A variable can depend strongly on another through a nonlinear shape — e.g. $Y=X^2$ with $X$ symmetric about 0 has $\\mathrm{Cov}=0$ yet $Y$ is completely determined by $X$. Independence forces $\\rho=0$, but the converse fails — never upgrade 'uncorrelated' to 'independent'." }
               ]
             }
           ],
@@ -1598,7 +1620,7 @@
             {
               "kind": "worked",
               "title": "Conditional density from a joint",
-              "body": "Let $f(x,y) = \\frac{x+y}{?}$… use $f(x,y) = 2$ on the triangle $0 < x < y < 1$. Find $f_{X\\mid Y}(x \\mid y)$ and $E[X \\mid Y = y]$.",
+              "body": "Let $f(x,y) = 2$ on the triangle $0 < x < y < 1$. Find $f_{X\\mid Y}(x \\mid y)$ and $E[X \\mid Y = y]$.",
               "steps": [
                 "Marginal of $Y$: $f_Y(y) = \\int_0^y 2\\,dx = 2y$ for $0 < y < 1$.",
                 "Conditional: $f_{X\\mid Y}(x\\mid y) = \\frac{2}{2y} = \\frac{1}{y}$ for $0 < x < y$ — i.e. $X \\mid Y=y$ is Uniform$(0,y)$.",
@@ -1606,6 +1628,18 @@
                 "The conditional turned a 2-D triangle into a simple 1-D uniform once $y$ is fixed."
               ],
               "answer": "$f_{X\\mid Y}=\\tfrac1y$ on $(0,y)$; $E[X\\mid Y=y]=\\tfrac{y}{2}$"
+            },
+            {
+              "kind": "worked",
+              "title": "A non-uniform conditional slice",
+              "body": "Let $f(x,y) = x + y$ on the unit square $0 \\le x,y \\le 1$. Find the conditional density $f_{X\\mid Y}(x\\mid y)$ and the conditional mean $E[X\\mid Y=y]$.",
+              "steps": [
+                "Divide by the marginal of the variable you condition on: first $f_Y(y) = \\int_0^1 (x+y)\\,dx = \\tfrac12 + y$.",
+                "Conditional density: $f_{X\\mid Y}(x\\mid y) = \\dfrac{x+y}{y + \\tfrac12}$ for $0 \\le x \\le 1$ — a *tilted* density, not uniform, because the slice is not flat.",
+                "Conditional mean: $E[X\\mid Y=y] = \\displaystyle\\int_0^1 x\\cdot\\frac{x+y}{y+\\tfrac12}\\,dx = \\frac{\\int_0^1 (x^2 + xy)\\,dx}{y+\\tfrac12} = \\frac{\\tfrac13 + \\tfrac{y}{2}}{y+\\tfrac12} = \\frac{3y+2}{6y+3}$.",
+                "Cross-check at $y=0$: the slice becomes $f_{X\\mid Y}(x\\mid 0) = 2x$, whose mean is $\\tfrac23$; the formula gives $\\tfrac{2}{3}$ too. ✓ And note $E[X\\mid Y=y]$ genuinely depends on $y$ — confirming $X$ and $Y$ are dependent."
+              ],
+              "answer": "$f_{X\\mid Y}=\\dfrac{x+y}{y+1/2}$; $E[X\\mid Y=y]=\\dfrac{3y+2}{6y+3}$"
             },
             {
               "kind": "trick",
@@ -1620,10 +1654,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Conditional density formula?", "back": "$f_{X\\mid Y}(x\\mid y)=\\frac{f(x,y)}{f_Y(y)}$ — slice over marginal." },
-                { "front": "What is $E[X\\mid Y=y]$?", "back": "The mean of the conditional distribution — a function of $y$." },
-                { "front": "Conditional when $X,Y$ independent?", "back": "Just the marginal: $f_{X\\mid Y}(x\\mid y)=f_X(x)$." },
-                { "front": "Why divide by the marginal?", "back": "To renormalize the slice (area $f_Y(y)$) back to a density of total area 1." }
+                { "front": "Why is the conditional density a *slice divided by the marginal* — and which marginal?", "back": "Fixing $Y=y$ takes a vertical slice $f(x,y)$ through the joint surface; that slice has the right *shape* for $X\\mid Y=y$ but its area is only $f_Y(y)$, not 1. Dividing by $f_Y(y)$ — the marginal of the variable you *conditioned on*, not the one you want — rescales it to a legitimate density. Its support also shrinks with $y$ (e.g. $X$ only on $(0,y)$), and you must carry that." },
+                { "front": "Why does recognizing the slice as a named distribution (or independence) save so much work?", "back": "After dividing out the marginal, the conditional is often a standard form in disguise — Uniform$(0,y)$, exponential, beta — so you can quote its mean/variance instead of integrating, which is gold in double-expectation problems that need $E[X\\mid Y]$ as a function of $Y$. And if $X,Y$ are independent, conditioning changes nothing: $f_{X\\mid Y}(x\\mid y)=f_X(x)$." }
               ]
             }
           ],
@@ -1709,6 +1741,18 @@
               "answer": "$E[X]=1.9$, $\\mathrm{Var}(X)=5.29$"
             },
             {
+              "kind": "worked",
+              "title": "A compound Poisson aggregate loss",
+              "body": "The number of claims is $N \\sim \\text{Poisson}(3)$, and each claim has mean $100$ and variance $400$, independent of $N$ and of each other. Find $E[S]$ and $\\mathrm{Var}(S)$ for the aggregate $S = X_1 + \\dots + X_N$.",
+              "steps": [
+                "Mean by the law of total expectation: $E[S] = E[N]\\,E[X] = 3(100) = 300$.",
+                "Variance by the law of total variance (within + between): $\\mathrm{Var}(S) = E[N]\\,\\mathrm{Var}(X) + (E[X])^2\\,\\mathrm{Var}(N)$. Here $\\mathrm{Var}(N) = 3$ (Poisson mean = variance).",
+                "Plug in: $\\mathrm{Var}(S) = 3(400) + (100)^2(3) = 1200 + 30000 = 31200$.",
+                "Cross-check with the Poisson shortcut $\\mathrm{Var}(S) = \\lambda\\,E[X^2]$, where $E[X^2] = \\mathrm{Var}(X) + (E[X])^2 = 400 + 10000 = 10400$: $3(10400) = 31200$. ✓ Both routes agree."
+              ],
+              "answer": "$E[S] = 300$, $\\mathrm{Var}(S) = 31200$"
+            },
+            {
               "kind": "trick",
               "title": "Compound sums: $E[S]=E[N]E[X]$",
               "body": "For a compound sum $S = X_1 + \\dots + X_N$ where $N$ is random and the $X_i$ are iid (mean $\\mu$, variance $\\sigma^2$), the laws give two memorizable results: $E[S] = E[N]\\,\\mu$ and $\\mathrm{Var}(S) = E[N]\\,\\sigma^2 + \\mu^2\\,\\mathrm{Var}(N)$. If $N$ is Poisson$(\\lambda)$ (so mean = variance = $\\lambda$), this collapses to the elegant $\\mathrm{Var}(S) = \\lambda\\,E[X^2]$. Memorize these — they appear every sitting."
@@ -1721,10 +1765,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Law of total expectation?", "back": "$E[X]=E[E[X\\mid Y]]$ — average the conditional means." },
-                { "front": "Law of total variance?", "back": "$\\mathrm{Var}(X)=E[\\mathrm{Var}(X\\mid Y)]+\\mathrm{Var}(E[X\\mid Y])$ (within + between)." },
-                { "front": "Compound mean $E[S]$ for $S=\\sum_1^N X_i$?", "back": "$E[N]\\,E[X]$." },
-                { "front": "Compound variance $\\mathrm{Var}(S)$?", "back": "$E[N]\\mathrm{Var}(X)+(E[X])^2\\mathrm{Var}(N)$; Poisson $N$: $\\lambda E[X^2]$." }
+                { "front": "Why does $E[X]=E[E[X\\mid Y]]$ work — what's the strategy it encodes?", "back": "When a hidden variable $Y$ (risk class, claim count) makes $X$ easy *once known*, compute the easy conditional answer $E[X\\mid Y]$, then treat it as a random variable — it depends on which $Y$ you land in — and average over $Y$. Solve given the unknown, then average out the unknown. That two-step is the whole engine behind mixture and compound problems." },
+                { "front": "Why does $\\mathrm{Var}(X)$ split into two terms, and what breaks if you drop one?", "back": "Total uncertainty is the spread *within* each class plus the spread *between* the class means: $\\mathrm{Var}(X)=E[\\mathrm{Var}(X\\mid Y)]+\\mathrm{Var}(E[X\\mid Y])$. Keeping only the within-term ($E[\\mathrm{Var}(X\\mid Y)]$) ignores how much the class means differ and *understates* the variance. Widening the gap between class means inflates the between-term while leaving the within-term untouched — so both are essential." }
               ]
             }
           ],
@@ -1795,12 +1837,24 @@
               "title": "Sum of independent normals",
               "body": "$X\\sim N(3,4)$ and $Y\\sim N(1,9)$ are independent. Find the distribution of $X+Y$ and $P(X+Y > 7)$ given $\\Phi(0.5)=0.691$.",
               "steps": [
-                "Normals are closed under addition: $X+Y \\sim N(3+1,\\ 4+9) = N(4, 13)$.",
-                "SD $=\\sqrt{13}\\approx 3.606$. Standardize: $Z = \\frac{7-4}{3.606} \\approx 0.83$… use $\\frac{7-4}{6}$? No — SD is $\\sqrt{13}$.",
-                "$Z=\\frac{7-4}{\\sqrt{13}}\\approx 0.832$, so $P(X+Y>7)=1-\\Phi(0.83)\\approx 1-0.797=0.203$.",
+                "Normals are closed under addition: $X+Y \\sim N(3+1,\\ 4+9) = N(4, 13)$ — means add, variances add.",
+                "Standardize using the SD $\\sqrt{13} \\approx 3.606$ (the SD, not the variance): $Z = \\dfrac{7-4}{\\sqrt{13}} \\approx 0.832$.",
+                "$P(X+Y>7) = 1 - \\Phi(0.83) \\approx 1 - 0.797 = 0.203$.",
                 "The whole problem reduced to one normal because the family is closed — no convolution integral."
               ],
               "answer": "$X+Y\\sim N(4,13)$; $P(\\cdot>7)\\approx0.203$"
+            },
+            {
+              "kind": "worked",
+              "title": "A convolution by hand — and why closure matches it",
+              "body": "$X \\sim \\text{Poisson}(1)$ and $Y \\sim \\text{Poisson}(2)$ are independent. Compute $P(X+Y = 1)$ directly from the convolution, then confirm it with the closure shortcut.",
+              "steps": [
+                "Convolution sums over every split that lands on the target $s=1$: $P(X+Y=1) = P(X=0)P(Y=1) + P(X=1)P(Y=0)$.",
+                "$= \\big(e^{-1}\\big)\\big(2e^{-2}\\big) + \\big(e^{-1}\\big)\\big(e^{-2}\\big) = e^{-3}(2 + 1) = 3e^{-3}$.",
+                "Closure shortcut: independent Poissons add, so $X+Y \\sim \\text{Poisson}(1+2) = \\text{Poisson}(3)$, giving $P(X+Y=1) = \\dfrac{e^{-3}3^1}{1!} = 3e^{-3}$.",
+                "Both give $3e^{-3} \\approx 0.149$. ✓ The convolution *is* the closure rule — the shortcut just skips the sum-over-splits."
+              ],
+              "answer": "$P(X+Y=1) = 3e^{-3} \\approx 0.149$"
             },
             {
               "kind": "trick",
@@ -1815,11 +1869,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "Density of $X+Y$ (independent, continuous)?", "back": "Convolution: $f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$." },
-                { "front": "Sum of independent Normals?", "back": "Normal: means add, variances add." },
-                { "front": "Sum of independent Poissons?", "back": "Poisson$(\\lambda+\\mu)$." },
-                { "front": "When do Binomials add to a Binomial?", "back": "Same success probability $p$: Binomial$(m+n,p)$." },
-                { "front": "Fast way to prove a closure rule?", "back": "Multiply the MGFs and recognize the product." }
+                { "front": "Why is the density of an independent sum a convolution?", "back": "To get $P(X+Y=s)$ you add up *every* way the total can be $s$: $X=k$ paired with $Y=s-k$, over all $k$. That sum-over-splits is $\\sum_k P(X=k)P(Y=s-k)$ (discrete) or $\\int f_X(x)f_Y(s-x)\\,dx$ (continuous) — geometrically, sliding one density across the other and integrating the overlap." },
+                { "front": "Why does family closure work, and what two conditions can break it?", "back": "Independent sums multiply MGFs, and for closed families that product is the same family's MGF with parameters combined — e.g. Poisson exponents add to $\\lambda+\\mu$, normal means and variances add. It breaks if (1) parameters don't match (Binomials need the same $p$, Gammas the same scale $\\theta$) or (2) the variables aren't independent — then covariance enters and simple parameter-adding fails." }
               ]
             }
           ],
@@ -1898,6 +1949,18 @@
               "answer": "$\\min \\sim$ Exponential$(3\\lambda)$, mean $\\frac{1}{3\\lambda}$"
             },
             {
+              "kind": "worked",
+              "title": "Maximum of uniforms: CDF, density, and mean",
+              "body": "$U_1, \\dots, U_n$ are iid Uniform$(0,1)$. Find the CDF and density of the maximum $M = \\max U_i$, and its mean.",
+              "steps": [
+                "Use 'all below': $M \\le y$ means every $U_i \\le y$. With $F(y) = y$ on $[0,1]$ and independence, $F_M(y) = [F(y)]^n = y^n$.",
+                "Differentiate (chain rule keeps the inner $f(y)=1$): $f_M(y) = n y^{n-1}$ on $[0,1]$ — this is a Beta$(n,1)$ density.",
+                "Mean: $E[M] = \\int_0^1 y\\cdot n y^{n-1}\\,dy = n\\int_0^1 y^n\\,dy = \\dfrac{n}{n+1}$.",
+                "Sanity check: for $n=3$, $E[M] = \\tfrac34$ — the largest of 3 uniforms sits well above the single-draw mean of $\\tfrac12$, and as $n\\to\\infty$ the max creeps toward 1, exactly as $\\frac{n}{n+1}$ predicts. ✓"
+              ],
+              "answer": "$F_M(y)=y^n$, $f_M(y)=ny^{n-1}$, $E[M]=\\frac{n}{n+1}$"
+            },
+            {
               "kind": "trick",
               "title": "The minimum of exponentials adds the rates",
               "body": "A reflex worth owning: $\\min$ of independent exponentials with rates $\\lambda_1,\\dots,\\lambda_n$ is itself exponential with rate $\\lambda_1+\\dots+\\lambda_n$. (For equal rates, $n\\lambda$.) This is the 'competing risks / first event' shortcut — whenever several exponential clocks race, the winner's time is exponential with the summed rate. No integration, just add rates."
@@ -1910,10 +1973,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "CDF of the maximum of $n$ iid draws?", "back": "$[F(y)]^n$ — all draws below $y$." },
-                { "front": "Survival of the minimum of $n$ iid draws?", "back": "$P(\\min>y)=[1-F(y)]^n$ — all draws above $y$." },
-                { "front": "Min of independent exponentials?", "back": "Exponential with the summed rate $\\sum\\lambda_i$." },
-                { "front": "Density of the max?", "back": "$f_{\\max}(y)=n[F(y)]^{n-1}f(y)$ (chain rule keeps the $f(y)$)." }
+                { "front": "Why is the max's CDF $[F(y)]^n$ but the min's *survival* $[1-F(y)]^n$ — and why aren't they mirror formulas?", "back": "The max is $\\le y$ exactly when *all* $n$ draws are $\\le y$, so by independence the probabilities multiply: $F_{\\max}(y)=[F(y)]^n$. The min is $>y$ exactly when *all* draws *exceed* $y$, so it's the *survival* that powers up: $P(\\min>y)=[1-F(y)]^n$. One works on the CDF, the other on the survival function — swapping them is the classic slip." },
+                { "front": "Why does the minimum of independent exponentials have the summed rate?", "back": "Each survival is $e^{-\\lambda_i y}$, so $P(\\min>y)=\\prod e^{-\\lambda_i y}=e^{-(\\sum\\lambda_i)y}$ — the survival of an exponential with rate $\\sum\\lambda_i$. Intuitively several exponential 'clocks' race and the first to fire wins; the failure rates add, so the winner's time is exponential with the combined rate (the competing-risks shortcut)." }
               ]
             }
           ],
@@ -1991,6 +2052,18 @@
               "answer": "$\\approx 0.067$"
             },
             {
+              "kind": "worked",
+              "title": "Normal approximation to a binomial, with continuity correction",
+              "body": "A fair coin is flipped 100 times. Use the CLT to approximate $P(X \\ge 60)$, where $X$ is the number of heads.",
+              "steps": [
+                "$X \\sim \\text{Binomial}(100, 0.5)$ is a sum of 100 iid Bernoullis, so the CLT applies. Mean $= np = 50$; variance $= np(1-p) = 25$, so SD $= 5$.",
+                "Apply the **continuity correction**: a discrete '$X \\ge 60$' becomes the continuous '$Y > 59.5$' — spread each integer's probability over a unit-wide bar and cut at the bar's edge.",
+                "Standardize: $Z = \\dfrac{59.5 - 50}{5} = 1.9$, so $P(X \\ge 60) \\approx 1 - \\Phi(1.9) = 1 - 0.9713 = 0.0287$.",
+                "Cross-check the correction's effect: skipping it gives $Z = \\frac{60-50}{5} = 2.0 \\Rightarrow 0.0228$. The half-unit shift matters for a discrete sum — the corrected $0.0287$ is closer to the exact binomial value. ✓"
+              ],
+              "answer": "$P(X\\ge 60) \\approx 0.0287$"
+            },
+            {
               "kind": "trick",
               "title": "SD of a sum grows like √n, not n",
               "body": "The *variance* of a sum scales with $n$, so the *standard deviation* scales with $\\sqrt{n}$. That is why averages get tighter slowly: to halve the SD of an average you need *four times* the sample. Whenever you standardize a sum, the denominator is $\\sigma\\sqrt{n}$ — never $\\sigma n$."
@@ -2010,9 +2083,8 @@
             {
               "kind": "recall",
               "cards": [
-                { "front": "What does the CLT promise?", "back": "The sum (or mean) of many independent variables is approximately normal, whatever the original shape." },
-                { "front": "Standard deviation of a sum of $n$ iid variables?", "back": "$\\sigma\\sqrt{n}$ — variance scales with $n$, SD with $\\sqrt{n}$." },
-                { "front": "Can you add standard deviations?", "back": "No — add variances (independent case), then take the square root." }
+                { "front": "Why does a sum of many independent variables become normal no matter where you started?", "back": "Each term may be skewed, lumpy, or discrete, but adding many independent copies lets their individual quirks cancel out, and the total smooths into a bell centered at $n\\mu$ with variance $n\\sigma^2$. The more terms, the better the fit — which is why most real quantities (sums of many small effects) end up roughly normal, and why an aggregate-loss question collapses to one $Z$-lookup." },
+                { "front": "Why does the SD of a sum scale like $\\sqrt{n}$, and why can't you add SDs directly?", "back": "For independent variables only *variances* add, so $n$ iid terms give variance $n\\sigma^2$ and therefore SD $\\sigma\\sqrt{n}$ — not $\\sigma n$. To combine two spreads you square to variance, add, then square-root back; writing $\\mathrm{SD}(X+Y)=\\mathrm{SD}(X)+\\mathrm{SD}(Y)$ overstates the spread. (This $\\sqrt{n}$ growth is also why halving an average's SD needs $4\\times$ the data.)" }
               ]
             }
           ],
