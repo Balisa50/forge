@@ -729,6 +729,20 @@
                 "correct": 1,
                 "explain": "$\\sum_{k\\ge1} c/2^k = c\\cdot\\frac{1/2}{1-1/2} = c = 1$, so $c=1$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "The CDF of a loss $X$ is $F(x) = 1 - (1+x)^{-3}$ for $x \\ge 0$. Calculate $P(1 \\le X \\le 3)$.",
+                "choices": ["$0.125$", "$0.109$", "$0.016$", "$0.875$", "$0.984$"],
+                "correct": 1,
+                "explain": "Interval probability is the jump in the CDF: $F(3) - F(1) = [1-(4)^{-3}] - [1-(2)^{-3}] = \\frac{1}{8} - \\frac{1}{64} = \\frac{7}{64} \\approx 0.109$. Taking only $\\frac18$ (forgetting $F(1)$) gives 0.125; only $\\frac{1}{64}$ gives 0.016.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A density has the form $f(x) = c\\,x^2$ on $0 \\le x \\le 3$ and 0 elsewhere. Find $c$, then calculate $P(X > 2)$.",
+                "choices": ["$0.296$", "$0.333$", "$0.667$", "$0.704$", "$0.190$"],
+                "correct": 3,
+                "explain": "Normalize first: $\\int_0^3 c x^2\\,dx = 9c = 1 \\Rightarrow c = \\frac19$. Then $P(X>2) = \\frac19\\int_2^3 x^2\\,dx = \\frac{1}{27}(27-8) = \\frac{19}{27} \\approx 0.704$. The complement 0.296 answers $P(X<2)$ instead.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -832,6 +846,20 @@
                 "correct": 0,
                 "explain": "$\\mathrm{Var}(0.8X) = 0.64\\cdot 10000 = 6400$, so SD $= \\sqrt{6400} = 80$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "An actuary models a risk with $E[X] = 10$ and $E[X^2] = 136$. Calculate the standard deviation of $0.5X + 4$.",
+                "choices": ["$6$", "$9$", "$3$", "$18$", "$2.5$"],
+                "correct": 2,
+                "explain": "Variance shortcut: $\\mathrm{Var}(X) = 136 - 10^2 = 36$. The shift $+4$ drops out and the scale enters squared: $\\mathrm{Var}(0.5X+4) = 0.25(36) = 9$, so SD $= 3$. Answer 9 forgets to take the square root; 18 scales the SD by $0.5\\cdot 36$ incorrectly.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "$X$ is uniformly distributed on $(0,1)$. Calculate $E\\!\\left[\\dfrac{1}{1+X}\\right]$.",
+                "choices": ["$0.693$", "$0.500$", "$1.000$", "$0.667$", "$0.405$"],
+                "correct": 0,
+                "explain": "By LOTUS, $E\\!\\left[\\frac{1}{1+X}\\right] = \\int_0^1 \\frac{1}{1+x}\\,dx = \\ln(1+x)\\big|_0^1 = \\ln 2 \\approx 0.693$. Plugging the mean into the function — $\\frac{1}{1+0.5} = 0.667$ — is the classic LOTUS error (you must average the function, not function the average).",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -936,6 +964,20 @@
                 "correct": 1,
                 "explain": "Binomial$(20, 0.1)$: mean $np = 2$, variance $np(1-p) = 20(0.1)(0.9) = 1.8$.",
                 "difficulty": "core"
+              },
+              {
+                "q": "Calls arrive at a help desk in a Poisson process at a rate of 2 per hour. Calculate the probability of at least one call during a 90-minute period.",
+                "choices": ["$0.865$", "$0.050$", "$0.135$", "$0.997$", "$0.950$"],
+                "correct": 4,
+                "explain": "Scale the rate to the interval: $\\lambda = 2 \\times 1.5 = 3$. Then $P(N \\ge 1) = 1 - e^{-3} = 1 - 0.0498 = 0.950$. Using $\\lambda = 2$ (forgetting to scale to 90 minutes) gives $1 - e^{-2} = 0.865$.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A fair coin is flipped repeatedly. Calculate the probability that the third head occurs on exactly the fifth flip.",
+                "choices": ["$0.3125$", "$0.1875$", "$0.0938$", "$0.1500$", "$0.5000$"],
+                "correct": 1,
+                "explain": "Negative binomial: exactly 2 heads in the first 4 flips, then a head on the 5th: $\\binom{4}{2}(0.5)^2(0.5)^2 \\times (0.5) = 6(0.5)^5 = \\frac{6}{32} = 0.1875$. Omitting the final head's factor gives 0.375; treating it as binomial 'exactly 3 in 5' double-counts orderings.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1040,6 +1082,20 @@
                 "correct": 2,
                 "explain": "$\\mathrm{Var} = \\frac{(6-0)^2}{12} = \\frac{36}{12} = 3$.",
                 "difficulty": "core"
+              },
+              {
+                "q": "A component's lifetime is exponential with mean 8 years. Given it has already survived 4 years, calculate the probability it survives past 12 years.",
+                "choices": ["$0.223$", "$0.607$", "$0.368$", "$0.500$", "$0.135$"],
+                "correct": 2,
+                "explain": "Memorylessness erases the elapsed 4 years: $P(X>12 \\mid X>4) = P(X>8) = e^{-8/8} = e^{-1} \\approx 0.368$. Computing $e^{-12/8} = e^{-1.5} = 0.223$ ignores the conditioning; $e^{-4/8} = 0.607$ uses the wrong gap.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "Claim amounts are normally distributed with mean 1000 and standard deviation 250. The largest 10% of claims exceed what amount? (Use $z_{0.90} = 1.282$.)",
+                "choices": ["$1000$", "$1282$", "$1641$", "$1320$", "$680$"],
+                "correct": 3,
+                "explain": "Invert the standardization: the 90th percentile is $\\mu + z_{0.90}\\sigma = 1000 + 1.282(250) = 1320.5$. Using the variance $250^2$ instead of the SD, or adding $1.282$ directly, produces the off answers.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1144,6 +1200,20 @@
                 "correct": 1,
                 "explain": "This is Bernoulli$(0.7)$. $M'(0)=0.7=E[X]$, $M''(0)=0.7=E[X^2]$, so $\\mathrm{Var}=0.7-0.49=0.21$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A random variable has moment generating function $M(t) = (0.3e^t + 0.7)^5$. Calculate $\\mathrm{Var}(X)$.",
+                "choices": ["$1.05$", "$1.50$", "$0.45$", "$3.50$", "$0.30$"],
+                "correct": 0,
+                "explain": "Match the form $(pe^t + (1-p))^n$: this is Binomial$(n=5, p=0.3)$. So $\\mathrm{Var}(X) = np(1-p) = 5(0.3)(0.7) = 1.05$. Answer 1.50 is the mean $np$; 0.30 is just $p$.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "$X$ has moment generating function $M_X(t) = e^{2t + 3t^2}$. Calculate $\\mathrm{Var}(2X - 1)$.",
+                "choices": ["$6$", "$12$", "$48$", "$24$", "$3$"],
+                "correct": 3,
+                "explain": "Match the normal MGF $e^{\\mu t + \\sigma^2 t^2/2}$: here $\\mu = 2$ and $\\sigma^2/2 = 3 \\Rightarrow \\sigma^2 = 6$. The shift $-1$ drops out and the scale enters squared: $\\mathrm{Var}(2X-1) = 4(6) = 24$. Reading $\\sigma^2 = 3$ (forgetting the $/2$) gives 12.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1248,6 +1318,20 @@
                 "correct": 1,
                 "explain": "Linear monotone transform: $Y$ is uniform on $(1,7)$, length 6, so $f_Y=\\frac16$.",
                 "difficulty": "core"
+              },
+              {
+                "q": "$X$ is exponential with mean 1, so $f_X(x) = e^{-x}$ for $x>0$. Let $Y = e^{-X}$. What is the distribution of $Y$?",
+                "choices": ["Exponential$(1)$", "Uniform$(0,1)$", "Normal$(0,1)$", "Beta$(2,1)$", "Uniform$(0,e)$"],
+                "correct": 1,
+                "explain": "$F_Y(y) = P(e^{-X} \\le y) = P(X \\ge -\\ln y) = e^{-(-\\ln y)} = y$ for $0<y<1$. A CDF of $F_Y(y)=y$ is Uniform$(0,1)$ — this is the probability integral transform ($Y = F_X(X)$ applied to an exponential's own survival form).",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "$X$ is uniform on $(-2, 2)$, so $f_X(x) = \\frac14$. Let $Y = X^2$. Find the density $f_Y(y)$ for $0 < y < 4$.",
+                "choices": ["$\\frac{1}{2\\sqrt{y}}$", "$\\frac{\\sqrt{y}}{2}$", "$\\frac{1}{4\\sqrt{y}}$", "$\\frac14$", "$\\frac{1}{8\\sqrt{y}}$"],
+                "correct": 2,
+                "explain": "$Y=X^2$ is non-monotone, so use the CDF method: $F_Y(y) = P(-\\sqrt{y} \\le X \\le \\sqrt{y}) = \\frac14(2\\sqrt{y}) = \\frac{\\sqrt{y}}{2}$. Differentiate: $f_Y(y) = \\frac{1}{4\\sqrt{y}}$. Treating it as monotone (one branch) drops the factor of 2 and gives $\\frac{1}{8\\sqrt{y}}$.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1352,6 +1436,20 @@
                 "correct": 2,
                 "explain": "Symmetry forces all three measures of center to coincide.",
                 "difficulty": "warmup"
+              },
+              {
+                "q": "Losses follow an exponential distribution with mean 500. Calculate the 75th percentile.",
+                "choices": ["$347$", "$1000$", "$375$", "$1151$", "$693$"],
+                "correct": 4,
+                "explain": "Solve $F(\\pi) = 1 - e^{-\\pi/500} = 0.75$: $e^{-\\pi/500} = 0.25 \\Rightarrow \\pi = -500\\ln(0.25) = 693$. The distractor 347 is the median ($500\\ln 2$) and 1151 is the 90th percentile — other percentiles of the same distribution.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A random variable has density $f(x) = 12x^2(1-x)$ for $0 < x < 1$. Calculate the mode.",
+                "choices": ["$0.667$", "$0.500$", "$0.600$", "$0.333$", "$0.750$"],
+                "correct": 0,
+                "explain": "Maximize the density: $f'(x) = 12(2x - 3x^2) = 12x(2 - 3x) = 0 \\Rightarrow x = \\frac23 \\approx 0.667$. This is a Beta$(3,2)$, whose mode $\\frac{\\alpha-1}{\\alpha+\\beta-2} = \\frac{2}{3}$ confirms it. The mean of this density is 0.6 — a different center.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1456,6 +1554,20 @@
                 "correct": 1,
                 "explain": "The median is $e^{\\mu}$ (since the median of $\\ln X$ is $\\mu$); the mean is the larger $e^{\\mu+\\sigma^2/2}$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "Annual losses are lognormal with parameters $\\mu = 8$ and $\\sigma = 1$ (so $\\ln X \\sim N(8,1)$). Calculate $P(X > e^9)$. (Use $\\Phi(1) = 0.841$.)",
+                "choices": ["$0.841$", "$0.500$", "$0.159$", "$0.023$", "$0.977$"],
+                "correct": 2,
+                "explain": "Take logs: $P(X > e^9) = P(\\ln X > 9) = P\\!\\left(Z > \\frac{9-8}{1}\\right) = P(Z > 1) = 1 - 0.841 = 0.159$. Reporting 0.841 forgets to take the upper tail.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "If $\\ln X \\sim N(4, 2)$ (mean 4, variance 2), calculate $E[X]$.",
+                "choices": ["$e^{4}\\approx 54.6$", "$e^{5}\\approx 148.4$", "$e^{4.5}\\approx 90.0$", "$e^{6}\\approx 403$", "$e^{2}\\approx 7.39$"],
+                "correct": 1,
+                "explain": "The lognormal mean is $E[X] = e^{\\mu + \\sigma^2/2} = e^{4 + 2/2} = e^{5} \\approx 148.4$. The trap answer $e^4 \\approx 54.6$ is the median; dropping the $+\\sigma^2/2$ understates the mean every time.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1560,6 +1672,20 @@
                 "correct": 1,
                 "explain": "Integrate $x$ from 0 to $y$: $f_Y(y) = \\int_0^y 2\\,dx = 2y$ for $0<y<1$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "The joint density is $f(x,y) = x + y$ on the unit square $0 \\le x,y \\le 1$. Calculate $P(X < 0.5,\\ Y < 0.5)$.",
+                "choices": ["$0.25$", "$0.0625$", "$0.125$", "$0.5$", "$0.1875$"],
+                "correct": 2,
+                "explain": "Integrate over the corner: $\\int_0^{0.5}\\!\\int_0^{0.5} (x+y)\\,dx\\,dy = \\int_0^{0.5}\\left(0.125 + 0.5y\\right)dy = 0.0625 + 0.0625 = 0.125$. Multiplying the marginals as if independent (0.25 × 0.25 region) misses that $x$ and $y$ are tangled.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "$X$ and $Y$ have joint density $f(x,y) = 4xy$ on the unit square. Calculate $P(X + Y < 1)$.",
+                "choices": ["$0.167$", "$0.5$", "$0.25$", "$0.333$", "$0.083$"],
+                "correct": 0,
+                "explain": "Integrate over the triangle $x,y>0,\\ x+y<1$: $\\int_0^1\\!\\int_0^{1-x} 4xy\\,dy\\,dx = \\int_0^1 2x(1-x)^2\\,dx = 1 - \\tfrac43 + \\tfrac12 = \\tfrac16 \\approx 0.167$. The trap is integrating over the full square (which gives 1) instead of the constrained region.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1663,6 +1789,20 @@
                 "correct": 4,
                 "explain": "$\\mathrm{Var}(2X+3Y) = 2^2\\mathrm{Var}(X) + 3^2\\mathrm{Var}(Y) + 2(2)(3)\\mathrm{Cov}(X,Y) = 4(1) + 9(2) + 12(0.5) = 4 + 18 + 6 = 28$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "Random variables satisfy $E[X]=2$, $E[Y]=3$, $E[XY]=8$, $\\mathrm{Var}(X)=4$, and $\\mathrm{Var}(Y)=9$. Calculate the correlation coefficient $\\rho_{X,Y}$.",
+                "choices": ["$2.0$", "$0.333$", "$0.111$", "$0.667$", "$0.5$"],
+                "correct": 1,
+                "explain": "Covariance first: $\\mathrm{Cov}(X,Y) = E[XY] - E[X]E[Y] = 8 - 6 = 2$. Then $\\rho = \\frac{\\mathrm{Cov}}{\\sigma_X\\sigma_Y} = \\frac{2}{\\sqrt{4}\\sqrt{9}} = \\frac{2}{6} = 0.333$. Answer 2.0 is the covariance left un-rescaled.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "$\\mathrm{Var}(X) = 5$, $\\mathrm{Var}(Y) = 8$, and $\\mathrm{Cov}(X,Y) = -2$. Calculate $\\mathrm{Var}(2X - 3Y)$.",
+                "choices": ["$92$", "$68$", "$140$", "$116$", "$104$"],
+                "correct": 3,
+                "explain": "$\\mathrm{Var}(2X-3Y) = 2^2(5) + (-3)^2(8) + 2(2)(-3)\\mathrm{Cov}(X,Y) = 20 + 72 + (-12)(-2) = 20 + 72 + 24 = 116$. Dropping the covariance term gives 92; mishandling its sign gives 68.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1767,6 +1907,20 @@
                 "correct": 1,
                 "explain": "Constant density $1/y$ on $(0,y)$ is the Uniform$(0,y)$ distribution.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "The joint density is $f(x,y) = 2$ on the triangle $0 < x < y < 1$. Calculate $E[Y \\mid X = 0.4]$.",
+                "choices": ["$0.5$", "$0.4$", "$0.2$", "$0.6$", "$0.7$"],
+                "correct": 4,
+                "explain": "Marginal $f_X(x) = \\int_x^1 2\\,dy = 2(1-x)$, so $f_{Y\\mid X}(y\\mid x) = \\frac{2}{2(1-x)} = \\frac{1}{1-x}$ on $(x,1)$ — i.e. $Y\\mid X=x$ is Uniform$(x,1)$. Thus $E[Y\\mid X=0.4] = \\frac{0.4+1}{2} = 0.7$. Forgetting the support starts at $x$ (using Uniform$(0,1)$) gives 0.5.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A joint pmf is $P(1,1)=0.1$, $P(1,2)=0.2$, $P(2,1)=0.3$, $P(2,2)=0.4$ (first coordinate $X$, second $Y$). Calculate $E[Y \\mid X = 2]$.",
+                "choices": ["$1.5$", "$2.0$", "$1.571$", "$1.667$", "$1.6$"],
+                "correct": 2,
+                "explain": "$P(X=2) = 0.3 + 0.4 = 0.7$, so $P(Y=1\\mid X=2) = \\frac{0.3}{0.7}=\\frac37$ and $P(Y=2\\mid X=2) = \\frac47$. Then $E[Y\\mid X=2] = 1\\cdot\\frac37 + 2\\cdot\\frac47 = \\frac{11}{7} \\approx 1.571$. Using the unconditional split (ignoring the renormalization by $P(X=2)$) gives the wrong weights.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1878,6 +2032,20 @@
                 "correct": 2,
                 "explain": "It is only the within-group piece; total variance also needs $\\mathrm{Var}(E[X\\mid Y])$, the between-group spread.",
                 "difficulty": "core"
+              },
+              {
+                "q": "The number of injuries $N$ on a given day is Poisson with mean $\\Lambda$, where $\\Lambda$ itself is uniformly distributed on $[0, 4]$. Calculate $\\mathrm{Var}(N)$.",
+                "choices": ["$3.333$", "$2.000$", "$1.333$", "$4.000$", "$0.667$"],
+                "correct": 0,
+                "explain": "Law of total variance: $\\mathrm{Var}(N) = E[\\mathrm{Var}(N\\mid\\Lambda)] + \\mathrm{Var}(E[N\\mid\\Lambda]) = E[\\Lambda] + \\mathrm{Var}(\\Lambda) = 2 + \\frac{4^2}{12} = 2 + 1.333 = 3.333$. Answer 2.0 keeps only $E[\\Lambda]$ (treating $\\Lambda$ as fixed); 1.333 keeps only $\\mathrm{Var}(\\Lambda)$.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "The number of claims $N \\sim$ Poisson$(4)$, and each claim has mean 200 and variance 100, independent of $N$. Calculate $\\mathrm{Var}(S)$ for the aggregate $S = X_1 + \\dots + X_N$.",
+                "choices": ["$400$", "$160000$", "$640000$", "$160400$", "$800$"],
+                "correct": 3,
+                "explain": "For a compound Poisson, $\\mathrm{Var}(S) = \\lambda\\,E[X^2] = \\lambda(\\mathrm{Var}(X) + E[X]^2) = 4(100 + 200^2) = 4(40100) = 160400$. Keeping only $\\lambda\\,\\mathrm{Var}(X) = 400$ omits the severity-mean contribution; $\\lambda\\,E[X]^2 = 160000$ omits the process variance.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1982,6 +2150,20 @@
                 "correct": 2,
                 "explain": "Binomial closure needs a common $p$. With $p=0.3$ vs $0.5$, the sum is not binomial.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "$X \\sim N(50, 100)$ and $Y \\sim N(30, 44)$ are independent. Calculate $P(X + Y > 92)$. (Use $\\Phi(1) = 0.841$.)",
+                "choices": ["$0.841$", "$0.159$", "$0.500$", "$0.023$", "$0.977$"],
+                "correct": 1,
+                "explain": "Normals are closed under addition: $X+Y \\sim N(80, 144)$, SD $= 12$. Standardize: $Z = \\frac{92-80}{12} = 1$, so $P(X+Y>92) = 1 - \\Phi(1) = 0.159$. Adding the SDs ($10+\\sqrt{44}$) instead of the variances is the usual trap.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "$X \\sim$ Poisson$(1.5)$ and $Y \\sim$ Poisson$(2.5)$ are independent. Calculate $P(X + Y = 2)$.",
+                "choices": ["$0.271$", "$0.018$", "$0.090$", "$0.195$", "$0.147$"],
+                "correct": 4,
+                "explain": "Independent Poissons add: $X+Y \\sim$ Poisson$(4)$. So $P(X+Y=2) = \\frac{e^{-4}4^2}{2!} = 8e^{-4} \\approx 0.147$. Using only one rate (e.g. Poisson(1.5) or (2.5)) gives the off-values.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -2086,6 +2268,20 @@
                 "correct": 0,
                 "explain": "$F(y)=y$, so $f_{\\max}(y)=n[F(y)]^{n-1}f(y)=n y^{n-1}\\cdot1=n y^{n-1}$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "Three independent components have exponential lifetimes with failure rates 1, 2, and 3 per year. Calculate the expected time until the first component fails.",
+                "choices": ["$0.500$", "$6.000$", "$0.167$", "$1.000$", "$0.611$"],
+                "correct": 2,
+                "explain": "The minimum of independent exponentials is exponential with the summed rate: $1+2+3 = 6$. Its mean is $\\frac{1}{6} \\approx 0.167$ years. Averaging the three individual means ($\\frac{1+0.5+0.333}{3} = 0.611$) is wrong — rates add, not means.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "Five independent observations are drawn from a Uniform$(0,1)$ distribution. Calculate $P(\\max \\le 0.8)$.",
+                "choices": ["$0.328$", "$0.800$", "$0.200$", "$0.672$", "$0.400$"],
+                "correct": 0,
+                "explain": "The max is $\\le 0.8$ exactly when all five draws are $\\le 0.8$: $[F(0.8)]^5 = (0.8)^5 = 0.328$. The bare 0.8 is a single draw; $1-0.8^5 = 0.672$ is the complement.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -2196,6 +2392,20 @@
                 "correct": 2,
                 "explain": "SD of the mean is $\\sigma/\\sqrt{n}$. Halving it needs $\\sqrt{n}$ to double, i.e. $n$ to quadruple.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A portfolio has 200 independent claims, each with mean 30 and standard deviation 10. Using the CLT, calculate the approximate probability the total exceeds 6300. (Use $\\Phi(2.12) = 0.983$.)",
+                "choices": ["$0.983$", "$0.500$", "$0.159$", "$0.017$", "$0.034$"],
+                "correct": 3,
+                "explain": "Total mean $= 200(30) = 6000$; total variance $= 200(10^2) = 20000$, so SD $= 141.4$. Standardize: $Z = \\frac{6300-6000}{141.4} = 2.12$, giving $P > 6300 \\approx 1 - 0.983 = 0.017$. Using SD $= 200(10)$ or $10$ alone breaks the $\\sqrt{n}$ scaling.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "100 independent claims each have mean 500 and standard deviation 200. Using the CLT, calculate the approximate probability that the sample mean exceeds 540. (Use $\\Phi(2) = 0.977$.)",
+                "choices": ["$0.977$", "$0.023$", "$0.421$", "$0.500$", "$0.159$"],
+                "correct": 1,
+                "explain": "The sample mean has SD $\\sigma/\\sqrt{n} = 200/\\sqrt{100} = 20$. Standardize: $Z = \\frac{540-500}{20} = 2$, so $P(\\bar X > 540) \\approx 1 - 0.977 = 0.023$. Using $\\sigma = 200$ as the SD of the mean (forgetting $\\div\\sqrt{n}$) gives $Z=0.2$ and the wrong 0.421.",
+                "difficulty": "stretch"
               }
             ]
           }
