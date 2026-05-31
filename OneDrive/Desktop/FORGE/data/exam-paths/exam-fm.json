@@ -501,6 +501,20 @@
                 "correct": 1,
                 "explain": "$a_{\\overline{n}|} = (1 - v^n)/i \\Rightarrow 8.5 = (1 - 0.49)/i = 0.51/i \\Rightarrow i = 0.06 = 6\\%$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A loan of 10000 is repaid with level payments at the end of each year for 10 years at 7% annual effective interest. Calculate the annual payment.",
+                "choices": ["$1423.78$", "$1000.00$", "$1700.00$", "$1500.00$", "$1352.00$"],
+                "correct": 0,
+                "explain": "Payment $= \\frac{10000}{a_{\\overline{10}|0.07}}$. Here $a_{\\overline{10}|} = \\frac{1 - 1.07^{-10}}{0.07} = 7.02358$, so payment $= \\frac{10000}{7.02358} = 1423.78$. Dividing principal by 10 (ignoring interest) gives 1000.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "Deposits of 500 are made at the BEGINNING of each year for 8 years into an account earning 5% annual effective interest. Calculate the accumulated value at the end of year 8.",
+                "choices": ["$4774.55$", "$5013.28$", "$5264.00$", "$4000.00$", "$4800.00$"],
+                "correct": 1,
+                "explain": "Beginning-of-year deposits form an annuity-due: $500 \\cdot \\ddot{s}_{\\overline{8}|0.05} = 500 \\cdot s_{\\overline{8}|}(1.05) = 500(9.54911)(1.05) = 5013.28$. Treating them as end-of-year (annuity-immediate) drops the $(1.05)$ factor and gives 4774.55.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -597,6 +611,20 @@
                 "choices": ["$9.50$", "$10.65$", "$11.65$", "$12.00$", "$13.49$"],
                 "correct": 1,
                 "explain": "$(Ia)_{\\overline{5}|} = (\\ddot{a}_{\\overline{5}|} - 5v^5)/i = (4.1699 - 5(0.62092))/0.1 = (4.1699 - 3.1046)/0.1 = 1.0653/0.1 = 10.65$.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A perpetuity pays 1000 at the end of each year, with the FIRST payment at the end of year 6. At 8% annual effective interest, calculate the present value.",
+                "choices": ["$12500.00$", "$9187.87$", "$8507.29$", "$7877.12$", "$11574.00$"],
+                "correct": 2,
+                "explain": "Value the perpetuity one period before its first payment (at time 5), then discount to today: $\\frac{1000}{0.08}\\cdot v^5 = 12500(1.08^{-5}) = 12500(0.680583) = 8507.29$. No discount gives 12500; discounting by $v^4$ or $v^6$ gives the other distractors.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A perpetuity-immediate pays 100 at the end of year 1, 200 at the end of year 2, and increases by 100 each year forever. At 10% annual effective interest, calculate the present value.",
+                "choices": ["$10000.00$", "$11000.00$", "$1100.00$", "$12100.00$", "$10100.00$"],
+                "correct": 1,
+                "explain": "An increasing perpetuity-immediate has PV $= \\frac{1+i}{i^2}$ per unit of increase: $100\\cdot\\frac{1.10}{0.10^2} = 100(110) = 11000$. Using $\\frac{1}{i^2}$ (forgetting the $(1+i)$ numerator) gives 10000.",
                 "difficulty": "stretch"
               }
             ]
@@ -702,6 +730,20 @@
                 "correct": 1,
                 "explain": "A continuous stream effectively delivers money earlier within each period, so its PV is larger by the factor $i/\\delta>1$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "Payments are made continuously at a rate of 1000 per year for 5 years. At a constant force of interest $\\delta = 0.06$, calculate the present value.",
+                "choices": ["$5000.00$", "$4319.70$", "$4216.99$", "$4000.00$", "$4550.00$"],
+                "correct": 1,
+                "explain": "Continuous annuity: $\\bar{a}_{\\overline{5}|} = \\frac{1 - v^5}{\\delta} = \\frac{1 - e^{-0.06(5)}}{0.06} = \\frac{1 - 0.740818}{0.06} = 4.31970$, so PV $= 1000(4.31970) = 4319.70$. Using $5$ years undiscounted gives 5000.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "An annuity-immediate pays 2000 per year for 10 years, but the first payment is at the end of year 4 (deferred 3 years). At 6% annual effective interest, calculate the present value.",
+                "choices": ["$14720.17$", "$11659.76$", "$12359.34$", "$13093.00$", "$14000.00$"],
+                "correct": 2,
+                "explain": "Value the 10-year annuity at its start (time 3), then discount: $2000\\,a_{\\overline{10}|0.06}\\,v^3 = 2000(7.360087)(1.06^{-3}) = 2000(7.360087)(0.839619) = 12359.34$. Forgetting the 3-year deferral discount gives 14720.17.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -805,6 +847,20 @@
                 "correct": 1,
                 "explain": "It is the Gordon growth (dividend discount) model.",
                 "difficulty": "warmup"
+              },
+              {
+                "q": "An annuity-immediate makes 10 annual payments. The first is 1000 and each later payment is 4% larger than the one before. At 9% annual effective interest, calculate the present value.",
+                "choices": ["$6417.66$", "$7494.58$", "$8000.00$", "$7000.00$", "$7900.00$"],
+                "correct": 1,
+                "explain": "Geometric annuity: PV $= P\\cdot\\frac{1 - \\left(\\frac{1+g}{1+i}\\right)^n}{i - g} = 1000\\cdot\\frac{1 - (1.04/1.09)^{10}}{0.09 - 0.04} = 1000\\cdot\\frac{1 - 0.62534}{0.05} = 7494.58$. Treating the payments as level (ignoring 4% growth) gives the level annuity 6417.66.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A perpetuity-immediate pays 500 at the end of year 1 and grows 3% per year forever. At 8% annual effective interest, calculate the present value.",
+                "choices": ["$10000.00$", "$6250.00$", "$16666.67$", "$9700.00$", "$10500.00$"],
+                "correct": 0,
+                "explain": "Growing perpetuity (Gordon): PV $= \\frac{P}{i - g} = \\frac{500}{0.08 - 0.03} = \\frac{500}{0.05} = 10000$. Ignoring growth ($500/0.08$) gives 6250; dividing by $g$ instead of $i-g$ gives 16667.",
+                "difficulty": "stretch"
               }
             ]
           }
