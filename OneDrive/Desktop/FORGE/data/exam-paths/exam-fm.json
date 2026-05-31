@@ -132,6 +132,20 @@
                 "correct": 2,
                 "explain": "Need PV of $X$ to be $2000 - 800 = 1200$. So $X\\,v^2 = 1200 \\Rightarrow X = 1200(1.1)^2 = 1200(1.21) = 1452$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "An account earns 6% annual effective interest. To the nearest year, how long until a single deposit triples in value?",
+                "choices": ["$19$", "$17$", "$12$", "$20$", "$50$"],
+                "correct": 0,
+                "explain": "Solve $(1.06)^n = 3$: $n = \\frac{\\ln 3}{\\ln 1.06} = \\frac{1.0986}{0.0583} = 18.85$, rounding to 19 years. The 'Rule of 72' style shortcut $72/6 = 12$ estimates *doubling*, not tripling — that is the trap answer.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "1000 is invested for 3 years at 8% annual effective, then the balance is reinvested for 2 more years at 5% annual effective. Calculate the accumulated value at the end of year 5.",
+                "choices": ["$1469.33$", "$1276.28$", "$1388.83$", "$1340.10$", "$1300.00$"],
+                "correct": 2,
+                "explain": "Accumulate through each rate in turn: $1000(1.08)^3(1.05)^2 = 1000(1.259712)(1.1025) = 1388.83$. Using 8% for all 5 years gives 1469.33; using 5% for all 5 gives 1276.28.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -242,6 +256,20 @@
                 "correct": 0,
                 "explain": "More frequent compounding needs a smaller nominal label for the same effective $i$, and continuous needs the smallest of all: $\\delta < i^{(m)} < i$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A nominal annual interest rate of 9% is compounded monthly. Calculate the equivalent annual effective interest rate.",
+                "choices": ["$9.00\\%$", "$9.38\\%$", "$9.42\\%$", "$8.65\\%$", "$9.31\\%$"],
+                "correct": 1,
+                "explain": "$i = \\left(1 + \\frac{0.09}{12}\\right)^{12} - 1 = (1.0075)^{12} - 1 = 0.0938 = 9.38\\%$. The 9.00% answer mistakes the nominal label for the effective rate; effective always exceeds nominal when compounding more than once a year.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "The force of interest is $\\delta_t = 0.04 + 0.01t$. Calculate the accumulated value at time 3 of 1 invested at time 0.",
+                "choices": ["$1.1735$", "$1.1853$", "$1.1275$", "$1.1794$", "$1.1650$"],
+                "correct": 3,
+                "explain": "$\\text{AV} = \\exp\\!\\left(\\int_0^3 (0.04 + 0.01t)\\,dt\\right) = \\exp\\!\\left(0.04(3) + 0.01\\cdot\\frac{3^2}{2}\\right) = \\exp(0.12 + 0.045) = e^{0.165} = 1.1794$. Using only the constant part $e^{0.12}$, or forgetting to integrate the $0.01t$ term, gives the off answers.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -347,6 +375,20 @@
                 "correct": 3,
                 "explain": "Value at $t=2$: $5000(1.06)^2 = 2000(1.06) + Y \\Rightarrow 5618 = 2120 + Y \\Rightarrow Y = 3498$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A loan of 1000 is repaid by a payment of 600 at the end of year 1 and a payment of $X$ at the end of year 2. At 10% annual effective interest, calculate $X$.",
+                "choices": ["$500.00$", "$545.45$", "$605.00$", "$484.00$", "$550.00$"],
+                "correct": 4,
+                "explain": "Equation of value at $t=0$: $1000 = \\frac{600}{1.1} + \\frac{X}{1.1^2}$. So $\\frac{X}{1.21} = 1000 - 545.45 = 454.55$, giving $X = 454.55(1.21) = 550.00$. Ignoring interest entirely ($1000-600+$ adjustments) leads to the distractors.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "Deposits of 100 are made at times 0, 1, and 2. At 6% annual effective interest, calculate the accumulated value of the fund at time 5.",
+                "choices": ["$379.17$", "$300.00$", "$357.71$", "$401.92$", "$339.06$"],
+                "correct": 0,
+                "explain": "Accumulate each deposit to time 5: $100\\big[(1.06)^5 + (1.06)^4 + (1.06)^3\\big] = 100(1.338226 + 1.262477 + 1.191016) = 379.17$. The 300.00 answer forgets to accumulate the deposits with interest.",
+                "difficulty": "stretch"
               }
             ]
           }
