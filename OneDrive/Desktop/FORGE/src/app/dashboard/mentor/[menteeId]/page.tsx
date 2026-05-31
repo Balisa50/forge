@@ -983,54 +983,71 @@ export default function MenteeDrilldownPage() {
                             />
                           </div>
 
-                          {/* Two-way thread (both your notes + mentee replies) */}
-                          {task.mentorComments.length > 0 && (
-                            <div style={{ marginTop: "0.875rem" }}>
-                              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
-                                Conversation
-                              </p>
-                              <ul className="flex flex-col gap-2">
-                                {task.mentorComments.map((cm) => {
-                                  const fromMentee = cm.authorRole === "mentee";
-                                  const isAction = cm.kind === "action_log";
-                                  const isRequest = cm.kind === "request_unlock";
-                                  return (
-                                    <li
-                                      key={cm.id}
-                                      style={{
-                                        padding: "0.625rem 0.75rem",
-                                        borderRadius: 8,
-                                        background: isAction
-                                          ? "rgba(59,130,246,0.06)"
-                                          : isRequest
-                                            ? "rgba(244,114,182,0.08)"
-                                            : fromMentee
-                                              ? "var(--bg-card)"
-                                              : "rgba(245,158,11,0.07)",
-                                        border: isAction
-                                          ? "1px solid rgba(59,130,246,0.18)"
-                                          : isRequest
-                                            ? "1px solid rgba(244,114,182,0.25)"
-                                            : fromMentee
-                                              ? "1px solid var(--border)"
-                                              : "1px solid rgba(245,158,11,0.2)",
-                                        fontSize: "0.875rem",
-                                        color: "var(--text-primary)",
-                                      }}
-                                    >
-                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: isRequest ? "#f472b6" : isAction ? "#60a5fa" : fromMentee ? "var(--text-dim)" : "var(--accent)", marginBottom: "0.25rem" }}>
-                                        {isAction ? "Action log" : isRequest ? "Unlock request" : fromMentee ? `${mentee.name ?? "Mentee"}` : "You"}
-                                      </p>
-                                      <p>{cm.body}</p>
-                                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
-                                        {new Date(cm.createdAt).toLocaleString()} {cm.readAt ? "· read" : "· unread"}
-                                      </p>
-                                    </li>
-                                  );
-                                })}
-                              </ul>
-                            </div>
-                          )}
+                          {/* Real messages and the automated activity log are split:
+                              the PROFESSOR's daily flags / release events no longer
+                              bury the actual you<->mentee conversation. */}
+                          {task.mentorComments.length > 0 && (() => {
+                            const msgs = task.mentorComments.filter((c) => c.kind !== "action_log");
+                            const logs = task.mentorComments.filter((c) => c.kind === "action_log");
+                            const renderItem = (cm: (typeof task.mentorComments)[number]) => {
+                              const fromMentee = cm.authorRole === "mentee";
+                              const isAction = cm.kind === "action_log";
+                              const isRequest = cm.kind === "request_unlock";
+                              return (
+                                <li
+                                  key={cm.id}
+                                  style={{
+                                    padding: "0.625rem 0.75rem",
+                                    borderRadius: 8,
+                                    background: isAction
+                                      ? "rgba(59,130,246,0.06)"
+                                      : isRequest
+                                        ? "rgba(244,114,182,0.08)"
+                                        : fromMentee
+                                          ? "var(--bg-card)"
+                                          : "rgba(245,158,11,0.07)",
+                                    border: isAction
+                                      ? "1px solid rgba(59,130,246,0.18)"
+                                      : isRequest
+                                        ? "1px solid rgba(244,114,182,0.25)"
+                                        : fromMentee
+                                          ? "1px solid var(--border)"
+                                          : "1px solid rgba(245,158,11,0.2)",
+                                    fontSize: "0.875rem",
+                                    color: "var(--text-primary)",
+                                  }}
+                                >
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: isRequest ? "#f472b6" : isAction ? "#60a5fa" : fromMentee ? "var(--text-dim)" : "var(--accent)", marginBottom: "0.25rem" }}>
+                                    {isAction ? "Action log" : isRequest ? "Unlock request" : fromMentee ? `${mentee.name ?? "Mentee"}` : "You"}
+                                  </p>
+                                  <p>{cm.body}</p>
+                                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
+                                    {new Date(cm.createdAt).toLocaleString()} {cm.readAt ? "· read" : "· unread"}
+                                  </p>
+                                </li>
+                              );
+                            };
+                            return (
+                              <div style={{ marginTop: "0.875rem" }}>
+                                {msgs.length > 0 && (
+                                  <>
+                                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+                                      Conversation
+                                    </p>
+                                    <ul className="flex flex-col gap-2">{msgs.map(renderItem)}</ul>
+                                  </>
+                                )}
+                                {logs.length > 0 && (
+                                  <details style={{ marginTop: msgs.length > 0 ? "0.75rem" : 0 }}>
+                                    <summary style={{ cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", padding: "0.25rem 0" }}>
+                                      Activity log · {logs.length} automated event{logs.length !== 1 ? "s" : ""}
+                                    </summary>
+                                    <ul className="flex flex-col gap-2" style={{ marginTop: "0.5rem" }}>{logs.map(renderItem)}</ul>
+                                  </details>
+                                )}
+                              </div>
+                            );
+                          })()}
 
                           {/* Mentor's question bank for this task */}
                           <MentorQuestionBank taskId={task.id} menteeId={menteeId} />

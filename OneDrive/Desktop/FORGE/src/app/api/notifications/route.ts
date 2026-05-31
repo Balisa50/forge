@@ -11,6 +11,20 @@ export async function GET() {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // Best-effort prune: drop this user's already-read notifications older than
+  // 30 days so the bell doesn't accumulate forever. Fire-and-forget — never
+  // blocks or fails the read.
+  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  void prisma.notification
+    .deleteMany({
+      where: {
+        userId: session.user.id,
+        readAt: { not: null },
+        createdAt: { lt: new Date(Date.now() - THIRTY_DAYS_MS) },
+      },
+    })
+    .catch(() => {});
+
   const notifications = await prisma.notification.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
@@ -43,4 +57,21 @@ export async function PATCH(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true });
+}
+
+/**
+ * DELETE /api/notifications        — clear ALL of the user's notifications
+ * DELETE /api/notifications?id=X   — dismiss one
+ */
+export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const id = new URL(req.url).searchParams.get("id");
+  const res = await prisma.notification.deleteMany({
+    where: id
+      ? { id, userId: session.user.id }
+      : { userId: session.user.id },
+  });
+  return NextResponse.json({ deleted: res.count });
 }

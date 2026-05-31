@@ -59,6 +59,13 @@ export default function NotificationBell({
     setUnread(0);
   };
 
+  const clearAll = async () => {
+    setNotifs([]);
+    setUnread(0);
+    setOpen(false);
+    try { await fetch("/api/notifications", { method: "DELETE" }); } catch { /* best-effort */ }
+  };
+
   const handleClick = async (n: Notif) => {
     if (!n.readAt) {
       await fetch(`/api/notifications?id=${n.id}`, { method: "PATCH" });
@@ -124,8 +131,8 @@ export default function NotificationBell({
             ? { bottom: "calc(100% + 0.5rem)" }
             : { top: "calc(100% + 0.5rem)" }),
           ...(align === "left" ? { left: 0 } : { right: 0 }),
-          width: "min(320px, calc(100vw - 1.5rem))",
-          maxHeight: 420,
+          width: "min(360px, calc(100vw - 1.5rem))",
+          maxHeight: 440,
           overflowY: "auto",
           background: "var(--bg-panel)",
           border: "1px solid var(--border)",
@@ -133,19 +140,29 @@ export default function NotificationBell({
           boxShadow: direction === "up" ? "0 -8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.4)",
           zIndex: 9999,
         }}>
-          {/* Header */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.875rem 1rem", borderBottom: "1px solid var(--border)" }}>
+          {/* Header — sticky so the actions stay reachable while the list scrolls */}
+          <div style={{ position: "sticky", top: 0, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", padding: "0.875rem 1rem", borderBottom: "1px solid var(--border)", background: "var(--bg-panel)" }}>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
               Notifications
             </span>
-            {unread > 0 && (
-              <button
-                onClick={markAllRead}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}
-              >
-                Mark all read
-              </button>
-            )}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              {unread > 0 && (
+                <button
+                  onClick={markAllRead}
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}
+                >
+                  Mark all read
+                </button>
+              )}
+              {notifs.length > 0 && (
+                <button
+                  onClick={clearAll}
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
           </div>
 
           {/* List */}
