@@ -367,45 +367,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Loans, savings plans, pensions — all are level annuities. Instead of discounting dozens of payments one by one, two formulas price the whole stream at once. The single thing you must nail is *when* the payments fall: end of period (immediate) or start (due)."
+              "body": "A loan, a pension, a savings plan, a mortgage — strip away the story and each is the same object: a **level annuity**, the same payment landing period after period. You *could* discount thirty payments one at a time, but that's thirty chances to fumble. Instead, one short formula prices the entire stream at once — and that formula isn't magic, it's a geometric series you can rebuild from scratch in ten seconds. Nail two things here, the formula's *origin* and the *timing* (do payments fall at the end or start of each period?), and annuities become the easiest big topic on the exam."
             },
             {
               "kind": "intuition",
               "title": "Immediate pays in arrears; due pays in advance",
-              "body": "An **annuity-immediate** pays at the *end* of each period — like a loan payment you make after using the money. An **annuity-due** pays at the *start* — like rent. Because due payments arrive one period earlier, they are each worth a factor of $(1+i)$ more, so $\\ddot{a}_{\\overline{n}|} = (1+i)\\,a_{\\overline{n}|}$. That single factor is the only difference."
+              "body": "Two flavors, one tiny difference. An **annuity-immediate** pays at the *end* of each period — the way you repay a loan, *after* you've had use of the money. An **annuity-due** pays at the *start* of each period — the way you pay rent, *before* you occupy the apartment. That's the whole distinction.\n\nAnd it has a clean consequence: every due payment arrives exactly one period *earlier* than the matching immediate payment, so it has dodged one period of discounting and is worth a factor of $(1+i)$ more. Multiply the entire immediate annuity by $(1+i)$ and you've shifted every payment one step earlier — that's the due annuity. You will never memorize a separate due formula; you'll *nudge* the immediate one."
             },
             {
               "kind": "formula",
-              "title": "Present and accumulated values",
-              "body": "Annuity-immediate PV of \\$1 per period: $$a_{\\overline{n}|} = \\frac{1 - v^n}{i}$$ Annuity-due PV: $\\ddot{a}_{\\overline{n}|} = \\dfrac{1 - v^n}{d} = (1+i)\\,a_{\\overline{n}|}$. Accumulated value (immediate): $$s_{\\overline{n}|} = \\frac{(1+i)^n - 1}{i}$$ and $\\ddot{s}_{\\overline{n}|} = (1+i)\\,s_{\\overline{n}|}$."
+              "title": "Deriving the annuity formula from a geometric series",
+              "body": "Picture \\$1 at the end of each year for $n$ years, discounted to today. The present value is literally the sum of each payment's discount factor: $$a_{\\overline{n}|} = v + v^2 + v^3 + \\cdots + v^n.$$ That is a **geometric series** — first term $v$, common ratio $v$. The standard sum of such a series is $\\text{first}\\times\\frac{1 - \\text{ratio}^{\\text{count}}}{1 - \\text{ratio}}$: $$a_{\\overline{n}|} = v\\cdot\\frac{1 - v^n}{1 - v}.$$ Now simplify the denominator — this is the satisfying step. Since $v = \\frac{1}{1+i}$, we get $1 - v = 1 - \\frac{1}{1+i} = \\frac{i}{1+i} = iv$. Substituting, the $v$ on top cancels the $v$ inside $1-v$: $$a_{\\overline{n}|} = \\frac{v(1 - v^n)}{iv} = \\frac{1 - v^n}{i}.$$ **There it is.** Not memorized — *derived.* The accumulated value is the same series valued at the last payment instead of today: $s_{\\overline{n}|} = 1 + (1+i) + \\cdots + (1+i)^{n-1} = \\frac{(1+i)^n - 1}{i}$. And the due versions are just the $(1+i)$ nudge: $\\ddot{a}_{\\overline{n}|} = (1+i)\\,a_{\\overline{n}|} = \\frac{1-v^n}{d}$, $\\ddot{s}_{\\overline{n}|} = (1+i)\\,s_{\\overline{n}|}$."
             },
             {
               "kind": "worked",
-              "title": "Price a 10-year payment stream",
+              "title": "Worked example 1 — price a 10-year stream",
               "body": "Find the present value of \\$500 paid at the end of each year for 10 years at 6% effective.",
               "steps": [
-                "This is an annuity-immediate: PV $= 500\\,a_{\\overline{10}|}$.",
-                "$a_{\\overline{10}|} = \\dfrac{1 - (1.06)^{-10}}{0.06} = \\dfrac{1 - 0.55839}{0.06} = \\dfrac{0.44161}{0.06} = 7.3601$.",
-                "PV $= 500 \\times 7.3601 = 3680.04$."
+                "**Identify the type:** payments at year-end → annuity-immediate, PV $= 500\\,a_{\\overline{10}|}$.",
+                "**Build $v^{10}$:** $v = 1/1.06$, so $v^{10} = 1.06^{-10} = 0.55839$.",
+                "**Apply the derived formula:** $a_{\\overline{10}|} = \\dfrac{1 - v^{10}}{i} = \\dfrac{1 - 0.55839}{0.06} = \\dfrac{0.44161}{0.06} = 7.3601$.",
+                "**Scale by the payment:** PV $= 500 \\times 7.3601 = \\$3680.04$."
               ],
               "answer": "$\\$3680.04$"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — solve for the payment (a real loan)",
+              "body": "The annuity formula runs backwards just as easily. You borrow \\$20{,}000 to be repaid by equal end-of-year payments over 5 years at 7%. Find the annual payment $P$ — this is exactly how a bank sets a loan installment.",
+              "steps": [
+                "**The loan IS an annuity:** the bank pays you \\$20{,}000 today in exchange for your stream of $P$, so $20{,}000 = P\\,a_{\\overline{5}|}$.",
+                "**Compute the annuity factor:** $v^5 = 1.07^{-5} = 0.71299$, so $a_{\\overline{5}|} = \\dfrac{1 - 0.71299}{0.07} = \\dfrac{0.28701}{0.07} = 4.1002$.",
+                "**Divide to isolate the payment:** $P = \\dfrac{20{,}000}{4.1002} = \\$4877.81$.",
+                "**Gut-check:** five payments of ~\\$4878 total \\$24{,}389; the \\$4389 excess over \\$20{,}000 is the interest — plausible for 7% over 5 years."
+              ],
+              "answer": "$P \\approx \\$4877.81$ per year"
+            },
+            {
               "kind": "trick",
-              "title": "Convert due↔immediate with one multiply",
-              "body": "Never re-derive a due annuity. Compute the immediate value, then multiply by $(1+i)$ to shift every payment one period earlier. Same trick for accumulated values. Memorize $a_{\\overline{n}|}$ and $s_{\\overline{n}|}$ only; the due versions are always just a $(1+i)$ nudge away."
+              "title": "Memorize one factor, nudge for the rest",
+              "body": "Don't carry four formulas in your head — carry one and a move. Compute the **immediate** present value $a_{\\overline{n}|}$, then: multiply by $(1+i)$ to get the **due** value (every payment shifted one period earlier); the accumulated value is the same number pushed to the end, $s_{\\overline{n}|} = (1+i)^n\\,a_{\\overline{n}|}$. So $a_{\\overline{n}|}$ is your home base and everything else is one multiplication away. Under exam pressure, fewer memorized objects means fewer ways to be wrong."
             },
             {
               "kind": "trap",
-              "title": "Counting the timing wrong",
-              "body": "The classic error is valuing an annuity-due with the immediate formula (or vice versa), missing a full $(1+i)$ factor. Equally common: an accumulated value $s_{\\overline{n}|}$ is measured at the time of the *last* payment — if the problem wants the value one period later, you still owe another $(1+i)$. Draw the timeline and mark the comparison date."
+              "title": "Where is the annuity actually valued?",
+              "body": "Every annuity symbol has a *built-in valuation date*, and forgetting it costs a clean $(1+i)$. $a_{\\overline{n}|}$ is valued **one period before the first payment** (i.e. 'today' for an immediate annuity). $s_{\\overline{n}|}$ is valued at the **moment of the last payment** — so if a problem asks for the balance one period *after* the final deposit, you still owe another $(1+i)$. And the perennial slip: pricing an annuity-due with the immediate formula, dropping a full $(1+i)$. Defense is always the same — sketch the timeline, mark where payments land, mark the date the question wants, and count the gap."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "PV of an annuity-immediate of 1 for $n$ years?", "back": "$a_{\\overline{n}|} = (1 - v^n)/i$." },
-                { "front": "Convert immediate to due.", "back": "Multiply by $(1+i)$: $\\ddot{a}_{\\overline{n}|} = (1+i)\\,a_{\\overline{n}|}$." },
-                { "front": "Accumulated value of an annuity-immediate?", "back": "$s_{\\overline{n}|} = ((1+i)^n - 1)/i$, valued at the last payment date." }
+                { "front": "Reconstruct $a_{\\overline{n}|}$ from scratch — what series is it and what does it sum to?", "back": "It's the geometric series $v + v^2 + \\cdots + v^n = v\\frac{1-v^n}{1-v}$; since $1-v = iv$, this simplifies to $(1-v^n)/i$." },
+                { "front": "Why is an annuity-due worth $(1+i)$ times the immediate one?", "back": "Every due payment lands one period earlier, escaping one period of discounting — so each is worth a factor of $(1+i)$ more, and so is the whole stream." }
               ]
             }
           ],
@@ -459,45 +471,50 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Some streams never end (perpetuities), and some climb every year (increasing annuities). They look scary but each has a closed form that the exam rewards you for recognizing instantly. These show up in dividend, pension, and endowment questions."
+              "body": "Now the payments stop being polite. Some streams run *forever* (perpetuities — endowments, consols, dividend-paying stocks); some *climb* every year (increasing annuities — pensions with cost-of-living bumps). They look like infinite sums you could never add by hand, and that's exactly the point: each collapses to a one-line closed form, and the exam pays you handsomely for recognizing the pattern on sight. The secret is that every one of these is *still* a geometric series — you already own the machinery."
             },
             {
               "kind": "intuition",
-              "title": "Forever is cheaper than it sounds",
-              "body": "A perpetuity pays \\$1 every year *forever*, yet its present value is just $1/i$ — finite, because distant payments are discounted to almost nothing. At 5%, a stream of \\$1 forever is worth only \\$20 today. Increasing annuities blend a level perpetuity-like piece with a growth piece; the formula bookkeeps both."
+              "title": "Why 'forever' costs a finite, small amount",
+              "body": "It feels paradoxical that paying \\$1 every year *for eternity* has a finite price — but discounting is relentless. The payment in year 50 is worth $v^{50}$; in year 100, $v^{100}$ — vanishingly small. The far tail of the stream contributes almost nothing, so the infinite sum *converges*. Concretely, at 5% a perpetuity of \\$1 forever is worth just $1/0.05 = \\$20$ today. Twenty dollars buys an infinite stream, because by year 100 each dollar is worth less than a penny in today's money.\n\nIncreasing streams add a second moving part — the payment size grows while the discount shrinks it — and the closed forms simply bookkeep that tug-of-war between growth and discounting."
             },
             {
               "kind": "formula",
-              "title": "Perpetuities and the increasing annuity",
-              "body": "Perpetuity-immediate: $\\dfrac{1}{i}$. Perpetuity-due: $\\dfrac{1}{d}$. Increasing annuity-immediate (payments $1, 2, \\dots, n$): $$(Ia)_{\\overline{n}|} = \\frac{\\ddot{a}_{\\overline{n}|} - n v^n}{i}$$ Increasing perpetuity (payments $1, 2, 3, \\dots$ forever): $$\\frac{1}{i} + \\frac{1}{i^2} = \\frac{i+1}{i^2}$$"
+              "title": "Deriving the perpetuity from the annuity limit",
+              "body": "Don't memorize $1/i$ — *take a limit.* A perpetuity-immediate is an annuity-immediate with $n \\to \\infty$: $$\\frac{1}{i}\\text{-perpetuity} = \\lim_{n\\to\\infty} a_{\\overline{n}|} = \\lim_{n\\to\\infty}\\frac{1 - v^n}{i}.$$ Since $|v| < 1$, $v^n \\to 0$ as $n\\to\\infty$, leaving $$a_{\\overline{\\infty}|} = \\frac{1 - 0}{i} = \\frac{1}{i}.$$ Clean. The perpetuity-**due** lands one period earlier, so multiply by $(1+i)$: $\\frac{1+i}{i} = \\frac{1}{d}$.\n\n**Increasing perpetuity** (payments $1, 2, 3, \\dots$ forever): here's the slick derivation. Think of it as *layers* of level perpetuities. A \\$1 perpetuity starting year 1 is worth $1/i$. Another \\$1 perpetuity starting year 2 (worth $\\frac{1}{i}\\cdot v$ today) stacks on top. Another starting year 3, and so on. Summing those layers, $\\frac{1}{i}(1 + v + v^2 + \\cdots) = \\frac{1}{i}\\cdot\\frac{1}{1-v} = \\frac{1}{i}\\cdot\\frac{1}{iv} = \\frac{1}{i^2}\\cdot\\frac{1}{v}$... cleaner to state the standard result: $$(I a)_{\\overline{\\infty}|} = \\frac{1}{i} + \\frac{1}{i^2} = \\frac{i+1}{i^2}.$$ For the *finite* increasing annuity, $(Ia)_{\\overline{n}|} = \\dfrac{\\ddot{a}_{\\overline{n}|} - n v^n}{i}$."
+            },
+            {
+              "kind": "formula",
+              "title": "The geometrically-growing perpetuity — derive 1/(i−g)",
+              "body": "This one is a dividend-model workhorse, so derive it once and own it. Payments grow by a factor $(1+g)$ each year: first payment 1 at year 1, then $(1+g)$, then $(1+g)^2$, .... Present value: $$PV = v + (1+g)v^2 + (1+g)^2 v^3 + \\cdots$$ Factor out $v$: $PV = v\\left[1 + (1+g)v + ((1+g)v)^2 + \\cdots\\right]$ — a geometric series with ratio $r = (1+g)v$. It sums (when $r<1$, i.e. $g<i$) to $\\frac{1}{1-r}$: $$PV = \\frac{v}{1 - (1+g)v}.$$ Multiply top and bottom by $(1+i)$ (recall $v=\\frac{1}{1+i}$): $$PV = \\frac{1}{(1+i) - (1+g)} = \\frac{1}{i - g}.$$ So the famous $\\frac{1}{i-g}$ isn't a separate fact — it's the geometric-series sum in disguise. Valid only when $i > g$; if growth outran the discount rate the sum would diverge."
             },
             {
               "kind": "worked",
-              "title": "A growing-dividend valuation",
-              "body": "A perpetuity pays \\$100 at the end of year 1, \\$200 at year 2, \\$300 at year 3, and so on forever. At $i = 10\\%$, find its present value.",
+              "title": "Worked example — a growing-dividend valuation",
+              "body": "A perpetuity pays \\$100 at the end of year 1, \\$200 at year 2, \\$300 at year 3, and so on forever (arithmetic growth). At $i = 10\\%$, find its present value.",
               "steps": [
-                "This is 100 times an increasing perpetuity-immediate with base payment 1.",
-                "Increasing perpetuity PV (per 1) $= \\dfrac{1}{i} + \\dfrac{1}{i^2} = \\dfrac{1}{0.1} + \\dfrac{1}{0.01} = 10 + 100 = 110$.",
-                "PV $= 100 \\times 110 = 11{,}000$."
+                "**Recognize the shape:** payments $100, 200, 300, \\dots$ are $100\\times(1, 2, 3, \\dots)$ — that's 100 copies of an increasing perpetuity-immediate with base 1.",
+                "**Apply the derived increasing-perpetuity formula:** per unit, $\\dfrac{1}{i} + \\dfrac{1}{i^2} = \\dfrac{1}{0.1} + \\dfrac{1}{0.01} = 10 + 100 = 110$.",
+                "**Scale:** PV $= 100 \\times 110 = \\$11{,}000$.",
+                "**Don't confuse arithmetic with geometric growth:** payments $+\\$100$ each year is *arithmetic* (use $Ia$); payments $\\times 1.10$ each year would be *geometric* (use $1/(i-g)$)."
               ],
               "answer": "$\\$11{,}000$"
             },
             {
               "kind": "trick",
-              "title": "Split varying streams into level + increasing pieces",
-              "body": "A messy stream like '\\$500 then growing by \\$100' is a level annuity of \\$400 *plus* an increasing annuity $(I a)$ with base \\$100. Decompose into a level part and an increasing part, price each with its own formula, and add. Most varying-annuity questions yield to this split."
+              "title": "Split any messy stream into level + increasing layers",
+              "body": "A stream like \"\\$500 in year 1, then rising \\$100 a year\" looks custom, but it's two familiar pieces glued together: a **level** annuity of \\$400 forever-or-$n$-years, *plus* an **increasing** annuity $(Ia)$ with base \\$100 (giving $400+100=500$ in year 1, $400+200=600$ in year 2, ...). Price each layer with its own closed form and add. This decompose-and-add move cracks the large majority of varying-annuity questions — whenever a stream resists one formula, look for the level part hiding inside it."
             },
             {
               "kind": "trap",
-              "title": "Perpetuity-due vs immediate, and the rate to use",
-              "body": "A perpetuity-immediate is $1/i$; a perpetuity-due is $1/d$ — using the wrong one misses a $(1+i)$ factor. And when growth is involved, be sure the rate in the denominator is the *interest* rate, not the growth rate, unless you are using the geometric-growth shortcut $1/(i - g)$ where $g$ is the growth rate."
+              "title": "Immediate vs due, and arithmetic vs geometric growth",
+              "body": "Two traps live here. **(1) Perpetuity timing:** immediate is $1/i$, due is $1/d$ — pick wrong and you drop a $(1+i)$. **(2) Growth type:** \"increases by \\$50 each year\" is *arithmetic* → use $(Ia)$ / the $1/i+1/i^2$ family; \"increases by 5% each year\" is *geometric* → use $1/(i-g)$. They are completely different formulas, and the words 'by \\$X' versus 'by X%' are your only clue. Read that phrase twice before choosing. And for $1/(i-g)$, sanity-check $i>g$ — otherwise the stream has no finite value."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "PV of a perpetuity-immediate of 1?", "back": "$1/i$." },
-                { "front": "PV of an increasing perpetuity $1,2,3,\\dots$ (immediate)?", "back": "$1/i + 1/i^2 = (i+1)/i^2$." },
-                { "front": "PV of a perpetuity growing at rate $g$, first payment 1 at year 1?", "back": "$1/(i - g)$, valid when $i > g$." }
+                { "front": "Why does a perpetuity's value $1/i$ fall out of the annuity formula?", "back": "It's $\\lim_{n\\to\\infty} a_{\\overline{n}|} = \\lim (1-v^n)/i$; since $v^n\\to 0$, it collapses to $1/i$. The infinite tail is discounted to nothing." },
+                { "front": "Where does the dividend-model $1/(i-g)$ come from?", "back": "It's the sum of the geometric series $v + (1+g)v^2 + \\cdots$ with ratio $(1+g)v$; summing and simplifying gives $1/(i-g)$, valid for $i>g$." }
               ]
             }
           ],
@@ -551,46 +568,57 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Two natural twists on the level annuity show up constantly. A **deferred** annuity does not start paying for a few years — a pension that begins at retirement. A **continuous** annuity pays in an unbroken stream rather than at discrete dates — the idealized limit as payment frequency goes to infinity. Both reduce to the level-annuity machinery you already own, plus one extra factor."
+              "body": "Two natural twists on the level annuity, and both are *less* work than they look. A **deferred** annuity simply doesn't start paying for a while — a pension that kicks in at retirement, a loan with a grace period. A **continuous** annuity pays in an unbroken trickle instead of discrete lumps — the idealized limit of paying weekly, then daily, then every instant. Here's the reassuring truth: neither is a new formula to memorize. Each is the *level annuity you already own*, multiplied by exactly one extra factor. Learn which factor, and why, and these become free points."
             },
             {
               "kind": "intuition",
-              "title": "Defer = value-as-usual, then discount the gap",
-              "body": "To value an annuity that starts later, pretend it starts *now*, compute its present value with the usual formula, then drag that whole lump sum back across the deferral period with a single $v^m$. The annuity does not care when you look at it — you value it at its own start, then discount that value to today. For the **continuous** annuity, the discrete sum of $v^t$ becomes an integral $\\int_0^n v^t\\,dt$, which collapses to a clean closed form."
+              "title": "Defer = value at its own start, then slide it back",
+              "body": "A deferred annuity isn't a different creature — it's an ordinary annuity that you're looking at *early*. So value it the lazy way: pretend it starts now, price it with the plain formula, then **drag that single lump sum back** across the deferral gap with one discount factor $v^m$. The annuity doesn't care from which date you observe it; you value it where it naturally lives (one period before its first payment) and then discount that value to today.\n\nThe **continuous** annuity comes from a different limit. Pay \\$1/year as 12 monthly bits, then 365 daily bits, then infinitely many infinitesimal bits — the discrete sum $\\sum v^t$ smooths into the integral $\\int_0^n v^t\\,dt$. Integration is just summation taken to the continuous limit, and it produces a tidy closed form."
             },
             {
               "kind": "formula",
-              "title": "Deferred and continuous values",
-              "body": "**$m$-year deferred** $n$-payment annuity-immediate: $$_{m|}a_{\\overline{n}|} = v^m\\, a_{\\overline{n}|} = a_{\\overline{m+n}|} - a_{\\overline{m}|}$$ **Continuous annuity** (rate 1 per year for $n$ years): $$\\bar a_{\\overline{n}|} = \\int_0^n v^t\\,dt = \\frac{1 - v^n}{\\delta}$$ Note the denominator is the **force** $\\delta$, the continuous analogue of $i$. Accumulated: $\\bar s_{\\overline{n}|} = \\frac{(1+i)^n - 1}{\\delta}$."
+              "title": "Deriving the continuous annuity by integration",
+              "body": "**Deferred** first (the easy one). An $m$-year deferred, $n$-payment annuity-immediate is value-then-discount: $$_{m|}a_{\\overline{n}|} = v^m\\, a_{\\overline{n}|}.$$ There's also a slick subtraction identity — a full $(m+n)$-year annuity minus the first $m$ years you don't actually receive: $_{m|}a_{\\overline{n}|} = a_{\\overline{m+n}|} - a_{\\overline{m}|}$. Same number, two viewpoints.\n\n**Continuous**, derived from scratch. Sum (integrate) the discount factor over the payment window: $$\\bar a_{\\overline{n}|} = \\int_0^n v^t\\,dt.$$ Write $v^t = e^{t\\ln v} = e^{-\\delta t}$ (since $\\ln v = -\\ln(1+i) = -\\delta$). The integral of $e^{-\\delta t}$ is $-\\frac{1}{\\delta}e^{-\\delta t}$, so $$\\bar a_{\\overline{n}|} = \\left[-\\frac{e^{-\\delta t}}{\\delta}\\right]_0^n = \\frac{1 - e^{-\\delta n}}{\\delta} = \\frac{1 - v^n}{\\delta}.$$ Notice the result is the *spitting image* of $a_{\\overline{n}|} = \\frac{1-v^n}{i}$ — only the denominator changed from $i$ to the **force** $\\delta$. The continuous analogue of the period rate is the instantaneous rate. Accumulated version: $\\bar s_{\\overline{n}|} = \\frac{(1+i)^n - 1}{\\delta}$."
             },
             {
               "kind": "worked",
-              "title": "A deferred annuity",
+              "title": "Worked example 1 — a deferred annuity",
               "body": "An annuity pays \\$1000 at the end of each year for 10 years, but the first payment is at the end of year 6 (a 5-year deferral). At $i = 7\\%$, find the present value. Use $a_{\\overline{10}|} = 7.0236$.",
               "steps": [
-                "Value the 10-year annuity at its own start (one period before its first payment, i.e. at $t=5$): $1000\\,a_{\\overline{10}|} = 1000(7.0236) = 7023.60$.",
-                "That value sits at $t=5$. Discount 5 years to today: $\\times v^5 = (1.07)^{-5} = 0.71299$.",
-                "$PV = 7023.60 \\times 0.71299 = 5008.7$."
+                "**Where does the plain formula plant the value?** $a_{\\overline{10}|}$ values the stream one period before its first payment. First payment is at $t=6$, so the formula's value sits at $t=5$.",
+                "**Value it there:** $1000\\,a_{\\overline{10}|} = 1000(7.0236) = 7023.60$, a lump sum located at $t=5$.",
+                "**Slide it back 5 years:** $\\times v^5 = (1.07)^{-5} = 0.71299$.",
+                "**Result:** $PV = 7023.60 \\times 0.71299 = \\$5008.7$. (The deferral exponent is 5, not 6 — that off-by-one is the whole game.)"
               ],
               "answer": "$PV \\approx \\$5009$"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — continuous annuity, then the i/δ shortcut",
+              "body": "A continuous annuity pays at rate \\$1/year for 5 years at $i = 7\\%$ effective ($\\delta = \\ln 1.07 = 0.06766$). Find $\\bar a_{\\overline{5}|}$ directly, then show it equals $\\frac{i}{\\delta}a_{\\overline{5}|}$.",
+              "steps": [
+                "**Direct (from the integral result):** $v^5 = 1.07^{-5} = 0.71299$, so $\\bar a_{\\overline{5}|} = \\dfrac{1 - 0.71299}{0.06766} = \\dfrac{0.28701}{0.06766} = 4.2418$.",
+                "**Via the shortcut:** the discrete $a_{\\overline{5}|} = \\dfrac{1 - 0.71299}{0.07} = 4.1002$.",
+                "**Scale by $i/\\delta$:** $\\dfrac{0.07}{0.06766}(4.1002) = 1.0346(4.1002) = 4.2420$ — matching, to rounding.",
+                "**Why slightly bigger than discrete?** A continuous stream delivers money a touch *earlier* within each year, so its PV exceeds the year-end annuity by exactly the factor $i/\\delta > 1$."
+              ],
+              "answer": "$\\bar a_{\\overline{5}|} \\approx 4.242$"
+            },
+            {
               "kind": "trick",
-              "title": "Continuous ≈ discrete, scaled by $i/\\delta$",
-              "body": "The continuous annuity relates to the immediate one by exactly one factor: $\\bar a_{\\overline{n}|} = \\frac{i}{\\delta}\\,a_{\\overline{n}|}$. Since $i > \\delta$, the continuous version is slightly *larger* — payments arrive a touch sooner on average. If you have $a_{\\overline{n}|}$ already, just multiply by $i/\\delta$ instead of integrating from scratch."
+              "title": "Two reusable conversion factors",
+              "body": "Don't re-derive — convert. (1) **Continuous from discrete:** $\\bar a_{\\overline{n}|} = \\frac{i}{\\delta}\\,a_{\\overline{n}|}$. Already have the discrete annuity factor? One multiply by $i/\\delta$ and you're done — no integral needed. Because $i > \\delta$, expect a slightly larger number. (2) **Deferred from plain:** value the annuity at its natural start, then multiply by $v^{(\\text{deferral})}$. Both moves reduce a scary-looking variant to your level-annuity home base plus a single factor."
             },
             {
               "kind": "trap",
-              "title": "Count the deferral period correctly",
-              "body": "The classic deferred-annuity error is an off-by-one on the discount exponent. An annuity-immediate's standard formula already values it **one period before the first payment**. If the first payment is at time $m+1$, you discount by $v^m$, not $v^{m+1}$. Drawing the timeline and marking where the level-annuity formula 'plants' its valuation date prevents this every time."
+              "title": "The deferral exponent is one less than you think",
+              "body": "The signature deferred-annuity mistake is an off-by-one on the discount power. The annuity-immediate formula *already* values the stream **one period before the first payment** — that's baked in. So if the first payment is at time $m+1$, the formula's value sits at time $m$, and you discount by $v^{m}$, **not** $v^{m+1}$. Equivalently: count the number of *empty* periods before the formula's valuation point, not before the first payment. Always sketch the timeline, mark where the plain formula 'plants its flag,' and count the gap from there to today."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "Value of an $m$-year deferred annuity-immediate?", "back": "$v^m a_{\\overline{n}|}$ — value normally, then discount the deferral." },
-                { "front": "Continuous annuity present value?", "back": "$\\bar a_{\\overline{n}|} = \\frac{1-v^n}{\\delta}$ — denominator is the force $\\delta$." },
-                { "front": "Continuous vs immediate annuity factor?", "back": "$\\bar a_{\\overline{n}|} = \\frac{i}{\\delta}a_{\\overline{n}|}$ — slightly larger." },
-                { "front": "Discount exponent for a first payment at time $m+1$?", "back": "$v^m$, because the immediate formula already sits one period before payment 1." }
+                { "front": "Where does the continuous annuity formula $\\frac{1-v^n}{\\delta}$ come from?", "back": "From $\\int_0^n v^t dt = \\int_0^n e^{-\\delta t}dt = \\frac{1-e^{-\\delta n}}{\\delta} = \\frac{1-v^n}{\\delta}$. It mirrors the discrete $\\frac{1-v^n}{i}$ with $i$ replaced by the force $\\delta$." },
+                { "front": "First payment of a deferred annuity is at time $m+1$ — what's the discount exponent, and why?", "back": "$v^m$. The immediate formula already values the stream at time $m$ (one period before the first payment), so you only discount $m$ more periods to today." }
               ]
             }
           ],
@@ -644,46 +672,56 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Real income streams rarely stay flat. Salaries get cost-of-living raises, dividends grow, rents step up by a percentage every year. These **geometric annuities** — where each payment is a fixed *multiple* of the last — look intimidating, but a single clever substitution collapses them into the level annuity you already know cold."
+              "body": "Real money rarely stays flat. Salaries get cost-of-living raises, dividends grow, rents step up a fixed percentage every year. A **geometric annuity** is a stream where each payment is a constant *multiple* $(1+g)$ of the one before. It looks like a brand-new beast — but one clever change of rate collapses it right back into the level annuity you already know cold. The whole concept is a single trick: *fold the growth into the discount rate.*"
             },
             {
               "kind": "intuition",
-              "title": "Growth at rate g, discounting at rate i, net out",
-              "body": "Each payment grows by a factor $(1+g)$ while each year of discounting shrinks value by $(1+i)$. Those two effects partly cancel. Define an **adjusted rate** $j$ where $1+j = \\frac{1+i}{1+g}$ — the *net* rate after growth eats into discounting. The growing annuity's present value is then just a level annuity evaluated at $j$, lightly rescaled. Growth becomes a discount-rate adjustment."
+              "title": "Growth and discounting are tug-of-war on the same rope",
+              "body": "Each year two things happen to a future payment. It *grows* by $(1+g)$ (good for you), and it gets *discounted* by another $(1+i)$ (shrinks its present value). Those two factors are fighting over the same payment, and what actually matters is the **net** of the two. So define a single **adjusted rate** $j$ that captures the net effect: $$1 + j = \\frac{1+i}{1+g}.$$ Read it literally — you discount at $(1+i)$ but get $(1+g)$ of growth back, so the *effective* shrink-per-year is the ratio. Once you've defined $j$, a *growing* annuity at rate $i$ becomes a plain *level* annuity at rate $j$ (with a small rescaling). The intimidating topic reduces to: compute $j$, then use $a_{\\overline{n}|}$ at $j$."
             },
             {
               "kind": "formula",
-              "title": "Growing annuity and growing perpetuity",
-              "body": "First payment \\$1 at $t=1$, growing by $(1+g)$ each year for $n$ payments, discounted at $i$: $$PV = \\frac{1 - \\left(\\frac{1+g}{1+i}\\right)^n}{i - g}$$ As $n\\to\\infty$ (growing perpetuity, requires $i>g$): $$PV = \\frac{1}{i-g}$$ Equivalently, value a level annuity at the adjusted rate $j$ with $1+j=\\frac{1+i}{1+g}$, then divide by $(1+g)$."
+              "title": "Deriving the growing-annuity formula",
+              "body": "First payment \\$1 at $t=1$, then growing by $(1+g)$ each year for $n$ payments, discounted at $i$. Write out the present value: $$PV = \\frac{1}{1+i} + \\frac{1+g}{(1+i)^2} + \\cdots + \\frac{(1+g)^{n-1}}{(1+i)^n}.$$ Factor $\\frac{1}{1+i}$ from every term: $PV = \\frac{1}{1+i}\\sum_{k=0}^{n-1}\\left(\\frac{1+g}{1+i}\\right)^k$ — a geometric series with ratio $r = \\frac{1+g}{1+i} = \\frac{1}{1+j}$. Summing $\\frac{1-r^n}{1-r}$ and simplifying (use $1 - r = 1 - \\frac{1+g}{1+i} = \\frac{i-g}{1+i}$) gives the clean closed form: $$PV = \\frac{1 - \\left(\\frac{1+g}{1+i}\\right)^n}{i - g}.$$ Let $n\\to\\infty$: if $i>g$ the ratio $r<1$ so $r^n\\to 0$, leaving the famous **growing perpetuity** $$PV = \\frac{1}{i-g}.$$ Equivalent calculator-friendly recipe: compute the level annuity $a_{\\overline{n}|}$ at the adjusted rate $j$, then divide by $(1+g)$ — same answer, fewer keystrokes."
             },
             {
               "kind": "worked",
-              "title": "A growing perpetuity",
+              "title": "Worked example 1 — a growing perpetuity (Gordon growth)",
               "body": "A perpetuity pays \\$100 at the end of year 1, growing 3% per year forever, discounted at 8%. Find its present value.",
               "steps": [
-                "Growing perpetuity formula with first payment 100: $PV = \\frac{100}{i - g} = \\frac{100}{0.08 - 0.03}$.",
-                "$= \\frac{100}{0.05} = 2000$.",
-                "Sanity check: a *level* \\$100 perpetuity at 8% is $100/0.08 = 1250$; the 3% growth lifts it to 2000."
+                "**Identify it's geometric and infinite:** payments $\\times 1.03$ each year, forever → growing-perpetuity formula.",
+                "**Apply $\\frac{P_1}{i-g}$ with the first payment 100:** $PV = \\dfrac{100}{0.08 - 0.03} = \\dfrac{100}{0.05} = \\$2000$.",
+                "**Sanity check against the level case:** a *flat* \\$100 perpetuity at 8% is $100/0.08 = \\$1250$; the 3% growth lifts it to \\$2000. Growth makes it worth more — as it must."
               ],
               "answer": "$PV = \\$2000$"
             },
             {
+              "kind": "worked",
+              "title": "Worked example 2 — the adjusted-rate trick on a finite annuity",
+              "body": "A 20-year annuity pays \\$1000 at the end of year 1, increasing 4% each year, discounted at 9%. Price it using the adjusted-rate method to show the trick in action.",
+              "steps": [
+                "**Build the adjusted rate:** $1 + j = \\frac{1+i}{1+g} = \\frac{1.09}{1.04} = 1.04808$, so $j = 4.808\\%$.",
+                "**Value as a level annuity at $j$:** $a_{\\overline{20}|}^{(j)} = \\dfrac{1 - (1.04808)^{-20}}{0.04808}$. Here $(1.04808)^{-20} = 0.39157$, so $a = \\dfrac{0.60843}{0.04808} = 12.654$.",
+                "**Rescale by dividing by $(1+g)$:** $PV = 1000 \\times \\dfrac{12.654}{1.04} = 1000 \\times 12.167 = \\$12{,}167$.",
+                "**Cross-check with the direct formula:** $\\dfrac{1 - (1.04/1.09)^{20}}{0.09-0.04} = \\dfrac{1 - 0.39157}{0.05} = \\dfrac{0.60843}{0.05}\\times\\frac{1}{1.04}\\cdots$ — same \\$12{,}167. The trick and the formula are one and the same."
+              ],
+              "answer": "$PV \\approx \\$12{,}167$"
+            },
+            {
               "kind": "trick",
-              "title": "Growing perpetuity is just $\\frac{\\text{first payment}}{i-g}$",
-              "body": "The growing-perpetuity formula $\\frac{P_1}{i-g}$ (the 'Gordon growth' model from finance) is worth memorizing outright — it appears in dividend and pension questions. Just make sure $P_1$ is the **first** payment (at $t=1$), and that $i > g$, or the series diverges and the formula is meaningless."
+              "title": "Memorize Gordon growth; derive the rest from j",
+              "body": "Burn $\\dfrac{P_1}{i-g}$ into memory — the **Gordon growth model** of finance — because dividend and pension questions hand it to you constantly, and it's a one-liner. For *finite* growing annuities, don't memorize the bulky formula; instead compute the adjusted rate $1+j=\\frac{1+i}{1+g}$, treat the stream as a plain level annuity at $j$, and divide by $(1+g)$ at the end. One reusable move handles every geometric annuity the exam can throw at you."
             },
             {
               "kind": "trap",
-              "title": "Use the first payment, and require $i > g$",
-              "body": "Two traps: (1) the numerator is the payment at $t=1$, *not* the payment at $t=0$ or some 'base' figure quoted before the first raise — read the timeline carefully. (2) If $g \\ge i$ the growing perpetuity has **no finite value** (payments grow at least as fast as you discount). A finite growing *annuity* still works when $g>i$ via the general formula, but the perpetuity shortcut does not."
+              "title": "First payment, $i>g$, and percent-vs-dollar growth",
+              "body": "Three landmines. **(1)** In $\\frac{P_1}{i-g}$, the numerator is the payment at $t=1$ — *not* a 'base' figure quoted before the first raise, and not a $t=0$ amount. Read the timeline. **(2)** The perpetuity needs $i>g$; if $g\\ge i$ payments grow at least as fast as you discount and the value is infinite — the shortcut is meaningless (a finite growing *annuity* still works via the general formula). **(3)** Don't confuse this with arithmetic growth: \"increases 4% a year\" is geometric (this concept); \"increases by \\$40 a year\" is arithmetic (use $Ia$). The single word percent-vs-dollars decides which formula you reach for."
             },
             {
               "kind": "recall",
               "cards": [
-                { "front": "Growing perpetuity present value?", "back": "$\\frac{P_1}{i-g}$, valid only when $i>g$ ($P_1$ = first payment)." },
-                { "front": "Adjusted rate for a geometric annuity?", "back": "$1+j=\\frac{1+i}{1+g}$ — value as a level annuity at $j$." },
-                { "front": "Growing $n$-payment annuity PV?", "back": "$\\frac{1-\\left(\\frac{1+g}{1+i}\\right)^n}{i-g}$." },
-                { "front": "What breaks the growing-perpetuity formula?", "back": "$g\\ge i$: payments grow at least as fast as discounting, so the PV diverges." }
+                { "front": "What single substitution turns a growing annuity into a level one, and why?", "back": "The adjusted rate $1+j = \\frac{1+i}{1+g}$ — it nets growth against discounting. Then value at $j$ as a level annuity and divide by $(1+g)$." },
+                { "front": "Derive the growing-perpetuity value and state its condition.", "back": "The PV is the geometric series $\\frac{1}{1+i}\\sum (\\frac{1+g}{1+i})^k$; for $i>g$ the ratio <1 and it sums to $\\frac{1}{i-g}$ (Gordon growth). If $g\\ge i$ it diverges." }
               ]
             }
           ],
