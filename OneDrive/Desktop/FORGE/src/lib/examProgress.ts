@@ -70,6 +70,76 @@ export function getConcept(p: PathProgress, conceptId: string): ConceptProgress 
   return p[conceptId] ?? emptyConcept();
 }
 
+// ── Account-backed sync ───────────────────────────────────────────────────────
+// localStorage stays the synchronous source of truth for instant reads; these
+// helpers mirror it to the server so progress survives a cache clear and syncs
+// across devices. All best-effort: a logged-out user or an offline device just
+// keeps the local copy.
+
+const statusRank = (s: ConceptStatus): number => (s === "mastered" ? 2 : s === "in-progress" ? 1 : 0);
+
+/** Combine a local and a server record into the strongest single state. */
+function mergeConcept(a: ConceptProgress, b: ConceptProgress): ConceptProgress {
+  const newer = (a.lastSeen ?? 0) >= (b.lastSeen ?? 0) ? a : b; // most recent study session
+  return {
+    // status never downgrades (mastered stays mastered) — take the higher rank
+    status: statusRank(a.status) >= statusRank(b.status) ? a.status : b.status,
+    best: Math.max(a.best, b.best),
+    attempts: Math.max(a.attempts, b.attempts),
+    // scheduling reflects whichever device studied most recently
+    box: newer.box,
+    dueAt: newer.dueAt,
+    masteredAt:
+      a.masteredAt && b.masteredAt ? Math.min(a.masteredAt, b.masteredAt) : a.masteredAt ?? b.masteredAt,
+    lastSeen: Math.max(a.lastSeen ?? 0, b.lastSeen ?? 0) || null,
+  };
+}
+
+async function pushAll(slug: string, data: PathProgress): Promise<void> {
+  if (typeof window === "undefined" || Object.keys(data).length === 0) return;
+  try {
+    await fetch("/api/exam-progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug, concepts: data }),
+    });
+  } catch {
+    /* offline / logged out — local copy is still intact */
+  }
+}
+
+/** Best-effort push of a single concept after a local write. */
+function pushConcept(slug: string, conceptId: string, c: ConceptProgress): void {
+  void pushAll(slug, { [conceptId]: c });
+}
+
+/**
+ * Pull the user's server progress, merge it into localStorage, and push the
+ * merged result back (so any local-only progress is saved server-side). Safe to
+ * call repeatedly; no-ops for logged-out users (401) and offline devices.
+ */
+export async function syncFromServer(slug: string): Promise<void> {
+  if (typeof window === "undefined") return;
+  let server: PathProgress = {};
+  try {
+    const res = await fetch(`/api/exam-progress?slug=${encodeURIComponent(slug)}`);
+    if (!res.ok) return; // 401 logged-out, or transient — keep local-only
+    server = ((await res.json()).progress ?? {}) as PathProgress;
+  } catch {
+    return;
+  }
+  const local = readProgress(slug);
+  const ids = new Set([...Object.keys(local), ...Object.keys(server)]);
+  const merged: PathProgress = {};
+  for (const id of ids) {
+    const a = local[id];
+    const b = server[id];
+    merged[id] = a && b ? mergeConcept(a, b) : a ?? b;
+  }
+  writeProgress(slug, merged);   // fires the change event → mounted hooks refresh
+  void pushAll(slug, merged);    // reconcile server with any local-only entries
+}
+
 /** Mark a concept opened (not-started → in-progress; never downgrades). */
 export function markOpened(slug: string, conceptId: string): void {
   const data = readProgress(slug);
@@ -78,6 +148,7 @@ export function markOpened(slug: string, conceptId: string): void {
   if (c.status === "not-started") c.status = "in-progress";
   data[conceptId] = c;
   writeProgress(slug, data);
+  pushConcept(slug, conceptId, c);
 }
 
 /**
@@ -115,6 +186,7 @@ export function recordAttempt(slug: string, conceptId: string, score: number, pa
   }
   data[conceptId] = c;
   writeProgress(slug, data);
+  pushConcept(slug, conceptId, c);
   return c;
 }
 
@@ -172,6 +244,8 @@ export function useExamProgress(slug: string): {
 
   useEffect(() => {
     refresh();
+    // Pull account-backed progress and merge it in (no-op when logged out).
+    void syncFromServer(slug);
     function onLocal(e: Event) {
       const detail = (e as CustomEvent).detail as { slug?: string } | undefined;
       if (!detail || detail.slug === slug) refresh();

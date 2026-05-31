@@ -124,6 +124,7 @@ model User {
   podMemberships    PodMember[]
   notifications     Notification[]
   learningProgress  LearningProgress[]
+  examProgress      ExamProgress[]
 }
 
 model Account {
@@ -515,6 +516,31 @@ model LearningProgress {
 
   @@unique([userId, slug, week, itemKey])
   @@index([userId, slug, week])
+}
+
+/// Account-backed mastery + spaced-repetition progress for the actuary exam
+/// paths (/learn/exam/[slug]). Previously localStorage-only, so progress was
+/// per-device and lost on a cache clear. Now persisted per user so it survives
+/// and syncs across devices. localStorage stays as an offline/instant cache.
+/// One row per (user, slug, concept). Mirrors the client ConceptProgress shape.
+model ExamProgress {
+  id         String    @id @default(cuid())
+  userId     String
+  slug       String    // "exam-p" / "exam-fm"
+  conceptId  String
+  status     String    @default("not-started") // not-started | in-progress | mastered
+  best       Float     @default(0)              // best quiz score, fraction 0–1
+  attempts   Int       @default(0)
+  box        Int       @default(0)              // SM-2-lite review box
+  dueAt      DateTime?                           // next review due (mastered only)
+  masteredAt DateTime?
+  lastSeen   DateTime?
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slug, conceptId])
+  @@index([userId, slug])
 }
 
 /// AI Mentor interaction log. Every release / verification / question / warning
