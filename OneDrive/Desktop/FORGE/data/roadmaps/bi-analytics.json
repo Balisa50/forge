@@ -719,25 +719,27 @@
     },
     {
       "number": 5,
-      "title": "Power BI Fundamentals",
+      "title": "Superstore BI v0.5: Model & DAX foundations",
       "phase": "Advanced Visualisation",
       "commitment_hours": "25--35",
-      "context": "You have been using Power BI to build Superstore reports for 4 weeks. This week you close the gaps — learning the fundamentals you may have skipped over while focused on features. The fundamentals that most analysts skip and then spend years trying to fix: data modelling, DAX basics, and the semantic layer.\n\nPower BI's architecture has three layers: data (Power Query — Extract, Transform, Load), model (relationships, hierarchies, measures), and report (visuals, interactions). Most analysts work only in the report layer and wonder why their numbers are wrong. Your numbers are wrong because of mistakes in the model layer.\n\nDAX (Data Analysis Expressions) is the formula language for measures. Measures are not calculated columns — a measure is a formula that responds to filter context. Understanding filter context is the single most important concept in Power BI. Every wrong number you see in a report is a filter context problem.",
+      "context": "You have shipped four versions of the Superstore report — published dashboard, drillthrough, row-level security, scheduled refresh. It looks finished. It is not. Under every report that gets a number wrong is the same root cause: the model layer was never understood, only assembled by trial and error.\n\nThis week you stop adding features and go down a layer. Power BI has three layers: data (Power Query — clean and shape), model (tables, relationships, measures), and report (visuals). Most analysts live only in the report layer and patch wrong numbers with filters and hacks. You are going to own the model layer of the Superstore file you already have.\n\nThe single concept that separates people who can build dashboards from people who can be trusted with them is filter context: a measure is not a stored value, it is a formula that recomputes against whatever filters surround it. CALCULATE is the function that lets you change those filters on purpose. By Friday you will be able to look at any wrong number in your own report and know which layer broke it.",
       "topics": [
-        "Power BI Desktop interface: Report, Data, Model views",
-        "Connecting to data: CSV, Excel, SQL Server, Web connectors",
-        "Power Query Editor: transformations, merge queries, append queries",
-        "Basic DAX: SUM, COUNT, CALCULATE, FILTER, basic measures vs calculated columns",
-        "Relationships in the data model: star schema vs snowflake schema"
+        "Measures vs calculated columns: which recomputes with filter context, which is baked at refresh, and when to use each",
+        "Auditing a star schema: fact vs dimension tables, one-to-many relationships, why a flat table eventually breaks",
+        "Filter context: how every measure silently recomputes against the slicers, rows, and visuals around it",
+        "CALCULATE: overriding, removing, and adding filters — the most important function in DAX",
+        "A proper marked Date table and the time-intelligence functions (TOTALYTD, SAMEPERIODLASTYEAR) that depend on it",
+        "Iterators (SUMX, AVERAGEX, RANKX): row-by-row evaluation when a plain aggregate is not enough"
       ],
       "tasks": [
-        "Install Power BI Desktop and load the AdventureWorks sample dataset",
-        "Use Power Query to clean and transform the data (remove nulls, change types, rename columns)",
-        "Build a star schema model with fact and dimension tables",
-        "Write 5 DAX measures: Total Sales, Total Cost, Gross Profit, Profit\\%, YTD Sales",
-        "Build a 3-page report: Overview, Product Detail, Customer Analysis"
+        "Open your existing Superstore .pbix (v0.4) — no new dataset, you are deepening the model you already have",
+        "Rewrite three of your report's numbers as proper measures and delete any calculated column doing a measure's job",
+        "Audit the model in Model view: confirm a star schema, fix any flat or snowflaked relationship",
+        "Write a Gross Profit % measure with DIVIDE (safe divide), then a CALCULATE measure that ignores the category slicer",
+        "Add a marked Date table and one time-intelligence measure (YTD Sales), then a RANKX measure for top products",
+        "Write a 1-page model README documenting every measure and the relationship diagram, and tag the file v0.5"
       ],
-      "project": "AdventureWorks Sales Report: Build a 3-page Power BI report for a fictional bicycle company. Page 1: Executive KPIs. Page 2: Product performance matrix with conditional formatting. Page 3: Customer segmentation by geography. Use slicers on every page.",
+      "project": "Superstore Semantic Model v0.5: take the Superstore report you have built over Weeks 1–4 and turn its model layer into something you can defend. Deliver the same .pbix with: a clean star schema (no flat tables), a marked Date table, at least six documented DAX measures (Total Sales, Total Cost, Gross Profit, Gross Profit %, YTD Sales, a CALCULATE override, and a RANKX), every calculated-column-doing-a-measure's-job removed, and a model README explaining each measure in one sentence. Same dataset, far stronger foundation.",
       "resources": [
         {
           "label": "YouTube: Guy in a Cube — Power BI for Beginners 2024 playlist",
@@ -750,7 +752,7 @@
           "note": ""
         },
         {
-          "label": "Dataset: AdventureWorks (available from Microsoft sample datasets)",
+          "label": "Dataset: your existing Sample - Superstore.xls (the file from Week 1 — do not switch datasets)",
           "url": "",
           "note": ""
         },
@@ -782,7 +784,155 @@
         "DAX measures documented in a README",
         "Data model diagram screenshot"
       ],
-      "days": [],
+      "days": [
+        {
+          "number": 1,
+          "title": "Measures vs calculated columns",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "Measures vs calculated columns in Power BI (search)",
+              "url": "https://www.youtube.com/results?search_query=measures%20vs%20calculated%20columns%20power%20bi%20explained",
+              "duration_min": 12,
+              "creator": "various",
+              "why": "Pick any clear 10–15 min explainer. You want the mental model, not a specific creator."
+            },
+            {
+              "kind": "reading",
+              "title": "Calculated columns vs measures — Microsoft Learn",
+              "url": "https://learn.microsoft.com/power-bi/transform-model/desktop-tutorial-create-calculated-measures",
+              "why": "The official line on when each one is the right tool. Read the 'when to use a measure' section twice."
+            },
+            {
+              "kind": "exercise",
+              "title": "Find the column doing a measure's job",
+              "body": "Open your Superstore v0.4 .pbix.\n\nSTEP 1 — Go to Data view. Look for any calculated column you added that holds a SUM, a profit, or a ratio (for example a Profit or Margin column you typed once).\n\nSTEP 2 — Ask the test question: does this number need to react when the user clicks a slicer? If yes, it should be a MEASURE, not a column. A column is frozen at refresh; a measure recomputes live.\n\nSTEP 3 — Create a measure instead. In the modelling ribbon: New measure → Total Sales = SUM(Orders[Sales]). Drop it on a card.\n\nYOU SHOULD SEE: the card number change when you click a Region slicer. The old calculated column would not. Write down which of your columns are secretly measures — you will delete them on Day 7."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Audit your star schema",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Star schema guidance for Power BI — Microsoft Learn",
+              "url": "https://learn.microsoft.com/power-bi/guidance/star-schema",
+              "why": "The definitive piece on fact vs dimension tables. This is the model shape every fast, correct report uses."
+            },
+            {
+              "kind": "exercise",
+              "title": "Draw your model before you judge it",
+              "body": "STEP 1 — Open Model view (the third icon on the left).\n\nSTEP 2 — Identify your fact table (the long, skinny one with one row per order line — Orders) and your dimension tables (Products/Category, Customer, Region, Date).\n\nSTEP 3 — Check the relationships. A star schema has dimensions pointing INTO the fact table with one-to-many relationships (the '1' on the dimension, the '*' on the fact).\n\nRED FLAGS to fix:\n  - One giant flat table with everything in it → split a dimension out.\n  - A dimension joined to another dimension (snowflake) → consider flattening it into one table.\n  - A many-to-many relationship → almost always a sign a dimension is missing.\n\nSTEP 4 — Screenshot the diagram. You will paste it into the README on Day 7."
+            },
+            {
+              "kind": "reflection",
+              "title": "Why the shape matters",
+              "body": "In one or two sentences, answer for your own model: if a colleague added a brand-new measure tomorrow, would your relationships let it filter correctly by Region AND by Date at the same time? If you are not sure, that uncertainty is exactly what this week removes."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Filter context — felt, not memorised",
+          "summary": "",
+          "items": [
+            {
+              "kind": "widget",
+              "title": "Watch one click recompute the whole page",
+              "body": "Use the interactive panel for this week. Click a region and watch every visual on the page recompute. That recomputation IS filter context: each measure re-ran against the new filter set. Nothing was stored — everything was calculated on the click."
+            },
+            {
+              "kind": "video",
+              "title": "Filter context in DAX, explained (search)",
+              "url": "https://www.youtube.com/results?search_query=dax%20filter%20context%20explained%20power%20bi",
+              "duration_min": 15,
+              "creator": "various",
+              "why": "Watch one solid filter-context explainer. If the words 'a measure has no value until it is placed in a context' click for you, you have the week's core idea."
+            },
+            {
+              "kind": "exercise",
+              "title": "Make the same measure show three different numbers",
+              "body": "STEP 1 — Put your Total Sales measure on three things at once: a card (no filter), a bar chart by Category, and a matrix by Region × Year.\n\nSTEP 2 — Notice the card shows the grand total, each bar shows that category's slice, each matrix cell shows that region-year slice. ONE measure, many answers.\n\nSTEP 3 — Now add a Region slicer and click 'West'. Watch all three update. Write the sentence in your own words: 'The number a measure shows is decided by ____.' (Answer: the filters around it.)"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "CALCULATE — overriding filters",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "CALCULATE function — Microsoft Learn reference",
+              "url": "https://learn.microsoft.com/dax/calculate-function-dax",
+              "why": "The reference for the function that changes filter context on purpose. Skim now; you will reread it once the exercise makes it concrete."
+            },
+            {
+              "kind": "exercise",
+              "title": "Two CALCULATE measures that prove you get it",
+              "body": "MEASURE 1 — Safe ratio.\n  Gross Profit % = DIVIDE([Gross Profit], [Total Sales])\n  Use DIVIDE, not the / operator — DIVIDE returns blank instead of an error on divide-by-zero.\n\nMEASURE 2 — Override a filter.\n  Sales All Categories = CALCULATE([Total Sales], ALL(Orders[Category]))\n  Put this and plain [Total Sales] side by side in a matrix sliced by Category.\n\nYOU SHOULD SEE: [Total Sales] changes per category row; Sales All Categories shows the SAME grand total on every row, because ALL() removed the Category filter. That is CALCULATE editing the filter context. Build a '% of total category' measure by dividing the two."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "A proper Date table + time intelligence",
+          "summary": "",
+          "items": [
+            {
+              "kind": "reading",
+              "title": "Create a date table — Microsoft Learn",
+              "url": "https://learn.microsoft.com/power-bi/guidance/model-date-tables",
+              "why": "Time-intelligence functions silently return wrong answers without a marked date table. This explains why and how to mark one."
+            },
+            {
+              "kind": "exercise",
+              "title": "Build and mark the Date table",
+              "body": "STEP 1 — New table:\n  Date = CALENDARAUTO()\n  (or CALENDAR(DATE(2014,1,1), DATE(2018,12,31)) to match Superstore's range.)\n\nSTEP 2 — Add columns: Year = YEAR([Date]), MonthNo = MONTH([Date]), Month = FORMAT([Date], 'MMM'). Sort Month by MonthNo.\n\nSTEP 3 — Relate Date[Date] to Orders[Order Date] (one-to-many).\n\nSTEP 4 — Right-click the Date table → Mark as date table → pick Date[Date]. This is the step everyone forgets.\n\nSTEP 5 — Now time intelligence works:\n  YTD Sales = TOTALYTD([Total Sales], 'Date'[Date])\n  Put YTD Sales in a matrix by Month and watch it accumulate then reset each January."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Iterators: SUMX, AVERAGEX, RANKX",
+          "summary": "",
+          "items": [
+            {
+              "kind": "video",
+              "title": "SUMX and DAX iterators, explained (search)",
+              "url": "https://www.youtube.com/results?search_query=dax%20sumx%20iterator%20explained%20power%20bi",
+              "duration_min": 14,
+              "creator": "various",
+              "why": "Iterators evaluate row by row, then aggregate. Watch one explainer until the row-context idea lands."
+            },
+            {
+              "kind": "exercise",
+              "title": "Three iterators on Superstore",
+              "body": "MEASURE 1 — Row-level revenue, then summed:\n  Line Revenue = SUMX(Orders, Orders[Sales] * (1 - Orders[Discount]))\n  This multiplies on EACH row first, then adds up — a plain SUM cannot do that.\n\nMEASURE 2 — Average order value:\n  Avg Order Value = AVERAGEX(VALUES(Orders[Order ID]), [Total Sales])\n\nMEASURE 3 — Ranking:\n  Product Rank = RANKX(ALL(Products[Product Name]), [Total Sales], , DESC)\n  Put Product Rank in a table with Product Name and Total Sales. You now have a leaderboard that re-ranks live when you slice by Region."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Document the model + tag v0.5",
+          "summary": "",
+          "items": [
+            {
+              "kind": "exercise",
+              "title": "Delete the fakes and write the README",
+              "body": "STEP 1 — Delete the calculated columns you flagged on Day 1 as secretly-measures. Replace any visual using them with the measure equivalent. Your file gets smaller and faster.\n\nSTEP 2 — Write model-README.md with three sections:\n  1. Model diagram — paste the Day 2 screenshot.\n  2. Measures — list each measure (Total Sales, Total Cost, Gross Profit, Gross Profit %, YTD Sales, Sales All Categories, Product Rank, Line Revenue) with ONE sentence each on what it returns and the filter context it expects.\n  3. Date table — note that it is marked, and which functions depend on it.\n\nSTEP 3 — Commit the .pbix and the README to your repo. Tag the commit v0.5."
+            },
+            {
+              "kind": "reflection",
+              "title": "The promotion question",
+              "body": "Look at a number in your report you were unsure about two weeks ago. Can you now name which layer would produce a wrong value — data, model, or report — and why? If yes, you have crossed the line from someone who makes dashboards to someone who can be trusted with them. That is the whole point of v0.5."
+            }
+          ]
+        }
+      ],
       "mastery_questions": [
         "This is the single most important distinction in Power BI, and getting it wrong wrecks both performance and correctness. A calculated column is computed once, row by row, when the data refreshes, and the result is stored in the table — it takes up memory and its value is fixed regardless of how the user later slices the report. A measure is computed on the fly, at the moment a visual asks for it, and it respects whatever filters the user has applied — it stores nothing and recalculates constantly. The rule: use a calculated column when you need a per-row value to slice or group by (a category label, a flag); use a measure for any aggregation that should react to filters (sums, ratios, running totals). Give me one thing that must be a calculated column and one that must be a measure, and explain what goes wrong if you swap them.",
         "Filter context is the idea that makes DAX click — and until it does, measures feel like magic. Filter context is the set of filters in force at the exact moment a measure is evaluated: the slicers the user picked, the row and column a value sits in, the page-level filters. So when a slicer is set to 'West Region', every measure recalculates as if only West rows exist — that filter is silently applied before your expression runs. CALCULATE() is the one function that can deliberately change that context — it evaluates its expression under a modified set of filters you specify. Walk me through what the filter context is for a single cell in a matrix of Sales by Region and Year, and then explain what CALCULATE() does to that context when you wrap it.",
