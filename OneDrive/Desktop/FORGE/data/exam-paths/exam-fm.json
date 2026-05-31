@@ -1588,6 +1588,20 @@
                 "correct": 1,
                 "explain": "NPV at the cost of capital ranks by value created and avoids IRR's scale and multiple-root issues.",
                 "difficulty": "core"
+              },
+              {
+                "q": "A project costs 1000 today and returns 600 at the end of year 1 and 700 at the end of year 2. At a cost of capital of 10% annual effective, calculate the net present value.",
+                "choices": ["$300.00$", "$123.97$", "$100.00$", "$150.00$", "$-1000.00$"],
+                "correct": 1,
+                "explain": "NPV $= -1000 + \\frac{600}{1.10} + \\frac{700}{1.10^2} = -1000 + 545.45 + 578.51 = 123.97$. The 300 answer just nets the undiscounted cash flows ($-1000+600+700$), ignoring the time value of money.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "You pay 900 for an investment that returns a single payment of 1000 at the end of one year. Calculate the annual effective yield rate.",
+                "choices": ["$10.00\\%$", "$11.11\\%$", "$9.00\\%$", "$11.00\\%$", "$90.00\\%$"],
+                "correct": 1,
+                "explain": "The yield solves $900(1+i) = 1000$, so $i = \\frac{1000}{900} - 1 = 0.1111 = 11.11\\%$. Dividing the 100 gain by the 1000 ending value (instead of the 900 invested) gives the wrong 10%.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1692,6 +1706,20 @@
                 "correct": 0,
                 "explain": "$\\frac{80}{1000+200(1-0.5)}=\\frac{80}{1100}=0.0727\\approx7.3\\%$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A fund is worth 100 at the start of the year. After 6 months it is worth 120, at which point 30 is deposited. At year-end the fund is worth 200. Calculate the time-weighted yield.",
+                "choices": ["$33.33\\%$", "$60.00\\%$", "$100.00\\%$", "$70.00\\%$", "$50.00\\%$"],
+                "correct": 1,
+                "explain": "Break at the cash flow and chain the growth factors: $\\frac{120}{100}\\times\\frac{200}{120+30} = 1.20\\times\\frac{200}{150} = 1.20\\times1.3333 = 1.60$, so $i_{tw} = 60\\%$. The deposit raises the base to 150 (not counted as gain) — using 200/120 would wrongly credit it.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A fund starts the year at 1000. A deposit of 1000 is made at mid-year (t = 0.5), and the fund is worth 2100 at year-end. Calculate the dollar-weighted yield (simple-interest approximation).",
+                "choices": ["$5.00\\%$", "$10.00\\%$", "$6.67\\%$", "$4.76\\%$", "$6.00\\%$"],
+                "correct": 2,
+                "explain": "Interest earned $= 2100 - 1000 - 1000 = 100$. Exposure $= 1000(1) + 1000(0.5) = 1500$ (the mid-year deposit is invested half the year). So $i \\approx \\frac{100}{1500} = 6.67\\%$. Dividing by the full 2000 of deposits gives 5.0%.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1804,6 +1832,20 @@
                 "correct": 1,
                 "explain": "It is the rate for the single future year $t$, implied (locked in) by today's spot curve.",
                 "difficulty": "warmup"
+              },
+              {
+                "q": "The 2-year spot rate is 5% and the 3-year spot rate is 6% (annual effective). Calculate the 1-year forward rate for year 3.",
+                "choices": ["$7.00\\%$", "$8.03\\%$", "$6.00\\%$", "$5.50\\%$", "$9.00\\%$"],
+                "correct": 1,
+                "explain": "No-arbitrage: $f = \\frac{(1+s_3)^3}{(1+s_2)^2} - 1 = \\frac{1.06^3}{1.05^2} - 1 = \\frac{1.191016}{1.1025} - 1 = 8.03\\%$. The forward sits above both spots because the curve is rising — averaging the spots (≈5.5%) is the trap.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "Annual spot rates are $s_1 = 4\\%$, $s_2 = 5\\%$, $s_3 = 6\\%$. Calculate the present value of 1000 received at the end of year 3.",
+                "choices": ["$961.54$", "$907.03$", "$839.62$", "$943.40$", "$800.00$"],
+                "correct": 2,
+                "explain": "Discount each cash flow at its OWN spot rate: $\\frac{1000}{(1+s_3)^3} = \\frac{1000}{1.06^3} = \\frac{1000}{1.191016} = 839.62$. Using $s_1$ or $s_2$ (961.54, 907.03) misprices a 3-year cash flow.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -1908,6 +1950,20 @@
                 "correct": 1,
                 "explain": "A swap is zero-value only at inception; afterward revalue both legs at the prevailing spot rates.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "Annual spot rates are $s_1 = 3\\%$ and $s_2 = 5\\%$. Calculate the fixed rate on a 2-year interest rate swap (notional 1).",
+                "choices": ["$4.00\\%$", "$4.95\\%$", "$5.00\\%$", "$3.00\\%$", "$5.50\\%$"],
+                "correct": 1,
+                "explain": "Discount factors: $P(0,1) = 1/1.03 = 0.97087$, $P(0,2) = 1/1.05^2 = 0.90703$. Swap rate $R = \\frac{1 - P(0,2)}{P(0,1)+P(0,2)} = \\frac{0.09297}{1.87790} = 4.95\\%$ — sensibly between $s_1$ and $s_2$.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A company is the fixed-rate payer on a swap with notional 5,000,000 and a fixed rate of 4%. This period the floating reference rate sets at 5.5%. Calculate the net amount the fixed-rate payer receives this period.",
+                "choices": ["$-75{,}000$", "$75{,}000$", "$275{,}000$", "$200{,}000$", "$475{,}000$"],
+                "correct": 1,
+                "explain": "Fixed leg $= 0.04(5{,}000{,}000) = 200{,}000$; floating leg $= 0.055(5{,}000{,}000) = 275{,}000$. Only the difference settles (notional never changes hands): the fixed payer receives $275{,}000 - 200{,}000 = 75{,}000$ because floating came in above the locked fixed rate.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -2012,6 +2068,20 @@
                 "correct": 2,
                 "explain": "Solve $4w + 9(1-w) = 6 \\Rightarrow 9 - 5w = 6 \\Rightarrow 5w = 3 \\Rightarrow w = 0.6 = 60\\%$.",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A bond pays 50 at the end of year 1 and 1050 at the end of year 2. At an annual effective yield of 5%, calculate the Macaulay duration.",
+                "choices": ["$2.00$", "$1.95$", "$1.50$", "$1.90$", "$1.05$"],
+                "correct": 1,
+                "explain": "PVs: $50/1.05 = 47.62$ and $1050/1.05^2 = 952.38$, total price $1000$. Macaulay duration $= \\frac{1(47.62) + 2(952.38)}{1000} = \\frac{1952.38}{1000} = 1.95$ years — just under the 2-year maturity because a little cash arrives at year 1.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A bond has Macaulay duration 8.4 years at an annual effective yield of 5%. Estimate the percentage change in its price if the yield rises by 0.5%.",
+                "choices": ["$-4.2\\%$", "$-4.0\\%$", "$-8.0\\%$", "$-3.8\\%$", "$-0.5\\%$"],
+                "correct": 1,
+                "explain": "Convert to modified duration first: $D_{mod} = \\frac{D_{mac}}{1+i} = \\frac{8.4}{1.05} = 8.0$. Then $\\frac{\\Delta P}{P} \\approx -D_{mod}\\,\\Delta i = -8.0(0.005) = -4.0\\%$. Using Macaulay 8.4 directly (skipping the $\\div(1+i)$) gives the trap $-4.2\\%$.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -2116,6 +2186,20 @@
                 "correct": 1,
                 "explain": "The positive convexity term offsets part of the duration loss, raising the predicted price (a smaller drop).",
                 "difficulty": "exam"
+              },
+              {
+                "q": "A bond has modified duration 7 and convexity 90. If its yield rises by 1%, estimate the percentage price change using both the duration and convexity terms.",
+                "choices": ["$-7.00\\%$", "$-6.55\\%$", "$-7.45\\%$", "$-6.00\\%$", "$-5.50\\%$"],
+                "correct": 1,
+                "explain": "$\\frac{\\Delta P}{P} \\approx -D_{mod}\\,\\Delta i + \\tfrac12 C(\\Delta i)^2 = -7(0.01) + \\tfrac12(90)(0.01)^2 = -0.07 + 0.0045 = -6.55\\%$. Duration alone predicts $-7.00\\%$; the positive convexity term softens the loss by 0.45%.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A liability with duration 7 is to be immunized using two bonds of duration 4 and 10, with equal present values. Calculate the fraction of the portfolio to invest in the 4-year-duration bond.",
+                "choices": ["$0.3$", "$0.5$", "$0.7$", "$0.4$", "$0.6$"],
+                "correct": 1,
+                "explain": "Match the portfolio duration to the liability: $4w + 10(1-w) = 7 \\Rightarrow 10 - 6w = 7 \\Rightarrow w = 0.5$. Splitting equally around the liability's duration also gives the portfolio extra convexity, satisfying Redington's third condition.",
+                "difficulty": "stretch"
               }
             ]
           }
@@ -2220,6 +2304,20 @@
                 "correct": 1,
                 "explain": "Hard-to-trade assets carry a liquidity premium to compensate holders for that difficulty.",
                 "difficulty": "warmup"
+              },
+              {
+                "q": "A bond yields a nominal 10% while inflation runs at 4%. Using the Fisher equation, calculate the exact real rate of return.",
+                "choices": ["$6.00\\%$", "$5.77\\%$", "$6.25\\%$", "$5.00\\%$", "$14.00\\%$"],
+                "correct": 1,
+                "explain": "Exact Fisher: $1 + r = \\frac{1+i}{1+\\pi} = \\frac{1.10}{1.04} = 1.05769$, so $r = 5.77\\%$ — slightly below the quick approximation $i - \\pi = 6\\%$, because the subtraction drops the $r\\pi$ cross-term.",
+                "difficulty": "stretch"
+              },
+              {
+                "q": "A lender prices a loan with a real risk-free rate of 2%, expected inflation of 3%, a default premium of 1.5%, and a liquidity premium of 0.5%. Using the additive approximation, calculate the nominal interest rate.",
+                "choices": ["$5.00\\%$", "$7.00\\%$", "$6.50\\%$", "$3.50\\%$", "$5.06\\%$"],
+                "correct": 1,
+                "explain": "Stack the components: $r + \\pi + \\text{default} + \\text{liquidity} = 2 + 3 + 1.5 + 0.5 = 7.0\\%$. Keeping only the real rate and inflation (5.0%) ignores the risk premiums; the premiums alone (3.5%) ignore the base real+inflation return.",
+                "difficulty": "stretch"
               }
             ]
           }
