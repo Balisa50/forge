@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { loadExamPath, findConcept, flattenConcepts } from "@/lib/examPaths";
-import { auth } from "@/lib/auth";
 import ConceptSections from "@/components/exam/ConceptSections";
 import ConceptStatusBar from "@/components/exam/ConceptStatusBar";
 import MasteryQuiz from "@/components/exam/MasteryQuiz";
 
 export const dynamic = "force-dynamic";
 
+// Actuary concept pages are PUBLIC by design — full lessons + quiz, no login wall.
 export default async function ConceptPage({ params }: { params: Promise<{ slug: string; concept: string }> }) {
-  const session = await auth();
   const { slug, concept: conceptId } = await params;
-  if (!session?.user?.id) redirect(`/register?next=/learn/exam/${slug}/${conceptId}`);
 
   const path = loadExamPath(slug);
   if (!path) return notFound();

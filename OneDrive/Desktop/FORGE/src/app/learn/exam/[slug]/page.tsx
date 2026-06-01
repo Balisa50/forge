@@ -1,16 +1,14 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, FileText, ListChecks, Target } from "lucide-react";
 import { loadExamPath, totalConcepts } from "@/lib/examPaths";
-import { auth } from "@/lib/auth";
 import PathMap, { type PathMapModule } from "@/components/exam/PathMap";
 
 export const dynamic = "force-dynamic";
 
+// Actuary exam paths are PUBLIC by design — fully viewable with no login wall.
 export default async function ExamPathPage({ params }: { params: Promise<{ slug: string }> }) {
-  const session = await auth();
   const { slug } = await params;
-  if (!session?.user?.id) redirect(`/register?next=/learn/exam/${slug}`);
 
   const path = loadExamPath(slug);
   if (!path) return notFound();

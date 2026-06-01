@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ArrowRight, Clock, BookOpen, Target, GraduationCap, Brain, Timer } from "lucide-react";
 import { loadAllRoadmaps, ROADMAP_META } from "@/lib/roadmaps";
 import { loadAllExamPaths, totalConcepts } from "@/lib/examPaths";
-import { auth } from "@/lib/auth";
 
 export const metadata = {
   title: "Roadmaps — THE FORGE",
@@ -13,12 +11,10 @@ export const metadata = {
 // Force dynamic so the auth check runs on every request (no static cache leak)
 export const dynamic = "force-dynamic";
 
+// The hub is PUBLIC so anyone can browse. Clicking a build roadmap shows its
+// overview card (locked content until signup); clicking an Actuary exam opens
+// it fully (public by design).
 export default async function LearnIndexPage() {
-  // Gate: curriculum content is for FORGE members only. Unauthenticated
-  // visitors see the landing-page pitch, NOT the actual roadmap content.
-  const session = await auth();
-  if (!session?.user?.id) redirect("/register?next=/learn");
-
   const roadmaps = loadAllRoadmaps();
   const examPaths = loadAllExamPaths();
 

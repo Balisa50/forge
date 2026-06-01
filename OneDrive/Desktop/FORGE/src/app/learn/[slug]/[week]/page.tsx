@@ -19,10 +19,11 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const meta = ROADMAP_META[roadmap.slug];
 
   // ── Mentee gate ────────────────────────────────────────────────────
-  // First gate: curriculum is for FORGE members only. Public visitors get
-  // redirected to register with a return URL.
+  // First gate: week content is for FORGE members only. Public visitors are
+  // sent to the roadmap's overview card (covers / skills / time + signup CTA)
+  // rather than the locked week content.
   const session = await auth();
-  if (!session?.user?.id) redirect(`/register?next=/learn/${slug}/${week}`);
+  if (!session?.user?.id) redirect(`/learn/${slug}`);
 
   // Second gate: if the logged-in user is a mentee (has any active
   // MentorLink), they can ONLY view a week if their mentor has released it
