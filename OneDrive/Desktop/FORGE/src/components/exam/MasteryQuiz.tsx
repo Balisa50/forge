@@ -18,6 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Timer, Check, X, RotateCcw, Trophy, ArrowRight, Lock } from "lucide-react";
 import { renderRichText } from "@/lib/math";
 import { recordAttempt, useExamProgress, getConcept } from "@/lib/examProgress";
+import { hasGenerator, generateQuestions } from "@/lib/examQuestionGen";
 import type { MasteryQuestion as MQ } from "@/lib/examPaths";
 
 interface Props {
@@ -37,12 +38,23 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
   const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
   const [leftTab, setLeftTab] = useState(false);
   const [idx, setIdx] = useState(0);
+
+  // Non-exhaustible questions (#6): if this concept has a parameterized
+  // generator, build a FRESH randomized set; otherwise use the static bank.
+  // Regenerated on every `start()` so retakes never repeat.
+  const generated = hasGenerator(conceptId);
+  const makeSet = useCallback(
+    () => (generated ? generateQuestions(conceptId, questions.length || 7) : questions),
+    [generated, conceptId, questions],
+  );
+  const [liveQuestions, setLiveQuestions] = useState<MQ[]>(() => makeSet());
+
   // picks[i] = chosen index, or -1 if timed out / unanswered.
-  const [picks, setPicks] = useState<number[]>(() => questions.map(() => -2)); // -2 = not reached
+  const [picks, setPicks] = useState<number[]>(() => liveQuestions.map(() => -2)); // -2 = not reached
   const [secs, setSecs] = useState(secondsPerQuestion);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const total = questions.length;
+  const total = liveQuestions.length;
 
   const clearTick = useCallback(() => {
     if (tickRef.current) {
@@ -54,12 +66,12 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
   const finish = useCallback(
     (finalPicks: number[]) => {
       clearTick();
-      const correct = finalPicks.reduce((n, p, i) => n + (p === questions[i].correct ? 1 : 0), 0);
+      const correct = finalPicks.reduce((n, p, i) => n + (p === liveQuestions[i].correct ? 1 : 0), 0);
       const score = total ? correct / total : 0;
       recordAttempt(slug, conceptId, score, score >= passing);
       setPhase("done");
     },
-    [clearTick, conceptId, passing, questions, slug, total],
+    [clearTick, conceptId, passing, liveQuestions, slug, total],
   );
 
   const advance = useCallback(
@@ -122,7 +134,9 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
   }, [phase]);
 
   function start() {
-    setPicks(questions.map(() => -2));
+    const fresh = makeSet(); // resample so retakes never repeat (#6)
+    setLiveQuestions(fresh);
+    setPicks(fresh.map(() => -2));
     setIdx(0);
     setSecs(secondsPerQuestion);
     setLeftTab(false);
@@ -131,10 +145,10 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
 
   const result = useMemo(() => {
     if (phase !== "done") return null;
-    const correct = picks.reduce((n, p, i) => n + (p === questions[i].correct ? 1 : 0), 0);
+    const correct = picks.reduce((n, p, i) => n + (p === liveQuestions[i].correct ? 1 : 0), 0);
     const score = total ? correct / total : 0;
     return { correct, score, passed: score >= passing };
-  }, [phase, picks, questions, total, passing]);
+  }, [phase, picks, liveQuestions, total, passing]);
 
   // ---- IDLE ----
   if (phase === "idle") {
@@ -165,7 +179,7 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
 
   // ---- RUNNING ---- (full-screen locked overlay)
   if (phase === "running") {
-    const q = questions[idx];
+    const q = liveQuestions[idx];
     const low = secs <= Math.max(3, Math.round(secondsPerQuestion * 0.2));
     return (
       <div
@@ -267,7 +281,7 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
 
       {/* Per-question review */}
       <div className="mt-5 space-y-4">
-        {questions.map((q, i) => {
+        {liveQuestions.map((q, i) => {
           const pick = picks[i];
           const ok = pick === q.correct;
           return (
