@@ -1025,12 +1025,17 @@
             {
               "kind": "intuition",
               "title": "Discrete sprinkles, continuous spreads",
-              "body": "A **discrete** variable drops chunks of probability on specific points, the heights $p(x)$ are actual probabilities and must sum to 1. A **continuous** variable smears probability like butter; the height $f(x)$ is a *density*, not a probability, and you get probability only by integrating over an interval (an *area*). For a continuous variable, $P(X = x) = 0$, a single point has no width, hence no area."
+              "body": "A **discrete** variable drops chunks of probability on specific points, the heights $p(x)$ are actual probabilities and must sum to 1. A **continuous** variable smears probability like butter; the height $f(x)$ is a *density*, not a probability, and you get probability only by integrating over an interval (an *area*). For a continuous variable, $P(X = x) = 0$, a single point has no width, hence no area. One more shape lives between the two: a **mixed** variable that drops a chunk of probability on a point *and* spreads the rest as density, e.g. an insurance payout that is exactly $0$ with probability $0.3$ (a deductible never met) and continuous above that. Its CDF then has a visible *jump* of height $0.3$ at $0$ and climbs smoothly afterward. Reading those jumps is a recurring exam skill."
             },
             {
               "kind": "formula",
               "title": "The three functions and how they connect",
               "body": "Discrete pmf sums to 1: $\\sum_x p(x) = 1$. Continuous pdf integrates to 1: $\\int_{-\\infty}^{\\infty} f(x)\\,dx = 1$. The CDF accumulates probability up to a point: $$F(x) = P(X \\le x)$$ For continuous $X$, density is the derivative of the CDF: $f(x) = F'(x)$, and $P(a \\le X \\le b) = F(b) - F(a)$."
+            },
+            {
+              "kind": "formula",
+              "title": "Every CDF obeys four rules, and the survival function",
+              "body": "Whatever the variable, its CDF $F(x)=P(X\\le x)$ is **non-decreasing**, **right-continuous**, and runs from $\\lim_{x\\to-\\infty}F(x)=0$ up to $\\lim_{x\\to\\infty}F(x)=1$. For a discrete variable the size of the jump at a point *is* its probability: $$P(X=x) = F(x) - F(x^-).$$ The **survival function** $S(x)=P(X>x)=1-F(x)$ is the exam's favorite alternate view, tail probabilities, reliability, and 'at least' questions all read more cleanly through $S$."
             },
             {
               "kind": "widget",
@@ -1064,6 +1069,18 @@
               "answer": "$f(x) = 2x$; $P(0.2 \\le X \\le 0.5) = 0.21$"
             },
             {
+              "kind": "worked",
+              "title": "Read probabilities off a discrete CDF",
+              "body": "A claim count $X$ has CDF $F(0)=0.4$, $F(1)=0.7$, $F(2)=0.9$, $F(3)=1$ (a step function, flat between integers). Find $P(X=2)$, $P(X\\le 2)$, and $P(X<2)$.",
+              "steps": [
+                "$P(X=2)$ is the *jump* of the CDF at $2$: $F(2)-F(1) = 0.9 - 0.7 = 0.2$.",
+                "$P(X\\le 2) = F(2) = 0.9$ directly, the CDF already accumulates up to and including $2$.",
+                "$P(X<2)$ stops *before* the jump at $2$, so it equals $F(1) = 0.7$. For discrete variables $\\le$ and $<$ genuinely differ.",
+                "Check the pmf sums: $0.4+0.3+0.2+0.1 = 1$ across $x=0,1,2,3$. ✓"
+              ],
+              "answer": "$P(X=2)=0.2$, $P(X\\le2)=0.9$, $P(X<2)=0.7$"
+            },
+            {
               "kind": "trick",
               "title": "First move on any pdf: set the area to 1",
               "body": "Whenever a density has an unknown constant, your first line is always $\\int f = 1$, that single equation solves for the constant. And to get any probability, integrate the density (or subtract two CDF values). Density questions are integration questions in disguise."
@@ -1072,6 +1089,11 @@
               "kind": "trap",
               "title": "Reading a density as a probability",
               "body": "$f(x)$ can exceed 1, it is a density, not a probability. A narrow tall pdf can have $f(x) = 5$ and still integrate to 1. Never write $P(X = a) = f(a)$ for a continuous variable; that probability is 0. Probability is always an *area* under $f$, never a height."
+            },
+            {
+              "kind": "trap",
+              "title": "For discrete variables, $\\le$ and $<$ are not interchangeable",
+              "body": "With continuous variables $P(X\\le a)=P(X<a)$ because the single point carries no area, so swapping $\\le$ and $<$ is harmless. With **discrete** variables the point holds real mass, so $P(X<a)=F(a)-P(X=a)$, strictly less than $F(a)$. Misreading 'fewer than 3' as 'at most 3' silently adds one whole probability lump."
             },
             {
               "kind": "recall",
@@ -1083,6 +1105,14 @@
                 {
                   "front": "How do the pdf and CDF connect, and why does $P(a\\le X\\le b)=F(b)-F(a)$?",
                   "back": "The CDF accumulates probability up to a point, $F(x)=P(X\\le x)$, so the density is its slope: $f(x)=F'(x)$. Probability on $[a,b]$ is the *amount accumulated by $b$ minus the amount already accumulated by $a$*, i.e. $F(b)-F(a)$, which by the fundamental theorem of calculus equals $\\int_a^b f$."
+                },
+                {
+                  "front": "What four properties must every CDF satisfy, and what does a jump in $F$ mean?",
+                  "back": "A CDF is non-decreasing, right-continuous, with $F(-\\infty)=0$ and $F(\\infty)=1$. A jump at $x$ signals a point mass, and its height is exactly $P(X=x)=F(x)-F(x^-)$. A purely continuous variable has no jumps; a mixed variable has some smooth climb and some jumps."
+                },
+                {
+                  "front": "Why does the actuary's work so often use the survival function $S(x)=1-F(x)$?",
+                  "back": "$S(x)=P(X>x)$ reads 'at least / exceeds / survives past $x$' directly, which is how reliability, tail risk, and 'at least one' questions are phrased. For nonnegative variables it also gives the clean mean formula $E[X]=\\int_0^\\infty S(x)\\,dx$, area under the survival curve, no density integration needed."
                 }
               ]
             }
@@ -1198,12 +1228,17 @@
             {
               "kind": "intuition",
               "title": "Balance point and spread",
-              "body": "$E[X]$ is the **balance point** of the distribution, where the probability mass would teeter on a fulcrum. Variance measures the *average squared distance* from that balance point: small variance means tightly clustered, large variance means wild. We square the distances so positives and negatives do not cancel; the standard deviation un-squares it back to the original units."
+              "body": "$E[X]$ is the **balance point** of the distribution, where the probability mass would teeter on a fulcrum. Variance measures the *average squared distance* from that balance point: small variance means tightly clustered, large variance means wild. We square the distances so positives and negatives do not cancel; the standard deviation un-squares it back to the original units. Two cautions the exam builds traps around. First, $E[X]$ need not be a value $X$ can actually take, the average household size is $2.4$ people. Second, expectation does **not** pass through nonlinear functions: $E[g(X)] \\ne g(E[X])$ in general, so $E[X^2]\\ne (E[X])^2$ (their gap is precisely the variance) and $E[1/X]\\ne 1/E[X]$."
             },
             {
               "kind": "formula",
               "title": "Definitions and the shortcut",
               "body": "Expectation: $E[X] = \\sum_x x\\,p(x)$ or $\\int x f(x)\\,dx$. Law of the unconscious statistician: $E[g(X)] = \\sum g(x)p(x)$ or $\\int g(x)f(x)\\,dx$. The variance shortcut: $$\\mathrm{Var}(X) = E[X^2] - (E[X])^2$$ Linearity, always true: $E[aX + b] = aE[X] + b$ and $\\mathrm{Var}(aX + b) = a^2\\mathrm{Var}(X)$."
+            },
+            {
+              "kind": "formula",
+              "title": "Linearity always; the tail formula for nonnegative $X$",
+              "body": "Expectation is **linear no matter what**, even for dependent variables: $$E[aX+bY+c] = aE[X]+bE[Y]+c.$$ Variance is *not* so generous, $\\mathrm{Var}(X+Y)=\\mathrm{Var}(X)+\\mathrm{Var}(Y)+2\\,\\mathrm{Cov}(X,Y)$, with the covariance term vanishing only when $X,Y$ are uncorrelated. For a nonnegative variable there is a slick mean shortcut via the survival function: $$E[X]=\\int_0^\\infty S(x)\\,dx = \\int_0^\\infty\\big(1-F(x)\\big)\\,dx.$$"
             },
             {
               "kind": "worked",
@@ -1229,6 +1264,18 @@
               "answer": "$E[X]=\\tfrac23$, $\\mathrm{Var}(X)=\\tfrac1{18}$, $\\mathrm{Var}(2X+5)=\\tfrac29$"
             },
             {
+              "kind": "worked",
+              "title": "Mean via the survival-function shortcut",
+              "body": "A waiting time is exponential with $\\lambda = 1/4$ (mean $4$). Recover $E[X]$ from the tail formula instead of the density, to see the method.",
+              "steps": [
+                "Survival function of an exponential: $S(x)=P(X>x)=e^{-\\lambda x}=e^{-x/4}$ for $x\\ge0$.",
+                "Apply the shortcut: $E[X]=\\int_0^\\infty S(x)\\,dx = \\int_0^\\infty e^{-x/4}\\,dx$.",
+                "$= \\big[-4e^{-x/4}\\big]_0^\\infty = 0-(-4) = 4$.",
+                "It matches $1/\\lambda = 4$. The tail formula shines when $S(x)$ is simpler than $x f(x)$, common for loss and lifetime models."
+              ],
+              "answer": "$E[X]=4$"
+            },
+            {
               "kind": "trick",
               "title": "Never integrate variance directly",
               "body": "Computing $\\int (x - \\mu)^2 f(x)\\,dx$ by hand is slow and error-prone. Always use $\\mathrm{Var}(X) = E[X^2] - \\mu^2$: find $E[X]$ and $E[X^2]$ with the same machinery, then subtract. And remember the constant $b$ vanishes from variance, only the scale $a$ survives, squared."
@@ -1237,6 +1284,11 @@
               "kind": "trap",
               "title": "Forgetting to square the scalar in variance",
               "body": "$\\mathrm{Var}(aX + b) = a^2\\mathrm{Var}(X)$, **not** $a\\,\\mathrm{Var}(X)$, and the $+b$ contributes nothing. Doubling a random variable quadruples its variance. Equally common: $\\mathrm{Var}(X+Y) \\ne \\mathrm{Var}(X) + \\mathrm{Var}(Y)$ unless $X$ and $Y$ are uncorrelated."
+            },
+            {
+              "kind": "trap",
+              "title": "Expectation does not commute with nonlinear functions (Jensen)",
+              "body": "Writing $E[X^2]=(E[X])^2$ or $E[\\sqrt{X}]=\\sqrt{E[X]}$ is the classic blunder. For a convex function $g$, **Jensen's inequality** gives $E[g(X)]\\ge g(E[X])$ (concave reverses it), so the two sides are equal only when $g$ is linear or $X$ is constant. The whole point of variance, $E[X^2]-(E[X])^2>0$, is a measure of exactly this gap."
             },
             {
               "kind": "recall",
@@ -1248,6 +1300,14 @@
                 {
                   "front": "Why does $\\mathrm{Var}(aX+b)=a^2\\mathrm{Var}(X)$, the shift gone, the scale squared?",
                   "back": "Variance measures spread around the mean, and sliding the whole distribution by $b$ moves the mean with it, leaving every distance from center unchanged, so $b$ drops out. Scaling by $a$ stretches each deviation by $a$; since variance averages *squared* deviations, that scales it by $a^2$. (Hence doubling a variable quadruples its variance.)"
+                },
+                {
+                  "front": "Why is $E[\\cdot]$ linear even for dependent variables, while $\\mathrm{Var}(\\cdot)$ is not?",
+                  "back": "Expectation is a plain (probability-weighted) sum/integral, and sums distribute over addition regardless of how variables relate, so $E[aX+bY]=aE[X]+bE[Y]$ always. Variance averages *squared* deviations, and squaring a sum produces a cross term: $\\mathrm{Var}(X+Y)=\\mathrm{Var}(X)+\\mathrm{Var}(Y)+2\\,\\mathrm{Cov}(X,Y)$. Only zero covariance lets the variances simply add."
+                },
+                {
+                  "front": "Why does $E[g(X)]\\ne g(E[X])$ in general, and what does the direction depend on?",
+                  "back": "Averaging then transforming is not the same as transforming then averaging once $g$ bends. Jensen's inequality pins the direction: for convex $g$ (like $x^2$), $E[g(X)]\\ge g(E[X])$; for concave $g$ (like $\\sqrt{x}$ or $\\ln x$), $E[g(X)]\\le g(E[X])$. Equality holds only if $g$ is linear or $X$ is degenerate."
                 }
               ]
             }
@@ -1363,12 +1423,17 @@
             {
               "kind": "intuition",
               "title": "Each distribution answers one question",
-              "body": "**Binomial**: how many successes in $n$ fixed independent trials? **Geometric**: how many trials until the first success? **Negative binomial**: until the $r$-th success? **Poisson**: how many rare events in a fixed interval, given an average rate? **Hypergeometric**: like binomial but drawing *without* replacement from a finite pool. Match the question to the story first; reach for the formula second."
+              "body": "**Binomial**: how many successes in $n$ fixed independent trials? **Geometric**: how many trials until the first success? **Negative binomial**: until the $r$-th success? **Poisson**: how many rare events in a fixed interval, given an average rate? **Hypergeometric**: like binomial but drawing *without* replacement from a finite pool. Match the question to the story first; reach for the formula second. Two relatives complete the family. The **negative binomial** generalizes the geometric: instead of waiting for the *first* success it waits for the *$r$-th*, so it is a sum of $r$ independent geometrics. The **hypergeometric** is the binomial's without-replacement twin, used when the population is finite and small enough that each draw visibly changes the odds (drawing defectives from a crate, not flipping a coin)."
             },
             {
               "kind": "formula",
               "title": "The families and their moments",
               "body": "Binomial$(n,p)$: $P(X=k) = \\binom{n}{k}p^k(1-p)^{n-k}$, mean $np$, variance $np(1-p)$. Geometric$(p)$ (trials until first success): $P(X=k) = (1-p)^{k-1}p$, mean $1/p$, variance $(1-p)/p^2$. Poisson$(\\lambda)$: $P(X=k) = \\dfrac{e^{-\\lambda}\\lambda^k}{k!}$, mean and variance both $\\lambda$."
+            },
+            {
+              "kind": "formula",
+              "title": "Negative binomial, hypergeometric, and geometric memorylessness",
+              "body": "**Negative binomial** (trials until the $r$-th success): $P(X=k)=\\binom{k-1}{r-1}p^r(1-p)^{k-r}$, mean $r/p$, variance $r(1-p)/p^2$. **Hypergeometric** (draw $n$ without replacement from $N$ items, $K$ of them 'good'): $P(X=k)=\\dfrac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}$, mean $n\\frac{K}{N}$. The **geometric is memoryless** (the only discrete distribution that is): $P(X>s+t\\mid X>s)=P(X>t)$, past failures never improve your luck."
             },
             {
               "kind": "worked",
@@ -1395,6 +1460,18 @@
               "answer": "$P(X\\ge 2) \\approx 0.756$; mean $2.5$, SD $\\approx 1.37$"
             },
             {
+              "kind": "worked",
+              "title": "Hypergeometric: defectives without replacement",
+              "body": "A box holds $20$ fuses, $5$ of them defective. You draw $4$ at random *without replacement*. Find the probability exactly $2$ are defective.",
+              "steps": [
+                "Drawing without replacement from a small finite pool, count of 'good' (defective) items, this is hypergeometric with $N=20$, $K=5$, $n=4$.",
+                "Favorable: choose $2$ of the $5$ defective and $2$ of the $15$ good: $\\binom{5}{2}\\binom{15}{2} = 10\\cdot105 = 1050$.",
+                "Total ways to draw $4$ of $20$: $\\binom{20}{4} = 4845$.",
+                "$P(X=2) = \\dfrac{1050}{4845} \\approx 0.2167$. (A binomial with $p=5/20$ would give $\\approx0.211$, close, because $n$ is small relative to $N$, but not identical.)"
+              ],
+              "answer": "$\\approx 0.217$"
+            },
+            {
               "kind": "trick",
               "title": "Poisson's signature: mean equals variance",
               "body": "If a problem hands you a mean and a variance that are *equal*, suspect Poisson immediately. Also: a binomial with large $n$ and small $p$ is well-approximated by Poisson with $\\lambda = np$, handy when $n$ is too big to compute $\\binom{n}{k}$ comfortably."
@@ -1403,6 +1480,11 @@
               "kind": "trap",
               "title": "Geometric indexing and the binomial coefficient",
               "body": "Two classic slips: (1) the geometric can be indexed as *trials until success* (support $1,2,3,\\dots$, mean $1/p$) or *failures before success* (support $0,1,2,\\dots$, mean $(1-p)/p$), read which the problem wants. (2) Binomial needs the $\\binom{n}{k}$ coefficient; dropping it counts only one specific ordering of successes, undercounting badly."
+            },
+            {
+              "kind": "trap",
+              "title": "With replacement vs without: binomial vs hypergeometric",
+              "body": "If draws are **independent with constant $p$** (replacement, or an effectively infinite pool), it is binomial. If draws are **without replacement from a finite pool**, each draw shifts the odds and it is hypergeometric, the trials are dependent. Using binomial for a small-pool problem overstates the variance, because removing items actually makes the count *less* variable (the finite-population correction)."
             },
             {
               "kind": "recall",
@@ -1414,6 +1496,14 @@
                 {
                   "front": "Why does the Poisson have mean = variance, and when does it approximate the binomial?",
                   "back": "Both equal $\\lambda$, so seeing an equal mean and variance is the Poisson fingerprint. It arises as the limit of Binomial$(n,p)$ when $n$ is large and $p$ small with $\\lambda = np$ held fixed: the binomial's variance $np(1-p)\\to np=\\lambda$ as $p\\to 0$, collapsing mean and variance together. That makes Poisson$(\\lambda=np)$ a fast stand-in when $n$ is too big for $\\binom{n}{k}$."
+                },
+                {
+                  "front": "Why is the geometric the only memoryless discrete distribution?",
+                  "back": "Independent trials with constant success probability $p$ have no memory by construction: failing the first $s$ trials tells you nothing about future ones, so $P(X>s+t\\mid X>s)=P(X>t)=(1-p)^t$. The constant-hazard requirement forces a geometric tail, just as the exponential is the unique memoryless *continuous* distribution."
+                },
+                {
+                  "front": "When does hypergeometric collapse toward binomial, and what changes if it doesn't?",
+                  "back": "When the sample size $n$ is tiny relative to the population $N$, removing items barely shifts the proportion, so without-replacement (hypergeometric) ≈ with-replacement (binomial, $p=K/N$). For small $N$ the dependence matters: the hypergeometric variance carries a finite-population correction factor $\\frac{N-n}{N-1}<1$, making the count *less* variable than the binomial."
                 }
               ]
             }
@@ -1529,12 +1619,17 @@
             {
               "kind": "intuition",
               "title": "Three shapes you must recognize on sight",
-              "body": "**Uniform**: flat, every value in $[a,b]$ equally likely. **Exponential**: waiting time for a Poisson event; a memoryless decay from a peak at 0. **Normal**: the symmetric bell, the limit that the CLT funnels everything toward. If you can sketch these three from memory and know roughly where their mass sits, most continuous questions are half-solved before any algebra."
+              "body": "**Uniform**: flat, every value in $[a,b]$ equally likely. **Exponential**: waiting time for a Poisson event; a memoryless decay from a peak at 0. **Normal**: the symmetric bell, the limit that the CLT funnels everything toward. If you can sketch these three from memory and know roughly where their mass sits, most continuous questions are half-solved before any algebra. The exponential and the Poisson are two views of one process: if events arrive at Poisson rate $\\lambda$, the *count* in a fixed window is Poisson$(\\lambda t)$ while the *gap* between events is Exponential$(\\lambda)$. Count vs wait, same $\\lambda$. And the standard normal table value $\\Phi(z)$ is symmetric, $\\Phi(-z)=1-\\Phi(z)$, which is how you handle negative $Z$-scores from a table that only prints positive ones."
             },
             {
               "kind": "formula",
               "title": "Densities and moments",
               "body": "Uniform$(a,b)$: $f(x) = \\frac{1}{b-a}$, mean $\\frac{a+b}{2}$, variance $\\frac{(b-a)^2}{12}$. Exponential$(\\lambda)$: $f(x) = \\lambda e^{-\\lambda x}$, $F(x) = 1 - e^{-\\lambda x}$, mean $1/\\lambda$, variance $1/\\lambda^2$. Normal$(\\mu,\\sigma^2)$: standardize with $Z = \\frac{X - \\mu}{\\sigma}$, then use the standard table."
+            },
+            {
+              "kind": "formula",
+              "title": "Uniform CDF, normal symmetry, and the minimum of exponentials",
+              "body": "**Uniform$(a,b)$** CDF: $F(x)=\\dfrac{x-a}{b-a}$ on $[a,b]$, so probabilities are just length ratios. **Normal symmetry**: $\\Phi(-z)=1-\\Phi(z)$, the bell's mirror image. **Competing exponentials**: if $X_1,\\dots,X_n$ are independent with rates $\\lambda_1,\\dots,\\lambda_n$, the first to occur is $$\\min(X_i)\\sim\\text{Exponential}\\!\\Big(\\textstyle\\sum_i \\lambda_i\\Big),$$ because surviving past $t$ requires *all* of them to, and survival functions multiply."
             },
             {
               "kind": "worked",
@@ -1561,6 +1656,18 @@
               "answer": "$P(X>1300) = 0.0668$; $P(900<X<1300) = 0.6247$"
             },
             {
+              "kind": "worked",
+              "title": "Competing risks: the first of several exponentials",
+              "body": "Three independent components have exponential lifetimes with rates $\\lambda_1=0.1$, $\\lambda_2=0.2$, $\\lambda_3=0.3$ per year. The system fails when the *first* component fails. Find the mean time to system failure.",
+              "steps": [
+                "System survives past $t$ only if every component does: $P(T>t)=\\prod_i e^{-\\lambda_i t}=e^{-(\\lambda_1+\\lambda_2+\\lambda_3)t}$.",
+                "That is an exponential survival function with combined rate $\\lambda = 0.1+0.2+0.3 = 0.6$.",
+                "So $T\\sim\\text{Exponential}(0.6)$, and its mean is $1/\\lambda = 1/0.6 \\approx 1.67$ years.",
+                "Intuition check: pooling independent risks adds their rates, so the *first* failure comes sooner than any single component's mean ($10$, $5$, $3.33$ years). ✓"
+              ],
+              "answer": "$T\\sim\\text{Exponential}(0.6)$, mean $\\approx1.67$ years"
+            },
+            {
               "kind": "trick",
               "title": "Memorylessness kills the conditioning",
               "body": "For an exponential, $P(X > s + t \\mid X > s) = P(X > t)$, always. The moment you see *given it has already survived...*, drop the elapsed time entirely and compute the fresh tail probability. And for the normal, the empirical rule (68–95–99.7 within 1–2–3 SDs) lets you eyeball many answers without a table."
@@ -1569,6 +1676,11 @@
               "kind": "trap",
               "title": "Rate vs mean, and continuity of the normal",
               "body": "The exponential's $\\lambda$ is a **rate**; its mean is $1/\\lambda$. A mean lifetime of 5 means $\\lambda = 0.2$, not 5. Mixing these inverts your exponents. Also: when standardizing, divide by $\\sigma$ (the SD), not $\\sigma^2$ (the variance), a frequent, costly slip."
+            },
+            {
+              "kind": "trap",
+              "title": "Count vs wait, and reading negative $Z$ from the table",
+              "body": "Keep the two roles of one Poisson process straight: the **number** of events in a window is Poisson; the **time** to the next event is exponential. Plugging a time into a Poisson pmf (or vice versa) is a frequent mix-up. On the normal, a table printing only $z\\ge0$ still handles negatives via $\\Phi(-z)=1-\\Phi(z)$, forgetting the flip turns a lower-tail probability into its complement."
             },
             {
               "kind": "recall",
@@ -1580,6 +1692,14 @@
                 {
                   "front": "Why standardize a normal by $\\sigma$ (not $\\sigma^2$), and what does $Z$ measure?",
                   "back": "$Z = \\frac{X-\\mu}{\\sigma}$ rescales the variable to *how many standard deviations* it lies from the mean, a pure, unitless distance. That only works if you divide by the SD, which shares $X$'s units; dividing by the variance $\\sigma^2$ leaves the wrong units and a wrong $Z$. Once in $Z$ units, every normal collapses to the single standard table."
+                },
+                {
+                  "front": "Why is the minimum of independent exponentials again exponential, with rates added?",
+                  "back": "The minimum exceeds $t$ exactly when *all* of them do, and independence makes the survival functions multiply: $P(\\min>t)=\\prod e^{-\\lambda_i t}=e^{-(\\sum\\lambda_i)t}$. That is the survival function of an Exponential$(\\sum\\lambda_i)$. Pooling independent Poisson-type risks simply sums their rates, the first event arrives at the combined rate."
+                },
+                {
+                  "front": "How are the exponential and Poisson the same process, and what does $\\Phi(-z)=1-\\Phi(z)$ encode?",
+                  "back": "For events at Poisson rate $\\lambda$: the *count* in time $t$ is Poisson$(\\lambda t)$ and the *interarrival time* is Exponential$(\\lambda)$, count vs wait. The normal identity $\\Phi(-z)=1-\\Phi(z)$ is just the bell's symmetry about $0$: the area left of $-z$ equals the area right of $+z$, which lets a positive-only table serve negative scores."
                 }
               ]
             }
@@ -1695,12 +1815,17 @@
             {
               "kind": "intuition",
               "title": "Why differentiating at zero pulls out moments",
-              "body": "The MGF is $M(t) = E[e^{tX}]$. Expand $e^{tX} = 1 + tX + \\frac{t^2X^2}{2!} + \\frac{t^3X^3}{3!} + \\cdots$ and take expectations: $M(t) = 1 + tE[X] + \\frac{t^2}{2!}E[X^2] + \\cdots$. The coefficient of $t^k$ is $E[X^k]/k!$, so the $k$-th derivative at $t=0$ peels off exactly $E[X^k]$. The MGF is a power series whose coefficients *are* the moments, differentiation is just reading off the term you want."
+              "body": "The MGF is $M(t) = E[e^{tX}]$. Expand $e^{tX} = 1 + tX + \\frac{t^2X^2}{2!} + \\frac{t^3X^3}{3!} + \\cdots$ and take expectations: $M(t) = 1 + tE[X] + \\frac{t^2}{2!}E[X^2] + \\cdots$. The coefficient of $t^k$ is $E[X^k]/k!$, so the $k$-th derivative at $t=0$ peels off exactly $E[X^k]$. The MGF is a power series whose coefficients *are* the moments, differentiation is just reading off the term you want. A caution the exam occasionally tests: an MGF does not always exist. It requires $E[e^{tX}]$ to be finite on an interval around $0$, which fails for heavy-tailed laws like the lognormal or Cauchy, their tails grow faster than $e^{tx}$ can be tamed. When an MGF exists, though, it is unique, so two variables sharing an MGF share everything."
             },
             {
               "kind": "formula",
               "title": "The three properties you will actually use",
               "body": "**Moments:** $E[X^k] = M^{(k)}(0)$. So $E[X] = M'(0)$ and $\\mathrm{Var}(X) = M''(0) - [M'(0)]^2$. **Uniqueness:** if two variables have the same MGF on an interval around 0, they have the same distribution, match the MGF to a known form to identify it. **Independent sums:** if $X$ and $Y$ are independent, $M_{X+Y}(t) = M_X(t)\\,M_Y(t)$; and $M_{aX+b}(t) = e^{bt}M_X(at)$."
+            },
+            {
+              "kind": "formula",
+              "title": "More canonical MGFs, and the linear-transform rule",
+              "body": "Add these to your recognition set: **Binomial$(n,p)$**: $\\big(1-p+pe^t\\big)^n$. **Geometric$(p)$** (trials form): $\\dfrac{pe^t}{1-(1-p)e^t}$. **Bernoulli$(p)$**: $1-p+pe^t$. The **linear transform** rides the constant outside and the scale inside the argument: $$M_{aX+b}(t)=e^{bt}M_X(at).$$ So scaling stretches the $t$-axis and shifting tacks on an exponential factor, it does *not* multiply $M_X$ by $a$."
             },
             {
               "kind": "worked",
@@ -1727,6 +1852,18 @@
               "answer": "$X+Y \\sim \\text{Normal}(3, 25)$"
             },
             {
+              "kind": "worked",
+              "title": "Identify the distribution from its MGF",
+              "body": "A variable has MGF $M(t)=\\big(0.3 + 0.7e^t\\big)^5$. Name the distribution and give its mean and variance, without differentiating.",
+              "steps": [
+                "Pattern-match to the binomial MGF $\\big(1-p+pe^t\\big)^n$: here $1-p=0.3$ and $p=0.7$ with $n=5$.",
+                "So $X\\sim\\text{Binomial}(5,\\,0.7)$ by the uniqueness property, the MGF fingerprints it.",
+                "Quote the moments from memory: mean $=np = 5(0.7)=3.5$; variance $=np(1-p)=5(0.7)(0.3)=1.05$.",
+                "Optional check via $M'(0)$: $M'(t)=5(0.3+0.7e^t)^4(0.7e^t)$, and at $t=0$, $M'(0)=5(1)^4(0.7)=3.5$. ✓"
+              ],
+              "answer": "Binomial$(5,0.7)$: mean $3.5$, variance $1.05$"
+            },
+            {
               "kind": "trick",
               "title": "Match the form, skip the calculus",
               "body": "Memorize the canonical MGFs and you often never differentiate. Poisson$(\\lambda)$: $e^{\\lambda(e^t-1)}$. Normal$(\\mu,\\sigma^2)$: $e^{\\mu t + \\sigma^2 t^2/2}$. Gamma$(\\alpha,\\theta)$: $(1-\\theta t)^{-\\alpha}$. Exponential$(\\lambda)$ is Gamma with $\\alpha=1$: $(1-t/\\lambda)^{-1} = \\frac{\\lambda}{\\lambda-t}$. When an MGF appears, try to read off its parameters by pattern-matching, then quote the mean and variance from memory."
@@ -1735,6 +1872,11 @@
               "kind": "trap",
               "title": "Subtract the square, and respect the $e^{bt}$ shift",
               "body": "$M''(0)$ gives $E[X^2]$, **not** the variance, you still subtract $[M'(0)]^2$. Forgetting this is the single most common MGF error. Second trap: for a linear transform $aX+b$, the MGF is $e^{bt}M_X(at)$, with the constant riding *outside* as $e^{bt}$ and the scale going *inside* the argument, do not multiply $M_X$ by $a$."
+            },
+            {
+              "kind": "trap",
+              "title": "The MGF need not exist, and mind its interval",
+              "body": "Two slips: (1) assuming every variable has an MGF, heavy-tailed distributions (lognormal, Cauchy, some Paretos) have $E[e^{tX}]=\\infty$ for all $t>0$, so no MGF exists and you must use other tools. (2) Quoting an MGF without its domain, forms like $(1-\\theta t)^{-\\alpha}$ only hold for $t<1/\\theta$; evaluating outside that interval is meaningless even though the derivatives at $0$ are fine."
             },
             {
               "kind": "recall",
@@ -1746,6 +1888,14 @@
                 {
                   "front": "Why does an independent sum multiply MGFs, and what does the uniqueness property buy you?",
                   "back": "$M_{X+Y}(t)=E[e^{t(X+Y)}]=E[e^{tX}e^{tY}]$, and independence factors the expectation into $M_X(t)M_Y(t)$. Uniqueness says an MGF fingerprints exactly one distribution, so after multiplying you can pattern-match the product to a known form and *identify* the sum's distribution, proving, e.g., that independent normals sum to a normal, not just that their moments add."
+                },
+                {
+                  "front": "How do you read off Binomial vs Poisson vs Normal directly from an MGF?",
+                  "back": "Binomial$(n,p)$: $(1-p+pe^t)^n$ (a power of a Bernoulli MGF). Poisson$(\\lambda)$: $e^{\\lambda(e^t-1)}$ (double exponential in $t$). Normal$(\\mu,\\sigma^2)$: $e^{\\mu t+\\sigma^2 t^2/2}$ (exponential of a quadratic). Match the algebraic *shape* to read parameters, then quote moments, uniqueness guarantees the match is the distribution."
+                },
+                {
+                  "front": "Why might a distribution have no MGF, and why does it matter?",
+                  "back": "The MGF $E[e^{tX}]$ must be finite on an interval around $t=0$. Heavy-tailed laws (lognormal, Cauchy) have tails that overwhelm $e^{tx}$, so the integral diverges for every $t>0$ and no MGF exists. It matters because the MGF tricks, moment extraction, summing independents, identification, then simply do not apply; you fall back on the CDF or characteristic function."
                 }
               ]
             }
@@ -1861,7 +2011,7 @@
             {
               "kind": "intuition",
               "title": "Chase the probability through the CDF",
-              "body": "A transformation reshapes the density, but probabilities of *events* are preserved. So translate the question about $Y$ into an equivalent question about $X$: $F_Y(y) = P(Y \\le y) = P(g(X) \\le y)$. Solve the inequality for $X$, evaluate using the known CDF of $X$, then differentiate to get the density of $Y$. You are simply following the same probability mass to its new location on the $y$-axis."
+              "body": "A transformation reshapes the density, but probabilities of *events* are preserved. So translate the question about $Y$ into an equivalent question about $X$: $F_Y(y) = P(Y \\le y) = P(g(X) \\le y)$. Solve the inequality for $X$, evaluate using the known CDF of $X$, then differentiate to get the density of $Y$. You are simply following the same probability mass to its new location on the $y$-axis. When $g$ is monotone *decreasing*, the same Jacobian formula works but the inverse's derivative is negative, which is exactly why the formula takes the **absolute value**: a density can never be negative, and the $|\\cdot|$ records the stretch while discarding the flip in direction. For a *discrete* variable there is no Jacobian at all, you just relabel the support and sum the pmf over every $x$ that maps to each new value."
             },
             {
               "kind": "formula",
@@ -1893,6 +2043,18 @@
               "answer": "$f_Y(y) = 2y\\,e^{-y^2}$, $y>0$"
             },
             {
+              "kind": "worked",
+              "title": "Inverse-CDF transform: turning a uniform into an exponential",
+              "body": "Let $U\\sim\\text{Uniform}(0,1)$ and define $Y=-\\tfrac{1}{\\lambda}\\ln(1-U)$. Show $Y$ is exponential with rate $\\lambda$ (this is how simulators generate exponential draws).",
+              "steps": [
+                "$g(u)=-\\tfrac1\\lambda\\ln(1-u)$ is monotone increasing on $(0,1)$, so go through the CDF. $F_Y(y)=P(Y\\le y)=P\\!\\big(-\\tfrac1\\lambda\\ln(1-U)\\le y\\big)$.",
+                "Solve the inequality for $U$: $\\ln(1-U)\\ge -\\lambda y \\Rightarrow 1-U\\ge e^{-\\lambda y} \\Rightarrow U\\le 1-e^{-\\lambda y}$.",
+                "Since $U$ is uniform, $P(U\\le c)=c$ on $(0,1)$: $F_Y(y)=1-e^{-\\lambda y}$ for $y>0$.",
+                "That is exactly the Exponential$(\\lambda)$ CDF, so $f_Y(y)=\\lambda e^{-\\lambda y}$. This is the **inverse-transform method**: feeding a uniform through $F^{-1}$ produces any target distribution. ✓"
+              ],
+              "answer": "$Y\\sim\\text{Exponential}(\\lambda)$"
+            },
+            {
               "kind": "trick",
               "title": "Probability integral transform",
               "body": "Two universal facts the exam exploits: (1) If $U \\sim \\text{Uniform}(0,1)$ then $X = F^{-1}(U)$ has CDF $F$, this is how you *simulate* any distribution. (2) Going the other way, if $X$ has continuous CDF $F$, then $F(X) \\sim \\text{Uniform}(0,1)$. So a transform like $Y = 1 - e^{-\\lambda X}$ applied to an exponential is *exactly* its own CDF, making $Y$ uniform on $(0,1)$ instantly, no integration needed."
@@ -1901,6 +2063,11 @@
               "kind": "trap",
               "title": "Monotonicity and the new support",
               "body": "Never apply the Jacobian formula to a non-monotone $g$ (like $x^2$ over a symmetric interval), you will miss half the probability. When $g$ folds the line, split into monotone pieces or use the CDF method. Second trap: always restate the **support** of $Y$. The range of $g$ over the support of $X$ sets where $f_Y$ is nonzero; forgetting to update it produces a density that does not integrate to 1."
+            },
+            {
+              "kind": "trap",
+              "title": "Decreasing transforms still need the absolute value",
+              "body": "For a decreasing $g$ (say $Y=e^{-X}$), the inverse derivative $\\frac{d}{dy}g^{-1}(y)$ is **negative**. Dropping the absolute value in $f_Y(y)=f_X(g^{-1}(y))\\,|\\,(g^{-1})'(y)\\,|$ yields a negative 'density', an immediate red flag. The Jacobian measures a *stretch*, so only its magnitude enters; the sign just tells you $g$ reversed orientation."
             },
             {
               "kind": "recall",
@@ -1912,6 +2079,14 @@
                 {
                   "front": "What does the Jacobian $|\\frac{d}{dy}g^{-1}(y)|$ do, and why must you restate the support of $Y$?",
                   "back": "For a monotone $g$ the Jacobian is the local stretch factor: it rescales $f_X$ so that probability is conserved when the axis is stretched or compressed, keeping the total area at 1. You must also map the support, the range of $g$ over $X$'s support sets where $f_Y$ is nonzero; skip that and the 'density' won't integrate to 1."
+                },
+                {
+                  "front": "What is the inverse-transform method, and why does $F(X)\\sim\\text{Uniform}(0,1)$?",
+                  "back": "If $U\\sim\\text{Uniform}(0,1)$ then $X=F^{-1}(U)$ has CDF $F$, so feeding a uniform through the inverse CDF generates *any* distribution, the basis of simulation. The converse holds because $P(F(X)\\le u)=P(X\\le F^{-1}(u))=F(F^{-1}(u))=u$, so $F(X)$ is uniform whenever $F$ is continuous. The CDF maps a variable onto its own probability scale."
+                },
+                {
+                  "front": "Why does the Jacobian carry an absolute value, and what replaces it for discrete variables?",
+                  "back": "The Jacobian $|(g^{-1})'(y)|$ is a local stretch factor that conserves probability mass; a decreasing $g$ gives a negative derivative, but densities cannot be negative, so only the magnitude counts (the sign merely flips orientation). Discrete variables have no Jacobian, transforming just relabels outcomes, so you sum the pmf over every preimage $x$ with $g(x)=y$."
                 }
               ]
             }
@@ -2027,12 +2202,17 @@
             {
               "kind": "intuition",
               "title": "Three different notions of 'center'",
-              "body": "The **median** splits the area under the density in half, half the probability lies on each side. The **mode** is where the density is tallest, the most likely neighborhood. The **mean** is the balance point, the center of mass. For a symmetric distribution all three coincide. Skew the distribution and they spread out: a long right tail drags the mean above the median, which sits above the mode."
+              "body": "The **median** splits the area under the density in half, half the probability lies on each side. The **mode** is where the density is tallest, the most likely neighborhood. The **mean** is the balance point, the center of mass. For a symmetric distribution all three coincide. Skew the distribution and they spread out: a long right tail drags the mean above the median, which sits above the mode. Percentiles are the language of risk. Actuaries quote **Value-at-Risk** as a percentile of the loss, 'the 99th-percentile loss is the amount exceeded only 1% of the time', and spread is often summarized by the **interquartile range** IQR $=Q_3-Q_1$, the width of the middle 50%. Both are just the percentile machinery $F(\\pi_p)=p$ read at chosen $p$ values."
             },
             {
               "kind": "formula",
               "title": "Finding each one",
               "body": "**$p$-th percentile** $\\pi_p$: solve $F(\\pi_p) = p$. **Median** $m$: solve $F(m) = 0.5$. **Mode**: maximize $f(x)$, for a differentiable density, solve $f'(x)=0$ and check it is a maximum. For the exponential$(\\lambda)$, setting $1-e^{-\\lambda \\pi_p} = p$ gives $\\pi_p = -\\frac{1}{\\lambda}\\ln(1-p)$, so the median is $\\frac{\\ln 2}{\\lambda}$."
+            },
+            {
+              "kind": "formula",
+              "title": "VaR, IQR, and the normal quantile",
+              "body": "**Value-at-Risk** at level $p$ is the percentile $\\pi_p$ solving $F(\\pi_p)=p$ (equivalently $S(\\pi_p)=1-p$). **IQR** $=\\pi_{0.75}-\\pi_{0.25}$ measures spread robustly, unaffected by extreme tails. For a **normal**, percentiles come straight from a $z$-score: $$\\pi_p = \\mu + z_p\\,\\sigma,\\qquad z_{0.95}=1.645,\\ z_{0.975}=1.960,\\ z_{0.99}=2.326.$$"
             },
             {
               "kind": "worked",
@@ -2059,6 +2239,18 @@
               "answer": "Mode $0$, median $\\approx 0.293$, mean $\\tfrac13$ (right-skewed)"
             },
             {
+              "kind": "worked",
+              "title": "Value-at-Risk of a normal loss",
+              "body": "Annual losses are Normal with mean $\\mu=200$ and standard deviation $\\sigma=50$ (in thousands). Find the $95\\%$ Value-at-Risk, the loss exceeded only $5\\%$ of the time.",
+              "steps": [
+                "The $95\\%$ VaR is the $95$th percentile: solve $F(\\pi_{0.95})=0.95$, i.e. find the value $1.645$ SDs above the mean.",
+                "Use $\\pi_p=\\mu+z_p\\sigma$ with $z_{0.95}=1.645$: $\\pi_{0.95}=200+1.645(50)$.",
+                "$=200+82.25 = 282.25$ thousand.",
+                "Read it back: there is only a $5\\%$ chance annual losses exceed about $\\$282\\text{k}$, exactly the capital-planning figure VaR is built to give."
+              ],
+              "answer": "$95\\%$ VaR $\\approx 282.25$ (thousand)"
+            },
+            {
               "kind": "trick",
               "title": "Mean > median > mode for right skew",
               "body": "For a right-skewed distribution (long upper tail, lognormal, exponential, most loss models), the ordering is **mean $>$ median $>$ mode**. The rare large values inflate the mean most, the median less, and leave the mode (the peak) alone. If a question shows mean far above median, you are looking at right skew, and the mean is *not* a typical value. This single fact answers many qualitative questions instantly."
@@ -2067,6 +2259,11 @@
               "kind": "trap",
               "title": "Percentile means the value, not the probability",
               "body": "The $p$-th percentile is the **$x$-value** $\\pi_p$ such that $F(\\pi_p)=p$, not the probability $p$ itself. Students sometimes report 0.90 when asked for the 90th percentile; the answer is the dollar/time amount. Also: for discrete or mixed distributions the percentile may not be unique (a flat stretch of the CDF), and the median is the conventional choice in that interval."
+            },
+            {
+              "kind": "trap",
+              "title": "Percentiles can be non-unique for discrete or flat-CDF variables",
+              "body": "When the CDF is flat over an interval (a gap in a continuous support) or jumps (a discrete variable), the equation $F(\\pi_p)=p$ may have a whole interval of solutions or none exactly. The convention is to take the smallest $x$ with $F(x)\\ge p$. So the 'median' of a discrete variable can land on a value with $F$ jumping past $0.5$, do not expect a clean $F=0.5$ hit."
             },
             {
               "kind": "recall",
@@ -2078,6 +2275,14 @@
                 {
                   "front": "Why do mean, median, and mode coincide when symmetric but separate under skew?",
                   "back": "Each measures a different 'center': median halves the area, mode is the density's peak, mean is the balance point. Symmetry makes all three land at the axis of symmetry. A long right tail adds rare large values that pull the *balance point* (mean) outward most, the area-splitting median less, and leave the peak (mode) put, giving mode $<$ median $<$ mean for right skew (reversed for left)."
+                },
+                {
+                  "front": "How does Value-at-Risk relate to a percentile, and how do you get it for a normal?",
+                  "back": "$p$-level VaR is just the $p$-th percentile of the loss: the amount $\\pi_p$ with $F(\\pi_p)=p$, exceeded with probability $1-p$. For a normal loss, percentiles are $\\pi_p=\\mu+z_p\\sigma$, so the $95\\%$ VaR is $\\mu+1.645\\sigma$ and the $99\\%$ VaR is $\\mu+2.326\\sigma$, a single $z$-score scaled by $\\sigma$ and shifted by $\\mu$."
+                },
+                {
+                  "front": "Why might the percentile equation $F(\\pi_p)=p$ have no exact or no unique solution?",
+                  "back": "If the CDF *jumps* (discrete variable) it can skip past the level $p$ with no $x$ hitting it exactly; if the CDF is *flat* over an interval, many $x$ satisfy $F(x)=p$. The standard fix is to define $\\pi_p$ as the smallest $x$ with $F(x)\\ge p$, which is why a discrete median may sit at a value where $F$ leaps from below to above $0.5$."
                 }
               ]
             }
@@ -2193,12 +2398,17 @@
             {
               "kind": "intuition",
               "title": "Each family's origin story",
-              "body": "**Gamma$(\\alpha,\\theta)$**: add $\\alpha$ independent exponentials with mean $\\theta$ and you get a Gamma, the total time to the $\\alpha$-th arrival. Shape $\\alpha$ controls how bell-like it becomes. **Beta$(\\alpha,\\beta)$**: the natural distribution for a random *fraction*, flexible shapes on $[0,1]$, the conjugate prior for a binomial proportion. **Lognormal**: if $\\ln X$ is normal, $X$ is lognormal, the limit of many *multiplicative* shocks, so it models asset prices and loss sizes with a long right tail."
+              "body": "**Gamma$(\\alpha,\\theta)$**: add $\\alpha$ independent exponentials with mean $\\theta$ and you get a Gamma, the total time to the $\\alpha$-th arrival. Shape $\\alpha$ controls how bell-like it becomes. **Beta$(\\alpha,\\beta)$**: the natural distribution for a random *fraction*, flexible shapes on $[0,1]$, the conjugate prior for a binomial proportion. **Lognormal**: if $\\ln X$ is normal, $X$ is lognormal, the limit of many *multiplicative* shocks, so it models asset prices and loss sizes with a long right tail. These three are less exotic than they look, each is a familiar face in disguise. The **exponential** is just Gamma with shape $\\alpha=1$. The **chi-square** with $k$ degrees of freedom is Gamma$(k/2,\\,2)$, the workhorse of statistics. And a **uniform$(0,1)$** is Beta$(1,1)$. Seeing gamma as 'stacked exponentials' and beta as 'the flexible $[0,1]$ shape' turns a scary trio into one idea each."
             },
             {
               "kind": "formula",
               "title": "Moments worth memorizing",
               "body": "**Gamma$(\\alpha,\\theta)$**: mean $\\alpha\\theta$, variance $\\alpha\\theta^2$, MGF $(1-\\theta t)^{-\\alpha}$. **Beta$(\\alpha,\\beta)$**: mean $\\frac{\\alpha}{\\alpha+\\beta}$, variance $\\frac{\\alpha\\beta}{(\\alpha+\\beta)^2(\\alpha+\\beta+1)}$. **Lognormal**: if $\\ln X \\sim N(\\mu,\\sigma^2)$, then $E[X] = e^{\\mu + \\sigma^2/2}$ and $\\mathrm{Var}(X) = e^{2\\mu+\\sigma^2}\\big(e^{\\sigma^2}-1\\big)$. Probabilities for the lognormal are done by taking logs and using the normal table."
+            },
+            {
+              "kind": "formula",
+              "title": "Special cases and gamma additivity",
+              "body": "**Exponential$(\\lambda)$** $=$ Gamma$(1,\\,1/\\lambda)$. **Chi-square$(k)$** $=$ Gamma$(k/2,\\,2)$, mean $k$, variance $2k$. **Gamma additivity** (same scale): independent $\\text{Gamma}(\\alpha_1,\\theta)+\\text{Gamma}(\\alpha_2,\\theta)=\\text{Gamma}(\\alpha_1+\\alpha_2,\\theta)$, the shapes add, which is why summing $\\alpha$ exponentials of mean $\\theta$ gives Gamma$(\\alpha,\\theta)$. **Beta$(1,1)$** is the Uniform$(0,1)$."
             },
             {
               "kind": "worked",
@@ -2225,6 +2435,18 @@
               "answer": "$X \\sim \\text{Gamma}(4,2)$: mean $8$ h, SD $4$ h"
             },
             {
+              "kind": "worked",
+              "title": "Adding independent gammas (shapes add)",
+              "body": "Independent waiting times $X\\sim\\text{Gamma}(3,2)$ and $Y\\sim\\text{Gamma}(5,2)$ share the scale $\\theta=2$. Find the distribution, mean, and variance of $X+Y$.",
+              "steps": [
+                "Same scale $\\theta=2$, so gamma additivity applies and the shapes add: $X+Y\\sim\\text{Gamma}(3+5,\\,2)=\\text{Gamma}(8,2)$.",
+                "Mean: $\\alpha\\theta = 8(2) = 16$.",
+                "Variance: $\\alpha\\theta^2 = 8(2^2) = 32$.",
+                "Cross-check by adding pieces: means $3(2)+5(2)=16$ and (independent) variances $3(4)+5(4)=32$. ✓ The MGFs confirm it: $(1-2t)^{-3}(1-2t)^{-5}=(1-2t)^{-8}$."
+              ],
+              "answer": "$X+Y\\sim\\text{Gamma}(8,2)$: mean $16$, variance $32$"
+            },
+            {
               "kind": "trick",
               "title": "Take logs first for anything lognormal",
               "body": "Every lognormal *probability* question reduces to a normal one: turn $X$ into $\\ln X$, standardize, hit the $Z$-table. Never integrate the lognormal density. And for the Gamma, remember it is just a sum of exponentials, if you see 'time until the 3rd claim' with exponential interarrivals, that total is Gamma$(3,\\theta)$ and you can quote mean $3\\theta$ and variance $3\\theta^2$ without setup."
@@ -2233,6 +2455,11 @@
               "kind": "trap",
               "title": "Lognormal mean is not $e^{\\mu}$",
               "body": "The most punished lognormal error: $E[X] = e^{\\mu + \\sigma^2/2}$, **not** $e^{\\mu}$. The quantity $e^{\\mu}$ is the *median* of the lognormal; the mean is larger because of the right skew. Forgetting the $+\\sigma^2/2$ understates the mean every time. Separately, for the Gamma, $\\theta$ is the **scale** (so variance carries $\\theta^2$); some texts use rate $\\beta = 1/\\theta$, check which convention a problem uses."
+            },
+            {
+              "kind": "trap",
+              "title": "Gamma additivity needs a *common* scale",
+              "body": "Shapes add only when the gammas share the **same scale $\\theta$** (equivalently the same rate). $\\text{Gamma}(\\alpha_1,\\theta)+\\text{Gamma}(\\alpha_2,\\theta)=\\text{Gamma}(\\alpha_1+\\alpha_2,\\theta)$, but if the scales differ the sum is *not* a gamma at all. Watch the convention too: scale $\\theta$ vs rate $\\beta=1/\\theta$, the MGF is $(1-\\theta t)^{-\\alpha}$ in scale form, $(1-t/\\beta)^{-\\alpha}$ in rate form."
             },
             {
               "kind": "recall",
@@ -2244,6 +2471,14 @@
                 {
                   "front": "Why is the lognormal mean $e^{\\mu+\\sigma^2/2}$ rather than $e^\\mu$, and how do you get its probabilities?",
                   "back": "$e^\\mu$ is the *median* (the point where $\\ln X = \\mu$); the right skew drags the mean above it by the factor $e^{\\sigma^2/2}$, so $E[X]=e^{\\mu+\\sigma^2/2}$, dropping that term understates the mean every time. For any lognormal *probability*, don't integrate the density: take logs to convert to $\\ln X \\sim N(\\mu,\\sigma^2)$, standardize, and read the normal table."
+                },
+                {
+                  "front": "Why do the shapes add when you sum independent gammas of equal scale?",
+                  "back": "Each Gamma$(\\alpha_i,\\theta)$ has MGF $(1-\\theta t)^{-\\alpha_i}$; independence multiplies MGFs, giving $(1-\\theta t)^{-(\\alpha_1+\\alpha_2)}$, which is Gamma$(\\alpha_1+\\alpha_2,\\theta)$ by uniqueness. Intuitively, a Gamma is a stack of exponential waits, so concatenating two stacks (same per-wait scale) just lengthens the stack. Different scales break the common factor and the sum is no longer gamma."
+                },
+                {
+                  "front": "Which everyday distributions are special cases of Gamma and Beta?",
+                  "back": "Exponential$(\\lambda)=$ Gamma$(1,1/\\lambda)$ (shape $1$); Chi-square$(k)=$ Gamma$(k/2,2)$ (mean $k$, variance $2k$); Uniform$(0,1)=$ Beta$(1,1)$. Recognizing these lets you reuse gamma/beta moment formulas instead of re-deriving, e.g. a chi-square's mean and variance fall straight out of $\\alpha\\theta$ and $\\alpha\\theta^2$."
                 }
               ]
             }
