@@ -48,7 +48,9 @@ function buildEmbedUrl(url: string): { embed: string | null; provider: "youtube"
   const ytId = extractYouTubeId(url);
   if (ytId) {
     return {
-      embed: `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&controls=1`,
+      // playsinline=1 — critical for iOS Safari: without it, tapping the video
+      // forces fullscreen instead of playing inline, which looks broken.
+      embed: `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&controls=1&playsinline=1`,
       provider: "youtube",
       thumb: `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`,
     };
@@ -133,19 +135,25 @@ export default function VideoEmbed({ url, title, bare, lazy = true }: Props) {
           <iframe
             src={embed}
             title={title ?? "Video"}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
             style={{
               position: "absolute", inset: 0,
               width: "100%", height: "100%",
               border: 0,
+              // Explicit pointer-events ensures tap works even inside complex layouts
+              pointerEvents: "auto",
+              touchAction: "auto",
             }}
           />
         ) : (
           <button
             type="button"
             onClick={() => setLoaded(true)}
+            // touchStart fires before onClick on mobile — fires load immediately
+            // on tap without waiting for the 300ms click delay on older iOS.
+            onTouchStart={() => setLoaded(true)}
             aria-label={`Play ${title ?? "video"}`}
             style={{
               position: "absolute", inset: 0,
@@ -153,6 +161,8 @@ export default function VideoEmbed({ url, title, bare, lazy = true }: Props) {
               border: 0,
               padding: 0,
               cursor: "pointer",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
               background: thumb
                 ? `linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.5)), url(${thumb}) center/cover`
                 : "linear-gradient(135deg, #1a1410, #0a0807)",

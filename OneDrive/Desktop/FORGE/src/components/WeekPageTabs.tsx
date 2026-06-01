@@ -10,6 +10,7 @@ import ResourceViewer from "@/components/ResourceViewer";
 import ConceptPrimer from "@/components/ConceptPrimer";
 import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
+import ForgeMarkdown from "@/components/ForgeMarkdown";
 
 /**
  * Single linear week flow — no tabs, no repetition.
@@ -465,9 +466,9 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                               </p>
                             )}
                             {item.body && (
-                              <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                                {item.body}
-                              </p>
+                              <div style={{ marginTop: "0.5rem" }}>
+                                <ForgeMarkdown>{item.body}</ForgeMarkdown>
+                              </div>
                             )}
                             {/* Inline interactive widget for widget-kind items.
                                 Ticking the item happens via the normal checkbox —
