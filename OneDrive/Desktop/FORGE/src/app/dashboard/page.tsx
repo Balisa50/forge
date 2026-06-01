@@ -359,6 +359,9 @@ export default async function DashboardPage() {
         {!releasedWeek && !lastClosed && (() => {
           const mentorName = primaryMentor?.name ?? "Your mentor";
           const caughtUp = verifiedTasks > 0;
+          // Name the next week to release: first task that isn't verified yet.
+          const nextTask = allTasks.find((t) => t.status !== "verified");
+          const nextWeekLabel = nextTask?.title.match(/^Week\s+\d+/i)?.[0] ?? null;
           return (
             <div className="forge-panel" style={{ padding: "3rem 1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
               <Hourglass size={40} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
@@ -367,8 +370,8 @@ export default async function DashboardPage() {
               </h2>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 460, margin: "0 auto 1.5rem" }}>
                 {caughtUp
-                  ? `Nice work — you've completed ${verifiedTasks} week${verifiedTasks === 1 ? "" : "s"}. ${mentorName} hasn't released your next week yet; it'll appear here the moment they do.`
-                  : `${mentorName} hasn't released any weeks yet. You'll see the work here the moment they do.`}
+                  ? `Nice work — you've completed ${verifiedTasks} week${verifiedTasks === 1 ? "" : "s"}. ${mentorName} hasn't released ${nextWeekLabel ?? "your next week"} yet; it'll appear here the moment they do.`
+                  : `${mentorName} hasn't released ${nextWeekLabel ?? "any weeks"} yet. You'll see the work here the moment they do.`}
               </p>
               <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost">Message your mentor</Link>
             </div>
