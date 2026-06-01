@@ -32,58 +32,54 @@ export function Tex({ children, block = false }: { children: string; block?: boo
 }
 
 /**
- * Render a paragraph of text that may interleave plain prose with `$...$`
- * inline math and `$$...$$` display math. Returns an array of React nodes.
+ * Render a paragraph of text that interleaves prose with `$...$` inline math,
+ * `$$...$$` display math, `**bold**`, and `` `code` ``.
+ *
+ * One left-to-right tokenizer handles every mark in a single pass. The order
+ * matters for one reason only — **bold can wrap math** (e.g. `**the mean $\mu$
+ * matters**`). The earlier two-stage approach split on `$` first, which orphaned
+ * the `**` markers into separate prose segments and rendered them as literal
+ * asterisks on the page. Here a bold span is matched whole, then its inner text
+ * is rendered recursively, so any math (or code) inside it still resolves.
  */
+const TOKEN_RE = /(\$\$[^$]+?\$\$)|(\$[^$\n]+?\$)|(\*\*[\s\S]+?\*\*)|(`[^`]+?`)/g;
+
 export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[] {
   if (!text) return [];
   const nodes: React.ReactNode[] = [];
-  // Split on display math first ($$ ... $$), keeping the delimiters via capture.
-  const displayParts = text.split(/(\$\$[^$]+?\$\$)/g);
+  const re = new RegExp(TOKEN_RE.source, "g");
+  let last = 0;
   let k = 0;
-  for (const part of displayParts) {
-    if (part.startsWith("$$") && part.endsWith("$$")) {
-      const tex = part.slice(2, -2);
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    if (m.index > last) {
+      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{text.slice(last, m.index)}</React.Fragment>);
+    }
+    const tok = m[0];
+    if (m[1]) {
+      // $$ ... $$ display math
       nodes.push(
         <span
           key={`${keyPrefix}-d${k++}`}
           style={{ display: "block", margin: "0.75rem 0", overflowX: "auto" }}
-          dangerouslySetInnerHTML={{ __html: renderTeX(tex, true) }}
+          dangerouslySetInnerHTML={{ __html: renderTeX(tok.slice(2, -2), true) }}
         />,
       );
-      continue;
-    }
-    // Within non-display segments, split on inline math ($ ... $).
-    const inlineParts = part.split(/(\$[^$\n]+?\$)/g);
-    for (const seg of inlineParts) {
-      if (seg.startsWith("$") && seg.endsWith("$") && seg.length > 2) {
-        const tex = seg.slice(1, -1);
-        nodes.push(
-          <span key={`${keyPrefix}-i${k++}`} dangerouslySetInnerHTML={{ __html: renderTeX(tex, false) }} />,
-        );
-      } else if (seg) {
-        // Plain prose — support lightweight **bold** and `code` inline marks.
-        nodes.push(...renderInlineMarks(seg, `${keyPrefix}-t${k++}`));
-      }
-    }
-  }
-  return nodes;
-}
-
-/** Minimal inline markdown: **bold** and `code`. No HTML injection — text only. */
-function renderInlineMarks(text: string, keyPrefix: string): React.ReactNode[] {
-  const out: React.ReactNode[] = [];
-  const parts = text.split(/(\*\*[^*]+?\*\*|`[^`]+?`)/g);
-  let k = 0;
-  for (const p of parts) {
-    if (p.startsWith("**") && p.endsWith("**")) {
-      out.push(
-        <strong key={`${keyPrefix}-b${k++}`} style={{ color: "var(--text-primary)", fontWeight: 600 }}>
-          {p.slice(2, -2)}
+    } else if (m[2]) {
+      // $ ... $ inline math
+      nodes.push(
+        <span key={`${keyPrefix}-i${k++}`} dangerouslySetInnerHTML={{ __html: renderTeX(tok.slice(1, -1), false) }} />,
+      );
+    } else if (m[3]) {
+      // **bold** — recurse so inner math / code still render
+      nodes.push(
+        <strong key={`${keyPrefix}-b${k}`} style={{ color: "var(--text-primary)", fontWeight: 600 }}>
+          {renderRichText(tok.slice(2, -2), `${keyPrefix}-b${k++}`)}
         </strong>,
       );
-    } else if (p.startsWith("`") && p.endsWith("`")) {
-      out.push(
+    } else if (m[4]) {
+      // `code`
+      nodes.push(
         <code
           key={`${keyPrefix}-c${k++}`}
           style={{
@@ -95,14 +91,16 @@ function renderInlineMarks(text: string, keyPrefix: string): React.ReactNode[] {
             padding: "0.05rem 0.3rem",
           }}
         >
-          {p.slice(1, -1)}
+          {tok.slice(1, -1)}
         </code>,
       );
-    } else if (p) {
-      out.push(<React.Fragment key={`${keyPrefix}-s${k++}`}>{p}</React.Fragment>);
     }
+    last = m.index + tok.length;
   }
-  return out;
+  if (last < text.length) {
+    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{text.slice(last)}</React.Fragment>);
+  }
+  return nodes;
 }
 
 /** Convenience block: a <p> of rich text. */
