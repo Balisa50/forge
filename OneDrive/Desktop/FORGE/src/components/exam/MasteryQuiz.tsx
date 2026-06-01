@@ -149,7 +149,7 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
         <p className="mt-2" style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6 }}>
           {total} SOA-style questions · {secondsPerQuestion}s each · pass at <strong style={{ color: "var(--text-primary)" }}>{Math.round(passing * 100)}%</strong>.
           {alreadyMastered
-            ? " You've mastered this — clear it again to push the next review further out. Miss it and it drops back into daily rotation."
+            ? " You've mastered this. Clear it again to push the next review further out; miss it and it drops back into daily rotation."
             : " Clear it and the concept is locked in, then resurfaces on a spaced schedule so it never fades."}
         </p>
         <button
@@ -176,13 +176,13 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
           <div className="mb-3 flex items-center justify-center gap-2 rounded-lg px-3 py-2" style={{ background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.25)" }}>
             <Lock size={13} style={{ color: "var(--accent)" }} />
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-secondary)", letterSpacing: "0.04em" }}>
-              Quiz locked — finish it. Leaving, refreshing, or switching tabs is recorded.
+              Quiz locked. Finish it. Leaving, refreshing, or switching tabs is recorded.
             </span>
           </div>
           {leftTab && (
             <div className="mb-3 flex items-center justify-center gap-2 rounded-lg px-3 py-2" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.35)" }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "#ef4444" }}>
-                You switched away from the quiz — that&apos;s been flagged.
+                You switched away from the quiz. That&apos;s been flagged.
               </span>
             </div>
           )}
@@ -247,7 +247,7 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
         </div>
         <div>
           <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700 }}>
-            {r.passed ? (alreadyMastered ? "Review cleared" : "Concept mastered") : "Not yet — run it back"}
+            {r.passed ? (alreadyMastered ? "Review cleared" : "Concept mastered") : "Not yet. Run it back"}
           </h3>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
             {r.correct}/{total} correct · {Math.round(r.score * 100)}% · bar {Math.round(passing * 100)}%
@@ -257,11 +257,11 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
 
       {r.passed ? (
         <p className="mt-3" style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6 }}>
-          Locked in. It'll resurface on a spaced schedule — show up when it's due and the interval keeps stretching until recall is automatic.
+          Locked in. It'll resurface on a spaced schedule; show up when it's due and the interval keeps stretching until recall is automatic.
         </p>
       ) : (
         <p className="mt-3" style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6 }}>
-          Read the explanations below, re-skim the section, and go again. Missing the bar is information, not failure — it tells you exactly where the gap is.
+          Read the explanations below, re-skim the section, and go again. Missing the bar is information, not failure; it tells you exactly where the gap is.
         </p>
       )}
 

@@ -26,7 +26,7 @@ export default function StartConceptButton({ slug, conceptId }: { slug: string; 
         style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "#34d399", fontSize: "0.875rem", fontWeight: 600 }}
       >
         <CheckCircle2 size={16} />
-        Concept started — your progress is being tracked
+        Concept started. Your progress is being tracked.
       </div>
     );
   }
@@ -41,7 +41,7 @@ export default function StartConceptButton({ slug, conceptId }: { slug: string; 
         <Play size={16} /> Start this concept
       </button>
       <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
-        Click to mark you&apos;ve begun — that&apos;s what counts as progress.
+        Click to mark you&apos;ve begun. That&apos;s what counts as progress.
       </span>
     </div>
   );

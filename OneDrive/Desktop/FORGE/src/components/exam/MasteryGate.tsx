@@ -66,7 +66,7 @@ export default function MasteryGate({
           Finished the lesson?
         </h3>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, maxWidth: 460, margin: "0 auto 1.25rem" }}>
-          Take a beat — make sure it actually clicked. When you&apos;re ready, mark this concept complete to unlock the mastery quiz.
+          Take a beat and make sure it actually clicked. When you&apos;re ready, mark this concept complete to unlock the mastery quiz.
         </p>
         <button
           onClick={markComplete}
@@ -85,7 +85,7 @@ export default function MasteryGate({
       >
         <Lock size={22} style={{ color: "var(--text-dim)", margin: "0 auto 0.5rem" }} />
         <p style={{ color: "var(--text-dim)", fontSize: "0.875rem", marginBottom: "1rem" }}>
-          Mastery quiz locked — click <strong style={{ color: "var(--text-secondary)" }}>Complete</strong> above to unlock it.
+          Mastery quiz locked. Click <strong style={{ color: "var(--text-secondary)" }}>Complete</strong> above to unlock it.
         </p>
         <button
           disabled
