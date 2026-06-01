@@ -354,17 +354,26 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* Waiting state */}
-        {!releasedWeek && !lastClosed && (
-          <div className="forge-panel" style={{ padding: "3rem 1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
-            <Hourglass size={40} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
-            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Waiting for your first week</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 440, margin: "0 auto 1.5rem" }}>
-              {primaryMentor?.name ?? "Your mentor"} hasn&apos;t released any weeks yet. You&apos;ll see the work here the moment they do.
-            </p>
-            <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost">Message your mentor</Link>
-          </div>
-        )}
+        {/* Waiting state — distinguish a brand-new mentee (no weeks ever) from
+            someone who's finished the released weeks and is between assignments. */}
+        {!releasedWeek && !lastClosed && (() => {
+          const mentorName = primaryMentor?.name ?? "Your mentor";
+          const caughtUp = verifiedTasks > 0;
+          return (
+            <div className="forge-panel" style={{ padding: "3rem 1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
+              <Hourglass size={40} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
+              <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+                {caughtUp ? "You're all caught up" : "Waiting for your first week"}
+              </h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 460, margin: "0 auto 1.5rem" }}>
+                {caughtUp
+                  ? `Nice work — you've completed ${verifiedTasks} week${verifiedTasks === 1 ? "" : "s"}. ${mentorName} hasn't released your next week yet; it'll appear here the moment they do.`
+                  : `${mentorName} hasn't released any weeks yet. You'll see the work here the moment they do.`}
+              </p>
+              <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost">Message your mentor</Link>
+            </div>
+          );
+        })()}
 
         {/* Quick stats: weeks complete */}
         {totalTasks > 0 && verifiedTasks > 0 && (
