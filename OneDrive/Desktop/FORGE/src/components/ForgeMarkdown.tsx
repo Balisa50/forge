@@ -35,6 +35,7 @@ type UlBlock = { t: "ul"; items: string[] };
 type OlBlock = { t: "ol"; items: string[] };
 type ChecklistBlock = { t: "checklist"; items: string[] };
 type CodeBlock = { t: "code"; content: string };
+type MdTemplateBlock = { t: "mdtemplate"; content: string };
 type CellBlock = { t: "cell"; kind: "code" | "markdown"; label: string; bodyLines: string[] };
 type StepBlock = { t: "step"; number: string; title: string; bodyLines: string[] };
 type DividerBlock = { t: "divider"; label?: string };
@@ -42,8 +43,22 @@ type PassBlock = { t: "pass"; items: string[] };
 
 type Block =
   | HeadingBlock | ParagraphBlock | UlBlock | OlBlock
-  | ChecklistBlock | CodeBlock | CellBlock | StepBlock
+  | ChecklistBlock | CodeBlock | MdTemplateBlock | CellBlock | StepBlock
   | DividerBlock | PassBlock;
+
+/** Is an indented block actually a markdown TEMPLATE (a structure the student
+ *  should write — headings + prose) rather than real code? Heading present and
+ *  no code signals. Keeps git/python/SQL as copyable code, promotes memo /
+ *  notebook-markdown templates to a rendered preview so "## X" reads as a
+ *  heading instead of leaking raw hashes. */
+function looksLikeMarkdownTemplate(content: string): boolean {
+  const hasHeading = /(^|\n)\s*#{1,4}\s+\S/.test(content);
+  if (!hasHeading) return false;
+  const codeSignal =
+    /(^|\n)\s*(import |from \w|def |class |return\b|print\(|pip install|npm |yarn |git |cd |mkdir |sudo |SELECT |INSERT |CREATE |for \w+ in |while .+:|if .+:)/i.test(content) ||
+    /\bpd\.|\bplt\.|\bnp\.|\bdf\[|\.read_|\.groupby\(|=>|;\s*$/m.test(content);
+  return !codeSignal;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Inline formatter
@@ -610,7 +625,10 @@ function parse(raw: string): Block[] {
       }
       while (codeLines.length && !codeLines[codeLines.length - 1].trim()) codeLines.pop();
       while (codeLines.length && !codeLines[0].trim()) codeLines.shift();
-      if (codeLines.length) blocks.push({ t: "code", content: codeLines.join("\n") });
+      if (codeLines.length) {
+        const content = codeLines.join("\n");
+        blocks.push(looksLikeMarkdownTemplate(content) ? { t: "mdtemplate", content } : { t: "code", content });
+      }
       continue;
     }
 
@@ -864,6 +882,18 @@ function BlockRenderer({
 
     case "code":
       return <CodeBlock content={block.content} />;
+
+    case "mdtemplate":
+      // A "write this structure" template (memo outline, notebook markdown):
+      // render a parsed preview so headings/bullets read correctly.
+      return (
+        <div style={{ borderRadius: 8, border: "1px dashed rgba(96,165,250,0.35)", background: "rgba(96,165,250,0.04)", padding: "0.625rem 0.875rem 0.25rem", margin: "0.75rem 0" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#60a5fa", display: "block", marginBottom: "0.4rem", opacity: 0.8 }}>
+            Template — write this in your document
+          </span>
+          <BlockList blocks={parse(block.content)} nested />
+        </div>
+      );
 
     case "cell":
       return <CellBlock kind={block.kind} label={block.label} bodyLines={block.bodyLines} />;
