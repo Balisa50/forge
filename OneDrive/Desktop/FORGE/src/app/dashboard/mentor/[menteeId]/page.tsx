@@ -1020,7 +1020,7 @@ export default function MenteeDrilldownPage() {
                                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: isRequest ? "#f472b6" : isAction ? "#60a5fa" : fromMentee ? "var(--text-dim)" : "var(--accent)", marginBottom: "0.25rem" }}>
                                     {isAction ? "Action log" : isRequest ? "Unlock request" : fromMentee ? `${mentee.name ?? "Mentee"}` : "You"}
                                   </p>
-                                  <p>{cm.body}</p>
+                                  <p style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>{cm.body}</p>
                                   <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
                                     {new Date(cm.createdAt).toLocaleString()} {cm.readAt ? "· read" : "· unread"}
                                   </p>

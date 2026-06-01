@@ -269,18 +269,19 @@ export default function SubmissionViewer({ evidenceType, evidenceUrl, evidenceDa
           target="_blank"
           rel="noreferrer noopener"
           style={{
-            display: "inline-flex",
+            display: "flex",
             alignItems: "center",
             gap: "0.375rem",
             color: "var(--accent)",
             fontSize: "0.8125rem",
             fontFamily: "var(--font-mono)",
             textDecoration: "none",
-            width: "fit-content",
+            maxWidth: "100%",
+            minWidth: 0,
           }}
         >
-          <Link2 size={13} />
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "320px" }}>
+          <Link2 size={13} style={{ flexShrink: 0 }} />
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0, flex: "1 1 auto" }}>
             {evidenceUrl}
           </span>
           <ExternalLink size={11} style={{ flexShrink: 0 }} />
