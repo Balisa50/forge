@@ -80,6 +80,8 @@ export default function CheckinForm({
   const [fileError, setFileError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const [mentorQuestions, setMentorQuestions] = useState<{ id: string; prompt: string }[]>([]);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -284,7 +286,27 @@ export default function CheckinForm({
     setFileError("");
   };
 
+  // Pull the mentor's questions for the selected task; the mentee must answer
+  // them all to submit. null taskId → no questions.
+  useEffect(() => {
+    if (!selectedTaskId) { setMentorQuestions([]); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/mentee/questions?taskId=${encodeURIComponent(selectedTaskId)}`);
+        if (!res.ok) { if (!cancelled) setMentorQuestions([]); return; }
+        const data = (await res.json()) as { questions?: { id: string; prompt: string }[] };
+        if (!cancelled) setMentorQuestions(data.questions ?? []);
+      } catch {
+        if (!cancelled) setMentorQuestions([]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [selectedTaskId]);
+
   const hasProof = (projectUrl.trim() && isValidUrl(projectUrl.trim())) || attachments.length > 0;
+  const allAnswered = mentorQuestions.length === 0
+    || mentorQuestions.every((q) => (answers[q.id] ?? "").trim().length > 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -303,6 +325,10 @@ export default function CheckinForm({
       setError("Please enter a valid URL starting with http:// or https://");
       return;
     }
+    if (!allAnswered) {
+      setError("Answer all of your mentor's questions before submitting this week.");
+      return;
+    }
 
     setSubmitting(true);
 
@@ -316,6 +342,9 @@ export default function CheckinForm({
           taskId: selectedTaskId,
           projectUrl: projectUrl.trim() || null,
           files: attachments.length > 0 ? attachments : undefined,
+          answers: mentorQuestions.length > 0
+            ? mentorQuestions.map((q) => ({ questionId: q.id, answer: answers[q.id] ?? "" }))
+            : undefined,
         }),
       });
 
@@ -649,12 +678,62 @@ export default function CheckinForm({
         )}
       </div>
 
+      {/* Mentor's questions — required to submit when the mentor has authored any */}
+      {mentorQuestions.length > 0 && (
+        <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.25rem", borderColor: "var(--accent)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+            <label style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              Your mentor&apos;s questions <span style={{ color: "var(--red)" }}>*</span>
+            </label>
+            {allAnswered && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
+                <CheckCircle2 size={12} /> all answered
+              </span>
+            )}
+          </div>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+            You must answer all of these to submit this week. Your mentor reviews and grades each answer.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {mentorQuestions.map((q, i) => {
+              const filled = (answers[q.id] ?? "").trim().length > 0;
+              return (
+                <div key={q.id}>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", marginBottom: "0.375rem" }}>
+                    <span style={{ width: 22, height: 22, borderRadius: 6, background: "rgba(245,158,11,0.15)", color: "var(--accent)", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", display: "grid", placeItems: "center", flexShrink: 0 }}>Q{i + 1}</span>
+                    <p style={{ fontSize: "0.875rem", fontWeight: 500, flex: 1, margin: 0 }}>{q.prompt}</p>
+                  </div>
+                  <textarea
+                    value={answers[q.id] ?? ""}
+                    onChange={(e) => setAnswers((p) => ({ ...p, [q.id]: e.target.value }))}
+                    rows={3}
+                    placeholder="Your answer…"
+                    style={{
+                      width: "100%",
+                      padding: "0.5rem 0.75rem",
+                      background: "var(--bg-card)",
+                      border: `1px solid ${filled ? "var(--green)" : "var(--border)"}`,
+                      borderRadius: 8,
+                      color: "var(--text-primary)",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "0.875rem",
+                      resize: "vertical",
+                      transition: "border-color 0.2s",
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Submit */}
       <button
         type="submit"
         className="forge-btn forge-btn-primary"
         style={{ width: "100%", maxWidth: "480px", padding: "1rem", fontSize: "1rem" }}
-        disabled={submitting || uploading || !selectedTaskId || !hasProof || engagementBlocked}
+        disabled={submitting || uploading || !selectedTaskId || !hasProof || engagementBlocked || !allAnswered}
       >
         {submitting
           ? <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>

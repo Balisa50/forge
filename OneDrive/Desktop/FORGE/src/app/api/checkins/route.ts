@@ -128,6 +128,7 @@ export async function POST(req: NextRequest) {
   let projectUrl: string | null = null;
   let screenshotFile: File | null = null;
   let incomingFiles: unknown[] = [];
+  let incomingAnswers: Array<{ questionId?: unknown; answer?: unknown }> = [];
 
   if (contentType.includes("application/json")) {
     const body = await req.json().catch(() => ({} as Record<string, unknown>));
@@ -136,6 +137,7 @@ export async function POST(req: NextRequest) {
     taskId = body.taskId as string | undefined;
     projectUrl = ((body.projectUrl as string | null | undefined) ?? "").trim() || null;
     if (Array.isArray(body.files)) incomingFiles = body.files;
+    if (Array.isArray(body.answers)) incomingAnswers = body.answers;
   } else {
     const formData = await req.formData();
     roadmapId = formData.get("roadmapId") as string | undefined;
@@ -240,6 +242,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: blocker, kind: "engagement-required" }, { status: 400 });
   }
 
+  // MENTOR-QUESTION GATE — if the mentor authored questions for this task, the
+  // mentee must answer ALL of them to submit. Their answers become a
+  // mentor_async interrogation that lands in the mentor's review queue.
+  const mentorQuestions = await prisma.mentorQuestion.findMany({
+    where: { taskId, isActive: true },
+    orderBy: { position: "asc" },
+  });
+  const answerById = new Map<string, string>();
+  for (const a of incomingAnswers) {
+    if (typeof a?.questionId === "string" && typeof a?.answer === "string") {
+      answerById.set(a.questionId, a.answer.trim());
+    }
+  }
+  if (mentorQuestions.length > 0) {
+    const allAnswered = mentorQuestions.every((q) => (answerById.get(q.id) ?? "").length > 0);
+    if (!allAnswered) {
+      return NextResponse.json(
+        { error: "Answer your mentor's questions before submitting this week.", kind: "questions-required" },
+        { status: 400 },
+      );
+    }
+  }
+
   const checkin = await prisma.checkin.create({
     data: {
       userId,
@@ -258,6 +283,30 @@ export async function POST(req: NextRequest) {
     where: { id: taskId },
     data: { status: "in_progress" },
   });
+
+  // Persist the mentee's answers as a mentor_async interrogation so they show
+  // up in the mentor's Reviews queue (one interrogation per check-in).
+  if (mentorQuestions.length > 0) {
+    const transcript: Array<Record<string, unknown>> = [];
+    mentorQuestions.forEach((q, i) => {
+      transcript.push({ role: "assistant", type: "MENTOR_AUTHORED", questionNumber: i + 1, content: JSON.stringify({ question: q.prompt }) });
+      transcript.push({ role: "user", questionNumber: i + 1, content: answerById.get(q.id) ?? "", pendingReview: true });
+    });
+    try {
+      await prisma.interrogation.create({
+        data: {
+          checkinId: checkin.id,
+          mode: "mentor_async",
+          isDefence: true,
+          mentorReviewerId: mentorQuestions[0].mentorId,
+          transcript: transcript as unknown as object,
+          completedAt: new Date(),
+        },
+      });
+    } catch (err) {
+      console.warn("[checkins] interrogation create failed:", err instanceof Error ? err.message : err);
+    }
+  }
 
   // Notify every active mentor of this mentee that a check-in landed, with a
   // link straight to the mentee's page (where the submission + files show).
