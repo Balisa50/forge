@@ -4,7 +4,8 @@ import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { loadExamPath, findConcept, flattenConcepts } from "@/lib/examPaths";
 import ConceptSections from "@/components/exam/ConceptSections";
 import ConceptStatusBar from "@/components/exam/ConceptStatusBar";
-import MasteryQuiz from "@/components/exam/MasteryQuiz";
+import StartConceptButton from "@/components/exam/StartConceptButton";
+import MasteryGate from "@/components/exam/MasteryGate";
 
 export const dynamic = "force-dynamic";
 
@@ -47,9 +48,14 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
           <Clock size={11} /> ~{concept.minutes} min focused
         </div>
 
-        {/* Live status + opened tracker */}
+        {/* Live status */}
         <div className="mt-5">
           <ConceptStatusBar slug={slug} conceptId={conceptId} />
+        </div>
+
+        {/* Explicit, intentional progress — progress is tracked only on click */}
+        <div className="mt-4">
+          <StartConceptButton slug={slug} conceptId={conceptId} />
         </div>
 
         {/* Teaching arc */}
@@ -57,9 +63,9 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
           <ConceptSections sections={concept.sections} />
         </div>
 
-        {/* Mastery gate */}
+        {/* Completion closure → unlocks the mastery gate */}
         <div className="mt-10">
-          <MasteryQuiz
+          <MasteryGate
             slug={slug}
             conceptId={conceptId}
             passing={concept.mastery.passing}

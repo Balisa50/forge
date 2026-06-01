@@ -15,7 +15,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Timer, Check, X, RotateCcw, Trophy, ArrowRight } from "lucide-react";
+import { Timer, Check, X, RotateCcw, Trophy, ArrowRight, Lock } from "lucide-react";
 import { renderRichText } from "@/lib/math";
 import { recordAttempt, useExamProgress, getConcept } from "@/lib/examProgress";
 import type { MasteryQuestion as MQ } from "@/lib/examPaths";
@@ -35,6 +35,7 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
   const { progress } = useExamProgress(slug);
   const alreadyMastered = getConcept(progress, conceptId).status === "mastered";
   const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
+  const [leftTab, setLeftTab] = useState(false);
   const [idx, setIdx] = useState(0);
   // picks[i] = chosen index, or -1 if timed out / unanswered.
   const [picks, setPicks] = useState<number[]>(() => questions.map(() => -2)); // -2 = not reached
@@ -95,10 +96,36 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
     return clearTick;
   }, [phase, idx, advance, clearTick, secondsPerQuestion]);
 
+  // SCREEN-LOCK while RUNNING: the quiz overlay (below) covers the whole screen
+  // so nothing else is clickable; here we also trap the back button, warn on
+  // leaving/closing, disable right-click (deter inspect), and flag tab switches.
+  useEffect(() => {
+    if (phase !== "running") return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    const onContext = (e: MouseEvent) => e.preventDefault();
+    const onPop = () => { window.history.pushState(null, "", window.location.href); };
+    const onVisibility = () => { if (document.visibilityState === "hidden") setLeftTab(true); };
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("beforeunload", onBeforeUnload);
+    window.addEventListener("popstate", onPop);
+    document.addEventListener("contextmenu", onContext);
+    document.addEventListener("visibilitychange", onVisibility);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      window.removeEventListener("popstate", onPop);
+      document.removeEventListener("contextmenu", onContext);
+      document.removeEventListener("visibilitychange", onVisibility);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [phase]);
+
   function start() {
     setPicks(questions.map(() => -2));
     setIdx(0);
     setSecs(secondsPerQuestion);
+    setLeftTab(false);
     setPhase("running");
   }
 
@@ -136,11 +163,29 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
     );
   }
 
-  // ---- RUNNING ----
+  // ---- RUNNING ---- (full-screen locked overlay)
   if (phase === "running") {
     const q = questions[idx];
     const low = secs <= Math.max(3, Math.round(secondsPerQuestion * 0.2));
     return (
+      <div
+        style={{ position: "fixed", inset: 0, zIndex: 1000, background: "var(--bg-base)", overflowY: "auto", padding: "1.25rem", display: "flex", justifyContent: "center", alignItems: "flex-start" }}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <div style={{ width: "100%", maxWidth: 720 }}>
+          <div className="mb-3 flex items-center justify-center gap-2 rounded-lg px-3 py-2" style={{ background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.25)" }}>
+            <Lock size={13} style={{ color: "var(--accent)" }} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-secondary)", letterSpacing: "0.04em" }}>
+              Quiz locked — finish it. Leaving, refreshing, or switching tabs is recorded.
+            </span>
+          </div>
+          {leftTab && (
+            <div className="mb-3 flex items-center justify-center gap-2 rounded-lg px-3 py-2" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.35)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "#ef4444" }}>
+                You switched away from the quiz — that&apos;s been flagged.
+              </span>
+            </div>
+          )}
       <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-6">
         <div className="flex items-center justify-between">
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
@@ -185,6 +230,8 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
               <span style={{ fontSize: "0.9375rem", lineHeight: 1.5 }}>{renderRichText(ch, `q${idx}c${ci}`)}</span>
             </button>
           ))}
+        </div>
+      </div>
         </div>
       </div>
     );

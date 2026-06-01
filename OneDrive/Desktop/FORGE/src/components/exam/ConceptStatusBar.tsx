@@ -3,15 +3,14 @@
 /**
  * ConceptStatusBar — the live status strip at the top of a concept page.
  *
- * Two jobs: (1) mark the concept opened on mount (not-started → in-progress)
- * so the path map reflects that it's been touched; (2) show the current state —
- * best score, attempts, and the next spaced-repetition review date once
- * mastered. Reads live so it updates the instant the quiz below records a pass.
+ * Pure status display: best score, attempts, and the next spaced-repetition
+ * review date once mastered. Reads live so it updates the instant the quiz
+ * below records a pass. Progress is NOT tracked here — that only happens when
+ * the student explicitly clicks "Start this concept" (see StartConceptButton).
  */
 
-import { useEffect } from "react";
 import { CheckCircle2, CircleDot, Circle, CalendarClock } from "lucide-react";
-import { useExamProgress, getConcept, markOpened } from "@/lib/examProgress";
+import { useExamProgress, getConcept } from "@/lib/examProgress";
 
 function fmtDue(dueAt: number): string {
   const ms = dueAt - Date.now();
@@ -24,10 +23,6 @@ function fmtDue(dueAt: number): string {
 
 export default function ConceptStatusBar({ slug, conceptId }: { slug: string; conceptId: string }) {
   const { progress, ready } = useExamProgress(slug);
-
-  useEffect(() => {
-    markOpened(slug, conceptId);
-  }, [slug, conceptId]);
 
   const c = getConcept(progress, conceptId);
   const Icon = c.status === "mastered" ? CheckCircle2 : c.status === "in-progress" ? CircleDot : Circle;
