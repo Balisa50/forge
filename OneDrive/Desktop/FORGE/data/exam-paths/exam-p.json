@@ -31,12 +31,17 @@
             {
               "kind": "intuition",
               "title": "Think of it as a room of outcomes",
-              "body": "The **sample space** $S$ is the complete list of everything that could happen, the whole room. An **event** is any group of those outcomes, a roped-off section of the room. Probability is just *what fraction of the room* an event occupies (when outcomes are equally likely). Union $A \\cup B$ = in either section. Intersection $A \\cap B$ = in both at once. Complement $A^c$ = everything outside the section. That is the entire vocabulary."
+              "body": "The **sample space** $S$ is the complete list of everything that could happen, the whole room. An **event** is any group of those outcomes, a roped-off section of the room. Probability is just *what fraction of the room* an event occupies (when outcomes are equally likely). Union $A \\cup B$ = in either section. Intersection $A \\cap B$ = in both at once. Complement $A^c$ = everything outside the section. That is the entire vocabulary. Concretely: roll one fair die and the room holds six equally likely outcomes $\\{1,2,3,4,5,6\\}$; the event *even* ropes off $\\{2,4,6\\}$, so it occupies $3/6$ of the room. The instant outcomes stop being equally likely (a loaded die, a non-uniform population) the counting shortcut dies and you must **add the individual probabilities of the outcomes inside the event**. Most set-up errors are exactly this: assuming a uniform room the problem never promised."
             },
             {
               "kind": "formula",
               "title": "The identities you actually reuse",
               "body": "Inclusion–exclusion: $$P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$$ Complement: $$P(A^c) = 1 - P(A)$$ De Morgan, the most under-used pair on the exam: $$(A \\cup B)^c = A^c \\cap B^c, \\qquad (A \\cap B)^c = A^c \\cup B^c$$"
+            },
+            {
+              "kind": "formula",
+              "title": "Three more identities the exam quietly tests",
+              "body": "**Difference rule** (the part of $A$ that avoids $B$): $$P(A \\cap B^c) = P(A) - P(A \\cap B)$$ **Monotonicity** (a bigger event is at least as likely): if $A \\subseteq B$ then $P(A) \\le P(B)$. **Boole's inequality** (the union bound), true even when you do not know the overlaps: $$P\\!\\left(\\bigcup_i A_i\\right) \\le \\sum_i P(A_i)$$ with equality exactly when the $A_i$ are disjoint. And the silent referee on every line: every probability lives in $[0,1]$, so a running total above $1$ or below $0$ is a flag that you double-counted or mis-built the space."
             },
             {
               "kind": "worked",
@@ -62,6 +67,18 @@
               "answer": "$P(\\text{at least one}) = 0.80$"
             },
             {
+              "kind": "worked",
+              "title": "Read a Venn by its regions",
+              "body": "Given $P(A) = 0.6$, $P(B) = 0.5$, and $P(A \\cap B) = 0.3$, find (a) only $A$, (b) exactly one of the two, and (c) neither.",
+              "steps": [
+                "**Only $A$** is $A$ with the overlap carved off, the difference rule: $P(A \\cap B^c) = 0.6 - 0.3 = 0.3$.",
+                "**Only $B$** the same way: $P(B \\cap A^c) = 0.5 - 0.3 = 0.2$.",
+                "**Exactly one** is the two disjoint slivers added: $0.3 + 0.2 = 0.5$.",
+                "**Neither** is the complement of the union: $P(A^c \\cap B^c) = 1 - P(A \\cup B) = 1 - (0.6 + 0.5 - 0.3) = 0.2$. Sanity check: $0.3 + 0.2 + 0.3 + 0.2 = 1$, the four regions tile the whole room."
+              ],
+              "answer": "only $A=0.3$, exactly one $=0.5$, neither $=0.2$"
+            },
+            {
               "kind": "trick",
               "title": "Draw the two-circle Venn, fill the middle first",
               "body": "Always place $P(A \\cap B)$ in the overlap **first**, then subtract it from each circle so the *only-A* and *only-B* regions are correct. Once the three regions and the outside sum to 1, you can read off any compound probability by eye, no formula recall under pressure."
@@ -70,6 +87,11 @@
               "kind": "trap",
               "title": "Adding probabilities that overlap",
               "body": "$P(A \\cup B) = P(A) + P(B)$ is **only** true when $A$ and $B$ are mutually exclusive (no overlap). If they can both happen, you double-count the middle. When a problem says *or* and the events can co-occur, you must subtract $P(A \\cap B)$. Forgetting this single subtraction is the most common General-Probability error."
+            },
+            {
+              "kind": "trap",
+              "title": "A probability above 1 is a signal, not an answer",
+              "body": "If a union, a sum of cases, or an inclusion, exclusion line ever lands above $1$ (or below $0$), **stop**, you have not found a strange answer, you have found a bug. The usual cause is adding events that overlap as if they were disjoint, or forgetting to subtract a shared region. Treat the $[0,1]$ box as a free, instant error check on every intermediate quantity, not just the final one."
             },
             {
               "kind": "recall",
@@ -81,6 +103,14 @@
                 {
                   "front": "Why is De Morgan a probability shortcut, not just set algebra?",
                   "back": "It converts a complement of a union into an intersection (and vice versa). A 'neither' question, $(A\\cup B)^c$, becomes $A^c\\cap B^c$, which is often far easier to compute directly. Whenever 'at least one' is awkward, complement it and let De Morgan flip the and/or so the easy quantity is exposed."
+                },
+                {
+                  "front": "Why does the difference rule $P(A\\cap B^c)=P(A)-P(A\\cap B)$ hold?",
+                  "back": "The event $A$ splits cleanly into two disjoint pieces: the part inside $B$ ($A\\cap B$) and the part outside $B$ ($A\\cap B^c$). Disjoint pieces add, so $P(A)=P(A\\cap B)+P(A\\cap B^c)$; rearranging isolates the outside piece. It is just $A$ with its overlap with $B$ carved away."
+                },
+                {
+                  "front": "When is Boole's inequality $P(\\bigcup A_i)\\le\\sum P(A_i)$ tight, and why is it ever useful?",
+                  "back": "It is exact when the events are disjoint (no region is counted twice) and strict whenever they overlap, since the raw sum double-counts every shared region. It is useful precisely when you do *not* know the overlaps: it caps the probability that *at least one* of several events happens using only the individual probabilities, a fast worst-case bound."
                 }
               ]
             }
@@ -196,12 +226,17 @@
             {
               "kind": "intuition",
               "title": "Order matters → permutation. Order does not → combination.",
-              "body": "Picking a **president, VP, treasurer** from a club: order matters, the roles are different, that is a permutation. Picking a **committee of 3**: order does not matter, a group is a group, that is a combination. The number of combinations is always smaller, because you stop counting the same group in different seat orders."
+              "body": "Picking a **president, VP, treasurer** from a club: order matters, the roles are different, that is a permutation. Picking a **committee of 3**: order does not matter, a group is a group, that is a combination. The number of combinations is always smaller, because you stop counting the same group in different seat orders. Behind that one question sit **two** independent switches, and together they make the four sampling models you will ever need: does *order* matter, and is there *replacement*? Ordered with replacement gives $n^k$; ordered without gives $P(n,k)$; unordered without gives $\\binom{n}{k}$; unordered with replacement gives stars-and-bars. Pin a problem to its corner of that $2\\times2$ grid and the formula is no longer a guess."
             },
             {
               "kind": "formula",
               "title": "The three counting tools",
               "body": "Multiplication rule: independent stages multiply. Permutations of $k$ from $n$: $$P(n,k) = \\frac{n!}{(n-k)!}$$ Combinations of $k$ from $n$: $$\\binom{n}{k} = \\frac{n!}{k!\\,(n-k)!}$$ The three Kolmogorov axioms everything rests on: $P(A) \\ge 0$, $P(S) = 1$, and for disjoint events $P(\\bigcup A_i) = \\sum P(A_i)$."
+            },
+            {
+              "kind": "formula",
+              "title": "The four sampling models, and two facts that save time",
+              "body": "Drawing $k$ items from $n$, classified by *order* and *replacement*: $$\\text{ordered, with: } n^k \\qquad \\text{ordered, without: } \\tfrac{n!}{(n-k)!}$$ $$\\text{unordered, without: } \\binom{n}{k} \\qquad \\text{unordered, with: } \\binom{n+k-1}{k}$$ Two identities that turn ugly arithmetic into one-liners: **symmetry** $\\binom{n}{k} = \\binom{n}{n-k}$ (choosing who is *in* = choosing who is *out*), and **Pascal's rule** $\\binom{n}{k} = \\binom{n-1}{k-1} + \\binom{n-1}{k}$ (split on whether one fixed item is included)."
             },
             {
               "kind": "worked",
@@ -228,6 +263,18 @@
               "answer": "$336$ slates; $P(\\text{Ann in office}) = 0.375$"
             },
             {
+              "kind": "worked",
+              "title": "Ordered with vs without replacement: the distinct-PIN problem",
+              "body": "A 4-digit PIN is keyed from digits $0$, $9$, repeats allowed. What is the probability all four digits are different?",
+              "steps": [
+                "**Total** PINs, ordered and with replacement, $10$ choices at each of $4$ slots: $10^4 = 10{,}000$.",
+                "**Favorable** PINs with all-distinct digits, ordered and *without* replacement, the choices shrink $10,9,8,7$: $10 \\cdot 9 \\cdot 8 \\cdot 7 = 5040$.",
+                "Probability $= \\dfrac{5040}{10000} = 0.504$.",
+                "The lesson lives in the denominator vs numerator: *with* replacement multiplies a constant $n$, *without* replacement walks $n, n-1, n-2,\\dots$. Spotting which one the problem describes is the whole game."
+              ],
+              "answer": "$0.504$"
+            },
+            {
               "kind": "trick",
               "title": "Build the count as choose-this-then-that",
               "body": "Every hypergeometric-style count is *choose the good ones $\\times$ choose the rest, over choose everything*. Write the denominator first ($\\binom{N}{n}$, choose your whole sample), then split the numerator into the groups the problem cares about. The structure writes itself."
@@ -236,6 +283,11 @@
               "kind": "trap",
               "title": "Using a permutation when order is irrelevant",
               "body": "If you count a 3-person committee with $P(n,3)$ instead of $\\binom{n}{3}$, you over-count by $3! = 6$. The tell: if swapping two chosen items gives a *different* outcome you care about, order matters; if it gives the *same* outcome, divide out the $k!$."
+            },
+            {
+              "kind": "trap",
+              "title": "Additivity needs disjointness, the axiom has fine print",
+              "body": "The third axiom, $P(\\bigcup A_i) = \\sum P(A_i)$, holds **only for mutually disjoint** events. Adding probabilities of events that can co-occur silently breaks it and inflates your total. A clean self-check: if your candidate probabilities are supposed to partition the sample space, they must sum to exactly $1$, no more (overlap) and no less (a missing case)."
             },
             {
               "kind": "recall",
@@ -247,6 +299,14 @@
                 {
                   "front": "Why does an equally-likely probability reduce to a counting ratio, and what do the axioms guarantee?",
                   "back": "If every outcome in $S$ is equally likely, the axiom $P(S)=1$ spreads the total mass evenly, so each outcome carries weight $1/|S|$ and an event's probability is just (favorable)/(total). Non-negativity and additivity for disjoint events then guarantee those counts combine consistently, no probability is negative and disjoint pieces simply add."
+                },
+                {
+                  "front": "Why does 'unordered with replacement' give $\\binom{n+k-1}{k}$ (stars and bars)?",
+                  "back": "Choosing $k$ items from $n$ types where repeats are allowed and order is ignored is the same as deciding *how many* of each type you take, a list of $n$ non-negative counts summing to $k$. Lay out $k$ stars and $n-1$ bars to separate the types; every arrangement of those $k+n-1$ symbols is one valid multiset, and you pick which $k$ positions are stars: $\\binom{n+k-1}{k}$."
+                },
+                {
+                  "front": "Why is $\\binom{n}{k}=\\binom{n}{n-k}$ true by meaning, not just algebra?",
+                  "back": "Every time you choose the $k$ items that go *in*, you have simultaneously chosen the $n-k$ items that stay *out*. The two acts are the same act counted from opposite ends, so the counts must match. Use it to compute the smaller side, $\\binom{50}{48}=\\binom{50}{2}=1225$ beats expanding $\\binom{50}{48}$ directly."
                 }
               ]
             }
@@ -362,7 +422,12 @@
             {
               "kind": "intuition",
               "title": "Conditioning = restrict, then renormalize",
-              "body": "$P(A \\mid B)$ asks: *given we already landed inside $B$, how much of $B$ is also $A$?* You throw away everything outside $B$ (the new world is $B$), then ask what fraction of that world is $A \\cap B$. That is why $B$ sits in the denominator, it is the new total."
+              "body": "$P(A \\mid B)$ asks: *given we already landed inside $B$, how much of $B$ is also $A$?* You throw away everything outside $B$ (the new world is $B$), then ask what fraction of that world is $A \\cap B$. That is why $B$ sits in the denominator, it is the new total. Picture it with counts: out of $100$ people, $40$ own a car ($B$) and $10$ own *both* a car and a bike ($A\\cap B$). Asked $P(A\\mid B)$, you stand inside the $40$ car-owners and ask what share also bike: $10/40 = 0.25$. The original $100$ has vanished; the conditioned world *is* the $40$."
+            },
+            {
+              "kind": "formula",
+              "title": "Conditioning makes a brand-new, fully valid probability world",
+              "body": "Fix $B$ with $P(B) > 0$. Then $P(\\cdot \\mid B)$ obeys **all three axioms** by itself, so every identity you already trust still works *inside* the conditioned world: $$P(A^c \\mid B) = 1 - P(A \\mid B), \\qquad P(A \\cup C \\mid B) = P(A\\mid B) + P(C\\mid B) - P(A \\cap C \\mid B).$$ The **chain rule** extends the multiplication rule to a sequence, read it left to right as 'first this, then the next given the first, then the next given both': $$P(A_1 \\cap A_2 \\cap A_3) = P(A_1)\\,P(A_2 \\mid A_1)\\,P(A_3 \\mid A_1 \\cap A_2).$$"
             },
             {
               "kind": "formula",
@@ -393,6 +458,18 @@
               "answer": "$P(\\text{both red}) = 5/14 \\approx 0.357$"
             },
             {
+              "kind": "worked",
+              "title": "Chain rule down a path: three cards, all spades",
+              "body": "From a standard $52$-card deck, draw three cards without replacement. Find the probability all three are spades.",
+              "steps": [
+                "Chain the three dependent draws: $P(S_1 \\cap S_2 \\cap S_3) = P(S_1)\\,P(S_2 \\mid S_1)\\,P(S_3 \\mid S_1 \\cap S_2)$.",
+                "Spades remaining over cards remaining shrinks at every step: $\\dfrac{13}{52}\\cdot\\dfrac{12}{51}\\cdot\\dfrac{11}{50}$.",
+                "$= \\dfrac{1716}{132600} = \\dfrac{11}{850} \\approx 0.0129$.",
+                "Cross-check against an unordered count: $\\dfrac{\\binom{13}{3}}{\\binom{52}{3}} = \\dfrac{286}{22100} = \\dfrac{11}{850}$. The ordered chain and the combination agree, as they must. ✓"
+              ],
+              "answer": "$11/850 \\approx 0.0129$"
+            },
+            {
               "kind": "trick",
               "title": "The tree: branch probabilities multiply along a path",
               "body": "Draw a tree: first branch on the condition ($F_1$ vs $F_2$), then on the outcome (defect vs not). The probability of any leaf is the **product** along its path. To get a marginal like $P(D)$, **add** every leaf where $D$ happens. Multiply along, add across, that single rule solves most conditional problems without algebra."
@@ -401,6 +478,11 @@
               "kind": "trap",
               "title": "Flipping the condition",
               "body": "$P(A \\mid B) \\ne P(B \\mid A)$ in general. *The probability a defective part came from Factory 2* is **not** the same as *the defect rate at Factory 2*. Confusing these two directions is the single biggest conditional-probability mistake, and it is exactly what Bayes' theorem exists to fix."
+            },
+            {
+              "kind": "trap",
+              "title": "Conditioning on $B$ vs on $B^c$ are different worlds",
+              "body": "It is true that $P(A^c \\mid B) = 1 - P(A \\mid B)$, complementing the *event* inside a fixed world. It is **false** in general that $P(A \\mid B^c) = 1 - P(A \\mid B)$, that swaps the *world* you are standing in. Flipping the conditioning event is not the same as flipping the conditioned event; only the latter is a clean complement."
             },
             {
               "kind": "recall",
@@ -412,6 +494,14 @@
                 {
                   "front": "Why is $P(A\\mid B)$ generally not equal to $P(B\\mid A)$?",
                   "back": "They divide the *same* overlap $P(A\\cap B)$ by *different* totals, one by $P(B)$, the other by $P(A)$. 'The chance a defective part came from Factory 2' (condition on defective) is a different world than 'Factory 2's defect rate' (condition on Factory 2). Swapping the two is the classic error Bayes' theorem exists to correct."
+                },
+                {
+                  "front": "Why may you reuse complement and inclusion-exclusion *inside* a conditional like $P(\\cdot\\mid B)$?",
+                  "back": "Because $P(\\cdot\\mid B)$ is itself a genuine probability measure: it is non-negative, assigns $P(B\\mid B)=1$ to its new sample space $B$, and is additive over disjoint events. Anything provable from the three axioms therefore holds verbatim inside the conditioned world, e.g. $P(A^c\\mid B)=1-P(A\\mid B)$."
+                },
+                {
+                  "front": "Why is the chain rule the natural extension of the multiplication rule?",
+                  "back": "The multiplication rule $P(A\\cap B)=P(A)P(B\\mid A)$ says 'probability of the first, times probability of the second given the first.' Telescoping that down a sequence gives $P(A_1\\cap\\cdots\\cap A_n)=P(A_1)P(A_2\\mid A_1)\\cdots P(A_n\\mid A_1\\cap\\cdots\\cap A_{n-1})$, exactly the running product along a tree path, which is why sampling-without-replacement problems fall straight out of it."
                 }
               ]
             }
@@ -527,12 +617,17 @@
             {
               "kind": "intuition",
               "title": "Rare causes stay rare even after evidence",
-              "body": "The base rate dominates. If almost nobody has the disease, then the *false positives drawn from the huge healthy crowd* can rival or outnumber the *true positives from the tiny sick group*. Bayes simply weighs each path by how many people actually walk it. Always think in **counts of people**, not floating probabilities."
+              "body": "The base rate dominates. If almost nobody has the disease, then the *false positives drawn from the huge healthy crowd* can rival or outnumber the *true positives from the tiny sick group*. Bayes simply weighs each path by how many people actually walk it. Always think in **counts of people**, not floating probabilities. There is an even faster lens for two hypotheses: **work in odds**. The posterior odds are just the prior odds scaled by how much better the evidence fits one hypothesis than the other, no denominator to compute. That single multiplication is how professionals update beliefs as evidence arrives."
             },
             {
               "kind": "formula",
               "title": "Bayes' theorem",
               "body": "$$P(B_k \\mid A) = \\frac{P(A \\mid B_k)\\,P(B_k)}{\\sum_i P(A \\mid B_i)\\,P(B_i)}$$ The numerator is one path; the denominator is the law of total probability, *all* the paths that produce the evidence $A$. The whole theorem is: this path's weight divided by every path's weight."
+            },
+            {
+              "kind": "formula",
+              "title": "The odds form: prior odds times the likelihood ratio",
+              "body": "For two competing causes, divide Bayes by itself and the shared denominator cancels: $$\\underbrace{\\frac{P(B_1 \\mid A)}{P(B_2 \\mid A)}}_{\\text{posterior odds}} = \\underbrace{\\frac{P(B_1)}{P(B_2)}}_{\\text{prior odds}} \\times \\underbrace{\\frac{P(A \\mid B_1)}{P(A \\mid B_2)}}_{\\text{likelihood ratio}}.$$ Evidence enters as a single multiplier (the **Bayes factor**). Independent pieces of evidence multiply their factors in turn, which makes sequential updating trivial."
             },
             {
               "kind": "widget",
@@ -568,6 +663,18 @@
               "answer": "$P(F_2 \\mid \\text{defective}) = 0.625$"
             },
             {
+              "kind": "worked",
+              "title": "Odds form, and a second positive test",
+              "body": "Disease prevalence $1\\%$, a test with sensitivity and specificity both $99\\%$. Use odds to find the chance of disease after **one** positive, then after a **second independent** positive.",
+              "steps": [
+                "**Prior odds** (sick : healthy) $= 1 : 99$.",
+                "**Likelihood ratio** of a positive $= \\dfrac{P(+\\mid \\text{sick})}{P(+\\mid \\text{healthy})} = \\dfrac{0.99}{0.01} = 99$.",
+                "**After one positive**: posterior odds $= (1:99)\\times 99 = 99:99 = 1:1$, i.e. probability $\\tfrac{1}{1+1} = 0.50$, matching the count-based answer above.",
+                "**After a second independent positive**: multiply by $99$ again: $1:1 \\to 99:1$, probability $\\tfrac{99}{99+1} = 0.99$. Two independent positives crush the rare prior; this is why screening protocols confirm with a second test."
+              ],
+              "answer": "one positive $\\to 0.50$; two positives $\\to 0.99$"
+            },
+            {
               "kind": "trick",
               "title": "Skip the formula, use a population of 10,000",
               "body": "Never plug into the Bayes fraction cold under time pressure. Pick a round population (10,000 or 100,000), split it by the base rate, then apply the rates to get integer counts in each cell. The answer is *favorable count / total positive count*. Faster, and you literally cannot flip the conditional by accident."
@@ -576,6 +683,11 @@
               "kind": "trap",
               "title": "Ignoring the base rate",
               "body": "The base-rate fallacy: jumping from *the test is 99% accurate* to *I am 99% likely sick*. That throws away $P(B_k)$, the prior. When a condition is rare, even an excellent test produces a flood of false positives. The prior is never optional, it is half the calculation."
+            },
+            {
+              "kind": "trap",
+              "title": "Assuming repeated tests are independent when they are not",
+              "body": "The clean $\\times 99$-per-test update above assumes the tests are **conditionally independent given disease status**. Real retests often share a cause of error (the same reagent flaw, the same biological quirk), so a person who false-positives once is likelier to do it again. When errors are correlated, a second positive adds *less* than a full likelihood ratio, never assume independence the problem has not granted."
             },
             {
               "kind": "recall",
@@ -587,6 +699,14 @@
                 {
                   "front": "Why can a 99%-accurate test still leave you only ~50% likely to be sick?",
                   "back": "Because the posterior weighs each path by how many people actually walk it. With a rare disease, the 1% of false positives drawn from the *huge* healthy crowd can equal the true positives from the *tiny* sick group. The prior (base rate) is half the calculation, drop it and you commit the base-rate fallacy."
+                },
+                {
+                  "front": "In the odds form of Bayes, what does each of the three pieces mean?",
+                  "back": "$\\frac{P(B_1\\mid A)}{P(B_2\\mid A)}$ is the **posterior odds** (belief after evidence); $\\frac{P(B_1)}{P(B_2)}$ is the **prior odds** (belief before); $\\frac{P(A\\mid B_1)}{P(A\\mid B_2)}$ is the **likelihood ratio / Bayes factor** (how much better the evidence fits $B_1$ than $B_2$). Posterior odds = prior odds × Bayes factor, and the messy total-probability denominator cancels out."
+                },
+                {
+                  "front": "Why do two independent positive tests multiply the likelihood ratio rather than add it?",
+                  "back": "Each independent piece of evidence updates the *odds* by its own Bayes factor, and successive multiplications compose: odds after both $=$ prior odds $\\times LR_1 \\times LR_2$. With $LR=99$ each, a $1{:}99$ prior becomes $1{:}1$ then $99{:}1$. The rare prior is overcome only when the *product* of factors outweighs it, which is exactly why one strong test is rarely enough for a rare condition."
                 }
               ]
             }
@@ -702,7 +822,12 @@
             {
               "kind": "intuition",
               "title": "Independent = no information; exclusive = total information",
-              "body": "**Independent**: learning $B$ happened tells you *nothing* about $A$, coin flips. **Mutually exclusive**: learning $B$ happened tells you $A$ *definitely did not*, they cannot co-occur. Far from being the same, mutually exclusive events (with positive probability) are *strongly dependent*: one happening rules the other out."
+              "body": "**Independent**: learning $B$ happened tells you *nothing* about $A$, coin flips. **Mutually exclusive**: learning $B$ happened tells you $A$ *definitely did not*, they cannot co-occur. Far from being the same, mutually exclusive events (with positive probability) are *strongly dependent*: one happening rules the other out. One subtlety the exam exploits: with three or more events, checking them **two at a time** is not enough. Events can be *pairwise* independent yet fail to be *mutually* independent, so the clean product rule over all of them can quietly break even when every pair looks fine."
+            },
+            {
+              "kind": "formula",
+              "title": "Mutual independence, and closure under complements",
+              "body": "True **mutual** independence of $A_1,\\dots,A_n$ demands the product rule for *every* subset, not just every pair: $$P\\!\\left(\\bigcap_{i\\in T} A_i\\right) = \\prod_{i\\in T} P(A_i) \\quad\\text{for all } T.$$ Pairwise independence is the $|T|=2$ case alone and is strictly weaker. One convenient fact: if $A$ and $B$ are independent, so are $A$ and $B^c$ (and $A^c,B^c$), independence is preserved when you complement either side."
             },
             {
               "kind": "formula",
@@ -733,6 +858,18 @@
               "answer": "Independent: $P(A\\cap B) = P(A)P(B) = 0.20$"
             },
             {
+              "kind": "worked",
+              "title": "Independence survives complementing",
+              "body": "Suppose $A$ and $B$ are independent with $P(A)=0.6$, $P(B)=0.3$. Show $A$ and $B^c$ are independent, and find $P(A \\cap B^c)$.",
+              "steps": [
+                "Start from the difference rule: $P(A \\cap B^c) = P(A) - P(A \\cap B)$.",
+                "Use the given independence on the overlap: $P(A\\cap B) = P(A)P(B) = 0.6 \\cdot 0.3 = 0.18$, so $P(A\\cap B^c) = 0.6 - 0.18 = 0.42$.",
+                "Compare against the independence benchmark for $A$ and $B^c$: $P(A)P(B^c) = 0.6 \\cdot (1-0.3) = 0.6 \\cdot 0.7 = 0.42$.",
+                "They match, so $A \\perp B^c$. The algebra generalizes: $P(A)-P(A)P(B) = P(A)(1-P(B)) = P(A)P(B^c)$ always. ✓"
+              ],
+              "answer": "$P(A\\cap B^c)=0.42$; $A$ and $B^c$ are independent"
+            },
+            {
               "kind": "trick",
               "title": "'At least one' → take the complement",
               "body": "Whenever you see *at least one*, do not sum the messy cases, compute $1 - P(\\text{none})$. With independence, $P(\\text{none})$ is just a clean product of the individual failure probabilities. This complement move shows up on the exam constantly."
@@ -741,6 +878,11 @@
               "kind": "trap",
               "title": "Treating mutually exclusive as independent",
               "body": "If $A$ and $B$ are mutually exclusive and both have positive probability, they are **dependent**, because $P(A \\mid B) = 0 \\ne P(A)$. So you cannot multiply their probabilities. Two events can be independent, or mutually exclusive, but (with positive probability) never both."
+            },
+            {
+              "kind": "trick",
+              "title": "To prove independence, check one equation; to disprove it, find one violation",
+              "body": "Independence is a numerical claim, not a vibe. To confirm it, verify $P(A\\cap B) = P(A)P(B)$ (or equivalently $P(A\\mid B)=P(A)$) for the relevant events. To *refute* it you need just a single subset where the product rule fails, which is exactly how the pairwise-but-not-mutual counterexamples are built. Never argue independence from the story alone; the exam writes stories designed to fool that instinct."
             },
             {
               "kind": "recall",
@@ -752,6 +894,14 @@
                 {
                   "front": "Why is the complement the right move for 'at least one' under independence?",
                   "back": "'At least one' spans many messy overlapping cases, but its complement, 'none', is a single clean event. With independence the events don't interact, so $P(\\text{none})$ factors into a simple product of each failure probability, and $P(\\text{at least one}) = 1 - \\prod P(\\text{fail}_i)$. One subtraction replaces a sum over many cases."
+                },
+                {
+                  "front": "Why does pairwise independence not guarantee mutual independence?",
+                  "back": "Mutual independence requires the product rule on *every* subset of the events; pairwise independence only checks subsets of size two. The classic counterexample: flip two fair coins and let $A,B$ be the two outcomes and $C$ the event 'the flips match'. Each pair is independent, yet knowing any two of $A,B,C$ pins down the third, so $P(A\\cap B\\cap C)\\ne P(A)P(B)P(C)$. Higher-order structure can hide behind innocent-looking pairs."
+                },
+                {
+                  "front": "If $A$ and $B$ are independent, why are $A$ and $B^c$ automatically independent?",
+                  "back": "$P(A\\cap B^c)=P(A)-P(A\\cap B)=P(A)-P(A)P(B)=P(A)(1-P(B))=P(A)P(B^c)$. Independence says $B$ carries no information about $A$; its absence $B^c$ carries none either, so you may freely complement either event and the product rule still holds."
                 }
               ]
             }
