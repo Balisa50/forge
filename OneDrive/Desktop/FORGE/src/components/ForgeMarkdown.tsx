@@ -431,7 +431,18 @@ function CellBlock({ kind, label, bodyLines }: { kind: "code" | "markdown"; labe
           </p>
         )}
         {bodyContent && (
-          <CodeBlock content={bodyContent} label={isCode ? "python" : "markdown"} />
+          isCode ? (
+            <CodeBlock content={bodyContent} label="python" />
+          ) : (
+            // Markdown cell: show a rendered PREVIEW of what the student should
+            // type, so headings/bullets read as headings/bullets — not raw "##".
+            <div style={{ borderRadius: 8, border: "1px dashed rgba(96,165,250,0.35)", background: "rgba(96,165,250,0.04)", padding: "0.625rem 0.875rem 0.25rem" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#60a5fa", display: "block", marginBottom: "0.4rem", opacity: 0.8 }}>
+                Preview — type this into the cell
+              </span>
+              <BlockList blocks={parse(bodyContent)} nested />
+            </div>
+          )
         )}
       </div>
     </div>

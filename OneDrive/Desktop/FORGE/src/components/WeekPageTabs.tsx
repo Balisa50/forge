@@ -239,9 +239,9 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
 
       {/* Fallback inline intro for sparse-context weeks */}
       {showInlineContext && (
-        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.65, marginBottom: "0.5rem" }}>
-          {week.context}
-        </p>
+        <div style={{ marginBottom: "0.5rem" }}>
+          <ForgeMarkdown>{week.context}</ForgeMarkdown>
+        </div>
       )}
 
       {/* Day stream */}
@@ -386,9 +386,9 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
             {open && !isLocked && (
               <div style={{ padding: "0 1.125rem 1.125rem 1.125rem", borderTop: "1px solid var(--border)" }}>
                 {d.summary && (
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.55, padding: "0.875rem 0 0.75rem" }}>
-                    {d.summary}
-                  </p>
+                  <div style={{ padding: "0.875rem 0 0.25rem" }}>
+                    <ForgeMarkdown>{d.summary}</ForgeMarkdown>
+                  </div>
                 )}
 
                 <ul style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: d.summary ? 0 : "0.875rem" }}>
@@ -658,9 +658,9 @@ function ShipItSection({ week }: { week: RoadmapWeek }) {
           <h4 style={{ fontFamily: "var(--font-headline)", fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Target size={16} style={{ color: "#fb923c" }} /> Build this week
           </h4>
-          <p style={{ color: "var(--text-primary)", fontSize: "0.9375rem", lineHeight: 1.65, background: "rgba(251,146,60,0.06)", border: "1px solid rgba(251,146,60,0.22)", padding: "0.875rem 1rem", borderRadius: 8 }}>
-            {week.project}
-          </p>
+          <div style={{ background: "rgba(251,146,60,0.06)", border: "1px solid rgba(251,146,60,0.22)", padding: "0.875rem 1rem 0.125rem", borderRadius: 8 }}>
+            <ForgeMarkdown>{week.project}</ForgeMarkdown>
+          </div>
         </div>
       )}
 
