@@ -133,7 +133,11 @@ export default function VideoEmbed({ url, title, bare, lazy = true }: Props) {
       >
         {loaded ? (
           <iframe
-            src={embed}
+            // The iframe only mounts AFTER the user taps the thumbnail, so we
+            // append autoplay + playsinline: one tap loads AND plays the video
+            // inline (iOS refuses to start without playsinline; without autoplay
+            // mobile users had to tap a second time). #4
+            src={embed + (embed.includes("?") ? "&" : "?") + "autoplay=1&playsinline=1"}
             title={title ?? "Video"}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
