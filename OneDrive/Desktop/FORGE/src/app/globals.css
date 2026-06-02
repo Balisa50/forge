@@ -222,11 +222,18 @@
   }
 
   .dashboard-main {
-    margin-left: 240px;
-    padding: 2rem 2.5rem;
+    margin-left: 280px; /* clear the fixed 280px sidebar */
+    padding: 2rem;
     flex: 1;
     overflow-y: auto;
     min-width: 0;
+  }
+
+  /* Centered content column so wide screens don't stretch edge-to-edge. */
+  .dashboard-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 }
 @media (max-width: 768px) {
@@ -241,6 +248,31 @@
   .flex-col-on-mobile > textarea,
   .flex-col-on-mobile > input {
     width: 100% !important;
+  }
+}
+
+/* ─── PC / wide-screen polish (>1024px) ───────────────────────
+   Stops CTAs, tabs and containers from stretching edge-to-edge on
+   wide monitors. Mobile (<=768px) is untouched. */
+@media (min-width: 1025px) {
+  /* Prominent call-to-action buttons size to their text, never the row. */
+  .forge-btn-primary,
+  .forge-btn-red,
+  .forge-btn-blue,
+  .forge-cta {
+    width: fit-content;
+    min-width: 180px;
+    max-width: 280px;
+  }
+  /* A full-width CTA can opt back in when it truly should span its card. */
+  .forge-btn-full {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  /* Tabs hug their label instead of distributing across the bar. */
+  [role="tab"] {
+    width: fit-content;
+    max-width: 280px;
   }
 }
 

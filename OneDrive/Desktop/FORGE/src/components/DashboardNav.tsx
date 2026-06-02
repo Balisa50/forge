@@ -475,7 +475,7 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
           left: 0,
           top: 0,
           bottom: 0,
-          width: "240px",
+          width: "280px",
           background: "var(--bg-panel)",
           borderRight: "1px solid var(--border)",
           display: "flex",

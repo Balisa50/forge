@@ -104,8 +104,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
           hasMentor={hasMentor}
         />
         <main className="dashboard-main">
-          <ClientRememberName name={dbUser.name ?? null} />
-          {children}
+          <div className="dashboard-content">
+            <ClientRememberName name={dbUser.name ?? null} />
+            {children}
+          </div>
         </main>
       </div>
     </div>
