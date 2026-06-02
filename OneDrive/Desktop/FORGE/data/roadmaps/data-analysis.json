@@ -795,85 +795,288 @@
       "days": [
         {
           "number": 1,
-          "title": "What's the discount-profit relationship?",
-          "summary": "",
+          "title": "Form a testable hypothesis",
+          "summary": "Before any chart: state a falsifiable hypothesis with a number you can check.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Hypothesis",
-              "body": "Before you look — do you think more discount = more profit, or less? Think: discount drives sales, but it cuts margins. Write your guess."
+              "kind": "lesson",
+              "title": "Form a testable hypothesis",
+              "body": "## What it is\nA real analyst doesn't just poke at data — they write a **falsifiable hypothesis** first, then test it. A good hypothesis is **specific**, has a **number**, and could be proven **wrong**.\n\n## Why it matters\nIf you look first and form a theory to match what you saw, you'll always \"confirm\" it — that's bias, not analysis. Committing to a testable claim up front keeps you honest.\n\n## Examples\n```text\nToo vague:   \"Discounts hurt profit.\"\nFalsifiable: \"Orders with a discount above 30% have a NEGATIVE average profit.\"\n\nToo vague:   \"Some categories are worse.\"\nFalsifiable: \"Furniture loses money at a lower discount than Technology does.\"\n```\n\nNotice the good versions each name a **threshold** and a **measurable outcome** you can check against the data. Predict the direction before you plot anything."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A good hypothesis is specific and falsifiable — it names a number you can check.",
+                  "answer": true,
+                  "whenRight": "Right — 'profit goes negative above 30% discount' can be proven true or false.",
+                  "whenWrong": "Actually yes — specificity and a checkable number are what make it testable.",
+                  "sim": "weak:  'discounts hurt'\nstrong: 'avg profit < 0 when discount > 0.30'"
+                },
+                {
+                  "prompt": "It's good practice to study the data first, then write a hypothesis that fits what you saw.",
+                  "answer": false,
+                  "whenRight": "Correct — that's confirmation bias. Commit to the claim BEFORE you look.",
+                  "whenWrong": "That's the trap — fitting a hypothesis to data you've already seen just confirms your bias.",
+                  "sim": "look-first -> 'confirm' anything   |   claim-first -> a real test"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — write the hypothesis",
+              "body": "[WRITE] In one sentence, write a falsifiable hypothesis about discount vs profit. It must include a threshold number (e.g. \"above 30%\").\n\n[CODE] Load the Superstore data and confirm it has `Discount` and `Profit` columns (`df.info()`). No analysis yet — just set up.\n\n[WRITE] Predict: at what discount do you think profit turns negative? Write your guess down to check on Day 5."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Scatter plot — Discount vs Profit",
-          "summary": "",
+          "title": "Scatter plot: Discount vs Profit",
+          "summary": "One technique: the scatter plot — see the relationship between two numeric columns.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Scatter plot: Discount vs Profit",
+              "body": "## What it is\nA **scatter plot** draws one dot per row, placing it by two numeric columns — here `Discount` (x) and `Profit` (y). It's the fastest way to *see* a relationship a table would hide.\n\n## Why it matters\nYour hypothesis says profit falls as discount rises. A scatter shows it instantly: if the dot cloud slopes down and crosses below zero, you have visual evidence.\n\n## Examples\n```python\nimport pandas as pd\nimport matplotlib.pyplot as plt\ndf = pd.read_parquet(\"data/clean.parquet\")\n\n# 1. The core plot — one dot per order\ndf.plot.scatter(x=\"Discount\", y=\"Profit\", alpha=0.3)\n\n# 2. Make it readable\nplt.title(\"Discount vs Profit — every Superstore order\")\nplt.axhline(0, color=\"red\", linewidth=1)   # the break-even line\nplt.tight_layout()\n\n# 3. Save it for your memo\nplt.savefig(\"discount_vs_profit.png\", dpi=150)\nplt.show()\n```\n\nThe red line at Profit = 0 is the key: dots below it are losses. Watch where they start to dominate as discount grows."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A scatter plot places one dot per row, mapping two numeric columns against each other.",
+                  "answer": true,
+                  "whenRight": "Right — each order becomes a dot at (its discount, its profit).",
+                  "whenWrong": "It does — every row is one dot positioned by the two columns.",
+                  "sim": "order 1 -> (0.20, $40)\norder 2 -> (0.70, -$95)"
+                },
+                {
+                  "prompt": "If the dot cloud trends downward and crosses below zero as discount rises, that supports the hypothesis.",
+                  "answer": true,
+                  "whenRight": "Yes — that downward, into-the-red pattern is exactly the visual evidence you predicted.",
+                  "whenWrong": "It does support it — a downward cloud crossing zero is the pattern you're testing for.",
+                  "sim": "low discount -> dots above 0\nhigh discount -> dots below 0"
+                },
+                {
+                  "prompt": "A clear downward scatter PROVES discounts cause the losses.",
+                  "answer": false,
+                  "whenRight": "Correct — a scatter shows association, not causation. Other factors could be involved.",
+                  "whenWrong": "Careful — scatter shows a relationship, not proof of cause. Association is not causation.",
+                  "sim": "association  !=  causation"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Excel/Sheets scatter",
-              "body": "On the Orders sheet, with all rows visible:\n  Select two columns: Discount and Profit.\n  Insert → Chart → Scatter (X-Y).\n  YOU SHOULD SEE: a cloud of points. Most are clustered around 0% discount with small profits.\n  Save as chart in a sheet called Scatter."
+              "title": "Your turn — plot it",
+              "body": "[CODE] Make a scatter plot of `Discount` (x) vs `Profit` (y) with `alpha=0.3` so overlapping dots are visible.\n\n[CODE] Add a red horizontal line at Profit = 0 and save the chart as `discount_vs_profit.png`.\n\n[WRITE] Two sentences describing the shape: does profit fall as discount rises? Where do losses seem to start?"
+            },
+            {
+              "kind": "video",
+              "title": "Pandas scatter plot — df.plot.scatter()",
+              "url": "https://www.youtube.com/watch?v=i_H5fjqRUDE",
+              "creator": "",
+              "why": "Making a scatter straight from a DataFrame, shown live. Optional."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Bin discount into buckets",
-          "summary": "",
+          "title": "Bin the discount into buckets",
+          "summary": "One technique: pd.cut — turn a continuous column into labelled bands you can compare.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Bin the discount into buckets",
+              "body": "## What it is\nDiscount is continuous (0.00–0.80), which is hard to summarise. **Binning** with `pd.cut` slices it into labelled bands (0–10%, 10–20%, …) so you can compare **average profit per band**.\n\n## Why it matters\nThe scatter hinted at a trend; binning makes it precise. Once each order has a discount *band*, a single groupby tells you the average profit at each level — and exactly where it goes negative.\n\n## Examples\n```python\n# 1. Define the band edges and labels\nbins   = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.8]\nlabels = [\"0-10%\", \"10-20%\", \"20-30%\", \"30-40%\", \"40-50%\", \"50%+\"]\n\n# 2. Create a new categorical column (originals are untouched)\ndf[\"disc_band\"] = pd.cut(df[\"Discount\"], bins=bins, labels=labels, include_lowest=True)\n\n# 3. Average profit per band — the payoff\ndf.groupby(\"disc_band\")[\"Profit\"].mean()\n\n# 4. Add order counts so you trust the averages\ndf.groupby(\"disc_band\").agg(avg_profit=(\"Profit\", \"mean\"),\n                            orders=(\"Profit\", \"count\"))\n```\n\nRead the result top to bottom: the band where average profit first turns negative is your tipping point (Day 5)."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`pd.cut` turns a continuous column into labelled buckets.",
+                  "answer": true,
+                  "whenRight": "Right — each value is mapped into the band it falls in.",
+                  "whenWrong": "It does — pd.cut assigns each value to a labelled range.",
+                  "sim": "0.05 -> '0-10%'\n0.35 -> '30-40%'\n0.70 -> '50%+'"
+                },
+                {
+                  "prompt": "After binning you can `groupby` the band to compare average profit across discount levels.",
+                  "answer": true,
+                  "whenRight": "Yes — that's the whole point: band becomes a groupable category.",
+                  "whenWrong": "It does — once it's a band column, groupby summarises profit per level.",
+                  "sim": "disc_band\n0-10%    $52\n30-40%   -$8\n50%+    -$74"
+                },
+                {
+                  "prompt": "`pd.cut` overwrites the original Discount values.",
+                  "answer": false,
+                  "whenRight": "Correct — it returns a NEW categorical column; the original stays intact.",
+                  "whenWrong": "Not quite — pd.cut creates a new column; your raw Discount is unchanged.",
+                  "sim": "Discount (0.35) stays; disc_band ('30-40%') is added alongside"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Discount buckets",
-              "body": "In a helper column on Orders, add 'Discount Bucket':\n      =IF(O2=0, \"0%\", IF(O2<=0.1, \"0-10%\", IF(O2<=0.2, \"10-20%\", IF(O2<=0.4, \"20-40%\", \"40%+\"))))\n\nPivot: Rows = Discount Bucket. Values = SUM Profit, COUNT, AVG Discount, AVG Profit.\nWhat pattern do you see? Where does profit go negative?"
+              "title": "Your turn — bin and compare",
+              "body": "[CODE] Use `pd.cut` to add a `disc_band` column with bands 0-10%, 10-20%, … 50%+.\n\n[PRODUCE] Group by `disc_band` and show **average profit** and **order count** per band.\n\n[WRITE] One sentence: which band is the first to show a negative average profit?"
+            },
+            {
+              "kind": "video",
+              "title": "Binning with pandas pd.cut()",
+              "url": "https://www.youtube.com/watch?v=06LZtiF5yGg",
+              "creator": "",
+              "why": "pd.cut for bucketing a numeric column, shown live. Optional."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Break down by Category",
-          "summary": "",
+          "title": "Break it down by Category",
+          "summary": "One technique: a two-way breakdown (pivot_table) — averages can hide opposite subgroup trends.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Break it down by Category",
+              "body": "## What it is\nA single average can hide opposite stories in subgroups. A **two-way breakdown** crosses discount band against `Category` so you see *where* discounts bite hardest. `pivot_table` is the tool.\n\n## Why it matters\n\"Discounts hurt profit\" might be true for Furniture but barely matter for Technology. The business can't act on one blended number — it needs to know which category to cap.\n\n## Examples\n```python\n# 1. Average profit for every (band x category) cell\npivot = df.pivot_table(\n    index=\"disc_band\",\n    columns=\"Category\",\n    values=\"Profit\",\n    aggfunc=\"mean\",\n)\nprint(pivot)\n\n# 2. Read it: scan each column for where it turns negative\n#         Furniture  Office Supplies  Technology\n# 0-10%      45.1          38.7          120.4\n# 30-40%    -22.3           5.1           60.2   <- Furniture already losing\n# 50%+      -88.6         -30.2           10.5\n\n# 3. Optional: a quick heatmap for the memo\npivot.plot(kind=\"bar\")\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A two-way breakdown can reveal that discounts crush one category while barely touching another.",
+                  "answer": true,
+                  "whenRight": "Right — that's exactly why you cross by category instead of trusting one average.",
+                  "whenWrong": "It does — subgroups can move in opposite directions a single average hides.",
+                  "sim": "at 40% discount:\nFurniture  -$22\nTechnology +$60"
+                },
+                {
+                  "prompt": "If the overall average profit looks fine, you can be sure no subgroup is losing money.",
+                  "answer": false,
+                  "whenRight": "Correct — a healthy blended average can hide a category bleeding cash. Always break down.",
+                  "whenWrong": "Not safe — averages mask subgroups; a fine overall number can hide big losses.",
+                  "sim": "overall avg: +$18  (but Furniture@50% = -$88)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Cross-section",
-              "body": "New pivot. Rows = Category, Columns = Discount Bucket, Values = SUM Profit.\nColor-code red where the value is negative.\nWhich category tolerates discounts? Which is destroyed by them?"
+              "title": "Your turn — cross-section",
+              "body": "[CODE] Build a `pivot_table` of **average profit** with `disc_band` as rows and `Category` as columns.\n\n[WRITE] One sentence: which Category turns negative at the LOWEST discount band (i.e. is most discount-sensitive)?"
+            },
+            {
+              "kind": "video",
+              "title": "Pandas pivot_table for a two-way breakdown",
+              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
+              "creator": "",
+              "why": "pivot_table to cross two dimensions, shown live. Optional."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Find the 'tipping point' discount",
-          "summary": "",
+          "title": "Find the tipping point",
+          "summary": "One skill: read your tables to find the exact discount where profit turns negative.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Find the tipping point",
+              "body": "## What it is\nThe **tipping point** is the discount band where average profit crosses from positive to negative. From Day 3's table you can read it off; from Day 4's you can read a *different* one per category.\n\n## Why it matters\nA business can't act on \"discounts are bad.\" It can act on \"cap discounts at 20% for Furniture.\" The tipping point converts your analysis into a concrete, defensible recommendation.\n\n## Examples\n```python\n# 1. Per-band averages from Day 3\nband_profit = df.groupby(\"disc_band\")[\"Profit\"].mean()\n\n# 2. The first band that is negative = the tipping point\ntipping = band_profit[band_profit < 0].index[0]\nprint(\"Profit turns negative at:\", tipping)     # e.g. 30-40%\n\n# 3. How much of the business is ALREADY past the cap?\nover_cap = (df[\"Discount\"] > 0.30).mean()\nprint(f\"{over_cap:.0%} of orders are discounted above 30%\")\n```\n\nNow you have a number to recommend and the size of the problem."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The tipping point is the discount band where average profit first goes negative.",
+                  "answer": true,
+                  "whenRight": "Right — that crossing from + to - is the actionable threshold.",
+                  "whenWrong": "It is — the first band with a negative average profit is the tipping point.",
+                  "sim": "0-10% +$52 | 20-30% +$9 | 30-40% -$8  <- tips here"
+                },
+                {
+                  "prompt": "One single tipping point applies equally to every category.",
+                  "answer": false,
+                  "whenRight": "Correct — Day 4 showed each category tips at a different discount. Recommend per-category caps.",
+                  "whenWrong": "Not so — the breakdown showed categories tip at different discounts; caps should differ.",
+                  "sim": "Furniture tips ~20%  |  Technology tips ~50%"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Sweet spot",
-              "body": "Plot a line chart: x = Discount Bucket (in order), y = AVG Profit. Where does the line cross zero? That's the danger zone."
+              "title": "Your turn — pin the number",
+              "body": "[CODE] From your per-band averages, identify the first band where average profit is negative.\n\n[CODE] Compute what percentage of orders are discounted above that threshold.\n\n[WRITE] State your recommended discount cap and how much of current business exceeds it. Compare to your Day 1 prediction — were you right?"
             }
           ]
         },
         {
           "number": 6,
           "title": "Update the memo",
-          "summary": "",
+          "summary": "One skill: communicate the finding — headline, evidence, recommendation, one page.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Update the memo",
+              "body": "## What it is\nA finding that isn't communicated doesn't exist. A **data memo** leads with the answer: **headline → evidence → recommendation**, on one page. Executives read the headline; the charts back it up.\n\n## Why it matters\nYour boss won't read your notebook. They'll read three sentences. If the recommendation and its dollar impact aren't at the top, your week of analysis is wasted.\n\n## Examples\n```text\n## Headline\nDiscounts above 30% turn the average order unprofitable;\nFurniture tips first, at ~20%.\n\n## Evidence\n- Scatter: profit slopes below zero as discount rises (discount_vs_profit.png)\n- Average profit by band: positive to 20-30%, negative from 30-40%\n- By category: Furniture negative from 20%, Technology only past 50%\n\n## Recommendation\nCap Furniture discounts at 20% and overall discounts at 30%.\n[X]% of current orders exceed these caps.\n```\n\nCurate: include only the 1-2 charts that prove the point, not everything you made."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A data memo should lead with the recommendation and headline, not the methodology.",
+                  "answer": true,
+                  "whenRight": "Right — answer first. Decision-makers read the top line, then maybe the evidence.",
+                  "whenWrong": "It should — lead with the answer; methodology is supporting detail, not the opener.",
+                  "sim": "GOOD: headline -> evidence -> rec\nBAD: 'first I loaded the csv...'"
+                },
+                {
+                  "prompt": "You should attach every chart you produced so the reader sees all your work.",
+                  "answer": false,
+                  "whenRight": "Correct — curate to the 1-2 charts that prove the point; the rest is noise.",
+                  "whenWrong": "Not quite — dumping every chart buries the signal. Show only what proves the claim.",
+                  "sim": "5 charts -> reader lost   |   2 key charts -> point lands"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Memo v2",
-              "body": "Add a 4th section to your Superstore Memo PDF:\n      ## Discount strategy\n      Headline: Discounts above XX% destroy profit in [Category Y].\n      Recommendation: Cap discounts at XX% for Category Y.\nRe-export PDF."
+              "title": "Your turn — write the memo",
+              "body": "[WRITE] Update your Superstore memo with a new section using the headline -> evidence -> recommendation structure.\n\n[PRODUCE] Embed the scatter and the per-band table as evidence.\n\n[WRITE] End with a concrete discount-cap recommendation (overall + the most-sensitive category) and the % of orders that exceed it. Real numbers — no placeholders."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.2",
-          "summary": "",
+          "title": "Ship v0.2",
+          "summary": "Commit the deeper analysis + updated memo, tag v0.2. Versioned work is the portfolio.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.2",
+              "body": "## What it is\nYou took a vague worry (\"discounts hurt\") and turned it into a tested, quantified, communicated recommendation. Now **ship the increment**: commit the updated notebook and memo, tag it `v0.2`.\n\n## Why it matters\nShippable, versioned work is what goes on your CV and what a mentor reviews. \"v0.2\" shows iteration — the single most credible signal of a real analyst."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tagging this as v0.2 (a clear increment over v0.1) signals iteration — a strong portfolio habit.",
+                  "answer": true,
+                  "whenRight": "Right — versioned, incremental work is exactly what reviewers and employers trust.",
+                  "whenWrong": "It is valuable — visible iteration (v0.1 -> v0.2) is a credibility signal.",
+                  "sim": "v0.1: found the problem\nv0.2: tested + quantified + recommended"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "      git add . && git commit -m 'v0.2: discount-profit deep dive'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Scatter plot saved\n  ☐ Discount bucket pivot built\n  ☐ Category × Bucket cross-pivot built\n  ☐ Memo PDF v2 includes discount strategy section\n  ☐ v0.2 tag"
+              "title": "Acceptance — v0.2 is done when",
+              "body": "[PRODUCE] Notebook contains: the scatter, the binned per-band profit table, and the band x category breakdown.\n\n[PRODUCE] Memo updated with the headline -> evidence -> recommendation section and a concrete discount cap.\n\n[CODE] Commit and push, then tag the release:\n```\ngit add .\ngit commit -m \"Superstore v0.2: discount-vs-profit deep dive + cap recommendation\"\ngit tag v0.2\ngit push --tags\n```\n\n[WRITE] Drop your repo link in the dashboard check-in. You just shipped a real, quantified business recommendation."
             }
           ]
         }
@@ -963,11 +1166,7 @@
         "Compute the profit impact of your recommended cap: if all orders above the 20% Furniture discount threshold had been capped at 20%, what would the change in total Furniture profit be? This calculation -- \"how much does the recommendation change the outcome?\" -- is the analysis that makes a memo a business case.",
         "Plot a line chart of average margin by discount bucket for all three categories on the same axes. The visual separation between how Furniture and Technology respond to discounting makes the category-specific policy recommendation obvious.",
         "Run a simple linear regression of Profit Margin on Discount in Python (from scipy.stats import linregress). Report the slope, intercept, and R². The slope is the most interpretable number: \"each additional percentage point of discount is associated with a X percentage point reduction in margin.\""
-      ],
-      "concept_widget": {
-        "id": "correlation-scatter",
-        "caption": "Drag r from −1 to +1 and watch the cloud tighten, flip, and flatten — discount vs profit, live."
-      }
+      ]
     },
     {
       "number": 4,
