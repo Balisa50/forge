@@ -1971,109 +1971,288 @@
       "days": [
         {
           "number": 1,
-          "title": "Sampling + selection bias",
-          "summary": "",
+          "title": "Samples and selection bias",
+          "summary": "A pattern in a biased sample is not a finding. Today: what your data does and doesn't represent.",
           "items": [
             {
-              "kind": "video",
-              "title": "Sampling explained for analysts (15 min)",
-              "url": "https://www.youtube.com/results?search_query=sampling+bias+data+analyst+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "Samples and selection bias",
+              "body": "## What it is\nYour data is almost always a **sample**, not the whole population. **Selection bias** is when that sample isn't representative — so patterns in it may not hold in the real world.\n\n## Why it matters\n\"Patterns are not findings.\" A finding is a pattern with evidence it's *real* and *generalisable*. If your sample is skewed, even a strong pattern can be an artefact of *who got into the data*.\n\n## Examples\n```text\n- Survivorship bias: you only see customers who CHECKED OUT, not the carts abandoned.\n- Self-selection: people who leave reviews are happier OR angrier than average.\n- Coverage: Superstore is ONE retailer's orders — not \"US retail\" in general.\n```\n\nBefore trusting any pattern, ask: *who or what is missing from this data, and would including them change the story?*"
             },
             {
-              "kind": "reflection",
-              "title": "Three biases",
-              "body": "When does Sample Superstore data MISLEAD?\n  1. Only customers who already bought\n  2. Only successful orders\n  3. Only 4 regions, not all possible"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A strong pattern in a biased sample may not hold in the wider population.",
+                  "answer": true,
+                  "whenRight": "Right — bias in the sample can manufacture or hide patterns.",
+                  "whenWrong": "It can mislead — a biased sample's pattern needn't generalise.",
+                  "sim": "sample: only checkouts  ->  'everyone buys!' (abandoned carts unseen)"
+                },
+                {
+                  "prompt": "Collecting more data automatically removes selection bias.",
+                  "answer": false,
+                  "whenRight": "Correct — more biased data is just more bias. Representativeness, not volume, is the fix.",
+                  "whenWrong": "Not so — volume doesn't fix bias; a bigger skewed sample is still skewed.",
+                  "sim": "1M biased rows  =  still biased"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — interrogate the sample",
+              "body": "[WRITE] Name three specific ways the Superstore dataset could be biased or unrepresentative.\n\n[WRITE] For one of them, explain how it would limit a conclusion you drew in Weeks 1-5."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Confidence intervals in Excel",
-          "summary": "",
+          "title": "Confidence intervals",
+          "summary": "One concept: report a range, not a falsely precise point. A single average hides uncertainty.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Confidence intervals",
+              "body": "## What it is\nA single number — \"average margin = 7.2%\" — hides uncertainty. A **confidence interval (CI)** gives a range that probably contains the true value (commonly 95% confidence). Less data → wider interval.\n\n## Why it matters\n\"Margins are 7.2% lower\" sounds exact. \"Margins are 7.2% lower, 95% CI [3.1%, 11.3%]\" is honest — and if a difference's CI crosses zero, you can't claim the difference is real.\n\n## Examples\n```python\nimport numpy as np\nx = df.loc[df[\"sub_category\"] == \"Tables\", \"profit\"]\n\nmean = x.mean()\nse   = x.std(ddof=1) / np.sqrt(len(x))     # standard error\nci   = (mean - 1.96 * se, mean + 1.96 * se)  # ~95% CI\nprint(round(mean, 2), ci)\n```\n\nIn Excel: `CONFIDENCE.NORM(0.05, stdev, n)` gives the +/- margin around the mean."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A 95% CI is a range that likely contains the true value — not a guarantee it does.",
+                  "answer": true,
+                  "whenRight": "Right — it quantifies uncertainty; it isn't a promise.",
+                  "whenWrong": "Close — it's a likely range, not a certainty about the true value.",
+                  "sim": "mean 7.2%  ->  95% CI [3.1%, 11.3%]"
+                },
+                {
+                  "prompt": "A bigger sample makes the confidence interval narrower.",
+                  "answer": true,
+                  "whenRight": "Yes — more data shrinks the standard error, tightening the interval.",
+                  "whenWrong": "It does — larger n shrinks the standard error and narrows the CI.",
+                  "sim": "n=30 -> wide   |   n=3000 -> narrow"
+                },
+                {
+                  "prompt": "If a difference's 95% CI is [-2%, +9%], the difference is definitely positive.",
+                  "answer": false,
+                  "whenRight": "Correct — the interval crosses zero, so 'no difference' is still plausible.",
+                  "whenWrong": "Not definite — a CI spanning zero means the true difference could be zero or negative.",
+                  "sim": "[-2%, +9%] crosses 0  ->  not conclusive"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CI for mean",
-              "body": "On Superstore data, pick 100 random orders:\n      = AVERAGE(N2:N101) - 1.96 * STDEV(N2:N101) / SQRT(100)  (lower)\n      = AVERAGE(N2:N101) + 1.96 * STDEV(N2:N101) / SQRT(100)  (upper)\n\nNow pick 30 instead of 100. What happens to the CI? Why?"
+              "title": "Your turn — add a range",
+              "body": "[CODE] Pick one sub-category. Compute its mean profit and a ~95% confidence interval.\n\n[WRITE] One sentence: does the interval cross zero, and what does that mean for any claim about it?"
+            },
+            {
+              "kind": "video",
+              "title": "Interpreting confidence intervals (with examples)",
+              "url": "https://www.youtube.com/watch?v=ftYdEm6pEkE",
+              "creator": "",
+              "why": "What a CI does and doesn't mean. Optional."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Correlation in Excel",
-          "summary": "",
+          "title": "Correlation",
+          "summary": "One concept: r — quantify the strength and direction of a relationship instead of eyeballing it.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Correlation",
+              "body": "## What it is\n**Correlation (r)** measures how strongly two numeric variables move together, on a scale from **-1 to +1**. +1 = perfect upward line, -1 = perfect downward, 0 = no linear relationship.\n\n## Why it matters\nIn Week 3 you *eyeballed* discount vs profit on a scatter. Correlation puts a number on it, so \"they're related\" becomes \"r = -0.46, a moderate negative relationship.\"\n\n## Examples\n```python\n# 1. Correlation between two columns\ndf[\"Discount\"].corr(df[\"Profit\"])      # e.g. -0.46\n\n# 2. A correlation matrix across several numeric columns\ndf[[\"Discount\", \"Profit\", \"Sales\", \"Quantity\"]].corr()\n```\n\nIn Excel: `=CORREL(discount_range, profit_range)`. Read the sign (direction) and the magnitude (strength): |r| near 1 is strong, near 0 is weak."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Correlation r runs from -1 to +1, and a value near 0 means little linear relationship.",
+                  "answer": true,
+                  "whenRight": "Right — sign is direction, magnitude is strength; ~0 means weak/none.",
+                  "whenWrong": "It does — r is bounded -1..+1, and near 0 means almost no linear link.",
+                  "sim": "r = -0.46  ->  moderate, negative"
+                },
+                {
+                  "prompt": "r = -0.8 indicates a strong negative relationship between the two variables.",
+                  "answer": true,
+                  "whenRight": "Yes — the sign is negative and |0.8| is large, so it's strong and downward.",
+                  "whenWrong": "It is — negative sign, large magnitude = strong negative relationship.",
+                  "sim": "as x up -> y down, tightly"
+                },
+                {
+                  "prompt": "A high correlation proves that one variable causes the other.",
+                  "answer": false,
+                  "whenRight": "Correct — correlation measures association only; causation needs more (tomorrow's lesson).",
+                  "whenWrong": "Careful — high r is association, not proof of cause.",
+                  "sim": "high r  !=  causation"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CORREL function",
-              "body": "      =CORREL(Discount column, Profit column)\n\nResult is between -1 and +1. What does -0.4 mean? -0.9? +0.1?\nNow visualize as a scatter plot. Eyeball confirms?"
+              "title": "Your turn — put a number on it",
+              "body": "[CODE] Compute the correlation between `Discount` and `Profit`.\n\n[WRITE] One sentence interpreting the sign and strength — does it back up your Week 3 scatter?"
             }
           ]
         },
         {
           "number": 4,
-          "title": "Correlation != causation",
-          "summary": "",
+          "title": "Correlation is not causation",
+          "summary": "One concept: a confounder can drive two variables at once. Always ask 'what else explains this?'",
           "items": [
             {
-              "kind": "video",
-              "title": "Spurious correlations (5 min)",
-              "url": "https://www.youtube.com/watch?v=8B271L3NtAw",
-              "duration_min": 5,
-              "creator": "various",
-              "why": "Best visual on this topic."
+              "kind": "lesson",
+              "title": "Correlation is not causation",
+              "body": "## What it is\nTwo variables moving together doesn't mean one **causes** the other. Often a hidden third variable — a **confounder** — drives both.\n\n## Why it matters\nYour Week 3 finding (\"high discounts -> losses\") is correlational. Maybe discounts cause losses — or maybe clearance items that were *already* low-margin get the big discounts. Same correlation, very different action. Asking \"what else could explain this?\" is what separates an analyst from a chart-maker.\n\n## Examples\n```text\nClassic: ice-cream sales correlate with shark attacks.\n         Neither causes the other -> the confounder is SUMMER (hot weather).\n\nSuperstore: big discounts correlate with losses.\n         Possible confounder: overstocked, low-margin items get the deepest cuts.\n```"
             },
             {
-              "kind": "reflection",
-              "title": "Three spurious correlations in Superstore",
-              "body": "Pretend a junior analyst claims:\n  1. 'Higher Discount causes lower Profit' (probably right but think...)\n  2. 'Customer Segment = Corporate causes higher Sales' (right? wrong?)\n  3. 'Region = West causes worse profit margin' (?)\n\nFor each, write what's REALLY happening + the confound."
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Correlation between two variables alone proves one causes the other.",
+                  "answer": false,
+                  "whenRight": "Correct — association is not causation; a confounder can drive both.",
+                  "whenWrong": "It doesn't — correlation never proves cause on its own.",
+                  "sim": "ice cream ~ shark attacks (both <- summer)"
+                },
+                {
+                  "prompt": "A confounder is a hidden variable that influences both correlated variables.",
+                  "answer": true,
+                  "whenRight": "Right — it creates the correlation without either causing the other.",
+                  "whenWrong": "It is — a confounder drives both, faking a direct link.",
+                  "sim": "summer -> ice cream AND -> beach crowds -> shark attacks"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — find the confounder",
+              "body": "[WRITE] Propose one plausible confounder that could explain the discount-profit correlation in Superstore.\n\n[WRITE] Describe one way you could test whether discounts *themselves* hurt profit, separate from the confounder."
+            },
+            {
+              "kind": "video",
+              "title": "Correlation vs causation — simple examples",
+              "url": "https://www.youtube.com/watch?v=0sQa-oVWIPM",
+              "creator": "",
+              "why": "Why patterns can mislead. Optional."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Hypothesis tests in Excel",
-          "summary": "",
+          "title": "Is the difference real? (hypothesis testing)",
+          "summary": "One concept: a p-value tells you whether a gap is signal or could just be noise.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Is the difference real? (hypothesis testing)",
+              "body": "## What it is\n\"Furniture margin < Technology margin\" — is that a real difference or just random noise in this sample? A **hypothesis test** (e.g. a t-test) returns a **p-value**: the probability of seeing a gap this big if there were truly *no* difference.\n\n## Why it matters\nA small p-value (commonly < 0.05) means the gap is unlikely to be noise — worth acting on. A large p-value means you don't have enough evidence. This is how you stop over-reading random wiggles.\n\n## Examples\n```python\nfrom scipy import stats\nfurn = df.loc[df[\"Category\"] == \"Furniture\", \"profit\"]\ntech = df.loc[df[\"Category\"] == \"Technology\", \"profit\"]\n\nt, p = stats.ttest_ind(furn, tech, equal_var=False)\nprint(f\"p = {p:.4f}\")     # p < 0.05  ->  difference unlikely to be noise\n```\n\nIn Excel: `=T.TEST(rangeA, rangeB, 2, 3)`."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A small p-value (e.g. < 0.05) suggests the observed difference is unlikely to be just noise.",
+                  "answer": true,
+                  "whenRight": "Right — low p = the gap would be rare if there were truly no difference.",
+                  "whenWrong": "It does — a small p-value is evidence the difference is real, not random.",
+                  "sim": "p = 0.003  ->  difference unlikely to be chance"
+                },
+                {
+                  "prompt": "A p-value above 0.05 proves there is no difference between the groups.",
+                  "answer": false,
+                  "whenRight": "Correct — it means insufficient evidence, not proof of 'no difference'.",
+                  "whenWrong": "Not proof — high p means you can't conclude a difference, not that none exists.",
+                  "sim": "p = 0.40  ->  'not enough evidence', not 'no effect'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "T-test in Excel",
-              "body": "      =T.TEST(consumer_sales_range, corporate_sales_range, 2, 3)\n\n(2 = two-tailed, 3 = unequal variances)\nResult: a p-value. If <0.05 the two segments have significantly different average sales.\nRun for 3 region pairs. Document."
+              "title": "Your turn — test a claim",
+              "body": "[CODE] Run a t-test comparing profit between two categories (e.g. Furniture vs Technology).\n\n[WRITE] One sentence: is the difference statistically significant (p < 0.05), and what does that let you claim?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Simpson's paradox in Superstore",
-          "summary": "",
+          "title": "Simpson's paradox",
+          "summary": "One concept: an aggregate trend can reverse inside subgroups — always check the breakdown.",
           "items": [
             {
-              "kind": "video",
-              "title": "Simpson's Paradox (10 min)",
-              "url": "https://www.youtube.com/results?search_query=simpson%27s+paradox+explained+data",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "Simpson's paradox",
+              "body": "## What it is\n**Simpson's paradox**: a trend that appears in aggregated data can **disappear or reverse** when you split into subgroups (and vice versa).\n\n## Why it matters\n\"Discounts barely dent profit on average\" can be flat-out wrong once you split by category — exactly what you saw in Week 3 Day 4, where Furniture bled while Technology shrugged it off. The aggregate lied; the subgroups told the truth. This is *why* you always break down.\n\n## Examples\n```text\nOverall:   bigger discounts ~ only slightly lower profit   (looks fine)\nBy category:\n   Furniture   -> profit collapses past 20% discount\n   Technology  -> barely affected\n=> the 'fine' average hid a category losing money.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A trend in aggregated data can reverse when you split the data into subgroups.",
+                  "answer": true,
+                  "whenRight": "Right — that reversal is Simpson's paradox in one line.",
+                  "whenWrong": "It can — combining groups can flip or hide the within-group trend.",
+                  "sim": "aggregate: 'fine'  ->  Furniture subgroup: 'bleeding'"
+                },
+                {
+                  "prompt": "Routinely checking subgroups protects you from Simpson's paradox.",
+                  "answer": true,
+                  "whenRight": "Yes — breaking down by the relevant dimension is the standard guard.",
+                  "whenWrong": "It does — subgroup checks are exactly how you catch a misleading aggregate.",
+                  "sim": "always: overall AND by-category"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Find it",
-              "body": "Pivot: Discount Bucket × Region → AVG Profit. Compare WITHIN one region vs OVERALL. Sometimes a trend in subgroups REVERSES when aggregated. Find one example in Superstore."
+              "title": "Your turn — catch the paradox",
+              "body": "[PRODUCE] Find one place in Superstore where the aggregate story and a subgroup story disagree (revisit your Week 3 band x category breakdown).\n\n[WRITE] One sentence describing the aggregate claim and how the subgroup breakdown changes it."
+            },
+            {
+              "kind": "video",
+              "title": "Simpson's paradox explained in one minute",
+              "url": "https://www.youtube.com/watch?v=vqKdLF_VzZE",
+              "creator": "",
+              "why": "The reversal, in 60 seconds. Optional."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag stats-aware",
-          "summary": "",
+          "title": "Ship: stats-aware",
+          "summary": "Upgrade every claim from a bare pattern to evidence (a number, a CI, a significance, a subgroup check).",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship: stats-aware",
+              "body": "## What it is\nRe-read your Superstore memo and upgrade each claim from a **pattern** to a **finding** — pair it with a number, an interval, a significance, or a subgroup check.\n\n## Why it matters\n\"Furniture is less profitable\" is a hunch. \"Furniture margins run 7.2pp lower (95% CI 3-11pp; t-test p<0.01), and the gap widens past 20% discount\" is a finding a stakeholder can bet money on. That credibility is the whole job."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A finding is a pattern PLUS evidence that it's real and not just noise.",
+                  "answer": true,
+                  "whenRight": "Right — pattern + evidence (number, CI, significance, subgroup) = finding.",
+                  "whenWrong": "It is — the evidence is what turns a pattern into a defensible finding.",
+                  "sim": "pattern: 'lower margins'\nfinding: '-7.2pp, 95% CI [3,11], p<0.01'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "Add to your superstore memo: every finding now has a CI or p-value attached.\n\nPASS:\n  ☐ Computed CIs on 2 metrics\n  ☐ Computed correlation + scatter plot\n  ☐ Ran t-test on 3 segment pairs\n  ☐ Identified 1 Simpson's paradox in data\n  ☐ Memo updated with stats-supported claims"
+              "title": "Acceptance — stats-aware is done when",
+              "body": "[WRITE] Revise at least three claims in your memo to include a concrete number and a confidence/caveat (CI, p-value, or subgroup note).\n\n[CODE] Commit and tag:\n```\ngit add .\ngit commit -m \"Superstore: stats-aware findings (CIs, correlation, significance)\"\ngit tag stats-aware\ngit push --tags\n```\n\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -2167,11 +2346,7 @@
         "Run a one-way ANOVA to test whether mean Profit Margin differs significantly across the four Regions. Excel's Data Analysis ToolPak has a built-in ANOVA function. Report the F-statistic and p-value. If significant, run Tukey post-hoc tests to identify which specific pairs of regions differ significantly.",
         "Compute the Spearman rank correlation between Discount and Profit as a robustness check on the Pearson correlation. If Spearman and Pearson give very different results, the outliers in the data are driving the Pearson correlation and the Spearman result is more reliable.",
         "Read \"Statistics Done Wrong\" by Alex Reinhart (free online, 3 hours). Chapter 4 on p-values and Chapter 5 on data snooping are the two most relevant to business analysis. The book makes the case that most published statistics are overstated, and the reasons are exactly the errors listed in common mistakes above."
-      ],
-      "concept_widget": {
-        "id": "distribution-stats",
-        "caption": "Shift and skew a distribution and watch the mean get pulled while the median holds."
-      }
+      ]
     },
     {
       "number": 7,
@@ -2182,99 +2357,225 @@
       "days": [
         {
           "number": 1,
-          "title": "Why this matters",
-          "summary": "",
+          "title": "AI accelerates, you stay accountable",
+          "summary": "The one rule of AI-assisted analysis: it drafts, you verify. You own every number.",
           "items": [
             {
-              "kind": "video",
-              "title": "AI for analysts (10 min)",
-              "url": "https://www.youtube.com/results?search_query=ai+tools+for+data+analysts+chatgpt+2024",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "AI accelerates, you stay accountable",
+              "body": "## What it is\nEvery analyst you'll compete with has Claude, ChatGPT, and Copilot. The edge isn't *using* AI — it's using it **well**: let it draft, then **you verify against the data**. You remain accountable for every number you ship.\n\n## Why it matters\nCareless AI use produces confident, wrong answers that are humiliating to defend in a meeting. Skilled use makes you 2-3x faster *without* sacrificing trust. The difference is verification.\n\n## Examples\n```text\nBad:   \"ChatGPT said discounts cause 30% of losses\" -> you can't defend it.\nGood:  AI drafts the SQL -> you RUN it -> the number matches your own check\n       -> you ship it and can explain every step.\n```"
             },
             {
-              "kind": "reflection",
-              "title": "Honest assessment",
-              "body": "What's the LAST analyst task that took you 4+ hours? By Sunday you'll do similar in 30 minutes."
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "AI can produce confident-sounding but wrong answers, so you must verify its output against the data.",
+                  "answer": true,
+                  "whenRight": "Right — fluency is not accuracy; verification is non-negotiable.",
+                  "whenWrong": "It can — AI sounds sure even when wrong, so always verify.",
+                  "sim": "confident tone  !=  correct answer"
+                },
+                {
+                  "prompt": "If the AI's answer sounds confident and detailed, you can trust it without checking.",
+                  "answer": false,
+                  "whenRight": "Correct — confidence is not evidence. Run it, check it against the data.",
+                  "whenWrong": "No — tone is not proof; verify against the actual data every time.",
+                  "sim": "verify  >  vibes"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — honest assessment",
+              "body": "[WRITE] List two places AI could genuinely speed up your Superstore workflow.\n\n[WRITE] List two places AI is risky (where a wrong-but-confident answer would bite you), and how you'd verify."
             }
           ]
         },
         {
           "number": 2,
-          "title": "ChatGPT for SQL generation",
-          "summary": "",
+          "title": "Schema-aware prompts for SQL",
+          "summary": "AI writes great SQL only when you hand it the schema and the exact question — then you run it.",
           "items": [
             {
-              "kind": "reading",
-              "title": "ChatGPT",
-              "url": "https://chatgpt.com",
-              "why": "Free tier is plenty."
+              "kind": "lesson",
+              "title": "Schema-aware prompts for SQL",
+              "body": "## What it is\nAI writes SQL fast, but only if you give it the **table schema** and a **precise question**. A vague prompt yields a plausible-but-wrong query.\n\n## Why it matters\nYou already wrote these queries by hand in Week 5, so you can *verify* the AI — the perfect way to learn what good prompting looks like while staying safe.\n\n## Examples\n```text\nWeak prompt:   \"write SQL to find my best products\"\n\nStrong prompt: \"Table superstore(order_id, sub_category, category,\n                sales, profit, discount, order_date, customer_name).\n                Write SQLite to return each sub_category's total profit,\n                highest first.\"\n```\n\nThen **run it** in sqliteonline and confirm it matches your Week 5 answer."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Giving the AI your exact table schema makes its SQL far more likely to be correct.",
+                  "answer": true,
+                  "whenRight": "Right — column names + types remove the guessing that causes wrong queries.",
+                  "whenWrong": "It does — schema-aware prompts dramatically cut wrong-column errors.",
+                  "sim": "prompt includes: superstore(sub_category, profit, ...)"
+                },
+                {
+                  "prompt": "AI-generated SQL can be trusted and shipped without running it.",
+                  "answer": false,
+                  "whenRight": "Correct — always run it and check the result against a known answer.",
+                  "whenWrong": "Never ship unrun — execute it and verify against data you trust.",
+                  "sim": "AI SQL -> RUN -> compare to Week 5 -> then trust"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Schema-aware prompts",
-              "body": "Paste your Superstore table schema:\n      Table orders(Order Date, Region, Segment, Category, Sub-Category, Sales, Profit, Discount, Customer ID)\n\nAsk: 'Write a SQL query that finds the 3 sub-categories with the WORST profit margin in the West region, only for orders in 2023.'\n\nRun the result in sqliteonline.com. Did it work first try?"
+              "title": "Your turn — prompt, run, verify",
+              "body": "[PRODUCE] Write a schema-aware prompt asking an AI for the Q1 'profit per sub_category' query.\n\n[CODE] Run the AI's SQL in sqliteonline.\n\n[WRITE] One sentence: did it match your hand-written Week 5 result? If not, what did the AI get wrong?"
             }
           ]
         },
         {
           "number": 3,
-          "title": "AI as memo drafter",
-          "summary": "",
+          "title": "AI as a memo drafter",
+          "summary": "Feed AI your real numbers + audience; it drafts the prose; you edit for accuracy and voice.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "AI as a memo drafter",
+              "body": "## What it is\nHand the AI **your** findings (the real numbers) plus the audience, and it drafts the memo prose in seconds. You then edit for accuracy, tone, and truth.\n\n## Why it matters\nWriting is the slow part; drafting is where AI shines. But it must build from *your* numbers — never let it invent figures, because invented numbers are how careers end.\n\n## Examples\n```text\nPrompt: \"Audience: a non-technical sales director.\n         Findings: discounts above 30% turn the average order unprofitable;\n         Furniture tips at 20%; ~18% of orders exceed these caps.\n         Draft a 150-word memo: headline, evidence, recommendation.\"\nThen: edit for your voice and DELETE anything you can't back with data.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "AI should draft the memo from YOUR numbers — it must not invent figures of its own.",
+                  "answer": true,
+                  "whenRight": "Right — you supply the facts; AI supplies the phrasing. Verify nothing was fabricated.",
+                  "whenWrong": "Exactly — AI phrases your facts; invented numbers are a firing offence.",
+                  "sim": "you: the numbers  |  AI: the wording"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Auto-draft a memo",
-              "body": "Paste your top 3 Superstore findings (the numbers, not pretty prose). Ask:\n  'Draft a 1-page memo to a CEO summarising these 3 findings. Format: headline, 3 sections (1 per finding), recommendations. Tone: confident, concise.'\n\nCompare to your Week 5 hand-written memo. Which is better? Why?"
+              "title": "Your turn — draft then edit",
+              "body": "[PRODUCE] Give an AI your real discount + CLV findings and ask for a 150-word memo for a non-technical director.\n\n[WRITE] Edit the draft. Note two things you changed (a fabricated/ovestated claim removed, or voice fixed)."
             }
           ]
         },
         {
           "number": 4,
-          "title": "AI critiques YOUR memo",
-          "summary": "",
+          "title": "Make AI critique your memo",
+          "summary": "Flip the tool: ask AI to attack your own memo for weak claims and missing caveats.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Make AI critique your memo",
+              "body": "## What it is\nPaste your finished memo and ask the AI to **find its weaknesses** — unsupported claims, missing caveats, alternative explanations. A tireless, free critical reviewer.\n\n## Why it matters\nYou're blind to your own gaps. An adversarial pass before your boss sees it catches the embarrassing holes while they're still cheap to fix. You decide which critiques are fair.\n\n## Examples\n```text\nPrompt: \"You are a skeptical data director. Find the 3 weakest claims in this\n         memo and the questions I'd get grilled on. Be specific.\"\n-> e.g. \"You claim discounts CAUSE losses but only show correlation — address\n   the confounder, or soften to 'associated with'.\"\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Asking AI to critique your own work surfaces gaps and weak claims you're blind to.",
+                  "answer": true,
+                  "whenRight": "Right — an adversarial review pass is one of AI's highest-value uses.",
+                  "whenWrong": "It does — AI as a skeptic catches holes before your audience does.",
+                  "sim": "AI: 'claim 2 is correlation, not causation -> soften it'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Sharper feedback",
-              "body": "Paste your hand-written memo. Ask:\n  'Critique this memo for a senior data leader. Point out: weak claims, missing numbers, vague recommendations, places where I should push back.'\n\nApply the 3 best critiques. Reject the rest."
+              "title": "Your turn — get grilled (safely)",
+              "body": "[PRODUCE] Ask an AI to act as a skeptical director and list the 3 weakest claims in your memo.\n\n[WRITE] Address at least two of them in the memo (add a caveat, soften a claim, or add evidence)."
             }
           ]
         },
         {
           "number": 5,
           "title": "AI for slide content",
-          "summary": "",
+          "summary": "Turn your memo into lean slide bullets and speaker notes — AI phrases, you keep it tight.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "AI for slide content",
+              "body": "## What it is\nGive the AI your memo and ask for **slide bullets + speaker notes**. It compresses prose into talking points so you can present, not read.\n\n## Why it matters\nExecutives get a deck, not a notebook. Lean slides with strong speaker notes are how a finding actually lands in the room — and AI drafts them fast.\n\n## Examples\n```text\nPrompt: \"From this memo, draft 3 slides. For each: a 5-word title, 3 bullets\n         (<=8 words each), and 2 sentences of speaker notes I can say aloud.\"\nThen: cut every bullet that isn't essential. Slides are signposts, not scripts.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "AI can turn your memo into per-slide bullets and speaker notes you refine.",
+                  "answer": true,
+                  "whenRight": "Right — it compresses prose to talking points; you keep it lean.",
+                  "whenWrong": "It can — AI drafts slide content fast; your job is to trim it.",
+                  "sim": "memo -> 3 slides x (title + 3 bullets + notes)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Speaker notes per slide",
-              "body": "Paste your 5-slide deck content. Ask:\n  'Write speaker notes for each slide. 30 seconds of speaking per slide. Tone: confident.'\n\nPaste into your deck's Notes panel."
+              "title": "Your turn — deck-ify it",
+              "body": "[PRODUCE] Ask AI to convert your memo into 3 slides (title + 3 short bullets + 2 sentences of speaker notes each).\n\n[WRITE] Trim the result: delete any bullet that isn't essential to the recommendation."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Excel formula generation",
-          "summary": "",
+          "title": "AI for tricky formulas and code",
+          "summary": "Describe the calculation; AI writes the formula or pandas code; you verify on a known case.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "AI for tricky formulas and code",
+              "body": "## What it is\nStuck on a gnarly Excel formula or a pandas one-liner? Describe what you want in plain English and the AI writes it. Then **test it on a row where you already know the answer**.\n\n## Why it matters\nThis removes the syntax bottleneck — but unverified formulas silently produce wrong columns. The verify-on-a-known-case habit is what keeps AI speed from becoming AI risk.\n\n## Examples\n```text\nPrompt: \"pandas: add a year-over-year % growth column on yearly_sales\n         (columns: year, revenue), sorted by year.\"\n-> yearly[\"yoy\"] = yearly[\"revenue\"].pct_change() * 100\nVerify: hand-check one year's % against the raw numbers.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "You should always test an AI-generated formula on a case where you already know the answer.",
+                  "answer": true,
+                  "whenRight": "Right — a known-answer check is the cheapest guard against a silently-wrong formula.",
+                  "whenWrong": "Always — verify on a known case before trusting an AI formula across the data.",
+                  "sim": "AI formula -> check on 1 known row -> then apply"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Hard formulas",
-              "body": "Try these prompts:\n  1. 'Excel formula to compute year-over-year growth in a pivot table'\n  2. 'Excel formula for rolling 30-day average of column B'\n  3. 'Excel formula to flag rows where Profit < 0 and Discount > 0.4'\n\nTest each. Save the working ones in a formulas.md."
+              "title": "Your turn — generate and verify",
+              "body": "[PRODUCE] Ask AI for a formula/snippet you find fiddly (e.g. year-over-year % growth, or a running total).\n\n[CODE] Apply it, then hand-verify the result on one row you can compute yourself."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag AI-aware",
-          "summary": "",
+          "title": "Ship: AI-aware (prompts.md)",
+          "summary": "Save your best prompts as reusable assets and tag AI-aware.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship: AI-aware (prompts.md)",
+              "body": "## What it is\nCollect the prompts that actually worked this week into a `prompts.md` file — your reusable toolkit — and tag the project `AI-aware`.\n\n## Why it matters\nGood prompts are assets: you'll reuse the schema-aware SQL prompt and the skeptical-reviewer prompt on every future project. Saving them (and showing you verify AI output) signals deliberate, professional AI use — exactly what employers now screen for."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Saving your effective prompts in a file turns them into reusable assets for future projects.",
+                  "answer": true,
+                  "whenRight": "Right — a prompt library compounds; you stop reinventing them each time.",
+                  "whenWrong": "It does — saved prompts are reusable tools, not one-offs.",
+                  "sim": "prompts.md -> reuse the schema + critique prompts everywhere"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance — prompts.md ships",
-              "body": "Save prompts.md in your superstore-analysis repo:\n  - 5 prompts that worked\n  - 2 that failed (and why)\n  - 'AI workflow rules' — when to trust, when to verify\n\nPASS:\n  ☐ Generated working SQL from schema prompt\n  ☐ AI-drafted memo compared to hand-written\n  ☐ AI critique applied to your memo\n  ☐ Speaker notes generated for deck\n  ☐ prompts.md committed"
+              "title": "Acceptance — AI-aware is done when",
+              "body": "[PRODUCE] Create `prompts.md` with your best prompts from this week (SQL generation, memo draft, skeptical critique, formula help), each with a one-line note on when to use it.\n\n[WRITE] Add one line to your README on how you verified AI output (so reviewers know you didn't just trust it).\n\n[CODE] Commit, tag `AI-aware`, push. Drop your repo link in the dashboard check-in."
             }
           ]
         }
