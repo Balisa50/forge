@@ -62,6 +62,22 @@ function fileIcon(ext: string) {
   return <File size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />;
 }
 
+/** Detect what a pasted proof URL is, so the mentor knows what they're about
+ *  to open without clicking. Pure string inspection — never blocks a URL. */
+function detectUrlType(url: string): { label: string; color: string } | null {
+  let host = "";
+  try { host = new URL(url).hostname.replace(/^www\./, ""); } catch { return null; }
+  if (/github\.com|github\.io/.test(host)) return { label: "GitHub repo detected", color: "#a78bfa" };
+  if (/drive\.google\.com|docs\.google\.com/.test(host)) return { label: "Google Drive link detected", color: "#34d399" };
+  if (/colab\.research\.google\.com/.test(host)) return { label: "Colab notebook detected", color: "#fbbf24" };
+  if (/codesandbox\.io/.test(host)) return { label: "CodeSandbox detected", color: "#60a5fa" };
+  if (/youtube\.com|youtu\.be/.test(host)) return { label: "YouTube video detected", color: "#f87171" };
+  if (/vercel\.app|netlify\.app|pages\.dev/.test(host)) return { label: "Deployed app detected", color: "#34d399" };
+  if (/kaggle\.com/.test(host)) return { label: "Kaggle notebook detected", color: "#60a5fa" };
+  if (/figma\.com/.test(host)) return { label: "Figma file detected", color: "#f472b6" };
+  return { label: `Link detected · ${host}`, color: "var(--text-dim)" };
+}
+
 export default function CheckinForm({
   roadmap,
 }: {
@@ -78,6 +94,9 @@ export default function CheckinForm({
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [fileError, setFileError] = useState("");
+  // Set when the learner tries to upload a video/audio file directly — we block
+  // it and point them to a link instead (keeps heavy media out of blob storage).
+  const [videoNotice, setVideoNotice] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [mentorQuestions, setMentorQuestions] = useState<{ id: string; prompt: string }[]>([]);
@@ -211,8 +230,10 @@ export default function CheckinForm({
 
   const processFiles = useCallback(async (incoming: File[]) => {
     setFileError("");
+    setVideoNotice(false);
     const results: FileAttachment[] = [];
     const skipped: string[] = [];
+    const VIDEO_EXTS = ["mp4", "mov", "webm", "mkv", "avi", "m4v", "mp3", "wav", "m4a", "aac", "ogg"];
     setUploading(true);
 
     try {
@@ -220,6 +241,12 @@ export default function CheckinForm({
         const ext = getFileExtension(file.name);
         const isSpecialFile = file.name === "Dockerfile" || file.name.startsWith(".");
 
+        // Video/audio is NOT uploaded directly — too heavy for blob storage.
+        // Point the learner to Option C (a Drive/YouTube share link) instead.
+        if (VIDEO_EXTS.includes(ext.toLowerCase())) {
+          setVideoNotice(true);
+          continue;
+        }
         if (!isAcceptedExtension(ext) && !isSpecialFile) {
           skipped.push(file.name);
           continue;
@@ -550,8 +577,16 @@ export default function CheckinForm({
           </div>
         )}
         {projectUrl && isValidUrl(projectUrl) && (
-          <div style={{ color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
-            ✓ Valid URL
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.375rem" }}>
+            <span style={{ color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>✓ Valid URL</span>
+            {(() => {
+              const d = detectUrlType(projectUrl.trim());
+              return d ? (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color: d.color, background: `${d.color === "var(--text-dim)" ? "rgba(148,163,184,0.12)" : d.color + "1f"}`, border: `1px solid ${d.color === "var(--text-dim)" ? "var(--border)" : d.color + "55"}`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
+                  {d.label}
+                </span>
+              ) : null;
+            })()}
           </div>
         )}
 
@@ -569,7 +604,7 @@ export default function CheckinForm({
           Option B — File(s)
         </div>
         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "1rem", lineHeight: 1.55 }}>
-          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · <strong style={{ color: "#a78bfa" }}>video / audio (.mp4 .mov .webm .mp3)</strong> · whatever proves your work. Max 150 MB per file, 300 MB total.
+          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 150 MB per file, 300 MB total. <strong style={{ color: "var(--text-secondary)" }}>For video, paste a Google Drive or YouTube link in Option A above</strong> instead of uploading the file.
         </p>
 
         {/* Drop zone */}
@@ -596,7 +631,7 @@ export default function CheckinForm({
             {uploading ? (progress !== null ? `Uploading… ${progress}%` : "Uploading…") : dragOver ? "Drop it" : "Drop files here or click to browse"}
           </div>
           <div style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
-            .py .js .pdf .docx .xlsx .csv .ipynb · .mp4 .mov .mp3 · + more
+            .py .js .pdf .docx .xlsx .csv .ipynb · screenshots · + more
           </div>
           <input
             ref={fileInputRef}
@@ -607,6 +642,18 @@ export default function CheckinForm({
             style={{ display: "none" }}
           />
         </div>
+
+        {/* Video upload blocked — guide to a link instead */}
+        {videoNotice && (
+          <div style={{ marginTop: "0.875rem", padding: "0.75rem 0.875rem", borderRadius: 8, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.35)" }}>
+            <p style={{ fontSize: "0.8125rem", color: "var(--text-primary)", lineHeight: 1.55, fontWeight: 600, marginBottom: "0.25rem" }}>
+              Video files aren&apos;t uploaded directly.
+            </p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.55 }}>
+              Upload your video to Google Drive or YouTube, set sharing to &ldquo;anyone with the link,&rdquo; then paste the share link in <strong style={{ color: "var(--text-primary)" }}>Option A</strong> above. It&apos;ll be tagged automatically so your mentor knows it&apos;s a video.
+            </p>
+          </div>
+        )}
 
         {/* Size meter */}
         {attachments.length > 0 && (
