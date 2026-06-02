@@ -339,217 +339,249 @@
       "days": [
         {
           "number": 1,
-          "title": "Series — one column of data",
-          "summary": "Today's one concept: the pandas Series. Learn it, swipe-check it, then write your own.",
+          "title": "The Series — one labelled column",
+          "summary": "Concept, then a 2-minute video, then real code with its output. One idea: the Series.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Series — one column of data",
-              "body": "## What it is\nA **Series** is a single column of values with an **index** (row labels) attached. Think of one Excel column that remembers which row each value sits in.\n\n```python\nimport pandas as pd\nsales = pd.Series([120, 90, 200, 75], index=[\"Mon\", \"Tue\", \"Wed\", \"Thu\"])\n```\n\n## Why it matters\nEvery DataFrame column *is* a Series, so once Series click, a whole table is just many Series side by side. And Series operations are **vectorized** — they run on the whole column at once, with no `for` loop. That is what makes pandas fast and short.\n\n## Examples\n```python\n# 1. Read one value by its label\nsales[\"Wed\"]          # 200\n\n# 2. Vectorized math — every element at once, no loop\nsales * 1.1           # Mon 132.0, Tue 99.0, Wed 220.0, Thu 82.5\n\n# 3. Filter with a boolean mask\nsales[sales > 100]    # Mon 120, Wed 200\n\n# 4. Summarise the whole column\nsales.mean()          # 121.25\nsales.sum()           # 485\n\n# 5. Quick stats in one call\nsales.describe()      # count, mean, std, min, quartiles, max\n```\n\nYou now know enough to start. Try the task below."
+              "title": "The Series — one labelled column",
+              "body": "## What a Series actually is\nA pandas **Series** is a one-dimensional, *labelled* array — a single column of data where every value carries a label called the **index**. A plain Python list is a row of values at positions 0, 1, 2…; a Series is that same row, but each slot also has a *name*, and the whole thing comes with analytical superpowers bolted on.\n\nPicture one column in Excel. The values run down the column, and each sits in a labelled row — `Mon`, `Tue`, `Wed`. That row label is the index, and the crucial thing is that **it travels with the data everywhere**. When you sort, filter, or do arithmetic, pandas keeps every value glued to its own label. This \"alignment by label\" is the single idea that separates pandas from a bare list or NumPy array, and it's why merging and joining data later will *just work*.\n\n## Why it matters so much\nTwo reasons, and they're the foundation of the whole track:\n\n1. **A DataFrame is just many Series.** Every column of a table *is* a Series, all sharing one index. Once the Series clicks, a DataFrame stops being mysterious — it's literally a dictionary of Series lined up side by side. Master this and you've master the atom that everything else is built from.\n\n2. **Series operations are vectorised.** When you write `sales * 1.1`, pandas applies the multiplication to *every* value at once, in fast compiled code, with no Python `for` loop. That's the difference between an analyst who transforms a million rows in one line and an Excel user dragging a formula down by hand.\n\n## Where you'll meet it every day\nConstantly. A column of prices is a Series. The result of `df[\"region\"]` is a Series. The output of a groupby — \"average profit per region\" — comes back to you as a Series indexed by region. Counting categories returns a Series. Learning to read and bend a Series *is* learning the language pandas speaks back to you. Get this one right and the next six days are downhill.\n\nWatch the short video next to see one built live — then the code below will already feel familiar."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas Series, built step by step",
+              "url": "https://www.youtube.com/watch?v=hL5e1d3p7eM",
+              "creator": "",
+              "why": "Watch a Series come together before you read the code — it'll click faster. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build one and print it\nAlways **print** what you make so you can see exactly what pandas hands back:\n```python\nimport pandas as pd\nsales = pd.Series([120, 90, 200, 75], index=[\"Mon\", \"Tue\", \"Wed\", \"Thu\"])\nprint(sales)\n```\nOutput:\n```\nMon    120\nTue     90\nWed    200\nThu     75\ndtype: int64\n```\nRead that output carefully — it tells you three things: the **left column is the index** (your labels), the **right column is the values**, and pandas reports the **dtype** (`int64`) because it inferred whole numbers.\n\n## 1. Read a value by its label\n```python\nprint(sales[\"Wed\"])\n```\n```\n200\n```\nYou ask by *name*, not position. (`sales.iloc[2]` would ask by position and also give `200`.)\n\n## 2. Vectorised math — the whole column at once\n```python\nprint(sales * 1.1)\n```\n```\nMon    132.0\nTue     99.0\nWed    220.0\nThu     82.5\ndtype: float64\n```\nEvery value scaled in one line, no loop — and the dtype flipped to `float64` because the results now have decimals. pandas tracks types for you.\n\n## 3. Filter with a boolean mask\n```python\nprint(sales > 100)          # the mask itself\nprint(sales[sales > 100])   # the rows it keeps\n```\n```\nMon     True\nTue    False\nWed     True\nThu    False\ndtype: bool\nMon    120\nWed    200\ndtype: int64\n```\n`sales > 100` builds a True/False Series; indexing with it keeps only the `True` rows — and the labels stay attached.\n\n## 4. Summarise the whole column\n```python\nprint(sales.mean(), sales.sum(), sales.max())\n```\n```\n121.25 485 200\n```\nAn aggregation collapses the entire Series down to a single number."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "`sales * 1.1` raises every value by 10% in one line, with no loop.",
+                  "prompt": "In a printed Series, the left column is the index (labels) and the right column is the values.",
                   "answer": true,
-                  "whenRight": "Right — Series math is vectorized: it touches the whole column at once.",
-                  "whenWrong": "It does work in one line — Series math is vectorized, no loop needed.",
-                  "sim": "before:  Mon 120  Tue 90  Wed 200  Thu 75\nafter :  Mon 132  Tue 99  Wed 220  Thu 82.5"
+                  "whenRight": "Right — index on the left, values on the right, with the dtype noted underneath.",
+                  "whenWrong": "Look again — the left column is the index/labels, the right is the values.",
+                  "sim": "Mon    120   <- index | value\nTue     90\ndtype: int64"
                 },
                 {
-                  "prompt": "`sales.mean()` returns another Series.",
+                  "prompt": "`sales * 1.1` changes every value in one line with no Python loop (it's vectorised).",
+                  "answer": true,
+                  "whenRight": "Right — vectorised ops touch the whole column at once, in fast compiled code.",
+                  "whenWrong": "It does — that's vectorisation: the whole column at once, no loop.",
+                  "sim": "Mon 120 -> 132.0\nTue  90 ->  99.0  (all at once)"
+                },
+                {
+                  "prompt": "`sales.mean()` returns another Series with one value per row.",
                   "answer": false,
-                  "whenRight": "Correct — an aggregation collapses the column to a single number (121.25).",
-                  "whenWrong": "Not quite — `.mean()` collapses the Series to one scalar number, not a Series.",
-                  "sim": "sales.mean()  ->  121.25   (one number)"
-                },
-                {
-                  "prompt": "`sales[sales > 100]` keeps only the rows whose value is over 100.",
-                  "answer": true,
-                  "whenRight": "Yes — the boolean mask selects matching rows and drops the rest.",
-                  "whenWrong": "It does filter — the mask keeps rows where the condition is True.",
-                  "sim": "mask:  [True, False, True, False]\nresult: Mon 120, Wed 200"
+                  "whenRight": "Correct — an aggregation collapses the Series to ONE scalar number (121.25).",
+                  "whenWrong": "Not quite — .mean() returns a single number, not a Series.",
+                  "sim": "sales.mean() -> 121.25  (one number)"
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — build and query a Series",
-              "body": "[CODE] Create a Series of 5 days of sales with the weekday names as the index.\n\n[CODE] Print the average with `.mean()`.\n\n[PRODUCE] Print only the days where sales were **above** the average (use a boolean mask).\n\n[WRITE] In one sentence, say which day was strongest and by how much."
-            },
-            {
-              "kind": "video",
-              "title": "Pandas Series, step by step",
-              "url": "https://www.youtube.com/watch?v=hL5e1d3p7eM",
-              "creator": "",
-              "why": "Watch someone build and use a Series live. Optional — only if you want to see it in motion."
+              "title": "Your turn — build, print, query",
+              "body": "[CODE] Create a Series of 5 weekday sales with the weekday names as the index, and `print` it. Read the output: what's the index, what's the dtype?\n\n[CODE] Print the average with `.mean()`.\n\n[PRODUCE] Print only the days where sales were **above** the average (use a boolean mask) and confirm the labels are still attached.\n\n[WRITE] One sentence: which day was strongest, and by how much above the average?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "DataFrame — create and inspect",
-          "summary": "One concept: the DataFrame, and how to look before you leap.",
+          "title": "The DataFrame — many Series, one table",
+          "summary": "Concept (and how it differs from a Series), video, then code with output. Inspect before you analyse.",
           "items": [
             {
               "kind": "lesson",
-              "title": "DataFrame — create and inspect",
-              "body": "## What it is\nA **DataFrame** is a table: named columns, each one a Series, sharing one index. You will usually load it from a CSV, but you can build one from a dictionary to practise.\n\n```python\nimport pandas as pd\ndf = pd.DataFrame({\n    \"product\": [\"Chair\", \"Desk\", \"Lamp\", \"Pen\"],\n    \"price\":   [85, 240, 30, 3],\n    \"qty\":     [4, 2, 7, 50],\n})\n```\n\n## Why it matters\nBefore you analyse anything, you must **see** it — its size, its column types, and whether values are missing. Skipping inspection is how analysts ship wrong numbers. Four commands do it.\n\n## Examples\n```python\n# 1. First rows — eyeball the shape of the data\ndf.head()\n\n# 2. Structure: column names, dtypes, and non-null counts\ndf.info()\n\n# 3. Numeric summary: count, mean, min, quartiles, max\ndf.describe()\n\n# 4. (rows, columns)\ndf.shape          # (4, 3)\n\n# 5. Just the column names\ndf.columns        # Index(['product', 'price', 'qty'], ...)\n```\n\nThat four-step look — head, info, describe, shape — is the start of every real project."
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "`df.info()` tells you each column's data type and how many values are non-null.",
-                  "answer": true,
-                  "whenRight": "Right — info() is your first nulls-and-types check.",
-                  "whenWrong": "Actually it does — info() reports dtype and non-null count per column.",
-                  "sim": "price   4 non-null   int64\nqty     4 non-null   int64\nproduct 4 non-null   object"
-                },
-                {
-                  "prompt": "`df.shape` returns the number of (rows, columns).",
-                  "answer": true,
-                  "whenRight": "Yes — shape is a quick (rows, columns) tuple.",
-                  "whenWrong": "It does — shape gives (rows, columns), e.g. (4, 3).",
-                  "sim": "df.shape  ->  (4, 3)"
-                },
-                {
-                  "prompt": "`df.describe()` shows the average of your text columns too.",
-                  "answer": false,
-                  "whenRight": "Correct — describe() summarises numeric columns only by default.",
-                  "whenWrong": "Not quite — describe() covers numeric columns by default, not text.",
-                  "sim": "describe() ->  price & qty stats only  (product skipped)"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — make and inspect a table",
-              "body": "[CODE] Build a DataFrame of 4 products with `price` and `qty` columns.\n\n[CODE] Run `.head()`, `.info()`, and `.describe()`.\n\n[WRITE] From `.info()`, state how many rows there are and whether any column has missing values."
+              "title": "The DataFrame — many Series, one table",
+              "body": "## What it is, and how it differs from a Series\nA **DataFrame** is a two-dimensional table: rows and **named columns**, where **each column is a Series** and all of them share one index (the row labels). If a Series is a single Excel column, a DataFrame is the whole sheet.\n\nThat relationship is worth saying out loud because it's the mental model for the entire library:\n\n- **Series** = one column. One-dimensional. You pull a single variable out of it. Example: just the `price` values.\n- **DataFrame** = many columns glued on a shared index. Two-dimensional. It holds a *record* per row — a product with its price *and* its quantity *and* its category together.\n\nWhen you do `df[\"price\"]` you pull one column *out* of the table, and what you get back is — a Series. So you're never really leaving Series-world; a DataFrame is just the organised collection of them. You use a Series when you care about one variable, and a DataFrame when you need several variables per row to stay together (which is almost always, because real questions involve more than one column).\n\n## Why it matters\nThe DataFrame is the object you'll spend 95% of the track inside. Loading a CSV gives you a DataFrame. Cleaning, filtering, grouping, joining, plotting — all operate on DataFrames. Everything from here is \"do something to this table.\"\n\n## The habit that separates analysts from guessers: inspect first\nBefore you trust a single number, you **look** at the data — its size, its column types, and whether values are missing. Four commands do it: `.head()` (eyeball rows), `.info()` (types + non-null counts), `.describe()` (numeric summary), and `.shape` (rows × columns). Skipping this step is exactly how people ship confidently wrong analysis.\n\nWatch the short inspection video next, then the code below shows each command *with its actual output* so you know what to expect on screen."
             },
             {
               "kind": "video",
               "title": "Inspect a DataFrame: head(), info(), describe()",
               "url": "https://www.youtube.com/watch?v=BspcRHPiFk4",
               "creator": "",
-              "why": "A focused look at the four inspection commands. Optional."
-            }
-          ]
-        },
-        {
-          "number": 3,
-          "title": "Select columns, filter rows",
-          "summary": "One concept: slicing a table down to the rows and columns that answer your question.",
-          "items": [
+              "why": "See the four inspection commands run before you try them. Optional."
+            },
             {
               "kind": "lesson",
-              "title": "Select columns, filter rows",
-              "body": "## What it is\nAnalysis is mostly **slicing**: pick the columns you care about, keep the rows that match a condition.\n\n```python\ndf = pd.DataFrame({\n    \"name\":   [\"A\", \"B\", \"C\", \"D\"],\n    \"region\": [\"East\", \"West\", \"East\", \"West\"],\n    \"sales\":  [300, 90, 650, 120],\n})\n```\n\n## Why it matters\nA question like \"East-region orders over 500\" is just a column selection plus a row filter. Get fluent here and most analysis becomes a one-liner.\n\n## Examples\n```python\n# 1. One column (returns a Series)\ndf[\"sales\"]\n\n# 2. Several columns (returns a DataFrame) — note the double brackets\ndf[[\"name\", \"sales\"]]\n\n# 3. Filter rows with a boolean mask\ndf[df[\"sales\"] > 200]\n\n# 4. Combine conditions: & = and, | = or  (each condition in parentheses)\ndf[(df[\"region\"] == \"East\") & (df[\"sales\"] > 500)]\n\n# 5. .loc selects rows AND columns by label in one go\ndf.loc[df[\"region\"] == \"East\", [\"name\", \"sales\"]]\n```\n\nTip: it is `&` and `|`, never the words `and`/`or`, and every condition needs its own parentheses."
+              "title": "See it in code (with output)",
+              "body": "## Build a DataFrame from a dict and print it\n```python\nimport pandas as pd\ndf = pd.DataFrame({\n    \"product\": [\"Chair\", \"Desk\", \"Lamp\", \"Pen\"],\n    \"price\":   [85, 240, 30, 3],\n    \"qty\":     [4, 2, 7, 50],\n})\nprint(df)\n```\nOutput:\n```\n  product  price  qty\n0   Chair     85    4\n1    Desk    240    2\n2    Lamp     30    7\n3     Pen      3   50\n```\nThat leftmost `0,1,2,3` is the **index** (shared by every column); each named column is a Series.\n\n## A DataFrame is made of Series — proof\n```python\nprint(type(df))          # the table\nprint(type(df[\"price\"])) # one column pulled out\n```\n```\n<class 'pandas.core.frame.DataFrame'>\n<class 'pandas.core.series.Series'>\n```\nPull a column out and you're holding a Series again — exactly Day 1's object.\n\n## 1. head() — eyeball the first rows\n```python\nprint(df.head(2))\n```\n```\n  product  price  qty\n0   Chair     85    4\n1    Desk    240    2\n```\n\n## 2. info() — types and missing values\n```python\ndf.info()\n```\n```\nRangeIndex: 4 entries, 0 to 3\nData columns (total 3 columns):\n #   Column   Non-Null Count  Dtype\n---  ------   --------------  -----\n 0   product  4 non-null      object\n 1   price    4 non-null      int64\n 2   qty      4 non-null      int64\n```\n\"4 non-null\" on every column means **no missing values**; `object` = text, `int64` = whole numbers.\n\n## 3. describe() — numeric summary\n```python\nprint(df.describe())\n```\n```\n            price        qty\ncount    4.000000   4.000000\nmean    89.500000  15.750000\nstd    105.738...  22.793...\nmin      3.000000   2.000000\n50%     57.500000   5.500000\nmax    240.000000  50.000000\n```\nNotice `product` (text) is **skipped** — `describe()` summarises numeric columns by default.\n\n## 4. shape — rows × columns\n```python\nprint(df.shape)   # (4, 3)\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "`df[df[\"sales\"] > 200]` keeps the rows where sales is greater than 200.",
+                  "prompt": "Pulling one column out of a DataFrame with df[\"price\"] gives you a Series.",
                   "answer": true,
-                  "whenRight": "Right — the mask keeps matching rows and drops the rest.",
-                  "whenWrong": "It does filter — the boolean mask keeps rows over 200.",
-                  "sim": "kept:  C (650), A (300)\ndropped: B (90), D (120)"
+                  "whenRight": "Right — a DataFrame is many Series; take one out and you hold a Series again.",
+                  "whenWrong": "It does — a single column is a Series; the DataFrame is the collection of them.",
+                  "sim": "type(df['price']) -> Series"
                 },
                 {
-                  "prompt": "To combine two conditions you write `df[cond1 and cond2]`.",
+                  "prompt": "`df.info()` reports each column's dtype and its count of non-null (present) values.",
+                  "answer": true,
+                  "whenRight": "Right — info() is your first 'types and missing data' check.",
+                  "whenWrong": "It does — info() shows dtype and non-null counts per column.",
+                  "sim": "price  4 non-null  int64\nproduct 4 non-null object"
+                },
+                {
+                  "prompt": "`df.describe()` includes the average of your text columns by default.",
                   "answer": false,
-                  "whenRight": "Correct — use `&` with parentheses: `df[(cond1) & (cond2)]`, not the word `and`.",
-                  "whenWrong": "Careful — pandas needs `&` with parentheses, not the Python word `and`.",
-                  "sim": "df[(df.region=='East') & (df.sales>500)]   ->  C only"
-                },
-                {
-                  "prompt": "`df[[\"name\", \"sales\"]]` returns a DataFrame with just those two columns.",
-                  "answer": true,
-                  "whenRight": "Yes — double brackets select multiple columns and return a table.",
-                  "whenWrong": "It does — double brackets return a DataFrame of those columns.",
-                  "sim": "  name  sales\n  A     300\n  B     90 ..."
+                  "whenRight": "Correct — describe() summarises numeric columns only unless you ask otherwise.",
+                  "whenWrong": "Not by default — describe() covers numeric columns; text is skipped.",
+                  "sim": "describe() -> price, qty only (product skipped)"
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — slice to the answer",
-              "body": "[CODE] Build the 4-row table above (name, region, sales).\n\n[PRODUCE] Select `name` and `sales` for the rows where region is `East` **and** sales is over 500.\n\n[WRITE] One sentence: which order(s) matched, and what makes a row pass both conditions."
+              "title": "Your turn — build and inspect",
+              "body": "[CODE] Build a DataFrame of 4 products with `price` and `qty`, and `print` it. Identify the index.\n\n[CODE] Confirm a single column is a Series: `print(type(df[\"price\"]))`.\n\n[CODE] Run `.head()`, `.info()`, and `.describe()` and read each output.\n\n[WRITE] From `.info()`, state the number of rows and whether any column has missing values."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Selecting columns and filtering rows",
+          "summary": "Concept, video, then code with output. Slice the table to the rows and columns that answer the question.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Selecting columns and filtering rows",
+              "body": "## What it is\nAnalysis is mostly **slicing** a table down to what matters: choose the **columns** you care about, keep the **rows** that meet a condition. pandas gives you a small, precise vocabulary for this, and once it's reflex, most questions become one line.\n\nThere are three moves, and it helps to see them as a family:\n\n- **Select a column:** `df[\"sales\"]` returns one column — a **Series**.\n- **Select several columns:** `df[[\"name\", \"sales\"]]` (note the *double* brackets — a list of names) returns a smaller **DataFrame**.\n- **Filter rows:** `df[df[\"sales\"] > 500]` keeps only rows where the condition is `True`. The part inside, `df[\"sales\"] > 500`, is a boolean Series (a mask), exactly like Day 1.\n\nThe fourth, more powerful tool is **`.loc`**, which selects rows *and* columns by label in one shot: `df.loc[row_condition, [\"col1\", \"col2\"]]`.\n\n## Why it matters\nEvery business question is a slice. \"Which East-region orders lost money?\" is a row filter (`region == East` **and** `profit < 0`) plus a column selection (`order_id`, `profit`). The faster you translate a sentence into a select-and-filter, the faster you answer questions — and the less you fall back on slow, error-prone manual scanning.\n\n## The one rule people trip on\nCombine conditions with **`&`** (and) / **`|`** (or), and wrap each condition in its own parentheses: `df[(df[\"region\"] == \"East\") & (df[\"sales\"] > 500)]`. Using the Python words `and`/`or` here raises an error, because pandas needs to combine the masks element by element. Burn that in now and you'll save yourself a confusing afternoon later.\n\nWatch the short video, then the code below shows each move with the exact output it returns."
             },
             {
               "kind": "video",
               "title": "Select, slice and filter rows & columns",
               "url": "https://www.youtube.com/watch?v=DCE6t3vNfvM",
               "creator": "",
-              "why": "Selecting and filtering, shown live. Optional."
-            }
-          ]
-        },
-        {
-          "number": 4,
-          "title": "Aggregation and groupby",
-          "summary": "One concept: groupby — the pivot table of pandas, and the heart of analysis.",
-          "items": [
+              "why": "See selecting and filtering done live, then the code will read as review. Optional."
+            },
             {
               "kind": "lesson",
-              "title": "Aggregation and groupby",
-              "body": "## What it is\n**Aggregation** collapses many rows into one summary number (`sum`, `mean`, `count`). **groupby** does it *per group*: split rows by a column, aggregate each group, combine the results — exactly an Excel pivot table.\n\n```python\ndf = pd.DataFrame({\n    \"region\": [\"East\", \"West\", \"East\", \"West\", \"East\"],\n    \"sales\":  [300, 90, 650, 120, 200],\n})\n```\n\n## Why it matters\nAlmost every analysis question is \"per X, what is Y?\" — sales **per region**, revenue **per month**, orders **per customer**. That is groupby, every time.\n\n## Examples\n```python\n# 1. Aggregate the whole column\ndf[\"sales\"].sum()                       # 1360\n\n# 2. Total per group — the core move\ndf.groupby(\"region\")[\"sales\"].sum()     # East 1150, West 210\n\n# 3. Average per group\ndf.groupby(\"region\")[\"sales\"].mean()    # East 383.3, West 105.0\n\n# 4. Several aggregations at once, with clean names\ndf.groupby(\"region\").agg(\n    total=(\"sales\", \"sum\"),\n    avg=(\"sales\", \"mean\"),\n    orders=(\"sales\", \"count\"),\n)\n\n# 5. How many rows per group\ndf.groupby(\"region\").size()             # East 3, West 2\n```"
+              "title": "See it in code (with output)",
+              "body": "## A tiny table to slice\n```python\nimport pandas as pd\ndf = pd.DataFrame({\n    \"name\":   [\"A\", \"B\", \"C\", \"D\"],\n    \"region\": [\"East\", \"West\", \"East\", \"West\"],\n    \"sales\":  [300, 90, 650, 120],\n})\n```\n\n## 1. One column -> a Series\n```python\nprint(df[\"sales\"])\n```\n```\n0    300\n1     90\n2    650\n3    120\nName: sales, dtype: int64\n```\n\n## 2. Several columns -> a DataFrame (double brackets)\n```python\nprint(df[[\"name\", \"sales\"]])\n```\n```\n  name  sales\n0    A    300\n1    B     90\n2    C    650\n3    D    120\n```\n\n## 3. Filter rows with a mask\n```python\nprint(df[df[\"sales\"] > 200])\n```\n```\n  name region  sales\n0    A   East    300\n2    C   East    650\n```\nOnly the rows where `sales > 200` survived — labels and all columns intact.\n\n## 4. Combine conditions with & and parentheses\n```python\nprint(df[(df[\"region\"] == \"East\") & (df[\"sales\"] > 500)])\n```\n```\n  name region  sales\n2    C   East    650\n```\nBoth conditions must be `True`. Use `and` instead of `&` here and pandas raises a ValueError.\n\n## 5. .loc — rows AND columns at once\n```python\nprint(df.loc[df[\"region\"] == \"East\", [\"name\", \"sales\"]])\n```\n```\n  name  sales\n0    A    300\n2    C    650\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "`df.groupby(\"region\")[\"sales\"].sum()` gives one total per region.",
+                  "prompt": "`df[df[\"sales\"] > 200]` keeps only the rows where sales is greater than 200.",
                   "answer": true,
-                  "whenRight": "Right — split by region, sum sales in each, combine.",
-                  "whenWrong": "It does — groupby returns one summarised row per group.",
-                  "sim": "region\nEast   1150\nWest    210\nName: sales"
+                  "whenRight": "Right — the boolean mask keeps matching rows and drops the rest.",
+                  "whenWrong": "It does — the mask filters to rows over 200.",
+                  "sim": "kept: A(300), C(650) | dropped: B(90), D(120)"
                 },
                 {
-                  "prompt": "`df.groupby(\"region\")` on its own already prints the grouped totals.",
+                  "prompt": "You combine two pandas conditions with the words `and` / `or`.",
                   "answer": false,
-                  "whenRight": "Correct — groupby alone returns a lazy GroupBy object; you must add an aggregation.",
-                  "whenWrong": "Not quite — groupby alone is a lazy object; add `.sum()`/`.mean()` to get numbers.",
-                  "sim": "df.groupby('region')  ->  <DataFrameGroupBy object>  (no numbers yet)"
+                  "whenRight": "Correct — use `&` and `|` with each condition in parentheses; the words error out.",
+                  "whenWrong": "Careful — pandas needs `&`/`|` with parentheses, not `and`/`or`.",
+                  "sim": "df[(c1) & (c2)]   not   df[c1 and c2]"
                 },
                 {
-                  "prompt": "`.agg(total=(\"sales\",\"sum\"))` lets you name the output column.",
+                  "prompt": "`df[[\"name\", \"sales\"]]` (double brackets) returns a DataFrame of those two columns.",
                   "answer": true,
-                  "whenRight": "Yes — named aggregation gives tidy, readable result columns.",
-                  "whenWrong": "It does — the `name=(col, func)` form names each aggregated column.",
-                  "sim": "        total   avg\nEast    1150   383.3\nWest     210   105.0"
+                  "whenRight": "Right — a list of column names returns a (smaller) DataFrame.",
+                  "whenWrong": "It does — double brackets = a list of columns = a DataFrame back.",
+                  "sim": "  name  sales\n  A     300 ..."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — answer a per-group question",
-              "body": "[CODE] Build a table with `category` and `sales` columns (at least 5 rows, 2-3 categories).\n\n[PRODUCE] Compute the **total** and **average** sales per category with `.agg(...)`.\n\n[PRODUCE] Sort the result by total, highest first (`.sort_values`).\n\n[WRITE] One sentence naming the top category and its total."
+              "title": "Your turn — slice to the answer",
+              "body": "[CODE] Recreate the 4-row table, then `print` just the `sales` column and confirm its type is Series.\n\n[PRODUCE] Print `name` and `sales` for rows where region is `East` **and** sales is over 500 — and read the output.\n\n[WRITE] One sentence: which order matched, and why does it satisfy both conditions?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Aggregation and groupby",
+          "summary": "Concept (split-apply-combine), video, then code with output. The pivot table of pandas.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Aggregation and groupby",
+              "body": "## What it is\nTwo ideas that combine into the most important move in analysis.\n\n**Aggregation** collapses many values into one summary: `sum`, `mean`, `count`, `min`, `max`. `df[\"sales\"].sum()` turns a whole column into a single number.\n\n**groupby** does that aggregation *per group*. It follows a pattern called **split-apply-combine**: pandas *splits* the rows into groups (one per region, say), *applies* an aggregation to each group, and *combines* the answers into a result indexed by group. It is exactly an Excel pivot table, written in one line.\n\n```text\nsplit            apply (sum)      combine\nEast: 300,650  ->  950        ->   East   950\nWest: 90,120   ->  210             West   210\n```\n\n## Why it matters\nAlmost every real question is \"**per X, what is Y?**\" — sales per region, revenue per month, orders per customer, profit per sub-category. That shape *is* a groupby. When you internalise that \"per\" in a question signals `groupby`, you stop being stuck and start translating questions into code on sight. This single tool will answer more of your analytical questions than anything else in the track.\n\n## The two things beginners get wrong\n1. **groupby alone does nothing visible.** `df.groupby(\"region\")` returns a lazy GroupBy object — a *plan*, not numbers. You must add an aggregation (`.sum()`, `.mean()`, `.agg(...)`) to make it compute.\n2. **Forgetting that the group becomes the index.** The result is indexed by the group key, which is why it reads as a clean per-group table.\n\nWatch the short video, then the code below runs each form and shows the exact output, including the multi-aggregation `.agg()` you'll use constantly."
             },
             {
               "kind": "video",
               "title": "Aggregation in pandas with groupby() & agg()",
               "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
               "creator": "",
-              "why": "groupby and agg shown on real data. Optional."
+              "why": "See split-apply-combine on real data, then the code below is recognition. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Setup\n```python\nimport pandas as pd\ndf = pd.DataFrame({\n    \"region\": [\"East\", \"West\", \"East\", \"West\", \"East\"],\n    \"sales\":  [300, 90, 650, 120, 200],\n})\n```\n\n## 1. Aggregate the whole column\n```python\nprint(df[\"sales\"].sum())\n```\n```\n1360\n```\n\n## 2. Total per group — the core move\n```python\nprint(df.groupby(\"region\")[\"sales\"].sum())\n```\n```\nregion\nEast    1150\nWest     210\nName: sales, dtype: int64\n```\nOne row per region; `region` became the index.\n\n## 3. groupby ALONE returns a lazy object (no numbers yet)\n```python\nprint(df.groupby(\"region\"))\n```\n```\n<pandas.core.groupby.generic.DataFrameGroupBy object at 0x...>\n```\nThat's the \"plan\". You must add an aggregation to get values.\n\n## 4. Several named aggregations at once\n```python\nprint(df.groupby(\"region\").agg(\n    total=(\"sales\", \"sum\"),\n    avg=(\"sales\", \"mean\"),\n    orders=(\"sales\", \"count\"),\n))\n```\n```\n        total    avg  orders\nregion\nEast     1150  383.3       3\nWest      210  105.0       2\n```\n`.agg(name=(column, function))` gives you tidy, named result columns — exactly what a report needs."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.groupby(\"region\")[\"sales\"].sum()` returns one total per region, indexed by region.",
+                  "answer": true,
+                  "whenRight": "Right — split by region, sum each, combine into a per-group table.",
+                  "whenWrong": "It does — one summarised row per group, with the group as the index.",
+                  "sim": "region\nEast  1150\nWest   210"
+                },
+                {
+                  "prompt": "`df.groupby(\"region\")` on its own already prints the per-group totals.",
+                  "answer": false,
+                  "whenRight": "Correct — it returns a lazy GroupBy object; add an aggregation to get numbers.",
+                  "whenWrong": "Not yet — groupby alone is a plan; add .sum()/.agg() to compute.",
+                  "sim": "groupby('region') -> <GroupBy object> (no numbers)"
+                },
+                {
+                  "prompt": "`.agg(total=(\"sales\",\"sum\"))` lets you name the output column 'total'.",
+                  "answer": true,
+                  "whenRight": "Right — named aggregation produces clean, report-ready column names.",
+                  "whenWrong": "It does — the name=(col, func) form names each aggregated column.",
+                  "sim": "       total   avg\nEast    1150  383.3"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — answer a per-group question",
+              "body": "[CODE] Build a table with `category` and `sales` (5+ rows, 2-3 categories).\n\n[CODE] Print `df.groupby(\"category\")` on its own — note it shows a GroupBy object, not numbers.\n\n[PRODUCE] Use `.agg(...)` to print **total** and **average** sales per category, then sort by total descending.\n\n[WRITE] One sentence naming the top category and its total."
             }
           ]
         },
         {
           "number": 5,
           "title": "Handling missing data",
-          "summary": "One concept: finding and dealing with NaN before it poisons your numbers.",
+          "summary": "Concept (why NaN is dangerous), video, then code with output. Find, then drop or fill — deliberately.",
           "items": [
             {
               "kind": "lesson",
               "title": "Handling missing data",
-              "body": "## What it is\nReal data has holes — pandas shows them as **NaN** (Not a Number). You have three moves: **find** them, **drop** them, or **fill** them.\n\n```python\nimport numpy as np\ndf = pd.DataFrame({\n    \"product\": [\"Chair\", \"Desk\", \"Lamp\", \"Pen\"],\n    \"price\":   [85, np.nan, 30, np.nan],\n})\n```\n\n## Why it matters\nNaN spreads silently: one missing value can turn a whole sum or mean into NaN. You must decide — deliberately — whether to drop the row or fill the gap.\n\n## Examples\n```python\n# 1. Count missing values per column\ndf.isna().sum()                 # price 2\n\n# 2. Drop rows that have ANY missing value\ndf.dropna()                     # keeps Chair, Lamp\n\n# 3. Drop only when a specific column is missing\ndf.dropna(subset=[\"price\"])\n\n# 4. Fill missing with a fixed value\ndf.fillna(0)\n\n# 5. Fill missing price with the column's average (a common choice)\ndf[\"price\"].fillna(df[\"price\"].mean())   # blanks become 57.5\n```\n\nRule of thumb: drop when the row is useless without the value; fill when a sensible default (0, the mean, \"unknown\") keeps the row meaningful."
+              "body": "## What it is\nReal data has holes. pandas marks a missing value as **NaN** (\"Not a Number\"). You have exactly three responses, and choosing between them is a judgement call, not a default:\n\n1. **Find** the gaps: `df.isna().sum()` counts missing values per column.\n2. **Drop** them: `df.dropna()` removes any row containing a NaN.\n3. **Fill** them: `df.fillna(value)` replaces NaN — with `0`, a label like `\"unknown\"`, or a statistic like the column mean.\n\n## Why it matters (NaN is quietly destructive)\nA single NaN can poison an entire calculation. `sum()` and `mean()` will often return `NaN` or silently skip values, and a NaN slipping into a `groupby` key creates a phantom group. Worse, the wrong *fix* distorts your answer: dropping rows can throw away real information and bias your sample; filling with `0` can drag an average down to a lie. So the analyst's job isn't to make NaN disappear — it's to decide, on purpose, whether each gap should be dropped or filled, and to be able to defend that choice.\n\n## The rule of thumb\n- **Drop** when a row is useless without the missing value (e.g. an order with no amount), and you have plenty of data.\n- **Fill** when a sensible default keeps the row meaningful — `0` for \"no discount applied\", `\"unknown\"` for a missing category, the **mean/median** for a numeric gap you don't want to delete.\n\nAlways *find and count first* so you know how big the problem is before you touch it. Watch the short video, then the code below shows each step with its output so you can see NaN appear and disappear."
+            },
+            {
+              "kind": "video",
+              "title": "Handling missing data: dropna & fillna",
+              "url": "https://www.youtube.com/watch?v=EjZhV8qOges",
+              "creator": "",
+              "why": "See NaN handled live, then the code below confirms each step's output. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## A table with gaps\n```python\nimport pandas as pd, numpy as np\ndf = pd.DataFrame({\n    \"product\": [\"Chair\", \"Desk\", \"Lamp\", \"Pen\"],\n    \"price\":   [85, np.nan, 30, np.nan],\n})\nprint(df)\n```\n```\n  product  price\n0   Chair   85.0\n1    Desk    NaN\n2    Lamp   30.0\n3     Pen    NaN\n```\nTwo `NaN`s in `price`. (Note the column is `float64` — NaN forces floats.)\n\n## 1. Find: count missing per column\n```python\nprint(df.isna().sum())\n```\n```\nproduct    0\nprice      2\ndtype: int64\n```\n\n## 2. Drop rows with any NaN\n```python\nprint(df.dropna())\n```\n```\n  product  price\n0   Chair   85.0\n2    Lamp   30.0\n```\nDesk and Pen are gone — useful only if you can afford to lose them.\n\n## 3. Fill with the column mean (keeps every row)\n```python\ndf[\"price\"] = df[\"price\"].fillna(df[\"price\"].mean())\nprint(df)\n```\n```\n  product  price\n0   Chair   85.0\n1    Desk   57.5\n2    Lamp   30.0\n3     Pen   57.5\n```\nThe two blanks became `57.5` (the mean of 85 and 30). Confirm it worked:\n```python\nprint(df.isna().sum().sum())   # 0\n```\n```\n0\n```"
             },
             {
               "kind": "swipe",
@@ -559,124 +591,122 @@
                   "prompt": "`df.isna().sum()` tells you how many values are missing in each column.",
                   "answer": true,
                   "whenRight": "Right — isna() flags blanks, sum() counts them per column.",
-                  "whenWrong": "It does — isna().sum() is the standard 'how many blanks' check.",
-                  "sim": "product   0\nprice     2"
+                  "whenWrong": "It does — that's the standard 'how many gaps, and where' check.",
+                  "sim": "product 0\nprice   2"
                 },
                 {
-                  "prompt": "`df.dropna()` fills the missing values in place.",
+                  "prompt": "`df.dropna()` fills the missing values with sensible defaults.",
                   "answer": false,
-                  "whenRight": "Correct — dropna *removes* rows with NaN; `fillna` is what fills them.",
-                  "whenWrong": "Mix-up — dropna removes rows; use fillna to fill the blanks.",
-                  "sim": "dropna()  ->  Chair 85, Lamp 30   (Desk & Pen rows removed)"
+                  "whenRight": "Correct — dropna REMOVES rows with NaN; `fillna` is what fills them.",
+                  "whenWrong": "Mix-up — dropna deletes rows; fillna fills the gaps.",
+                  "sim": "dropna() -> Chair, Lamp kept (Desk, Pen removed)"
                 },
                 {
-                  "prompt": "Filling missing prices with the column mean keeps every row usable.",
+                  "prompt": "Filling a numeric gap with the column mean keeps the row while distorting the average less than filling with 0.",
                   "answer": true,
-                  "whenRight": "Yes — fillna(mean) is a common way to keep rows without distorting totals much.",
-                  "whenWrong": "It does help — fillna with the mean preserves rows while staying reasonable.",
-                  "sim": "price.fillna(price.mean())  ->  85, 57.5, 30, 57.5"
+                  "whenRight": "Right — the mean is a defensible default that preserves the row and the overall level.",
+                  "whenWrong": "It is — mean-fill keeps rows without dragging the average to a lie the way 0 can.",
+                  "sim": "blanks -> 57.5 (mean of 85, 30)"
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — clean the gaps",
-              "body": "[CODE] Build a table where the `price` column has 2 missing values (use `np.nan`).\n\n[PRODUCE] Print `df.isna().sum()` to confirm the count.\n\n[PRODUCE] Fill the missing prices with the column mean, then show `isna().sum()` is now 0.\n\n[WRITE] One sentence: why you chose to fill rather than drop here."
-            },
-            {
-              "kind": "video",
-              "title": "Handling missing data: dropna & fillna",
-              "url": "https://www.youtube.com/watch?v=EjZhV8qOges",
-              "creator": "",
-              "why": "dropna and fillna in action. Optional."
+              "body": "[CODE] Build a table whose `price` column has 2 `np.nan` values and `print` it so you can see the NaNs.\n\n[PRODUCE] Print `df.isna().sum()` to confirm the count.\n\n[PRODUCE] Fill the missing prices with the column mean, then print `df.isna().sum().sum()` to prove zero remain.\n\n[WRITE] One sentence: why did you choose to fill rather than drop here?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Combine datasets: merge and concat",
-          "summary": "One concept: bringing two tables together — stacking (concat) and joining on a key (merge).",
+          "title": "Combining datasets: merge and concat",
+          "summary": "Concept (stack vs join), video, then code with output. Real answers live across multiple tables.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Combine datasets: merge and concat",
-              "body": "## What it is\nTwo different tools for two different jobs:\n\n- **concat** stacks tables — more rows (or more columns) glued together.\n- **merge** joins tables on a shared **key** column — like a SQL JOIN or Excel VLOOKUP.\n\n```python\norders = pd.DataFrame({\"cust_id\": [1, 2, 1], \"sales\": [300, 90, 120]})\ncustomers = pd.DataFrame({\"cust_id\": [1, 2], \"name\": [\"Ada\", \"Bo\"]})\n```\n\n## Why it matters\nReal answers live across tables: orders in one, customer names in another. merge is how you bring the name onto each order so you can group by it.\n\n## Examples\n```python\n# 1. Stack two tables of the same shape (more rows)\npd.concat([orders, orders])          # 6 rows\n\n# 2. Join orders to customer names on the shared key\npd.merge(orders, customers, on=\"cust_id\")\n#   cust_id  sales  name\n#   1        300    Ada\n#   2        90     Bo\n#   1        120    Ada\n\n# 3. Keep ALL orders even if no matching customer (left join)\npd.merge(orders, customers, on=\"cust_id\", how=\"left\")\n\n# 4. Merge, then answer a per-customer question\nmerged = pd.merge(orders, customers, on=\"cust_id\")\nmerged.groupby(\"name\")[\"sales\"].sum()   # Ada 420, Bo 90\n```"
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "`pd.merge(orders, customers, on=\"cust_id\")` attaches each customer's name to their orders.",
-                  "answer": true,
-                  "whenRight": "Right — merge matches rows on the shared key and joins the columns.",
-                  "whenWrong": "It does — merge joins on the key, bringing name onto each order.",
-                  "sim": "cust_id  sales  name\n1        300    Ada\n2        90     Bo\n1        120    Ada"
-                },
-                {
-                  "prompt": "`concat` is the right tool to join two tables on a key column.",
-                  "answer": false,
-                  "whenRight": "Correct — concat just stacks; joining on a key is `merge`'s job.",
-                  "whenWrong": "Mix-up — concat stacks rows/columns; use merge to join on a key.",
-                  "sim": "concat -> stacks rows   |   merge(on='key') -> joins by key"
-                },
-                {
-                  "prompt": "After merging orders with names, you can `groupby(\"name\")` to total each customer's sales.",
-                  "answer": true,
-                  "whenRight": "Yes — that's the payoff: merge brings the name over, groupby summarises by it.",
-                  "whenWrong": "It does — once name is on each row, groupby('name') totals per customer.",
-                  "sim": "name\nAda   420\nBo     90"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — join then summarise",
-              "body": "[CODE] Build an `orders` table (cust_id, sales) and a `customers` table (cust_id, name).\n\n[PRODUCE] Merge them on `cust_id`.\n\n[PRODUCE] Group the merged table by `name` and total the sales.\n\n[WRITE] One sentence naming the highest-spending customer."
+              "title": "Combining datasets: merge and concat",
+              "body": "## What it is\nTwo different tools for two different jobs — and confusing them is the classic beginner mistake, so anchor the distinction now:\n\n- **concat** *stacks* tables. Same columns, more rows (put January's orders under February's), or — less often — more columns side by side. Think \"glue these on top of each other.\"\n- **merge** *joins* tables on a shared **key** column. It's the pandas equivalent of a SQL JOIN or an Excel VLOOKUP: for each row in one table, it finds the matching row in the other (by the key) and brings the columns together. Think \"look up and attach.\"\n\nThe everyday case is **merge**: your orders table has a `customer_id` but not the customer's name; the customers table has both. merge brings the name onto every order so you can finally group by it.\n\n## Why it matters\nReal data is almost never in one table — it's normalised across several (orders here, customers there, products somewhere else) precisely so each fact is stored once. Every meaningful question therefore requires *combining* tables first. An analyst who can't join tables is stuck answering only the trivial single-table questions.\n\n## The one thing to get right with merge: the join type\n`how=\"inner\"` (the default) keeps only rows that match in **both** tables. `how=\"left\"` keeps **all** rows from the left table, filling unmatched ones with NaN. Choosing wrong silently drops or invents rows — e.g. an inner join quietly deletes orders whose customer is missing from the customers table. Always know which rows you intend to keep.\n\nWatch the short video, then the code below runs concat and merge and shows the exact tables they produce."
             },
             {
               "kind": "video",
               "title": "Merge and concat DataFrames — a quick guide",
               "url": "https://www.youtube.com/watch?v=dhovvL-AMVQ",
               "creator": "",
-              "why": "Combining tables, shown live. Optional."
-            }
-          ]
-        },
-        {
-          "number": 7,
-          "title": "Project — a real mini analysis",
-          "summary": "Put all six concepts together on one dataset and answer three real questions.",
-          "items": [
+              "why": "See stacking vs joining on a key, then the code below is recognition. Optional."
+            },
             {
               "kind": "lesson",
-              "title": "Project — put it all together",
-              "body": "## The brief\nYou now have every tool you need: Series, DataFrames, selecting, filtering, groupby, missing-data handling, and merge. This project chains them into one real analysis — the exact shape of work an analyst does daily.\n\n## The pipeline every analysis follows\n1. **Load** the data into a DataFrame.\n2. **Inspect** it (`head`, `info`, `describe`).\n3. **Clean** missing values (`isna`, `fillna`/`dropna`).\n4. **Filter** to the rows that matter.\n5. **Aggregate** with `groupby` to answer the question.\n6. **State** the finding in plain English.\n\nUse the Superstore dataset from Week 1 (or any CSV with a category, a region, sales, and dates)."
+              "title": "See it in code (with output)",
+              "body": "## Two small tables\n```python\nimport pandas as pd\norders = pd.DataFrame({\"cust_id\": [1, 2, 1], \"sales\": [300, 90, 120]})\ncustomers = pd.DataFrame({\"cust_id\": [1, 2], \"name\": [\"Ada\", \"Bo\"]})\nprint(orders)\nprint(customers)\n```\n```\n   cust_id  sales\n0        1    300\n1        2     90\n2        1    120\n   cust_id name\n0        1  Ada\n1        2   Bo\n```\n\n## 1. concat — stack rows\n```python\nprint(pd.concat([orders, orders]))\n```\n```\n   cust_id  sales\n0        1    300\n1        2     90\n2        1    120\n0        1    300\n1        2     90\n2        1    120\n```\nSix rows now — the same shape stacked. (Notice the index repeats; that's concat gluing, not matching.)\n\n## 2. merge — join on the key\n```python\nprint(pd.merge(orders, customers, on=\"cust_id\"))\n```\n```\n   cust_id  sales name\n0        1    300  Ada\n1        2     90   Bo\n2        1    120  Ada\n```\nEach order now carries the customer's name — looked up by `cust_id`.\n\n## 3. The payoff: merge, then groupby\n```python\nmerged = pd.merge(orders, customers, on=\"cust_id\")\nprint(merged.groupby(\"name\")[\"sales\"].sum())\n```\n```\nname\nAda    420\nBo      90\nName: sales, dtype: int64\n```\nYou could only answer \"sales per customer name\" *because* you joined the name on first."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "A solid analysis usually flows: load -> inspect -> clean -> filter -> aggregate.",
+                  "prompt": "`merge` joins two tables on a shared key column (like a SQL JOIN / Excel VLOOKUP).",
                   "answer": true,
-                  "whenRight": "Right — that order keeps you from analysing dirty or wrong-shaped data.",
-                  "whenWrong": "That is the dependable order — inspect and clean before you aggregate.",
-                  "sim": "load -> inspect -> clean -> filter -> groupby -> answer"
+                  "whenRight": "Right — merge matches rows by the key and attaches the other table's columns.",
+                  "whenWrong": "It does — merge looks up by key and brings the columns together.",
+                  "sim": "orders + customers on cust_id -> name attached"
                 },
                 {
-                  "prompt": "It's fine to run `groupby` before checking for missing values.",
+                  "prompt": "`concat` is the right tool when you need to join two tables on a key column.",
                   "answer": false,
-                  "whenRight": "Correct — clean first: NaN can quietly distort group totals and averages.",
-                  "whenWrong": "Risky — clean missing values first, or your group totals can be wrong.",
-                  "sim": "NaN in sales  ->  group total becomes NaN  ->  wrong answer"
+                  "whenRight": "Correct — concat just stacks; joining on a key is `merge`'s job.",
+                  "whenWrong": "Mix-up — concat stacks rows; use merge to join on a key.",
+                  "sim": "concat = stack | merge(on=key) = join"
+                },
+                {
+                  "prompt": "After merging the name onto each order, `groupby(\"name\")` can total each customer's sales.",
+                  "answer": true,
+                  "whenRight": "Right — that's the whole point: join brings the name over, groupby summarises by it.",
+                  "whenWrong": "It does — once name is on each row, groupby('name') totals per customer.",
+                  "sim": "Ada 420\nBo   90"
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — TaxiPulse / Superstore analysis",
-              "body": "Build one notebook, `pandas-project.ipynb`, that answers **three** questions on your dataset.\n\n[CODE] Load the CSV and run `head()` + `info()`.\n\n[CODE] Clean: check `isna().sum()`, then fill or drop missing values (your choice — justify it).\n\n[PRODUCE] Question 1: total sales **per category** (`groupby` + `sum`), sorted high to low.\n\n[PRODUCE] Question 2: average sales **per region** (`groupby` + `mean`).\n\n[PRODUCE] Question 3: if you have two tables, `merge` them and answer one cross-table question; otherwise, the busiest single category by order count.\n\n[WRITE] A short markdown cell at the top with your three findings in plain English (real numbers, no placeholders).\n\n[PRODUCE] Push the notebook to GitHub and submit the link."
+              "title": "Your turn — join then summarise",
+              "body": "[CODE] Build an `orders` table (cust_id, sales) and a `customers` table (cust_id, name); `print` both.\n\n[PRODUCE] Merge them on `cust_id` and print the result — confirm each order now shows a name.\n\n[PRODUCE] Group the merged table by `name` and total the sales.\n\n[WRITE] One sentence naming the highest-spending customer."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Project — a real mini analysis",
+          "summary": "Chain all six concepts into one real analysis on the Superstore data, and ship it.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Project — put it all together",
+              "body": "## The brief\nYou now own the six tools that make up 90% of day-to-day analysis: the **Series**, the **DataFrame**, **selecting & filtering**, **groupby aggregation**, **missing-data handling**, and **merge**. This project chains them into one real analysis — the exact shape of work an analyst does every week.\n\n## The pipeline every analysis follows\nThere is a dependable order, and following it is what keeps you from analysing dirty or wrong-shaped data:\n\n1. **Load** the CSV into a DataFrame.\n2. **Inspect** it — `head`, `info`, `describe`, `shape` — so you know what you're holding.\n3. **Clean** missing values — `isna().sum()`, then a *deliberate* drop or fill.\n4. **Filter** to the rows that matter.\n5. **Aggregate** with `groupby` to answer each question.\n6. **State** each finding in one plain-English sentence with a real number.\n\nWhy this order? Each step depends on the one before — you can't trust an aggregate built on uninspected, uncleaned data. Use the Superstore dataset from Week 1 (or any CSV with a category, a region, sales, and dates)."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A reliable analysis flows: load -> inspect -> clean -> filter -> aggregate -> state the finding.",
+                  "answer": true,
+                  "whenRight": "Right — that order stops you from aggregating dirty or misshaped data.",
+                  "whenWrong": "It is the dependable order — inspect and clean before you aggregate.",
+                  "sim": "load -> inspect -> clean -> filter -> groupby -> answer"
+                },
+                {
+                  "prompt": "It's fine to run `groupby` before checking for missing values.",
+                  "answer": false,
+                  "whenRight": "Correct — clean first; a NaN in a key or value silently corrupts group results.",
+                  "whenWrong": "Risky — clean missing values first or your group totals can be quietly wrong.",
+                  "sim": "NaN in sales -> group total becomes NaN -> wrong answer"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — ship a mini analysis",
+              "body": "Build one notebook, `pandas-project.ipynb`, that answers **three** questions on your dataset, following the pipeline.\n\n[CODE] Load the CSV; run `head()` and `info()` and read them.\n\n[CODE] Clean: print `isna().sum()`, then fill or drop deliberately (and justify it).\n\n[PRODUCE] Q1: total sales **per category** (`groupby` + `sum`), sorted high to low.\n\n[PRODUCE] Q2: average sales **per region** (`groupby` + `mean`).\n\n[PRODUCE] Q3: if you have two tables, `merge` them and answer one cross-table question; otherwise, the busiest single category by order count.\n\n[WRITE] A markdown cell at the top with your three findings in plain English (real numbers, no placeholders).\n\n[PRODUCE] Push the notebook to GitHub and submit the link."
             }
           ]
         }
