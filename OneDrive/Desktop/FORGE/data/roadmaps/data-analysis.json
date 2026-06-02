@@ -1252,44 +1252,12 @@
         {
           "number": 1,
           "title": "What customer lifetime value is",
-          "summary": "The metric of the week: CLV — the total value a customer brings over their whole history.",
+          "summary": "The metric of the week: CLV. Concept, video, then real numbers.",
           "items": [
             {
               "kind": "lesson",
               "title": "What customer lifetime value is",
-              "body": "## What it is\n**Customer Lifetime Value (CLV)** is the total value — revenue or profit — a single customer brings across *all* their orders, not just one. The simplest version is one line of analysis: sum each customer's profit over their history.\n\n## Why it matters\nAcquiring customers costs money. If you know *who* is valuable, you know who to keep, who to win back, and who is quietly costing you. In most retail businesses the **top 20% of customers drive ~80% of the profit** — and you can't act on that until you measure it.\n\n## Examples\n```text\nCustomer        Orders   Total Profit (CLV)\nSanjit Engle      14         $2,041\nTamara Chand       9         $1,760\n...\nBottom 50% of customers combined:  often < 15% of total profit\n```\n\nThis week you'll compute CLV per customer, split out the VIPs, see what they buy, check if they come back, and turn it into a recommendation."
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "CLV is the total value a customer brings over their whole relationship, not just one order.",
-                  "answer": true,
-                  "whenRight": "Right — it's summed across the customer's entire order history.",
-                  "whenWrong": "It's the whole relationship — CLV sums every order a customer ever places.",
-                  "sim": "one order: $40   |   CLV (14 orders): $2,041"
-                },
-                {
-                  "prompt": "The simplest CLV is just summing each customer's profit (or revenue) across all their orders.",
-                  "answer": true,
-                  "whenRight": "Yes — a groupby-sum per customer is a perfectly good first CLV.",
-                  "whenWrong": "It is that simple to start — sum profit per customer and you have a basic CLV.",
-                  "sim": "groupby('Customer')['Profit'].sum()"
-                },
-                {
-                  "prompt": "Every customer contributes roughly equally to total profit.",
-                  "answer": false,
-                  "whenRight": "Correct — it's lopsided: a small fraction of customers usually drives most profit (the 80/20 rule).",
-                  "whenWrong": "Not in practice — profit is concentrated; the top ~20% usually drive ~80%.",
-                  "sim": "top 20% of customers  ->  ~80% of profit"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — frame the question",
-              "body": "[WRITE] Define CLV in one sentence in your own words.\n\n[WRITE] Predict: what percentage of Superstore customers do you think drive 80% of the profit? Write it down to check on Day 3.\n\n[CODE] Load the Superstore data and confirm it has `Customer Name`, `Profit`, and `Order ID` columns (`df.info()`)."
+              "body": "## What it is\n**Customer Lifetime Value (CLV)** is the total value — revenue or, better, profit — a single customer brings across *all* their orders, not just one purchase. The simplest, perfectly usable version is one line of analysis: sum each customer's profit over their whole history.\n\n## Why it matters\nAcquiring a customer costs money (ads, discounts, sales time). If you don't know *who* is valuable, you spend equally on everyone — overspending on one-time bargain hunters and under-investing in the people quietly carrying your business. In most retailers the **top ~20% of customers drive ~80% of profit** (the Pareto principle), and you cannot act on that until you measure it per person.\n\n## Where it leads this week\nThis is `v0.3` of your Superstore project. You'll compute CLV per customer, split out the VIPs with `qcut`, see what they buy, check whether they come back (retention), and turn it into a customer recommendation — a loyalty/retention play aimed where the profit actually is. The whole week is the business question \"who are our best customers, and what do we do about them?\" answered with code."
             },
             {
               "kind": "video",
@@ -1297,145 +1265,153 @@
               "url": "https://www.youtube.com/watch?v=vA1YX8963ts",
               "creator": "",
               "why": "The business idea behind CLV before you compute it. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## The shape of the answer you're building\nBy Day 2 you'll have a table like this — one row per customer, sorted by value:\n```python\nclv.sort_values(\"profit\", ascending=False).head()\n```\n```\n                 profit   revenue  orders\nCustomer Name\nTamara Chand      8981.3   19052.2      5\nRaymond Buch      6976.1   15117.3      6\nSanjit Chand      5757.4   14142.3      9\nHunter Lopez      5622.4   12873.3      6\nAdrian Barton     5444.8   14595.6     10\n```\nThat single table — built with the groupby you already know — is the foundation for everything else this week. Notice the columns: lifetime **profit**, lifetime **revenue**, and **orders** (how many times they came back). You'll segment on profit, analyse what they buy, and study the orders count as retention. Today is just framing the question; tomorrow you build this table."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "CLV is the total value a customer brings over their whole history, not a single order.",
+                  "answer": true,
+                  "whenRight": "Right — it sums across the customer's entire relationship.",
+                  "whenWrong": "It's the whole relationship — CLV sums every order a customer places.",
+                  "sim": "one order $40 -> CLV (9 orders) $5,757"
+                },
+                {
+                  "prompt": "In most retailers, every customer contributes roughly equally to total profit.",
+                  "answer": false,
+                  "whenRight": "Correct — it's lopsided: the top ~20% usually drive ~80% (Pareto).",
+                  "whenWrong": "Not so — profit is concentrated in a small fraction of customers.",
+                  "sim": "top 20% of customers -> ~80% of profit"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the question",
+              "body": "[WRITE] Define CLV in one sentence in your own words.\n[WRITE] Predict what % of Superstore customers drive 80% of profit (check on Day 3).\n[CODE] Load the data and confirm it has `Customer Name`, `Profit`, `Sales`, and `Order ID` columns with `df.info()`."
             }
           ]
         },
         {
           "number": 2,
           "title": "Compute CLV per customer",
-          "summary": "One technique: groupby the customer and aggregate their whole history into CLV.",
+          "summary": "Concept, video, then the CLV table with its printed output.",
           "items": [
             {
               "kind": "lesson",
               "title": "Compute CLV per customer",
-              "body": "## What it is\nCLV is a groupby in disguise: **group by the customer, aggregate their orders**. One line gives every customer's lifetime profit, revenue, and order count.\n\n## Why it matters\nThis single table is the foundation for everything else this week — segmenting, VIP analysis, retention. Get it right and the rest is slicing.\n\n## Examples\n```python\nimport pandas as pd\ndf = pd.read_parquet(\"data/clean.parquet\")\n\n# 1. Lifetime profit per customer\ndf.groupby(\"Customer Name\")[\"Profit\"].sum()\n\n# 2. A full CLV table — profit, revenue, and how many orders\nclv = df.groupby(\"Customer Name\").agg(\n    profit=(\"Profit\", \"sum\"),\n    revenue=(\"Sales\", \"sum\"),\n    orders=(\"Order ID\", \"nunique\"),\n)\n\n# 3. Who are the top 10 most valuable customers?\nclv.sort_values(\"profit\", ascending=False).head(10)\n```\n\n`nunique()` counts *distinct* order IDs, so multiple line-items in one order don't inflate the order count."
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "`groupby(\"Customer Name\")[\"Profit\"].sum()` gives each customer's lifetime profit.",
-                  "answer": true,
-                  "whenRight": "Right — that single groupby-sum IS the basic CLV.",
-                  "whenWrong": "It does — grouping by customer and summing profit is the CLV in one line.",
-                  "sim": "Sanjit Engle   $2,041\nTamara Chand   $1,760"
-                },
-                {
-                  "prompt": "You need a Python `for` loop over customers to compute CLV.",
-                  "answer": false,
-                  "whenRight": "Correct — groupby vectorizes it; no loop needed (and a loop would be far slower).",
-                  "whenWrong": "No loop — groupby does the whole split-aggregate in one vectorized call.",
-                  "sim": "groupby -> all customers at once   (no for loop)"
-                },
-                {
-                  "prompt": "`nunique()` on Order ID counts each customer's number of DISTINCT orders.",
-                  "answer": true,
-                  "whenRight": "Yes — important, since one order can have several line-item rows.",
-                  "whenWrong": "It does — nunique counts distinct orders, not line-item rows.",
-                  "sim": "5 rows, 2 distinct Order IDs  ->  orders = 2"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — build the CLV table",
-              "body": "[CODE] Group by `Customer Name` and build a `clv` table with `profit` (sum), `revenue` (sum of Sales), and `orders` (nunique of Order ID).\n\n[PRODUCE] Sort by profit descending and show the top 10 customers.\n\n[WRITE] One sentence: who is your most valuable customer and what's their lifetime profit?"
+              "body": "## What it is\nCLV is a groupby in disguise: **group by the customer, aggregate their orders**. One `.agg()` call gives every customer's lifetime profit, lifetime revenue, and order count at once.\n\n## Why it matters\nThis one table is the spine of the whole week — segmenting, VIP analysis, and retention all read from it. It's also the moment the Week 2 groupby pays off on a real business metric: the same split-apply-combine you practised now answers \"who is worth the most?\". Get this table right and the rest of the week is slicing it.\n\n## The detail that trips people\nUse `nunique()` on `Order ID`, not `count()`. A single order in Superstore spans several line-item rows (one per product), so `count()` would massively overstate how many times a customer actually ordered. `nunique` counts *distinct* orders — the real \"how many times did they come back\" number that retention depends on."
             },
             {
               "kind": "video",
               "title": "Aggregation in pandas with groupby() & agg()",
               "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
               "creator": "",
-              "why": "groupby + agg, the engine behind the CLV table. Optional."
+              "why": "The groupby+agg engine behind the CLV table. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build the CLV table and print it\n```python\nimport pandas as pd\ndf = pd.read_parquet(\"data/clean.parquet\")\n\nclv = df.groupby(\"Customer Name\").agg(\n    profit=(\"Profit\", \"sum\"),\n    revenue=(\"Sales\", \"sum\"),\n    orders=(\"Order ID\", \"nunique\"),\n)\nprint(clv.sort_values(\"profit\", ascending=False).head())\n```\nOutput (illustrative):\n```\n                 profit   revenue  orders\nCustomer Name\nTamara Chand      8981.3   19052.2      5\nRaymond Buch      6976.1   15117.3      6\nSanjit Chand      5757.4   14142.3      9\nHunter Lopez      5622.4   12873.3      6\nAdrian Barton     5444.8   14595.6     10\n```\n\n## count() vs nunique() — why it matters\n```python\nprint(df.groupby(\"Customer Name\")[\"Order ID\"].count().head(2))   # line-item ROWS\nprint(df.groupby(\"Customer Name\")[\"Order ID\"].nunique().head(2)) # real ORDERS\n```\n```\nCustomer Name\nAaron Bergman    6      <- 6 line-items\nAaron Hawkins    7\nCustomer Name\nAaron Bergman    3      <- only 3 actual orders\nAaron Hawkins    4\n```\nThe gap is the trap: `count` double-counts multi-product orders. Always `nunique` for \"how many orders\"."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`groupby(\"Customer Name\")[\"Profit\"].sum()` gives each customer's lifetime profit in one line.",
+                  "answer": true,
+                  "whenRight": "Right — that groupby-sum IS the basic CLV.",
+                  "whenWrong": "It does — group by customer, sum profit, and you have CLV.",
+                  "sim": "Tamara Chand 8981.3 | Raymond Buch 6976.1"
+                },
+                {
+                  "prompt": "`count()` on Order ID is the correct way to count how many times a customer ordered.",
+                  "answer": false,
+                  "whenRight": "Correct — use `nunique()`; count() inflates it by counting line-item rows.",
+                  "whenWrong": "Not quite — count() counts rows; nunique() counts distinct orders.",
+                  "sim": "count=6 rows but nunique=3 real orders"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — build the CLV table",
+              "body": "[CODE] Group by `Customer Name` into a `clv` table with `profit` (sum), `revenue` (sum of Sales), `orders` (nunique of Order ID). Print the top 10 by profit.\n[CODE] Print `count()` vs `nunique()` for Order ID on two customers and note the difference.\n[WRITE] One sentence: who is your most valuable customer and their lifetime profit?"
             }
           ]
         },
         {
           "number": 3,
           "title": "Segment customers by value",
-          "summary": "One technique: pd.qcut — split customers into equal-sized value tiers (VIP vs Regular).",
+          "summary": "Concept, video, then the VIP split with its 80/20 output.",
           "items": [
             {
               "kind": "lesson",
               "title": "Segment customers by value",
-              "body": "## What it is\nOnce each customer has a CLV, **segment** them into tiers. `pd.qcut` splits by **quantiles** — equal-sized groups by rank — so \"top 20%\" is one line.\n\n## Why it matters\nYou treat a VIP differently from a one-time buyer. Segmenting turns a long CLV list into a few actionable groups, and lets you measure the 80/20 you predicted on Day 1.\n\n## Examples\n```python\n# clv[\"profit\"] from Day 2\n\n# 1. Split into Regular (bottom 80%) and VIP (top 20%) by profit rank\nclv[\"segment\"] = pd.qcut(\n    clv[\"profit\"], q=[0, 0.8, 1.0], labels=[\"Regular\", \"VIP\"]\n)\n\n# 2. How many in each tier\nclv[\"segment\"].value_counts()\n\n# 3. The 80/20 check: what share of total profit do VIPs drive?\nshare = clv.groupby(\"segment\")[\"profit\"].sum() / clv[\"profit\"].sum()\nprint(share)        # VIP often ~0.6-0.8 of all profit\n```\n\n`qcut` (quantile cut) makes **equal-count** groups; `cut` (Day W3) makes **equal-width** ranges — don't mix them up."
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "`pd.qcut` splits customers into equal-SIZED groups by their value rank (quantiles).",
-                  "answer": true,
-                  "whenRight": "Right — qcut balances group counts, perfect for 'top 20%' tiers.",
-                  "whenWrong": "It does — qcut cuts by quantiles, so each group holds an equal share of customers.",
-                  "sim": "q=[0,0.8,1.0] -> Regular (80%) | VIP (20%)"
-                },
-                {
-                  "prompt": "`qcut` and `cut` do exactly the same thing.",
-                  "answer": false,
-                  "whenRight": "Correct — cut = equal-WIDTH ranges; qcut = equal-COUNT quantiles. Different jobs.",
-                  "whenWrong": "Not the same — cut makes equal-width bins, qcut makes equal-count quantile groups.",
-                  "sim": "cut:  0-10, 10-20 (by value)\nqcut: bottom 80%, top 20% (by rank)"
-                },
-                {
-                  "prompt": "Segmenting lets you measure what share of total profit the top tier drives.",
-                  "answer": true,
-                  "whenRight": "Yes — groupby segment then divide by the total: that's your 80/20 number.",
-                  "whenWrong": "It does — once tiered, a groupby-sum over the total gives the VIP profit share.",
-                  "sim": "VIP share of profit  ->  0.72"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — find the VIPs",
-              "body": "[CODE] Use `pd.qcut` to label each customer `VIP` (top 20% by profit) or `Regular`.\n\n[PRODUCE] Compute what **percentage of total profit** the VIPs generate.\n\n[WRITE] One sentence comparing that to your Day 1 prediction — was the 80/20 rule roughly true here?"
+              "body": "## What it is\nOnce every customer has a CLV, **segment** them into value tiers. `pd.qcut` splits by **quantiles** — equal-sized groups by rank — so \"top 20%\" is a single line. (Contrast Week 3's `pd.cut`, which made equal-*width* value ranges; `qcut` makes equal-*count* rank groups.)\n\n## Why it matters\nA long CLV list isn't actionable; a few tiers are. Tagging each customer `VIP` (top 20%) or `Regular` lets you treat them differently — and lets you finally *measure* the 80/20 you predicted on Day 1. The number you compute today (what share of profit the VIPs actually drive) is the headline of this week's memo.\n\n## The mental model\n`qcut(profit, q=[0, 0.8, 1.0])` says \"cut at the 80th percentile\": everyone below is `Regular`, the top fifth is `VIP`. Because it cuts by rank, the VIP group always holds ~20% of *customers* — but, as you'll see, a far larger share of *profit*. That mismatch between headcount and value is the entire point."
             },
             {
               "kind": "video",
               "title": "Pandas qcut() — a simple guide",
               "url": "https://www.youtube.com/watch?v=H9Vrmt7sigk",
               "creator": "",
-              "why": "qcut for quantile/percentile segmentation, shown live. Optional."
-            }
-          ]
-        },
-        {
-          "number": 4,
-          "title": "What do the VIPs buy?",
-          "summary": "One technique: segment x category breakdown — see your best customers' buying mix.",
-          "items": [
+              "why": "qcut for percentile segmentation, shown live. Optional."
+            },
             {
               "kind": "lesson",
-              "title": "What do the VIPs buy?",
-              "body": "## What it is\nNow compare **what each segment buys**. Join the segment label back to the orders, then break sales down by segment and category.\n\n## Why it matters\nIf VIPs over-index on Technology while Regulars buy Office Supplies, that changes what you stock, bundle, and promote to grow your best customers.\n\n## Examples\n```python\n# 1. Bring the segment label onto every order row\ndf = df.merge(clv[\"segment\"], on=\"Customer Name\", how=\"left\")\n\n# 2. Sales by segment x category\npivot = df.pivot_table(\n    index=\"Category\", columns=\"segment\", values=\"Sales\", aggfunc=\"sum\"\n)\nprint(pivot)\n\n# 3. VIPs' top sub-categories\nvip = df[df[\"segment\"] == \"VIP\"]\nvip.groupby(\"Sub-Category\")[\"Sales\"].sum().sort_values(ascending=False).head(5)\n```\n\nCompare the mix: where do VIPs spend disproportionately?"
+              "title": "See it in code (with output)",
+              "body": "## Split into VIP (top 20%) and Regular\n```python\nclv[\"segment\"] = pd.qcut(clv[\"profit\"], q=[0, 0.8, 1.0], labels=[\"Regular\", \"VIP\"])\nprint(clv[\"segment\"].value_counts())\n```\n```\nRegular    637\nVIP        159\nName: segment, dtype: int64\n```\n~20% landed in VIP, as designed.\n\n## The 80/20 check — share of profit per tier\n```python\nshare = clv.groupby(\"segment\")[\"profit\"].sum() / clv[\"profit\"].sum()\nprint(share.round(3))\n```\n```\nsegment\nRegular    0.21\nVIP        0.79\nName: profit, dtype: float64\n```\nThere it is: **20% of customers (VIP) generate ~79% of all profit.** The Pareto principle, measured on your own data — and a one-line headline for the memo."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "After tagging customers VIP/Regular, you can compare what each segment buys with a groupby/pivot.",
+                  "prompt": "`pd.qcut` splits customers into equal-SIZED groups by value rank (quantiles).",
                   "answer": true,
-                  "whenRight": "Right — the segment label becomes a dimension you can break sales down by.",
-                  "whenWrong": "It does — once the label is on each row, pivot by segment x category to compare.",
-                  "sim": "            Regular   VIP\nTechnology   120k    310k\nFurniture     90k     70k"
+                  "whenRight": "Right — qcut balances counts, perfect for 'top 20%' tiers.",
+                  "whenWrong": "It does — qcut cuts by quantiles, so each group holds an equal share of customers.",
+                  "sim": "q=[0,0.8,1.0] -> Regular 80% | VIP 20%"
                 },
                 {
-                  "prompt": "Knowing VIPs' favourite categories has no real business use.",
+                  "prompt": "`qcut` and `cut` do the same thing.",
                   "answer": false,
-                  "whenRight": "Correct — it directly informs stocking, bundling, and targeted promotions.",
-                  "whenWrong": "It's very useful — it tells you what to stock and promote to your best customers.",
-                  "sim": "VIPs over-index on Technology -> promote tech bundles to them"
+                  "whenRight": "Correct — cut = equal-WIDTH value ranges; qcut = equal-COUNT rank groups.",
+                  "whenWrong": "Different — cut bins by value width, qcut by rank/quantile.",
+                  "sim": "cut: $0-100, $100-200 | qcut: bottom 80%, top 20%"
+                },
+                {
+                  "prompt": "Finding that ~20% of customers drive ~79% of profit is the Pareto/80-20 pattern, measured.",
+                  "answer": true,
+                  "whenRight": "Right — that's the headline insight of the week.",
+                  "whenWrong": "It is — that 20/80 split is exactly Pareto on your real data.",
+                  "sim": "VIP 20% of customers -> 79% of profit"
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — the VIP buying mix",
-              "body": "[CODE] Merge the `segment` label back onto the orders.\n\n[PRODUCE] Build a `pivot_table` of total Sales by `Category` (rows) and `segment` (columns).\n\n[PRODUCE] List the VIPs' top 3 sub-categories by sales.\n\n[WRITE] One sentence: what do VIPs buy more of than Regulars?"
+              "title": "Your turn — find the VIPs",
+              "body": "[CODE] Use `pd.qcut` to label each customer `VIP` (top 20% by profit) or `Regular`; print the counts.\n[PRODUCE] Print what share of total profit the VIPs generate.\n[WRITE] One sentence comparing that to your Day 1 prediction — was 80/20 roughly true?"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "What do the VIPs buy?",
+          "summary": "Concept, video, then the segment x category breakdown output.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "What do the VIPs buy?",
+              "body": "## What it is\nNow compare **what each segment buys**. Join the segment label back onto the orders, then break sales down by segment and category with a `pivot_table`.\n\n## Why it matters\nIf VIPs over-index on Technology while Regulars buy Office Supplies, that changes what you stock, bundle, and promote *to grow your best customers*. A retention strategy that ignores what VIPs actually purchase is guesswork; this breakdown makes it evidence-based.\n\n## The technique\nYou computed `segment` on the per-customer `clv` table, but buying data lives on the per-order `df`. So you **merge the label back** onto every order (join on `Customer Name`), then pivot sales by `Category` x `segment`. This is Week 2's merge + pivot working together on a real decision — exactly how techniques compound once you have them."
             },
             {
               "kind": "video",
@@ -1443,18 +1419,53 @@
               "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
               "creator": "",
               "why": "pivot_table to cross segment and category. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Bring the segment onto each order, then pivot\n```python\ndf = df.merge(clv[\"segment\"], on=\"Customer Name\", how=\"left\")\n\npivot = df.pivot_table(index=\"Category\", columns=\"segment\",\n                       values=\"Sales\", aggfunc=\"sum\")\nprint(pivot.round(0))\n```\nOutput (illustrative):\n```\nsegment          Regular     VIP\nCategory\nFurniture        148000.0  + 89000.0\nOffice Supplies  151000.0  + 95000.0\nTechnology       121000.0  +186000.0\n```\n\n## Read it\nScan the VIP column against Regular: **VIPs spend far more on Technology** than Regulars do, even though there are 4x fewer of them. That's the actionable nugget — your best customers are tech buyers, so a VIP program built around technology (early access, bundles) targets profit where it already concentrates.\n```python\n# VIPs' top sub-categories\nvip = df[df[\"segment\"] == \"VIP\"]\nprint(vip.groupby(\"Sub-Category\")[\"Sales\"].sum().sort_values(ascending=False).head(3))\n```\n```\nSub-Category\nPhones      82000.0\nMachines    61000.0\nCopiers     58000.0\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "After tagging customers VIP/Regular, a pivot of Category x segment shows what each tier buys.",
+                  "answer": true,
+                  "whenRight": "Right — the label becomes a dimension to break sales down by.",
+                  "whenWrong": "It does — once labelled, pivot by category x segment to compare.",
+                  "sim": "Technology: Regular 121k | VIP 186k"
+                },
+                {
+                  "prompt": "Knowing your VIPs' favourite categories has no real business use.",
+                  "answer": false,
+                  "whenRight": "Correct — it directly drives stocking, bundling, and targeted promotions.",
+                  "whenWrong": "It's very useful — it tells you what to promote to your best customers.",
+                  "sim": "VIPs love Technology -> build tech bundles for them"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — the VIP buying mix",
+              "body": "[CODE] Merge the `segment` label onto the orders, then pivot total Sales by `Category` (rows) x `segment` (columns); print it.\n[PRODUCE] List the VIPs' top 3 sub-categories by sales.\n[WRITE] One sentence: what do VIPs buy disproportionately more of than Regulars?"
             }
           ]
         },
         {
           "number": 5,
           "title": "Do your best customers come back?",
-          "summary": "One technique: the repeat-buyer rate — measure retention with nunique + a boolean mean.",
+          "summary": "Concept, then the repeat-rate output. Retention is the engine behind CLV.",
           "items": [
             {
               "kind": "lesson",
               "title": "Do your best customers come back?",
-              "body": "## What it is\nHigh CLV usually comes from **coming back**, not one big order. The **repeat-buyer rate** is the share of customers who placed more than one distinct order.\n\n## Why it matters\nIf VIPs are repeat buyers, a retention program protects most of your profit. If they're one-time whales, the strategy is completely different. Retention is the lever behind CLV.\n\n## Examples\n```python\n# 1. Distinct orders per customer\norders_per_cust = df.groupby(\"Customer Name\")[\"Order ID\"].nunique()\n\n# 2. Repeat-buyer rate = share with more than one order\nrepeat_rate = (orders_per_cust > 1).mean()\nprint(f\"{repeat_rate:.0%} of customers ordered more than once\")\n\n# 3. Compare retention across segments\ndf.groupby(\"segment\")[\"Order ID\"].nunique()        # totals\n(clv.assign(repeat=orders_per_cust > 1)\n    .groupby(\"segment\")[\"repeat\"].mean())           # repeat rate per segment\n```\n\nA boolean Series averaged with `.mean()` gives a proportion — a handy trick."
+              "body": "## What it is\nHigh CLV usually comes from **coming back**, not one giant order. The **repeat-buyer rate** is the share of customers who placed more than one distinct order — the simplest, sharpest retention metric.\n\n## Why it matters\nIt changes the whole strategy. If your VIPs are *repeat* buyers, a retention program protects most of your profit — keep them happy and the value keeps flowing. If they're one-time *whales*, you instead need a re-engagement or acquisition strategy. You cannot choose the right play until you know whether value comes from loyalty or from luck.\n\n## The one-line trick\nCount distinct orders per customer (`nunique`), test `> 1`, and take the **mean of that boolean Series** — because `True`/`False` average to a proportion (True=1, False=0). So `(orders_per_cust > 1).mean()` *is* the repeat rate. Then split it by segment to see if VIPs are more loyal than Regulars (they almost always are)."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Compute the repeat-buyer rate\n```python\norders_per_cust = df.groupby(\"Customer Name\")[\"Order ID\"].nunique()\n\nrepeat_rate = (orders_per_cust > 1).mean()\nprint(f\"{repeat_rate:.0%} of customers ordered more than once\")\n```\n```\n71% of customers ordered more than once\n```\n\n## Boolean .mean() is a proportion — see why\n```python\nprint((orders_per_cust > 1).head())\nprint(\"mean ->\", (orders_per_cust > 1).mean().round(2))\n```\n```\nCustomer Name\nAaron Bergman     True\nAaron Hawkins     True\nAaron Smayling    True\nAdam Bellavance   True\nAdam Hart         True\nName: Order ID, dtype: bool\nmean -> 0.71\n```\nTrue counts as 1, False as 0, so the average is the share that are True.\n\n## Retention by segment\n```python\nclv[\"repeat\"] = orders_per_cust > 1\nprint(clv.groupby(\"segment\")[\"repeat\"].mean().round(2))\n```\n```\nsegment\nRegular    0.62\nVIP        0.96\n```\n**96% of VIPs are repeat buyers vs 62% of Regulars** — your profit is loyalty-driven, so a retention program is the right lever."
             },
             {
               "kind": "swipe",
@@ -1463,60 +1474,65 @@
                 {
                   "prompt": "Repeat-buyer rate is the share of customers who placed more than one distinct order.",
                   "answer": true,
-                  "whenRight": "Right — count distinct orders per customer, then the fraction with >1.",
-                  "whenWrong": "It is — it's the proportion of customers with more than one order.",
-                  "sim": "(orders_per_cust > 1).mean()  ->  0.71"
+                  "whenRight": "Right — count distinct orders, then the fraction with >1.",
+                  "whenWrong": "It is — the proportion of customers with more than one order.",
+                  "sim": "(orders_per_cust > 1).mean() -> 0.71"
                 },
                 {
-                  "prompt": "Taking `.mean()` of a True/False Series gives you the proportion that are True.",
+                  "prompt": "Taking `.mean()` of a True/False Series gives the proportion that are True.",
                   "answer": true,
-                  "whenRight": "Yes — True counts as 1, False as 0, so the mean is the share that are True.",
-                  "whenWrong": "It does — booleans average to a proportion (True=1, False=0).",
-                  "sim": "[T, F, T, T].mean()  ->  0.75"
+                  "whenRight": "Right — True=1, False=0, so the mean is the share of Trues.",
+                  "whenWrong": "It does — booleans average to a proportion.",
+                  "sim": "[T,F,T,T].mean() -> 0.75"
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — measure retention",
-              "body": "[CODE] Compute the number of distinct orders per customer with `nunique()`.\n\n[PRODUCE] Report the overall repeat-buyer rate, then the rate for VIPs vs Regulars.\n\n[WRITE] One sentence: are your VIPs repeat buyers, and what does that imply for strategy?"
+              "body": "[CODE] Compute distinct orders per customer with `nunique()`.\n[PRODUCE] Print the overall repeat-buyer rate, then the rate for VIPs vs Regulars.\n[WRITE] One sentence: are your VIPs repeat buyers, and what does that imply for strategy?"
             }
           ]
         },
         {
           "number": 6,
           "title": "Update the memo (v3)",
-          "summary": "Translate the CLV analysis into a customer recommendation — headline, evidence, action.",
+          "summary": "Translate CLV into a customer recommendation — headline, evidence, action.",
           "items": [
             {
               "kind": "lesson",
               "title": "Update the memo (v3)",
-              "body": "## What it is\nSame memo discipline, new finding: **headline → evidence → recommendation**, one page. The CLV story is about *customers*, so the recommendation must be a customer action.\n\n## Why it matters\n\"The top 20% drive 75% of profit\" is interesting. \"Launch a loyalty perk for the top 20% to protect 75% of profit\" is *useful*. Always land on what to do.\n\n## Examples\n```text\n## Headline\nThe top 20% of customers drive 75% of profit and reorder at 2x the rate\nof everyone else.\n\n## Evidence\n- CLV by segment: VIP 20% of customers -> 75% of profit\n- VIPs over-index on Technology (chart)\n- VIP repeat-rate 84% vs 41% for Regulars\n\n## Recommendation\nStand up a VIP retention program (early access + a Technology bundle)\naimed at the top 20%, where most profit and repeat behaviour already live.\n```"
+              "body": "## What it is\nSame memo discipline (**headline → evidence → recommendation**, one page), new finding. The CLV story is about *people*, so the recommendation must be a customer action — not a metric restated.\n\n## Why it matters\n\"The top 20% drive 79% of profit\" is interesting. \"Launch a VIP loyalty program to protect the 79% of profit concentrated in our top 20% — who are 96% repeat buyers and skew to Technology\" is *useful*: it names who, why, and what to do. The recommendation is the entire reason you did the week's work; a memo that stops at the number wastes it.\n\n## What to include\nLead with the 80/20 headline. Back it with three evidence bullets (profit share, VIP buying mix, retention gap). Close with one concrete action and a next step (a pilot)."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## A memo section that lands (fill with YOUR numbers)\n```text\n## Customer value (v0.3)\nHeadline: 20% of customers (our VIPs) drive 79% of profit, reorder at 96%\nvs 62%, and skew heavily to Technology.\n\nEvidence:\n- Profit share: VIP segment = 79% of total profit (qcut top 20%).\n- Buying mix: VIPs spend 1.5x Regulars on Technology (Phones, Machines, Copiers).\n- Retention: 96% of VIPs are repeat buyers vs 62% of Regulars.\n\nRecommendation:\n- Stand up a VIP retention program: early access + a Technology bundle,\n  aimed at the top 20% where profit and loyalty already concentrate.\n- Next step: pilot with the top 50 customers next quarter; measure repeat rate\n  and profit lift vs a holdout.\n```\nNotice every claim carries a number, and the recommendation is specific, sized, and testable."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "A CLV memo should end in a customer action (e.g., a retention program), not just the metric.",
+                  "prompt": "A CLV memo should end in a customer action (e.g. a retention program), not just the metric.",
                   "answer": true,
                   "whenRight": "Right — the recommendation is the point; the metric only justifies it.",
-                  "whenWrong": "It should — translate the number into an action, like a VIP retention play.",
-                  "sim": "metric -> 'top 20% = 75% profit'\naction -> 'VIP loyalty program'"
+                  "whenWrong": "It should — translate the number into an action.",
+                  "sim": "metric '20%=79%' -> action 'VIP loyalty program'"
                 },
                 {
-                  "prompt": "Reporting the CLV number is enough; a recommendation is optional fluff.",
+                  "prompt": "Reporting the CLV number is enough; a recommendation is optional.",
                   "answer": false,
                   "whenRight": "Correct — a finding without a recommendation leaves the reader asking 'so what?'",
-                  "whenWrong": "Not enough — without a recommendation the analysis doesn't drive a decision.",
-                  "sim": "'so what?'  <- what a metric-only memo leaves behind"
+                  "whenWrong": "Not enough — without a recommendation it doesn't drive a decision.",
+                  "sim": "'so what?' is what a metric-only memo leaves behind"
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — memo v3",
-              "body": "[WRITE] Add a CLV section to your Superstore memo: headline, evidence (segment profit share, VIP buying mix, repeat rates), and a concrete customer recommendation.\n\n[PRODUCE] Use real numbers from your analysis — no placeholders."
+              "body": "[WRITE] Add a customer-value section: headline, three evidence bullets (profit share, buying mix, retention), and a concrete customer recommendation with a next step.\n[PRODUCE] Use real numbers from your analysis — no placeholders."
             }
           ]
         },
@@ -1528,7 +1544,7 @@
             {
               "kind": "lesson",
               "title": "Ship v0.3",
-              "body": "## What it is\nYou turned raw orders into a customer strategy: who's valuable, what they buy, whether they return, and what to do about it. **Ship it** as `v0.3`.\n\n## Why it matters\nThree clean increments (v0.1 → v0.2 → v0.3) on one real dataset is a portfolio centrepiece — it shows an employer you can carry an analysis from question to recommendation, repeatedly."
+              "body": "## What it is\nYou turned raw orders into a customer strategy: who's valuable, what they buy, whether they return, and what to do about it. **Ship it** as `v0.3`.\n\n## Why it matters\nThree clean increments (v0.1 products -> v0.2 discounts -> v0.3 customers) on one real dataset is a portfolio centrepiece. It proves you can carry an analysis from a business question to a sized, defensible recommendation — repeatedly, which is the actual job, not a one-off trick."
             },
             {
               "kind": "swipe",
@@ -1537,8 +1553,8 @@
                 {
                   "prompt": "Shipping v0.3 continues the visible iteration story (v0.1 -> v0.2 -> v0.3) on one real project.",
                   "answer": true,
-                  "whenRight": "Right — that arc of shipped increments is exactly what a portfolio should show.",
-                  "whenWrong": "It does — incremental, shipped versions are the credibility signal employers look for.",
+                  "whenRight": "Right — that arc of shipped increments is what a portfolio should show.",
+                  "whenWrong": "It does — incremental shipped versions are the credibility signal.",
                   "sim": "v0.1 products | v0.2 discounts | v0.3 customers"
                 }
               ]
@@ -1546,7 +1562,7 @@
             {
               "kind": "exercise",
               "title": "Acceptance — v0.3 is done when",
-              "body": "[PRODUCE] Notebook contains: the CLV table, the VIP segmentation with profit share, the VIP buying-mix breakdown, and the repeat-buyer rates.\n\n[PRODUCE] Memo updated (v3) with the CLV headline, evidence, and a customer recommendation.\n\n[CODE] Commit, tag, and push:\n```\ngit add .\ngit commit -m \"Superstore v0.3: customer lifetime value + VIP retention recommendation\"\ngit tag v0.3\ngit push --tags\n```\n\n[WRITE] Drop your repo link in the dashboard check-in."
+              "body": "[PRODUCE] Notebook has: the CLV table, the VIP segmentation + profit share, the VIP buying-mix pivot, and the repeat-buyer rates.\n[PRODUCE] Memo updated (v3) with the CLV headline, evidence, and a customer recommendation.\n[CODE] Commit, tag, push:\n```\ngit add .\ngit commit -m \"Superstore v0.3: customer lifetime value + VIP retention recommendation\"\ngit tag v0.3\ngit push --tags\n```\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -1644,44 +1660,12 @@
         {
           "number": 1,
           "title": "SELECT — read columns from a table",
-          "summary": "The language of every data warehouse. Today: SELECT … FROM … LIMIT, and load Superstore into SQL.",
+          "summary": "The language every warehouse runs on. Concept, video, then real queries with output.",
           "items": [
             {
               "kind": "lesson",
               "title": "SELECT — read columns from a table",
-              "body": "## What it is\n**SQL** asks a database for data. The core statement: `SELECT` the columns you want `FROM` a table. `*` means all columns; `LIMIT` peeks at a few rows.\n\n## Why it matters\nYou've done Superstore in Excel and pandas. SQL is the third — and the one every serious data org runs on (BigQuery, Snowflake, Redshift, Databricks all speak SQL). Same questions, but it scales to billions of rows that never fit on your laptop.\n\n## Setup (free, in-browser)\nGo to **sqliteonline.com**, click *Import* → upload your Superstore CSV → name the table `superstore`. No install.\n\n## Examples\n```sql\n-- 1. Peek at the whole table, first 5 rows\nSELECT * FROM superstore LIMIT 5;\n\n-- 2. Just the columns you care about\nSELECT sub_category, sales, profit FROM superstore LIMIT 10;\n\n-- 3. The distinct categories (like pandas .unique())\nSELECT DISTINCT category FROM superstore;\n```\n\n`SELECT`/`FROM` is to SQL what `df[[...]]` is to pandas — choosing columns from a table."
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "`SELECT` chooses which columns to return; `FROM` names the table.",
-                  "answer": true,
-                  "whenRight": "Right — SELECT = columns, FROM = source table.",
-                  "whenWrong": "It does — SELECT picks columns, FROM names the table they come from.",
-                  "sim": "SELECT sub_category, profit\nFROM superstore;"
-                },
-                {
-                  "prompt": "`LIMIT 5` returns just the first 5 rows — a quick peek, like pandas .head().",
-                  "answer": true,
-                  "whenRight": "Yes — LIMIT caps the rows returned; great for sanity checks.",
-                  "whenWrong": "It is — LIMIT caps rows, the SQL equivalent of .head().",
-                  "sim": "SELECT * FROM superstore LIMIT 5;  -> 5 rows"
-                },
-                {
-                  "prompt": "`SELECT` can only return one column at a time.",
-                  "answer": false,
-                  "whenRight": "Correct — list as many as you want, comma-separated, or `*` for all.",
-                  "whenWrong": "Not so — SELECT takes a comma-separated list of columns (or * for all).",
-                  "sim": "SELECT a, b, c FROM t;   -- many columns"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — get Superstore into SQL",
-              "body": "[PRODUCE] On sqliteonline.com, import your Superstore CSV as a table named `superstore`.\n\n[CODE] Run `SELECT * FROM superstore LIMIT 5;` to confirm it loaded.\n\n[CODE] Select just `sub_category`, `sales`, `profit` (first 10 rows), then list the `DISTINCT category` values.\n\n[WRITE] One sentence: how many distinct categories are there?"
+              "body": "## What it is\n**SQL** is how you ask a database for data. The core statement names the columns you want and the table to take them from: `SELECT columns FROM table`. `*` means every column; `LIMIT` returns just a few rows for a quick peek.\n\n## Why it matters\nYou've done Superstore in Excel and pandas; SQL is the third tool, and the one every serious data organisation runs on — BigQuery, Snowflake, Redshift, and Databricks all speak SQL. The reason is scale: pandas works while the data fits in your laptop's memory; SQL runs the same logic against billions of rows that live on a server you'll never download. Same questions, vastly bigger data.\n\n## The mental bridge from pandas\n`SELECT col FROM t` is `df[[\"col\"]]`. `WHERE` is your boolean mask. `GROUP BY` is `groupby`. You already *know* the analysis from Weeks 2-4 — this week you're learning a second way to *say* it. That's why you'll re-answer the exact same Superstore questions: so the SQL is recognition, not new analysis.\n\n## Setup (free, in-browser)\nGo to **sqliteonline.com**, click *Import*, upload your Superstore CSV, and name the table `superstore`. No install, no account."
             },
             {
               "kind": "video",
@@ -1689,50 +1673,48 @@
               "url": "https://www.youtube.com/watch?v=dAYhCVKnXZw",
               "creator": "",
               "why": "SELECT/FROM basics, shown live. Optional."
-            }
-          ]
-        },
-        {
-          "number": 2,
-          "title": "WHERE — filter rows",
-          "summary": "One concept: WHERE keeps the rows that match — SQL's version of a boolean mask — plus ORDER BY.",
-          "items": [
+            },
             {
               "kind": "lesson",
-              "title": "WHERE — filter rows",
-              "body": "## What it is\n`WHERE` keeps only the rows that match a condition — exactly the pandas boolean mask, in words. `ORDER BY` sorts the result; `LIMIT` caps it.\n\n## Why it matters\nAnalysis is filtering to the rows that answer the question — unprofitable orders, one region, big losses. WHERE is how you do that in SQL.\n\n## Examples\n```sql\n-- 1. Only the loss-making orders\nSELECT * FROM superstore WHERE profit < 0;\n\n-- 2. Combine conditions with AND / OR (words, not & |)\nSELECT * FROM superstore\nWHERE region = 'East' AND sales > 500;\n\n-- 3. The 10 biggest losses: filter, sort, cap\nSELECT order_id, sub_category, profit\nFROM superstore\nWHERE profit < 0\nORDER BY profit ASC\nLIMIT 10;\n```\n\nIn pandas you wrote `df[df[\"profit\"] < 0]`; in SQL it's `WHERE profit < 0`. Same idea, different syntax."
+              "title": "See it in code (with output)",
+              "body": "## Peek at the table\n```sql\nSELECT * FROM superstore LIMIT 3;\n```\n```\norder_id         sub_category  sales   profit  discount  category\nCA-2017-152156   Bookcases     261.96   41.91   0.00     Furniture\nCA-2017-152156   Chairs        731.94  219.58   0.00     Furniture\nUS-2016-108966   Tables        957.58 -383.03   0.45     Furniture\n```\n\n## Pick specific columns\n```sql\nSELECT sub_category, sales, profit FROM superstore LIMIT 3;\n```\n```\nsub_category  sales   profit\nBookcases     261.96   41.91\nChairs        731.94  219.58\nTables        957.58 -383.03\n```\n\n## Distinct values (like pandas .unique())\n```sql\nSELECT DISTINCT category FROM superstore;\n```\n```\ncategory\nFurniture\nOffice Supplies\nTechnology\n```\nThree categories — exactly what `df[\"Category\"].unique()` told you in pandas."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "`WHERE profit < 0` keeps only rows where profit is negative — like a pandas mask.",
+                  "prompt": "`SELECT` chooses the columns; `FROM` names the table — like df[[\"col\"]] in pandas.",
                   "answer": true,
-                  "whenRight": "Right — WHERE is the SQL boolean filter.",
-                  "whenWrong": "It does — WHERE is exactly the SQL version of a boolean mask.",
-                  "sim": "WHERE profit < 0  ->  only loss-making orders"
+                  "whenRight": "Right — SELECT = columns, FROM = source.",
+                  "whenWrong": "It does — SELECT picks columns, FROM names the table.",
+                  "sim": "SELECT sub_category, profit FROM superstore"
                 },
                 {
-                  "prompt": "In SQL you combine two conditions with the words `AND` / `OR`.",
-                  "answer": true,
-                  "whenRight": "Yes — SQL uses AND/OR words (pandas used & and | with parentheses).",
-                  "whenWrong": "It does — SQL uses AND/OR, unlike pandas' & and |.",
-                  "sim": "WHERE region='East' AND sales>500"
-                },
-                {
-                  "prompt": "`ORDER BY profit ASC` sorts from the largest profit down to the smallest.",
+                  "prompt": "`SELECT` can only return one column at a time.",
                   "answer": false,
-                  "whenRight": "Correct — ASC is ascending (smallest first); use DESC for largest first.",
-                  "whenWrong": "Backwards — ASC is smallest-first; DESC is largest-first.",
-                  "sim": "ORDER BY profit ASC  ->  biggest losses on top"
+                  "whenRight": "Correct — list as many as you want, comma-separated, or `*` for all.",
+                  "whenWrong": "Not so — SELECT takes a comma-separated list, or * for all.",
+                  "sim": "SELECT a, b, c FROM t;"
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — filter and sort",
-              "body": "[CODE] Query all orders where `profit < 0`.\n\n[PRODUCE] Return the 10 biggest losses: `WHERE profit < 0`, `ORDER BY profit ASC`, `LIMIT 10`, showing sub_category and profit.\n\n[WRITE] One sentence: which sub-category shows up most among the biggest losses?"
+              "title": "Your turn — get Superstore into SQL",
+              "body": "[PRODUCE] Import the Superstore CSV into sqliteonline.com as `superstore`.\n[CODE] `SELECT * FROM superstore LIMIT 5;` to confirm it loaded.\n[CODE] Select `sub_category, sales, profit` (10 rows), then `SELECT DISTINCT category`.\n[WRITE] One sentence: how many distinct categories are there?"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "WHERE — filter rows",
+          "summary": "Concept, video, then filtered queries with output. SQL's boolean mask.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "WHERE — filter rows",
+              "body": "## What it is\n`WHERE` keeps only the rows that match a condition — the exact pandas boolean mask, written in words. Pair it with `ORDER BY` to sort and `LIMIT` to cap.\n\n## Why it matters\nAnalysis is filtering to the rows that answer the question: the loss-making orders, one region, the biggest losses. In pandas you wrote `df[df[\"profit\"] < 0]`; in SQL it's `WHERE profit < 0`. Same idea, and recognising that mapping means you're not learning analysis again — just new syntax for logic you own.\n\n## The gotcha to internalise now\nCombine conditions with the **words** `AND` / `OR` (not pandas' `&` / `|`), and you don't need the extra parentheses pandas forced on you. `WHERE region = 'East' AND sales > 500`. Text values go in single quotes; numbers don't. Get that and WHERE is effortless."
             },
             {
               "kind": "video",
@@ -1740,18 +1722,67 @@
               "url": "https://www.youtube.com/watch?v=_kAQm4N50e4",
               "creator": "",
               "why": "WHERE filtering in context. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Filter to loss-making orders\n```sql\nSELECT order_id, sub_category, profit\nFROM superstore\nWHERE profit < 0\nLIMIT 3;\n```\n```\norder_id        sub_category  profit\nUS-2016-108966  Tables       -383.03\nCA-2017-118983  Tables       -129.44\nUS-2015-150630  Binders      -123.86\n```\n\n## Combine conditions with AND\n```sql\nSELECT order_id, region, sales\nFROM superstore\nWHERE region = 'East' AND sales > 500\nLIMIT 3;\n```\n```\norder_id        region  sales\nCA-2017-152156  East    731.94\nCA-2016-138688  East    957.58\n...\n```\n\n## The 10 biggest losses: filter + sort + cap\n```sql\nSELECT sub_category, profit\nFROM superstore\nWHERE profit < 0\nORDER BY profit ASC\nLIMIT 5;\n```\n```\nsub_category  profit\nMachines     -3839.99\nBinders      -3701.89\nTables       -3399.98\nBookcases    -1665.05\nTables       -1359.99\n```\n`ORDER BY profit ASC` puts the most negative (biggest losses) first."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`WHERE profit < 0` keeps only rows where profit is negative — SQL's boolean mask.",
+                  "answer": true,
+                  "whenRight": "Right — WHERE is the SQL filter.",
+                  "whenWrong": "It does — WHERE is exactly a boolean mask in words.",
+                  "sim": "WHERE profit < 0 -> only loss orders"
+                },
+                {
+                  "prompt": "In SQL you combine two conditions with the words AND / OR.",
+                  "answer": true,
+                  "whenRight": "Right — AND/OR words (pandas used & and |).",
+                  "whenWrong": "It does — SQL uses AND/OR, no & or |.",
+                  "sim": "WHERE region='East' AND sales>500"
+                },
+                {
+                  "prompt": "`ORDER BY profit ASC` sorts largest profit first.",
+                  "answer": false,
+                  "whenRight": "Correct — ASC is ascending (smallest/most-negative first); use DESC for largest.",
+                  "whenWrong": "Backwards — ASC is smallest-first; that's why it surfaces biggest losses.",
+                  "sim": "ASC -> biggest losses on top"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — filter and sort",
+              "body": "[CODE] Query all orders where `profit < 0`.\n[PRODUCE] Return the 10 biggest losses (`WHERE profit < 0`, `ORDER BY profit ASC`, `LIMIT 10`) showing sub_category and profit.\n[WRITE] One sentence: which sub-category dominates the biggest losses?"
             }
           ]
         },
         {
           "number": 3,
           "title": "GROUP BY — summarise into groups",
-          "summary": "One concept: GROUP BY + SUM/AVG — the pivot table of SQL. Rewrite Q1 (margin leaders).",
+          "summary": "Concept, video, then grouped queries with output. The pivot table of SQL.",
           "items": [
             {
               "kind": "lesson",
               "title": "GROUP BY — summarise into groups",
-              "body": "## What it is\n`GROUP BY` collapses rows into one row per group, paired with an **aggregate** (`SUM`, `AVG`, `COUNT`). It is the SQL pivot table — and the pandas `groupby` you already know.\n\n## Why it matters\n\"Profit per sub-category\", \"sales per region\" — every per-X question is a GROUP BY. This is the workhorse of analytical SQL.\n\n## Examples\n```sql\n-- 1. Total profit per sub-category (Q1: margin leaders)\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore\nGROUP BY sub_category\nORDER BY total_profit DESC;\n\n-- 2. Several aggregates at once\nSELECT category,\n       SUM(sales)  AS revenue,\n       AVG(profit) AS avg_profit,\n       COUNT(*)    AS orders\nFROM superstore\nGROUP BY category;\n\n-- 3. HAVING filters GROUPS after aggregating (WHERE filters rows before)\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore\nGROUP BY sub_category\nHAVING SUM(profit) < 0;     -- only loss-making sub-categories\n```"
+              "body": "## What it is\n`GROUP BY` collapses rows into one row per group, paired with an **aggregate** (`SUM`, `AVG`, `COUNT`). It is the SQL pivot table — and the same split-apply-combine as pandas `groupby`.\n\n## Why it matters\nEvery \"per X\" question — profit per sub-category, sales per region — is a GROUP BY. It's the workhorse of analytical SQL, and re-deriving your Week 1 margin finding with it proves the analysis transfers across tools (which is what makes you genuinely fluent rather than dependent on one).\n\n## WHERE vs HAVING — the classic confusion\n`WHERE` filters **rows before** grouping; `HAVING` filters **groups after** aggregating. \"Orders over $500\" is a WHERE; \"sub-categories whose *total* profit is negative\" is a HAVING (it tests an aggregate). And every column you SELECT must be either in the GROUP BY or wrapped in an aggregate — otherwise SQL doesn't know which row's value to show."
+            },
+            {
+              "kind": "video",
+              "title": "SQL aggregate functions, GROUP BY & HAVING",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "GROUP BY + aggregates explained clearly. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Q1 (margin leaders) in SQL\n```sql\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore\nGROUP BY sub_category\nORDER BY total_profit DESC\nLIMIT 5;\n```\n```\nsub_category  total_profit\nCopiers        55617.8\nPhones         44515.7\nAccessories    41936.6\nPaper          34053.6\nBinders        30221.8\n```\n\n## The loss-makers — HAVING filters the GROUPS\n```sql\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore\nGROUP BY sub_category\nHAVING SUM(profit) < 0\nORDER BY total_profit ASC;\n```\n```\nsub_category  total_profit\nTables        -17725.5\nBookcases      -3472.6\nSupplies       -1189.1\n```\nThree sub-categories lose money overall — the same answer Excel and pandas gave, now in SQL. `HAVING` (not `WHERE`) because it tests the aggregated `SUM(profit)`."
             },
             {
               "kind": "swipe",
@@ -1760,22 +1791,22 @@
                 {
                   "prompt": "`GROUP BY sub_category` with `SUM(profit)` returns one total-profit row per sub-category.",
                   "answer": true,
-                  "whenRight": "Right — group, aggregate, one row out per group. The SQL pivot.",
-                  "whenWrong": "It does — GROUP BY + an aggregate yields one summarised row per group.",
-                  "sim": "Phones    12,300\nTables    -8,200\nChairs    26,100"
+                  "whenRight": "Right — group, aggregate, one row per group. The SQL pivot.",
+                  "whenWrong": "It does — GROUP BY + aggregate = one summarised row per group.",
+                  "sim": "Copiers 55617.8 | Tables -17725.5"
                 },
                 {
-                  "prompt": "`HAVING` filters groups AFTER aggregation, while `WHERE` filters rows before it.",
+                  "prompt": "`HAVING` filters groups after aggregation, while `WHERE` filters rows before it.",
                   "answer": true,
-                  "whenRight": "Yes — WHERE = rows pre-aggregation, HAVING = groups post-aggregation.",
-                  "whenWrong": "Correct distinction — WHERE filters rows first, HAVING filters the grouped results.",
-                  "sim": "WHERE profit<0 (rows)\nHAVING SUM(profit)<0 (groups)"
+                  "whenRight": "Right — WHERE pre-aggregation (rows), HAVING post-aggregation (groups).",
+                  "whenWrong": "Correct — WHERE filters rows first, HAVING filters grouped results.",
+                  "sim": "WHERE profit<0 (rows) | HAVING SUM(profit)<0 (groups)"
                 },
                 {
-                  "prompt": "You can freely SELECT a raw column that's neither in GROUP BY nor inside an aggregate.",
+                  "prompt": "You can SELECT a raw column that's neither grouped nor aggregated.",
                   "answer": false,
-                  "whenRight": "Correct — every selected column must be grouped or aggregated, or SQL errors.",
-                  "whenWrong": "Not allowed — non-grouped, non-aggregated columns are ambiguous and error out.",
+                  "whenRight": "Correct — every selected column must be in GROUP BY or inside an aggregate.",
+                  "whenWrong": "Not allowed — non-grouped, non-aggregated columns error out.",
                   "sim": "GROUP BY category; SELECT sub_category -> error"
                 }
               ]
@@ -1783,70 +1814,80 @@
             {
               "kind": "exercise",
               "title": "Your turn — Q1 in SQL",
-              "body": "[CODE] Total profit per `sub_category`, sorted highest to lowest (this is Q1, the margin leaders, in SQL).\n\n[PRODUCE] Add a `HAVING` clause to show only the sub-categories with negative total profit.\n\n[WRITE] One sentence: do the loss-makers match what you found in Excel/pandas?"
-            },
-            {
-              "kind": "video",
-              "title": "SQL aggregate functions, GROUP BY & HAVING",
-              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
-              "creator": "",
-              "why": "GROUP BY + aggregates explained clearly. Optional."
+              "body": "[CODE] Total profit per `sub_category`, sorted high to low (Q1 in SQL).\n[PRODUCE] Add `HAVING` to show only sub-categories with negative total profit.\n[WRITE] One sentence: do the loss-makers match your Excel/pandas results?"
             }
           ]
         },
         {
           "number": 4,
           "title": "Aggregate over time (year-over-year)",
-          "summary": "One concept: group by a slice of a date to get a trend — Q2 (YoY) in SQL.",
+          "summary": "Concept, video, then the yearly trend query with output.",
           "items": [
             {
               "kind": "lesson",
               "title": "Aggregate over time (year-over-year)",
-              "body": "## What it is\nTo see a trend you group by a **slice of the date**. In SQLite, `strftime('%Y', order_date)` pulls the year out, and you GROUP BY that.\n\n## Why it matters\n\"Is the business growing?\" is a time question. Grouping by year (or month) turns a pile of orders into a trend line — the Q2 year-over-year answer.\n\n## Examples\n```sql\n-- 1. Yearly sales\nSELECT strftime('%Y', order_date) AS yr,\n       SUM(sales) AS revenue\nFROM superstore\nGROUP BY yr\nORDER BY yr;\n\n-- 2. Sales AND profit per year, side by side\nSELECT strftime('%Y', order_date) AS yr,\n       SUM(sales)  AS revenue,\n       SUM(profit) AS profit\nFROM superstore\nGROUP BY yr\nORDER BY yr;\n```\n\nRead the rows top to bottom: is revenue climbing year over year? By how much?"
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "Grouping by the year pulled from a date gives one total per year — a trend.",
-                  "answer": true,
-                  "whenRight": "Right — extract the year, GROUP BY it, and each row is one year's total.",
-                  "whenWrong": "It does — grouping on the extracted year yields a per-year trend.",
-                  "sim": "2021  484k\n2022  609k\n2023  733k"
-                },
-                {
-                  "prompt": "`GROUP BY` only works on text columns, never on values derived from a date.",
-                  "answer": false,
-                  "whenRight": "Correct — you can group by any expression, including a year extracted from a date.",
-                  "whenWrong": "Not true — you can GROUP BY a derived value like strftime('%Y', date).",
-                  "sim": "GROUP BY strftime('%Y', order_date)  -- works"
-                }
-              ]
-            },
-            {
-              "kind": "exercise",
-              "title": "Your turn — Q2 (YoY) in SQL",
-              "body": "[CODE] Using `strftime('%Y', order_date)`, return revenue and profit per year, ordered by year.\n\n[WRITE] One sentence: is revenue growing year over year, and roughly by how much?"
+              "body": "## What it is\nTo see a trend you group by a **slice of the date**. In SQLite, `strftime('%Y', order_date)` extracts the year as text, and you GROUP BY that to get one total per year.\n\n## Why it matters\n\"Is the business growing?\" is a time question, and time questions are answered by grouping on a date part — year, quarter, month. It turns a pile of dated orders into a trend line: the Q2 year-over-year answer you computed in pandas, now in SQL. Grouping by a *derived* value (not a raw column) is also a small but important leap — it shows GROUP BY works on expressions, not just columns.\n\n## How to read YoY\nOnce you have revenue per year, year-over-year growth is just each year compared to the one above it. Even reading the rows top to bottom tells you the direction; the exact % is the next refinement."
             },
             {
               "kind": "video",
               "title": "SQL aggregate functions & GROUP BY",
               "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
               "creator": "",
-              "why": "Same GROUP BY concept, applied to a time slice. Optional."
+              "why": "The grouping concept, applied to a time slice. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Revenue and profit per year\n```sql\nSELECT strftime('%Y', order_date) AS yr,\n       SUM(sales)  AS revenue,\n       SUM(profit) AS profit\nFROM superstore\nGROUP BY yr\nORDER BY yr;\n```\n```\nyr     revenue    profit\n2014   484247.5   49544.0\n2015   470532.5   61618.6\n2016   609205.6   81795.2\n2017   733215.3  ...\n```\nRead it top to bottom: revenue dips slightly in 2015, then climbs strongly through 2016-2017 — a growing business. Grouping by the *extracted year* (an expression, not a stored column) is the key move."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Grouping by the year extracted from a date gives one total per year — a trend.",
+                  "answer": true,
+                  "whenRight": "Right — extract the year, GROUP BY it, one row per year.",
+                  "whenWrong": "It does — grouping on the extracted year yields a per-year trend.",
+                  "sim": "2014 484k | 2016 609k | 2017 733k"
+                },
+                {
+                  "prompt": "`GROUP BY` only works on stored text columns, never on a value derived from a date.",
+                  "answer": false,
+                  "whenRight": "Correct — you can GROUP BY any expression, like strftime('%Y', order_date).",
+                  "whenWrong": "Not true — GROUP BY works on derived expressions too.",
+                  "sim": "GROUP BY strftime('%Y', order_date)"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — Q2 (YoY) in SQL",
+              "body": "[CODE] Using `strftime('%Y', order_date)`, return revenue and profit per year, ordered by year.\n[WRITE] One sentence: is revenue growing year over year, and roughly by how much?"
             }
           ]
         },
         {
           "number": 5,
           "title": "Top customers (CLV in SQL)",
-          "summary": "One concept: GROUP BY customer + ORDER BY + LIMIT — the same CLV, now in SQL.",
+          "summary": "Concept, video, then the CLV leaderboard query with output.",
           "items": [
             {
               "kind": "lesson",
               "title": "Top customers (CLV in SQL)",
-              "body": "## What it is\nThe CLV you computed in pandas last week is a single SQL query: group by the customer, sum their profit, sort, and cap.\n\n## Why it matters\nThis is the payoff of learning the same idea in two tools — you'll *see* that pandas `groupby` and SQL `GROUP BY` express the identical logic. That transfer is what makes you tool-fluent, not tool-dependent.\n\n## Examples\n```sql\n-- 1. Top 10 customers by lifetime profit\nSELECT customer_name,\n       SUM(profit) AS clv,\n       COUNT(DISTINCT order_id) AS orders\nFROM superstore\nGROUP BY customer_name\nORDER BY clv DESC\nLIMIT 10;\n```\n\nCompare this list to your pandas result from Week 4 — it should match exactly. Same data, same logic, different language."
+              "body": "## What it is\nThe CLV you computed in pandas last week is a single SQL query: group by the customer, sum their profit, sort, and cap with LIMIT.\n\n## Why it matters\nThis is the payoff of learning one idea in two tools. When you see that `df.groupby(\"Customer Name\")[\"Profit\"].sum()` and `GROUP BY customer_name ... SUM(profit)` produce the *identical* leaderboard, the concept detaches from the syntax — and that transfer is exactly what makes a hire valuable. You can drop into any stack and express the analysis.\n\n## The pattern\n`GROUP BY customer + SUM(profit) + ORDER BY DESC + LIMIT 10` is a reusable shape: \"top N things by some total\". You'll use it for top products, top regions, top anything."
+            },
+            {
+              "kind": "video",
+              "title": "SQL GROUP BY & aggregates",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "The grouping concept behind the CLV query. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Top 10 customers by lifetime profit\n```sql\nSELECT customer_name,\n       SUM(profit) AS clv,\n       COUNT(DISTINCT order_id) AS orders\nFROM superstore\nGROUP BY customer_name\nORDER BY clv DESC\nLIMIT 5;\n```\n```\ncustomer_name    clv      orders\nTamara Chand     8981.3   5\nRaymond Buch     6976.1   6\nSanjit Chand     5757.4   9\nHunter Lopez     5622.4   6\nAdrian Barton    5444.8   10\n```\nThis is the **same leaderboard** your pandas CLV table produced in Week 4 — identical names, identical numbers. Same data, same logic, different language. `COUNT(DISTINCT order_id)` is the SQL of `nunique()` — real orders, not line-items."
             },
             {
               "kind": "swipe",
@@ -1855,90 +1896,88 @@
                 {
                   "prompt": "Top-10 customers = GROUP BY customer, SUM(profit), ORDER BY DESC, LIMIT 10.",
                   "answer": true,
-                  "whenRight": "Right — that one query is CLV plus a leaderboard.",
-                  "whenWrong": "It is — group, sum, sort, cap: the whole top-customers query.",
-                  "sim": "GROUP BY customer_name\nORDER BY clv DESC LIMIT 10"
+                  "whenRight": "Right — group, sum, sort, cap: the whole leaderboard.",
+                  "whenWrong": "It is — that one query is CLV plus a ranking.",
+                  "sim": "GROUP BY customer_name ORDER BY clv DESC LIMIT 10"
                 },
                 {
                   "prompt": "pandas `groupby` and SQL `GROUP BY` express the same underlying idea.",
                   "answer": true,
-                  "whenRight": "Yes — split-apply-combine in both; only the syntax differs.",
-                  "whenWrong": "They do — both are split-apply-combine; the logic is identical.",
-                  "sim": "pandas: groupby('cust')['profit'].sum()\nSQL: GROUP BY customer SUM(profit)"
+                  "whenRight": "Right — split-apply-combine in both; only syntax differs.",
+                  "whenWrong": "They do — both are split-apply-combine; identical logic.",
+                  "sim": "pandas groupby == SQL GROUP BY"
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — CLV in SQL",
-              "body": "[CODE] Return the top 10 customers by lifetime profit, with their order count, using GROUP BY + ORDER BY + LIMIT.\n\n[WRITE] One sentence: does this top-10 match the pandas CLV table from Week 4?"
-            },
-            {
-              "kind": "video",
-              "title": "SQL GROUP BY & aggregates",
-              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
-              "creator": "",
-              "why": "The grouping concept behind the CLV query. Optional."
+              "body": "[CODE] Return the top 10 customers by lifetime profit with their order count (GROUP BY + ORDER BY + LIMIT).\n[WRITE] One sentence: does this match your pandas CLV top-10 from Week 4?"
             }
           ]
         },
         {
           "number": 6,
           "title": "Save your queries",
-          "summary": "One habit: keep every query in a queries.sql file — reproducible, reviewable analysis.",
+          "summary": "Keep every query in a commented queries.sql — reproducible, reviewable analysis.",
           "items": [
             {
               "kind": "lesson",
               "title": "Save your queries",
-              "body": "## What it is\nCollect every query you wrote this week into one file, `queries.sql`, each with a short comment saying what it answers.\n\n## Why it matters\nA saved, commented `.sql` file is a **deliverable**: anyone can rerun it against the data and get the same answers. Ad-hoc queries you typed and lost are not analysis — reproducible ones are.\n\n## Examples\n```sql\n-- Q1: Margin leaders and laggards\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore GROUP BY sub_category ORDER BY total_profit DESC;\n\n-- Q2: Year-over-year revenue\nSELECT strftime('%Y', order_date) AS yr, SUM(sales) AS revenue\nFROM superstore GROUP BY yr ORDER BY yr;\n\n-- Q3: Top 10 customers by lifetime profit\nSELECT customer_name, SUM(profit) AS clv\nFROM superstore GROUP BY customer_name ORDER BY clv DESC LIMIT 10;\n```"
+              "body": "## What it is\nCollect every query you wrote this week into one file, `queries.sql`, each with a one-line comment saying what it answers.\n\n## Why it matters\nA saved, commented `.sql` file is a **deliverable**, not a throwaway: anyone (including future-you) can rerun it against the data and reproduce every answer. Reproducibility is the line between real analysis and ad-hoc poking — and in a job, the queries you can hand over are worth far more than the ones you typed and lost."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## queries.sql — your reusable analysis\n```sql\n-- Q1: Margin leaders and laggards\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore GROUP BY sub_category ORDER BY total_profit DESC;\n\n-- Q2: Year-over-year revenue and profit\nSELECT strftime('%Y', order_date) AS yr, SUM(sales) AS revenue, SUM(profit) AS profit\nFROM superstore GROUP BY yr ORDER BY yr;\n\n-- Q3: Top 10 customers by lifetime profit (CLV)\nSELECT customer_name, SUM(profit) AS clv\nFROM superstore GROUP BY customer_name ORDER BY clv DESC LIMIT 10;\n```\nRe-run each in sqliteonline to confirm they still work end to end."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "Saving your queries in a commented .sql file makes the analysis reproducible and reviewable.",
+                  "prompt": "A commented .sql file makes your analysis reproducible and reviewable by others.",
                   "answer": true,
-                  "whenRight": "Right — anyone can rerun it and get the same answer. That's real analysis.",
-                  "whenWrong": "It does — a commented .sql file is a reproducible deliverable, not a throwaway.",
-                  "sim": "queries.sql  ->  rerun anytime, same results"
+                  "whenRight": "Right — anyone can rerun it and get the same answers.",
+                  "whenWrong": "It does — a commented query file is a reproducible deliverable.",
+                  "sim": "queries.sql -> rerun anytime, same results"
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — build queries.sql",
-              "body": "[PRODUCE] Create `queries.sql` containing your Q1, Q2, and top-customers queries, each with a one-line `-- comment` describing what it answers.\n\n[CODE] Re-run each one in sqliteonline to confirm it still works."
+              "body": "[PRODUCE] Create `queries.sql` with your Q1, Q2, and top-customers queries, each with a `-- comment`.\n[CODE] Re-run each in sqliteonline to confirm it works."
             }
           ]
         },
         {
           "number": 7,
           "title": "Ship v0.4",
-          "summary": "Commit queries.sql + a short note, tag v0.4. You've now done Superstore in Excel, Python, and SQL.",
+          "summary": "Commit queries.sql, tag v0.4. Superstore now done in Excel, Python, and SQL.",
           "items": [
             {
               "kind": "lesson",
               "title": "Ship v0.4",
-              "body": "## What it is\nShip the SQL version: commit `queries.sql` and a short README note, tag `v0.4`.\n\n## Why it matters\nYou've now answered the same business questions in **Excel, pandas, and SQL**. That's not three tricks — it's proof you understand the *analysis* well enough to express it in any tool. Employers read that as fluency, and it's rare."
+              "body": "## What it is\nShip the SQL version: commit `queries.sql` and a short README note, tag `v0.4`.\n\n## Why it matters\nYou've now answered the same business questions in **Excel, pandas, and SQL**. That's not three party tricks — it's proof you understand the *analysis* deeply enough to express it in any tool. Employers read that as genuine fluency, and it's rarer than you'd think."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "Solving the same analysis in Excel, pandas, and SQL proves analytical fluency, not just one tool.",
+                  "prompt": "Solving one analysis in Excel, pandas, and SQL proves fluency, not just one tool.",
                   "answer": true,
-                  "whenRight": "Right — the transfer across tools is the signal that you understand the analysis itself.",
-                  "whenWrong": "It does — expressing one analysis in three tools shows you own the thinking, not a syntax.",
-                  "sim": "Excel + pandas + SQL  ->  same answers, three tools"
+                  "whenRight": "Right — the transfer across tools shows you own the thinking.",
+                  "whenWrong": "It does — three tools, same answers = you understand the analysis itself.",
+                  "sim": "Excel + pandas + SQL -> same answers"
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Acceptance — v0.4 is done when",
-              "body": "[PRODUCE] `queries.sql` answers Q1 (margins), Q2 (YoY), and top customers, each commented.\n\n[PRODUCE] A short note in your README confirming the SQL answers match the Excel/pandas ones.\n\n[CODE] Commit, tag, push:\n```\ngit add queries.sql\ngit commit -m \"Superstore v0.4: SQL version — same answers, in SQL\"\ngit tag v0.4\ngit push --tags\n```\n\n[WRITE] Drop your repo link in the dashboard check-in."
+              "body": "[PRODUCE] `queries.sql` answers Q1, Q2, and top customers, each commented.\n[PRODUCE] A README note confirming the SQL answers match the Excel/pandas ones.\n[CODE] Commit, tag, push:\n```\ngit add queries.sql\ngit commit -m \"Superstore v0.4: SQL version — same answers, in SQL\"\ngit tag v0.4\ngit push --tags\n```\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
