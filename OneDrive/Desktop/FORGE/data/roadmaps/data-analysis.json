@@ -7828,85 +7828,248 @@
       "days": [
         {
           "number": 1,
-          "title": "Capstone brief",
-          "summary": "",
+          "title": "What a capstone is",
+          "summary": "Your own multi-source project, scoped by you. Concept + what makes it different.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Pick the scenario",
-              "body": "Pick ONE fictional company:\n  A. ForgeRetail — combine sales (Superstore-like) + customer (HR-like demographics) + reviews (Olist-like)\n  B. ForgeMedia — combine subscribers + content engagement + ad revenue\n  C. ForgeHealth — combine patient visits + outcomes + costs\n\nA is recommended — you already have similar data on disk. B and C need synthetic data."
+              "kind": "lesson",
+              "title": "What a capstone is",
+              "body": "## What it is\nThe capstone is the fourth and final DA project — and the first one **you** define. Unlike Superstore, HR, and Olist (handed to you), here you choose the question, combine **multiple data sources**, and build a polished multi-page dashboard end to end.\n\n## Why it matters\nA capstone is what a hiring manager actually looks for: proof you can take an *ambiguous* business problem, scope it, source and model the data, analyse it, and present a decision — without anyone holding your hand. The three guided projects taught the skills; the capstone proves you can apply them *unprompted*, which is the entire difference between someone who can follow a tutorial and someone who can do the job.\n\n## What makes it harder (and better)\nMultiple sources (you must join/relate them), self-defined scope (you decide what's worth answering), and a real deliverable (a 4-page dashboard a stakeholder could use). Ambiguity is the point — embrace it."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (capstone shape)",
+              "body": "```text\nA good capstone:\n  QUESTION: one clear business question you chose\n  SOURCES:  2-3 datasets you combine (e.g. sales + weather + holidays)\n  MODEL:    related tables joined on keys\n  OUTPUT:   a 4-page interactive dashboard + a CEO memo + a demo\n  PROOF:    \"I scoped, sourced, modelled, analysed, and presented this myself.\"\n```\nThe guided projects were practice; this is the performance."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The capstone's value is proving you can scope and execute an ambiguous problem unprompted.",
+                  "answer": true,
+                  "whenRight": "Right — that self-direction is what employers screen for.",
+                  "whenWrong": "It is — handling ambiguity end to end is the capstone's whole point.",
+                  "sim": "tutorials teach skills; the capstone proves judgement"
+                },
+                {
+                  "prompt": "A capstone should use a single, pre-cleaned dataset like the earlier projects.",
+                  "answer": false,
+                  "whenRight": "Correct — it should combine multiple sources you scope and model yourself.",
+                  "whenWrong": "Not so — multi-source + self-defined scope is what makes it a capstone.",
+                  "sim": "2-3 sources joined, your own question"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — pick the problem",
+              "body": "[WRITE] Propose a capstone: one business question and 2-3 data sources you'd combine to answer it."
             }
           ]
         },
         {
           "number": 2,
           "title": "Write the SPEC",
-          "summary": "",
+          "summary": "A one-page plan before you build. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Write the SPEC",
+              "body": "## What it is\nA one-page **spec**: the question, the audience, the data sources, the key metrics, and what 'done' looks like — written before you build anything.\n\n## Why it matters\nScoping is where capstones live or die. Without a spec you'll wander, over-build, and never finish. The spec is a contract with yourself that defines the finish line and keeps you from scope-creep. Professionally, the analyst who writes a crisp spec before diving in is the one who delivers on time — it's a senior habit."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (spec template)",
+              "body": "```text\n## Capstone SPEC\nQuestion: \"How do weather and holidays affect store sales, and which stores\n           are most weather-sensitive?\"\nAudience: regional operations director.\nSources:  daily sales (synthetic), public weather API, public holiday calendar.\nMetrics:  sales, weather-sensitivity index, holiday lift.\nDone when: a 4-page dashboard + CEO memo answer the question with a recommendation.\n```\nOne page. It defines the finish line."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A written spec (question, sources, metrics, 'done') prevents scope-creep and an unfinished capstone.",
+                  "answer": true,
+                  "whenRight": "Right — it's the contract that defines the finish line.",
+                  "whenWrong": "It does — the spec keeps you from wandering and over-building.",
+                  "sim": "spec = the finish line, written before building"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "SPEC.md",
-              "body": "Make repo forge-da-capstone/. SPEC.md:\n      # Capstone\n      ## Company\n  ForgeRetail (fictional)\n      ## Audience\n  CEO + 4 VPs (Sales, Ops, Marketing, Finance)\n      ## Dashboard pages\n      1. Executive overview (1 page)\n      2. Sales detail\n      3. Customer / segment\n      4. Operations\n      ## Data sources\n  - sales.csv (Superstore-style)\n  - customers.csv (HR-style)\n  - reviews.csv (Olist-style)\n      ## Definition of done\n  4-page dashboard + 1-page memo for CEO + 1 deck for board"
+              "title": "Your turn — the spec",
+              "body": "[WRITE] Write a one-page capstone spec: question, audience, sources, metrics, and 'done when'."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Build the synthetic dataset",
-          "summary": "",
+          "title": "Build the dataset",
+          "summary": "Source or synthesise realistic multi-source data. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the dataset",
+              "body": "## What it is\nAssemble your data: combine real public datasets, or generate a realistic **synthetic** dataset (with pandas/`numpy`) when real data isn't available — covering the sources your spec named.\n\n## Why it matters\nSourcing/creating data is a real skill (you practised it scraping). A good synthetic dataset must be *realistic* — sensible distributions, plausible relationships (sales actually dip in bad weather) — so the analysis has something true to find. Junk data makes for junk insight; building believable data is itself analytical thinking."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (synthetic data)",
+              "body": "```python\nimport pandas as pd, numpy as np\nn = 2000\ndf = pd.DataFrame({\n    \"date\": pd.date_range(\"2024-01-01\", periods=n, freq=\"h\"),\n    \"store\": np.random.choice([\"A\",\"B\",\"C\"], n),\n    \"temp_c\": np.random.normal(18, 8, n).round(1),\n})\n# build a REAL relationship: colder -> fewer sales\ndf[\"sales\"] = (200 - 3*np.maximum(0, 10 - df[\"temp_c\"]) + np.random.normal(0,20,n)).round(0)\nprint(df.head(3))\n```\n```\n                 date store  temp_c  sales\n0 2024-01-01 00:00:00     B    12.4  188.0\n1 2024-01-01 01:00:00     A     6.1  168.0\n2 2024-01-01 02:00:00     C    21.7  205.0\n```\nThe baked-in relationship (cold -> lower sales) is what your analysis will 'discover'."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A synthetic dataset must have realistic distributions and relationships for the analysis to find anything true.",
+                  "answer": true,
+                  "whenRight": "Right — bake in real relationships, or there's nothing to discover.",
+                  "whenWrong": "It must — believable data is what makes the analysis meaningful.",
+                  "sim": "cold weather -> lower sales, built into the data"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Combine + augment",
-              "body": "Combine Sample Superstore + Olist + IBM HR slices:\n  - Take 1000 Superstore orders as 'sales'\n  - Take 200 Olist reviews as 'reviews', randomly link to sales\n  - Take 100 IBM employees as 'staff', randomly link some sales to a salesperson\nSave 3 CSVs in data/."
+              "title": "Your turn — build it",
+              "body": "[PRODUCE] Assemble or synthesise your multi-source dataset with realistic relationships; print a sample."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Schema diagram",
-          "summary": "",
+          "title": "Diagram the schema",
+          "summary": "Map how the sources relate. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Diagram the schema",
+              "body": "## What it is\nDraw a simple **schema diagram**: each table, its key columns, and the relationships (which key joins to which). A box-and-line sketch is enough.\n\n## Why it matters\nWith multiple sources, you must know how they connect *before* you join, or you'll produce wrong merges and silently wrong numbers. The diagram is your map — it forces you to identify the keys (date, store_id) that link the sources and to spot a missing link before it bites. Data modelling is a core, often-overlooked analyst skill."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ sales ]----store_id----[ stores ]\n    | date\n[ weather ]--date+location--/\n[ holidays ]--date----------/\nKeys: date links sales<->weather<->holidays; store_id links sales<->stores.\n```\nNow you know exactly which columns to merge on."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A schema diagram identifies the keys that link your sources before you attempt joins.",
+                  "answer": true,
+                  "whenRight": "Right — knowing the keys prevents wrong merges.",
+                  "whenWrong": "It does — the diagram maps the join columns up front.",
+                  "sim": "date + store_id are the links"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "schema.png",
-              "body": "Draw how sales / customers / reviews / staff connect. Save as schema.png."
+              "title": "Your turn — the diagram",
+              "body": "[PRODUCE] Sketch a schema diagram of your sources, marking the key columns that join them."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Build the data model in Excel",
-          "summary": "",
+          "title": "Build the data model",
+          "summary": "Join the sources into one analysable model. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the data model",
+              "body": "## What it is\nExecute the joins from your diagram to produce the unified, analysis-ready table(s) — `merge` the sources on their keys (the skill from the Olist week, now on your own data).\n\n## Why it matters\nThis is where the multi-source nature pays off: a question like 'are cold-weather days worse for store B?' needs sales *and* weather joined. The model is the foundation everything downstream sits on, so getting the joins (and join types) right is critical — a wrong join here corrupts every KPI."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Join sales to weather on date\n```python\nmodel = sales.merge(weather, on=\"date\", how=\"left\")\nprint(model.shape)\nprint(model[[\"date\",\"store\",\"temp_c\",\"sales\"]].head(2))\nprint(\"nulls after join:\", model[\"temp_c\"].isna().sum())\n```\n```\n(2000, 6)\n                 date store  temp_c  sales\n0 2024-01-01 00:00:00     B    12.4  188.0\n1 2024-01-01 01:00:00     A     6.1  168.0\nnulls after join: 0\n```\nClean left join, no orphaned rows — the model is ready. Always check post-join nulls/row-count to confirm the join behaved."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "After joining sources, checking row count and post-join nulls confirms the merge behaved correctly.",
+                  "answer": true,
+                  "whenRight": "Right — a bad join shows up as exploded rows or unexpected nulls.",
+                  "whenWrong": "It does — verify the join didn't drop/duplicate/orphan rows.",
+                  "sim": "check shape + isna() after every merge"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Data Model relationships",
-              "body": "Open Excel. Power Pivot / Data Model. Add 3 tables. Define relationships (sales.customer_id → customers.id, etc).\nOR use Google Sheets + VLOOKUP across sheets. Power Pivot is preferred."
+              "title": "Your turn — build the model",
+              "body": "[CODE] Merge your sources per the schema; print the shape and confirm post-join nulls are as expected."
             }
           ]
         },
         {
           "number": 6,
           "title": "First KPIs",
-          "summary": "",
+          "summary": "Define the headline metrics. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "First KPIs",
+              "body": "## What it is\nCompute the first version of your capstone's headline KPIs — the 3-4 numbers your dashboard will lead with, derived from the joined model.\n\n## Why it matters\nKPIs are the spine of the dashboard; defining them now (and confirming they compute) means the rest of the build is just presenting them well. Choosing the *right* few KPIs — the ones that actually answer your spec's question — is the judgement that separates a focused dashboard from a cluttered one."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Headline KPIs from the model\n```python\nprint(\"Total sales:\", model[\"sales\"].sum())\ncold = model[model[\"temp_c\"] < 10][\"sales\"].mean()\nwarm = model[model[\"temp_c\"] >= 10][\"sales\"].mean()\nprint(f\"Cold-day avg: {cold:.0f}  Warm-day avg: {warm:.0f}\")\nprint(f\"Weather sensitivity: {(warm-cold)/warm:.1%} drop on cold days\")\n```\n```\nTotal sales: 392140.0\nCold-day avg: 171  Warm-day avg: 199\nWeather sensitivity: 14.1% drop on cold days\n```\nThere's your headline KPI and your spec's answer in one: sales drop ~14% on cold days. The dashboard will showcase this."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Choosing the few KPIs that answer your spec's question keeps the dashboard focused, not cluttered.",
+                  "answer": true,
+                  "whenRight": "Right — KPIs should map to the question, not show everything.",
+                  "whenWrong": "It does — spec-aligned KPIs are the focused dashboard's spine.",
+                  "sim": "weather sensitivity KPI answers the spec"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "3 KPIs",
-              "body": "Using the data model:\n  - Total revenue\n  - Avg review score\n  - % sales tied to a staff member\nThese are the foundation."
+              "title": "Your turn — first KPIs",
+              "body": "[CODE] Compute 3-4 headline KPIs from your model that answer your spec's question; print them."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.1",
-          "summary": "",
+          "title": "Ship v0.1",
+          "summary": "Commit spec + model + KPIs, tag capstone-v0.1.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.1",
+              "body": "## What it is\nShip the foundation: spec, dataset, schema, joined model, and first KPIs. Tag `capstone-v0.1`.\n\n## Why it matters\nThe hardest part of a capstone is scoping and modelling — done once, the rest is presentation. Shipping a clean v0.1 (a defined question + a working multi-source model + headline KPIs) means the project is now de-risked and on rails to completion."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Scoping + modelling is the hard part of a capstone; once shipped as v0.1 the rest is presentation.",
+                  "answer": true,
+                  "whenRight": "Right — a working model + KPIs de-risks the whole project.",
+                  "whenWrong": "It is — with the model done, the remaining work is presenting it.",
+                  "sim": "v0.1 = spec + model + KPIs = de-risked"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.1",
-              "body": "      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ SPEC.md\n  ☐ 3 CSVs in data/\n  ☐ Schema diagram\n  ☐ Data model with relationships\n  ☐ First 3 KPIs\n  ☐ v0.1 tag"
+              "title": "Acceptance — v0.1 is done when",
+              "body": "[PRODUCE] Repo has the spec, dataset, schema diagram, joined model, and first KPIs.\n[CODE] `git tag capstone-v0.1`; push. Drop your repo link."
             }
           ]
         }
@@ -7997,84 +8160,240 @@
         {
           "number": 1,
           "title": "Page 1 layout",
-          "summary": "",
+          "summary": "Design the overview page first. Concept + layout.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Executive Overview",
-              "body": "What's on the CEO's single-page view?\n  - 6 KPIs (revenue, growth, customer count, avg review, NPS, ops efficiency)\n  - 1 trend chart\n  - 1 segment-of-business breakdown chart"
+              "kind": "lesson",
+              "title": "Page 1 layout",
+              "body": "## What it is\nPage 1 is the **overview** — the executive summary of your capstone: KPI band on top, then the 2-3 charts that answer the headline question, designed before you build anything.\n\n## Why it matters\nDesigning the layout first (on paper or in your head) prevents the common mistake of building charts and cramming them in afterwards. Page 1 must answer the spec's question at a glance; everything else is detail pages. A deliberate layout is what makes a dashboard feel designed, not assembled."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nPAGE 1 — OVERVIEW\n+-----------------------------------------------------+\n| KPI: Total Sales | Cold-day drop 14% | Top store    |   <- KPI band\n+-----------------------------------------------------+\n| [trend: sales over time]  [bar: sales by store]     |\n| [the headline chart: sales vs temperature]          |\n+-----------------------------------------------------+\n```\nThe headline question answered on one screen."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Page 1 should answer the headline question at a glance; details belong on later pages.",
+                  "answer": true,
+                  "whenRight": "Right — overview first, drill-down pages after.",
+                  "whenWrong": "It does — page 1 is the executive summary, not everything.",
+                  "sim": "KPI band + the headline chart on page 1"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — design page 1",
+              "body": "[WRITE/PRODUCE] Sketch the page-1 layout: KPI band + the 2-3 charts that answer your headline question."
             }
           ]
         },
         {
           "number": 2,
           "title": "Build the KPI band",
-          "summary": "",
+          "summary": "The top-row numbers. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the KPI band",
+              "body": "## What it is\nThe row of big-number KPI tiles at the top of page 1 — your headline metrics, formatted large and clear.\n\n## Why it matters\nThe KPI band is the first thing anyone reads; it must communicate the state of the business in seconds. Clean formatting (rounded numbers, clear labels, maybe a trend arrow) is what makes it glanceable. This is the same KPI skill from the dashboard weeks, now leading your capstone."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n+----------------+----------------+----------------+\n| Total Sales    | Cold-day drop  | Best store     |\n|   $392k        |    14.1%       |   Store C      |\n+----------------+----------------+----------------+\nBig, rounded, labelled. Optional: a small up/down arrow vs last period.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "KPI tiles should be large, rounded, and clearly labelled so they're readable in seconds.",
+                  "answer": true,
+                  "whenRight": "Right — glanceability is the whole job of a KPI band.",
+                  "whenWrong": "It is — clean, rounded, labelled numbers read instantly.",
+                  "sim": "$392k not $392,140.00"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "6 cards in a row",
-              "body": "Excel: insert 6 large text boxes. Each linked to a SUMIFS/COUNTIFS that computes the KPI from the data model.\nStyle: big number top, label below, micro-trend arrow if you can."
+              "title": "Your turn — KPI band",
+              "body": "[PRODUCE] Build the page-1 KPI band with your 3-4 headline metrics, cleanly formatted."
             }
           ]
         },
         {
           "number": 3,
           "title": "Trend chart",
-          "summary": "",
+          "summary": "Show the metric over time. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Trend chart",
+              "body": "## What it is\nA line chart of your key metric over time — the standard 'is it going up or down?' visual on page 1.\n\n## Why it matters\nTime trends answer the question every stakeholder asks first. A clean trend (labelled axes, maybe a reference line for average or target) instantly shows direction and seasonality — and seasonality might itself be a finding (sales dip every cold month)."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nsales\n  |      /\\      /\\\n  |   /\\/  \\  /\\/  \\      <- monthly sales, with cold-month dips visible\n  | /        \\/        \\\n  +------------------------> time\nAdd a dashed average line so 'above/below normal' is obvious.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A trend chart answers 'is the metric going up or down?' and can reveal seasonality.",
+                  "answer": true,
+                  "whenRight": "Right — direction + seasonality at a glance.",
+                  "whenWrong": "It does — trends show direction and recurring patterns.",
+                  "sim": "cold-month dips visible in the trend"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Monthly revenue",
-              "body": "Pivot: rows = month, value = SUM revenue. Line chart on the dashboard. Compare vs LY."
+              "title": "Your turn — trend chart",
+              "body": "[PRODUCE] Build a trend line of your key metric over time with a reference (average/target) line."
             }
           ]
         },
         {
           "number": 4,
           "title": "Segment breakdown",
-          "summary": "",
+          "summary": "Break the metric by a key dimension. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Segment breakdown",
+              "body": "## What it is\nA bar chart breaking your metric by a key dimension (store, region, product) — showing *where* the totals come from.\n\n## Why it matters\nA total hides the distribution; the breakdown shows which segment drives or drags it. It's the chart that turns 'sales are $392k' into 'Store C drives 40% of it' — the actionable detail. This is groupby-then-bar, the most common analytical visual."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nStore C ############## 40%\nStore A #########      28%\nStore B ########       24%  ...\nSorted descending so the biggest contributor is obvious.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A segment breakdown shows which part of the business drives the total a single KPI hides.",
+                  "answer": true,
+                  "whenRight": "Right — it turns a total into 'where it comes from'.",
+                  "whenWrong": "It does — the breakdown localises what drives the KPI.",
+                  "sim": "total $392k -> Store C is 40% of it"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Donut or bar",
-              "body": "Revenue by Segment (Consumer / Corporate / Home Office). Compact chart at bottom right of page."
+              "title": "Your turn — breakdown",
+              "body": "[PRODUCE] Build a sorted bar chart of your metric by a key dimension."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Page 2: Sales Detail",
-          "summary": "",
+          "title": "Page 2: the detail view",
+          "summary": "A drill-down page. Concept + layout.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Page 2: the detail view",
+              "body": "## What it is\nPage 2 is the **detail** page — a deeper, filterable table/charts for someone who wants to dig past the overview (e.g. sales detail by store and day).\n\n## Why it matters\nTwo-page structure separates the *summary* (page 1, for executives) from the *detail* (page 2, for analysts who want specifics). This layering is what makes a dashboard serve multiple audiences without cluttering the front page. The overview answers 'what'; the detail answers 'show me'."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nPAGE 2 — SALES DETAIL\n+-----------------------------------------------------+\n| [filterable table: date, store, temp, sales]        |\n| [small multiples: sales by store, one mini-chart each]|\n+-----------------------------------------------------+\nFor the analyst who wants the specifics behind page 1.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A detail page lets users dig past the overview without cluttering page 1.",
+                  "answer": true,
+                  "whenRight": "Right — summary up front, detail behind it.",
+                  "whenWrong": "It does — layering serves execs and analysts separately.",
+                  "sim": "page 1 = what; page 2 = show me the detail"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Sales page layout",
-              "body": "New sheet 'Sales'. 3-4 KPIs (avg order value, top product, top region). 2 charts (monthly trend by segment, top 10 sub-categories by margin). 1 table (top 20 orders by profit)."
+              "title": "Your turn — page 2",
+              "body": "[PRODUCE] Build a detail page: a filterable table + supporting small charts behind the overview."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Filter linking",
-          "summary": "",
+          "title": "Link the filters",
+          "summary": "One filter controls both pages. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Link the filters",
+              "body": "## What it is\nWire a shared filter (e.g. store, date range) so selecting it updates *both* pages consistently — the cross-page filter architecture.\n\n## Why it matters\nInconsistent filters are confusing and erode trust ('why does page 2 show different numbers?'). Linked filters make the whole dashboard feel like one coherent tool, and let a user 'follow' a selection across the overview and detail. Getting this architecture right early prevents painful rework later."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ Store: C v ] [ Date: 2024 v ]   <- one filter panel\n   -> Page 1 KPIs + charts update\n   -> Page 2 table + charts update to the SAME selection\nConsistency across pages = trust.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Linked cross-page filters keep numbers consistent and make the dashboard feel like one tool.",
+                  "answer": true,
+                  "whenRight": "Right — inconsistent filters erode trust; linking fixes it.",
+                  "whenWrong": "It does — shared filters give a coherent, trustworthy dashboard.",
+                  "sim": "one selection -> both pages agree"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Cross-page filters",
-              "body": "Make a 'Region' filter on Page 1 that ALSO affects Page 2. Use slicers connected to the data model."
+              "title": "Your turn — link filters",
+              "body": "[PRODUCE] Add a shared filter that updates both pages consistently; verify the numbers agree."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.2",
-          "summary": "",
+          "title": "Ship v0.2",
+          "summary": "Commit pages 1-2 + linked filters, tag capstone-v0.2.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.2",
+              "body": "## What it is\nShip the first two dashboard pages with working cross-page filters. Tag `capstone-v0.2`.\n\n## Why it matters\nProving the multi-page + linked-filter architecture works is the structural milestone — pages 3-4 then follow the same pattern. A v0.2 with a coherent two-page dashboard shows the hard architectural decisions are settled."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Proving the multi-page + linked-filter architecture works is the key structural milestone.",
+                  "answer": true,
+                  "whenRight": "Right — once it works for 2 pages, 3-4 follow the pattern.",
+                  "whenWrong": "It is — the architecture is the hard part; pages then replicate.",
+                  "sim": "2 pages + linked filters = architecture proven"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Page 1 with 6 KPIs + trend + segment chart\n  ☐ Page 2 with 3-4 KPIs + 2 charts + 1 table\n  ☐ Cross-page filter works\n  ☐ v0.2 tag"
+              "title": "Acceptance — v0.2 is done when",
+              "body": "[PRODUCE] Pages 1-2 built with a working shared filter; numbers consistent across pages.\n[CODE] `git tag capstone-v0.2`; push. Drop your repo link."
             }
           ]
         }
@@ -8162,85 +8481,241 @@
       "days": [
         {
           "number": 1,
-          "title": "Page 3 — Customer",
-          "summary": "",
+          "title": "Page 3 — Customer view",
+          "summary": "A customer-focused page. Concept + layout.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Page 3 — Customer view",
+              "body": "## What it is\nPage 3 focuses on **customers/segments** — who they are, their value, their behaviour — reusing your CLV/cohort skills on the capstone data.\n\n## Why it matters\nA complete dashboard answers more than 'what happened' (pages 1-2); it answers 'who' (customers) and 'how well are we running' (operations, page 4). The customer page is where retention/value insights live, and it shows you can carry a customer lens into any project."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nPAGE 3 — CUSTOMER\nKPIs: customers | repeat rate | avg value\n[segment value bar]  [cohort retention mini-matrix]\nThe 'who' behind the sales.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A customer page answers 'who' (value, retention), complementing the 'what' of the overview.",
+                  "answer": true,
+                  "whenRight": "Right — a full dashboard covers what, who, and how-well.",
+                  "whenWrong": "It does — the customer lens rounds out the dashboard.",
+                  "sim": "page 3 = customers: value + retention"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Customer segment layout",
-              "body": "New sheet. KPIs: total customers, repeat rate, top segment by revenue, top customer.\nCharts: revenue per customer histogram, top 10 customers by lifetime sales, segment × profit cross-tab."
+              "title": "Your turn — page 3",
+              "body": "[PRODUCE] Build a customer page: customer KPIs + a segment/value chart."
             }
           ]
         },
         {
           "number": 2,
           "title": "Cohort retention mini",
-          "summary": "",
+          "summary": "Embed a small retention matrix. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Cohort retention mini",
+              "body": "## What it is\nA compact cohort retention matrix on page 3 — the Olist-week skill, shrunk to a dashboard tile.\n\n## Why it matters\nCohort retention is a senior signal, and embedding it in the capstone proves you can deploy advanced analysis inside a polished product, not just in a notebook. Even a small retention heatmap tells a stakeholder whether the business keeps its customers."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\ncohort   m0   m1   m2\nJan     100%  22%  14%\nFeb     100%  25%  16%   <- compact heatmap tile on page 3\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Embedding a cohort retention matrix in the capstone shows advanced analysis inside a polished product.",
+                  "answer": true,
+                  "whenRight": "Right — it's a senior signal deployed in a real deliverable.",
+                  "whenWrong": "It does — advanced analysis in a shipped dashboard stands out.",
+                  "sim": "cohort heatmap as a dashboard tile"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Embed simplified cohort",
-              "body": "Smaller version of Olist Project 3's cohort matrix. Just 6 months × 6 months."
+              "title": "Your turn — cohort tile",
+              "body": "[PRODUCE] Add a compact cohort retention matrix to the customer page."
             }
           ]
         },
         {
           "number": 3,
           "title": "Page 4 — Operations",
-          "summary": "",
+          "summary": "An operational metrics page. Concept + layout.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Page 4 — Operations",
+              "body": "## What it is\nPage 4 covers **operations** — efficiency, fulfilment, quality metrics (delivery time, error rates, capacity) relevant to your capstone's domain.\n\n## Why it matters\nOperations is the 'how well are we running' view that completes the picture. Including it shows you understand a business has multiple stakeholders (finance, customer, ops) and can build for all of them — the mark of a mature analyst, not a one-dimensional one."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nPAGE 4 — OPERATIONS\nKPIs: avg fulfilment time | on-time % | issue rate\n[trend: fulfilment time]  [bar: issues by type]\nThe 'how well are we running' view.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An operations page shows you can build for multiple stakeholders, not just finance.",
+                  "answer": true,
+                  "whenRight": "Right — finance, customer, ops: a mature dashboard serves all.",
+                  "whenWrong": "It does — covering ops rounds out the stakeholder picture.",
+                  "sim": "page 4 = operations efficiency"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Ops layout",
-              "body": "KPIs: avg fulfillment time, avg review score, % late shipments.\nCharts: review score distribution, fulfillment time by region."
+              "title": "Your turn — page 4",
+              "body": "[PRODUCE] Build an operations page with 2-3 efficiency/quality metrics and charts."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Add an 'Alerts' section to Page 1",
-          "summary": "",
+          "title": "Add an Alerts section",
+          "summary": "Surface what needs attention. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Add an Alerts section",
+              "body": "## What it is\nAn **Alerts** block on page 1 that flags metrics breaching a threshold (e.g. 'Store B sales down 20% this month') — turning the dashboard from passive display into active guidance.\n\n## Why it matters\nA dashboard that just shows numbers makes the viewer hunt for problems; one that *flags* them does the thinking. Alerts (conditional text/colour driven by rules) are a high-value feature — they're the difference between a report and a decision-support tool. This is conditional logic applied to KPIs."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nALERTS (page 1)\n  ! Store B sales -20% vs last month\n  ! Cold-week fulfilment time +30%\n  (only shows when a rule is breached; green/quiet otherwise)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An alerts section that flags threshold breaches turns a dashboard from passive display into guidance.",
+                  "answer": true,
+                  "whenRight": "Right — it does the problem-hunting for the viewer.",
+                  "whenWrong": "It does — alerts make the dashboard a decision tool, not a report.",
+                  "sim": "'Store B -20%' flagged automatically"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Red flags",
-              "body": "On Page 1, add a small text box: 'Alerts'. With formulas: IF(avg_review < 4, 'Reviews are dropping', '')\nList 3-5 alert rules. They show only when triggered."
+              "title": "Your turn — alerts",
+              "body": "[PRODUCE] Add an alerts block to page 1 that flags any KPI breaching a threshold you define."
             }
           ]
         },
         {
           "number": 5,
           "title": "Unified filter panel",
-          "summary": "",
+          "summary": "One control panel for all pages. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Unified filter panel",
+              "body": "## What it is\nConsolidate filters into one consistent panel that controls all four pages — the same selection (store, date) applied everywhere.\n\n## Why it matters\nAcross four pages, inconsistent or scattered filters are confusing and break trust. A single, persistent filter panel makes the whole thing feel like one coherent application a user can navigate confidently. This is the polish that distinguishes a professional dashboard from a stack of charts."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ Store v ][ Date v ][ Segment v ]   <- one panel, every page obeys it\nNavigate page 1->4 with Store C selected: all four stay on Store C.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A single filter panel controlling all pages makes a multi-page dashboard feel like one coherent app.",
+                  "answer": true,
+                  "whenRight": "Right — consistency across pages is what builds user trust.",
+                  "whenWrong": "It does — one persistent panel = a coherent application.",
+                  "sim": "one panel -> all 4 pages obey it"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "All filters in one place",
-              "body": "On Page 1 right side: stack the 3-4 most-used filters (Region, Segment, Time period). All linked."
+              "title": "Your turn — unify filters",
+              "body": "[PRODUCE] Consolidate filters into one panel that controls all four pages consistently."
             }
           ]
         },
         {
           "number": 6,
           "title": "Polish + branding",
-          "summary": "",
+          "summary": "Make it look like a product. Concept + checklist.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Polish + branding",
+              "body": "## What it is\nA consistency + branding pass over all four pages: unified colours/fonts, a title and logo, aligned elements, removed clutter — so it reads as one designed product.\n\n## Why it matters\nBranding and consistency are what make a portfolio dashboard look *professional* rather than student-made. Recruiters judge polish in seconds; a consistent colour scheme and clean layout borrow credibility for the analysis. This is the design pass from the deck weeks, applied across the whole app."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ ] one colour palette across all 4 pages\n[ ] consistent title style + a simple logo/header\n[ ] every chart labelled, aligned, decluttered\n[ ] consistent fonts and spacing\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Consistent branding and decluttering make a capstone dashboard read as a professional product.",
+                  "answer": true,
+                  "whenRight": "Right — polish is judged in seconds and lends credibility.",
+                  "whenWrong": "It does — consistency signals 'professional', not 'student'.",
+                  "sim": "one palette + clean layout = credible"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Brand pass",
-              "body": "Pick 2 colors + 1 accent. Apply across all pages. Consistent font sizes (header 14, body 11, caption 9)."
+              "title": "Your turn — polish",
+              "body": "[PRODUCE] Run a branding/consistency pass across all four pages (palette, title, alignment, declutter)."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.3",
-          "summary": "",
+          "title": "Ship v0.3",
+          "summary": "Commit the full 4-page dashboard, tag capstone-v0.3.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.3",
+              "body": "## What it is\nShip the complete, branded four-page dashboard with alerts and a unified filter. Tag `capstone-v0.3`.\n\n## Why it matters\nA polished, interactive, multi-page dashboard built from a self-defined multi-source project is a genuine portfolio centrepiece — the single artefact most likely to land an interview. v0.3 is feature-complete; only storytelling and the final ship remain."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A polished multi-page dashboard from a self-scoped project is a top portfolio centrepiece.",
+                  "answer": true,
+                  "whenRight": "Right — it's the artefact most likely to win an interview.",
+                  "whenWrong": "It is — a feature-complete capstone dashboard stands out.",
+                  "sim": "4 pages, branded, interactive, self-scoped"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.3",
-              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ All 4 pages exist + working\n  ☐ Filters cross-link\n  ☐ Alerts section on Page 1\n  ☐ Visual consistency across pages\n  ☐ v0.3 tag"
+              "title": "Acceptance — v0.3 is done when",
+              "body": "[PRODUCE] All 4 pages built, branded, with alerts and a unified filter panel.\n[CODE] `git tag capstone-v0.3`; push. Drop your repo link."
             }
           ]
         }
@@ -8324,98 +8799,247 @@
         {
           "number": 1,
           "title": "Why storytelling beats analysis",
-          "summary": "",
+          "summary": "A dashboard displays; a story persuades. Concept, video.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Why storytelling beats analysis",
+              "body": "## What it is\nThere's a real gap between a dashboard that *displays data* and a presentation that *tells a story* — a narrative with a point, a tension, and a recommendation. This week you turn your capstone into a story.\n\n## Why it matters\nDecisions are made by people, and people act on stories, not spreadsheets. Two analysts can have the identical numbers; the one who frames them as \"here's the problem, here's the evidence, here's what we should do\" gets the budget. Storytelling is the highest-leverage, least-taught analyst skill — it's what turns correct analysis into actual influence. Your analysis is already done; this week multiplies its impact."
+            },
+            {
               "kind": "video",
-              "title": "Storytelling with data (15 min)",
-              "url": "https://www.youtube.com/results?search_query=storytelling+with+data+cole+nussbaumer+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "title": "Tips for presenting data at work",
+              "url": "https://www.youtube.com/watch?v=jizZKNnx9wA",
+              "creator": "",
+              "why": "Data-storytelling habits. Optional."
             },
             {
-              "kind": "reading",
-              "title": "Storytelling with Data — free chapter",
-              "url": "https://www.storytellingwithdata.com",
-              "why": "Click 'Open'. The book that defined the field."
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nDISPLAY:  \"Here are 12 charts about our sales.\"  (audience: so...?)\nSTORY:    \"We're losing 14% of sales on cold days, concentrated in Store B.\n           Here's why, and a $X fix.\"  (audience: tell me more)\nSame data; the story has a point, tension, and an ask.\n```"
             },
             {
-              "kind": "reflection",
-              "title": "Pyramid principle",
-              "body": "Top: ONE clear answer.\nMiddle: 3 supporting findings.\nBottom: the data behind each.\n\nThis is how executives think — top-down. Build slides this way."
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "People make decisions from stories with a point and an ask, not from raw dashboards.",
+                  "answer": true,
+                  "whenRight": "Right — narrative is what turns analysis into influence.",
+                  "whenWrong": "It does — a story with a point persuades; a chart dump doesn't.",
+                  "sim": "problem -> evidence -> recommendation = a story"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — find the story",
+              "body": "[WRITE] In 2-3 sentences, what's the story your capstone tells (the problem, the insight, the recommendation)?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Distill capstone into ONE sentence",
-          "summary": "",
+          "title": "Distil it to ONE sentence",
+          "summary": "The single takeaway. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Distil it to ONE sentence",
+              "body": "## What it is\nCompress your entire capstone into **one sentence** — the single thing the audience must remember if they forget everything else.\n\n## Why it matters\nIf you can't say it in one sentence, you don't yet know your own point — and your audience certainly won't find it. The one-sentence takeaway becomes your title slide, your memo headline, and the spine every other slide supports. This forced compression is the hardest and most clarifying step in the whole presentation."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nRAMBLING: \"We looked at sales, weather, holidays, stores, and customers and\n           found several interesting patterns across the dataset.\"\nONE SENTENCE: \"Cold weather costs us 14% of sales, and Store B is twice as\n               exposed as the rest — a $X annual fix.\"\nThe second one is a presentation's spine.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "If you can't compress the capstone to one sentence, you haven't found your point yet.",
+                  "answer": true,
+                  "whenRight": "Right — the one-sentence takeaway is the spine of the whole talk.",
+                  "whenWrong": "It is — forced compression reveals (and sharpens) your point.",
+                  "sim": "one sentence = title slide + memo headline"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "The headline",
-              "body": "Take your ForgeRetail Capstone. Write ONE sentence (≤ 20 words) that captures the most important thing you learned.\n\nExamples:\n  'Tables sub-category lost $X annually — exit or redesign within 90 days.'\n  'Sales > $50k correlate with 3x repeat rate — invest in big-account onboarding.'\n\nHard. Iterate until it FITS on one slide."
+              "title": "Your turn — one sentence",
+              "body": "[WRITE] Write the single sentence your audience must remember; reject anything vague or multi-part."
             }
           ]
         },
         {
           "number": 3,
           "title": "Slide as visual hierarchy",
-          "summary": "",
+          "summary": "Guide the eye to the point. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Slide as visual hierarchy",
+              "body": "## What it is\nDesign each slide so the eye lands on **the point first** — the biggest, boldest element is the takeaway, with supporting detail smaller and secondary.\n\n## Why it matters\nViewers don't read slides, they *scan* them — and they look at the biggest thing first. If your slide's largest element is a busy chart instead of the conclusion, you've buried the lede. Deliberate visual hierarchy (size, colour, position) makes the audience absorb your point before they even read the details. It's how a slide communicates in the 3 seconds before someone tunes out."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nWEAK slide: a big chart, tiny title -> eye hits the chart, point unclear.\nSTRONG slide: BIG bold takeaway sentence at top, the chart below as evidence,\n              the one number that matters highlighted in colour.\nEye path: takeaway -> supporting chart -> highlighted number.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Viewers scan to the biggest element first, so the takeaway (not a busy chart) should dominate the slide.",
+                  "answer": true,
+                  "whenRight": "Right — make the conclusion the visual focal point.",
+                  "whenWrong": "It does — size/colour/position should lead the eye to the point.",
+                  "sim": "big bold takeaway > big busy chart"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Re-design slide 1",
-              "body": "Old slide 1: 'ForgeRetail Q4 Review'. Charts everywhere.\nNEW slide 1: just the headline. 48pt font. White space. ONE subtle accent color.\n\nIf they only see this slide, they get the message."
+              "title": "Your turn — hierarchy",
+              "body": "[PRODUCE] Redesign one slide so the takeaway is the dominant element and the chart is clearly supporting."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Show the numbers — but ONLY the ones that matter",
-          "summary": "",
+          "title": "Show only the numbers that matter",
+          "summary": "Cut to the decisive figures. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Show only the numbers that matter",
+              "body": "## What it is\nRuthlessly cut the numbers on each slide down to the few that *support the story* — delete every figure that's merely true but not decisive.\n\n## Why it matters\nMore numbers feel rigorous but actually dilute the message — the audience can't tell which figure matters. One highlighted number ('14% sales loss') lands; a table of twenty drowns it. Choosing what to *leave out* is as important as the analysis itself, and it's a discipline that signals you understand what your audience needs versus what you happen to know."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nWEAK: a 6x8 table of every metric by store and month.\nSTRONG: \"14%\" in huge type, with \"(Store B: 28%)\" beside it. One chart.\nEvery number on the slide must earn its place by supporting the point.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Cutting to the few decisive numbers makes the message land; a table of everything drowns it.",
+                  "answer": true,
+                  "whenRight": "Right — choosing what to leave out is part of the skill.",
+                  "whenWrong": "It does — one decisive number beats twenty true ones.",
+                  "sim": "'14%' big > a 20-cell table"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Kill 3 charts",
-              "body": "Look at your deck. For each chart, ask: 'If this disappeared, would the audience LOSE understanding?' If no — kill it.\nEnd deck should have ≤ 5 charts. Maximum."
+              "title": "Your turn — cut numbers",
+              "body": "[PRODUCE] Strip each story slide to only the numbers that support the point; highlight the single most important one."
             }
           ]
         },
         {
           "number": 5,
           "title": "Speaker notes that work",
-          "summary": "",
+          "summary": "Write what you'll say, not what's on screen. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Speaker notes that work",
+              "body": "## What it is\nWrite **speaker notes** — what you'll *say* aloud — that add context and narrative beyond what's on the slide, rather than just reading the slide text.\n\n## Why it matters\nReading your slides aloud is the cardinal presentation sin (the audience can read faster than you talk). Good notes carry the *story between* the slides — the 'why this matters', the transition, the anecdote. The slide is the evidence; your voice is the narrative. Prepared notes are also what let you present confidently instead of improvising."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nSLIDE shows: \"Cold days: -14% sales\"\nBAD notes:   \"On cold days, sales drop 14 percent.\"   (just reading it)\nGOOD notes:  \"This surprised us. We assumed weather was noise, but it's our\n              single biggest controllable driver - and Store B is twice exposed,\n              which points to a roofing/heating issue we can actually fix.\"\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Speaker notes should add narrative beyond the slide, not just read the slide text aloud.",
+                  "answer": true,
+                  "whenRight": "Right — your voice carries the story between the evidence.",
+                  "whenWrong": "It does — notes add the 'why it matters', not a re-read.",
+                  "sim": "slide = evidence; voice = narrative"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Notes per slide",
-              "body": "For each slide, write 30 seconds of spoken text. Pattern:\n  - Tell them what you'll tell them (5 sec)\n  - Tell them (20 sec)\n  - Tell them what you told them (5 sec)\n\nPaste into the deck's Notes pane."
+              "title": "Your turn — speaker notes",
+              "body": "[PRODUCE] Write speaker notes for your 4-5 key slides that add story/context beyond the on-screen text."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Record + practice",
-          "summary": "",
+          "title": "Record and practice",
+          "summary": "Rehearse the full story. Concept + rubric.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Record and practice",
+              "body": "## What it is\nRecord yourself delivering the full capstone story (5-7 minutes) and watch it back against a rubric.\n\n## Why it matters\nThe story only works if delivered well. Recording surfaces the pacing problems, the filler, the slide you can't explain, and whether your one-sentence takeaway actually opens the talk. Two practice rounds turn a shaky walkthrough into a confident narrative — and confidence is itself persuasive."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (rubric)",
+              "body": "```text\n[ ] Did I open with the one-sentence takeaway?\n[ ] Pacing: 5-7 min, no rushing?\n[ ] Filler count (um/like) trending down?\n[ ] Every slide: could I explain it without reading it?\n[ ] Did I end on the recommendation/ask?\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Recording and reviewing your delivery turns a shaky walkthrough into a confident narrative.",
+                  "answer": true,
+                  "whenRight": "Right — practice surfaces pacing/filler before the real room.",
+                  "whenWrong": "It does — review-and-redo builds the confidence that persuades.",
+                  "sim": "record -> fix pacing/filler -> deliver confidently"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Self-tape",
-              "body": "Use your phone. Record yourself presenting the full deck. Maximum 5 minutes.\nWatch back. List 3 things you'd improve. Re-record. Watch again."
+              "title": "Your turn — rehearse",
+              "body": "[PRODUCE] Record a 5-7 min delivery of the capstone story; score it on the rubric; note two fixes."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag storyteller",
-          "summary": "",
+          "title": "Ship: storyteller",
+          "summary": "Commit the story deck + notes, tag storyteller.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship: storyteller",
+              "body": "## What it is\nShip the storytelling layer: the narrative deck, speaker notes, and your practice recording. Tag `storyteller`.\n\n## Why it matters\nYou can now do the thing most analysts can't — turn correct analysis into a persuasive story that drives a decision. Combined with the dashboard, your capstone now has both the *substance* and the *delivery*, which is the complete package employers rarely see in a junior."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Pairing strong analysis with storytelling is the complete package most junior analysts lack.",
+                  "answer": true,
+                  "whenRight": "Right — substance + persuasive delivery is rare and hireable.",
+                  "whenWrong": "It is — analysis plus storytelling is the full skill set.",
+                  "sim": "dashboard (substance) + story (delivery)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "Final polished deck PDF + practice video (unlisted YouTube) committed.\n\nPASS:\n  ☐ One-sentence headline for capstone\n  ☐ Slide 1 redesigned to JUST the headline\n  ☐ Killed ≥ 3 unnecessary charts\n  ☐ Speaker notes per slide\n  ☐ Self-recorded ≤ 5 min presentation\n  ☐ Practice video URL in README"
+              "title": "Acceptance — storyteller is done when",
+              "body": "[PRODUCE] A narrative deck with a one-sentence spine, decisive numbers, speaker notes, and a practiced delivery.\n[CODE] `git tag storyteller`; push. Drop your repo link."
             }
           ]
         }
@@ -8508,84 +9132,259 @@
         {
           "number": 1,
           "title": "Write the CEO memo",
-          "summary": "",
+          "summary": "The one-page executive memo. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Write the CEO memo",
+              "body": "## What it is\nA one-page memo addressed to a CEO: the capstone's headline, the evidence, and the recommendation with its business impact — the polished written companion to your story.\n\n## Why it matters\nThe CEO memo is the artefact that survives the meeting and circulates to people who weren't there. For the highest audience it must be exceptionally tight: the recommendation and its dollar impact in the first two lines, evidence curated to the essential, and a clear ask. This is the memo discipline from every project, at its most demanding."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (CEO memo)",
+              "body": "```text\n## To: CEO   Re: Weather exposure in retail sales\nCold weather costs ~14% of daily sales ($X/yr), concentrated in Store B\n(twice the exposure of other sites). A targeted fix pays back in N months.\n\nEvidence: sales vs temperature (14% cold-day drop); Store B 28% vs 14% network.\nRecommendation: weatherproofing + dynamic cold-day promotions at Store B;\n   pilot one quarter, measure sales lift vs control.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A CEO memo must put the recommendation and its dollar impact in the first two lines.",
+                  "answer": true,
+                  "whenRight": "Right — the highest audience needs the answer instantly.",
+                  "whenWrong": "It does — lead with the rec + impact; curate the rest.",
+                  "sim": "'costs $X/yr, here's the fix' up top"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CEO-Memo.docx",
-              "body": "1 page. Headline. 4 findings (one per dashboard page). 3 recommendations. Export PDF."
+              "title": "Your turn — CEO memo",
+              "body": "[WRITE] Write a one-page CEO memo: headline + impact, curated evidence, recommendation with payback."
             }
           ]
         },
         {
           "number": 2,
           "title": "Build the board deck",
-          "summary": "",
+          "summary": "A 5-slide board-level deck. Concept, video, structure.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the board deck",
+              "body": "## What it is\nA 5-slide deck for a board/executive audience — your storytelling work, formalised: title takeaway, problem, evidence, recommendation, ask.\n\n## Why it matters\nThe board deck is the formal version of your story — the highest-stakes presentation format. It must be flawless: BLUF title, one idea per slide, decisive numbers, a clear ask. Producing a board-grade deck from your own capstone is a portfolio flex that signals you can operate at the level decisions are made."
+            },
+            {
+              "kind": "video",
+              "title": "Tips for presenting data at work",
+              "url": "https://www.youtube.com/watch?v=jizZKNnx9wA",
+              "creator": "",
+              "why": "Presentation habits for the board deck. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nS1  \"Weather costs us 14% of sales — a $X fix\" (the takeaway IS the title)\nS2  The problem: cold-day sales drop, network-wide\nS3  The evidence: sales vs temp + Store B exposure\nS4  Recommendation: weatherproofing + cold-day promos\nS5  The ask: approve a one-quarter pilot at Store B\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A board deck should be the formalised story: BLUF title, one idea per slide, a clear ask.",
+                  "answer": true,
+                  "whenRight": "Right — highest stakes, maximum discipline.",
+                  "whenWrong": "It is — the board deck is the story at its most polished.",
+                  "sim": "5 slides: takeaway, problem, evidence, rec, ask"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "8-slide board deck",
-              "body": "Cover slide + 4 finding slides + 1 recommendations + 1 next-quarter plan + 1 closing. Export PDF."
+              "title": "Your turn — board deck",
+              "body": "[PRODUCE] Build a 5-slide board deck from your capstone story, ending in a clear ask."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Demo video",
-          "summary": "",
+          "title": "Record a demo video",
+          "summary": "Walk through the dashboard. Concept + script.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Record a demo video",
+              "body": "## What it is\nA 2-3 minute demo of the capstone dashboard and its story — the most shareable proof the project works. Link it (Drive/YouTube) per the video policy.\n\n## Why it matters\nThe capstone demo is the single best item in your portfolio: it shows a complete, interactive, self-built product *and* you presenting it persuasively. It's what you link at the top of your CV and LinkedIn — recruiters who won't run code will watch three minutes."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (script)",
+              "body": "```text\n0:00 \"I built this dashboard to answer: how does weather affect our sales?\"\n0:30 \"The headline: cold days cost 14% of sales.\" [page 1]\n1:10 \"Store B is twice as exposed.\" [drill via filter]\n1:50 \"So I recommend weatherproofing + cold-day promos at Store B.\"\n2:20 \"Built from 3 sources, 4 pages. Repo + memo linked.\" (stop)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The capstone demo video is typically the single strongest item in a junior portfolio.",
+                  "answer": true,
+                  "whenRight": "Right — a self-built interactive product + persuasive delivery.",
+                  "whenWrong": "It is — the demo is the headline of your portfolio.",
+                  "sim": "2-3 min: product + story = top portfolio item"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "3-minute walkthrough of all 4 pages",
-              "body": "Upload to YouTube unlisted."
+              "title": "Your turn — demo",
+              "body": "[PRODUCE] Record a 2-3 min capstone demo; link it at the top of your portfolio README."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Add a SQL version of all KPIs",
-          "summary": "",
+          "title": "SQL version of all KPIs",
+          "summary": "Re-express every KPI in SQL. Concept, video.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "SQL version of all KPIs",
+              "body": "## What it is\nWrite `capstone_queries.sql` reproducing every dashboard KPI in SQL — the joins and aggregations behind the visuals.\n\n## Why it matters\nIt proves the dashboard isn't magic — every number traces to a verifiable query — and it gives recruiters the SQL artefact they filter for. Across four projects you've now shown the same analyses in pandas, SQL, dbt, Tableau, and Power BI: undeniable, demonstrated tool-fluency."
+            },
+            {
+              "kind": "video",
+              "title": "SQL aggregate functions, GROUP BY & HAVING",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "GROUP BY for the KPI queries. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```sql\n-- Weather-sensitivity KPI in SQL\nSELECT\n  AVG(CASE WHEN temp_c < 10 THEN sales END) AS cold_avg,\n  AVG(CASE WHEN temp_c >= 10 THEN sales END) AS warm_avg\nFROM capstone_model;\n-- -> cold 171, warm 199 -> matches the dashboard's 14% drop\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Backing every dashboard KPI with a SQL query proves the numbers are verifiable, not magic.",
+                  "answer": true,
+                  "whenRight": "Right — traceable numbers + a SQL artefact recruiters want.",
+                  "whenWrong": "It does — SQL behind each KPI makes the dashboard auditable.",
+                  "sim": "each KPI -> a query that reproduces it"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "queries.sql",
-              "body": "Re-do all KPIs in SQLite Online. 15+ queries covering every page."
+              "title": "Your turn — SQL KPIs",
+              "body": "[PRODUCE] Write `capstone_queries.sql` reproducing each KPI; confirm they match the dashboard."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Polish + brand",
-          "summary": "",
+          "title": "Final polish + branding",
+          "summary": "Last consistency pass across everything. Concept + checklist.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Final polish + branding",
+              "body": "## What it is\nA final pass across all deliverables — dashboard, memo, deck, demo, repo — for consistent branding, reconciled numbers, working links, and a clean README.\n\n## Why it matters\nThis is the public face of your entire roadmap; recruiters judge it in seconds. One inconsistent number or broken link undercuts everything. The final polish is what makes four projects read as the work of a careful professional, ready to share widely."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ ] one brand/palette across dashboard, memo, deck\n[ ] every number reconciled to one value everywhere\n[ ] all links (repo, demo, dashboard) click through\n[ ] README: overview, links, how-to-run, your name\n[ ] repo public + secret-free\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The final polish across all deliverables is the public face recruiters judge in seconds.",
+                  "answer": true,
+                  "whenRight": "Right — one broken link or stray number undercuts it all.",
+                  "whenWrong": "It does — consistency across everything signals professionalism.",
+                  "sim": "one palette, reconciled numbers, working links"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Final polish",
-              "body": "Every chart has labels. Every page has a footer with 'as of [date]'."
+              "title": "Your turn — final polish",
+              "body": "[PRODUCE] Run the final checklist across dashboard, memo, deck, demo, and README."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Get 3 readers",
-          "summary": "",
+          "title": "Get three readers",
+          "summary": "Wider feedback before shipping. Concept + the test.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Get three readers",
+              "body": "## What it is\nShow the capstone to **three** different people and gather where each gets confused — a wider review than the single reader of earlier projects.\n\n## Why it matters\nThree readers reveal patterns one can't: if all three stumble on the same slide, it's definitely broken; if only one does, it might be them. For your flagship project, this broader feedback is worth it — it catches the issues that would otherwise surface in an interview, where the stakes are highest."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nReader A: confused by the cohort tile        }\nReader B: also confused by the cohort tile   } -> definitely fix (pattern)\nReader C: got it -> single confusions are lower priority\nAsk each: \"one sentence - what am I recommending?\"\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Multiple readers reveal patterns (all stumble on X = definitely broken) a single reader can't.",
+                  "answer": true,
+                  "whenRight": "Right — repeated confusion is a clear signal to fix.",
+                  "whenWrong": "It does — patterns across readers separate real issues from one-offs.",
+                  "sim": "2-3 readers hit the same slide -> fix it"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Feedback",
-              "body": "Apply common feedback."
+              "title": "Your turn — three readers",
+              "body": "[PRODUCE] Get three people to review it; note which confusions repeat; fix the patterns."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v1.0 + ROADMAP RETRO",
-          "summary": "",
+          "title": "Ship v1.0 + ROADMAP RETRO",
+          "summary": "Tag v1.0 and reflect on the whole journey. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v1.0 + ROADMAP RETRO",
+              "body": "## What it is\nTag the capstone `capstone-v1.0` — then write a **roadmap retro** reflecting on the entire Data Analysis journey: four shipped projects, the skills built (Excel, pandas, SQL, stats, Tableau, Power BI, dbt, storytelling), and where you go next.\n\n## Why it matters\nThis is the end of the Data Analysis track. You have a portfolio of four complete, shipped, reader-tested projects across retail, HR, e-commerce, and a self-defined capstone — built with the full modern analyst toolkit and presented like a professional. The roadmap retro cements the transformation: you began unable to load a CSV and end able to scope, analyse, model, visualise, and *persuade*. That's a job-ready analyst."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (roadmap retro)",
+              "body": "```text\n## Data Analysis — Roadmap Retro\nShipped: Superstore, HR Attrition, Olist, Capstone (4 projects, all v1.0).\nSkills:  Excel -> pandas -> SQL -> stats -> Tableau/Power BI -> dbt -> storytelling.\nProudest: the capstone - scoped and built entirely myself.\nHardest:  multi-source modelling and ruthless storytelling compression.\nNext:     specialise (BI engineer? analytics engineer?) and apply to roles.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Finishing the track means a portfolio of four shipped projects and the full modern analyst toolkit.",
+                  "answer": true,
+                  "whenRight": "Right — that's a job-ready analyst, demonstrated not claimed.",
+                  "whenWrong": "It is — four projects + the toolkit = ready to be hired.",
+                  "sim": "Superstore + HR + Olist + Capstone, all shipped"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "DATA ANALYSIS ROADMAP COMPLETE",
-              "body": "Write RETRO.md for the capstone.\nWrite ROADMAP_RETRO.md at the top level:\n      # Forge Data Analysis Roadmap — Retro\n      ## 4 projects shipped\n  1. Superstore\n  2. HR Attrition\n  3. Olist Funnel\n  4. ForgeRetail Capstone\n      ## What I learned\n  ...\n      ## What I'd do differently\n  ...\n      ## Hardest week\n  ...\n      ## Proudest moment\n  ...\n      ## What's next\n  ...\n\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Capstone memo PDF + board deck PDF\n  ☐ Demo video\n  ☐ queries.sql\n  ☐ 3 readers' feedback applied\n  ☐ RETRO.md + ROADMAP_RETRO.md\n  ☐ v1.0 tag\n\nDATA ANALYSIS ROADMAP COMPLETE. 4 named projects + capstone on your CV."
+              "title": "Acceptance — Capstone v1.0 (TRACK CORE DONE)",
+              "body": "[PRODUCE] All deliverables polished, public-safe, reader-tested, links working.\n[WRITE] A roadmap retro in your portfolio README covering the whole journey.\n[CODE] `git tag capstone-v1.0`; push. Drop your repo link. Capstone complete."
             }
           ]
         }
