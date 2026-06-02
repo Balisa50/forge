@@ -3512,91 +3512,318 @@
       "days": [
         {
           "number": 1,
-          "title": "Why HR analytics",
-          "summary": "",
+          "title": "Why people analytics",
+          "summary": "A new domain: HR. Concept of attrition, then compute the base rate on real data.",
           "items": [
             {
-              "kind": "reading",
-              "title": "IBM HR Attrition dataset — Kaggle",
-              "url": "https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset",
-              "why": "Click 'Open' → download. CSV, ~225KB."
+              "kind": "lesson",
+              "title": "Why people analytics",
+              "body": "## What it is\nLast project you analysed a retailer; now you turn the same rigour on **people**. **Attrition** is employees leaving the company, and **people analytics** is using data to understand who leaves and why — instead of guessing.\n\n## Why it matters\nAttrition is brutally expensive: replacing an employee costs roughly **50-200% of their annual salary** (recruiting, onboarding, lost productivity). HR decisions are too often made on gut feel — \"people leave for money\" — when the data frequently says something else entirely (overtime, no promotion, a specific role). Finding the *real* drivers lets a company spend its retention budget where it actually moves the needle. This is exactly the analytical thinking from Project 1, applied to a domain where one good finding can save millions.\n\n## The dataset\nThe **IBM HR Analytics** dataset: 1,470 employees, 35 columns (age, department, job role, monthly income, overtime, years at company, years since promotion…). The target column is **Attrition** (`Yes`/`No`) — whether each employee left. Everything this week predicts or explains that one column."
             },
             {
-              "kind": "reflection",
-              "title": "Three questions",
-              "body": "Before you look at the data, write 3 questions HR would care about:\n  1. Who is most likely to leave?\n  2. Which department / role / tenure has worst attrition?\n  3. What predicts attrition — salary? overtime? distance from home?"
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Load and find the base rate\nThe first question in any attrition study: what fraction actually left?\n```python\nimport pandas as pd\ndf = pd.read_csv(\"HR-Employee-Attrition.csv\")\nprint(df.shape)\nprint(df[\"Attrition\"].value_counts())\nprint(df[\"Attrition\"].value_counts(normalize=True).round(3))\n```\nOutput:\n```\n(1470, 35)\nNo     1233\nYes     237\nName: Attrition, dtype: int64\nNo     0.839\nYes    0.161\nName: Attrition, dtype: float64\n```\nRead it: **16.1% of employees left** — that's your *base rate*, the number every group you analyse this week gets compared against. A department at 25% is a problem; one at 8% is a model. Note too that the classes are **imbalanced** (most stayed) — important to remember so you don't over-read small groups."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The attrition rate is the share of employees whose Attrition is 'Yes' — a boolean mean.",
+                  "answer": true,
+                  "whenRight": "Right — (Attrition=='Yes').mean() gives the rate, like the repeat-rate trick.",
+                  "whenWrong": "It is — it's the proportion of 'Yes', exactly a boolean mean.",
+                  "sim": "(df['Attrition']=='Yes').mean() -> 0.161"
+                },
+                {
+                  "prompt": "Every department will have the same attrition rate as the 16% overall.",
+                  "answer": false,
+                  "whenRight": "Correct — the whole project is finding which groups deviate from that base rate.",
+                  "whenWrong": "Not so — groups vary widely; finding the deviations is the point.",
+                  "sim": "Sales 20.6% vs R&D 13.8% vs overall 16.1%"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the project",
+              "body": "[CODE] Load the IBM HR dataset; print `shape` and the `Attrition` value counts (raw and normalized).\n[WRITE] State the overall attrition rate (the base rate).\n[WRITE] Write three questions you'd want the data to answer about who leaves."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Load + first look",
-          "summary": "",
+          "title": "Load and inspect",
+          "summary": "Inspect first, always. Concept, video, then the structure + target balance.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Load and inspect",
+              "body": "## What it is\nSame discipline as every dataset: before analysing, **look**. `head`, `info`, `describe`, and the target's balance. With 35 columns you especially need to know what's numeric, what's categorical, and whether anything's missing.\n\n## Why it matters\nYou can't analyse drivers of attrition until you know which columns *are* drivers (numeric like MonthlyIncome, categorical like Department) and that the data is clean. Inspecting also re-surfaces the **class imbalance** (only 16% left) — which matters because a group with just 10 employees can show a wild attrition rate that's pure noise. Knowing your column types now also tells you which technique each driver needs: `groupby` for categoricals, `pd.cut` then groupby for numerics.\n\n## What to check\nColumn count and types (`info`), missing values (the IBM set is clean — confirm it), the spread of key numerics (`describe`), and the target balance again so it's front of mind."
+            },
+            {
+              "kind": "video",
+              "title": "Inspect a DataFrame: head(), info(), describe()",
+              "url": "https://www.youtube.com/watch?v=BspcRHPiFk4",
+              "creator": "",
+              "why": "The four inspection commands, reused on the HR data. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Inspect the structure\n```python\nprint(df.info())\nprint(df.isna().sum().sum())     # total missing values\n```\n```\nRangeIndex: 1470 entries, 0 to 1469\nColumns: 35 ...\n #  Column            Non-Null Count  Dtype\n 0  Age               1470 non-null   int64\n 1  Attrition         1470 non-null   object\n 4  Department        1470 non-null   object\n 18 MonthlyIncome     1470 non-null   int64\n 22 OverTime          1470 non-null   object\n ...\n0      <- no missing values, the set is clean\n```\n\n## A reusable helper: encode the target as 0/1\n```python\ndf[\"left\"] = (df[\"Attrition\"] == \"Yes\").astype(int)\nprint(df[\"left\"].mean().round(3))\n```\n```\n0.161\n```\nTurning `Attrition` into a 0/1 `left` column is the key move: now `groupby(...)[\"left\"].mean()` gives the **attrition rate** of any group directly. You'll use this every day this week."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Encoding Attrition as a 0/1 'left' column lets groupby().mean() return the attrition RATE per group.",
+                  "answer": true,
+                  "whenRight": "Right — the mean of a 0/1 column is the proportion of 1s = the rate.",
+                  "whenWrong": "It does — mean of 0/1 is the share that left, per group.",
+                  "sim": "groupby('Dept')['left'].mean() -> rate per dept"
+                },
+                {
+                  "prompt": "A group of only 10 employees gives an attrition rate as trustworthy as one of 500.",
+                  "answer": false,
+                  "whenRight": "Correct — tiny groups give noisy rates; always check the group size (count).",
+                  "whenWrong": "Not equally — small groups are noisy; check counts before trusting a rate.",
+                  "sim": "10 people, 4 left -> 40%? could be noise"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Set up",
-              "body": "Make folder hr-attrition/. Save the CSV in data/.\nIn Excel/Sheets: open the file. ~1470 rows, ~35 columns. Note: Attrition (Yes/No), Age, Department, MonthlyIncome, OverTime, YearsAtCompany, DistanceFromHome.\n\nHeadline: =COUNTIF(Attrition column, \"Yes\") / COUNT(...)\nWhat's the overall attrition rate?"
+              "title": "Your turn — inspect",
+              "body": "[CODE] Run `info()` and confirm zero missing values.\n[CODE] Create a 0/1 `left` column from `Attrition` and confirm its mean is the 16.1% base rate.\n[WRITE] One sentence: how many columns are numeric vs categorical (roughly)?"
             }
           ]
         },
         {
           "number": 3,
           "title": "Attrition by department",
-          "summary": "",
+          "summary": "The core move: a rate per group. Concept, video, then department rates vs the base.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Attrition by department",
+              "body": "## What it is\nThe workhorse question: **which departments lose the most people?** Group by `Department`, take the mean of your 0/1 `left` column, and you get each department's attrition rate — directly comparable to the 16.1% base rate.\n\n## Why it matters\n\"We have a turnover problem\" is useless to act on; \"Sales runs 20.6% attrition vs 13.8% in R&D\" tells leadership exactly where to focus. Comparing each group to the base rate is the move that turns a single company-wide number into a *map* of where the problem actually lives. This is the same split-apply-combine you've used since Week 2 — now answering an expensive HR question.\n\n## The pattern\n`groupby` the category, `.mean()` the 0/1 target for the rate, and `.count()` (or size) alongside so you know each group is big enough to trust. Always sort, and always compare to the base rate."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas pivot_table / grouping for a breakdown",
+              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
+              "creator": "",
+              "why": "Grouping a category to summarise, reused on attrition. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate per department\n```python\ndept = df.groupby(\"Department\").agg(\n    attrition_rate=(\"left\", \"mean\"),\n    employees=(\"left\", \"count\"),\n).sort_values(\"attrition_rate\", ascending=False)\nprint(dept.round(3))\n```\nOutput (illustrative):\n```\n                        attrition_rate  employees\nDepartment\nSales                            0.206        446\nHuman Resources                  0.190         63\nResearch & Development           0.138        961\n```\nRead it against the 16.1% base: **Sales (20.6%) is well above** average and is the biggest group, so it's the priority. HR is high too but only 63 people, so treat that rate with some caution. R&D is below base — relatively healthy. One groupby just turned \"we have turnover\" into \"Sales is the problem\"."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Comparing each group's rate to the overall base rate is how you find where the problem lives.",
+                  "answer": true,
+                  "whenRight": "Right — deviation from the 16.1% base is the signal.",
+                  "whenWrong": "It is — the gap from the base rate tells you which groups matter.",
+                  "sim": "Sales 20.6% vs base 16.1% -> above average"
+                },
+                {
+                  "prompt": "Reporting the employee COUNT next to each rate matters for trusting it.",
+                  "answer": true,
+                  "whenRight": "Right — a high rate on 63 people is shakier than on 446.",
+                  "whenWrong": "It does — counts tell you whether a rate rests on enough people.",
+                  "sim": "HR 19.0% but only 63 employees -> caution"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Department pivot",
-              "body": "Pivot: Rows = Department, Values = COUNT Yes / COUNT All * 100% = Attrition rate.\nSort. Which department has worst attrition?"
+              "title": "Your turn — department rates",
+              "body": "[CODE] Compute attrition rate AND employee count per `Department`, sorted by rate.\n[WRITE] One sentence: which department is the priority (high rate AND large enough to matter), vs the base rate?"
             }
           ]
         },
         {
           "number": 4,
-          "title": "Attrition by role",
-          "summary": "",
+          "title": "Attrition by job role",
+          "summary": "Drill deeper than department. Concept, video, then role-level hotspots.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Attrition by job role",
+              "body": "## What it is\nDepartment is coarse. Drill into **JobRole** — the same rate-per-group move, one level finer — to find the specific roles bleeding talent.\n\n## Why it matters\nA department average can hide a disaster in one role (a near-Simpson's effect you met in the stats week). Sales overall is 20.6%, but that blends calm roles with one that's on fire. Pinpointing the *role* lets HR target a fix — a specific role's pay, workload, or career path — instead of a vague \"fix Sales\". The finer the actionable unit, the more useful the finding.\n\n## The pattern\nIdentical to yesterday, just group by `JobRole`. Sort, keep counts, and look for roles far above the base rate — those are your hotspots."
+            },
+            {
+              "kind": "video",
+              "title": "Aggregation with groupby() & agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "creator": "",
+              "why": "groupby + agg, reused to break attrition down by role. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate per job role\n```python\nrole = df.groupby(\"JobRole\").agg(\n    attrition_rate=(\"left\", \"mean\"),\n    employees=(\"left\", \"count\"),\n).sort_values(\"attrition_rate\", ascending=False)\nprint(role.round(3).head(5))\n```\nOutput (illustrative):\n```\n                          attrition_rate  employees\nJobRole\nSales Representative               0.398         83\nLaboratory Technician              0.239        259\nHuman Resources                    0.231         52\nSales Executive                    0.175        326\nResearch Scientist                 0.161        292\n```\nThe headline: **Sales Representatives churn at 39.8% — nearly 2.5x the company base rate.** That single role is the hotspot the department average (20.6%) was hiding. *This* is what HR should fix first — and you couldn't see it until you went one level deeper than department."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Breaking attrition down by role can reveal a hotspot that the department average hides.",
+                  "answer": true,
+                  "whenRight": "Right — Sales Reps at 39.8% hid inside Sales' 20.6%.",
+                  "whenWrong": "It does — the finer cut exposes the role driving a department's average.",
+                  "sim": "Sales 20.6% -> Sales Rep 39.8% (the real problem)"
+                },
+                {
+                  "prompt": "Once you know the department, drilling into role adds no value.",
+                  "answer": false,
+                  "whenRight": "Correct — the role view found the 39.8% hotspot the department blended away.",
+                  "whenWrong": "Not true — role-level detail pinpoints the actual problem to fix.",
+                  "sim": "dept hides the on-fire role inside its average"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Job role pivot",
-              "body": "Pivot: Rows = JobRole, Values = attrition rate.\nSort. Top 3 most-leaving roles?"
+              "title": "Your turn — role hotspots",
+              "body": "[CODE] Compute attrition rate + count per `JobRole`, sorted; print the top 5.\n[WRITE] One sentence naming the worst role and how its rate compares to the 16.1% base."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Salary effect",
-          "summary": "",
+          "title": "Does pay drive leaving?",
+          "summary": "Bin a numeric driver, then rate per band. Concept, video, then the salary effect.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Does pay drive leaving?",
+              "body": "## What it is\nNow a *numeric* driver: `MonthlyIncome`. You can't group by a continuous salary directly, so **bin it** with `pd.cut` into bands, then compute the attrition rate per band — exactly the cut-then-groupby move from the discount week.\n\n## Why it matters\n\"People leave for money\" is the most common HR assumption, and data lets you test it instead of repeating it. If attrition falls steeply as pay rises, comp is a real lever; if it's flat, the money story is a myth and you should look elsewhere (overtime, promotion). Either way you've replaced a belief with evidence — and possibly saved the company from throwing raises at a problem raises won't fix.\n\n## The pattern\n`pd.cut(MonthlyIncome, bins)` to create salary bands, then `groupby(band)[\"left\"].mean()`. Watch the trend across bands top to bottom."
+            },
+            {
+              "kind": "video",
+              "title": "Binning with pandas pd.cut()",
+              "url": "https://www.youtube.com/watch?v=06LZtiF5yGg",
+              "creator": "",
+              "why": "pd.cut to bucket a numeric driver, reused for salary. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate by salary band\n```python\ndf[\"income_band\"] = pd.cut(df[\"MonthlyIncome\"],\n    bins=[0, 3000, 6000, 10000, 20000],\n    labels=[\"<3k\", \"3-6k\", \"6-10k\", \"10k+\"])\nprint(df.groupby(\"income_band\")[\"left\"].mean().round(3))\n```\nOutput (illustrative):\n```\nincome_band\n<3k      0.295\n3-6k     0.146\n6-10k    0.092\n10k+     0.077\nName: left, dtype: float64\n```\nRead the trend: attrition **falls steeply with pay** — 29.5% in the lowest band vs 7.7% in the top. So for this company the \"money matters\" story holds, *at the low end especially*: the cheapest-paid third is where the bleeding is. That's an actionable, evidence-backed lever (review pay floors) — not a guess."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "To study a numeric driver like salary, you bin it with pd.cut then take the rate per band.",
+                  "answer": true,
+                  "whenRight": "Right — cut to bands, groupby band, mean the 0/1 target.",
+                  "whenWrong": "It is — bin the continuous driver, then rate per band.",
+                  "sim": "income bands -> attrition 29.5% (<3k) down to 7.7% (10k+)"
+                },
+                {
+                  "prompt": "You can groupby a continuous salary column directly to see its effect.",
+                  "answer": false,
+                  "whenRight": "Correct — too many unique values; you must bin it into bands first.",
+                  "whenWrong": "Not directly — bin it first; raw continuous values don't group usefully.",
+                  "sim": "cut(income) -> bands -> groupby"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Bucketed salary",
-              "body": "Add column: Salary Bucket = nested IF on MonthlyIncome:\n  <3000 = Low; 3000-7000 = Mid; 7000-15000 = High; >15000 = Top\nPivot: rate by bucket. Where's the cliff?"
+              "title": "Your turn — the salary effect",
+              "body": "[CODE] Bin `MonthlyIncome` into bands and compute attrition rate per band.\n[WRITE] One sentence: does attrition fall with pay, and where is it worst?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Overtime effect",
-          "summary": "",
+          "title": "The overtime effect",
+          "summary": "A binary driver, compared directly. Concept, video, then the single biggest factor.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The overtime effect",
+              "body": "## What it is\n`OverTime` is a simple `Yes`/`No` column — so no binning needed, just compare the attrition rate for those who work overtime vs those who don't.\n\n## Why it matters\nSimple often wins. In the IBM data, overtime turns out to be one of the **single strongest** predictors of leaving — frequently a bigger effect than pay or role. That's a hugely actionable finding because overtime is a *managed* variable: a company can change workload policy far faster than it can restructure salaries. It's also a lesson in analytical humility — the most powerful driver is sometimes the plainest column, which you'd miss if you only chased the fancy ones.\n\n## The pattern\nA direct `groupby(\"OverTime\")[\"left\"].mean()`. Then quantify the gap (a ratio) — \"overtime workers leave at Nx the rate\" is the kind of crisp line that lands in a memo."
+            },
+            {
+              "kind": "video",
+              "title": "Aggregation with groupby() & agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "creator": "",
+              "why": "A direct two-group comparison, reused for overtime. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate: overtime vs not\n```python\not = df.groupby(\"OverTime\")[\"left\"].agg([\"mean\", \"count\"]).round(3)\nprint(ot)\nprint(\"ratio:\", round(ot.loc[\"Yes\",\"mean\"] / ot.loc[\"No\",\"mean\"], 1), \"x\")\n```\nOutput (illustrative):\n```\n          mean  count\nOverTime\nNo       0.104    1054\nYes      0.305     416\nratio: 2.9 x\n```\nRead it: employees on overtime leave at **30.5% vs 10.4%** — nearly **3x** the rate. That's likely the most powerful single finding of the whole project, and it's from a plain Yes/No column. The recommendation writes itself: investigate and cap chronic overtime, especially in the high-attrition roles you found on Day 4."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "OverTime (a Yes/No column) can be compared directly by group — no binning needed.",
+                  "answer": true,
+                  "whenRight": "Right — it's already categorical, so a direct groupby gives the two rates.",
+                  "whenWrong": "It is — binary columns group directly; no cut required.",
+                  "sim": "groupby('OverTime')['left'].mean() -> No 10.4%, Yes 30.5%"
+                },
+                {
+                  "prompt": "Expressing the effect as a ratio ('2.9x the rate') makes the finding land harder than two raw rates.",
+                  "answer": true,
+                  "whenRight": "Right — '3x more likely to leave' is the memo-ready version.",
+                  "whenWrong": "It does — a ratio is the crisp, quotable form of the finding.",
+                  "sim": "30.5% / 10.4% = 2.9x more likely to leave"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "OverTime pivot",
-              "body": "Pivot: Rows = OverTime (Yes/No), Values = attrition rate.\nDocument: by what factor does overtime increase attrition?"
+              "title": "Your turn — the overtime effect",
+              "body": "[CODE] Compute attrition rate for OverTime Yes vs No, plus the ratio between them.\n[WRITE] One sentence: how much more likely are overtime employees to leave?"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.1",
-          "summary": "",
+          "title": "Ship v0.1",
+          "summary": "Commit the first-pass attrition drivers, tag v0.1.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.1",
+              "body": "## What it is\nYou've found the first-pass drivers of attrition — department, role, salary, and overtime. **Ship it** as `v0.1` of Project 2: a notebook with the base rate and four driver breakdowns.\n\n## Why it matters\nThis is the same iterative discipline as Superstore, in a brand-new domain — which is exactly what makes it portfolio gold. Two projects, different industries (retail, HR), same rigorous method: it proves you have a transferable *process*, not a single memorised analysis. A `v0.1` that cleanly identifies the biggest drivers is a real, shippable increment."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Finding the biggest attrition drivers (overtime, low pay, Sales Rep role) is a shippable v0.1.",
+                  "answer": true,
+                  "whenRight": "Right — clear first-pass drivers are a real increment to ship and iterate on.",
+                  "whenWrong": "It is — identifying the top drivers is a legitimate v0.1.",
+                  "sim": "v0.1: base rate + dept/role/salary/overtime drivers"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.1",
-              "body": "Create GitHub repo hr-attrition. Commit Excel/Sheets file + 4 pivots + a README listing what you found.\n      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ Data loaded\n  ☐ Overall attrition rate documented\n  ☐ 4 pivots (department, role, salary, overtime)\n  ☐ One-paragraph 'first findings' note in README\n  ☐ v0.1 tag"
+              "title": "Acceptance — v0.1 is done when",
+              "body": "[PRODUCE] Notebook has: the base attrition rate, plus attrition-rate breakdowns by department, job role, salary band, and overtime.\n[CODE] Commit and tag:\n```\ngit add .\ngit commit -m \"HR Attrition v0.1: base rate + driver breakdowns\"\ngit tag hr-v0.1\ngit push --tags\n```\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -3689,85 +3916,318 @@
       "days": [
         {
           "number": 1,
-          "title": "What is tenure analysis",
-          "summary": "",
+          "title": "What tenure analysis is",
+          "summary": "From WHO leaves to WHEN they leave. Concept, then sketch the hypothesis.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Sketch hypothesis",
-              "body": "Draw a chart on paper of attrition rate vs YearsAtCompany. What shape do you expect — flat? J-shape? Bathtub curve?"
+              "kind": "lesson",
+              "title": "What tenure analysis is",
+              "body": "## What it is\nLast week you found *who* leaves (which departments, roles, pay levels). This week adds the **time dimension**: *when* in an employee's tenure is the risk highest? Tenure is `YearsAtCompany`, and the question is whether attrition risk is flat over time or spikes at certain points.\n\n## Why it matters\nThe intervention changes completely depending on the answer. If risk spikes in the **first 1-2 years**, the problem is onboarding and early experience — fix the first 90 days. If it spikes around **years 3-5**, it's career stagnation — fix promotion and growth paths. A flat curve would mean tenure isn't the lever at all. You can't design a retention program until you know *when* people are at risk, and most companies have never actually looked.\n\n## The discipline (again)\nForm the hypothesis first, before plotting: most attrition research finds an **early-tenure spike** — new hires who realise it's not a fit and leave within two years. Write that prediction down, then test it."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Look at the tenure column first\n```python\nprint(df[\"YearsAtCompany\"].describe().round(1))\n```\nOutput (illustrative):\n```\ncount    1470.0\nmean        7.0\nstd         6.1\nmin         0.0\n25%         3.0\n50%         5.0\nmax        40.0\nName: YearsAtCompany, dtype: float64\n```\nTenure runs 0 to 40 years, most employees in the 3-5 year range. That spread tells you how to bin it tomorrow (fine bands early where the action is, wider bands later). Write your hypothesis as a notebook comment:\n```python\n# HYPOTHESIS: attrition risk is HIGHEST in years 0-2 (early-tenure spike),\n# then falls as tenure increases.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tenure analysis asks WHEN in an employee's time at the company attrition risk is highest.",
+                  "answer": true,
+                  "whenRight": "Right — it's the time dimension on top of last week's 'who'.",
+                  "whenWrong": "It is — tenure analysis studies attrition against time-at-company.",
+                  "sim": "who leaves (W10) + when they leave (W11)"
+                },
+                {
+                  "prompt": "The intervention is the same regardless of when the attrition risk peaks.",
+                  "answer": false,
+                  "whenRight": "Correct — early spike -> fix onboarding; mid-career spike -> fix promotion paths.",
+                  "whenWrong": "Not so — the timing of the peak dictates a completely different fix.",
+                  "sim": "yr 0-2 spike -> onboarding | yr 3-5 -> promotions"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame tenure",
+              "body": "[CODE] Print `df[\"YearsAtCompany\"].describe()`.\n[WRITE] Write a hypothesis (as a comment) for when attrition risk peaks, with a year range."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Attrition by tenure bucket",
-          "summary": "",
+          "title": "Attrition by tenure band",
+          "summary": "Bin tenure, rate per band. Concept, video, then the early-tenure spike.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Attrition by tenure band",
+              "body": "## What it is\nBin `YearsAtCompany` into tenure bands and compute attrition rate per band — the cut-then-groupby move again, now revealing the *shape* of risk over time.\n\n## Why it matters\nThis single table tests your hypothesis and usually delivers the project's most strategic insight: the **early-tenure spike**. If years 0-2 show double the base rate, the company is losing people it just spent money hiring and training — the most expensive kind of attrition. Quantifying exactly how steep that early spike is tells HR how much to invest in onboarding and the first-year experience.\n\n## The pattern\nUse *finer* bands early (0-1, 1-2, 2-5) where the action is and wider ones later (5-10, 10+). Then `groupby(band)[\"left\"].mean()` and read the curve."
+            },
+            {
+              "kind": "video",
+              "title": "Binning with pandas pd.cut()",
+              "url": "https://www.youtube.com/watch?v=06LZtiF5yGg",
+              "creator": "",
+              "why": "pd.cut to band tenure, reused. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate by tenure band\n```python\ndf[\"tenure_band\"] = pd.cut(df[\"YearsAtCompany\"],\n    bins=[-1, 1, 2, 5, 10, 41],\n    labels=[\"0-1\", \"1-2\", \"2-5\", \"5-10\", \"10+\"])\nprint(df.groupby(\"tenure_band\")[\"left\"].agg([\"mean\",\"count\"]).round(3))\n```\nOutput (illustrative):\n```\n              mean  count\ntenure_band\n0-1          0.362    171\n1-2          0.213    127\n2-5          0.165    494\n5-10         0.118    436\n10+          0.092    242\n```\nThere's the spike, confirmed: **36.2% attrition in year 0-1** — more than double the 16.1% base — falling steadily with tenure. The strategic read: the company hemorrhages brand-new hires. Every dollar spent making the first year better targets the biggest, most expensive leak. Hypothesis from Day 1: confirmed."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Attrition risk is typically highest in the earliest tenure band (the early-tenure spike).",
+                  "answer": true,
+                  "whenRight": "Right — new hires who aren't a fit leave fast; year 0-1 is the danger zone.",
+                  "whenWrong": "It is — the first year usually shows the highest attrition.",
+                  "sim": "0-1 yr: 36.2% vs base 16.1%"
+                },
+                {
+                  "prompt": "Using finer bands in early tenure (0-1, 1-2) is pointless; equal-width bands are always best.",
+                  "answer": false,
+                  "whenRight": "Correct — finer early bands resolve the spike where the action is; later years can be wide.",
+                  "whenWrong": "Not so — fine early bands reveal the early spike that wide bands would blur.",
+                  "sim": "0-1, 1-2 (fine) ... 10+ (wide)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Bucket pivot",
-              "body": "Add column YearsBucket: nested IF on YearsAtCompany:\n  =IF(A2<=1, \"0-1\", IF(A2<=3, \"2-3\", IF(A2<=5, \"4-5\", IF(A2<=10, \"6-10\", \"10+\"))))\nPivot: Rows = YearsBucket, Values = attrition rate, COUNT.\nWhat's the shape?"
+              "title": "Your turn — the tenure curve",
+              "body": "[CODE] Bin `YearsAtCompany` (fine early, wide late) and compute attrition rate + count per band.\n[WRITE] One sentence: where is risk highest, and how does it compare to the base rate? Did your Day 1 hypothesis hold?"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Time-since-promotion",
-          "summary": "",
+          "title": "Stagnation: years since promotion",
+          "summary": "A second time driver. Concept, video, then the promotion-gap effect.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Stagnation: years since promotion",
+              "body": "## What it is\n`YearsSinceLastPromotion` measures career *stagnation* — how long since the employee last moved up. Group attrition rate by it (binned) to test whether being stuck drives people out.\n\n## Why it matters\nStagnation is a distinct lever from tenure and pay. Someone can be well-paid and long-tenured but feel *stuck* — no promotion in five years — and that resentment is a classic exit trigger. If the data shows attrition climbing with the promotion gap, the fix isn't money, it's a visible growth path. Separating \"stuck\" from \"underpaid\" matters because the company would otherwise treat a career problem with a salary solution that won't work.\n\n## The pattern\nSame cut-then-groupby. Watch whether the rate rises as the promotion gap widens — and remember this is correlational (a confounder could lurk), so phrase findings as 'associated with'."
+            },
+            {
+              "kind": "video",
+              "title": "Aggregation with groupby() & agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "creator": "",
+              "why": "Grouping by a binned driver, reused. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate by years-since-promotion\n```python\ndf[\"promo_gap\"] = pd.cut(df[\"YearsSinceLastPromotion\"],\n    bins=[-1, 1, 3, 7, 16], labels=[\"0-1\", \"2-3\", \"4-7\", \"8+\"])\nprint(df.groupby(\"promo_gap\")[\"left\"].mean().round(3))\n```\nOutput (illustrative):\n```\npromo_gap\n0-1      0.182\n2-3      0.121\n4-7      0.151\n8+       0.196\nName: left, dtype: float64\n```\nThe pattern here is U-shaped, not a clean climb: high for the just-promoted-or-not-yet (0-1) and again for the long-stuck (8+). That nuance is itself a finding — it warns you *not* to claim a simple \"longer gap = more attrition\" line the data doesn't support. Honest analysis reports the shape it sees, including the messy ones."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Years-since-promotion measures career stagnation, a different lever from tenure or pay.",
+                  "answer": true,
+                  "whenRight": "Right — someone can be well-paid yet feel stuck; that's its own exit driver.",
+                  "whenWrong": "It is — stagnation is distinct from pay/tenure and needs a growth-path fix.",
+                  "sim": "stuck 8+ yrs -> 19.6% attrition"
+                },
+                {
+                  "prompt": "If the relationship isn't a clean upward line, you should still report it as one.",
+                  "answer": false,
+                  "whenRight": "Correct — report the actual shape (here U-shaped); forcing a clean story is dishonest.",
+                  "whenWrong": "No — report what the data shows, even when it's messy.",
+                  "sim": "U-shaped -> say 'U-shaped', not 'rises steadily'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "YearsSinceLastPromotion",
-              "body": "Pivot: Rows = YearsSinceLastPromotion (cap at 8+), Values = attrition rate.\nWhere's the danger zone?"
+              "title": "Your turn — the stagnation effect",
+              "body": "[CODE] Bin `YearsSinceLastPromotion` and compute attrition rate per band.\n[WRITE] One sentence honestly describing the shape (rising? flat? U-shaped?)."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Cross-tab tenure × role",
-          "summary": "",
+          "title": "Cross-tab: tenure x role",
+          "summary": "Where AND when, together. Concept, video, then the worst cell.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Cross-tab: tenure x role",
+              "body": "## What it is\nCombine last week's *where* (role) with this week's *when* (tenure) in a single two-way `pivot_table`: rows = tenure band, columns = job role, values = attrition rate. The grid shows you the worst *(role, tenure)* combination.\n\n## Why it matters\nThe most precise, most actionable insight is usually an *interaction*: not \"Sales Reps are risky\" and \"early tenure is risky\" separately, but \"**early-tenure Sales Reps**\" — a specific cell that might be at 60% attrition. That's a target so precise HR can design an intervention for exactly those people. Single-variable findings point at a neighbourhood; the cross-tab points at the house.\n\n## The pattern\n`pivot_table(index=tenure_band, columns=JobRole, values=\"left\", aggfunc=\"mean\")`. Scan the grid for the hottest cell — but mind the counts, because narrow cells can be tiny."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas pivot_table for a two-way breakdown",
+              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
+              "creator": "",
+              "why": "pivot_table crossing two dimensions, reused. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Tenure x role attrition grid\n```python\npivot = df.pivot_table(index=\"tenure_band\", columns=\"JobRole\",\n                       values=\"left\", aggfunc=\"mean\")\nprint(pivot[[\"Sales Representative\",\"Laboratory Technician\",\"Research Scientist\"]].round(2))\n```\nOutput (illustrative):\n```\nJobRole      Sales Representative  Laboratory Technician  Research Scientist\ntenure_band\n0-1                          0.62                   0.34                0.23\n1-2                          0.45                   0.28                0.17\n2-5                          0.33                   0.21                0.14\n5-10                         0.20                   0.15                0.11\n```\nThe hotspot jumps out: **first-year Sales Representatives leave at ~62%** — the intersection of the worst role and the riskiest tenure. That's the single most targetable group in the company. Neither the role view nor the tenure view alone could point this precisely; the interaction did."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A tenure x role cross-tab can reveal a high-risk interaction (e.g. first-year Sales Reps) neither variable showed alone.",
+                  "answer": true,
+                  "whenRight": "Right — the interaction is the most precise, most actionable target.",
+                  "whenWrong": "It does — the grid pinpoints the worst (role, tenure) cell.",
+                  "sim": "first-year Sales Rep ~62% attrition"
+                },
+                {
+                  "prompt": "Narrow cells in a cross-tab can be based on very few people, so check counts before trusting them.",
+                  "answer": true,
+                  "whenRight": "Right — a 100% cell on 3 people is noise; always sanity-check size.",
+                  "whenWrong": "It does — small cells are noisy; verify the count behind a scary rate.",
+                  "sim": "cell rate 80% but n=5 -> not trustworthy"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "2-D pivot",
-              "body": "Rows = YearsBucket, Columns = JobRole, Values = attrition rate.\nConditional formatting (red high, green low). Which combos are worst?"
+              "title": "Your turn — the interaction",
+              "body": "[CODE] Build a `pivot_table` of attrition rate with `tenure_band` rows and `JobRole` columns.\n[WRITE] One sentence naming the worst (role, tenure) cell — and confirm it's based on enough people."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Years × salary",
-          "summary": "",
+          "title": "Tenure x salary interaction",
+          "summary": "Stuck and underpaid. Concept, video, then the combined-risk grid.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Tenure x salary interaction",
+              "body": "## What it is\nAnother interaction: cross tenure band against salary band. The hypothesis is that **long-tenured but low-paid** employees — people who stayed loyal yet never got paid up — carry a distinct resentment risk.\n\n## Why it matters\nInteractions keep finding what single variables miss. Low pay alone is risky (Week 10); long tenure alone is *protective* (the curve falls). But the *combination* — someone who's been loyal for years and is still underpaid — can be uniquely toxic, because it signals being taken for granted. If the grid confirms it, the fix is targeted equity raises for that specific cell, not an across-the-board change. This is how analysis gets surgical instead of blunt.\n\n## The pattern\n`pivot_table(index=tenure_band, columns=income_band, values=\"left\", aggfunc=\"mean\")`, then look for cells that are *worse than either band alone would predict*."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas pivot_table for a two-way breakdown",
+              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
+              "creator": "",
+              "why": "pivot_table for a second interaction, reused. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Tenure x salary-band attrition grid\n```python\npivot = df.pivot_table(index=\"tenure_band\", columns=\"income_band\",\n                       values=\"left\", aggfunc=\"mean\")\nprint(pivot.round(2))\n```\nOutput (illustrative):\n```\nincome_band   <3k  3-6k  6-10k  10k+\ntenure_band\n0-1          0.48  0.31   0.18  0.10\n1-2          0.34  0.19   0.11  0.07\n2-5          0.27  0.14   0.08  0.06\n5-10         0.21  0.10   0.07  0.05\n```\nRead it: low pay is bad at every tenure, but the **<3k column stays elevated even at 5-10 years (21%)** — the loyal-but-underpaid cell. Meanwhile high earners are safe regardless of tenure. The targeted recommendation: a pay-equity review for long-tenured staff still in the bottom income band, rather than blanket raises."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Crossing two drivers can surface a combined-risk cell worse than either driver alone implies.",
+                  "answer": true,
+                  "whenRight": "Right — long-tenured AND low-paid is its own risk the single views miss.",
+                  "whenWrong": "It does — interactions reveal combined risks single variables hide.",
+                  "sim": "5-10yr & <3k -> 21% (loyal but underpaid)"
+                },
+                {
+                  "prompt": "Once you've checked salary and tenure separately, crossing them adds nothing.",
+                  "answer": false,
+                  "whenRight": "Correct — the interaction found the loyal-but-underpaid cell neither single view showed.",
+                  "whenWrong": "Not true — the combination reveals targeted risk the separate views miss.",
+                  "sim": "low-pay + long-tenure = a distinct, targetable risk"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Tenure-salary interaction",
-              "body": "Rows = YearsBucket, Columns = Salary Bucket, Values = attrition rate.\nFindings: do high-tenure low-salary employees leave more?"
+              "title": "Your turn — the combined risk",
+              "body": "[CODE] Build a `pivot_table` of attrition rate with `tenure_band` rows and `income_band` columns.\n[WRITE] One sentence: is there a cell that's worse than either band alone would suggest?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Plot a 'survival curve'",
-          "summary": "",
+          "title": "Plot a survival curve",
+          "summary": "Visualise retention over tenure. Concept, video, then the cumulative-leave chart.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Plot a survival curve",
+              "body": "## What it is\nA **survival curve** plots how the workforce thins out over tenure — the cumulative share still employed (or, flipped, the cumulative share who've left) by each year. It turns your tenure table into one intuitive picture.\n\n## Why it matters\nA curve communicates retention to non-analysts instantly in a way a table can't: a steep early drop *is* the early-tenure spike, visible at a glance. It's also the standard tool of professional people-analytics and medical statistics (where it's literally about survival), so producing one signals fluency. For your dashboard next week, this single chart can carry the whole tenure story.\n\n## The pattern\nCompute attrition rate per tenure year (or band), then plot it as a line; or compute the cumulative leave rate and plot that. Either way it's a `groupby` feeding a `matplotlib` line plot — Week 2's plotting skill on an HR question."
+            },
+            {
+              "kind": "video",
+              "title": "Matplotlib in 15 minutes",
+              "url": "https://www.youtube.com/watch?v=3Xc3CA655Y4",
+              "creator": "",
+              "why": "Plotting a line chart, reused for the survival curve. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate by each tenure year, plotted\n```python\nimport matplotlib.pyplot as plt\nby_year = df.groupby(\"YearsAtCompany\")[\"left\"].mean()\n\nby_year.plot(kind=\"line\", marker=\"o\", figsize=(9,5))\nplt.axhline(df[\"left\"].mean(), color=\"red\", ls=\"--\", label=\"base rate 16.1%\")\nplt.title(\"Attrition rate by years at company\")\nplt.xlabel(\"Years at company\"); plt.ylabel(\"Attrition rate\")\nplt.legend(); plt.tight_layout()\nplt.savefig(\"attrition_by_tenure.png\", dpi=150); plt.show()\n```\nThe output is a line that starts **high on the left (year 0-1)** and falls toward and below the red base-rate line as tenure grows — the early-tenure spike, now a picture anyone can read. Describe it in your notebook: \"risk is concentrated in the first two years, then drops below average.\" That sentence + this chart is dashboard-ready."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A survival/attrition curve communicates the tenure-risk pattern to non-analysts at a glance.",
+                  "answer": true,
+                  "whenRight": "Right — a steep early drop shows the spike instantly, no table needed.",
+                  "whenWrong": "It does — the curve makes the early-tenure risk visible immediately.",
+                  "sim": "line high at year 0-1, falling -> 'early risk'"
+                },
+                {
+                  "prompt": "Adding the base-rate line to the chart helps the reader judge which years are above/below average.",
+                  "answer": true,
+                  "whenRight": "Right — a reference line turns raw rates into 'better or worse than typical'.",
+                  "whenWrong": "It does — the base-rate line gives the curve meaning at a glance.",
+                  "sim": "dashed line at 16.1% = the comparison anchor"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Cumulative leave rate by tenure",
-              "body": "Compute % of all leavers who had ≤ N years tenure. Plot as a step chart. This is your 'cumulative attrition by tenure'."
+              "title": "Your turn — the survival curve",
+              "body": "[CODE] Plot attrition rate by `YearsAtCompany` as a line, with a dashed base-rate reference line; save it as a PNG.\n[WRITE] One sentence describing the shape of the curve."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.2",
-          "summary": "",
+          "title": "Ship v0.2",
+          "summary": "Commit the tenure + interaction analysis, tag v0.2.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.2",
+              "body": "## What it is\nShip the time dimension: the tenure curve, the promotion-gap effect, the tenure x role and tenure x salary interactions, and the survival chart. Tag it `hr-v0.2`.\n\n## Why it matters\nYou've gone from *who* leaves to *when* and *which combinations* — and surfaced a surgically precise target (first-year Sales Reps; loyal-but-underpaid long-timers). That progression from blunt to precise, shipped as a clean increment, is exactly the analytical maturity a portfolio should demonstrate."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Moving from single-variable drivers to interaction effects (and shipping it) shows analytical maturity.",
+                  "answer": true,
+                  "whenRight": "Right — precise, targetable findings beat blunt single-variable ones.",
+                  "whenWrong": "It does — interaction findings are the more sophisticated, shippable result.",
+                  "sim": "v0.1 single drivers -> v0.2 interactions + timing"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "Update README with findings.\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Tenure bucket pivot\n  ☐ Promotion gap pivot\n  ☐ Cross-tab tenure × role\n  ☐ Cross-tab tenure × salary\n  ☐ Cumulative attrition step chart\n  ☐ v0.2 tag"
+              "title": "Acceptance — v0.2 is done when",
+              "body": "[PRODUCE] Notebook has: tenure-band attrition, promotion-gap effect, tenure x role and tenure x salary pivots, and the survival curve PNG.\n[CODE] Commit and tag:\n```\ngit add .\ngit commit -m \"HR Attrition v0.2: tenure, interactions, survival curve\"\ngit tag hr-v0.2\ngit push --tags\n```\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -3846,11 +4306,7 @@
         "Add the Manager relationship as a predictor. Compute attrition rate by YearsWithCurrManager (bucket into 0-1, 2-4, 5+). Do employees who have been with their current manager for less than 1 year have higher attrition? In most datasets, manager transitions are a leading indicator of attrition.",
         "Compute a simple \"attrition risk score\" per employee: the sum of three binary flags (tenure in danger zone, salary in bottom band, promotion gap above 1 year). An employee with all three flags is high risk; with none, low risk. Compute the attrition rate for each score level (0, 1, 2, 3). Does the risk score discriminate well?",
         "Research the Glassdoor employee satisfaction data for a company in the HR dataset's industry. Does the sentiment on Glassdoor align with the attrition patterns you found? This connection between internal data and external signals is the kind of analysis a senior HR analyst or people analytics team does."
-      ],
-      "concept_widget": {
-        "id": "groupby-aggregator",
-        "caption": "Pick an aggregation and watch many rows collapse into one per cohort."
-      }
+      ]
     },
     {
       "number": 12,
