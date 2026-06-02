@@ -514,6 +514,21 @@ function parse(raw: string): Block[] {
     // Skip blank
     if (!trimmed) { i++; continue; }
 
+    // Fenced code block: ```lang ... ```  (standard markdown)
+    if (trimmed.startsWith("```")) {
+      const code: string[] = [];
+      i++; // skip opening fence
+      while (i < lines.length && !lines[i].trim().startsWith("```")) {
+        code.push(lines[i]);
+        i++;
+      }
+      i++; // skip closing fence
+      while (code.length && !code[code.length - 1].trim()) code.pop();
+      while (code.length && !code[0].trim()) code.shift();
+      if (code.length) blocks.push({ t: "code", content: code.join("\n") });
+      continue;
+    }
+
     // Heading: # ## ###
     const hm = trimmed.match(/^(#{1,3})\s+(.+)$/);
     if (hm) {

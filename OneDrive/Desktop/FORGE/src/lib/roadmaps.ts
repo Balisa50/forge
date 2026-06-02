@@ -19,7 +19,7 @@ export interface RoadmapResource {
 
 /** Item inside a single day of a week. The richer interface that
  *  replaces the wall-of-text "topics" list. */
-export type DayItemKind = "video" | "reading" | "exercise" | "reflection" | "widget";
+export type DayItemKind = "video" | "reading" | "exercise" | "reflection" | "widget" | "lesson" | "swipe";
 
 /** Reference to an interactive concept widget. The heavy HTML/JS lives in the
  *  server-side registry (src/lib/conceptWidgets); JSON only points at it by
@@ -34,6 +34,23 @@ export interface ConceptWidgetRef {
   caption?: string;
 }
 
+/** One swipe retention card. The student reads the claim, swipes RIGHT if they
+ *  think it's true / YES, LEFT if false / NO. On answer the card reveals whether
+ *  they were right plus a tiny live "simulation" of the concept (sim). Reusable
+ *  across every track — the data lives in the roadmap JSON. */
+export interface SwipeCard {
+  /** The claim/question about the concept just taught. */
+  prompt: string;
+  /** true = the claim is correct (swipe right ✓); false = swipe left ✗. */
+  answer: boolean;
+  /** Shown when the learner answers correctly. */
+  whenRight: string;
+  /** Shown when the learner answers wrong. */
+  whenWrong: string;
+  /** Optional tiny code/output snippet rendered as the live result on reveal. */
+  sim?: string;
+}
+
 export interface DayItem {
   kind: DayItemKind;
   title: string;
@@ -41,8 +58,9 @@ export interface DayItem {
   duration_min?: number;     // for video
   creator?: string;          // for video — channel/author
   why?: string;              // one-line "why this matters"
-  body?: string;             // for exercise + reflection — the prompt
+  body?: string;             // for exercise + reflection + lesson — the prose
   widget?: ConceptWidgetRef; // for kind === "widget" — the interactive sim
+  cards?: SwipeCard[];       // for kind === "swipe" — retention swipe cards
 }
 
 export interface RoadmapDay {

@@ -335,175 +335,348 @@
           "explain": "Idempotent = same input always → same output. If a script depends on external state (a counter, a file that grows), it's not idempotent — and that's a bug."
         }
       ],
-      "context": "Last week you answered three questions about Superstore in Excel. This week you answer the same questions in Python. Same data, same questions, same numbers -- but this time the analysis runs in five minutes from a blank machine, it can be scheduled to run automatically every month when new data arrives, and the results are always consistent because there is no manual drag-and-drop involved.\n\nThat last point is the reason data teams eventually outgrow spreadsheets. Not because Excel is bad -- Excel is genuinely excellent for one-time analysis and for work that needs to be done by people who do not code. But when the monthly revenue report takes 3 hours because someone has to manually update the pivot table and re-check the formulas, that is 3 hours that could be a 5-minute script run. The Python version is not smarter than the Excel version. It is repeatable.\n\nPandas is the tool. It is not magic -- it is NumPy with column names and a groupby method. Once that framing clicks, most of the API guesses itself: if you want to group rows by Category and sum their Sales, that is df.groupby('Category')['Sales'].sum(), and the result looks like a spreadsheet pivot table because it is the same operation. The things that are different from Excel: there is no GUI, errors show up as tracebacks rather than wrong cell values, and the output has no formatting until you add it.\n\nThe deliverable is monthly_report.py -- a script that reads the CSV, reproduces all three analyses from week 1, prints the results to the console, and saves a clean summary to a CSV. Idempotent means running it twice gives the same output. If it does not, something in the script has a side effect that depends on external state.\n\nBy Sunday: monthly_report.py committed to the superstore-analysis repo, running cleanly from a fresh terminal, producing the same numbers as the week 1 Excel analysis. If the numbers differ by more than rounding, one of them is wrong -- find which one.",
+      "context": "Last week you answered questions by clicking through Excel. This week you do the same analysis in Python with pandas, the analyst's power tool. Each day teaches exactly one concept: read the short lesson, study the examples, swipe the quick check, then write the code yourself. By Sunday you can load, clean, filter, group, and join real data without touching a spreadsheet.",
       "days": [
         {
           "number": 1,
-          "title": "Why analysts need Python too",
-          "summary": "",
+          "title": "Series — one column of data",
+          "summary": "Today's one concept: the pandas Series. Learn it, swipe-check it, then write your own.",
           "items": [
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "What Python is and why an analyst would leave Excel for it."
+              "kind": "lesson",
+              "title": "Series — one column of data",
+              "body": "## What it is\nA **Series** is a single column of values with an **index** (row labels) attached. Think of one Excel column that remembers which row each value sits in.\n\n```python\nimport pandas as pd\nsales = pd.Series([120, 90, 200, 75], index=[\"Mon\", \"Tue\", \"Wed\", \"Thu\"])\n```\n\n## Why it matters\nEvery DataFrame column *is* a Series, so once Series click, a whole table is just many Series side by side. And Series operations are **vectorized** — they run on the whole column at once, with no `for` loop. That is what makes pandas fast and short.\n\n## Examples\n```python\n# 1. Read one value by its label\nsales[\"Wed\"]          # 200\n\n# 2. Vectorized math — every element at once, no loop\nsales * 1.1           # Mon 132.0, Tue 99.0, Wed 220.0, Thu 82.5\n\n# 3. Filter with a boolean mask\nsales[sales > 100]    # Mon 120, Wed 200\n\n# 4. Summarise the whole column\nsales.mean()          # 121.25\nsales.sum()           # 485\n\n# 5. Quick stats in one call\nsales.describe()      # count, mean, std, min, quartiles, max\n```\n\nYou now know enough to start. Try the task below."
             },
             {
-              "kind": "reflection",
-              "title": "Excel pain points",
-              "body": "Three things Excel does badly that pandas does well:\n  1. >1M rows — Excel crashes; pandas yawns\n  2. Repeating an analysis on next month's data — Excel: re-do; pandas: re-run\n  3. Joining 5+ tables — Excel: VLOOKUP hell; pandas: 1 line"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`sales * 1.1` raises every value by 10% in one line, with no loop.",
+                  "answer": true,
+                  "whenRight": "Right — Series math is vectorized: it touches the whole column at once.",
+                  "whenWrong": "It does work in one line — Series math is vectorized, no loop needed.",
+                  "sim": "before:  Mon 120  Tue 90  Wed 200  Thu 75\nafter :  Mon 132  Tue 99  Wed 220  Thu 82.5"
+                },
+                {
+                  "prompt": "`sales.mean()` returns another Series.",
+                  "answer": false,
+                  "whenRight": "Correct — an aggregation collapses the column to a single number (121.25).",
+                  "whenWrong": "Not quite — `.mean()` collapses the Series to one scalar number, not a Series.",
+                  "sim": "sales.mean()  ->  121.25   (one number)"
+                },
+                {
+                  "prompt": "`sales[sales > 100]` keeps only the rows whose value is over 100.",
+                  "answer": true,
+                  "whenRight": "Yes — the boolean mask selects matching rows and drops the rest.",
+                  "whenWrong": "It does filter — the mask keeps rows where the condition is True.",
+                  "sim": "mask:  [True, False, True, False]\nresult: Mon 120, Wed 200"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — build and query a Series",
+              "body": "[CODE] Create a Series of 5 days of sales with the weekday names as the index.\n\n[CODE] Print the average with `.mean()`.\n\n[PRODUCE] Print only the days where sales were **above** the average (use a boolean mask).\n\n[WRITE] In one sentence, say which day was strongest and by how much."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas Series, step by step",
+              "url": "https://www.youtube.com/watch?v=hL5e1d3p7eM",
+              "creator": "",
+              "why": "Watch someone build and use a Series live. Optional — only if you want to see it in motion."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Install + first notebook",
-          "summary": "",
+          "title": "DataFrame — create and inspect",
+          "summary": "One concept: the DataFrame, and how to look before you leap.",
           "items": [
             {
-              "kind": "video",
-              "title": "Install Anaconda in 5 minutes",
-              "url": "https://www.youtube.com/watch?v=UTqOXwAi1pE",
-              "duration_min": 5,
-              "creator": "",
-              "why": "One install = Python + Jupyter + pandas. Use this, not python.org."
+              "kind": "lesson",
+              "title": "DataFrame — create and inspect",
+              "body": "## What it is\nA **DataFrame** is a table: named columns, each one a Series, sharing one index. You will usually load it from a CSV, but you can build one from a dictionary to practise.\n\n```python\nimport pandas as pd\ndf = pd.DataFrame({\n    \"product\": [\"Chair\", \"Desk\", \"Lamp\", \"Pen\"],\n    \"price\":   [85, 240, 30, 3],\n    \"qty\":     [4, 2, 7, 50],\n})\n```\n\n## Why it matters\nBefore you analyse anything, you must **see** it — its size, its column types, and whether values are missing. Skipping inspection is how analysts ship wrong numbers. Four commands do it.\n\n## Examples\n```python\n# 1. First rows — eyeball the shape of the data\ndf.head()\n\n# 2. Structure: column names, dtypes, and non-null counts\ndf.info()\n\n# 3. Numeric summary: count, mean, min, quartiles, max\ndf.describe()\n\n# 4. (rows, columns)\ndf.shape          # (4, 3)\n\n# 5. Just the column names\ndf.columns        # Index(['product', 'price', 'qty'], ...)\n```\n\nThat four-step look — head, info, describe, shape — is the start of every real project."
             },
             {
-              "kind": "video",
-              "title": "Jupyter Notebook in 5 minutes",
-              "url": "https://www.youtube.com/watch?v=jZ952vChhuI",
-              "duration_min": 5,
-              "creator": "",
-              "why": "Open Jupyter, make a cell, run it, save the .ipynb."
-            },
-            {
-              "kind": "video",
-              "title": "Pandas in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=tRKeLrwfUgU",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "What pandas is and why we use it instead of Excel for big data."
-            },
-            {
-              "kind": "reading",
-              "title": "Anaconda download",
-              "url": "https://www.anaconda.com/download",
-              "why": "Click 'Open'. If you did Data Science Week 2 already, you have this."
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.info()` tells you each column's data type and how many values are non-null.",
+                  "answer": true,
+                  "whenRight": "Right — info() is your first nulls-and-types check.",
+                  "whenWrong": "Actually it does — info() reports dtype and non-null count per column.",
+                  "sim": "price   4 non-null   int64\nqty     4 non-null   int64\nproduct 4 non-null   object"
+                },
+                {
+                  "prompt": "`df.shape` returns the number of (rows, columns).",
+                  "answer": true,
+                  "whenRight": "Yes — shape is a quick (rows, columns) tuple.",
+                  "whenWrong": "It does — shape gives (rows, columns), e.g. (4, 3).",
+                  "sim": "df.shape  ->  (4, 3)"
+                },
+                {
+                  "prompt": "`df.describe()` shows the average of your text columns too.",
+                  "answer": false,
+                  "whenRight": "Correct — describe() summarises numeric columns only by default.",
+                  "whenWrong": "Not quite — describe() covers numeric columns by default, not text.",
+                  "sim": "describe() ->  price & qty stats only  (product skipped)"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Hello pandas",
-              "body": "Open Jupyter. Create superstore-py.ipynb in your superstore-analysis repo:\n      import pandas as pd\n      df = pd.read_excel('Sample - Superstore.xls', sheet_name='Orders')\n      print(df.shape, df.columns.tolist())"
+              "title": "Your turn — make and inspect a table",
+              "body": "[CODE] Build a DataFrame of 4 products with `price` and `qty` columns.\n\n[CODE] Run `.head()`, `.info()`, and `.describe()`.\n\n[WRITE] From `.info()`, state how many rows there are and whether any column has missing values."
+            },
+            {
+              "kind": "video",
+              "title": "Inspect a DataFrame: head(), info(), describe()",
+              "url": "https://www.youtube.com/watch?v=BspcRHPiFk4",
+              "creator": "",
+              "why": "A focused look at the four inspection commands. Optional."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Re-do Q1 (margins) in pandas",
-          "summary": "",
+          "title": "Select columns, filter rows",
+          "summary": "One concept: slicing a table down to the rows and columns that answer your question.",
           "items": [
             {
-              "kind": "video",
-              "title": "Pandas read_csv + first DataFrame (10 min)",
-              "url": "https://www.youtube.com/watch?v=vmEHCJofslg",
-              "duration_min": 10,
-              "creator": "",
-              "why": "Load the CSV, peek at head, check dtypes — the start of every project."
+              "kind": "lesson",
+              "title": "Select columns, filter rows",
+              "body": "## What it is\nAnalysis is mostly **slicing**: pick the columns you care about, keep the rows that match a condition.\n\n```python\ndf = pd.DataFrame({\n    \"name\":   [\"A\", \"B\", \"C\", \"D\"],\n    \"region\": [\"East\", \"West\", \"East\", \"West\"],\n    \"sales\":  [300, 90, 650, 120],\n})\n```\n\n## Why it matters\nA question like \"East-region orders over 500\" is just a column selection plus a row filter. Get fluent here and most analysis becomes a one-liner.\n\n## Examples\n```python\n# 1. One column (returns a Series)\ndf[\"sales\"]\n\n# 2. Several columns (returns a DataFrame) — note the double brackets\ndf[[\"name\", \"sales\"]]\n\n# 3. Filter rows with a boolean mask\ndf[df[\"sales\"] > 200]\n\n# 4. Combine conditions: & = and, | = or  (each condition in parentheses)\ndf[(df[\"region\"] == \"East\") & (df[\"sales\"] > 500)]\n\n# 5. .loc selects rows AND columns by label in one go\ndf.loc[df[\"region\"] == \"East\", [\"name\", \"sales\"]]\n```\n\nTip: it is `&` and `|`, never the words `and`/`or`, and every condition needs its own parentheses."
             },
             {
-              "kind": "video",
-              "title": "Pandas groupby in 12 minutes",
-              "url": "https://www.youtube.com/watch?v=txMdrV1Ut64",
-              "duration_min": 12,
-              "creator": "Misra Turp",
-              "why": "groupby is the pivot table in Python. Exactly what today's margin task needs."
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df[df[\"sales\"] > 200]` keeps the rows where sales is greater than 200.",
+                  "answer": true,
+                  "whenRight": "Right — the mask keeps matching rows and drops the rest.",
+                  "whenWrong": "It does filter — the boolean mask keeps rows over 200.",
+                  "sim": "kept:  C (650), A (300)\ndropped: B (90), D (120)"
+                },
+                {
+                  "prompt": "To combine two conditions you write `df[cond1 and cond2]`.",
+                  "answer": false,
+                  "whenRight": "Correct — use `&` with parentheses: `df[(cond1) & (cond2)]`, not the word `and`.",
+                  "whenWrong": "Careful — pandas needs `&` with parentheses, not the Python word `and`.",
+                  "sim": "df[(df.region=='East') & (df.sales>500)]   ->  C only"
+                },
+                {
+                  "prompt": "`df[[\"name\", \"sales\"]]` returns a DataFrame with just those two columns.",
+                  "answer": true,
+                  "whenRight": "Yes — double brackets select multiple columns and return a table.",
+                  "whenWrong": "It does — double brackets return a DataFrame of those columns.",
+                  "sim": "  name  sales\n  A     300\n  B     90 ..."
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Margin pivot in pandas",
-              "body": "      df['margin'] = df['Profit'] / df['Sales']\n      out = df.groupby('Sub-Category').agg(\n          sales=('Sales','sum'),\n          profit=('Profit','sum'),\n          margin=('margin','mean'),\n      ).sort_values('margin', ascending=False)\n      print(out)\n\nMatch your Excel pivot? Should be the same."
+              "title": "Your turn — slice to the answer",
+              "body": "[CODE] Build the 4-row table above (name, region, sales).\n\n[PRODUCE] Select `name` and `sales` for the rows where region is `East` **and** sales is over 500.\n\n[WRITE] One sentence: which order(s) matched, and what makes a row pass both conditions."
+            },
+            {
+              "kind": "video",
+              "title": "Select, slice and filter rows & columns",
+              "url": "https://www.youtube.com/watch?v=DCE6t3vNfvM",
+              "creator": "",
+              "why": "Selecting and filtering, shown live. Optional."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Filter + group by multiple",
-          "summary": "",
+          "title": "Aggregation and groupby",
+          "summary": "One concept: groupby — the pivot table of pandas, and the heart of analysis.",
           "items": [
             {
-              "kind": "video",
-              "title": "Pandas pivot_table in 11 minutes",
-              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
-              "duration_min": 11,
-              "creator": "codebasics",
-              "why": "The direct pandas equivalent of an Excel pivot — for filtering and grouping by multiple columns."
+              "kind": "lesson",
+              "title": "Aggregation and groupby",
+              "body": "## What it is\n**Aggregation** collapses many rows into one summary number (`sum`, `mean`, `count`). **groupby** does it *per group*: split rows by a column, aggregate each group, combine the results — exactly an Excel pivot table.\n\n```python\ndf = pd.DataFrame({\n    \"region\": [\"East\", \"West\", \"East\", \"West\", \"East\"],\n    \"sales\":  [300, 90, 650, 120, 200],\n})\n```\n\n## Why it matters\nAlmost every analysis question is \"per X, what is Y?\" — sales **per region**, revenue **per month**, orders **per customer**. That is groupby, every time.\n\n## Examples\n```python\n# 1. Aggregate the whole column\ndf[\"sales\"].sum()                       # 1360\n\n# 2. Total per group — the core move\ndf.groupby(\"region\")[\"sales\"].sum()     # East 1150, West 210\n\n# 3. Average per group\ndf.groupby(\"region\")[\"sales\"].mean()    # East 383.3, West 105.0\n\n# 4. Several aggregations at once, with clean names\ndf.groupby(\"region\").agg(\n    total=(\"sales\", \"sum\"),\n    avg=(\"sales\", \"mean\"),\n    orders=(\"sales\", \"count\"),\n)\n\n# 5. How many rows per group\ndf.groupby(\"region\").size()             # East 3, West 2\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.groupby(\"region\")[\"sales\"].sum()` gives one total per region.",
+                  "answer": true,
+                  "whenRight": "Right — split by region, sum sales in each, combine.",
+                  "whenWrong": "It does — groupby returns one summarised row per group.",
+                  "sim": "region\nEast   1150\nWest    210\nName: sales"
+                },
+                {
+                  "prompt": "`df.groupby(\"region\")` on its own already prints the grouped totals.",
+                  "answer": false,
+                  "whenRight": "Correct — groupby alone returns a lazy GroupBy object; you must add an aggregation.",
+                  "whenWrong": "Not quite — groupby alone is a lazy object; add `.sum()`/`.mean()` to get numbers.",
+                  "sim": "df.groupby('region')  ->  <DataFrameGroupBy object>  (no numbers yet)"
+                },
+                {
+                  "prompt": "`.agg(total=(\"sales\",\"sum\"))` lets you name the output column.",
+                  "answer": true,
+                  "whenRight": "Yes — named aggregation gives tidy, readable result columns.",
+                  "whenWrong": "It does — the `name=(col, func)` form names each aggregated column.",
+                  "sim": "        total   avg\nEast    1150   383.3\nWest     210   105.0"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Region YoY",
-              "body": "      df['Year'] = pd.to_datetime(df['Order Date']).dt.year\n      out = df.groupby(['Region','Year'])['Sales'].sum().unstack()\n      out['yoy'] = (out[2023] - out[2022]) / out[2022]\n      print(out)\n\n1 line for 2-D pivot. Excel needs 5 clicks."
+              "title": "Your turn — answer a per-group question",
+              "body": "[CODE] Build a table with `category` and `sales` columns (at least 5 rows, 2-3 categories).\n\n[PRODUCE] Compute the **total** and **average** sales per category with `.agg(...)`.\n\n[PRODUCE] Sort the result by total, highest first (`.sort_values`).\n\n[WRITE] One sentence naming the top category and its total."
+            },
+            {
+              "kind": "video",
+              "title": "Aggregation in pandas with groupby() & agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "creator": "",
+              "why": "groupby and agg shown on real data. Optional."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Charts with matplotlib",
-          "summary": "",
+          "title": "Handling missing data",
+          "summary": "One concept: finding and dealing with NaN before it poisons your numbers.",
           "items": [
             {
-              "kind": "video",
-              "title": "Matplotlib in 15 minutes",
-              "url": "https://www.youtube.com/watch?v=3Xc3CA655Y4",
-              "duration_min": 15,
-              "creator": "Tech With Tim",
-              "why": "Plot your first chart and save it with plt.savefig('chart.png')."
+              "kind": "lesson",
+              "title": "Handling missing data",
+              "body": "## What it is\nReal data has holes — pandas shows them as **NaN** (Not a Number). You have three moves: **find** them, **drop** them, or **fill** them.\n\n```python\nimport numpy as np\ndf = pd.DataFrame({\n    \"product\": [\"Chair\", \"Desk\", \"Lamp\", \"Pen\"],\n    \"price\":   [85, np.nan, 30, np.nan],\n})\n```\n\n## Why it matters\nNaN spreads silently: one missing value can turn a whole sum or mean into NaN. You must decide — deliberately — whether to drop the row or fill the gap.\n\n## Examples\n```python\n# 1. Count missing values per column\ndf.isna().sum()                 # price 2\n\n# 2. Drop rows that have ANY missing value\ndf.dropna()                     # keeps Chair, Lamp\n\n# 3. Drop only when a specific column is missing\ndf.dropna(subset=[\"price\"])\n\n# 4. Fill missing with a fixed value\ndf.fillna(0)\n\n# 5. Fill missing price with the column's average (a common choice)\ndf[\"price\"].fillna(df[\"price\"].mean())   # blanks become 57.5\n```\n\nRule of thumb: drop when the row is useless without the value; fill when a sensible default (0, the mean, \"unknown\") keeps the row meaningful."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.isna().sum()` tells you how many values are missing in each column.",
+                  "answer": true,
+                  "whenRight": "Right — isna() flags blanks, sum() counts them per column.",
+                  "whenWrong": "It does — isna().sum() is the standard 'how many blanks' check.",
+                  "sim": "product   0\nprice     2"
+                },
+                {
+                  "prompt": "`df.dropna()` fills the missing values in place.",
+                  "answer": false,
+                  "whenRight": "Correct — dropna *removes* rows with NaN; `fillna` is what fills them.",
+                  "whenWrong": "Mix-up — dropna removes rows; use fillna to fill the blanks.",
+                  "sim": "dropna()  ->  Chair 85, Lamp 30   (Desk & Pen rows removed)"
+                },
+                {
+                  "prompt": "Filling missing prices with the column mean keeps every row usable.",
+                  "answer": true,
+                  "whenRight": "Yes — fillna(mean) is a common way to keep rows without distorting totals much.",
+                  "whenWrong": "It does help — fillna with the mean preserves rows while staying reasonable.",
+                  "sim": "price.fillna(price.mean())  ->  85, 57.5, 30, 57.5"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Plot the margin pivot",
-              "body": "      import matplotlib.pyplot as plt\n      out['margin'].plot(kind='barh', figsize=(10,6), title='Margin by Sub-Category')\n      plt.tight_layout()\n      plt.savefig('margin.png', dpi=150)"
+              "title": "Your turn — clean the gaps",
+              "body": "[CODE] Build a table where the `price` column has 2 missing values (use `np.nan`).\n\n[PRODUCE] Print `df.isna().sum()` to confirm the count.\n\n[PRODUCE] Fill the missing prices with the column mean, then show `isna().sum()` is now 0.\n\n[WRITE] One sentence: why you chose to fill rather than drop here."
+            },
+            {
+              "kind": "video",
+              "title": "Handling missing data: dropna & fillna",
+              "url": "https://www.youtube.com/watch?v=EjZhV8qOges",
+              "creator": "",
+              "why": "dropna and fillna in action. Optional."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Automate the monthly report",
-          "summary": "",
+          "title": "Combine datasets: merge and concat",
+          "summary": "One concept: bringing two tables together — stacking (concat) and joining on a key (merge).",
           "items": [
             {
-              "kind": "video",
-              "title": "Schedule a Python script with Windows Task Scheduler",
-              "url": "https://www.youtube.com/watch?v=IsuAltPOiEw",
-              "duration_min": 9,
-              "creator": "",
-              "why": "Run your report automatically. Mac/Linux: use cron, same idea."
+              "kind": "lesson",
+              "title": "Combine datasets: merge and concat",
+              "body": "## What it is\nTwo different tools for two different jobs:\n\n- **concat** stacks tables — more rows (or more columns) glued together.\n- **merge** joins tables on a shared **key** column — like a SQL JOIN or Excel VLOOKUP.\n\n```python\norders = pd.DataFrame({\"cust_id\": [1, 2, 1], \"sales\": [300, 90, 120]})\ncustomers = pd.DataFrame({\"cust_id\": [1, 2], \"name\": [\"Ada\", \"Bo\"]})\n```\n\n## Why it matters\nReal answers live across tables: orders in one, customer names in another. merge is how you bring the name onto each order so you can group by it.\n\n## Examples\n```python\n# 1. Stack two tables of the same shape (more rows)\npd.concat([orders, orders])          # 6 rows\n\n# 2. Join orders to customer names on the shared key\npd.merge(orders, customers, on=\"cust_id\")\n#   cust_id  sales  name\n#   1        300    Ada\n#   2        90     Bo\n#   1        120    Ada\n\n# 3. Keep ALL orders even if no matching customer (left join)\npd.merge(orders, customers, on=\"cust_id\", how=\"left\")\n\n# 4. Merge, then answer a per-customer question\nmerged = pd.merge(orders, customers, on=\"cust_id\")\nmerged.groupby(\"name\")[\"sales\"].sum()   # Ada 420, Bo 90\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`pd.merge(orders, customers, on=\"cust_id\")` attaches each customer's name to their orders.",
+                  "answer": true,
+                  "whenRight": "Right — merge matches rows on the shared key and joins the columns.",
+                  "whenWrong": "It does — merge joins on the key, bringing name onto each order.",
+                  "sim": "cust_id  sales  name\n1        300    Ada\n2        90     Bo\n1        120    Ada"
+                },
+                {
+                  "prompt": "`concat` is the right tool to join two tables on a key column.",
+                  "answer": false,
+                  "whenRight": "Correct — concat just stacks; joining on a key is `merge`'s job.",
+                  "whenWrong": "Mix-up — concat stacks rows/columns; use merge to join on a key.",
+                  "sim": "concat -> stacks rows   |   merge(on='key') -> joins by key"
+                },
+                {
+                  "prompt": "After merging orders with names, you can `groupby(\"name\")` to total each customer's sales.",
+                  "answer": true,
+                  "whenRight": "Yes — that's the payoff: merge brings the name over, groupby summarises by it.",
+                  "whenWrong": "It does — once name is on each row, groupby('name') totals per customer.",
+                  "sim": "name\nAda   420\nBo     90"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "monthly_report.py",
-              "body": "Create a script that:\n  1. Loads the latest Excel from data/\n  2. Computes top 5 / bottom 5 sub-categories by margin\n  3. Saves a chart\n  4. Prints a 3-line summary\n\nRun: python monthly_report.py. Imagine running this on the 1st of every month — 5 minutes vs 2 hours in Excel."
+              "title": "Your turn — join then summarise",
+              "body": "[CODE] Build an `orders` table (cust_id, sales) and a `customers` table (cust_id, name).\n\n[PRODUCE] Merge them on `cust_id`.\n\n[PRODUCE] Group the merged table by `name` and total the sales.\n\n[WRITE] One sentence naming the highest-spending customer."
+            },
+            {
+              "kind": "video",
+              "title": "Merge and concat DataFrames — a quick guide",
+              "url": "https://www.youtube.com/watch?v=dhovvL-AMVQ",
+              "creator": "",
+              "why": "Combining tables, shown live. Optional."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag pandas-ready",
-          "summary": "",
+          "title": "Project — a real mini analysis",
+          "summary": "Put all six concepts together on one dataset and answer three real questions.",
           "items": [
             {
-              "kind": "video",
-              "title": "Your first Git + GitHub push in 10 minutes",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "why": "git init, add, commit, push — reuse every time a week says 'push to GitHub'."
+              "kind": "lesson",
+              "title": "Project — put it all together",
+              "body": "## The brief\nYou now have every tool you need: Series, DataFrames, selecting, filtering, groupby, missing-data handling, and merge. This project chains them into one real analysis — the exact shape of work an analyst does daily.\n\n## The pipeline every analysis follows\n1. **Load** the data into a DataFrame.\n2. **Inspect** it (`head`, `info`, `describe`).\n3. **Clean** missing values (`isna`, `fillna`/`dropna`).\n4. **Filter** to the rows that matter.\n5. **Aggregate** with `groupby` to answer the question.\n6. **State** the finding in plain English.\n\nUse the Superstore dataset from Week 1 (or any CSV with a category, a region, sales, and dates)."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A solid analysis usually flows: load -> inspect -> clean -> filter -> aggregate.",
+                  "answer": true,
+                  "whenRight": "Right — that order keeps you from analysing dirty or wrong-shaped data.",
+                  "whenWrong": "That is the dependable order — inspect and clean before you aggregate.",
+                  "sim": "load -> inspect -> clean -> filter -> groupby -> answer"
+                },
+                {
+                  "prompt": "It's fine to run `groupby` before checking for missing values.",
+                  "answer": false,
+                  "whenRight": "Correct — clean first: NaN can quietly distort group totals and averages.",
+                  "whenWrong": "Risky — clean missing values first, or your group totals can be wrong.",
+                  "sim": "NaN in sales  ->  group total becomes NaN  ->  wrong answer"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "      git add . && git commit -m 'Python pandas version of Superstore analysis'\n\nPASS:\n  ☐ pandas matches your Excel pivots exactly\n  ☐ At least 3 grouping operations done\n  ☐ 1 chart saved as PNG\n  ☐ monthly_report.py runs end-to-end"
+              "title": "Your turn — TaxiPulse / Superstore analysis",
+              "body": "Build one notebook, `pandas-project.ipynb`, that answers **three** questions on your dataset.\n\n[CODE] Load the CSV and run `head()` + `info()`.\n\n[CODE] Clean: check `isna().sum()`, then fill or drop missing values (your choice — justify it).\n\n[PRODUCE] Question 1: total sales **per category** (`groupby` + `sum`), sorted high to low.\n\n[PRODUCE] Question 2: average sales **per region** (`groupby` + `mean`).\n\n[PRODUCE] Question 3: if you have two tables, `merge` them and answer one cross-table question; otherwise, the busiest single category by order count.\n\n[WRITE] A short markdown cell at the top with your three findings in plain English (real numbers, no placeholders).\n\n[PRODUCE] Push the notebook to GitHub and submit the link."
             }
           ]
         }
@@ -611,11 +784,7 @@
         "Schedule monthly_report.py to run automatically using cron (Mac/Linux) or Task Scheduler (Windows). Run it on the 1st of each month. Automating the report is the point -- doing it once proves the concept.",
         "Add an argparse argument --year that filters the analysis to a specific year: python monthly_report.py --year 2017. The script should work with or without the flag, defaulting to all years. Parameterised scripts are more useful than hardcoded ones.",
         "Compare pandas .groupby().agg() to pd.pivot_table on the same data. They can produce identical results -- understand when you would choose each. The pivot_table interface is closer to Excel's mental model; groupby + agg is more flexible for complex multi-step pipelines."
-      ],
-      "concept_widget": {
-        "id": "df-inspector",
-        "caption": "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet."
-      }
+      ]
     },
     {
       "number": 3,

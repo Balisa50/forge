@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2, Play, FileText, PenLine, Circle, Lock, Target, Code2, HelpCircle,
-  ExternalLink, ChevronDown, ArrowRight, Sparkles,
+  ExternalLink, ChevronDown, ArrowRight, Sparkles, BookOpen,
 } from "lucide-react";
 import type { RoadmapWeek } from "@/lib/roadmaps";
 import ResourceViewer from "@/components/ResourceViewer";
 import ConceptPrimer from "@/components/ConceptPrimer";
 import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
+import SwipeCards from "@/components/SwipeCards";
 import ForgeMarkdown from "@/components/ForgeMarkdown";
 
 /**
@@ -379,9 +380,9 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                   {d.items.map((item, i) => {
                     const key = `d${d.number}-i${i}`;
                     const checked = !!done[key];
-                    const Icon = item.kind === "video" ? Play : item.kind === "reading" ? FileText : item.kind === "exercise" ? Code2 : item.kind === "widget" ? Sparkles : PenLine;
-                    const accent = item.kind === "video" ? "#fb7185" : item.kind === "reading" ? "#60a5fa" : item.kind === "exercise" ? "#34d399" : item.kind === "widget" ? "#D4AF37" : "#c084fc";
-                    const kindLabel = item.kind === "video" ? "Watch" : item.kind === "reading" ? "Read" : item.kind === "exercise" ? "Build" : item.kind === "widget" ? "Explore" : "Reflect";
+                    const Icon = item.kind === "video" ? Play : item.kind === "reading" ? FileText : item.kind === "lesson" ? BookOpen : item.kind === "exercise" ? Code2 : item.kind === "widget" ? Sparkles : item.kind === "swipe" ? HelpCircle : PenLine;
+                    const accent = item.kind === "video" ? "#fb7185" : item.kind === "reading" ? "#60a5fa" : item.kind === "lesson" ? "#60a5fa" : item.kind === "exercise" ? "#34d399" : item.kind === "widget" ? "#D4AF37" : item.kind === "swipe" ? "#D4AF37" : "#c084fc";
+                    const kindLabel = item.kind === "video" ? "Watch" : item.kind === "reading" ? "Read" : item.kind === "lesson" ? "Learn" : item.kind === "exercise" ? "Build" : item.kind === "widget" ? "Explore" : item.kind === "swipe" ? "Quick check" : "Reflect";
                     const clickable = !!item.url;
 
                     return (
@@ -464,6 +465,13 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
                                   params={item.widget.params}
                                   caption={item.widget.caption}
                                 />
+                              </div>
+                            )}
+                            {/* Swipe retention cards — the gamified concept check
+                                that sits after the lesson, before the coding task. */}
+                            {item.kind === "swipe" && item.cards && item.cards.length > 0 && (
+                              <div style={{ marginTop: "0.75rem" }}>
+                                <SwipeCards cards={item.cards} />
                               </div>
                             )}
                             {/* Inline VideoEmbed for video items with YouTube/Loom URLs.
