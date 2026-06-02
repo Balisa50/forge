@@ -1569,94 +1569,302 @@
       "days": [
         {
           "number": 1,
-          "title": "SQL in 1 hour",
-          "summary": "",
+          "title": "SELECT — read columns from a table",
+          "summary": "The language of every data warehouse. Today: SELECT … FROM … LIMIT, and load Superstore into SQL.",
           "items": [
             {
-              "kind": "video",
-              "title": "SQL crash course — 1 hour",
-              "url": "https://www.youtube.com/results?search_query=sql+crash+course+beginner+1+hour",
-              "duration_min": 60,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "SELECT — read columns from a table",
+              "body": "## What it is\n**SQL** asks a database for data. The core statement: `SELECT` the columns you want `FROM` a table. `*` means all columns; `LIMIT` peeks at a few rows.\n\n## Why it matters\nYou've done Superstore in Excel and pandas. SQL is the third — and the one every serious data org runs on (BigQuery, Snowflake, Redshift, Databricks all speak SQL). Same questions, but it scales to billions of rows that never fit on your laptop.\n\n## Setup (free, in-browser)\nGo to **sqliteonline.com**, click *Import* → upload your Superstore CSV → name the table `superstore`. No install.\n\n## Examples\n```sql\n-- 1. Peek at the whole table, first 5 rows\nSELECT * FROM superstore LIMIT 5;\n\n-- 2. Just the columns you care about\nSELECT sub_category, sales, profit FROM superstore LIMIT 10;\n\n-- 3. The distinct categories (like pandas .unique())\nSELECT DISTINCT category FROM superstore;\n```\n\n`SELECT`/`FROM` is to SQL what `df[[...]]` is to pandas — choosing columns from a table."
             },
             {
-              "kind": "reading",
-              "title": "SQLite Online — free in-browser SQL",
-              "url": "https://sqliteonline.com/",
-              "why": "Click 'Open' to use SQL right in your browser, no install."
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`SELECT` chooses which columns to return; `FROM` names the table.",
+                  "answer": true,
+                  "whenRight": "Right — SELECT = columns, FROM = source table.",
+                  "whenWrong": "It does — SELECT picks columns, FROM names the table they come from.",
+                  "sim": "SELECT sub_category, profit\nFROM superstore;"
+                },
+                {
+                  "prompt": "`LIMIT 5` returns just the first 5 rows — a quick peek, like pandas .head().",
+                  "answer": true,
+                  "whenRight": "Yes — LIMIT caps the rows returned; great for sanity checks.",
+                  "whenWrong": "It is — LIMIT caps rows, the SQL equivalent of .head().",
+                  "sim": "SELECT * FROM superstore LIMIT 5;  -> 5 rows"
+                },
+                {
+                  "prompt": "`SELECT` can only return one column at a time.",
+                  "answer": false,
+                  "whenRight": "Correct — list as many as you want, comma-separated, or `*` for all.",
+                  "whenWrong": "Not so — SELECT takes a comma-separated list of columns (or * for all).",
+                  "sim": "SELECT a, b, c FROM t;   -- many columns"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — get Superstore into SQL",
+              "body": "[PRODUCE] On sqliteonline.com, import your Superstore CSV as a table named `superstore`.\n\n[CODE] Run `SELECT * FROM superstore LIMIT 5;` to confirm it loaded.\n\n[CODE] Select just `sub_category`, `sales`, `profit` (first 10 rows), then list the `DISTINCT category` values.\n\n[WRITE] One sentence: how many distinct categories are there?"
+            },
+            {
+              "kind": "video",
+              "title": "The SQL SELECT statement",
+              "url": "https://www.youtube.com/watch?v=dAYhCVKnXZw",
+              "creator": "",
+              "why": "SELECT/FROM basics, shown live. Optional."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Import the CSV",
-          "summary": "",
+          "title": "WHERE — filter rows",
+          "summary": "One concept: WHERE keeps the rows that match — SQL's version of a boolean mask — plus ORDER BY.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "WHERE — filter rows",
+              "body": "## What it is\n`WHERE` keeps only the rows that match a condition — exactly the pandas boolean mask, in words. `ORDER BY` sorts the result; `LIMIT` caps it.\n\n## Why it matters\nAnalysis is filtering to the rows that answer the question — unprofitable orders, one region, big losses. WHERE is how you do that in SQL.\n\n## Examples\n```sql\n-- 1. Only the loss-making orders\nSELECT * FROM superstore WHERE profit < 0;\n\n-- 2. Combine conditions with AND / OR (words, not & |)\nSELECT * FROM superstore\nWHERE region = 'East' AND sales > 500;\n\n-- 3. The 10 biggest losses: filter, sort, cap\nSELECT order_id, sub_category, profit\nFROM superstore\nWHERE profit < 0\nORDER BY profit ASC\nLIMIT 10;\n```\n\nIn pandas you wrote `df[df[\"profit\"] < 0]`; in SQL it's `WHERE profit < 0`. Same idea, different syntax."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`WHERE profit < 0` keeps only rows where profit is negative — like a pandas mask.",
+                  "answer": true,
+                  "whenRight": "Right — WHERE is the SQL boolean filter.",
+                  "whenWrong": "It does — WHERE is exactly the SQL version of a boolean mask.",
+                  "sim": "WHERE profit < 0  ->  only loss-making orders"
+                },
+                {
+                  "prompt": "In SQL you combine two conditions with the words `AND` / `OR`.",
+                  "answer": true,
+                  "whenRight": "Yes — SQL uses AND/OR words (pandas used & and | with parentheses).",
+                  "whenWrong": "It does — SQL uses AND/OR, unlike pandas' & and |.",
+                  "sim": "WHERE region='East' AND sales>500"
+                },
+                {
+                  "prompt": "`ORDER BY profit ASC` sorts from the largest profit down to the smallest.",
+                  "answer": false,
+                  "whenRight": "Correct — ASC is ascending (smallest first); use DESC for largest first.",
+                  "whenWrong": "Backwards — ASC is smallest-first; DESC is largest-first.",
+                  "sim": "ORDER BY profit ASC  ->  biggest losses on top"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Get Superstore into SQL",
-              "body": "Export the Orders sheet from Excel as 'orders.csv'.\nIn sqliteonline.com: Import → CSV → upload orders.csv → create table 'orders'.\nRun: SELECT COUNT(*) FROM orders;\nYOU SHOULD SEE: about 10,000 rows."
+              "title": "Your turn — filter and sort",
+              "body": "[CODE] Query all orders where `profit < 0`.\n\n[PRODUCE] Return the 10 biggest losses: `WHERE profit < 0`, `ORDER BY profit ASC`, `LIMIT 10`, showing sub_category and profit.\n\n[WRITE] One sentence: which sub-category shows up most among the biggest losses?"
+            },
+            {
+              "kind": "video",
+              "title": "SQL intro: SELECT, FROM & WHERE",
+              "url": "https://www.youtube.com/watch?v=_kAQm4N50e4",
+              "creator": "",
+              "why": "WHERE filtering in context. Optional."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Rewrite Q1 in SQL",
-          "summary": "",
+          "title": "GROUP BY — summarise into groups",
+          "summary": "One concept: GROUP BY + SUM/AVG — the pivot table of SQL. Rewrite Q1 (margin leaders).",
           "items": [
             {
+              "kind": "lesson",
+              "title": "GROUP BY — summarise into groups",
+              "body": "## What it is\n`GROUP BY` collapses rows into one row per group, paired with an **aggregate** (`SUM`, `AVG`, `COUNT`). It is the SQL pivot table — and the pandas `groupby` you already know.\n\n## Why it matters\n\"Profit per sub-category\", \"sales per region\" — every per-X question is a GROUP BY. This is the workhorse of analytical SQL.\n\n## Examples\n```sql\n-- 1. Total profit per sub-category (Q1: margin leaders)\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore\nGROUP BY sub_category\nORDER BY total_profit DESC;\n\n-- 2. Several aggregates at once\nSELECT category,\n       SUM(sales)  AS revenue,\n       AVG(profit) AS avg_profit,\n       COUNT(*)    AS orders\nFROM superstore\nGROUP BY category;\n\n-- 3. HAVING filters GROUPS after aggregating (WHERE filters rows before)\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore\nGROUP BY sub_category\nHAVING SUM(profit) < 0;     -- only loss-making sub-categories\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`GROUP BY sub_category` with `SUM(profit)` returns one total-profit row per sub-category.",
+                  "answer": true,
+                  "whenRight": "Right — group, aggregate, one row out per group. The SQL pivot.",
+                  "whenWrong": "It does — GROUP BY + an aggregate yields one summarised row per group.",
+                  "sim": "Phones    12,300\nTables    -8,200\nChairs    26,100"
+                },
+                {
+                  "prompt": "`HAVING` filters groups AFTER aggregation, while `WHERE` filters rows before it.",
+                  "answer": true,
+                  "whenRight": "Yes — WHERE = rows pre-aggregation, HAVING = groups post-aggregation.",
+                  "whenWrong": "Correct distinction — WHERE filters rows first, HAVING filters the grouped results.",
+                  "sim": "WHERE profit<0 (rows)\nHAVING SUM(profit)<0 (groups)"
+                },
+                {
+                  "prompt": "You can freely SELECT a raw column that's neither in GROUP BY nor inside an aggregate.",
+                  "answer": false,
+                  "whenRight": "Correct — every selected column must be grouped or aggregated, or SQL errors.",
+                  "whenWrong": "Not allowed — non-grouped, non-aggregated columns are ambiguous and error out.",
+                  "sim": "GROUP BY category; SELECT sub_category -> error"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Margin leaders in SQL",
-              "body": "      SELECT \n        \"Sub-Category\",\n        SUM(Sales) AS total_sales,\n        SUM(Profit) AS total_profit,\n        SUM(Profit) * 1.0 / SUM(Sales) AS margin\n      FROM orders\n      GROUP BY \"Sub-Category\"\n      ORDER BY margin DESC;\n\nSave this query in queries.sql. Compare to your pivot — same answer?"
+              "title": "Your turn — Q1 in SQL",
+              "body": "[CODE] Total profit per `sub_category`, sorted highest to lowest (this is Q1, the margin leaders, in SQL).\n\n[PRODUCE] Add a `HAVING` clause to show only the sub-categories with negative total profit.\n\n[WRITE] One sentence: do the loss-makers match what you found in Excel/pandas?"
+            },
+            {
+              "kind": "video",
+              "title": "SQL aggregate functions, GROUP BY & HAVING",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "GROUP BY + aggregates explained clearly. Optional."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Rewrite Q2 (YoY) in SQL",
-          "summary": "",
+          "title": "Aggregate over time (year-over-year)",
+          "summary": "One concept: group by a slice of a date to get a trend — Q2 (YoY) in SQL.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Aggregate over time (year-over-year)",
+              "body": "## What it is\nTo see a trend you group by a **slice of the date**. In SQLite, `strftime('%Y', order_date)` pulls the year out, and you GROUP BY that.\n\n## Why it matters\n\"Is the business growing?\" is a time question. Grouping by year (or month) turns a pile of orders into a trend line — the Q2 year-over-year answer.\n\n## Examples\n```sql\n-- 1. Yearly sales\nSELECT strftime('%Y', order_date) AS yr,\n       SUM(sales) AS revenue\nFROM superstore\nGROUP BY yr\nORDER BY yr;\n\n-- 2. Sales AND profit per year, side by side\nSELECT strftime('%Y', order_date) AS yr,\n       SUM(sales)  AS revenue,\n       SUM(profit) AS profit\nFROM superstore\nGROUP BY yr\nORDER BY yr;\n```\n\nRead the rows top to bottom: is revenue climbing year over year? By how much?"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Grouping by the year pulled from a date gives one total per year — a trend.",
+                  "answer": true,
+                  "whenRight": "Right — extract the year, GROUP BY it, and each row is one year's total.",
+                  "whenWrong": "It does — grouping on the extracted year yields a per-year trend.",
+                  "sim": "2021  484k\n2022  609k\n2023  733k"
+                },
+                {
+                  "prompt": "`GROUP BY` only works on text columns, never on values derived from a date.",
+                  "answer": false,
+                  "whenRight": "Correct — you can group by any expression, including a year extracted from a date.",
+                  "whenWrong": "Not true — you can GROUP BY a derived value like strftime('%Y', date).",
+                  "sim": "GROUP BY strftime('%Y', order_date)  -- works"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Year-over-year in SQL",
-              "body": "      SELECT \n        Region,\n        strftime('%Y', \"Order Date\") AS year,\n        SUM(Sales) AS total_sales\n      FROM orders\n      GROUP BY Region, year\n      ORDER BY Region, year;\n\nCompute YoY growth with a CTE:\n      WITH yearly AS (\n        SELECT Region, strftime('%Y', \"Order Date\") AS year, SUM(Sales) AS sales\n        FROM orders GROUP BY Region, year\n      )\n      SELECT a.Region, a.year, a.sales,\n             (a.sales - b.sales) * 1.0 / b.sales AS yoy_growth\n      FROM yearly a\n      LEFT JOIN yearly b ON a.Region = b.Region AND a.year = CAST(b.year AS INT) + 1\n      ORDER BY a.Region, a.year;"
+              "title": "Your turn — Q2 (YoY) in SQL",
+              "body": "[CODE] Using `strftime('%Y', order_date)`, return revenue and profit per year, ordered by year.\n\n[WRITE] One sentence: is revenue growing year over year, and roughly by how much?"
+            },
+            {
+              "kind": "video",
+              "title": "SQL aggregate functions & GROUP BY",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "Same GROUP BY concept, applied to a time slice. Optional."
             }
           ]
         },
         {
           "number": 5,
-          "title": "CLV in SQL",
-          "summary": "",
+          "title": "Top customers (CLV in SQL)",
+          "summary": "One concept: GROUP BY customer + ORDER BY + LIMIT — the same CLV, now in SQL.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Top customers (CLV in SQL)",
+              "body": "## What it is\nThe CLV you computed in pandas last week is a single SQL query: group by the customer, sum their profit, sort, and cap.\n\n## Why it matters\nThis is the payoff of learning the same idea in two tools — you'll *see* that pandas `groupby` and SQL `GROUP BY` express the identical logic. That transfer is what makes you tool-fluent, not tool-dependent.\n\n## Examples\n```sql\n-- 1. Top 10 customers by lifetime profit\nSELECT customer_name,\n       SUM(profit) AS clv,\n       COUNT(DISTINCT order_id) AS orders\nFROM superstore\nGROUP BY customer_name\nORDER BY clv DESC\nLIMIT 10;\n```\n\nCompare this list to your pandas result from Week 4 — it should match exactly. Same data, same logic, different language."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Top-10 customers = GROUP BY customer, SUM(profit), ORDER BY DESC, LIMIT 10.",
+                  "answer": true,
+                  "whenRight": "Right — that one query is CLV plus a leaderboard.",
+                  "whenWrong": "It is — group, sum, sort, cap: the whole top-customers query.",
+                  "sim": "GROUP BY customer_name\nORDER BY clv DESC LIMIT 10"
+                },
+                {
+                  "prompt": "pandas `groupby` and SQL `GROUP BY` express the same underlying idea.",
+                  "answer": true,
+                  "whenRight": "Yes — split-apply-combine in both; only the syntax differs.",
+                  "whenWrong": "They do — both are split-apply-combine; the logic is identical.",
+                  "sim": "pandas: groupby('cust')['profit'].sum()\nSQL: GROUP BY customer SUM(profit)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Top 10 customers",
-              "body": "      SELECT \n        \"Customer ID\", \"Customer Name\",\n        SUM(Sales) AS lifetime_sales,\n        SUM(Profit) AS lifetime_profit,\n        COUNT(DISTINCT \"Order ID\") AS order_count\n      FROM orders\n      GROUP BY \"Customer ID\", \"Customer Name\"\n      ORDER BY lifetime_sales DESC\n      LIMIT 10;"
+              "title": "Your turn — CLV in SQL",
+              "body": "[CODE] Return the top 10 customers by lifetime profit, with their order count, using GROUP BY + ORDER BY + LIMIT.\n\n[WRITE] One sentence: does this top-10 match the pandas CLV table from Week 4?"
+            },
+            {
+              "kind": "video",
+              "title": "SQL GROUP BY & aggregates",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "The grouping concept behind the CLV query. Optional."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Save all queries",
-          "summary": "",
+          "title": "Save your queries",
+          "summary": "One habit: keep every query in a queries.sql file — reproducible, reviewable analysis.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Save your queries",
+              "body": "## What it is\nCollect every query you wrote this week into one file, `queries.sql`, each with a short comment saying what it answers.\n\n## Why it matters\nA saved, commented `.sql` file is a **deliverable**: anyone can rerun it against the data and get the same answers. Ad-hoc queries you typed and lost are not analysis — reproducible ones are.\n\n## Examples\n```sql\n-- Q1: Margin leaders and laggards\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore GROUP BY sub_category ORDER BY total_profit DESC;\n\n-- Q2: Year-over-year revenue\nSELECT strftime('%Y', order_date) AS yr, SUM(sales) AS revenue\nFROM superstore GROUP BY yr ORDER BY yr;\n\n-- Q3: Top 10 customers by lifetime profit\nSELECT customer_name, SUM(profit) AS clv\nFROM superstore GROUP BY customer_name ORDER BY clv DESC LIMIT 10;\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Saving your queries in a commented .sql file makes the analysis reproducible and reviewable.",
+                  "answer": true,
+                  "whenRight": "Right — anyone can rerun it and get the same answer. That's real analysis.",
+                  "whenWrong": "It does — a commented .sql file is a reproducible deliverable, not a throwaway.",
+                  "sim": "queries.sql  ->  rerun anytime, same results"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "queries.sql",
-              "body": "Save at least 10 queries in queries.sql, each with a comment explaining what it answers:\n  - Total Sales 2023\n  - Margin by sub-category\n  - YoY growth by region\n  - Top 10 customers\n  - Discount bucket vs avg profit\n  - Furniture profit by sub-category\n  - Repeat-buyer rate\n  - VIP segmentation\n  - Worst single order\n  - Average days from order to ship"
+              "title": "Your turn — build queries.sql",
+              "body": "[PRODUCE] Create `queries.sql` containing your Q1, Q2, and top-customers queries, each with a one-line `-- comment` describing what it answers.\n\n[CODE] Re-run each one in sqliteonline to confirm it still works."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.4",
-          "summary": "",
+          "title": "Ship v0.4",
+          "summary": "Commit queries.sql + a short note, tag v0.4. You've now done Superstore in Excel, Python, and SQL.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.4",
+              "body": "## What it is\nShip the SQL version: commit `queries.sql` and a short README note, tag `v0.4`.\n\n## Why it matters\nYou've now answered the same business questions in **Excel, pandas, and SQL**. That's not three tricks — it's proof you understand the *analysis* well enough to express it in any tool. Employers read that as fluency, and it's rare."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Solving the same analysis in Excel, pandas, and SQL proves analytical fluency, not just one tool.",
+                  "answer": true,
+                  "whenRight": "Right — the transfer across tools is the signal that you understand the analysis itself.",
+                  "whenWrong": "It does — expressing one analysis in three tools shows you own the thinking, not a syntax.",
+                  "sim": "Excel + pandas + SQL  ->  same answers, three tools"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.4",
-              "body": "      git add queries.sql\n      git commit -m 'v0.4: SQL versions of all queries'\n      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ orders.csv imported into a SQLite DB\n  ☐ queries.sql has 10+ commented queries\n  ☐ Each query result matches the pivot table answer\n  ☐ v0.4 tag"
+              "title": "Acceptance — v0.4 is done when",
+              "body": "[PRODUCE] `queries.sql` answers Q1 (margins), Q2 (YoY), and top customers, each commented.\n\n[PRODUCE] A short note in your README confirming the SQL answers match the Excel/pandas ones.\n\n[CODE] Commit, tag, push:\n```\ngit add queries.sql\ngit commit -m \"Superstore v0.4: SQL version — same answers, in SQL\"\ngit tag v0.4\ngit push --tags\n```\n\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -1752,11 +1960,7 @@
         "Translate the queries to BigQuery SQL syntax (free tier available). The main differences: backtick quoting is the same, but date functions use DATE_TRUNC instead of strftime, and CAST uses a different syntax. Running the same queries in BigQuery proves they work against a production-grade engine.",
         "Write a query that identifies customers who placed orders in 2016 but not in 2017 (churned customers) using a NOT EXISTS or LEFT JOIN ... WHERE IS NULL pattern. Churn identification in SQL is a standard analyst skill and this dataset is a clean example.",
         "Write one stored view: CREATE VIEW customer_segments AS (your segment query). Then write a query on top of the view: SELECT * FROM customer_segments WHERE segment = 'VIP'. Views are the SQL equivalent of a named range in Excel -- they hide complexity and make downstream queries readable."
-      ],
-      "concept_widget": {
-        "id": "sql-query",
-        "caption": "Toggle WHERE, ORDER BY and LIMIT and watch the result set — and the query — change."
-      }
+      ]
     },
     {
       "number": 6,
