@@ -1177,93 +1177,302 @@
       "days": [
         {
           "number": 1,
-          "title": "What is CLV",
-          "summary": "",
+          "title": "What customer lifetime value is",
+          "summary": "The metric of the week: CLV — the total value a customer brings over their whole history.",
           "items": [
             {
-              "kind": "video",
-              "title": "Customer lifetime value explained (10 min)",
-              "url": "https://www.youtube.com/results?search_query=customer+lifetime+value+explained+beginner",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "What customer lifetime value is",
+              "body": "## What it is\n**Customer Lifetime Value (CLV)** is the total value — revenue or profit — a single customer brings across *all* their orders, not just one. The simplest version is one line of analysis: sum each customer's profit over their history.\n\n## Why it matters\nAcquiring customers costs money. If you know *who* is valuable, you know who to keep, who to win back, and who is quietly costing you. In most retail businesses the **top 20% of customers drive ~80% of the profit** — and you can't act on that until you measure it.\n\n## Examples\n```text\nCustomer        Orders   Total Profit (CLV)\nSanjit Engle      14         $2,041\nTamara Chand       9         $1,760\n...\nBottom 50% of customers combined:  often < 15% of total profit\n```\n\nThis week you'll compute CLV per customer, split out the VIPs, see what they buy, check if they come back, and turn it into a recommendation."
             },
             {
-              "kind": "reflection",
-              "title": "Why does it matter?",
-              "body": "If 10% of customers drive 60% of revenue, what should marketing focus on?"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "CLV is the total value a customer brings over their whole relationship, not just one order.",
+                  "answer": true,
+                  "whenRight": "Right — it's summed across the customer's entire order history.",
+                  "whenWrong": "It's the whole relationship — CLV sums every order a customer ever places.",
+                  "sim": "one order: $40   |   CLV (14 orders): $2,041"
+                },
+                {
+                  "prompt": "The simplest CLV is just summing each customer's profit (or revenue) across all their orders.",
+                  "answer": true,
+                  "whenRight": "Yes — a groupby-sum per customer is a perfectly good first CLV.",
+                  "whenWrong": "It is that simple to start — sum profit per customer and you have a basic CLV.",
+                  "sim": "groupby('Customer')['Profit'].sum()"
+                },
+                {
+                  "prompt": "Every customer contributes roughly equally to total profit.",
+                  "answer": false,
+                  "whenRight": "Correct — it's lopsided: a small fraction of customers usually drives most profit (the 80/20 rule).",
+                  "whenWrong": "Not in practice — profit is concentrated; the top ~20% usually drive ~80%.",
+                  "sim": "top 20% of customers  ->  ~80% of profit"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the question",
+              "body": "[WRITE] Define CLV in one sentence in your own words.\n\n[WRITE] Predict: what percentage of Superstore customers do you think drive 80% of the profit? Write it down to check on Day 3.\n\n[CODE] Load the Superstore data and confirm it has `Customer Name`, `Profit`, and `Order ID` columns (`df.info()`)."
+            },
+            {
+              "kind": "video",
+              "title": "What is Customer Lifetime Value? (beginner explainer)",
+              "url": "https://www.youtube.com/watch?v=vA1YX8963ts",
+              "creator": "",
+              "why": "The business idea behind CLV before you compute it. Optional."
             }
           ]
         },
         {
           "number": 2,
           "title": "Compute CLV per customer",
-          "summary": "",
+          "summary": "One technique: groupby the customer and aggregate their whole history into CLV.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Compute CLV per customer",
+              "body": "## What it is\nCLV is a groupby in disguise: **group by the customer, aggregate their orders**. One line gives every customer's lifetime profit, revenue, and order count.\n\n## Why it matters\nThis single table is the foundation for everything else this week — segmenting, VIP analysis, retention. Get it right and the rest is slicing.\n\n## Examples\n```python\nimport pandas as pd\ndf = pd.read_parquet(\"data/clean.parquet\")\n\n# 1. Lifetime profit per customer\ndf.groupby(\"Customer Name\")[\"Profit\"].sum()\n\n# 2. A full CLV table — profit, revenue, and how many orders\nclv = df.groupby(\"Customer Name\").agg(\n    profit=(\"Profit\", \"sum\"),\n    revenue=(\"Sales\", \"sum\"),\n    orders=(\"Order ID\", \"nunique\"),\n)\n\n# 3. Who are the top 10 most valuable customers?\nclv.sort_values(\"profit\", ascending=False).head(10)\n```\n\n`nunique()` counts *distinct* order IDs, so multiple line-items in one order don't inflate the order count."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`groupby(\"Customer Name\")[\"Profit\"].sum()` gives each customer's lifetime profit.",
+                  "answer": true,
+                  "whenRight": "Right — that single groupby-sum IS the basic CLV.",
+                  "whenWrong": "It does — grouping by customer and summing profit is the CLV in one line.",
+                  "sim": "Sanjit Engle   $2,041\nTamara Chand   $1,760"
+                },
+                {
+                  "prompt": "You need a Python `for` loop over customers to compute CLV.",
+                  "answer": false,
+                  "whenRight": "Correct — groupby vectorizes it; no loop needed (and a loop would be far slower).",
+                  "whenWrong": "No loop — groupby does the whole split-aggregate in one vectorized call.",
+                  "sim": "groupby -> all customers at once   (no for loop)"
+                },
+                {
+                  "prompt": "`nunique()` on Order ID counts each customer's number of DISTINCT orders.",
+                  "answer": true,
+                  "whenRight": "Yes — important, since one order can have several line-item rows.",
+                  "whenWrong": "It does — nunique counts distinct orders, not line-item rows.",
+                  "sim": "5 rows, 2 distinct Order IDs  ->  orders = 2"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CLV pivot",
-              "body": "New pivot from Orders:\n  Rows: Customer ID\n  Values: SUM Sales, COUNT Orders, AVG Profit, SUM Profit\n  Filter: Top 100 by SUM Sales\nSort by SUM Sales descending.\nWho's #1? What do they buy?"
+              "title": "Your turn — build the CLV table",
+              "body": "[CODE] Group by `Customer Name` and build a `clv` table with `profit` (sum), `revenue` (sum of Sales), and `orders` (nunique of Order ID).\n\n[PRODUCE] Sort by profit descending and show the top 10 customers.\n\n[WRITE] One sentence: who is your most valuable customer and what's their lifetime profit?"
+            },
+            {
+              "kind": "video",
+              "title": "Aggregation in pandas with groupby() & agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "creator": "",
+              "why": "groupby + agg, the engine behind the CLV table. Optional."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Segment by spend",
-          "summary": "",
+          "title": "Segment customers by value",
+          "summary": "One technique: pd.qcut — split customers into equal-sized value tiers (VIP vs Regular).",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Segment customers by value",
+              "body": "## What it is\nOnce each customer has a CLV, **segment** them into tiers. `pd.qcut` splits by **quantiles** — equal-sized groups by rank — so \"top 20%\" is one line.\n\n## Why it matters\nYou treat a VIP differently from a one-time buyer. Segmenting turns a long CLV list into a few actionable groups, and lets you measure the 80/20 you predicted on Day 1.\n\n## Examples\n```python\n# clv[\"profit\"] from Day 2\n\n# 1. Split into Regular (bottom 80%) and VIP (top 20%) by profit rank\nclv[\"segment\"] = pd.qcut(\n    clv[\"profit\"], q=[0, 0.8, 1.0], labels=[\"Regular\", \"VIP\"]\n)\n\n# 2. How many in each tier\nclv[\"segment\"].value_counts()\n\n# 3. The 80/20 check: what share of total profit do VIPs drive?\nshare = clv.groupby(\"segment\")[\"profit\"].sum() / clv[\"profit\"].sum()\nprint(share)        # VIP often ~0.6-0.8 of all profit\n```\n\n`qcut` (quantile cut) makes **equal-count** groups; `cut` (Day W3) makes **equal-width** ranges — don't mix them up."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`pd.qcut` splits customers into equal-SIZED groups by their value rank (quantiles).",
+                  "answer": true,
+                  "whenRight": "Right — qcut balances group counts, perfect for 'top 20%' tiers.",
+                  "whenWrong": "It does — qcut cuts by quantiles, so each group holds an equal share of customers.",
+                  "sim": "q=[0,0.8,1.0] -> Regular (80%) | VIP (20%)"
+                },
+                {
+                  "prompt": "`qcut` and `cut` do exactly the same thing.",
+                  "answer": false,
+                  "whenRight": "Correct — cut = equal-WIDTH ranges; qcut = equal-COUNT quantiles. Different jobs.",
+                  "whenWrong": "Not the same — cut makes equal-width bins, qcut makes equal-count quantile groups.",
+                  "sim": "cut:  0-10, 10-20 (by value)\nqcut: bottom 80%, top 20% (by rank)"
+                },
+                {
+                  "prompt": "Segmenting lets you measure what share of total profit the top tier drives.",
+                  "answer": true,
+                  "whenRight": "Yes — groupby segment then divide by the total: that's your 80/20 number.",
+                  "whenWrong": "It does — once tiered, a groupby-sum over the total gives the VIP profit share.",
+                  "sim": "VIP share of profit  ->  0.72"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CLV buckets",
-              "body": "Add a 'CLV Bucket' column for each customer:\n  >$5000 = VIP\n  $1000-$5000 = Regular\n  <$1000 = Casual\nPivot: Rows = CLV Bucket. Values = COUNT customers, SUM Sales, SUM Profit, AVG Profit Margin.\nPareto check: VIPs are X% of customers but Y% of sales?"
+              "title": "Your turn — find the VIPs",
+              "body": "[CODE] Use `pd.qcut` to label each customer `VIP` (top 20% by profit) or `Regular`.\n\n[PRODUCE] Compute what **percentage of total profit** the VIPs generate.\n\n[WRITE] One sentence comparing that to your Day 1 prediction — was the 80/20 rule roughly true here?"
+            },
+            {
+              "kind": "video",
+              "title": "Pandas qcut() — a simple guide",
+              "url": "https://www.youtube.com/watch?v=H9Vrmt7sigk",
+              "creator": "",
+              "why": "qcut for quantile/percentile segmentation, shown live. Optional."
             }
           ]
         },
         {
           "number": 4,
-          "title": "What do VIPs buy?",
-          "summary": "",
+          "title": "What do the VIPs buy?",
+          "summary": "One technique: segment x category breakdown — see your best customers' buying mix.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "What do the VIPs buy?",
+              "body": "## What it is\nNow compare **what each segment buys**. Join the segment label back to the orders, then break sales down by segment and category.\n\n## Why it matters\nIf VIPs over-index on Technology while Regulars buy Office Supplies, that changes what you stock, bundle, and promote to grow your best customers.\n\n## Examples\n```python\n# 1. Bring the segment label onto every order row\ndf = df.merge(clv[\"segment\"], on=\"Customer Name\", how=\"left\")\n\n# 2. Sales by segment x category\npivot = df.pivot_table(\n    index=\"Category\", columns=\"segment\", values=\"Sales\", aggfunc=\"sum\"\n)\nprint(pivot)\n\n# 3. VIPs' top sub-categories\nvip = df[df[\"segment\"] == \"VIP\"]\nvip.groupby(\"Sub-Category\")[\"Sales\"].sum().sort_values(ascending=False).head(5)\n```\n\nCompare the mix: where do VIPs spend disproportionately?"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "After tagging customers VIP/Regular, you can compare what each segment buys with a groupby/pivot.",
+                  "answer": true,
+                  "whenRight": "Right — the segment label becomes a dimension you can break sales down by.",
+                  "whenWrong": "It does — once the label is on each row, pivot by segment x category to compare.",
+                  "sim": "            Regular   VIP\nTechnology   120k    310k\nFurniture     90k     70k"
+                },
+                {
+                  "prompt": "Knowing VIPs' favourite categories has no real business use.",
+                  "answer": false,
+                  "whenRight": "Correct — it directly informs stocking, bundling, and targeted promotions.",
+                  "whenWrong": "It's very useful — it tells you what to stock and promote to your best customers.",
+                  "sim": "VIPs over-index on Technology -> promote tech bundles to them"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Category by segment",
-              "body": "New pivot. Filter to VIPs only. Rows = Sub-Category. Values = SUM Sales.\nSort. Compare to the same pivot for Casuals — what's different?"
+              "title": "Your turn — the VIP buying mix",
+              "body": "[CODE] Merge the `segment` label back onto the orders.\n\n[PRODUCE] Build a `pivot_table` of total Sales by `Category` (rows) and `segment` (columns).\n\n[PRODUCE] List the VIPs' top 3 sub-categories by sales.\n\n[WRITE] One sentence: what do VIPs buy more of than Regulars?"
+            },
+            {
+              "kind": "video",
+              "title": "Pandas pivot_table for a two-way breakdown",
+              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
+              "creator": "",
+              "why": "pivot_table to cross segment and category. Optional."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Retention",
-          "summary": "",
+          "title": "Do your best customers come back?",
+          "summary": "One technique: the repeat-buyer rate — measure retention with nunique + a boolean mean.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Do your best customers come back?",
+              "body": "## What it is\nHigh CLV usually comes from **coming back**, not one big order. The **repeat-buyer rate** is the share of customers who placed more than one distinct order.\n\n## Why it matters\nIf VIPs are repeat buyers, a retention program protects most of your profit. If they're one-time whales, the strategy is completely different. Retention is the lever behind CLV.\n\n## Examples\n```python\n# 1. Distinct orders per customer\norders_per_cust = df.groupby(\"Customer Name\")[\"Order ID\"].nunique()\n\n# 2. Repeat-buyer rate = share with more than one order\nrepeat_rate = (orders_per_cust > 1).mean()\nprint(f\"{repeat_rate:.0%} of customers ordered more than once\")\n\n# 3. Compare retention across segments\ndf.groupby(\"segment\")[\"Order ID\"].nunique()        # totals\n(clv.assign(repeat=orders_per_cust > 1)\n    .groupby(\"segment\")[\"repeat\"].mean())           # repeat rate per segment\n```\n\nA boolean Series averaged with `.mean()` gives a proportion — a handy trick."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Repeat-buyer rate is the share of customers who placed more than one distinct order.",
+                  "answer": true,
+                  "whenRight": "Right — count distinct orders per customer, then the fraction with >1.",
+                  "whenWrong": "It is — it's the proportion of customers with more than one order.",
+                  "sim": "(orders_per_cust > 1).mean()  ->  0.71"
+                },
+                {
+                  "prompt": "Taking `.mean()` of a True/False Series gives you the proportion that are True.",
+                  "answer": true,
+                  "whenRight": "Yes — True counts as 1, False as 0, so the mean is the share that are True.",
+                  "whenWrong": "It does — booleans average to a proportion (True=1, False=0).",
+                  "sim": "[T, F, T, T].mean()  ->  0.75"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Repeat-buyer rate",
-              "body": "Add a helper column on Orders: 'Customer Order #' using COUNTIFS on the rows ABOVE (this counts how many prior orders this customer has).\nPivot: Rows = Customer Order # (1, 2, 3, ...). Values = COUNT of customer IDs.\nPlot the decay — what % of buyers come back for a 2nd order? 5th?"
+              "title": "Your turn — measure retention",
+              "body": "[CODE] Compute the number of distinct orders per customer with `nunique()`.\n\n[PRODUCE] Report the overall repeat-buyer rate, then the rate for VIPs vs Regulars.\n\n[WRITE] One sentence: are your VIPs repeat buyers, and what does that imply for strategy?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Update the memo",
-          "summary": "",
+          "title": "Update the memo (v3)",
+          "summary": "Translate the CLV analysis into a customer recommendation — headline, evidence, action.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Update the memo (v3)",
+              "body": "## What it is\nSame memo discipline, new finding: **headline → evidence → recommendation**, one page. The CLV story is about *customers*, so the recommendation must be a customer action.\n\n## Why it matters\n\"The top 20% drive 75% of profit\" is interesting. \"Launch a loyalty perk for the top 20% to protect 75% of profit\" is *useful*. Always land on what to do.\n\n## Examples\n```text\n## Headline\nThe top 20% of customers drive 75% of profit and reorder at 2x the rate\nof everyone else.\n\n## Evidence\n- CLV by segment: VIP 20% of customers -> 75% of profit\n- VIPs over-index on Technology (chart)\n- VIP repeat-rate 84% vs 41% for Regulars\n\n## Recommendation\nStand up a VIP retention program (early access + a Technology bundle)\naimed at the top 20%, where most profit and repeat behaviour already live.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A CLV memo should end in a customer action (e.g., a retention program), not just the metric.",
+                  "answer": true,
+                  "whenRight": "Right — the recommendation is the point; the metric only justifies it.",
+                  "whenWrong": "It should — translate the number into an action, like a VIP retention play.",
+                  "sim": "metric -> 'top 20% = 75% profit'\naction -> 'VIP loyalty program'"
+                },
+                {
+                  "prompt": "Reporting the CLV number is enough; a recommendation is optional fluff.",
+                  "answer": false,
+                  "whenRight": "Correct — a finding without a recommendation leaves the reader asking 'so what?'",
+                  "whenWrong": "Not enough — without a recommendation the analysis doesn't drive a decision.",
+                  "sim": "'so what?'  <- what a metric-only memo leaves behind"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Memo v3",
-              "body": "Add a 5th section to your memo PDF:\n      ## Customer analysis\n      - VIPs are X% of customers but drive Y% of revenue\n      - Top VIP buys mostly [categories]\n      - Repeat-buyer rate from 1st to 2nd order is Z%\n      Recommendation: VIP loyalty program at $5k threshold."
+              "title": "Your turn — memo v3",
+              "body": "[WRITE] Add a CLV section to your Superstore memo: headline, evidence (segment profit share, VIP buying mix, repeat rates), and a concrete customer recommendation.\n\n[PRODUCE] Use real numbers from your analysis — no placeholders."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.3",
-          "summary": "",
+          "title": "Ship v0.3",
+          "summary": "Commit the CLV analysis + memo v3, tag v0.3. Three shipped increments now.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.3",
+              "body": "## What it is\nYou turned raw orders into a customer strategy: who's valuable, what they buy, whether they return, and what to do about it. **Ship it** as `v0.3`.\n\n## Why it matters\nThree clean increments (v0.1 → v0.2 → v0.3) on one real dataset is a portfolio centrepiece — it shows an employer you can carry an analysis from question to recommendation, repeatedly."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Shipping v0.3 continues the visible iteration story (v0.1 -> v0.2 -> v0.3) on one real project.",
+                  "answer": true,
+                  "whenRight": "Right — that arc of shipped increments is exactly what a portfolio should show.",
+                  "whenWrong": "It does — incremental, shipped versions are the credibility signal employers look for.",
+                  "sim": "v0.1 products | v0.2 discounts | v0.3 customers"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.3",
-              "body": "      git add . && git commit -m 'v0.3: customer lifetime value'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ CLV pivot top 100 built\n  ☐ CLV bucket segmentation done\n  ☐ Repeat-buyer chart\n  ☐ Memo v3 with customer analysis section\n  ☐ v0.3 tag"
+              "title": "Acceptance — v0.3 is done when",
+              "body": "[PRODUCE] Notebook contains: the CLV table, the VIP segmentation with profit share, the VIP buying-mix breakdown, and the repeat-buyer rates.\n\n[PRODUCE] Memo updated (v3) with the CLV headline, evidence, and a customer recommendation.\n\n[CODE] Commit, tag, and push:\n```\ngit add .\ngit commit -m \"Superstore v0.3: customer lifetime value + VIP retention recommendation\"\ngit tag v0.3\ngit push --tags\n```\n\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -1349,11 +1558,7 @@
         "Compute the retention rate by segment: of customers who placed an order in 2016, what percentage placed at least one order in 2017? Compute separately for VIPs and Low Value customers. The retention rate difference by segment is one of the strongest arguments for differential treatment of customer groups.",
         "Map the VIP customers by State using a geographic pivot table. Are the VIP customers concentrated in specific states? If so, does the regional concentration match the high-performing regions from week 1? Connecting the customer analysis to the geographic analysis is the kind of multi-dimensional insight that distinguishes a senior analyst's work.",
         "Compute RFM scores (Recency, Frequency, Monetary) for the customer base as an alternative segmentation approach. Score each customer 1-5 on each dimension, then combine the scores. Compare the RFM segments to the profit-based segments. Where do they agree and where do they disagree? The disagreements are the most instructive cases."
-      ],
-      "concept_widget": {
-        "id": "join-visualiser",
-        "caption": "Switch join types and watch which rows survive and where NULLs appear."
-      }
+      ]
     },
     {
       "number": 5,
