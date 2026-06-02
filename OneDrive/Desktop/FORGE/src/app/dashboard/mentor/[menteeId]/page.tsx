@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   ArrowLeft, MessageSquare, CheckCircle2, AlertTriangle, Lock,
   Clock, ExternalLink, Send, Loader2, Unlock, ShieldCheck, RotateCcw,
-  Link2, Plus, Trash2,
+  Link2, Plus, Trash2, Pin,
 } from "lucide-react";
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
@@ -34,7 +34,7 @@ interface MentorComment {
   createdAt: string;
   readAt: string | null;
   authorRole: "mentor" | "mentee";
-  kind: "note" | "request_unlock" | "action_log";
+  kind: "note" | "message" | "request_unlock" | "action_log";
   mentorId: string;
 }
 
@@ -151,7 +151,9 @@ export default function MenteeDrilldownPage() {
     load();
   }, [load]);
 
-  const handlePost = async (task: MenteeTask) => {
+  // kind "message" → week conversation thread (default). kind "note" → pinned
+  // to the mentee's permanent Notes page. Only notes land on /dashboard/notes.
+  const handlePost = async (task: MenteeTask, kind: "message" | "note" = "message") => {
     const body = (draft[task.id] || "").trim();
     if (!body) return;
     setPosting(task.id);
@@ -159,7 +161,7 @@ export default function MenteeDrilldownPage() {
       const res = await fetch("/api/mentor/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ taskId: task.id, menteeId, body }),
+        body: JSON.stringify({ taskId: task.id, menteeId, body, kind }),
       });
       if (!res.ok) throw new Error("Failed to post comment");
       setDraft((d) => ({ ...d, [task.id]: "" }));
@@ -1137,7 +1139,7 @@ export default function MenteeDrilldownPage() {
                             <textarea
                               value={draft[task.id] ?? ""}
                               onChange={(e) => setDraft({ ...draft, [task.id]: e.target.value })}
-                              placeholder="Leave a note for this week's work…"
+                              placeholder="Message about this week's work… (stays in this week's thread)"
                               rows={2}
                               style={{
                                 flex: 1,
@@ -1153,13 +1155,23 @@ export default function MenteeDrilldownPage() {
                             />
                             <button
                               type="button"
-                              onClick={() => handlePost(task)}
+                              onClick={() => handlePost(task, "message")}
                               disabled={!(draft[task.id] ?? "").trim() || posting === task.id}
                               className="forge-btn forge-btn-primary"
                               style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center" }}
                             >
                               {posting === task.id ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
-                              Send
+                              Send message
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handlePost(task, "note")}
+                              disabled={!(draft[task.id] ?? "").trim() || posting === task.id}
+                              className="forge-btn forge-btn-ghost"
+                              title="Pin to the mentee's permanent Notes page instead of this week's thread"
+                              style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center" }}
+                            >
+                              <Pin size={13} /> Pin as note
                             </button>
                           </div>
                         </div>

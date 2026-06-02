@@ -20,7 +20,15 @@ export async function GET(req: NextRequest) {
 
   const [rawComments, rawResources] = await Promise.all([
     prisma.mentorComment.findMany({
-      where: { menteeId, hiddenByMentee: false, ...(taskId ? { taskId } : {}) },
+      // Aggregate Notes page (no taskId) shows ONLY deliberately-pinned notes;
+      // week-conversation messages + system rows are excluded so the page is a
+      // clean, intentional record. A per-task request (week view) still returns
+      // the full thread for context.
+      where: {
+        menteeId,
+        hiddenByMentee: false,
+        ...(taskId ? { taskId } : { kind: "note" }),
+      },
       orderBy: { createdAt: "desc" },
       select: {
         id: true,

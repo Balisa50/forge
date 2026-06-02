@@ -16,7 +16,7 @@ interface Comment {
   createdAt: string;
   readAt: string | null;
   authorRole: "mentor" | "mentee";
-  kind: "note" | "request_unlock" | "action_log";
+  kind: "note" | "message" | "request_unlock" | "action_log";
   mentor: MentorAuthor;
 }
 

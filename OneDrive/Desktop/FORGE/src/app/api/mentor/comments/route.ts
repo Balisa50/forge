@@ -21,6 +21,10 @@ export async function POST(req: NextRequest) {
   const taskId: string | undefined = body.taskId;
   const menteeId: string | undefined = body.menteeId;
   const text: string | undefined = typeof body.body === "string" ? body.body.trim() : undefined;
+  // "message" = week conversation thread (default); "note" = a permanent note
+  // the mentor deliberately pins to the mentee's Notes page. Only "note" shows
+  // on /dashboard/notes; messages stay in the week thread.
+  const kind: "message" | "note" = body.kind === "note" ? "note" : "message";
 
   if (!taskId || !menteeId || !text) {
     return NextResponse.json({ error: "taskId, menteeId and body required" }, { status: 400 });
@@ -52,8 +56,8 @@ export async function POST(req: NextRequest) {
   }
 
   const comment = await prisma.mentorComment.create({
-    data: { taskId, mentorId, menteeId, body: text, authorRole: "mentor", kind: "note" },
-    select: { id: true, body: true, createdAt: true, readAt: true },
+    data: { taskId, mentorId, menteeId, body: text, authorRole: "mentor", kind },
+    select: { id: true, body: true, createdAt: true, readAt: true, kind: true },
   });
 
   void sendNotification("mentor-left-note", {

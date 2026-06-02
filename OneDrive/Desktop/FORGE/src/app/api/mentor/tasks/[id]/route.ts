@@ -148,6 +148,17 @@ export async function PATCH(
       break;
   }
 
+  // CLEAN SLATE ON SIGN-OFF: when a week is verified, archive its previously
+  // pinned notes from the mentee's Notes page so they start the next week
+  // fresh. The week's own thread keeps the full history for the record, and the
+  // sign-off note written just below stays visible as the final word.
+  if (action === "verify") {
+    await prisma.mentorComment.updateMany({
+      where: { taskId, menteeId, kind: "note", hiddenByMentee: false },
+      data: { hiddenByMentee: true },
+    });
+  }
+
   // Apply atomically + log
   // If mentor provided a custom note, write it as a separate "note" comment
   // alongside the auto action_log so it's visually distinct on the mentee's
