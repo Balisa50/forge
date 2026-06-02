@@ -4317,85 +4317,255 @@
       "days": [
         {
           "number": 1,
-          "title": "What HR needs",
-          "summary": "",
+          "title": "What HR actually needs",
+          "summary": "Same packaging discipline, different audience. HR acts on people, privacy, and fairness.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Audience",
-              "body": "Imagine you're presenting to the HR Director. They want to know:\n  - Who do we lose?\n  - Why?\n  - What 1 thing should we do this quarter?"
+              "kind": "lesson",
+              "title": "What HR actually needs",
+              "body": "## What it is\nYou're packaging two weeks of attrition analysis into deliverables — like Superstore W8-9, but the audience is **HR leadership**, and that changes everything you emphasise.\n\n## Why it matters\nA sales director wants dollars; HR wants **actions on people**, framed around **retention, privacy, and fairness**. They don't care about your p-value; they care \"which team do we help, and is this analysis fair to individuals?\" Lead with the at-risk group and the intervention, not the methodology. Get the framing wrong and a technically perfect analysis gets ignored — or worse, raises legal/ethical flags (you must never single out *named* employees as flight risks).\n\n## The rule for this audience\nTalk about *groups and drivers* (overtime, early-tenure Sales Reps), never individuals. Recommend *policy* (cap overtime, fix onboarding), and acknowledge fairness (is the model just flagging a protected group?)."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (audience framing)",
+              "body": "## Same finding, wrong vs right framing\n```text\nWRONG (for HR): \"Our model flags these 12 employees as 87% likely to quit.\"\n   -> targets individuals; privacy + fairness nightmare; HR can't use it.\n\nRIGHT (for HR): \"Attrition concentrates in first-year Sales Reps and anyone on\n   chronic overtime (3x the base rate). Recommend an onboarding revamp for new\n   Sales hires and an overtime cap policy.\"\n   -> targets drivers + policy; actionable and fair.\n```\nThe data is identical; the framing is the deliverable."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An HR deliverable should target groups/drivers and policy, not flag named individuals as flight risks.",
+                  "answer": true,
+                  "whenRight": "Right — individual targeting raises privacy and fairness problems; recommend policy.",
+                  "whenWrong": "It should — talk drivers and policy, never single out employees.",
+                  "sim": "'first-year Sales Reps + overtime' not '12 named people'"
+                },
+                {
+                  "prompt": "HR leadership most wants to see your statistical methodology up front.",
+                  "answer": false,
+                  "whenRight": "Correct — they want the at-risk group and the action; methods are backup.",
+                  "whenWrong": "Not quite — lead with the group and the intervention, not the stats.",
+                  "sim": "lead: 'who's at risk + what to do', not 'p<0.05'"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame for HR",
+              "body": "[WRITE] Name your audience (HR director) and the one decision they need to make.\n[WRITE] Restate your top finding as a group+policy recommendation, with no individual targeting."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Build the dashboard sheet",
-          "summary": "",
+          "title": "Build the dashboard",
+          "summary": "A dashboard is a glanceable answer: a few KPIs + a few charts. Concept + the layout.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the dashboard",
+              "body": "## What it is\nA **dashboard** is a single screen that answers the recurring questions at a glance — here, 4 KPI numbers (overall attrition, highest-risk department, overtime effect, first-year rate) plus 3 charts (by department, by tenure, by role).\n\n## Why it matters\nHR will check this monthly; they need the state of attrition in five seconds, not a notebook to run. A dashboard turns your one-off analysis into a *living instrument*. The discipline is restraint: a dashboard with 20 charts is as useless as none — pick the few numbers that drive decisions and make them unmissable.\n\n## The layout\nTop row: 4 big KPI numbers. Below: 3 charts (the department bar, the tenure survival curve, the role hotspot). One screen, no scrolling. Build it in Excel/Sheets or a notebook — the principle is the same."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (dashboard spec)",
+              "body": "## A 4-KPI + 3-chart layout\n```text\n+-----------------------------------------------------------+\n|  Attrition 16.1%  | Sales 20.6% | Overtime 3x | Yr-1 36%  |   <- 4 KPIs\n+-----------------------------------------------------------+\n|  [Bar: attrition by dept]   [Line: survival curve]        |\n|  [Bar: attrition by role (top 5, sorted)]                 |   <- 3 charts\n+-----------------------------------------------------------+\n```\nEvery element answers a question HR asks every month. Nothing decorative."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A good dashboard shows the few numbers that drive decisions, not every chart you made.",
+                  "answer": true,
+                  "whenRight": "Right — restraint is the skill; one glanceable screen.",
+                  "whenWrong": "It is — a few decision-driving KPIs beat a wall of charts.",
+                  "sim": "4 KPIs + 3 charts, one screen, no scroll"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "4 KPIs + 3 charts",
-              "body": "On a Dashboard sheet:\n  TOP ROW (4 KPI cards):\n    - Total employees\n    - Overall attrition rate\n    - Worst-department attrition rate\n    - Highest-risk tenure bucket\n  MIDDLE:\n    - Bar chart: attrition by department\n    - Line/step chart: attrition by tenure\n  BOTTOM:\n    - Table: top 5 most-at-risk role × tenure combos"
+              "title": "Your turn — build it",
+              "body": "[PRODUCE] Build a dashboard with 4 KPIs (overall attrition, top department, overtime ratio, year-1 rate) and 3 charts (by department, survival curve, top roles)."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Filters",
-          "summary": "",
+          "title": "Make it interactive (filters)",
+          "summary": "A filter lets HR answer their own follow-ups. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Make it interactive (filters)",
+              "body": "## What it is\nAdd a **filter** (a slicer in Excel/Sheets, or a dropdown) so the viewer can slice the dashboard — e.g. show attrition for one department or one job level — without asking you.\n\n## Why it matters\nStatic dashboards generate a flood of \"can you also show me just Sales?\" requests. A filter hands that power to HR, which makes the dashboard *self-serve* — the difference between a report you maintain forever and a tool they own. Self-serve dashboards are what get adopted; static ones get a glance and forgotten.\n\n## The pattern\nOne or two filters max (department, job level). More than that and it's a control panel nobody understands. Wire the charts to respond to the filter so the whole screen updates together."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "## Before vs after a filter\n```text\nSTATIC:  one view; HR emails you \"now show only R&D\" -> you redo it\nFILTERED: a [Department v] dropdown; HR picks R&D themselves; all charts update\n```\nOne dropdown turns a report into a tool. Keep it to 1-2 filters so it stays legible."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A filter/slicer lets the viewer answer their own follow-up questions, making the dashboard self-serve.",
+                  "answer": true,
+                  "whenRight": "Right — self-serve is what gets a dashboard actually adopted.",
+                  "whenWrong": "It does — filters hand the slicing power to the viewer.",
+                  "sim": "[Department v] dropdown -> charts update"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Slicer / dropdown",
-              "body": "Add a Department filter — let the viewer focus on one department and see all KPIs for just that team."
+              "title": "Your turn — add a filter",
+              "body": "[PRODUCE] Add a department (and/or job-level) filter that updates all charts at once. Keep it to 1-2 filters."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Write the memo",
-          "summary": "",
+          "title": "Write the HR memo",
+          "summary": "Headline -> evidence -> recommendation, tuned for HR. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Write the HR memo",
+              "body": "## What it is\nA one-page memo, same structure as always — **headline -> evidence -> recommendation** — but the recommendation is an HR *program*, and you add a fairness/privacy note.\n\n## Why it matters\nThe memo is what circulates to people who never open the dashboard. For HR it must lead with the at-risk groups and the proposed intervention, cite the drivers as evidence, and proactively address fairness — because an attrition analysis that ignores fairness will (rightly) be challenged. Naming the trade-off yourself builds trust; hiding it destroys it."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (HR memo template)",
+              "body": "```text\n## Headline\nAttrition (16.1%) concentrates in first-year Sales Reps and employees on\nchronic overtime (~3x base). Two targeted programs could cut it materially.\n\n## Evidence\n- Overtime: 30.5% attrition vs 10.4% (2.9x).\n- Tenure: 36% leave in year 1; risk falls steeply after.\n- Role: Sales Representatives 39.8% (2.5x base).\n\n## Recommendation\n- Onboarding revamp for new Sales hires (target the year-1 spike).\n- Overtime policy review for chronic-OT employees.\n- Fairness note: drivers are role/workload, not protected attributes; flag at\n  the GROUP level only, never individuals.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An HR memo should proactively address fairness/privacy, not hide the trade-off.",
+                  "answer": true,
+                  "whenRight": "Right — naming it builds trust; an unaddressed fairness gap gets the work rejected.",
+                  "whenWrong": "It should — surface fairness yourself; it's a feature, not a weakness.",
+                  "sim": "add a 'fairness note: group-level only'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "HR-Memo.docx",
-              "body": "1 page. Structure:\n      # IBM HR Attrition — Memo to HR Director\n      ## Headline\n  Sales Reps in 0-3 years are leaving at 3x company rate.\n      ## Findings\n  Q1. Overall attrition: 16%. Sales: 21%. Research: 14%.\n      Q2. Tenure 0-1 yr has 37% attrition.\n      Q3. Overtime DOUBLES attrition rate from 10% to 30%.\n      ## Recommendations\n  - Year-1 retention program for sales reps\n  - Audit overtime exposure\n  - Promotion review for employees > 4 yrs without promotion\n      ## What's next\n  - 3 bullets"
+              "title": "Your turn — the memo",
+              "body": "[WRITE] Write `HR-Memo` with headline/evidence/recommendation, an HR program recommendation, and a fairness/privacy note. Real numbers."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Export as PDF",
-          "summary": "",
+          "title": "Export as a polished PDF",
+          "summary": "Format signals credibility. Concept + spec.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Export as a polished PDF",
+              "body": "## What it is\nTurn the memo and a dashboard snapshot into one clean PDF — headings, embedded charts, page numbers — the artefact you actually send.\n\n## Why it matters\nHR forwards PDFs to executives and legal; a raw notebook or markdown file won't travel. A polished PDF reads as authoritative and is the format decisions get made from. Same content, far more credible wrapper — and it's the deliverable that ends up in someone's \"approved\" folder."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nPDF contents (1-2 pages):\n  - Title + your name/date\n  - The memo (headline / evidence / recommendation / fairness note)\n  - A dashboard snapshot image\n  - Page numbers\nExport from Word/Docs or notebook -> PDF, commit it to the repo.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A polished PDF travels and reads as more credible than a raw notebook to HR/execs.",
+                  "answer": true,
+                  "whenRight": "Right — it's the format decisions are forwarded and made from.",
+                  "whenWrong": "It does — a clean PDF is the shippable, forwardable deliverable.",
+                  "sim": "memo + dashboard snapshot -> one clean PDF"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "PDF",
-              "body": "Export the memo as HR-Memo.pdf."
+              "title": "Your turn — export",
+              "body": "[PRODUCE] Export a clean PDF containing the memo and a dashboard snapshot, with page numbers; commit it."
             }
           ]
         },
         {
           "number": 6,
           "title": "Build a 4-slide exec deck",
-          "summary": "",
+          "summary": "Compress to 4 slides for leadership. Concept, video, structure.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build a 4-slide exec deck",
+              "body": "## What it is\nA 4-slide version for an HR exec meeting: headline, two findings, recommendation. Same BLUF discipline as the Superstore deck, tighter.\n\n## Why it matters\nLeadership gets minutes, not a dashboard tour. Four slides force you to pick the two findings that matter (overtime, year-1 spike) and lead with the recommendation. The deck is how the analysis turns into an approved program in the room."
+            },
+            {
+              "kind": "video",
+              "title": "Tips for presenting data at work",
+              "url": "https://www.youtube.com/watch?v=jizZKNnx9wA",
+              "creator": "",
+              "why": "Data-presentation habits for the deck. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (4-slide spine)",
+              "body": "```text\nSlide 1  \"Two fixable drivers explain most of our attrition\"  (+ the ask)\nSlide 2  Overtime: 3x the attrition rate  [bar chart]\nSlide 3  Year-1 Sales Reps: the hotspot   [survival curve / role bar]\nSlide 4  Recommendation: onboarding revamp + overtime policy; pilot + measure\n```\nTitles alone tell the story."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A 4-slide HR deck should lead with the recommendation and carry only the 2 findings that matter.",
+                  "answer": true,
+                  "whenRight": "Right — BLUF + the two strongest findings; cut the rest.",
+                  "whenWrong": "It should — lead with the ask, show only the decisive findings.",
+                  "sim": "4 slides: headline, 2 findings, recommendation"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Same as Superstore W5",
-              "body": "Headline slide + 3 finding slides. Practice the 5-minute pitch."
+              "title": "Your turn — the deck",
+              "body": "[PRODUCE] Build a 4-slide deck (headline + 2 findings + recommendation), titles that tell the story alone."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.3",
-          "summary": "",
+          "title": "Ship v0.3",
+          "summary": "Commit dashboard + memo + deck, tag hr-v0.3.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.3",
+              "body": "## What it is\nShip the deliverables layer: dashboard, PDF memo, 4-slide deck. Tag `hr-v0.3`.\n\n## Why it matters\nv0.1 found drivers, v0.2 added timing/interactions, v0.3 makes it *consumable* by non-analysts. A project only creates value once decision-makers can act on it — packaging is not optional polish, it's where analysis becomes impact."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Packaging analysis into a dashboard/memo/deck is where it becomes usable impact, not optional polish.",
+                  "answer": true,
+                  "whenRight": "Right — unconsumed analysis creates zero value.",
+                  "whenWrong": "It is — deliverables are how the work reaches decisions.",
+                  "sim": "v0.3 = the analysis HR can actually act on"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.3",
-              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Dashboard sheet built\n  ☐ Department filter works\n  ☐ HR-Memo.pdf 1-page\n  ☐ 4-slide deck\n  ☐ v0.3 tag"
+              "title": "Acceptance — v0.3 is done when",
+              "body": "[PRODUCE] Dashboard (4 KPI + 3 charts + filter), PDF memo with fairness note, and a 4-slide deck.\n[CODE] `git commit -m \"HR Attrition v0.3: dashboard + memo + deck\"`; `git tag hr-v0.3`; push.\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
@@ -4483,85 +4653,253 @@
       "days": [
         {
           "number": 1,
-          "title": "Polish list",
-          "summary": "",
+          "title": "List the rough edges",
+          "summary": "Audit everything before the final ship. Concept + worked audit.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "10 rough edges",
-              "body": "List them."
+              "kind": "lesson",
+              "title": "List the rough edges",
+              "body": "## What it is\nAudit every HR artefact — notebook, dashboard, memo, deck — and write down every rough edge: errors, inconsistent numbers, unclear labels, anything half-done.\n\n## Why it matters\n\"Shipping\" means finishing. A written punch list converts \"basically done\" into completable tasks and catches the embarrassing inconsistency (a number that disagrees between memo and dashboard) before a stakeholder does. You can't fix what you haven't named."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n- notebook: cell 9 errors on Restart & Run All\n- dashboard: overtime KPI says 2.9x, memo says 3x -> reconcile\n- deck slide 3 chart unlabeled\n- README missing 'how to run'\n```\nSpecific, checkable items."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A written rough-edge list before the final ship prevents shipping half-done work.",
+                  "answer": true,
+                  "whenRight": "Right — it turns 'basically done' into finishable tasks.",
+                  "whenWrong": "It does — listing gaps makes finishing concrete.",
+                  "sim": "'basically done' -> 6 concrete fixes"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — audit",
+              "body": "[WRITE] List every rough edge across the HR notebook, dashboard, memo, and deck. Specific; don't fix yet."
             }
           ]
         },
         {
           "number": 2,
           "title": "Fix them",
-          "summary": "",
+          "summary": "Work the list; polish compounds. Concept + checklist.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Fix them",
+              "body": "## What it is\nDrive every punch-list item to done: restart-and-run-all the notebook, reconcile every number to one canonical value, fix labels and links.\n\n## Why it matters\nPolish is invisible per item but unmistakable in aggregate — it's the line between a draft and a portfolio piece. A reviewer feels \"careful\" without naming why, and it's the accumulation of these small fixes."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ ] Restart & Run All -> no errors\n[ ] one canonical value per number, everywhere\n[ ] every chart labelled + has a takeaway\n[ ] all links click through; README has 'how to run'\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Reconciling every number to one canonical value across documents is part of finishing.",
+                  "answer": true,
+                  "whenRight": "Right — disagreeing figures destroy trust instantly.",
+                  "whenWrong": "It is — one source of truth per number is non-negotiable.",
+                  "sim": "memo 3x and dashboard 2.9x -> pick one"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Polish pass",
-              "body": "Top 5."
+              "title": "Your turn — fix them",
+              "body": "[PRODUCE] Clear the rough-edge list; restart-run-all the notebook clean; reconcile all numbers."
             }
           ]
         },
         {
           "number": 3,
           "title": "Anonymize the dataset",
-          "summary": "",
+          "summary": "HR data is sensitive — scrub before public. Concept + checklist.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Anonymize the dataset",
+              "body": "## What it is\nBefore this goes in a public portfolio, ensure nothing identifies real people. The IBM set is already synthetic/public — confirm it, remove any added private notes, and strip anything that could leak.\n\n## Why it matters\nHR data is the *most* sensitive domain — real attrition data with names would be a serious privacy and legal breach in a public repo. Practising rigorous anonymisation on safe data now builds the reflex that protects you (and your future employer) when the data is real. \"Scrub before public\" must be automatic."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ ] dataset is the public IBM sample (no real employees)\n[ ] no real names / IDs anywhere\n[ ] no internal notes or private commentary in the notebook\n[ ] no credentials/keys; relative paths only\ngit log -p | grep -iE \"key|token|password\"   # quick secrets sweep\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "HR data is highly sensitive, so a public version must be rigorously anonymized and secret-free.",
+                  "answer": true,
+                  "whenRight": "Right — names/PII/keys in a public HR repo is a serious breach.",
+                  "whenWrong": "It must — scrub PII, notes, and secrets before going public.",
+                  "sim": "public HR repo: no names, no keys, no private notes"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Public-safe",
-              "body": "Even though IBM HR is public, practice: drop EmployeeID and any near-identifying combos."
+              "title": "Your turn — anonymize",
+              "body": "[PRODUCE] Confirm no real PII, no private notes, no secrets; make the repo public-safe."
             }
           ]
         },
         {
           "number": 4,
           "title": "Add a SQL version",
-          "summary": "",
+          "summary": "Re-answer key questions in SQL. Concept, video, queries with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Add a SQL version",
+              "body": "## What it is\nRe-express your top attrition findings as SQL queries in `hr_queries.sql` — attrition rate by department, by overtime — the same GROUP BY logic from the Superstore SQL week, on the HR table.\n\n## Why it matters\nShowing the *same* analysis in pandas and SQL across two projects proves durable tool-fluency. It also makes your portfolio searchable by the SQL keyword recruiters filter on. The attrition rate is just `AVG(CASE WHEN Attrition='Yes' THEN 1 ELSE 0 END)`."
+            },
+            {
+              "kind": "video",
+              "title": "SQL aggregate functions, GROUP BY & HAVING",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "GROUP BY for the SQL attrition queries. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Attrition rate by department, in SQL\n```sql\nSELECT Department,\n       AVG(CASE WHEN Attrition='Yes' THEN 1.0 ELSE 0 END) AS attrition_rate,\n       COUNT(*) AS employees\nFROM hr GROUP BY Department ORDER BY attrition_rate DESC;\n```\n```\nDepartment              attrition_rate  employees\nSales                   0.206           446\nHuman Resources         0.190            63\nResearch & Development  0.138           961\n```\nMatches your pandas Week 10 result exactly — `AVG(CASE WHEN ...)` is the SQL of the 0/1 `left` mean."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`AVG(CASE WHEN Attrition='Yes' THEN 1 ELSE 0 END)` is the SQL way to compute a rate.",
+                  "answer": true,
+                  "whenRight": "Right — it's the SQL of the pandas 0/1 boolean mean.",
+                  "whenWrong": "It is — CASE WHEN -> 1/0, then AVG = the rate.",
+                  "sim": "AVG(CASE...) == groupby['left'].mean()"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "queries.sql",
-              "body": "Re-do the 3 main findings in SQLite Online. Save 5+ queries. Verify results match pivots."
+              "title": "Your turn — SQL version",
+              "body": "[PRODUCE] Write `hr_queries.sql`: attrition rate by department and by overtime, each commented. Confirm they match pandas."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Demo video",
-          "summary": "",
+          "title": "Record a demo video",
+          "summary": "A 90-second walkthrough proves it works. Concept + script.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Record a demo video",
+              "body": "## What it is\nRecord a 90-second screen walkthrough of your dashboard: what it shows, the two key findings, the recommendation. Upload to Drive/YouTube and link it (per the platform's video policy — link, don't upload here).\n\n## Why it matters\nA demo video is the single most convincing portfolio artefact — it proves the project *works* and that *you* can present it, which a static repo never shows. Recruiters who won't run your code will watch 90 seconds. It's also rehearsal for the real thing."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (90-sec script)",
+              "body": "```text\n0:00 \"This dashboard tracks employee attrition for 1,470 staff.\"\n0:15 \"Overall 16%, but overtime workers leave at 3x the rate.\" [point]\n0:40 \"And first-year Sales Reps are the hotspot.\" [survival curve]\n1:05 \"So I recommend an onboarding revamp and an overtime cap.\"\n1:20 \"Repo and memo linked below.\" (stop)\n```\nTight, pointed, under 90 seconds."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A short demo video proves the project works and that you can present it — a top portfolio asset.",
+                  "answer": true,
+                  "whenRight": "Right — recruiters watch 90 seconds even if they never run your code.",
+                  "whenWrong": "It does — a demo is the most convincing, accessible proof of work.",
+                  "sim": "90-sec walkthrough: findings + recommendation"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "90-sec walkthrough of the dashboard",
-              "body": "Upload to YouTube unlisted. Embed in README."
+              "title": "Your turn — demo",
+              "body": "[PRODUCE] Record a <=90-second dashboard walkthrough; upload to Drive/YouTube and add the share link to your README."
             }
           ]
         },
         {
           "number": 6,
           "title": "Get one reader",
-          "summary": "",
+          "summary": "A fresh reader finds your blind spots. Concept + the test.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Get one reader",
+              "body": "## What it is\nGive the memo/dashboard to one person who hasn't seen it; watch where they get confused and run the one-sentence test: \"what am I recommending, and why?\"\n\n## Why it matters\nYou're blind to your own clarity gaps. A fresh reader finds the jargon and the unexplained jump for free, before it costs you in front of HR. If they can't restate your recommendation, your headline failed."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nAsk: \"Tell me in one sentence what I'm recommending and why.\"\nNote: every pause, every \"what's this?\", every misread number.\nThat list is tomorrow's fixes.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A fresh reader reveals confusion you can't see in your own work.",
+                  "answer": true,
+                  "whenRight": "Right — you know too much to spot your own gaps.",
+                  "whenWrong": "It does — an outsider surfaces jargon and jumps you can't see.",
+                  "sim": "can't restate the rec -> headline needs work"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Feedback",
-              "body": "Apply 1 piece of feedback."
+              "title": "Your turn — reader test",
+              "body": "[PRODUCE] Have one stranger read it and do the one-sentence test; note every point of confusion."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v1.0 + retro",
-          "summary": "",
+          "title": "Ship v1.0 + retro",
+          "summary": "Tag v1.0, write the retro. Project 2 DONE. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v1.0 + retro",
+              "body": "## What it is\nApply the reader's fixes, tag `hr-v1.0`, and write a short retro: what worked, what was hard, what you'd do differently.\n\n## Why it matters\nTwo complete, shipped, reader-tested projects in different domains (retail, HR) is a portfolio that proves a transferable *process*. The retro turns the experience into lessons — reflection is what compounds skill from one project to the next."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (retro)",
+              "body": "```text\n## HR Attrition Retro\nWorked: the 0/1 'left' trick made every rate a one-liner; overtime finding landed.\nHard: framing for HR (fairness) was new; reconciling numbers across docs.\nNext time: build the dashboard alongside the analysis, not at the end.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A short retro turns a finished project into reusable lessons for the next one.",
+                  "answer": true,
+                  "whenRight": "Right — reflection is how projects compound into skill.",
+                  "whenWrong": "It does — a retro converts experience into carry-forward lessons.",
+                  "sim": "worked / hard / next-time, 3 bullets each"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Project 2 DONE",
-              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Polished\n  ☐ SQL queries.sql committed\n  ☐ Demo video embedded\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 2 COMPLETE. Next: Project 3 — Marketing Funnel."
+              "title": "Acceptance — v1.0 (Project 2 DONE)",
+              "body": "[PRODUCE] Reader fixes applied; everything consistent and public-safe; demo linked.\n[WRITE] Retro in the README (worked / hard / next time).\n[CODE] `git tag hr-v1.0`; push. Drop your repo link. Project 2 complete."
             }
           ]
         }
@@ -4646,99 +4984,276 @@
       "days": [
         {
           "number": 1,
-          "title": "Why scraping for analysts",
-          "summary": "",
+          "title": "Why analysts scrape",
+          "summary": "Real data isn't always handed to you. Concept + where scraping fits.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Three real business uses",
-              "body": "  1. Competitor price monitoring (track 10 competitors weekly)\n  2. Review sentiment (Trustpilot, G2)\n  3. Public stats data (your government's open data portal)"
+              "kind": "lesson",
+              "title": "Why analysts scrape",
+              "body": "## What it is\nBoth projects used clean, packaged datasets. Most real analyst work doesn't get that gift — the data you need (competitor prices, listings, public stats) lives on **web pages**, not in a tidy CSV. **Web scraping** is programmatically extracting that data into a table you can analyse.\n\n## Why it matters\nScraping unlocks questions no packaged dataset can answer: \"how did our competitor's prices move this month?\" There's no CSV for that — but there's a web page, updated daily, that you can turn into one. The analyst who can build their own dataset isn't limited to questions someone already answered. It's the difference between consuming data and *sourcing* it.\n\n## The shape of it\nThree steps: fetch the page (HTML), parse it to pull the values you want, and write them to a DataFrame/CSV. This week: ethics first, then BeautifulSoup, then schedule it, then analyse the result."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (the pipeline)",
+              "body": "```text\nweb page (HTML)  --requests-->  raw HTML text\nraw HTML         --BeautifulSoup-->  the values you want (price, title)\nvalues           --pandas-->  a clean CSV you can analyse like any other\n```\nYou're manufacturing a dataset that didn't exist before."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Scraping lets analysts answer questions no pre-packaged dataset covers (e.g. competitor price moves).",
+                  "answer": true,
+                  "whenRight": "Right — you source your own data instead of waiting for a CSV.",
+                  "whenWrong": "It does — scraping turns live web pages into analysable data.",
+                  "sim": "no CSV for competitor prices -> scrape the page"
+                },
+                {
+                  "prompt": "Everything worth analysing already comes as a clean CSV.",
+                  "answer": false,
+                  "whenRight": "Correct — most real-world data lives on pages/APIs you must extract yourself.",
+                  "whenWrong": "Not so — most real data must be sourced, not downloaded ready-made.",
+                  "sim": "real work = building the dataset too"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — pick a target",
+              "body": "[WRITE] Name a public web page with data you'd want as a table (a price list, a rankings page, public stats).\n[WRITE] What question would scraping it let you answer that no existing CSV can?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Ethics + robots.txt",
-          "summary": "",
+          "title": "Scrape ethically (robots.txt)",
+          "summary": "Just because you can doesn't mean you should. Concept + the rules.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Books-to-scrape (practice site)",
-              "url": "https://books.toscrape.com",
-              "why": "Built for scraping practice. Legal + safe."
+              "kind": "lesson",
+              "title": "Scrape ethically (robots.txt)",
+              "body": "## What it is\nBefore scraping, check the site's **robots.txt** (e.g. `example.com/robots.txt`) and Terms of Service. Respect what's disallowed, identify yourself, and don't hammer the server.\n\n## Why it matters\nScraping carelessly can be rude (overloading a small site), against ToS, or in some cases legally risky. A professional scrapes *politely*: obeys robots.txt, rate-limits requests (a pause between them), scrapes only public data, and never republishes copyrighted content. This isn't just ethics — a scraper that gets your IP banned is also useless. Doing it right keeps the data flowing and keeps you out of trouble."
             },
             {
-              "kind": "video",
-              "title": "Web scraping ethics (10 min)",
-              "url": "https://www.youtube.com/results?search_query=web+scraping+ethics+legal+robots",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "See it worked (the rules)",
+              "body": "```text\n[ ] read example.com/robots.txt  -> respect Disallow paths\n[ ] add a delay between requests (time.sleep(1-2s)) -> don't hammer\n[ ] set a real User-Agent identifying you\n[ ] scrape only PUBLIC data; don't log in and scrape private pages\n[ ] don't republish copyrighted content; use it for analysis\n```"
             },
             {
-              "kind": "reflection",
-              "title": "Rules",
-              "body": "Three you'll always follow:\n  1. Robots.txt\n  2. Rate limit (≤ 1 req/sec)\n  3. Identify yourself in User-Agent"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Checking robots.txt and rate-limiting requests is part of scraping responsibly.",
+                  "answer": true,
+                  "whenRight": "Right — respect Disallow rules and don't overload the server.",
+                  "whenWrong": "It is — robots.txt + a delay between requests is basic scraping etiquette.",
+                  "sim": "read /robots.txt; time.sleep between requests"
+                },
+                {
+                  "prompt": "If data is on a public page, there are no rules about how you scrape it.",
+                  "answer": false,
+                  "whenRight": "Correct — robots.txt, ToS, rate, and copyright still apply.",
+                  "whenWrong": "Not true — etiquette and terms still govern how you scrape.",
+                  "sim": "public != anything goes"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — check the rules",
+              "body": "[PRODUCE] Open your target site's `/robots.txt`; note what's disallowed.\n[WRITE] One sentence confirming your target is allowed and your plan to rate-limit."
             }
           ]
         },
         {
           "number": 3,
           "title": "BeautifulSoup hello world",
-          "summary": "",
+          "summary": "Fetch and parse a page. Concept, video, code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "BeautifulSoup hello world",
+              "body": "## What it is\n`requests` fetches a page's HTML; **BeautifulSoup** parses it so you can pull out the elements you want by their tag/class. Together they're the standard beginner scraping toolkit.\n\n## Why it matters\nThis is the core skill: turning a wall of HTML into the three values you actually care about. Once you can `find`/`find_all` the right elements, scraping any simple page is the same pattern — inspect the page to find the tag, then extract it. Start on a scraping-practice site (like books.toscrape.com), never a site that forbids it."
+            },
+            {
+              "kind": "video",
+              "title": "Easy web scraping with Python & BeautifulSoup",
+              "url": "https://www.youtube.com/watch?v=M37koTo8NjA",
+              "creator": "",
+              "why": "Fetch + parse a page live, then the code below is review. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Fetch a page and extract data\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\nurl = \"https://books.toscrape.com/\"        # a scraping-practice site\nhtml = requests.get(url, headers={\"User-Agent\": \"learn-scraper\"}).text\nsoup = BeautifulSoup(html, \"html.parser\")\n\nbooks = soup.find_all(\"article\", class_=\"product_pod\")\nfor b in books[:3]:\n    title = b.h3.a[\"title\"]\n    price = b.find(\"p\", class_=\"price_color\").text\n    print(title, \"|\", price)\n```\nOutput:\n```\nA Light in the Attic | £51.77\nTipping the Velvet | £53.74\nSoumission | £50.10\n```\nYou just turned a web page into structured data. `find_all` got every book block; inside each, `find`/attribute access pulled the title and price."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "requests fetches the HTML and BeautifulSoup parses it so you can extract elements by tag/class.",
+                  "answer": true,
+                  "whenRight": "Right — requests gets the page, BeautifulSoup finds the values.",
+                  "whenWrong": "It is — requests = fetch, BeautifulSoup = parse/extract.",
+                  "sim": "find_all('article', class_='product_pod')"
+                },
+                {
+                  "prompt": "You should practise scraping on a site that explicitly forbids it.",
+                  "answer": false,
+                  "whenRight": "Correct — use practice sites (books.toscrape.com); respect those that forbid it.",
+                  "whenWrong": "No — learn on sites built for it, not ones that disallow scraping.",
+                  "sim": "books.toscrape.com is built for practice"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Scrape book prices",
-              "body": "      pip install requests beautifulsoup4 pandas\n\nCreate scraper.py:\n      import requests, time, pandas as pd\n      from bs4 import BeautifulSoup\n      headers = {'User-Agent':'forge-analyst scraper'}\n      books = []\n      for page in range(1, 6):\n          url = f'https://books.toscrape.com/catalogue/page-{page}.html'\n          r = requests.get(url, headers=headers)\n          soup = BeautifulSoup(r.text, 'html.parser')\n          for art in soup.select('article.product_pod'):\n              title = art.select_one('h3 a').get('title')\n              price = art.select_one('.price_color').text.replace('£','')\n              books.append({'title': title, 'price': float(price)})\n          time.sleep(1)\n      pd.DataFrame(books).to_csv('books.csv', index=False)"
+              "title": "Your turn — scrape a page",
+              "body": "[CODE] Use requests + BeautifulSoup to scrape titles and prices from books.toscrape.com (or your allowed target).\n[PRODUCE] Print the first 5, then load them into a pandas DataFrame."
             }
           ]
         },
         {
           "number": 4,
           "title": "Schedule the scraper",
-          "summary": "",
+          "summary": "Automate it to build a time series. Concept + how.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Schedule the scraper",
+              "body": "## What it is\nSave your scraper as a `.py` script and run it automatically on a schedule (Windows Task Scheduler / cron) so it captures the data **over time** — appending each run's results with a date.\n\n## Why it matters\nA one-off scrape is a snapshot; a *scheduled* scrape is a **time series**, which is where the real insight lives (\"prices rose 12% this month\"). Automating it also means the dataset builds itself while you sleep — the analyst's leverage. The key habit: stamp each row with the scrape date and append, never overwrite."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```python\n# scraper.py — append today's prices with a date stamp\nimport pandas as pd, datetime as dt\nrows = scrape()                       # your Day-3 function -> list of dicts\ndf = pd.DataFrame(rows)\ndf[\"scraped_on\"] = dt.date.today()\ndf.to_csv(\"prices.csv\", mode=\"a\", header=False, index=False)  # APPEND\n```\n```text\nSchedule it: Windows Task Scheduler (daily) or cron `0 9 * * *`.\nEach run adds today's rows -> a growing time series.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Scheduling the scraper and appending date-stamped rows turns snapshots into a time series.",
+                  "answer": true,
+                  "whenRight": "Right — the trend over time is where the insight is.",
+                  "whenWrong": "It does — scheduled + appended = a growing time series.",
+                  "sim": "daily run -> 'prices +12% this month'"
+                },
+                {
+                  "prompt": "Each scheduled run should overwrite the previous file.",
+                  "answer": false,
+                  "whenRight": "Correct — append with a date stamp; overwriting destroys the history you need.",
+                  "whenWrong": "No — append; overwriting kills the time series.",
+                  "sim": "mode='a' (append), not overwrite"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Run it weekly",
-              "body": "Add a timestamp column:\n      from datetime import date\n      books_df['scraped_on'] = date.today().isoformat()\n      books_df.to_csv('books_history.csv', mode='a', header=False, index=False)\n\nSet up to run every Monday (Windows Task Scheduler / cron). Over time you'll have a time series of prices."
+              "title": "Your turn — schedule it",
+              "body": "[PRODUCE] Save your scraper as `scraper.py` that appends date-stamped rows; schedule it (Task Scheduler/cron) to run daily."
             }
           ]
         },
         {
           "number": 5,
           "title": "Analyze price changes",
-          "summary": "",
+          "summary": "Now it's just pandas. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Analyze price changes",
+              "body": "## What it is\nOnce the scraper has run a few times, your scraped CSV is an ordinary dataset — load it and use the pandas you already know to compute changes over time.\n\n## Why it matters\nThis closes the loop: the scraping was only ever in service of a *question*. Now you answer it with groupby/sort/pct_change — the exact skills from Project 1, on data you sourced yourself. The point of the week wasn't scraping for its own sake; it was being able to answer a question that had no CSV."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Biggest movers between two scrape dates\n```python\ndf = pd.read_csv(\"prices.csv\", parse_dates=[\"scraped_on\"])\npivot = df.pivot_table(index=\"title\", columns=\"scraped_on\", values=\"price\")\npivot[\"change_%\"] = (pivot.iloc[:, -1] / pivot.iloc[:, 0] - 1) * 100\nprint(pivot.sort_values(\"change_%\", ascending=False).head(3).round(1))\n```\nOutput (illustrative):\n```\ntitle            2026-06-01  2026-06-08  change_%\nWidget A              19.99       24.99      25.0\nGadget B              50.10       55.10       10.0\nBook C                51.77       50.77      -1.9\n```\nThe scrape became a question answered: Widget A jumped 25% this week. Standard pandas — the data source was the only new part."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Once scraped into a CSV, the data is analysed with the same pandas skills as any dataset.",
+                  "answer": true,
+                  "whenRight": "Right — scraping just sources the data; analysis is ordinary pandas.",
+                  "whenWrong": "It is — after scraping, it's groupby/pivot/pct_change as usual.",
+                  "sim": "pivot + pct_change -> biggest price movers"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Diff over time",
-              "body": "After running 2x (simulate by editing dates):\n      df = pd.read_csv('books_history.csv')\n      changes = df.pivot_table('price', 'title', 'scraped_on').dropna()\n      changes['change'] = (changes.iloc[:,-1] - changes.iloc[:,0]) / changes.iloc[:,0]\n      print(changes.sort_values('change').head(10))"
+              "title": "Your turn — analyze",
+              "body": "[CODE] Load your scraped CSV, pivot by date, and compute % change per item.\n[WRITE] One sentence: which item moved most, and by how much?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Build a Sheets dashboard",
-          "summary": "",
+          "title": "Dashboard the prices",
+          "summary": "A live price tracker. Concept + spec.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Dashboard the prices",
+              "body": "## What it is\nPut the scraped, analysed prices into a small dashboard (Sheets or notebook): current prices, biggest movers, and a trend line — refreshed as the scraper runs.\n\n## Why it matters\nA self-updating price dashboard is a genuinely useful business tool (competitor monitoring), and it's an impressive portfolio piece because it shows the *full* pipeline — source, automate, analyse, present — not just analysis of someone else's data. End to end is rare and hireable."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nPrice tracker dashboard:\n  KPIs: # items tracked | biggest rise | biggest drop\n  Chart: trend line of a key item over scrape dates\n  Table: top 5 movers this week\nRefreshes as prices.csv grows.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A scraped-price dashboard shows the full pipeline (source -> automate -> analyse -> present), which is rare and hireable.",
+                  "answer": true,
+                  "whenRight": "Right — end-to-end ownership is more impressive than analysis alone.",
+                  "whenWrong": "It does — the whole pipeline is the standout portfolio signal.",
+                  "sim": "source + automate + analyse + present = end to end"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Visualize price trends",
-              "body": "Upload books_history.csv to Google Sheets. Build:\n  - 1 line chart per top-10 book showing price over time\n  - 1 table flagging books with > 10% price change\n  - 1 KPI: 'average price drop this month'"
+              "title": "Your turn — build the tracker",
+              "body": "[PRODUCE] Build a small dashboard: KPIs (items tracked, biggest mover), a trend line, and a top-movers table."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag scraping-ready",
-          "summary": "",
+          "title": "Ship: scraping-ready",
+          "summary": "Commit scraper + analysis + dashboard, tag scraping-ready.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship: scraping-ready",
+              "body": "## What it is\nShip the whole pipeline: `scraper.py`, the appended dataset, the analysis notebook, and the dashboard. Tag `scraping-ready`.\n\n## Why it matters\nYou can now *source* data, not just consume it — a capability most junior analysts lack. This single skill widens the set of questions you can answer for any employer, and a clean end-to-end scraping project is a portfolio differentiator."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Being able to source your own data (scraping) widens the questions you can answer for an employer.",
+                  "answer": true,
+                  "whenRight": "Right — you're no longer limited to existing datasets.",
+                  "whenWrong": "It does — sourcing data is a capability most juniors lack.",
+                  "sim": "scrape -> answer questions with no existing CSV"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "New repo: competitor-price-tracker. Push scraper + sample data + dashboard screenshot.\n\nPASS:\n  ☐ BS4 scraper pulls 5 pages\n  ☐ Saves with timestamp column\n  ☐ Rate-limited + User-Agent set\n  ☐ Diff analysis works\n  ☐ Sheets dashboard committed (screenshot in README)"
+              "title": "Acceptance — scraping-ready is done when",
+              "body": "[PRODUCE] Repo has scraper.py (polite + scheduled), the appended dataset, the analysis, and the dashboard.\n[CODE] `git tag scraping-ready`; push. Drop your repo link."
             }
           ]
         }
@@ -4833,98 +5348,296 @@
         {
           "number": 1,
           "title": "What is a funnel?",
-          "summary": "",
+          "summary": "Project 3: e-commerce. Concept of a conversion funnel.",
           "items": [
             {
-              "kind": "video",
-              "title": "Marketing funnel analysis (10 min)",
-              "url": "https://www.youtube.com/results?search_query=marketing+funnel+analysis+explained",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "What is a funnel?",
+              "body": "## What it is\nProject 3 uses **Olist** — a public Brazilian e-commerce dataset: ~100,000 orders (2016-2018) across multiple tables (orders, items, customers, reviews, payments). A **funnel** tracks how customers progress through stages (ordered -> shipped -> delivered -> reviewed), and where they drop off.\n\n## Why it matters\nEvery drop-off is lost money, and the funnel shows *exactly where*. \"We lose customers somewhere\" is useless; \"8% of orders never reach delivered\" points at a fixable operations problem. Funnel thinking is the core of marketing and e-commerce analytics — and Olist's multi-table structure forces you to practise the `merge` skill on realistic, messy, relational data.\n\n## What's new here\nUnlike Superstore (one table), Olist is **relational** — answers require *joining* tables. That's this project's growth edge: real data is normalised across tables, and you'll live in `merge`."
             },
             {
-              "kind": "reflection",
-              "title": "Funnel intuition",
-              "body": "Classic funnel: Visitors → Carts → Checkouts → Orders → Repeat customers. At each step, what % usually drops off?"
+              "kind": "lesson",
+              "title": "See it worked (the funnel)",
+              "body": "```text\nORDERED ---> APPROVED ---> SHIPPED ---> DELIVERED ---> REVIEWED\n 100%         98%           95%          92%            ~70% leave a review\n              \\ where do orders fall out? each gap = lost value\n```\nThe whole project answers: where do customers drop, and why?"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A funnel tracks customers through stages and shows exactly where they drop off.",
+                  "answer": true,
+                  "whenRight": "Right — each drop-off gap is a fixable loss.",
+                  "whenWrong": "It does — the funnel localises where value leaks.",
+                  "sim": "ordered->delivered->reviewed; find the drop"
+                },
+                {
+                  "prompt": "Olist is a single flat table like Superstore.",
+                  "answer": false,
+                  "whenRight": "Correct — it's relational (orders, items, customers, reviews); you must merge.",
+                  "whenWrong": "Not so — Olist spans multiple tables; joining is the new skill.",
+                  "sim": "orders + customers + reviews -> merge"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the funnel",
+              "body": "[WRITE] List the funnel stages for an e-commerce order.\n[WRITE] One question about where customers drop off that this project could answer."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Get Olist data",
-          "summary": "",
+          "title": "Get the Olist data",
+          "summary": "Download and load multiple tables. Concept + code with output.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Olist Brazilian E-Commerce — Kaggle",
-              "url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
-              "why": "Click 'Open' → download. ~50MB zip with 9 CSVs."
+              "kind": "lesson",
+              "title": "Get the Olist data",
+              "body": "## What it is\nDownload the Olist dataset (Kaggle) — it's several CSVs (orders, order_items, customers, products, reviews). Load the ones you need into separate DataFrames.\n\n## Why it matters\nWorking with multiple files is itself the realistic skill: you load each table, inspect it, and understand how they connect (via key columns like `order_id`, `customer_id`) before you can answer anything. Rushing to analysis before understanding the table relationships is how people produce wrong joins and wrong numbers."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Load the core tables\n```python\nimport pandas as pd\norders   = pd.read_csv(\"olist_orders_dataset.csv\")\nreviews  = pd.read_csv(\"olist_order_reviews_dataset.csv\")\ncustomers= pd.read_csv(\"olist_customers_dataset.csv\")\nprint(orders.shape, reviews.shape, customers.shape)\nprint(orders.columns.tolist()[:6])\n```\nOutput (illustrative):\n```\n(99441, 8) (99224, 7) (99441, 5)\n['order_id', 'customer_id', 'order_status', 'order_purchase_timestamp',\n 'order_approved_at', 'order_delivered_customer_date']\n```\n~99k orders. Note the key columns (`order_id`, `customer_id`) — those are how you'll join the tables. The timestamp columns are how you'll measure each funnel stage."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Olist comes as multiple CSVs that connect through key columns like order_id and customer_id.",
+                  "answer": true,
+                  "whenRight": "Right — those keys are how you'll join the tables.",
+                  "whenWrong": "It is — the keys link the separate tables for merging.",
+                  "sim": "order_id links orders<->items<->reviews"
+                },
+                {
+                  "prompt": "You should start analysing before understanding how the tables relate.",
+                  "answer": false,
+                  "whenRight": "Correct — map the keys/relationships first or you'll build wrong joins.",
+                  "whenWrong": "No — understand the relationships first to avoid wrong merges.",
+                  "sim": "know the keys before you join"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Setup",
-              "body": "Make repo olist-funnel/. Unzip the Kaggle dataset into data/.\nFiles: customers, orders, order_items, order_payments, order_reviews, products, sellers, geolocation, category translation."
+              "title": "Your turn — load it",
+              "body": "[CODE] Load orders, reviews, and customers; print each shape and the orders columns.\n[WRITE] One sentence: which column links orders to reviews?"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Understand the schema",
-          "summary": "",
+          "title": "Understand the schema (join tables)",
+          "summary": "Relational data needs joins. Concept, video, code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Understand the schema (join tables)",
+              "body": "## What it is\nMap how the tables connect, then `merge` them on their keys to assemble the wide table you need (e.g. orders + their review scores + customer location).\n\n## Why it matters\nThis is the project's core skill: real questions (\"do late deliveries get worse reviews?\") need columns from *different* tables, so you must join them correctly. Choosing the right join type (`how=\"left\"` to keep all orders) and the right key is where accuracy is won or lost — a wrong join silently drops or duplicates rows and quietly corrupts every number downstream."
+            },
+            {
+              "kind": "video",
+              "title": "Merge and concat DataFrames — a quick guide",
+              "url": "https://www.youtube.com/watch?v=dhovvL-AMVQ",
+              "creator": "",
+              "why": "Joining tables on a key, applied to Olist. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Join orders to their reviews\n```python\nom = orders.merge(reviews[[\"order_id\",\"review_score\"]], on=\"order_id\", how=\"left\")\nprint(om.shape)\nprint(om[[\"order_id\",\"order_status\",\"review_score\"]].head(3))\n```\nOutput (illustrative):\n```\n(99992, 9)\n        order_id        order_status  review_score\n0  e481f51cbdc54...     delivered           4.0\n1  53cdb2fc8bc7d...     delivered           4.0\n2  47770eb9100c2...     delivered           5.0\n```\nNow each order carries its review score — a question that needed two tables, answered by one `merge`. `how=\"left\"` kept every order, even those with no review (NaN score)."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Answering Olist questions usually requires merging columns from different tables on a key.",
+                  "answer": true,
+                  "whenRight": "Right — relational data means join first, analyse second.",
+                  "whenWrong": "It does — you assemble the wide table with merge before analysing.",
+                  "sim": "orders.merge(reviews, on='order_id')"
+                },
+                {
+                  "prompt": "`how=\"left\"` on a merge keeps all rows from the left table even if there's no match.",
+                  "answer": true,
+                  "whenRight": "Right — left join preserves every order, NaN where no review.",
+                  "whenWrong": "It does — left keeps all left rows; unmatched get NaN.",
+                  "sim": "99k orders kept; missing reviews -> NaN"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Schema diagram",
-              "body": "On paper or in a draw.io file: how do the 9 tables connect?\n  orders.customer_id → customers.customer_id\n  orders.order_id → order_items.order_id → products.product_id\n  orders.order_id → order_payments\n  orders.order_id → order_reviews\n\nSave the diagram as schema.png."
+              "title": "Your turn — join the tables",
+              "body": "[CODE] Merge orders with review scores on `order_id` using a left join; print the shape and a few rows.\n[WRITE] One sentence: how many orders have no review (NaN score)?"
             }
           ]
         },
         {
           "number": 4,
-          "title": "Funnel step 1: orders by status",
-          "summary": "",
+          "title": "Funnel step: orders by status",
+          "summary": "Count each stage. Concept, video, code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Funnel step: orders by status",
+              "body": "## What it is\nThe `order_status` column (delivered, shipped, canceled, unavailable…) is the funnel in one column. `value_counts` shows how many orders sit at each stage — and how many fell out.\n\n## Why it matters\nThis is the funnel's headline: the share of orders that actually reach *delivered* vs those canceled/unavailable. A 3% cancellation rate might be fine; 15% is an operations fire. One `value_counts` quantifies the leak you'll spend the rest of the project explaining."
+            },
+            {
+              "kind": "video",
+              "title": "Aggregation with groupby() & agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "creator": "",
+              "why": "Counting/grouping a category, applied to status. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Orders by status\n```python\nprint(orders[\"order_status\"].value_counts())\nprint((orders[\"order_status\"]==\"delivered\").mean().round(3))\n```\nOutput (illustrative):\n```\ndelivered      96478\nshipped         1107\ncanceled         625\nunavailable      609\ninvoiced         314\nprocessing       301\n...\n0.970\n```\nRead it: **97% of orders reach delivered** — a healthy funnel — but ~1,200 canceled/unavailable orders are the leak worth investigating. The base completion rate (97%) is the number every later cut compares against."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "order_status value_counts is the funnel: it shows how many orders reach each stage.",
+                  "answer": true,
+                  "whenRight": "Right — the status column IS the funnel in one place.",
+                  "whenWrong": "It is — value_counts on status quantifies each stage.",
+                  "sim": "delivered 96k, canceled 625, ..."
+                },
+                {
+                  "prompt": "A 97% delivered rate means there's nothing in the funnel worth investigating.",
+                  "answer": false,
+                  "whenRight": "Correct — the ~1,200 canceled/unavailable orders are still a leak to explain.",
+                  "whenWrong": "Not quite — even a small drop-off is lost value worth a look.",
+                  "sim": "625 canceled + 609 unavailable = the leak"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Status pivot",
-              "body": "Load orders.csv. Pivot: status → COUNT.\nOlist statuses: created, approved, invoiced, shipped, delivered, canceled, unavailable.\nWhat's the conversion from 'created' to 'delivered'?"
+              "title": "Your turn — the funnel headline",
+              "body": "[CODE] Print `order_status.value_counts()` and the delivered rate.\n[WRITE] One sentence: what % reach delivered, and what's the biggest drop-off status?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Time-to-delivery",
-          "summary": "",
+          "title": "Time to delivery",
+          "summary": "Compute a duration from timestamps. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Time to delivery",
+              "body": "## What it is\nSubtract the purchase timestamp from the delivery timestamp to get **delivery time in days** for each order — a derived metric from two date columns.\n\n## Why it matters\nDelivery speed is a top driver of e-commerce satisfaction, and it sets up tomorrow's question (does slow delivery hurt reviews?). The skill is **datetime math**: parse the timestamp columns to real dates, subtract, and convert to days. Getting date handling right is a rite of passage — strings won't subtract; you must parse first."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Delivery time in days\n```python\nfor col in [\"order_purchase_timestamp\",\"order_delivered_customer_date\"]:\n    orders[col] = pd.to_datetime(orders[col])\n\norders[\"delivery_days\"] = (orders[\"order_delivered_customer_date\"]\n                           - orders[\"order_purchase_timestamp\"]).dt.days\nprint(orders[\"delivery_days\"].describe().round(1))\n```\nOutput (illustrative):\n```\ncount    96476.0\nmean        12.1\nstd          9.5\nmin          0.0\n50%         10.0\nmax        209.0\nName: delivery_days, dtype: float64\n```\nRead it: average delivery **~12 days**, median 10, but a long tail (max 209!). Those extreme deliveries are prime suspects for bad reviews — the link you test next. Note `pd.to_datetime` first: you can't subtract date *strings*."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "To compute delivery time you must parse the timestamp columns to datetimes first, then subtract.",
+                  "answer": true,
+                  "whenRight": "Right — pd.to_datetime, then subtract, then .dt.days.",
+                  "whenWrong": "It is — strings won't subtract; parse to datetime first.",
+                  "sim": "to_datetime -> subtract -> .dt.days"
+                },
+                {
+                  "prompt": "A long tail (max 209 days) of delivery times is worth flagging as a driver of bad reviews.",
+                  "answer": true,
+                  "whenRight": "Right — extreme deliveries are prime suspects for low scores.",
+                  "whenWrong": "It does — the slow tail is exactly what to test against reviews.",
+                  "sim": "mean 12d but max 209d -> investigate the tail"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Lag metrics",
-              "body": "Compute days from order_purchase_timestamp to order_delivered_customer_date for delivered orders.\nPlot the distribution. Median? 90th percentile? What's the customer-promise gap (estimated vs actual)?"
+              "title": "Your turn — delivery time",
+              "body": "[CODE] Parse the timestamps and compute `delivery_days`; print describe().\n[WRITE] One sentence: average delivery time and the worst case."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Review scores",
-          "summary": "",
+          "title": "Do late deliveries hurt reviews?",
+          "summary": "Link delivery time to review score. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Do late deliveries hurt reviews?",
+              "body": "## What it is\nCombine the last two days: bin `delivery_days` and compute the average `review_score` per band. This tests the hypothesis that slow delivery -> worse reviews.\n\n## Why it matters\nThis is the project's first real *finding* — a relationship across two derived/joined metrics, exactly the kind of cross-table insight Olist exists to teach. If reviews crater past a delivery-time threshold, that's an actionable operations target (\"get every order under N days\"). It's also a correlation, so phrase it carefully (slow delivery is *associated with* low scores)."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Review score by delivery-time band\n```python\nom = orders.merge(reviews[[\"order_id\",\"review_score\"]], on=\"order_id\", how=\"left\")\nom[\"band\"] = pd.cut(om[\"delivery_days\"], bins=[-1,5,10,20,40,300],\n                    labels=[\"0-5\",\"6-10\",\"11-20\",\"21-40\",\"40+\"])\nprint(om.groupby(\"band\")[\"review_score\"].mean().round(2))\n```\nOutput (illustrative):\n```\nband\n0-5      4.31\n6-10     4.18\n11-20    3.79\n21-40    3.951\n40+      2.28\nName: review_score, dtype: float64\n```\nClear signal: reviews fall from **4.3 (fast) to 2.3 (40+ days)**. Slow delivery is strongly associated with bad reviews — an actionable finding: cutting the long delivery tail would lift scores. (Association, not proof of cause — but a strong lead.)"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Binning delivery time and averaging review score per band tests the slow-delivery -> bad-review idea.",
+                  "answer": true,
+                  "whenRight": "Right — cut + groupby on the joined table reveals the relationship.",
+                  "whenWrong": "It does — band the duration, average the score per band.",
+                  "sim": "0-5 days: 4.3 stars | 40+ days: 2.3 stars"
+                },
+                {
+                  "prompt": "A clear band relationship proves slow delivery CAUSES bad reviews.",
+                  "answer": false,
+                  "whenRight": "Correct — it's a strong association; phrase as 'associated with', not 'causes'.",
+                  "whenWrong": "Careful — it's correlation; a confounder could contribute.",
+                  "sim": "strong lead, not proof of cause"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Review by delivery time",
-              "body": "Join orders + reviews. Plot avg review_score by delivery-time bucket. Late = lower review?"
+              "title": "Your turn — the finding",
+              "body": "[CODE] Merge reviews, bin delivery_days, and average review_score per band.\n[WRITE] One sentence: how do reviews change with delivery time?"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.1",
-          "summary": "",
+          "title": "Ship v0.1",
+          "summary": "Commit the funnel + delivery finding, tag v0.1.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.1",
+              "body": "## What it is\nShip Project 3's first pass: the order-status funnel, delivery-time metric, and the delivery-vs-review finding. Tag `olist-v0.1`.\n\n## Why it matters\nYou've now handled **relational data** end to end — joining multiple tables to produce a cross-table insight — which Superstore and HR (single-table) never required. That's a real capability step, and a third project in a third domain (e-commerce) rounds out a portfolio that proves range."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Producing a cross-table finding from joined Olist tables is a step up from single-table projects.",
+                  "answer": true,
+                  "whenRight": "Right — relational joins are a distinct, valuable capability.",
+                  "whenWrong": "It is — multi-table analysis is the new skill this project proves.",
+                  "sim": "merge multiple tables -> a finding neither holds alone"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.1",
-              "body": "Push the repo. Tag v0.1.\n\nPASS:\n  ☐ Data loaded\n  ☐ Schema diagram\n  ☐ Order status funnel\n  ☐ Delivery time distribution\n  ☐ Review vs delivery analysis\n  ☐ v0.1 tag"
+              "title": "Acceptance — v0.1 is done when",
+              "body": "[PRODUCE] Notebook has: the status funnel, delivery_days, and the review-score-by-delivery-band finding.\n[CODE] `git tag olist-v0.1`; push. Drop your repo link."
             }
           ]
         }
@@ -5015,92 +5728,296 @@
         {
           "number": 1,
           "title": "What's a cohort?",
-          "summary": "",
+          "summary": "Group customers by when they joined. Concept, video, why it matters.",
           "items": [
             {
-              "kind": "video",
-              "title": "Cohort analysis explained (10 min)",
-              "url": "https://www.youtube.com/results?search_query=cohort+analysis+tutorial+beginner",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "What's a cohort?",
+              "body": "## What it is\nA **cohort** is a group of customers defined by a shared start — usually their **first-purchase month**. Cohort analysis tracks each group's behaviour over the months that follow, to see if and when customers come back.\n\n## Why it matters\nA single \"repeat rate\" hides whether retention is improving or decaying over time. Cohorts answer the sharper question: \"of customers who first bought in January, how many bought again in month 2, month 3…?\" — and whether newer cohorts retain better than older ones (is the business getting healthier?). It's the gold-standard retention tool in marketing and SaaS, and the reason VCs ask for \"cohort curves\".\n\n## The shape\nRows = cohort (first-purchase month); columns = months since first purchase; cells = % of that cohort still active. A retention *matrix*."
             },
             {
-              "kind": "reflection",
-              "title": "Question",
-              "body": "If Olist gets 1000 first-time customers in January, how many come back in February? March? August?"
+              "kind": "video",
+              "title": "Customer cohort analysis: retention & churn",
+              "url": "https://www.youtube.com/watch?v=spXPj0-E5Lk",
+              "creator": "",
+              "why": "What a cohort/retention matrix is. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (the matrix)",
+              "body": "```text\n                months since first purchase\ncohort        0     1     2     3\n2017-01     100%   18%   12%    9%\n2017-02     100%   21%   14%   10%\n2017-03     100%   24%   15%  ...\n            ^ everyone active at month 0; decay across the row;\n              compare DOWN a column -> are newer cohorts retaining better?\n```\nReading down a column tells you if retention is improving cohort over cohort."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A cohort groups customers by a shared start (e.g. first-purchase month) to track them over time.",
+                  "answer": true,
+                  "whenRight": "Right — same-start groups, followed across later months.",
+                  "whenWrong": "It is — cohorts = customers grouped by when they began.",
+                  "sim": "cohort = first-purchase month"
+                },
+                {
+                  "prompt": "A single overall repeat rate tells you everything a cohort matrix would.",
+                  "answer": false,
+                  "whenRight": "Correct — only cohorts reveal the time-shape and whether retention is improving.",
+                  "whenWrong": "Not so — one number hides the decay curve and cohort-over-cohort trend.",
+                  "sim": "cohorts show decay + are newer cohorts better?"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame cohorts",
+              "body": "[WRITE] In your words, what is a cohort and what question does a retention matrix answer that a single repeat rate can't?"
             }
           ]
         },
         {
           "number": 2,
           "title": "First-purchase month per customer",
-          "summary": "",
+          "summary": "Define each customer's cohort. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "First-purchase month per customer",
+              "body": "## What it is\nFor each customer, find their **first** order's month — that label *is* their cohort. It's a groupby-min on the purchase date, formatted to year-month.\n\n## Why it matters\nEvery later step depends on this label being right: assign the wrong cohort and the whole matrix is wrong. It's also a clean example of deriving a per-customer attribute (their start) and joining it back to every order — the same merge-the-label-back pattern from the CLV week."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Each customer's cohort month\n```python\no = orders.merge(customers[[\"customer_id\",\"customer_unique_id\"]], on=\"customer_id\")\no[\"order_month\"] = o[\"order_purchase_timestamp\"].dt.to_period(\"M\")\n\nfirst = o.groupby(\"customer_unique_id\")[\"order_month\"].min().rename(\"cohort\")\no = o.merge(first, on=\"customer_unique_id\")\nprint(o[[\"customer_unique_id\",\"order_month\",\"cohort\"]].head(3))\n```\nOutput (illustrative):\n```\n   customer_unique_id  order_month   cohort\n0  0a1b...             2017-05      2017-05\n1  0a1b...             2017-08      2017-05   <- same customer, cohort stays 2017-05\n2  7c2d...             2017-06      2017-06\n```\nNote the second row: a customer's cohort is their *first* month and never changes, even on later orders. `to_period(\"M\")` buckets dates to year-month; `groupby-min` finds the start; merge stamps it on every order."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A customer's cohort is their FIRST purchase month and stays fixed on all later orders.",
+                  "answer": true,
+                  "whenRight": "Right — groupby-min on date defines it once, merged onto every order.",
+                  "whenWrong": "It is — the first month is the cohort, constant across later orders.",
+                  "sim": "later orders keep the original cohort month"
+                },
+                {
+                  "prompt": "Each order should get a cohort equal to that order's own month.",
+                  "answer": false,
+                  "whenRight": "Correct — the cohort is the customer's FIRST month, not each order's month.",
+                  "whenWrong": "No — cohort = the customer's first month, fixed for all their orders.",
+                  "sim": "cohort = min(order_month) per customer"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Identify cohort",
-              "body": "Build a derived table: for each customer, their first order date.\nThen for each customer, label every order with the customer's COHORT (first-purchase year-month).\n\nIn Excel: add Helper column 'is_first_order' = whether this order is the customer's earliest. Filter to is_first_order = true → that's your cohort table."
+              "title": "Your turn — assign cohorts",
+              "body": "[CODE] Compute each customer's first-purchase month and merge it back as `cohort` on every order; print a customer with 2+ orders to confirm the cohort is constant."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Cohort retention matrix",
-          "summary": "",
+          "title": "The cohort retention matrix",
+          "summary": "Rows=cohort, cols=months-since, cells=active. Concept, video, code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The cohort retention matrix",
+              "body": "## What it is\nBuild the matrix: for each order compute **months since the cohort start**, then `pivot_table` count of active customers by cohort (rows) × months-since (columns), converted to a % of each cohort's month-0 size.\n\n## Why it matters\nThis single table is the deliverable of the week — it shows the retention *curve* for every cohort at once. Reading across a row shows decay; reading down a column shows whether newer cohorts retain better than older ones. It's the most information-dense retention artefact you can produce, and pivoting is exactly the Week-2 skill scaled up."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas pivot_table for a two-way breakdown",
+              "url": "https://www.youtube.com/watch?v=xPPs59pn6qU",
+              "creator": "",
+              "why": "pivot_table to build the cohort grid. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build the retention matrix\n```python\no[\"months_since\"] = ((o[\"order_month\"] - o[\"cohort\"]).apply(lambda x: x.n))\ncounts = o.pivot_table(index=\"cohort\", columns=\"months_since\",\n                       values=\"customer_unique_id\", aggfunc=\"nunique\")\nretention = counts.divide(counts[0], axis=0).round(3)\nprint(retention.iloc[:3, :4])\n```\nOutput (illustrative):\n```\nmonths_since      0      1      2      3\ncohort\n2017-01        1.000  0.041  0.029  0.018\n2017-02        1.000  0.038  0.025  0.021\n2017-03        1.000  0.052  0.031  0.024\n```\nRead it: month-0 is always 100%; retention drops to ~4-5% by month 1. Olist's repeat behaviour is *low* (most customers buy once) — itself a key finding. Comparing down column 1, newer cohorts retain slightly better."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "In a retention matrix, month-0 is 100% and each later column shows the share of that cohort still active.",
+                  "answer": true,
+                  "whenRight": "Right — normalise each cohort by its own month-0 size.",
+                  "whenWrong": "It is — cells are % of the cohort's starting size.",
+                  "sim": "2017-01: 100% -> 4.1% by month 1"
+                },
+                {
+                  "prompt": "Reading DOWN a column compares retention across cohorts (is the business improving?).",
+                  "answer": true,
+                  "whenRight": "Right — same months-since, different cohorts = the trend over time.",
+                  "whenWrong": "It does — down a column = cohort-over-cohort comparison.",
+                  "sim": "col 1: are newer cohorts retaining better?"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Cohort × month matrix",
-              "body": "Pivot: Rows = cohort year-month, Columns = (order month - cohort month) in months, Values = COUNT distinct customer_id.\nColor-code with conditional formatting (green = high retention, white = low)."
+              "title": "Your turn — the matrix",
+              "body": "[CODE] Compute months_since, pivot to a cohort x months-since count, and normalise to a retention %.\n[WRITE] One sentence: roughly what % of customers return by month 1?"
             }
           ]
         },
         {
           "number": 4,
           "title": "Repeat-purchase rate",
-          "summary": "",
+          "summary": "The headline retention number. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Repeat-purchase rate",
+              "body": "## What it is\nThe single summary number behind the matrix: what share of customers ever place a **second** order? Count orders per customer, test `> 1`, take the mean — the boolean-mean trick again.\n\n## Why it matters\nThe matrix shows the shape; this gives the headline a stakeholder remembers (\"only ~3% of Olist customers buy again\"). For a marketplace that's a strategic alarm: acquisition is expensive and almost no one returns, so either retention or margin-per-order must carry the business. One number, big implication."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Repeat-purchase rate\n```python\norders_per_cust = o.groupby(\"customer_unique_id\")[\"order_id\"].nunique()\nrepeat_rate = (orders_per_cust > 1).mean()\nprint(f\"{repeat_rate:.1%} of customers placed more than one order\")\nprint(orders_per_cust.value_counts().head(3))\n```\nOutput (illustrative):\n```\n3.0% of customers placed more than one order\n1    93099\n2     2745\n3      203\nName: order_id, dtype: int64\n```\nRead it: **~97% of customers buy exactly once.** That's the defining fact of this marketplace — and it reframes the whole strategy toward acquisition efficiency and first-order value, since repeat business is negligible."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Repeat-purchase rate = the share of customers with more than one order (a boolean mean).",
+                  "answer": true,
+                  "whenRight": "Right — (orders_per_cust > 1).mean(), same trick as HR/CLV.",
+                  "whenWrong": "It is — the proportion with >1 order.",
+                  "sim": "(orders_per_cust > 1).mean() -> 0.03"
+                },
+                {
+                  "prompt": "A ~3% repeat rate is a minor detail with no strategic implication.",
+                  "answer": false,
+                  "whenRight": "Correct — near-zero repeat reshapes the entire strategy toward acquisition.",
+                  "whenWrong": "Not minor — it means the business runs on one-time buyers.",
+                  "sim": "97% buy once -> acquisition is everything"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Single metric",
-              "body": "Across ALL cohorts: what % of customers bought again at any later point?\nSpoiler: Olist's repeat rate is famously low (~3%). Confirm with your data."
+              "title": "Your turn — the headline number",
+              "body": "[CODE] Compute the repeat-purchase rate and the distribution of orders-per-customer.\n[WRITE] One sentence: what share buy again, and what does that imply strategically?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Investigate: who buys again?",
-          "summary": "",
+          "title": "Who buys again?",
+          "summary": "Profile the repeaters. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Who buys again?",
+              "body": "## What it is\nOf the few who *do* return, what's different about them or their first order? Compare repeaters vs one-timers on things like first-order review score, delivery time, or product category.\n\n## Why it matters\nIf repeaters had faster deliveries or higher first-order review scores, you've found a lever: improve the first experience to manufacture more repeaters. Profiling the rare repeat customers turns \"almost no one returns\" from a dead end into a hypothesis you can act on — which is exactly what a marketing team needs."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Repeaters vs one-timers\n```python\no[\"is_repeater\"] = o[\"customer_unique_id\"].map(orders_per_cust > 1)\nprint(o.groupby(\"is_repeater\").agg(\n    avg_first_review=(\"review_score\",\"mean\"),\n    avg_delivery=(\"delivery_days\",\"mean\"),\n).round(2))\n```\nOutput (illustrative):\n```\n             avg_first_review  avg_delivery\nis_repeater\nFalse                   4.05         12.4\nTrue                    4.22         10.1\n```\nRead it: repeaters had **faster deliveries (10 vs 12 days) and slightly better first reviews** — a lever! Making the first delivery faster is plausibly a way to grow the (tiny) repeat base. A correlation, but an actionable hypothesis to test."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Profiling repeaters vs one-timers can reveal a lever (e.g. faster first delivery) to grow retention.",
+                  "answer": true,
+                  "whenRight": "Right — differences in the first experience are actionable hypotheses.",
+                  "whenWrong": "It does — comparing the groups surfaces what to improve.",
+                  "sim": "repeaters: 10d delivery vs 12d for one-timers"
+                },
+                {
+                  "prompt": "Since so few repeat, profiling repeaters is a waste of time.",
+                  "answer": false,
+                  "whenRight": "Correct — it's exactly how you find what to change to create more of them.",
+                  "whenWrong": "Not so — the repeaters tell you what a good first experience looks like.",
+                  "sim": "what's different about repeaters = the lever"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Compare repeat vs one-time",
-              "body": "Split customers into 2 groups: repeat buyers vs one-time. Compare:\n  - average order value\n  - average review score on first order\n  - average delivery time on first order\n  - product category on first order\nAnything stand out?"
+              "title": "Your turn — profile repeaters",
+              "body": "[CODE] Flag repeaters vs one-timers; compare their average first-order review score and delivery time.\n[WRITE] One sentence: what's different about customers who come back?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Average days to second purchase",
-          "summary": "",
+          "title": "Days to second purchase",
+          "summary": "When do repeaters return? Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Days to second purchase",
+              "body": "## What it is\nFor customers who bought twice, compute the gap in days between their first and second orders — the typical \"time to return\".\n\n## Why it matters\nThis tells marketing *when* to act: if most second purchases happen within 30 days, a re-engagement email at day 20 is well-timed; if it's 6 months, the cadence is totally different. Timing a retention campaign to the natural repeat window is the difference between a nudge that works and budget wasted on the wrong week."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Median days to second order\n```python\ntwo = o[o[\"is_repeater\"]].sort_values([\"customer_unique_id\",\"order_purchase_timestamp\"])\ngap = (two.groupby(\"customer_unique_id\")[\"order_purchase_timestamp\"]\n          .apply(lambda s: (s.iloc[1] - s.iloc[0]).days))\nprint(gap.describe().round(0))\n```\nOutput (illustrative):\n```\ncount    2948.0\nmean      115.0\nmedian     58.0\nmin         0.0\nmax       690.0\n```\nRead it: the **median repeater returns in ~58 days** (but a long mean tail). So a re-engagement campaign around weeks 6-8 would hit most second-purchase windows — a concrete, timed marketing recommendation."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Knowing the typical days-to-second-purchase lets you time a re-engagement campaign well.",
+                  "answer": true,
+                  "whenRight": "Right — match the campaign to the natural repeat window.",
+                  "whenWrong": "It does — the return-gap tells marketing WHEN to act.",
+                  "sim": "median 58 days -> email around week 6-8"
+                },
+                {
+                  "prompt": "The timing of repeat purchases doesn't matter for marketing.",
+                  "answer": false,
+                  "whenRight": "Correct — timing the campaign to the repeat window is what makes it work.",
+                  "whenWrong": "It matters — the right week is the difference between nudge and waste.",
+                  "sim": "wrong-week email = wasted budget"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Second-purchase lag",
-              "body": "For repeat customers: days between 1st and 2nd order. Plot the distribution.\nMost repeats happen within X days — what's X?"
+              "title": "Your turn — the return window",
+              "body": "[CODE] For repeaters, compute days between first and second orders; print the median.\n[WRITE] One sentence: when would you time a re-engagement campaign?"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.2",
-          "summary": "",
+          "title": "Ship v0.2",
+          "summary": "Commit the cohort + retention analysis, tag v0.2.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.2",
+              "body": "## What it is\nShip the retention layer: the cohort matrix, repeat rate, repeater profile, and return-window. Tag `olist-v0.2`.\n\n## Why it matters\nCohort analysis is a senior, sought-after skill — many analysts never learn it. Shipping a real cohort retention matrix plus an actionable timing recommendation is a standout portfolio piece, and it completes the move from \"what happened\" (the funnel) to \"do they come back\" (retention)."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A cohort retention matrix + a timed re-engagement recommendation is a standout, senior-level deliverable.",
+                  "answer": true,
+                  "whenRight": "Right — cohort analysis is a sought-after skill many analysts lack.",
+                  "whenWrong": "It is — cohorts + an actionable timing rec stand out in a portfolio.",
+                  "sim": "matrix + 'email at week 6-8' = senior-level work"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Cohort retention matrix\n  ☐ Overall repeat rate documented\n  ☐ Repeat-vs-onetime comparison\n  ☐ Days-to-second-purchase distribution\n  ☐ v0.2 tag"
+              "title": "Acceptance — v0.2 is done when",
+              "body": "[PRODUCE] Notebook has: cohort assignment, the retention matrix, repeat rate, repeater profile, and days-to-second-purchase.\n[CODE] `git tag olist-v0.2`; push. Drop your repo link."
             }
           ]
         }
