@@ -201,7 +201,9 @@ export default async function DashboardPage() {
   // surfaced as MentorReplay at the top of the *current* released week.
   const previousVerifiedNote = latestVerified && hasMentor
     ? await prisma.mentorComment.findFirst({
-        where: { taskId: latestVerified.id, kind: "note", authorRole: "mentor" },
+        // readAt: null → once the learner dismisses the replay (which marks it
+        // read), it never resurfaces, even after a new week is released.
+        where: { taskId: latestVerified.id, kind: "note", authorRole: "mentor", readAt: null },
         orderBy: { createdAt: "desc" },
         select: { id: true, body: true },
       })

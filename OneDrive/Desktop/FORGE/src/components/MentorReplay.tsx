@@ -27,8 +27,11 @@ interface Props {
   scopeKey?: string;
 }
 
-export default function MentorReplay({ noteId, mentorName, noteBody, previousWeekTitle, scopeKey }: Props) {
-  const dismissKey = `forge.mentorReplayDismissed.${scopeKey ?? "global"}.${noteId}`;
+export default function MentorReplay({ noteId, mentorName, noteBody, previousWeekTitle }: Props) {
+  // Dismiss GLOBALLY per note (not per week), so the same note never
+  // re-surfaces when a new week is released. Also marked read server-side
+  // below, so it stays dismissed across devices.
+  const dismissKey = `forge.mentorReplayDismissed.${noteId}`;
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -40,6 +43,13 @@ export default function MentorReplay({ noteId, mentorName, noteBody, previousWee
   const dismiss = () => {
     setDismissed(true);
     try { localStorage.setItem(dismissKey, "1"); } catch { /* */ }
+    // Persist server-side so it won't replay on another device / after a cache
+    // clear. Fire-and-forget; the local hide already happened.
+    void fetch("/api/mentor-notes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commentId: noteId }),
+    }).catch(() => { /* offline — local dismissal still holds */ });
   };
 
   if (dismissed) return null;
