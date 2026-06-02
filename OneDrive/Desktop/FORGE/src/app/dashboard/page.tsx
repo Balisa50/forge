@@ -8,7 +8,6 @@ import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import ForgePactCard from "@/components/ForgePactCard";
 import ShippedChain from "@/components/ShippedChain";
 import BuildFeed from "@/components/BuildFeed";
-import MentorReplay from "@/components/MentorReplay";
 
 /** Map a Roadmap.title back to its curated slug so we can deep-link into /learn. */
 const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
@@ -197,17 +196,7 @@ export default async function DashboardPage() {
     : -1;
   const latestVerifiedWeekNumber = latestVerifiedIdx >= 0 ? latestVerifiedIdx + 1 : null;
 
-  // Pull the mentor's "note" comment from the most-recently-verified task —
-  // surfaced as MentorReplay at the top of the *current* released week.
-  const previousVerifiedNote = latestVerified && hasMentor
-    ? await prisma.mentorComment.findFirst({
-        // readAt: null → once the learner dismisses the replay (which marks it
-        // read), it never resurfaces, even after a new week is released.
-        where: { taskId: latestVerified.id, kind: "note", authorRole: "mentor", readAt: null },
-        orderBy: { createdAt: "desc" },
-        select: { id: true, body: true },
-      })
-    : null;
+  // (MentorReplay removed — mentees no longer see a replayed mentor note.)
 
   // Not used — analytics page handles detailed scores
 
@@ -234,18 +223,6 @@ export default async function DashboardPage() {
         </div>
 
         <ForgePactCard />
-
-        {/* Mentor Replay — only when there's a previous verified week note and
-            the learner has a currently-released week (so the timing lands right). */}
-        {releasedWeek && previousVerifiedNote && primaryMentor && (
-          <MentorReplay
-            noteId={previousVerifiedNote.id}
-            mentorName={primaryMentor.name}
-            noteBody={previousVerifiedNote.body}
-            previousWeekTitle={latestVerified?.title ?? null}
-            scopeKey={releasedWeek.id}
-          />
-        )}
 
         <ShippedChain shipped={verifiedTasks} total={totalTasks} streak={streakWeeks} />
 
