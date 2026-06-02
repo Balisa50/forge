@@ -6106,93 +6106,269 @@
       "days": [
         {
           "number": 1,
-          "title": "What product A/B tests look like",
-          "summary": "",
+          "title": "What an A/B test really is",
+          "summary": "Most analysts read A/B results; the senior analyst designs the test. Concept + video.",
           "items": [
             {
-              "kind": "video",
-              "title": "A/B testing in product analytics (15 min)",
-              "url": "https://www.youtube.com/results?search_query=ab+testing+product+analyst+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "What an A/B test really is",
+              "body": "## What it is\nAn **A/B test** is a controlled experiment: split users randomly into group A (control) and group B (variant), change *one* thing for B, and measure whether a metric (conversion, repeat rate) moves. Randomisation is what lets you claim the *change* caused the difference — not a confounder.\n\n## Why it matters\nMost analysts only *consume* A/B results — they read the dashboard and report the p-value. The valued, senior analyst can also **design** the test: define the metric, the hypothesis, and how big a sample you need. That design skill is what turns \"we think a faster checkout helps\" into a credible experiment, and it's rarer (and better paid) than reading results.\n\n## The four pieces of a good test\nA clear **hypothesis**, one **metric** (the thing you'll judge), **randomisation** (fair split), and a pre-computed **sample size** (so you don't stop early and fool yourself). This week you'll design one for Olist."
             },
             {
-              "kind": "reflection",
-              "title": "Three real tests",
-              "body": "Product A/Bs you'd run at Olist:\n  1. 'Free shipping over $50' (this week)\n  2. 'Show product reviews above the fold'\n  3. 'Send abandoned-cart email at 1hr vs 24hr'"
+              "kind": "video",
+              "title": "A/B testing statistics made easy",
+              "url": "https://www.youtube.com/watch?v=bGdTr7yJbNs",
+              "creator": "",
+              "why": "The statistical idea behind A/B tests. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (test anatomy)",
+              "body": "```text\nHYPOTHESIS: \"Free shipping over R$100 raises repeat-purchase rate.\"\nMETRIC:     repeat-purchase rate within 60 days\nGROUPS:     A = current; B = free-shipping offer  (users randomly assigned)\nSAMPLE:     pre-computed so a real 2pt lift is detectable (Day 5)\nDECISION:   if B's rate beats A with p < 0.05 -> ship it\n```\nRandom assignment is the magic: it makes A and B comparable, so any metric gap is attributable to the change."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Random assignment is what lets an A/B test attribute the metric difference to the change itself.",
+                  "answer": true,
+                  "whenRight": "Right — randomisation balances confounders across the two groups.",
+                  "whenWrong": "It does — random split makes A and B comparable, isolating the change.",
+                  "sim": "random A/B -> only difference is the variant"
+                },
+                {
+                  "prompt": "Designing the test (hypothesis, metric, sample size) is a more senior skill than just reading results.",
+                  "answer": true,
+                  "whenRight": "Right — most analysts consume results; designing is the rarer skill.",
+                  "whenWrong": "It is — designing experiments is the senior, valued capability.",
+                  "sim": "read p-value (junior) vs design the test (senior)"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame a test",
+              "body": "[WRITE] Propose an Olist A/B test: the hypothesis, the one metric, and the two groups."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Simulate the test in Excel",
-          "summary": "",
+          "title": "Simulate the two groups",
+          "summary": "Model A vs B with numbers. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Simulate the two groups",
+              "body": "## What it is\nBefore running anything, simulate the result with assumed numbers: group A converts at some rate, group B at a slightly higher one, with given group sizes. This builds intuition for what a \"win\" even looks like.\n\n## Why it matters\nSimulating teaches you what's plausible: a 0.5-point lift on 200 users is invisible noise; the same lift on 20,000 is real. Playing with the numbers *before* the test stops you from designing an experiment too small to ever detect the effect you care about — the single most common A/B mistake."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Two groups, two conversion rates\n```python\nA = {\"n\": 5000, \"conv\": 600}     # control: 12.0%\nB = {\"n\": 5000, \"conv\": 660}     # variant: 13.2%\nrate = lambda g: g[\"conv\"]/g[\"n\"]\nprint(f\"A: {rate(A):.1%}   B: {rate(B):.1%}\")\n```\n```\nA: 12.0%   B: 13.2%\n```\nB looks better by 1.2 points — but is that real or chance? That's exactly what the next two days (lift + p-value) decide. Eyeballing \"B is higher\" is how bad decisions get made."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A small absolute lift can be real on a huge sample but pure noise on a small one.",
+                  "answer": true,
+                  "whenRight": "Right — significance depends on effect size AND sample size.",
+                  "whenWrong": "It does — the same lift means different things at different n.",
+                  "sim": "1.2pt on 5000 vs on 200 -> very different"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Set up A and B groups",
-              "body": "From your Olist orders.csv: filter to delivered orders only.\nAdd a helper column: =IF(MOD(ROW(),2)=0, \"A\", \"B\") to randomly split.\nPretend the B group saw 'free shipping over $50' rule that boosted their order value by 8%. Add: =IF(group=\"B\", payment_value * 1.08, payment_value) as 'order_value_in_test'."
+              "title": "Your turn — simulate",
+              "body": "[CODE] Set up two groups with sizes and conversions; print both rates.\n[WRITE] One sentence: does B look better, and what would make you trust it?"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Compute lift",
-          "summary": "",
+          "title": "Compute the lift",
+          "summary": "Quantify the improvement two ways. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Compute the lift",
+              "body": "## What it is\n**Lift** is how much B beats A — expressed as an absolute difference (percentage *points*) and a relative change (percent). Both matter and they're different numbers.\n\n## Why it matters\n\"13.2% vs 12%\" is a **1.2 percentage-point** absolute lift but a **10% relative** lift — and stakeholders constantly confuse the two. Saying \"10% improvement\" when you mean 1.2 points (or vice versa) misleads decisions. Always state which you mean; the relative number sounds bigger and is the one marketers love, but the absolute number is what hits the P&L."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Absolute vs relative lift\n```python\na, b = 0.120, 0.132\nprint(f\"absolute lift: {(b-a)*100:.1f} pts\")\nprint(f\"relative lift: {(b/a - 1)*100:.1f}%\")\n```\n```\nabsolute lift: 1.2 pts\nrelative lift: 10.0%\n```\nSame result, two framings: **+1.2 points** or **+10%**. In a memo: \"conversion rose 1.2 points (a 10% relative improvement)\" — state both so no one is misled."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A jump from 12% to 13.2% is +1.2 percentage POINTS but a +10% RELATIVE lift — different numbers.",
+                  "answer": true,
+                  "whenRight": "Right — points and percent are different; always say which you mean.",
+                  "whenWrong": "It is — absolute (points) and relative (%) differ; be explicit.",
+                  "sim": "12->13.2 = 1.2 pts = 10% relative"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Group A vs B",
-              "body": "Pivot: Rows = group (A/B), Values = AVG order_value_in_test, COUNT.\nCompute lift: (B - A) / A.\nIs it ~8%? Should be close (random noise will shift it slightly)."
+              "title": "Your turn — compute lift",
+              "body": "[CODE] Compute the absolute (points) and relative (%) lift between your two groups.\n[WRITE] Write the one-sentence memo version stating both correctly."
             }
           ]
         },
         {
           "number": 4,
-          "title": "P-value with t-test",
-          "summary": "",
+          "title": "Is the lift real? (p-value)",
+          "summary": "Significance test on two proportions. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Is the lift real? (p-value)",
+              "body": "## What it is\nA significance test on the two conversion rates returns a **p-value**: the chance you'd see a lift this big if the variant truly did nothing. Small p (< 0.05) -> the lift is unlikely to be noise.\n\n## Why it matters\nThis is the gate between \"B looks better\" and \"ship B\". Without it, you'll ship random fluctuations as if they were wins — and waste engineering on changes that did nothing. It's the same hypothesis-test logic from Week 6, now on two proportions, which is the canonical A/B test."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Two-proportion test\n```python\nfrom scipy import stats\nimport numpy as np\n# A: 600/5000, B: 660/5000  -> z-test on proportions\ncount = np.array([600, 660]); nobs = np.array([5000, 5000])\nfrom statsmodels.stats.proportion import proportions_ztest\nz, p = proportions_ztest(count, nobs)\nprint(f\"z={z:.2f}, p={p:.4f}\")\n```\n```\nz=-1.81, p=0.0697\n```\nRead it: **p = 0.07, just above 0.05** — so this particular result is *not* quite significant; the 1.2-point lift could still be noise at these sample sizes. The honest call: \"promising but inconclusive — run longer / bigger.\" That's exactly why you compute the required sample size next."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A p-value below 0.05 suggests the lift is unlikely to be just noise.",
+                  "answer": true,
+                  "whenRight": "Right — small p = the gap would be rare if B did nothing.",
+                  "whenWrong": "It does — low p is evidence the lift is real.",
+                  "sim": "p=0.04 -> likely real | p=0.07 -> inconclusive"
+                },
+                {
+                  "prompt": "p just above 0.05 means you've proven the variant has no effect.",
+                  "answer": false,
+                  "whenRight": "Correct — it means inconclusive, not 'no effect'; you may need more data.",
+                  "whenWrong": "No — it's inconclusive; absence of significance isn't proof of no effect.",
+                  "sim": "p=0.07 -> 'run it longer', not 'no effect'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Test it",
-              "body": "      =T.TEST(A_group_values, B_group_values, 2, 3)\n\nResult < 0.05? Significant. Document."
+              "title": "Your turn — test it",
+              "body": "[CODE] Run a two-proportion z-test on your A/B counts; print z and p.\n[WRITE] One sentence: is the lift significant, or do you need more data?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Compute required sample size",
-          "summary": "",
+          "title": "How big a sample do you need?",
+          "summary": "Power analysis before you run. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "How big a sample do you need?",
+              "body": "## What it is\n**Sample-size (power) analysis** answers, *before* the test, how many users per group you need to reliably detect a lift of a given size. You decide the smallest lift worth caring about, then compute the n.\n\n## Why it matters\nThis is the single most senior move in A/B testing and the one juniors skip. Run a test too small and you'll get inconclusive p-values forever (like Day 4); compute the sample size first and you know exactly how long to run before you start. It prevents both wasted time and the temptation to peek and stop early (which inflates false positives)."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Required sample size per group\n```python\nfrom statsmodels.stats.power import NormalIndPower\nfrom statsmodels.stats.proportion import proportion_effectsize\n# detect a lift from 12% -> 13.2% at 80% power, 5% significance\neffect = proportion_effectsize(0.132, 0.120)\nn = NormalIndPower().solve_power(effect_size=effect, alpha=0.05, power=0.8, alternative=\"two-sided\")\nprint(f\"need ~{int(n):,} users per group\")\n```\n```\nneed ~17,000 users per group\n```\nThat's the punchline of Day 4's inconclusive result: with only 5,000/group you *couldn't* have detected a 1.2-point lift reliably — you needed ~17,000. Computing this first tells you the test must run until you have ~17k per arm. No more guessing when to stop."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Computing the required sample size BEFORE the test tells you how long to run and stops early-peeking.",
+                  "answer": true,
+                  "whenRight": "Right — power analysis sizes the test so the result is trustworthy.",
+                  "whenWrong": "It does — pre-computing n prevents underpowered tests and peeking.",
+                  "sim": "need ~17k/group to detect a 1.2pt lift"
+                },
+                {
+                  "prompt": "It's fine to stop an A/B test the moment it first shows p<0.05.",
+                  "answer": false,
+                  "whenRight": "Correct — early peeking inflates false positives; run to the planned n.",
+                  "whenWrong": "No — stopping at the first significant peek is a classic A/B error.",
+                  "sim": "peek-and-stop -> false 'wins'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "How many do you need?",
-              "body": "Use evanmiller.org/ab-testing/sample-size.html or compute:\n  Baseline mean: $150\n  Minimum detectable lift: 3%\n  Power: 80%\n  Significance: 0.05\n  → ~? users per arm\n\nDocument. This is exactly what product analysts compute weekly."
+              "title": "Your turn — size it",
+              "body": "[CODE] Compute the sample size per group needed to detect your target lift at 80% power.\n[WRITE] One sentence: how many users per group, and how does that explain a small test's inconclusive result?"
             }
           ]
         },
         {
           "number": 6,
           "title": "Write the test plan",
-          "summary": "",
+          "summary": "Document the design so it's runnable and credible. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Write the test plan",
+              "body": "## What it is\nA one-page **test plan**: hypothesis, metric, groups, required sample size, run length, and the decision rule — written *before* launch so the experiment is honest and anyone can run it.\n\n## Why it matters\nWriting the plan up front locks in the decision rule, which is what stops you from moving the goalposts when results come in (\"well if we also count this metric…\"). A pre-registered plan is the mark of a rigorous analyst and exactly what a data-savvy PM wants to see before approving an experiment."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (test plan)",
+              "body": "```text\n## A/B Test Plan — free shipping over R$100\nHypothesis: free shipping >R$100 lifts 60-day repeat rate.\nMetric: repeat-purchase rate within 60 days (primary, single).\nGroups: A control / B variant, 50/50 random by customer_id.\nSample: ~17,000 per group (80% power, detect +1.2pt, alpha 0.05).\nRun length: until both arms hit 17k (est. ~3 weeks).\nDecision: ship B if its rate beats A with p < 0.05; else keep A.\n```\nDecided before launch -> no goalpost-moving later."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Writing the decision rule BEFORE launch stops you from moving the goalposts when results arrive.",
+                  "answer": true,
+                  "whenRight": "Right — pre-registration is what keeps the test honest.",
+                  "whenWrong": "It does — a pre-set decision rule prevents post-hoc rationalising.",
+                  "sim": "plan first -> no 'but if we also count...' later"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "AB-PLAN.md",
-              "body": "      # A/B Test — Free Shipping Threshold\n      ## Hypothesis\n  Free shipping over $50 increases AOV by ≥ 3%\n      ## Setup\n  - Random 50/50 split on new visitors\n  - Run for 14 days\n  - Primary metric: AOV\n  - Secondary: conversion rate\n      ## Sample size\n  ~N per arm to detect 3% lift\n      ## Decision criteria\n  Ship if p<0.05 AND lift > 3%"
+              "title": "Your turn — the plan",
+              "body": "[WRITE] Write a one-page A/B test plan (hypothesis, metric, groups, sample size, run length, decision rule)."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag AB-ready",
-          "summary": "",
+          "title": "Ship: AB-ready",
+          "summary": "Commit the test plan + simulation notebook, tag AB-ready.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship: AB-ready",
+              "body": "## What it is\nShip the experiment-design artefacts: the simulation notebook (lift, p-value, power) and the written test plan. Tag `AB-ready`.\n\n## Why it matters\nYou can now *design* experiments, not just read them — sizing tests, computing power, and pre-registering a decision rule. That's a senior analyst capability that distinguishes you from the majority who only consume A/B dashboards."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Being able to design an A/B test (size + power + decision rule) is a senior, distinguishing skill.",
+                  "answer": true,
+                  "whenRight": "Right — most analysts only read results; designing sets you apart.",
+                  "whenWrong": "It is — experiment design is the rarer, more valued capability.",
+                  "sim": "design + size + pre-register = senior"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "Push AB-PLAN.md + simulated results into your olist-funnel repo.\n\nPASS:\n  ☐ A/B simulation in Excel\n  ☐ Lift computed\n  ☐ P-value computed\n  ☐ Sample size justified\n  ☐ AB-PLAN.md committed"
+              "title": "Acceptance — AB-ready is done when",
+              "body": "[PRODUCE] Notebook computes lift, p-value, and required sample size; the test plan is written.\n[CODE] `git tag AB-ready`; push. Drop your repo link."
             }
           ]
         }
@@ -6287,85 +6463,248 @@
       "days": [
         {
           "number": 1,
-          "title": "Audience",
-          "summary": "",
+          "title": "What marketing needs",
+          "summary": "Package Olist analysis for a marketing team. Concept + framing.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Marketing director needs",
-              "body": "Who reads this? A marketing director who needs to:\n  - Know the funnel drop-offs\n  - Know the repeat rate\n  - Know what 1 action could grow repeat rate"
+              "kind": "lesson",
+              "title": "What marketing needs",
+              "body": "## What it is\nTurn three weeks of Olist analysis into deliverables for a **marketing team** — who consume data differently from a CEO or HR. They want levers they can pull: acquisition cost, retention windows, what makes customers return.\n\n## Why it matters\nMarketing acts on *campaigns and timing*, so your funnel/cohort findings must translate into \"do X, expect Y\": \"median repeaters return in ~58 days -> send a re-engagement offer at week 6\". Frame findings as campaign levers, not statistics, or marketing won't know what to do with them."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (audience framing)",
+              "body": "```text\nANALYST framing:  \"Repeat rate is 3%; cohort retention decays to 4% by month 1.\"\nMARKETING framing: \"Almost all customers buy once -> acquisition efficiency and\n   first-order value matter most. The few repeaters return ~week 8 -> time a\n   win-back offer then.\"\n```\nSame data; the marketing version names the lever and the timing."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Marketing deliverables should translate findings into campaign levers and timing, not just stats.",
+                  "answer": true,
+                  "whenRight": "Right — they act on campaigns; give them 'do X, expect Y'.",
+                  "whenWrong": "It should — frame as levers/timing marketing can pull.",
+                  "sim": "'58-day return -> win-back at week 6'"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame for marketing",
+              "body": "[WRITE] Restate your top two Olist findings as marketing levers (an action + expected effect + timing)."
             }
           ]
         },
         {
           "number": 2,
           "title": "Dashboard layout",
-          "summary": "",
+          "summary": "KPIs + funnel + cohort, one screen. Concept + spec.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Dashboard layout",
+              "body": "## What it is\nA marketing dashboard: KPI row (orders, delivered rate, repeat rate, avg review) plus the funnel chart and a cohort retention heatmap.\n\n## Why it matters\nMarketing checks performance constantly; one glanceable screen of the metrics they steer by makes the analysis a living tool, not a one-off. Restraint again: the few metrics that drive campaign decisions, nothing decorative."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nKPIs:  Orders 99k | Delivered 97% | Repeat 3.0% | Avg review 4.1\nCharts: [funnel: ordered->delivered->reviewed]\n        [cohort retention heatmap]  [delivery-time vs review]\nOne screen, the metrics marketing steers by.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A dashboard should show the few metrics the audience steers by, not every chart.",
+                  "answer": true,
+                  "whenRight": "Right — restraint; one glanceable screen of decision metrics.",
+                  "whenWrong": "It is — pick the steering metrics, drop the rest.",
+                  "sim": "KPIs + funnel + cohort, one screen"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "4 KPI + 3 charts",
-              "body": "Dashboard:\n  TOP: total customers / total orders / repeat rate / avg review score\n  MIDDLE: funnel chart (created → delivered with drop-offs) + cohort retention heatmap\n  BOTTOM: top 5 categories driving repeat purchases"
+              "title": "Your turn — lay it out",
+              "body": "[PRODUCE] Build a dashboard: KPI row + funnel chart + cohort heatmap."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Funnel chart",
-          "summary": "",
+          "title": "The funnel chart",
+          "summary": "Visualise drop-off across stages. Concept + how to read it.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The funnel chart",
+              "body": "## What it is\nA **funnel chart** shows the count (or %) of orders at each stage — ordered, approved, shipped, delivered, reviewed — as descending bars, making the drop-off between stages visible.\n\n## Why it matters\nThe funnel is *the* marketing visual: the biggest bar-to-bar gap is where you're losing the most customers, and that's where a fix pays off most. One chart points the whole team at the priority stage."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nOrdered    ############## 100%\nApproved   #############   98%\nShipped    ############    95%\nDelivered  ###########     92%\nReviewed   ########        70%   <- biggest drop: most don't review\n```\nRead the gaps: the largest fall (delivered->reviewed) is the stage to address first."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "In a funnel chart, the biggest stage-to-stage gap is where you're losing the most and should focus.",
+                  "answer": true,
+                  "whenRight": "Right — the largest drop is the highest-value fix.",
+                  "whenWrong": "It does — the biggest gap localises the priority.",
+                  "sim": "biggest bar drop = priority stage"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Build it",
-              "body": "Excel: insert chart → Funnel (Excel 365 / Sheets has it built-in).\nCategories: Created, Approved, Shipped, Delivered, 2nd Purchase.\nEach: count.\nDrop-off % between each stage shown."
+              "title": "Your turn — funnel chart",
+              "body": "[PRODUCE] Build a funnel chart of order counts by stage; identify the biggest drop-off."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Memo",
-          "summary": "",
+          "title": "Write the memo",
+          "summary": "Headline -> evidence -> recommendation for marketing. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Write the memo",
+              "body": "## What it is\nA one-page memo leading with the marketing recommendation, backed by the funnel and cohort evidence.\n\n## Why it matters\nThe memo circulates to people who won't open the dashboard. For marketing it must end in a campaign action with expected impact and timing — the lever, not the statistic."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (memo template)",
+              "body": "```text\n## Headline\n97% of customers buy once. Growth depends on acquisition efficiency and a\nwell-timed win-back at ~week 6.\n\n## Evidence\n- Repeat rate 3%; cohort retention ~4% by month 1.\n- Repeaters had faster first deliveries (10 vs 12 days) and better reviews.\n- Median second purchase at ~58 days.\n\n## Recommendation\n- Improve first-delivery speed (a repeat lever).\n- Launch a win-back offer at week 6; measure repeat lift vs a holdout.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A marketing memo should end in a campaign action with expected impact and timing.",
+                  "answer": true,
+                  "whenRight": "Right — lever + impact + when, not a restated metric.",
+                  "whenWrong": "It should — close on a timed campaign action.",
+                  "sim": "'win-back at week 6 -> measure repeat lift'"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "MEMO.docx",
-              "body": "Title: 'Olist e-commerce funnel analysis'\nHeadline finding (one sentence)\n## Funnel\n  - X% drop from order to delivery (and Y% of those due to delivery time)\n## Repeat purchases\n  - 3% repeat rate. 80% of repeats happen within 30 days.\n## Recommendations\n  - 1. Improve delivery time on top 5 highest-revenue categories\n  - 2. Email campaign at day 14 post-purchase\n  - 3. Loyalty discount on 2nd purchase\nExport PDF."
+              "title": "Your turn — the memo",
+              "body": "[WRITE] Write the Olist marketing memo (headline/evidence/recommendation) ending in a timed campaign action. Real numbers."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Exec deck",
-          "summary": "",
+          "title": "Build the exec deck",
+          "summary": "Compress to a 4-5 slide deck. Concept, video, structure.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the exec deck",
+              "body": "## What it is\nA 4-5 slide deck for a marketing lead: headline, funnel finding, retention finding, recommendation.\n\n## Why it matters\nLeadership gets minutes. The deck forces the two findings that matter and leads with the action — BLUF discipline, marketing edition."
+            },
+            {
+              "kind": "video",
+              "title": "Tips for presenting data at work",
+              "url": "https://www.youtube.com/watch?v=jizZKNnx9wA",
+              "creator": "",
+              "why": "Presentation habits for the deck. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nS1 \"Olist runs on one-time buyers — here's where to act\"  (+ the ask)\nS2 Funnel: biggest drop is delivered->reviewed  [funnel]\nS3 Retention: ~3% return, ~week 8  [cohort heatmap]\nS4 Recommendation: faster first delivery + week-6 win-back\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A marketing deck should lead with the recommendation and carry only the decisive findings.",
+                  "answer": true,
+                  "whenRight": "Right — BLUF + the two findings that matter.",
+                  "whenWrong": "It should — lead with the ask, show only decisive findings.",
+                  "sim": "4 slides: headline, 2 findings, recommendation"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "5 slides",
-              "body": "Same shape as previous decks."
+              "title": "Your turn — the deck",
+              "body": "[PRODUCE] Build a 4-5 slide marketing deck; titles that tell the story alone."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Practice pitch",
-          "summary": "",
+          "title": "Rehearse the pitch",
+          "summary": "Practise the 5-minute delivery. Concept + rubric.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Rehearse the pitch",
+              "body": "## What it is\nRecord a 5-minute walkthrough: headline, two findings, recommendation. Watch it back.\n\n## Why it matters\nDelivery sells the analysis; recording surfaces filler, unclear slides, and overruns before the real meeting. The constraint forces the core."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (rubric)",
+              "body": "```text\nTIME <= 5:00? | FILLER count | any slide you can't explain in a breath?\nCONFIDENCE: facts not hedges | OPENING: rec in first 15s?\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Recording your pitch surfaces filler and weak spots before the real meeting.",
+                  "answer": true,
+                  "whenRight": "Right — you can't fix what you can't see.",
+                  "whenWrong": "It does — the recording exposes what to tighten.",
+                  "sim": "record -> spot filler, unclear slides"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "5-minute pitch",
-              "body": "Record yourself."
+              "title": "Your turn — rehearse",
+              "body": "[PRODUCE] Record a 5-min pitch; score it on the rubric; note two fixes."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.3",
-          "summary": "",
+          "title": "Ship v0.3",
+          "summary": "Commit dashboard + memo + deck, tag olist-v0.3.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v0.3",
+              "body": "## What it is\nShip the Olist deliverables: dashboard, memo, deck. Tag `olist-v0.3`.\n\n## Why it matters\nPackaging is where analysis becomes impact — marketing can now act on the funnel and cohort work. Third project, third audience (retail exec, HR, marketing): you're proving you can tailor delivery to whoever's reading."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tailoring the deliverable to the audience (here marketing) is part of making analysis land.",
+                  "answer": true,
+                  "whenRight": "Right — same analysis, audience-shaped delivery.",
+                  "whenWrong": "It is — the framing for the audience is the deliverable.",
+                  "sim": "exec / HR / marketing each need different framing"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.3",
-              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Dashboard built\n  ☐ Funnel chart works\n  ☐ Memo PDF\n  ☐ 5-slide deck PDF\n  ☐ v0.3 tag"
+              "title": "Acceptance — v0.3 is done when",
+              "body": "[PRODUCE] Dashboard, memo (marketing framing), 4-5 slide deck.\n[CODE] `git tag olist-v0.3`; push. Drop your repo link."
             }
           ]
         }
@@ -6454,85 +6793,253 @@
       "days": [
         {
           "number": 1,
-          "title": "Polish list",
-          "summary": "",
+          "title": "List the rough edges",
+          "summary": "Audit before final ship. Concept + worked audit.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "10 rough edges",
-              "body": "List them."
+              "kind": "lesson",
+              "title": "List the rough edges",
+              "body": "## What it is\nAudit every Olist artefact and list every rough edge — errors, inconsistent numbers, unclear labels — before tagging v1.0.\n\n## Why it matters\nBy Project 3 this should be reflex: shipping means finishing, and a written punch list catches the embarrassing inconsistency before a reviewer does."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n- notebook: cohort cell slow / errors on rerun\n- memo says 3.0% repeat, dashboard says 2.9% -> reconcile\n- funnel chart % don't sum sensibly -> recheck\n- README missing 'how to run'\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "By the third project, auditing for rough edges before shipping should be an automatic habit.",
+                  "answer": true,
+                  "whenRight": "Right — finish, don't abandon; the punch list makes it concrete.",
+                  "whenWrong": "It is — a rough-edge audit is now standard practice.",
+                  "sim": "'basically done' -> a finishable list"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — audit",
+              "body": "[WRITE] List every rough edge across the Olist notebook, dashboard, memo, and deck."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Fix top 5",
-          "summary": "",
+          "title": "Fix the top 5",
+          "summary": "Prioritise and fix. Concept + checklist.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Fix the top 5",
+              "body": "## What it is\nFix the five highest-impact rough edges first: the rerun errors, the disagreeing numbers, the unclear charts.\n\n## Why it matters\nPrioritising the worst five gets you 80% of the polish for 20% of the effort — and a clean restart-run-all plus reconciled numbers is what reads as professional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n[ ] Restart & Run All -> clean\n[ ] one canonical value per number everywhere\n[ ] every chart labelled + has a takeaway\n[ ] README: what it is + how to run\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Fixing the few highest-impact rough edges first is the efficient path to a polished result.",
+                  "answer": true,
+                  "whenRight": "Right — the worst five carry most of the credibility gain.",
+                  "whenWrong": "It is — prioritise impact; not all edges are equal.",
+                  "sim": "top 5 fixes ~= 80% of the polish"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Polish",
-              "body": "Fix."
+              "title": "Your turn — fix top 5",
+              "body": "[PRODUCE] Fix the five highest-impact items; restart-run-all clean; reconcile numbers."
             }
           ]
         },
         {
           "number": 3,
-          "title": "SQL version",
-          "summary": "",
+          "title": "Add a SQL version",
+          "summary": "Re-answer key questions in SQL. Concept, video, query with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Add a SQL version",
+              "body": "## What it is\nRe-express the funnel and a cohort metric in SQL (`olist_queries.sql`) — joins + GROUP BY on the Olist tables.\n\n## Why it matters\nShowing the same multi-table analysis in pandas and SQL proves you can work in either, and SQL JOINs on relational data are a core interview topic. Olist's multiple tables make it the ideal place to show real SQL joins."
+            },
+            {
+              "kind": "video",
+              "title": "SQL aggregate functions, GROUP BY & HAVING",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "creator": "",
+              "why": "GROUP BY for the SQL queries. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Orders by status, in SQL\n```sql\nSELECT order_status, COUNT(*) AS orders,\n       ROUND(100.0*COUNT(*)/(SELECT COUNT(*) FROM orders), 1) AS pct\nFROM orders GROUP BY order_status ORDER BY orders DESC;\n```\n```\norder_status  orders  pct\ndelivered     96478   97.0\nshipped        1107    1.1\ncanceled        625    0.6\n...\n```\nMatches your pandas funnel. A JOIN version (orders + reviews) answers the delivery-vs-review question in SQL too."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Showing the Olist analysis in both pandas and SQL (with JOINs) strengthens the portfolio.",
+                  "answer": true,
+                  "whenRight": "Right — multi-table SQL joins are a core, interview-relevant skill.",
+                  "whenWrong": "It does — relational SQL is exactly what Olist showcases.",
+                  "sim": "funnel + delivery-vs-review, now in SQL"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "queries.sql",
-              "body": "Re-do all major queries in SQLite Online. 10+ queries with comments."
+              "title": "Your turn — SQL version",
+              "body": "[PRODUCE] Write `olist_queries.sql`: the status funnel and one JOIN-based finding, commented; confirm they match pandas."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Demo video",
-          "summary": "",
+          "title": "Record a demo video",
+          "summary": "90-second walkthrough. Concept + script.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Record a demo video",
+              "body": "## What it is\nRecord a <=90-second walkthrough of the Olist dashboard and the key findings; link it (per the video policy — share a Drive/YouTube link).\n\n## Why it matters\nA demo is the most convincing portfolio artefact — proof it works and that you can present. Three demo videos across three projects is a powerful, watchable portfolio."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (script)",
+              "body": "```text\n0:00 \"Olist: 99k Brazilian e-commerce orders.\"\n0:20 \"97% deliver, but almost nobody buys twice.\" [funnel + cohort]\n0:50 \"Faster delivery links to better reviews and repeat buying.\"\n1:10 \"So: speed up first delivery, win-back at week 6.\" (stop)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A short demo video is one of the most convincing portfolio artefacts.",
+                  "answer": true,
+                  "whenRight": "Right — recruiters watch 90 seconds even if they never run code.",
+                  "whenWrong": "It is — a demo proves it works and that you can present it.",
+                  "sim": "90-sec walkthrough: findings + recommendation"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "90-sec walkthrough",
-              "body": "Upload to YouTube unlisted."
+              "title": "Your turn — demo",
+              "body": "[PRODUCE] Record a <=90-sec dashboard walkthrough; link it in the README."
             }
           ]
         },
         {
           "number": 5,
           "title": "Polish memo + deck",
-          "summary": "",
+          "summary": "Final formatting pass. Concept + spec.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Polish memo + deck",
+              "body": "## What it is\nFinal formatting: memo as a clean PDF (headings, captioned charts, page numbers), deck design-consistent.\n\n## Why it matters\nFormat is credibility, especially for a public portfolio recruiters will judge. A polished PDF and a consistent deck signal care that borrows trust for your analysis."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nMemo: H1/H2 headings, captioned charts, page numbers -> PDF\nDeck: one title style, one colour per series, axes labelled, no clutter\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A polished, consistent memo and deck signal care that makes a public portfolio more credible.",
+                  "answer": true,
+                  "whenRight": "Right — format is a credibility signal recruiters react to.",
+                  "whenWrong": "It does — consistency and polish read as professionalism.",
+                  "sim": "clean PDF + consistent deck = trust"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Final polish",
-              "body": "Make sure every chart has axis labels, every recommendation has a number."
+              "title": "Your turn — polish",
+              "body": "[PRODUCE] Export a polished memo PDF and run a design-consistency pass on the deck."
             }
           ]
         },
         {
           "number": 6,
           "title": "Get one reader",
-          "summary": "",
+          "summary": "Fresh-reader test. Concept + the test.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Get one reader",
+              "body": "## What it is\nOne person who hasn't seen the project reads the memo/deck; you note their confusion and run the one-sentence test.\n\n## Why it matters\nYou're blind to your own gaps; a fresh reader finds the jargon and unexplained jumps for free, before a recruiter does."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nAsk: \"What am I recommending, and why?\" (one sentence)\nNote every pause, question, misread number -> the fix list.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A fresh reader reveals confusion you can't see in your own work.",
+                  "answer": true,
+                  "whenRight": "Right — they don't have your context, so they find the gaps.",
+                  "whenWrong": "It does — an outsider surfaces what's unclear.",
+                  "sim": "can't restate the rec -> headline needs work"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Feedback",
-              "body": "Apply 1 piece of feedback."
+              "title": "Your turn — reader test",
+              "body": "[PRODUCE] Have one stranger read it; do the one-sentence test; note confusion points."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v1.0 + retro",
-          "summary": "",
+          "title": "Ship v1.0 + retro",
+          "summary": "Tag v1.0, write the retro. Project 3 DONE. Concept + template.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Ship v1.0 + retro",
+              "body": "## What it is\nApply fixes, tag `olist-v1.0`, write a short retro (worked / hard / next time).\n\n## Why it matters\nThree complete, shipped, reader-tested projects across retail, HR, and e-commerce is a portfolio that proves a transferable process and real range. The retro turns the experience into lessons that compound."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (retro)",
+              "body": "```text\n## Olist Retro\nWorked: relational thinking; cohort matrix was the standout.\nHard: multi-table joins and period math; keeping numbers consistent.\nNext: load + map the schema fully before any analysis.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Three shipped projects across three domains prove a transferable process, not a one-off.",
+                  "answer": true,
+                  "whenRight": "Right — range + repeatable method is what a portfolio should show.",
+                  "whenWrong": "It does — three domains, one rigorous process = credibility.",
+                  "sim": "retail + HR + e-commerce, same method"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Project 3 DONE",
-              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Polished\n  ☐ queries.sql committed\n  ☐ Demo video\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 3 COMPLETE. Next: capstone — multi-source executive dashboard."
+              "title": "Acceptance — v1.0 (Project 3 DONE)",
+              "body": "[PRODUCE] Fixes applied; public-safe; demo linked; consistent throughout.\n[WRITE] Retro in README.\n[CODE] `git tag olist-v1.0`; push. Drop your repo link. Project 3 complete."
             }
           ]
         }
@@ -6611,99 +7118,255 @@
       "days": [
         {
           "number": 1,
-          "title": "Why both Power BI + Tableau",
-          "summary": "",
+          "title": "Why learn both Power BI and Tableau",
+          "summary": "The two dominant BI tools. Concept, video.",
           "items": [
             {
-              "kind": "video",
-              "title": "Power BI vs Tableau in 2026 (10 min)",
-              "url": "https://www.youtube.com/results?search_query=power+bi+vs+tableau+2024+comparison",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "Why learn both Power BI and Tableau",
+              "body": "## What it is\n**Tableau** and **Power BI** are the two dominant business-intelligence tools. You'll rebuild a dashboard you already know (the Superstore KPIs) in Tableau, so the focus is the *tool*, not the analysis.\n\n## Why it matters\nAlmost every BI job posting names one or both, and which a company uses is often just history, not merit. Knowing both doubles the jobs you qualify for, and they share concepts (dimensions, measures, drag-and-drop viz) so the second is far faster than the first. Rebuilding a *known* dashboard means you can focus 100% on learning Tableau's interface."
             },
             {
-              "kind": "reflection",
-              "title": "Job ad mix",
-              "body": "Check 10 data analyst job ads on LinkedIn. How many list Tableau? Power BI? Both? Note ratios."
+              "kind": "video",
+              "title": "Tableau tutorial for beginners — first dashboard",
+              "url": "https://www.youtube.com/watch?v=X5Fl8_zjt0U",
+              "creator": "",
+              "why": "Build a first Tableau dashboard, then the steps below are review. Optional."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked (the plan)",
+              "body": "```text\nThis week, in Tableau Public (free):\n  install -> connect Superstore CSV -> 4 KPIs -> trend + region charts ->\n  a matrix with conditional colour -> assemble dashboard + filters -> publish.\nSame dashboard as your pandas/Excel work -> you judge the TOOL, not the data.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Knowing both Tableau and Power BI roughly doubles the BI jobs you qualify for.",
+                  "answer": true,
+                  "whenRight": "Right — postings name one or both; which is often just company history.",
+                  "whenWrong": "It does — covering both widens your eligible roles.",
+                  "sim": "Tableau + Power BI = more job matches"
+                },
+                {
+                  "prompt": "Rebuilding a dashboard you already know lets you focus on learning the new tool, not the analysis.",
+                  "answer": true,
+                  "whenRight": "Right — known analysis frees attention for Tableau's interface.",
+                  "whenWrong": "It does — familiar data means the tool is the only new thing.",
+                  "sim": "known dashboard -> learn the tool faster"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — orient",
+              "body": "[WRITE] One sentence on why a BI analyst benefits from knowing both tools."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Install Tableau Public",
-          "summary": "",
+          "title": "Install Tableau Public + connect data",
+          "summary": "Free setup and first connection. Concept + steps.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Tableau Public (free)",
-              "url": "https://www.tableau.com/products/public/download",
-              "why": "Click 'Open'. Sign up + download. ~500MB."
+              "kind": "lesson",
+              "title": "Install Tableau Public + connect data",
+              "body": "## What it is\n**Tableau Public** is the free version. Install it, connect your Superstore CSV, and meet Tableau's core idea: columns are split into **Dimensions** (categories like Region) and **Measures** (numbers like Sales) that you drag onto shelves to build charts.\n\n## Why it matters\nThe dimension/measure distinction is the whole mental model of Tableau (and Power BI): you build a viz by dragging a dimension and a measure together, and the tool aggregates automatically. Grasp that and the drag-and-drop stops feeling random."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n1. Download Tableau Public (free) -> install.\n2. Connect -> Text file -> Superstore.csv.\n3. Note the panes: DIMENSIONS (Region, Category, Order Date)\n   and MEASURES (Sales, Profit, Quantity).\n4. Drag Category to Rows + Sales to Columns -> a bar chart appears, auto-summed.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "In Tableau, dimensions are categories and measures are numbers you drag together to build a viz.",
+                  "answer": true,
+                  "whenRight": "Right — dimension + measure = an auto-aggregated chart.",
+                  "whenWrong": "It is — that split is Tableau's core mental model.",
+                  "sim": "Region (dim) + Sales (measure) -> bar chart"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "First connection",
-              "body": "Open Tableau Public. Connect to your Sample - Superstore.xls file. Drag 'Orders' to the data pane."
+              "title": "Your turn — connect",
+              "body": "[PRODUCE] Install Tableau Public, connect the Superstore CSV, and make one bar chart by dragging a dimension and a measure."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Build the same 4 KPIs",
-          "summary": "",
+          "title": "Build the 4 KPIs",
+          "summary": "Recreate your KPI tiles. Concept + steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build the 4 KPIs",
+              "body": "## What it is\nBuild four big-number KPI tiles (Total Sales, Total Profit, Profit Margin, Orders) — the same KPIs from your Superstore dashboard, now in Tableau.\n\n## Why it matters\nKPI tiles teach you **calculated fields** (e.g. Profit Margin = SUM(Profit)/SUM(Sales)) and text/BAN (\"big a** number\") sheets — the building blocks of every Tableau dashboard. Recreating known numbers also lets you *verify* Tableau against your pandas results."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n- Sales KPI: drag SUM(Sales) to a Text sheet, format big.\n- Profit Margin: create a Calculated Field = SUM([Profit])/SUM([Sales]) -> % format.\n- Repeat for Profit and Orders (COUNTD(Order ID)).\nVerify each matches your pandas number.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Calculated fields (e.g. Profit Margin = SUM(Profit)/SUM(Sales)) are how Tableau builds derived metrics.",
+                  "answer": true,
+                  "whenRight": "Right — calculated fields are Tableau's formula layer.",
+                  "whenWrong": "It is — derived metrics come from calculated fields.",
+                  "sim": "margin = SUM(Profit)/SUM(Sales)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "KPI cards",
-              "body": "New worksheet 'Total Sales'. Drag Sales → Text. Right-click → Format → big font.\nRepeat for: Total Profit, Profit Margin (Profit / Sales — Tableau makes this 'measure name + Aggregation'), YoY Growth.\nCombine into a single Dashboard 'Overview'."
+              "title": "Your turn — KPIs",
+              "body": "[PRODUCE] Build 4 KPI tiles incl. a Profit Margin calculated field; verify each against your pandas numbers."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Charts: trend + region",
-          "summary": "",
+          "title": "Trend and region charts",
+          "summary": "A time trend and a category/region breakdown. Concept + steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Trend and region charts",
+              "body": "## What it is\nBuild a sales-over-time line chart (drag Order Date to Columns, Sales to Rows) and a sales-by-region bar — Tableau's bread-and-butter visuals.\n\n## Why it matters\nThese teach how Tableau handles dates (it auto-creates Year/Quarter/Month hierarchies you can drill) and sorting. Time trends and category breakdowns are 80% of real BI charts, so nailing them covers most of the job."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nTrend: Order Date (Columns, set to Month) + SUM(Sales) (Rows) -> line.\nRegion: Region (Columns) + SUM(Sales) (Rows) -> bar; sort descending.\nTip: click the date pill to switch Year/Quarter/Month -> instant drill-down.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tableau auto-builds date hierarchies (Year/Quarter/Month) you can drill into on a trend chart.",
+                  "answer": true,
+                  "whenRight": "Right — one date field gives you drillable time levels.",
+                  "whenWrong": "It does — Tableau generates the date hierarchy automatically.",
+                  "sim": "click the date pill -> Year/Quarter/Month"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "2 charts",
-              "body": "New worksheet 'Sales Trend'. Drag Order Date → Columns (month). Drag Sales → Rows. Line chart.\nNew worksheet 'Sales by Region'. Drag Region → Rows. Sales → Columns. Bar chart, sort desc."
+              "title": "Your turn — two charts",
+              "body": "[PRODUCE] Build a monthly sales trend line and a sales-by-region bar (sorted)."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Matrix + conditional color",
-          "summary": "",
+          "title": "Matrix with conditional colour",
+          "summary": "A heatmap-style table. Concept + steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Matrix with conditional colour",
+              "body": "## What it is\nBuild a matrix (Category × Region) of profit with **conditional colour** — red for losses, green for profit — Tableau's version of a heatmap.\n\n## Why it matters\nColour-encoding turns a wall of numbers into an instant pattern: a red cell jumps out as a problem. Conditional formatting is one of the highest-impact, easiest wins in any BI tool, and it's how you make a dashboard *readable at a glance*."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\nRows: Category | Columns: Region | Text/Colour: SUM(Profit)\nDrag SUM(Profit) onto Colour -> diverging red-green palette, centre at 0.\nNow loss cells are red and visible instantly.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Conditional colour turns a table of numbers into an instantly readable pattern (red=loss).",
+                  "answer": true,
+                  "whenRight": "Right — colour-encoding surfaces problems at a glance.",
+                  "whenWrong": "It does — a red cell jumps out far faster than a number.",
+                  "sim": "SUM(Profit) on Colour -> red losses pop"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Sub-Category margin",
-              "body": "Drag Sub-Category → Rows. Profit/Sales as calculated field → Columns. Format as %.\nClick the bar color → Edit Colors → red-green diverging at 0."
+              "title": "Your turn — the matrix",
+              "body": "[PRODUCE] Build a Category x Region profit matrix with diverging red-green conditional colour centred at 0."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Build the dashboard + filters",
-          "summary": "",
+          "title": "Assemble the dashboard + filters",
+          "summary": "Combine sheets, add interactivity. Concept + steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Assemble the dashboard + filters",
+              "body": "## What it is\nDrag your KPI tiles and charts onto a **Dashboard** and add a Region/Category filter that controls them all at once.\n\n## Why it matters\nAssembly + filters is what makes it a *dashboard* rather than loose charts. Tableau's \"use as filter\" and global filters give the viewer self-serve interactivity — the single feature that gets a dashboard adopted instead of glanced at."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n- New Dashboard -> drag KPI sheets to the top row, charts below.\n- Add a Region filter -> right-click -> \"Apply to all using this data source\".\n- Now picking a region updates every tile and chart together.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A global filter applied to all sheets gives the dashboard self-serve interactivity.",
+                  "answer": true,
+                  "whenRight": "Right — one filter driving everything is what makes it adopted.",
+                  "whenWrong": "It does — global filters let viewers slice it themselves.",
+                  "sim": "Region filter -> all tiles update together"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Assemble",
-              "body": "New Dashboard. Drag in: 4 KPI sheets, Trend, Bar, Matrix.\nAdd a Date filter. Set it to apply to all sheets.\nAdd a Region filter too."
+              "title": "Your turn — assemble",
+              "body": "[PRODUCE] Assemble KPIs + charts + matrix into one dashboard with a global Region filter."
             }
           ]
         },
         {
           "number": 7,
           "title": "Publish to Tableau Public",
-          "summary": "",
+          "summary": "Share it live, link it. Concept + steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Publish to Tableau Public",
+              "body": "## What it is\nPublish the finished dashboard to your Tableau Public profile — a live, interactive, shareable URL.\n\n## Why it matters\nA published Tableau Public dashboard is a *live* portfolio piece anyone can click and explore — far more impressive than a screenshot, and a standard expectation for BI roles. The link goes on your CV and LinkedIn."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A published Tableau Public dashboard is a live, interactive portfolio piece — stronger than a screenshot.",
+                  "answer": true,
+                  "whenRight": "Right — recruiters can click and explore it themselves.",
+                  "whenWrong": "It is — a live URL beats a static image every time.",
+                  "sim": "live Tableau Public link on your CV"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "Server → Tableau Public → Save. Sign in.\nGet a public URL like public.tableau.com/profile/yourname/viz/SuperstoreDashboard.\n\nPASS:\n  ☐ 4 KPI cards built\n  ☐ Trend + bar + matrix charts\n  ☐ Date + Region filters applied to all\n  ☐ Published to Tableau Public\n  ☐ URL in superstore-analysis README"
+              "title": "Acceptance — Tableau done when",
+              "body": "[PRODUCE] The dashboard (4 KPIs, trend, region, coloured matrix, filter) is published to Tableau Public.\n[WRITE] Add the public link to your portfolio README and the dashboard check-in."
             }
           ]
         }
@@ -6793,11 +7456,7 @@
         "Add a Parameter to the dashboard: a slider that lets the user set the minimum profit margin threshold for highlighting. Any Sub-Category below the threshold turns red. Parameters in Tableau are the equivalent of input cells in a financial model -- they make the dashboard interactive for scenario analysis.",
         "Rebuild one of the Tableau worksheets using a Calculated Field that uses FIXED LOD: [Profit Margin by Category] = {FIXED [Category]: SUM([Profit]) / SUM([Sales])}. This computes the category margin for every row, regardless of the current view filter. Understanding FIXED LOD is the single most useful advanced Tableau skill.",
         "Compare the Tableau dashboard load time to the Excel dashboard load time for the same user task (finding the worst Sub-Category by margin). Measure the time from opening the file to having the answer. For a local Excel file with a user who knows Excel well, Excel usually wins for simple lookups. For a remote shared Tableau dashboard accessible by a non-technical stakeholder, Tableau wins. Document your observation."
-      ],
-      "concept_widget": {
-        "id": "dashboard-filter",
-        "caption": "Click a region and watch every chart recompute from the same filtered data."
-      }
+      ]
     },
     {
       "number": 21,
@@ -6808,119 +7467,269 @@
       "days": [
         {
           "number": 1,
-          "title": "What is dbt and why do analysts use it",
-          "summary": "Watch and understand. No setup yet.",
+          "title": "What dbt is and why analysts use it",
+          "summary": "The modern analytics-engineering tool. Concept, video.",
           "items": [
             {
-              "kind": "video",
-              "title": "dbt explained in 10 minutes",
-              "url": "https://www.youtube.com/results?search_query=dbt+data+build+tool+beginner+10+minutes",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "What dbt is and why analysts use it",
+              "body": "## What it is\n**dbt** (data build tool) lets analysts transform data in the warehouse using **just SQL `SELECT` statements**, organised as version-controlled, tested, documented **models**. It's the core tool of the \"modern data stack\" and the analytics-engineering role.\n\n## Why it matters\nUntil now your SQL was ad-hoc queries you ran and lost. dbt turns SQL into *software*: each transformation is a model in git, models build on each other, and you can **test** them (e.g. \"this column is never null\"). That reliability is why every modern data team uses it — and \"dbt\" on a CV opens the higher-paid analytics-engineer path. It's SQL you already know, wrapped in engineering discipline."
             },
             {
               "kind": "video",
-              "title": "Modern data stack overview",
-              "url": "https://www.youtube.com/results?search_query=modern+data+stack+2024+explained",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "title": "What is dbt: the data build tool?",
+              "url": "https://www.youtube.com/watch?v=W0Pcgbw6KxE",
+              "creator": "",
+              "why": "What dbt is and the problem it solves. Optional."
             },
             {
-              "kind": "reflection",
-              "title": "Three problems dbt solves",
-              "body": "Write in notes.txt:\n  1. 'I have 100 SQL queries in random files' — dbt makes them versioned + tested\n  2. 'I copy-paste the same JOIN everywhere' — dbt lets you DEFINE a model once and reuse\n  3. 'I don't know if my changes broke yesterday's reports' — dbt runs tests automatically"
+              "kind": "lesson",
+              "title": "See it worked (the idea)",
+              "body": "```text\nWithout dbt: 20 ad-hoc queries in a file, run by hand, no tests, no lineage.\nWith dbt:    each transform is a model (a SELECT) in git ->\n             models reference each other -> `dbt run` builds them all ->\n             `dbt test` checks data quality -> docs auto-generated.\nSame SQL, now reliable, versioned, testable software.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "dbt lets analysts transform data with version-controlled, testable SQL SELECT models.",
+                  "answer": true,
+                  "whenRight": "Right — it turns ad-hoc SQL into reliable, tested software.",
+                  "whenWrong": "It does — models + tests + git = engineering-grade SQL.",
+                  "sim": "SELECT models in git + dbt test"
+                },
+                {
+                  "prompt": "dbt requires learning a new programming language instead of SQL.",
+                  "answer": false,
+                  "whenRight": "Correct — dbt models ARE SQL SELECTs; that's the whole appeal.",
+                  "whenWrong": "Not so — it's the SQL you already know, organised as models.",
+                  "sim": "dbt model = a SELECT statement"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — orient",
+              "body": "[WRITE] One sentence: what does dbt add on top of plain SQL queries, and why do teams want it?"
             }
           ]
         },
         {
           "number": 2,
           "title": "Set up BigQuery (free)",
-          "summary": "Google's data warehouse. No credit card needed.",
+          "summary": "A cloud data warehouse. Concept + steps.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Google Cloud Console",
-              "url": "https://console.cloud.google.com",
-              "why": "Click 'Open'. Sign in with any Google account. Free tier includes $300 in credits and 1TB/month of BigQuery queries forever."
+              "kind": "lesson",
+              "title": "Set up BigQuery (free)",
+              "body": "## What it is\n**BigQuery** is Google's cloud data warehouse — where the data lives and SQL runs at scale. Its free tier (10GB storage, 1TB queries/month) is plenty to learn on. dbt will connect to it.\n\n## Why it matters\nThis is your first real **cloud warehouse**, the environment professional analytics actually runs in (not a local SQLite file). Learning that data lives in a warehouse and tools connect to it — rather than CSVs on your laptop — is a key mental shift toward how data teams work."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```text\n1. Go to console.cloud.google.com -> create a free project.\n2. Open BigQuery -> you get a SQL workspace in the browser.\n3. Free tier: 10GB storage + 1TB queries/month -> no cost to learn.\n4. Note your project ID -> dbt needs it to connect.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "BigQuery is a cloud data warehouse where data lives and SQL runs at scale — not a local file.",
+                  "answer": true,
+                  "whenRight": "Right — it's the professional environment data teams use.",
+                  "whenWrong": "It is — a cloud warehouse, the real home of analytics SQL.",
+                  "sim": "data in the warehouse; tools connect to it"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Create a BigQuery project",
-              "body": "STEP 1 — Sign in to console.cloud.google.com.\n\nSTEP 2 — Click the project dropdown (top, next to 'Google Cloud') → New Project.\n  Name: forge-analytics. Click Create.\n\nSTEP 3 — Search 'BigQuery' in the top search bar. Open it.\n\nSTEP 4 — Run a free test query:\n      SELECT 'Hello BigQuery' AS greeting;\n  Click Run. YOU SHOULD SEE: 'Hello BigQuery' in 1 second."
+              "title": "Your turn — set up",
+              "body": "[PRODUCE] Create a free Google Cloud project, open BigQuery, and note your project ID."
             }
           ]
         },
         {
           "number": 3,
           "title": "Upload Superstore to BigQuery",
-          "summary": "Your familiar data, now in the cloud.",
+          "summary": "Get data into the warehouse. Concept + steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Upload Superstore to BigQuery",
+              "body": "## What it is\nLoad your familiar Superstore CSV into a BigQuery table, then query it with the SQL you already know — confirming the warehouse works before adding dbt.\n\n## Why it matters\nUsing *known* data means you can verify BigQuery returns the same answers as your pandas/SQLite work. It also teaches the load step (create dataset -> upload table) that every warehouse workflow starts with."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```sql\n-- After uploading Superstore as a table, query it in BigQuery:\nSELECT sub_category, SUM(profit) AS total_profit\nFROM `your_project.superstore.orders`\nGROUP BY sub_category ORDER BY total_profit DESC LIMIT 3;\n```\n```\nsub_category  total_profit\nCopiers       55617.8\nPhones        44515.7\nAccessories   41936.6\n```\nSame answer as Week 5 SQL — the warehouse works; now dbt can build on it."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Loading known data (Superstore) into BigQuery lets you verify the warehouse against earlier results.",
+                  "answer": true,
+                  "whenRight": "Right — same data, same answers = confidence the setup works.",
+                  "whenWrong": "It does — known data validates the new environment.",
+                  "sim": "BigQuery sums match your Week-5 SQL"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Convert + upload",
-              "body": "STEP 1 — Convert your Superstore Excel to CSV.\n  Open Sample - Superstore.xls. File → Save As → CSV. Save as orders.csv.\n\nSTEP 2 — In BigQuery, click the 3 dots next to your project name → Create dataset.\n  Dataset ID: superstore. Location: US. Click Create.\n\nSTEP 3 — Click 3 dots next to your dataset → Create table.\n  Source: Upload. File: orders.csv. Format: CSV. Table name: orders. Schema: Auto-detect. Create.\n  Takes 10 seconds.\n\nSTEP 4 — Test:\n      SELECT COUNT(*) FROM `forge-analytics.superstore.orders`;\n  YOU SHOULD SEE: ~10000 rows."
+              "title": "Your turn — load it",
+              "body": "[PRODUCE] Create a dataset, upload Superstore as a table, and run the margin query; confirm it matches Week 5."
             }
           ]
         },
         {
           "number": 4,
           "title": "Install dbt locally",
-          "summary": "The tool itself, set up step by step.",
+          "summary": "Connect dbt to BigQuery. Concept + steps.",
           "items": [
             {
-              "kind": "reading",
-              "title": "dbt installation docs",
-              "url": "https://docs.getdbt.com/docs/core/pip-install",
-              "why": "Click 'Open'. Reference page."
+              "kind": "lesson",
+              "title": "Install dbt locally",
+              "body": "## What it is\nInstall `dbt-bigquery` (pip), run `dbt init` to scaffold a project, and configure the connection (`profiles.yml`) to your BigQuery project so `dbt debug` passes.\n\n## Why it matters\nGetting `dbt debug` green is the setup hurdle everyone trips on (auth, project ID, dataset). Once connected, dbt can read from and write models back to BigQuery — the foundation for everything after. Configuration is a real analytics-engineering skill in itself."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it worked",
+              "body": "```bash\npip install dbt-bigquery\ndbt init superstore_dbt        # scaffolds the project\n# edit ~/.dbt/profiles.yml with project id, dataset, auth (gcloud)\ndbt debug                      # -> \"All checks passed!\"\n```\nA green `dbt debug` means dbt is talking to your warehouse."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`dbt debug` passing confirms dbt is correctly connected to your BigQuery warehouse.",
+                  "answer": true,
+                  "whenRight": "Right — green debug = auth + project + dataset all configured.",
+                  "whenWrong": "It does — dbt debug is the connection sanity check.",
+                  "sim": "dbt debug -> 'All checks passed!'"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Install dbt-bigquery",
-              "body": "STEP 1 — Open your terminal (Anaconda Prompt on Windows, Terminal on Mac).\n\nSTEP 2 — Install (this includes the BigQuery adapter):\n      pip install dbt-bigquery\n  Takes ~1 minute.\n\nSTEP 3 — Verify:\n      dbt --version\n  YOU SHOULD SEE: 'Core: 1.x.x  Plugins: bigquery 1.x.x'.\n\nSTEP 4 — Initialize a new dbt project:\n      cd Desktop\n      dbt init forge_analytics\n  It asks: which adapter? Type 1 (BigQuery).\n  Project name: forge_analytics. Method: oauth.\n  Project ID: forge-analytics (the one from BigQuery).\n  Dataset: superstore. Threads: 1. Location: US. Job execution timeout: 300.\n\nSTEP 5 — Verify the connection:\n      cd forge_analytics\n      dbt debug\n  YOU SHOULD SEE: 'All checks passed!'\n  IF YOU SEE: 'authentication errors' — run 'gcloud auth application-default login' in a new tab, then retry."
+              "title": "Your turn — connect",
+              "body": "[PRODUCE] Install dbt-bigquery, `dbt init` a project, configure profiles.yml, and get `dbt debug` to pass."
             }
           ]
         },
         {
           "number": 5,
           "title": "Build your first dbt model",
-          "summary": "SQL that's now tested + version-controlled.",
+          "summary": "A transformation as a SELECT. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Build your first dbt model",
+              "body": "## What it is\nA dbt **model** is a `.sql` file containing one `SELECT`. When you `dbt run`, dbt wraps it in `CREATE TABLE/VIEW` and builds it in BigQuery. Your first model: a clean per-sub-category profit summary.\n\n## Why it matters\nThis is the core dbt loop: write a SELECT, `dbt run`, and a table appears in the warehouse — reproducibly, in git. Models can `ref()` each other to form a pipeline (raw -> cleaned -> summary), which is how real transformation layers are built. It's the moment SQL becomes a maintainable data product."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## models/profit_by_subcat.sql\n```sql\nSELECT\n    sub_category,\n    SUM(profit)  AS total_profit,\n    COUNT(*)     AS orders\nFROM {{ source('superstore', 'orders') }}\nGROUP BY sub_category\n```\n```bash\ndbt run\n# -> Completed successfully. Created table profit_by_subcat in BigQuery.\n```\nYou now have a versioned, rebuildable table. `{{ source(...) }}` is dbt's way of referencing raw data so it tracks lineage. Change the SQL, `dbt run` again, and the table rebuilds — no manual steps."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A dbt model is a SELECT statement that `dbt run` turns into a table/view in the warehouse.",
+                  "answer": true,
+                  "whenRight": "Right — write SELECT, dbt run, table built reproducibly.",
+                  "whenWrong": "It is — the model is a SELECT; dbt materialises it.",
+                  "sim": "model.sql (SELECT) -> dbt run -> table"
+                },
+                {
+                  "prompt": "dbt models can reference each other to build a multi-step pipeline.",
+                  "answer": true,
+                  "whenRight": "Right — ref()/source() chain models into a lineage.",
+                  "whenWrong": "It does — models build on models, forming a pipeline.",
+                  "sim": "raw -> cleaned -> summary via ref()"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Margin model",
-              "body": "STEP 1 — Open the forge_analytics folder in VS Code.\n  Open models/example/. Delete the 2 sample files inside.\n\nSTEP 2 — Create a new file: models/example/sub_category_margin.sql\n  Type:\n      SELECT\n        `Sub-Category` AS subcategory,\n        SUM(Sales) AS total_sales,\n        SUM(Profit) AS total_profit,\n        SAFE_DIVIDE(SUM(Profit), SUM(Sales)) AS margin\n      FROM {{ source('superstore', 'orders') }}\n      GROUP BY 1\n\nSTEP 3 — Tell dbt where the source is. Create models/example/sources.yml:\n      version: 2\n      sources:\n        - name: superstore\n          tables:\n            - name: orders\n\nSTEP 4 — Run:\n      dbt run\n  YOU SHOULD SEE: 'Completed successfully' and a new table in BigQuery.\n\nSTEP 5 — Verify in BigQuery console:\n      SELECT * FROM `forge-analytics.superstore.sub_category_margin` ORDER BY margin DESC LIMIT 5;\n  YOU SHOULD SEE: 5 rows of top-margin sub-categories."
+              "title": "Your turn — first model",
+              "body": "[PRODUCE] Write a model `profit_by_subcat.sql` (a SELECT with GROUP BY), `dbt run`, and confirm the table appears in BigQuery."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Add tests (docs OPTIONAL)",
-          "summary": "Tests are required — that's what makes dbt powerful. Docs generation is great-to-see but optional this week.",
+          "title": "Add a data test",
+          "summary": "Guarantee data quality. Concept + code with output.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Add a data test",
+              "body": "## What it is\ndbt **tests** assert things about your data — e.g. a key column is `unique` and `not_null` — declared in a `schema.yml`. `dbt test` checks them on every run.\n\n## Why it matters\nThis is dbt's superpower and what separates it from ad-hoc SQL: your pipeline *fails loudly* if the data breaks an assumption (a null sneaks into a key, a duplicate appears), instead of silently producing wrong numbers downstream. Automated data tests are the reliability layer every serious data team depends on — and a concept most analysts have never even seen."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## models/schema.yml\n```yaml\nmodels:\n  - name: profit_by_subcat\n    columns:\n      - name: sub_category\n        tests: [unique, not_null]\n```\n```bash\ndbt test\n# PASS unique_profit_by_subcat_sub_category\n# PASS not_null_profit_by_subcat_sub_category\n# -> Done. PASS=2 WARN=0 ERROR=0\n```\nNow if a duplicate or null ever appears in `sub_category`, `dbt test` turns red and the pipeline stops — catching the problem before it reaches a dashboard."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "dbt tests make the pipeline fail loudly when data breaks an assumption (null/duplicate), preventing silent errors.",
+                  "answer": true,
+                  "whenRight": "Right — tests catch bad data before it reaches a dashboard.",
+                  "whenWrong": "It does — failing tests stop wrong numbers from shipping.",
+                  "sim": "null sneaks into a key -> dbt test goes red"
+                },
+                {
+                  "prompt": "Data tests are an exotic feature most analysts won't benefit from.",
+                  "answer": false,
+                  "whenRight": "Correct — automated data quality is core to reliable analytics and rare to know.",
+                  "whenWrong": "Not so — tests are central to trustworthy pipelines and a standout skill.",
+                  "sim": "tests = the reliability layer teams depend on"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Schema tests",
-              "body": "STEP 1 — Create models/example/schema.yml:\n      version: 2\n      models:\n        - name: sub_category_margin\n          description: 'Profit margin per sub-category'\n          columns:\n            - name: subcategory\n              tests:\n                - unique\n                - not_null\n            - name: margin\n              description: 'Profit / Sales'\n\nSTEP 2 — Run the tests:\n      dbt test\n  YOU SHOULD SEE: '2 tests passed'.\n\nSTEP 3 — (OPTIONAL) Generate docs:\n      dbt docs generate\n      dbt docs serve\n  Browser opens with a navigable diagram of your data + tests. This is what real analyst teams use."
+              "title": "Your turn — add tests",
+              "body": "[PRODUCE] Add `unique` + `not_null` tests on your model's key column in schema.yml; run `dbt test` and confirm they pass."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag dbt-ready + commit",
-          "summary": "Your modern stack project is shipped.",
+          "title": "Ship: dbt-ready",
+          "summary": "Commit the dbt project, tag dbt-ready.",
           "items": [
             {
-              "kind": "reading",
-              "title": "GitHub — create repository",
-              "url": "https://github.com/new",
-              "why": "Click 'Open'. Name: superstore-dbt. Public."
+              "kind": "lesson",
+              "title": "Ship: dbt-ready",
+              "body": "## What it is\nCommit your dbt project — models, tests, config — to git and tag `dbt-ready`. (The warehouse holds the data; git holds the transformation code.)\n\n## Why it matters\nA working dbt project on your GitHub — SQL models with passing tests against a real cloud warehouse — signals **analytics engineering**, the higher-paid frontier of the analyst career. Very few junior portfolios show this, so it's a genuine differentiator."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A dbt + BigQuery project on your portfolio signals analytics-engineering skills few juniors have.",
+                  "answer": true,
+                  "whenRight": "Right — versioned, tested SQL models against a cloud warehouse stands out.",
+                  "whenWrong": "It does — dbt + warehouse is a rare, higher-paid differentiator.",
+                  "sim": "dbt models + tests + BigQuery = analytics engineering"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Acceptance — dbt v0.1",
-              "body": "STEP 1 — Add a README.md at the top of forge_analytics/:\n      # Superstore on the Modern Data Stack\n      Same analysis as my Excel/Sheets Superstore project — now powered by BigQuery + dbt.\n      \n      ## Stack\n      - Warehouse: BigQuery\n      - Transformation: dbt\n      - Models: 1 (sub_category_margin)\n      - Tests: 2 passing (unique + not_null on subcategory)\n      \n      ## How to run\n      pip install dbt-bigquery\n      gcloud auth application-default login\n      dbt run && dbt test\n\nSTEP 2 — Push:\n      git init && git add . && git commit -m 'dbt v0.1: superstore on modern data stack'\n      git remote add origin https://github.com/YOUR-USERNAME/superstore-dbt.git\n      git push -u origin main\n\nPASS:\n  ☐ BigQuery project + dataset created\n  ☐ Superstore data uploaded to BigQuery\n  ☐ dbt installed + dbt debug passes\n  ☐ At least 1 dbt model that runs successfully\n  ☐ At least 2 tests passing\n  ☐ (OPTIONAL) dbt docs generated locally\n  ☐ Public GitHub repo named superstore-dbt"
+              "title": "Acceptance — dbt-ready is done when",
+              "body": "[PRODUCE] Repo has a dbt project: at least one model + passing tests, connected to BigQuery.\n[CODE] `git add . && git commit -m \"dbt + BigQuery: first model + tests\"`; `git tag dbt-ready`; push.\n[WRITE] Drop your repo link in the dashboard check-in."
             }
           ]
         }
