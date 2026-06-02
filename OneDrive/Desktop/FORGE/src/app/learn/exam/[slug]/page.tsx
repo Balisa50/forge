@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, FileText, ListChecks, Target } from "lucide-react";
 import { loadExamPath, totalConcepts } from "@/lib/examPaths";
 import PathMap, { type PathMapModule } from "@/components/exam/PathMap";
+import ReadinessPanel from "@/components/exam/ReadinessPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,7 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-10">
+        <ReadinessPanel slug={path.slug} modules={modules} />
         <PathMap slug={path.slug} gradient={path.gradient} modules={modules} />
       </section>
     </main>
