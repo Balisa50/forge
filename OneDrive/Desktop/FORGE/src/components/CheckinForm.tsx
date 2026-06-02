@@ -17,6 +17,7 @@ import {
   formatFileSize,
   getLanguageLabel,
   ACCEPTED_MIME_TYPES,
+  detectUrlType,
 } from "@/lib/submission-types";
 import { upload } from "@vercel/blob/client";
 
@@ -60,22 +61,6 @@ function fileIcon(ext: string) {
     return <Film size={15} style={{ color: "#a78bfa", flexShrink: 0 }} />;
   }
   return <File size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />;
-}
-
-/** Detect what a pasted proof URL is, so the mentor knows what they're about
- *  to open without clicking. Pure string inspection — never blocks a URL. */
-function detectUrlType(url: string): { label: string; color: string } | null {
-  let host = "";
-  try { host = new URL(url).hostname.replace(/^www\./, ""); } catch { return null; }
-  if (/github\.com|github\.io/.test(host)) return { label: "GitHub repo detected", color: "#a78bfa" };
-  if (/drive\.google\.com|docs\.google\.com/.test(host)) return { label: "Google Drive link detected", color: "#34d399" };
-  if (/colab\.research\.google\.com/.test(host)) return { label: "Colab notebook detected", color: "#fbbf24" };
-  if (/codesandbox\.io/.test(host)) return { label: "CodeSandbox detected", color: "#60a5fa" };
-  if (/youtube\.com|youtu\.be/.test(host)) return { label: "YouTube video detected", color: "#f87171" };
-  if (/vercel\.app|netlify\.app|pages\.dev/.test(host)) return { label: "Deployed app detected", color: "#34d399" };
-  if (/kaggle\.com/.test(host)) return { label: "Kaggle notebook detected", color: "#60a5fa" };
-  if (/figma\.com/.test(host)) return { label: "Figma file detected", color: "#f472b6" };
-  return { label: `Link detected · ${host}`, color: "var(--text-dim)" };
 }
 
 export default function CheckinForm({
@@ -582,8 +567,8 @@ export default function CheckinForm({
             {(() => {
               const d = detectUrlType(projectUrl.trim());
               return d ? (
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color: d.color, background: `${d.color === "var(--text-dim)" ? "rgba(148,163,184,0.12)" : d.color + "1f"}`, border: `1px solid ${d.color === "var(--text-dim)" ? "var(--border)" : d.color + "55"}`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
-                  {d.label}
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color: d.color, background: `${d.color}1f`, border: `1px solid ${d.color}55`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
+                  {d.label} detected{d.isVideo ? " · video" : ""}
                 </span>
               ) : null;
             })()}

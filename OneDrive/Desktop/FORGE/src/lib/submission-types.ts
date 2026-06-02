@@ -187,3 +187,28 @@ export function getLanguageLabel(ext: string): string {
   };
   return map[ext] ?? ext.toUpperCase();
 }
+
+/** Detect what a pasted proof URL is, so mentors know what they're opening
+ *  without clicking — and so the submission form can badge it on entry. Pure
+ *  string inspection; never blocks or rewrites the URL. Returns null for input
+ *  that isn't a parseable URL. */
+export function detectUrlType(url: string): { label: string; color: string; isVideo: boolean } | null {
+  let host = "";
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+  const drive = /drive\.google\.com|docs\.google\.com/.test(host);
+  const youtube = /youtube\.com|youtu\.be/.test(host);
+  if (/github\.com|github\.io/.test(host)) return { label: "GitHub repo", color: "#a78bfa", isVideo: false };
+  if (drive) return { label: "Google Drive link", color: "#34d399", isVideo: true };
+  if (youtube) return { label: "YouTube video", color: "#f87171", isVideo: true };
+  if (/colab\.research\.google\.com/.test(host)) return { label: "Colab notebook", color: "#fbbf24", isVideo: false };
+  if (/codesandbox\.io|stackblitz\.com/.test(host)) return { label: "CodeSandbox", color: "#60a5fa", isVideo: false };
+  if (/vercel\.app|netlify\.app|pages\.dev/.test(host)) return { label: "Deployed app", color: "#34d399", isVideo: false };
+  if (/kaggle\.com/.test(host)) return { label: "Kaggle notebook", color: "#60a5fa", isVideo: false };
+  if (/figma\.com/.test(host)) return { label: "Figma file", color: "#f472b6", isVideo: false };
+  if (/loom\.com|vimeo\.com/.test(host)) return { label: "Video link", color: "#f87171", isVideo: true };
+  return { label: host, color: "#94a3b8", isVideo: false };
+}

@@ -15,6 +15,7 @@ import {
   fileHref,
   isVideo,
   isAudio,
+  detectUrlType,
 } from "@/lib/submission-types";
 
 interface SubmissionViewerProps {
@@ -262,31 +263,41 @@ export default function SubmissionViewer({ evidenceType, evidenceUrl, evidenceDa
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem", marginTop: "0.625rem" }}>
-      {/* URL evidence */}
-      {evidenceUrl && evidenceType !== "screenshot" && (
-        <a
-          href={evidenceUrl}
-          target="_blank"
-          rel="noreferrer noopener"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.375rem",
-            color: "var(--accent)",
-            fontSize: "0.8125rem",
-            fontFamily: "var(--font-mono)",
-            textDecoration: "none",
-            maxWidth: "100%",
-            minWidth: 0,
-          }}
-        >
-          <Link2 size={13} style={{ flexShrink: 0 }} />
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0, flex: "1 1 auto" }}>
-            {evidenceUrl}
-          </span>
-          <ExternalLink size={11} style={{ flexShrink: 0 }} />
-        </a>
-      )}
+      {/* URL evidence — with a detection badge so the mentor knows what it is
+          (GitHub repo, Google Drive video, Colab, etc.) before clicking. */}
+      {evidenceUrl && evidenceType !== "screenshot" && (() => {
+        const d = detectUrlType(evidenceUrl);
+        return (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", maxWidth: "100%", minWidth: 0 }}>
+            {d && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", flexShrink: 0, fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color: d.color, background: `${d.color}1f`, border: `1px solid ${d.color}55`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
+                {d.isVideo ? <Film size={11} /> : <Link2 size={11} />} {d.label}
+              </span>
+            )}
+            <a
+              href={evidenceUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                color: "var(--accent)",
+                fontSize: "0.8125rem",
+                fontFamily: "var(--font-mono)",
+                textDecoration: "none",
+                minWidth: 0,
+                flex: "1 1 auto",
+              }}
+            >
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0, flex: "1 1 auto" }}>
+                {evidenceUrl}
+              </span>
+              <ExternalLink size={11} style={{ flexShrink: 0 }} />
+            </a>
+          </div>
+        );
+      })()}
 
       {/* Legacy screenshot */}
       {isLegacyScreenshot && (
