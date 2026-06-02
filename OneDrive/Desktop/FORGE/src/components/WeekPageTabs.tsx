@@ -200,6 +200,7 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
         {week.concept_widget && (
           <ConceptWidget id={week.concept_widget.id} params={week.concept_widget.params} caption={week.concept_widget.caption} />
         )}
+        <WeekResources resources={week.resources} onOpen={openItem} />
         <ShipItSection week={week} />
         {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
       </div>
@@ -243,6 +244,11 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
           <ForgeMarkdown>{week.context}</ForgeMarkdown>
         </div>
       )}
+
+      {/* Curated resources — the videos/readings that teach the week. Surfaced
+          here so the learner actually learns, not just copies code from the
+          day exercises. */}
+      <WeekResources resources={week.resources} onOpen={openItem} />
 
       {/* Day stream */}
       {week.days.map((d, idx) => {
@@ -645,6 +651,78 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/** Curated learn-first resources for the week (videos + readings). These live
+ *  on the week JSON's `resources` array but were previously only shown on the
+ *  roadmap overview — so mentees never saw them and were left copying code from
+ *  the day exercises. Surfaced at the top of the week so they learn first. */
+function WeekResources({
+  resources,
+  onOpen,
+}: {
+  resources?: { label: string; url: string; note?: string }[];
+  onOpen: (url: string, label: string) => void;
+}) {
+  if (!resources || resources.length === 0) return null;
+  const isVid = (u: string) => /youtube\.com|youtu\.be|vimeo\.com|loom\.com/.test(u);
+  return (
+    <div className="forge-panel" style={{ padding: "1.125rem 1.25rem", border: "1px solid rgba(96,165,250,0.28)", background: "linear-gradient(180deg, rgba(96,165,250,0.05), rgba(96,165,250,0.01))" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.875rem" }}>
+        <Play size={16} style={{ color: "#60a5fa" }} />
+        <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.0625rem", fontWeight: 700 }}>
+          Learn first — watch &amp; read
+        </h3>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", letterSpacing: "0.08em" }}>
+          {resources.length} resources
+        </span>
+      </div>
+      <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.5, marginBottom: "0.875rem" }}>
+        Go through these before the exercises below. Understand the idea first, then build it yourself — don&apos;t just copy the code.
+      </p>
+      <ul style={{ display: "flex", flexDirection: "column", gap: "0.5rem", listStyle: "none", padding: 0, margin: 0 }}>
+        {resources.map((r, i) => {
+          const video = isVid(r.url);
+          const accent = video ? "#fb7185" : "#60a5fa";
+          return (
+            <li key={i}>
+              <button
+                type="button"
+                onClick={() => onOpen(r.url, r.label)}
+                style={{
+                  width: "100%", textAlign: "left", cursor: "pointer",
+                  display: "flex", alignItems: "flex-start", gap: "0.75rem",
+                  background: "var(--bg-card)", border: "1px solid var(--border)",
+                  borderRadius: 8, padding: "0.75rem 0.875rem",
+                  transition: "border-color 0.15s, background 0.15s",
+                }}
+              >
+                <span style={{ width: 28, height: 28, borderRadius: 7, background: `${accent}1f`, color: accent, display: "grid", placeItems: "center", flexShrink: 0, marginTop: "0.0625rem" }}>
+                  {video ? <Play size={14} /> : <FileText size={14} />}
+                </span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: accent }}>
+                      {video ? "Watch" : "Read"}
+                    </span>
+                    <span style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)", lineHeight: 1.35 }}>
+                      {r.label}
+                    </span>
+                  </span>
+                  {r.note && (
+                    <span style={{ display: "block", color: "var(--text-secondary)", fontSize: "0.8125rem", lineHeight: 1.5, marginTop: "0.2rem" }}>
+                      {r.note}
+                    </span>
+                  )}
+                </span>
+                <ExternalLink size={13} style={{ color: "var(--text-dim)", flexShrink: 0, marginTop: "0.2rem" }} />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
