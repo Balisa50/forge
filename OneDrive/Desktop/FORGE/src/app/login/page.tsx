@@ -159,9 +159,9 @@ export default function LoginPage() {
   };
 
   return (
-    {/* margin:auto on the card centres it on both axes when it fits and keeps the
-        top reachable/scrollable when taller than the viewport — robust against the
-        off-centre / cut-off look. overflowX hidden guards against any child overflow. */}
+    // margin:auto on the inner card centres it on both axes when it fits and keeps
+    // the top reachable/scrollable when taller than the viewport. width:100vw +
+    // overflowX:hidden make centring immune to parent sizing and child overflow.
     <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100vw", maxWidth: "100%", display: "flex", padding: "1.5rem", boxSizing: "border-box", overflowX: "hidden" }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
