@@ -7,7 +7,8 @@
       "number": 1,
       "title": "What data science actually is",
       "phase": "Foundations",
-      "commitment_hours": "5–8",
+      "commitment_hours": "10-15",
+      "context": "Somewhere in New York right now, a yellow cab is making a turn. The meter is logging the moment — exact fare, exact distance, pickup minute, drop-off minute — and a few months from now that single record will sit on a public NYC government server alongside three and a half million other trips from the same month.\n\nThose trips are October 2023. They are sitting there. This week you load all of them into Python and figure out three things about how the city actually moves.\n\nYou are building TaxiPulse. By Sunday it lives on your GitHub as your first real piece of public work.\n\nI want to flag something before you write a line of code. The thing that makes someone good at this job is not pandas. It is a kind of suspicion. The instinct to see a 30-cent taxi fare and immediately ask whether the meter was broken. The habit of noticing that the average trip distance shifted by 4% between two months and wanting to know if the city changed a regulation or if someone forgot to clean the data. A quiet distrust of round numbers. That instinct is what we are actually training here. The syntax is incidental — you will absorb pandas just by needing it.\n\nA second thing: this is going to feel slow at first. Installing Anaconda, opening Jupyter for the first time, fighting with a Python kernel that will not start, downloading a 50MB file from a city website that buries the link. None of that is the interesting part. All of it is unavoidable. Push through the boring half of the week so you get to the interesting half with the data already loaded.\n\nYou will hit errors. Red text in your terminal, scary-looking tracebacks. Most of them are boring once you read them — usually a column name you typed slightly wrong, or a quote mark you forgot to close. When the first one happens, do not refresh the page. Read the last line of the error first. That line is where Python tells you what actually broke. We will practise this together.\n\nBy Sunday: 3.5 million trips loaded, the obvious junk filtered out, three real patterns about NYC movement, and one Jupyter notebook live at a public URL with your name on it. That is the week.",
       "resources": [
         {
           "label": "Create your GitHub account (2 min)",
@@ -75,650 +76,1183 @@
           "note": "5 min. The 5 sections every project README needs. Recruiters skim this in 30 seconds."
         }
       ],
-      "context": "Somewhere in New York right now, a yellow cab is making a turn. The meter is logging the moment — exact fare, exact distance, pickup minute, drop-off minute — and a few months from now that single record will sit on a public NYC government server alongside three and a half million other trips from the same month.\n\nThose trips are October 2023. They are sitting there. This week you load all of them into Python and figure out three things about how the city actually moves.\n\nYou are building TaxiPulse. By Sunday it lives on your GitHub as your first real piece of public work.\n\nI want to flag something before you write a line of code. The thing that makes someone good at this job is not pandas. It is a kind of suspicion. The instinct to see a 30-cent taxi fare and immediately ask whether the meter was broken. The habit of noticing that the average trip distance shifted by 4% between two months and wanting to know if the city changed a regulation or if someone forgot to clean the data. A quiet distrust of round numbers. That instinct is what we are actually training here. The syntax is incidental — you will absorb pandas just by needing it.\n\nA second thing: this is going to feel slow at first. Installing Anaconda, opening Jupyter for the first time, fighting with a Python kernel that will not start, downloading a 50MB file from a city website that buries the link. None of that is the interesting part. All of it is unavoidable. Push through the boring half of the week so you get to the interesting half with the data already loaded.\n\nYou will hit errors. Red text in your terminal, scary-looking tracebacks. Most of them are boring once you read them — usually a column name you typed slightly wrong, or a quote mark you forgot to close. When the first one happens, do not refresh the page. Read the last line of the error first. That line is where Python tells you what actually broke. We will practise this together.\n\nBy Sunday: 3.5 million trips loaded, the obvious junk filtered out, three real patterns about NYC movement, and one Jupyter notebook live at a public URL with your name on it. That is the week.",
+      "concept_check": [
+        {
+          "q": "A manager asks: 'Which hour makes us the most money?' — first move?",
+          "choices": [
+            "Average all fares and report it",
+            "Clarify: most money means total revenue, highest average fare, or highest trip count?",
+            "Build a bar chart immediately",
+            "Filter the data to peak hours"
+          ],
+          "correct": 1,
+          "explain": "Real data science starts with a precise question. 'Most money' could mean three different things — answering the wrong one wastes a week."
+        },
+        {
+          "q": "What separates a data scientist from a data analyst?",
+          "choices": [
+            "Data scientists use Python; analysts use Excel",
+            "Data scientists build predictive models; analysts describe what already happened",
+            "Data scientists earn more",
+            "Data scientists work with bigger files"
+          ],
+          "correct": 1,
+          "explain": "The core distinction is description vs prediction. Analysts find patterns in the past. Data scientists build models that generalise to new, unseen data."
+        },
+        {
+          "q": "Why store 3.5M rows as Parquet instead of CSV?",
+          "choices": [
+            "Parquet is easier to open in Excel",
+            "Parquet is columnar — reading one column skips the other 19 entirely",
+            "CSV cannot store numbers",
+            "Parquet always uses less RAM"
+          ],
+          "correct": 1,
+          "explain": "Parquet is columnar. Reading one column reads only that column's bytes. CSV reads every byte of every row regardless."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "What is data science?",
-          "summary": "Today is mostly watching and writing down what you think. No coding yet.",
+          "title": "What data science actually is",
+          "summary": "Orientation: the mental model before you write a line of code.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "What data science actually is",
+              "body": "## What it is\nData science is the practice of **turning raw data into decisions** — using code to ask questions, statistics to test whether the answers are real, and communication to make findings actionable.\n\nThe loop never changes regardless of company or domain:\n1. **Question** — a business problem precise enough that data can test it\n2. **Pipeline** — code that loads, cleans, and analyses the data\n3. **Decision** — a recommendation backed by evidence\n\nEverything in this track — pandas, SQL, sklearn, FastAPI, Streamlit — is a tool in service of that loop.\n\n## Description vs prediction\n**Description** = 'what happened?' — the analyst's territory. **Prediction** = 'what will happen next?' — the data scientist's move, requiring a trained model. Week 1 is pure description. Week 5 is your first prediction model.\n\n## Where this fits in TaxiPulse\nThis week you load 3.5 million NYC taxi trips and answer three questions you commit to RIGHT NOW — before touching the data. That commitment forces a hypothesis first. It is the single most important habit in the field."
+            },
+            {
               "kind": "video",
-              "title": "Data Science explained simply (2 minutes)",
+              "title": "Data Science explained in 2 minutes",
               "url": "https://www.youtube.com/watch?v=X3paOmcrTjQ",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "Watch this first. It is fast and clear."
+              "why": "Watch first. Sets the tone: DS is a craft, not magic."
             },
             {
-              "kind": "video",
-              "title": "Data Science vs Machine Learning vs Analytics (10 min)",
-              "url": "https://www.youtube.com/results?search_query=data+science+vs+machine+learning+vs+analytics+beginner",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Helps you understand what your future job actually looks like."
+              "kind": "lesson",
+              "title": "The TaxiPulse project",
+              "body": "## The dataset\nNYC TLC releases every yellow-cab trip as a public Parquet file. October 2023: **3,516,318 rows**, 19 columns.\n\n```text\nColumn                  Type       What it is\ntpep_pickup_datetime    timestamp  When the meter started\ntrip_distance           float      Miles logged by the meter\nfare_amount             float      Base fare (excludes tip)\ntip_amount              float      Tip (non-zero for card payments)\nPULocationID            int        Pickup taxi zone (1-265)\n```\n\n## Write your three guesses NOW\nBefore loading one byte, create `guesses.txt` and write your gut answer:\n1. What hour of the day has the most trips?\n2. Do longer trips tip a higher or lower % of fare?\n3. Which day of the week has the highest average fare?\n\nBeing wrong is not failure — it is the point. Data that surprises you is the valuable kind."
             },
             {
-              "kind": "reflection",
-              "title": "Write three guesses",
-              "body": "By Sunday you will answer these three questions about NYC taxi trips in October 2023. Before you look at any data, write down your guess for each one — just a sentence each. Put your guesses in a file called `guesses.txt`. You will check them on Day 6 and see if you were right.\n\nQuestion 1: What hour of the day are the most taxi trips? (Midnight? 8am? 5pm?)\n\nQuestion 2: Do people tip more when the ride is longer, or less?\n\nQuestion 3: Which day of the week has the highest average fare? (Friday night fares? Sunday mornings?)"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Data science and machine learning are the same field.",
+                  "answer": false,
+                  "whenRight": "ML is a subset of DS. DS also covers cleaning, exploration, stats, and communication.",
+                  "whenWrong": "ML is one tool inside data science. DS also includes statistical testing and turning findings into decisions.",
+                  "sim": "DS = stats + coding + domain + ML\nML is a subset of DS"
+                },
+                {
+                  "prompt": "Parquet loads one column out of 20 faster than CSV because it stores columns contiguously on disk.",
+                  "answer": true,
+                  "whenRight": "Right — columnar storage means reading one column skips the other 19 entirely at the byte level.",
+                  "whenWrong": "Parquet IS columnar. Reading column 5 of 20 skips columns 1-4 and 6-20. CSV has no such optimisation.",
+                  "sim": "read_parquet()[['fare']]  # reads ~5% of file\nread_csv()[['fare']]      # reads 100% of file"
+                },
+                {
+                  "prompt": "Writing your hypothesis BEFORE looking at data is optional for experienced analysts.",
+                  "answer": false,
+                  "whenRight": "Pre-registration is non-optional. Post-hoc hypotheses are confirmation bias at any seniority level.",
+                  "whenWrong": "Even senior data scientists pre-register. Fitting the hypothesis to what you already saw produces confident, wrong analysis.",
+                  "sim": "# The rule: commit first, look second\n# No exceptions"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — commit to three guesses",
+              "body": "[WRITE] Create `guesses.txt` in your taxipulse folder. Write one sentence per question — your actual gut guess, not a safe hedge. You will grade yourself on Day 5."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Install Python and Jupyter",
-          "summary": "Today we set up the tools. This is the boring but important day. Do not skip.",
+          "title": "Python you actually need",
+          "summary": "The minimum viable Python before touching pandas.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Anaconda download page (official)",
-              "url": "https://www.anaconda.com/download",
-              "why": "Click 'Open' to go to the page. Download the version for your computer (Windows, Mac, or Linux)."
+              "kind": "lesson",
+              "title": "Five Python constructs for data science",
+              "body": "## What you need — nothing more\nFive constructs cover ~80% of everything you will write in the first 10 weeks.\n\n```python\n# 1. Variables\nfare = 14.50\nborough = 'Manhattan'\nis_weekend = False\n\n# 2. Lists\nhours = [7, 8, 17, 18, 19]\nhours.append(20)   # [7, 8, 17, 18, 19, 20]\nhours[0]           # 7  (zero-indexed)\n\n# 3. Dicts\nzone = {132: 'JFK Airport', 138: 'LaGuardia'}\nzone[132]          # 'JFK Airport'\n\n# 4. Loops\nfor h in [7, 8, 9]:\n    print(f'Rush hour: {h}:00')\n\n# 5. Functions\ndef tip_rate(tip, fare):\n    return tip / fare if fare > 0 else 0.0\n\ntip_rate(2.50, 12.00)   # 0.2083\n```\n\n## The just-enough rule\nThree weeks on syntax before data = lost momentum = quitting. Learn these five, then learn everything else by needing it."
             },
             {
               "kind": "video",
-              "title": "How to install Anaconda on Windows / Mac / Linux",
-              "url": "https://www.youtube.com/results?search_query=install+anaconda+2024+windows+mac+linux+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": "Pick the video that matches YOUR computer (Windows or Mac)."
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Fastest Python orientation. Watch before writing any code."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Python warmup — tools TaxiPulse will actually use\n```python\n# Extract hour from a datetime string\ndef get_hour(ts):\n    return int(ts[11:13])\n\nget_hour('2023-10-15 17:32:00')\n# 17\n\n# Map day-of-week int to name\nDAYS = {0:'Mon',1:'Tue',2:'Wed',3:'Thu',4:'Fri',5:'Sat',6:'Sun'}\nDAYS[4]\n# 'Fri'\n\n# Filter a list with a comprehension\nraw = [4.5, 14.0, 320.0, 8.75, 0.01]\nclean = [f for f in raw if 2.50 <= f <= 200.0]\n# [4.5, 14.0, 8.75]\n```\nEvery snippet does something TaxiPulse actually needs: extract hours, label days, filter outliers."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`my_list[0]` gives the FIRST element in Python (zero-indexed).",
+                  "answer": true,
+                  "whenRight": "Right — zero-indexed. First = index 0, last = index -1.",
+                  "whenWrong": "Python is zero-indexed. my_list[0] is the first item.",
+                  "sim": "hours = [7, 8, 9]\nhours[0]   # 7\nhours[-1]  # 9 (last)"
+                },
+                {
+                  "prompt": "A Python dict in 3.7+ preserves the order you inserted keys.",
+                  "answer": true,
+                  "whenRight": "Correct — since 3.7, dicts are ordered by insertion as a language guarantee.",
+                  "whenWrong": "Python 3.7+ dicts ARE ordered. This matters when you iterate over them."
+                },
+                {
+                  "prompt": "`def tip_rate(tip, fare): return tip/fare` is safe to call with fare=0.",
+                  "answer": false,
+                  "whenRight": "Right — division by zero raises ZeroDivisionError. Guard with `if fare > 0 else 0.0`.",
+                  "whenWrong": "It will crash with ZeroDivisionError. Always guard: `return tip/fare if fare > 0 else 0.0`",
+                  "sim": "tip_rate(2.5, 0)\n# ZeroDivisionError: division by zero"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Step-by-step setup",
-              "body": "Follow each step in order. Do not skip ahead.\n\nSTEP 1 — Download Anaconda.\n  Go to https://www.anaconda.com/download\n  Click the big download button for your operating system (Windows, Mac, or Linux).\n  Run the installer when it finishes downloading. Click 'Next' on every screen — the defaults are fine.\n  This takes about 5-10 minutes.\n\nSTEP 2 — Open the terminal.\n  WINDOWS: Press the Windows key, type 'Anaconda Prompt', press Enter.\n  MAC: Press Cmd+Space, type 'Terminal', press Enter.\n  LINUX: Open your usual terminal.\n  A black or white window with text appears. This is where you type commands.\n\nSTEP 3 — Check Python works.\n  Type this and press Enter:\n      python --version\n  YOU SHOULD SEE: something like 'Python 3.11.5' (any 3.10+ is fine).\n  IF YOU SEE 'command not found': close the terminal, reopen it, try again. If still broken, watch the install video again.\n\nSTEP 4 — Make a folder for the project.\n  Type these one at a time, pressing Enter after each:\n      cd Desktop\n      mkdir taxipulse\n      cd taxipulse\n  Your prompt should now end with 'taxipulse'.\n  This is now your project home.\n\nSTEP 5 — Start Jupyter Notebook.\n  Type this and press Enter:\n      jupyter notebook\n  YOU SHOULD SEE: your web browser opens to a page showing files in the taxipulse folder. The page address starts with 'localhost:8888'.\n  This is Jupyter. It is where you will write Python and see results.\n\nSTEP 6 — Create your first notebook.\n  In the browser, click the 'New' button (top right) → choose 'Python 3'.\n  A new tab opens with an empty notebook called 'Untitled'.\n  Click the word 'Untitled' at the top and rename it to '01-setup'.\n\nSTEP 7 — Test that everything works.\n  In the first empty cell, type this exactly:\n      import pandas\n      import numpy\n      import matplotlib\n      print('All good — pandas is', pandas.__version__)\n  Press Shift+Enter to run the cell.\n  YOU SHOULD SEE: 'All good — pandas is 2.x.x' (any 2.x is fine).\n  IF YOU SEE 'ModuleNotFoundError': pandas isn't installed. In the terminal (not Jupyter), type 'conda install pandas numpy matplotlib' and press Enter. Then re-run the cell.\n\nSTEP 8 — Save.\n  Press Ctrl+S (or Cmd+S on Mac) in the Jupyter tab.\n\nIf you got here without errors — you have Python + Jupyter working. That alone is a win. Stop for today."
+              "title": "Your turn — Python warmup",
+              "body": "[CODE] In `warmup.py`, write three functions:\n1. `clean_fares(lst)` — returns only values between 2.50 and 200.00\n2. `label_day(n)` — maps 0 to 'Mon' ... 6 to 'Sun' using a dict\n3. `tip_rate(tip, fare)` — returns tip/fare, returns 0.0 if fare is 0\nTest each with print() and confirm the output."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Download the real NYC taxi data",
-          "summary": "Today you get the actual data file. One specific file. Do not look for others.",
+          "title": "Load and inspect the taxi data",
+          "summary": "First contact with 3.5 million rows — describe before you analyse.",
           "items": [
             {
-              "kind": "reading",
-              "title": "NYC Taxi data — official page (NYC.gov)",
-              "url": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
-              "why": "Open this in your browser so you know where the data comes from. It is published by the NYC government."
+              "kind": "lesson",
+              "title": "pandas DataFrames and the inspect-first habit",
+              "body": "## What a DataFrame is\nA pandas **DataFrame** is a two-dimensional table with named columns and a labelled index. Every column is a Series. Think: an Excel sheet that lives in memory and responds to code.\n\nFour commands tell you everything about a new dataset:\n\n| Command | What it shows |\n|---|---|\n| `df.head()` | First 5 rows — eyeball the structure |\n| `df.shape` | (rows, columns) |\n| `df.info()` | Column names, dtypes, non-null counts |\n| `df.describe()` | Min/max/mean/std for all numeric columns |\n\n## Why inspect first — the trust gap\nRaw data is never clean. Fare amounts of $0.01 and $9,999 sit in the same column. Distances of 0.0 and 312 miles exist. Skip inspection, compute statistics on garbage, report them with confidence. That is the most common mistake in data science."
             },
             {
-              "kind": "reading",
-              "title": "Direct download link — yellow_tripdata_2023-10.parquet (50 MB)",
-              "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet",
-              "why": "This is the exact file we will use this week. Click 'Open' to download it — or follow the terminal steps below."
+              "kind": "video",
+              "title": "pandas in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=tRKeLrwfUgU",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Fastest orientation to what pandas is and why it exists."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Load and inspect 3.5 million trips\n```python\nimport pandas as pd\n\ndf = pd.read_parquet('data/yellow_tripdata_2023-10.parquet')\nprint(df.shape)\n# (3516318, 19)\n\nprint(df[['fare_amount','trip_distance','tip_amount']].describe().round(2))\n#        fare_amount  trip_distance  tip_amount\n# count   3516318.0    3516318.0     3516318.0\n# mean         18.38         3.12        2.87\n# min         -52.00         0.00        0.00\n# 25%           8.50         1.04        0.00\n# max        9999.00       312.12      300.00\n```\nImmediately visible problems: fare -52 and 9999, distance 0 and 312 miles. Day 4 fixes these."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.shape` returns (columns, rows) — columns first.",
+                  "answer": false,
+                  "whenRight": "It is rows first: (3516318, 19).",
+                  "whenWrong": "shape is (rows, columns). For TaxiPulse: (3516318, 19).",
+                  "sim": "df.shape\n# (3516318, 19)  <- rows, cols"
+                },
+                {
+                  "prompt": "`df.describe()` only shows statistics for numeric columns by default.",
+                  "answer": true,
+                  "whenRight": "Correct — it skips text columns. Use describe(include='all') to include strings.",
+                  "whenWrong": "It does skip non-numeric columns. Add include='all' to include strings."
+                },
+                {
+                  "prompt": "A fare_amount of -52 in taxi data is a valid trip to keep in the analysis.",
+                  "answer": false,
+                  "whenRight": "Right — negative fares are data errors. Filter them.",
+                  "whenWrong": "Negative fares are errors. A taxi cannot charge -$52. Remove them before any analysis.",
+                  "sim": "df['fare_amount'].min()\n# -52.0  <- remove this"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Get the data file",
-              "body": "STEP 1 — Open your terminal where 'taxipulse' is.\n  WINDOWS: Anaconda Prompt. Make sure your prompt ends with 'taxipulse'.\n  MAC/LINUX: Terminal in the taxipulse folder.\n  If unsure, type 'pwd' and press Enter — you should see a path ending in '/taxipulse'.\n\nSTEP 2 — Make a folder called 'data' inside taxipulse.\n      mkdir data\n\nSTEP 3 — Download the dataset. This is a 50MB file with about 3 million taxi trips.\n  WINDOWS (Anaconda Prompt):\n      curl -o data/taxi.parquet https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  MAC / LINUX:\n      curl -o data/taxi.parquet https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  IF curl IS NOT FOUND: copy the URL into your browser. The file will download. Move it to taxipulse/data/ and rename it to 'taxi.parquet'.\n  YOU SHOULD SEE: a progress bar that fills up over 30-60 seconds.\n\nSTEP 4 — Verify the file is there.\n      dir data            (Windows)\n      ls -lh data         (Mac / Linux)\n  YOU SHOULD SEE: 'taxi.parquet' listed, around 47 MB in size.\n\nSTEP 5 — Open Jupyter and load it.\n  In the taxipulse folder, type 'jupyter notebook' if it isn't already open.\n  Open '01-setup.ipynb' (or make a new notebook called '02-load').\n  In a new cell, type exactly this:\n\n      import pandas as pd\n      df = pd.read_parquet('data/taxi.parquet')\n      print('Rows:', len(df))\n      print('Columns:', list(df.columns))\n      df.head()\n\n  Press Shift+Enter to run.\n  YOU SHOULD SEE:\n    Rows: about 3,500,000\n    Columns: a list with 'tpep_pickup_datetime', 'tpep_dropoff_datetime', 'passenger_count', 'trip_distance', 'fare_amount', 'tip_amount', and others\n    A table showing the first 5 rows of real taxi trips.\n\n  IF YOU SEE 'FileNotFoundError': you are not in the taxipulse folder, OR the file is named differently. Re-check Step 4.\n\nSTEP 6 — Save the notebook. You're done for today.\n  You just loaded 3.5 MILLION real taxi rides into Python. That is a real data scientist move."
+              "title": "Your turn — first inspection",
+              "body": "[CODE] Create `notebooks/01-inspect.ipynb`.\n1. Download yellow_tripdata_2023-10.parquet from NYC TLC into `data/`.\n2. Load with pd.read_parquet().\n3. Print shape, dtypes, info(), and describe() for fare_amount/trip_distance/tip_amount.\n4. Markdown cell: 2-3 sentences on what looks suspicious and what you will clean."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Clean the data",
-          "summary": "Real data has weird rows — negative fares, trips that take 0 seconds, trips that started before October. We remove them today.",
+          "title": "Clean the taxi data",
+          "summary": "Remove garbage before computing anything.",
           "items": [
             {
-              "kind": "video",
-              "title": "pandas filtering for beginners (15 min)",
-              "url": "https://www.youtube.com/results?search_query=pandas+filter+rows+beginner+tutorial",
-              "duration_min": 15,
-              "creator": "various",
-              "why": "Watch this once before you start the exercise."
+              "kind": "lesson",
+              "title": "Data cleaning — dropna, query, and the outlier problem",
+              "body": "## Three categories to clean\n\n**1. Missing values**\n```python\ndf.isnull().sum()   # count nulls per column\ndf = df.dropna(subset=['fare_amount','trip_distance'])\n```\n\n**2. Impossible values** — readings that cannot be real\n- fare_amount <= 0 (negative or zero — data errors)\n- trip_distance <= 0 or > 100 (meter glitch or test trip)\n- tip_amount < 0 (should never happen)\n\n**3. Extreme outliers** — technically possible, statistically distorting\n- fare_amount > 200 (wrecks the mean)\n\n## Document every filter\nCleaning is a judgment call. When someone asks 'why is your average fare $16.40?', you must answer: 'I removed fares below $2.50 and above $200, which was 8.8% of trips.' Undocumented cleaning is unfalsifiable analysis.\n\n## Never delete the raw file\nYour cleaned file is derived from the raw. If your cleaning has a bug, you need the original to re-run."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Clean the October 2023 taxi data\n```python\nimport pandas as pd\n\ndf = pd.read_parquet('data/yellow_tripdata_2023-10.parquet')\nprint('Before:', df.shape)\n# Before: (3516318, 19)\n\ndf = df.dropna(subset=['fare_amount','trip_distance','tpep_pickup_datetime'])\ndf = df.query('fare_amount >= 2.50 and fare_amount <= 200')\ndf = df.query('trip_distance > 0 and trip_distance <= 100')\ndf = df.query('tip_amount >= 0')\n\ndf['pickup_hour'] = df['tpep_pickup_datetime'].dt.hour\ndf['pickup_dow']  = df['tpep_pickup_datetime'].dt.dayofweek\ndf['tip_rate']    = df['tip_amount'] / df['fare_amount'].clip(lower=0.01)\n\nprint('After:', df.shape)\n# After: (3207445, 22)\ndf.to_parquet('data/clean.parquet', index=False)\n# Removed 308873 rows (8.8%)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "After cleaning, you should delete the raw Parquet to save disk space.",
+                  "answer": false,
+                  "whenRight": "Never delete raw data. The cleaned file is derived from it. Deleting raw is irreversible.",
+                  "whenWrong": "Never delete raw data. If your cleaning has a bug, you need the original to re-run.",
+                  "sim": "# Rule: raw data is sacred\n# clean.parquet is derived, not primary"
+                },
+                {
+                  "prompt": "`df.query('fare_amount >= 2.50')` modifies df in place.",
+                  "answer": false,
+                  "whenRight": "Right — query() returns a new DataFrame. You must assign: df = df.query(...).",
+                  "whenWrong": "query() returns a new object. You need df = df.query(...) to update.",
+                  "sim": "df = df.query('fare_amount >= 2.50')  # <- must assign"
+                },
+                {
+                  "prompt": "Adding `pickup_hour` from a datetime column is called feature engineering.",
+                  "answer": true,
+                  "whenRight": "Exactly — extracting hour from a timestamp is classic feature engineering. Raw timestamps are useless to most models.",
+                  "whenWrong": "It is — you are engineering a new feature from an existing one. The most common transformation in tabular ML.",
+                  "sim": "df['pickup_hour'] = df['tpep_pickup_datetime'].dt.hour\n# 0-23 integer per trip"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Remove the impossible trips",
-              "body": "Open a new notebook called '03-clean.ipynb'. In each cell below, type the code and press Shift+Enter to run it.\n\nCELL 1 — Load the data again.\n      import pandas as pd\n      df = pd.read_parquet('data/taxi.parquet')\n      print('Starting rows:', len(df))\n  YOU SHOULD SEE: 'Starting rows: 3,500,000' or similar.\n\nCELL 2 — Remove trips with no distance or no fare.\n      df = df[df['trip_distance'] > 0]\n      df = df[df['fare_amount'] > 0]\n      print('After removing 0-distance and 0-fare trips:', len(df))\n  YOU SHOULD SEE the row count drops a little.\n\nCELL 3 — Remove super-long trips that are probably errors.\n      df = df[df['trip_distance'] < 100]\n      print('After removing 100+ mile trips:', len(df))\n\nCELL 4 — Keep only October 2023 trips. Some rows have wrong dates.\n      df = df[(df['tpep_pickup_datetime'] >= '2023-10-01') & (df['tpep_pickup_datetime'] < '2023-11-01')]\n      print('After fixing dates:', len(df))\n\nCELL 5 — Add two useful columns we will need later.\n      df['trip_minutes'] = (df['tpep_dropoff_datetime'] - df['tpep_pickup_datetime']).dt.total_seconds() / 60\n      df['tip_percent'] = (df['tip_amount'] / df['fare_amount']) * 100\n      df['pickup_hour'] = df['tpep_pickup_datetime'].dt.hour\n      df['pickup_dayofweek'] = df['tpep_pickup_datetime'].dt.day_name()\n      print('Added 4 new columns:', list(df.columns)[-4:])\n\nCELL 6 — Remove super short or super long trips by time.\n      df = df[(df['trip_minutes'] >= 1) & (df['trip_minutes'] <= 180)]\n      print('Final rows after cleaning:', len(df))\n\nCELL 7 — Save the cleaned data.\n      df.to_parquet('data/clean.parquet')\n      print('Saved data/clean.parquet — final size:', len(df), 'rows')\n\n  YOU SHOULD SEE: 'Saved data/clean.parquet — final size: 3,400,000 rows' or close.\n  You just cleaned 3.5M rows of real data. Save the notebook."
+              "title": "Your turn — clean the data",
+              "body": "[CODE] Create `notebooks/02-clean.ipynb`.\n1. Apply all three cleaning steps: nulls, impossible values, outliers.\n2. Add pickup_hour, pickup_dow, and tip_rate columns.\n3. Print before/after shapes and % rows removed.\n4. Save to `data/clean.parquet`.\n5. Markdown: document every filter applied and why."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Answer Question 1: busiest hour",
-          "summary": "Today we make our first chart. By the end of today you will know what hour the most taxis run in October 2023.",
+          "title": "Answer your first question — busiest hour",
+          "summary": "GroupBy is the single most powerful analytical move in pandas.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "pandas groupby — the question-answering machine",
+              "body": "## What it is\ngroupby transforms 3.2 million rows into an answer in three steps:\n1. **Split** — group all trips at hour 0 together, all at hour 1 together, ...\n2. **Apply** — run an aggregation on each group (count, mean, sum, ...)\n3. **Combine** — return a compact result\n\nPattern: `df.groupby('column')['value'].agg_function()`\n\n## Every analytical question is a groupby\n- 'Busiest hour?' → `groupby('pickup_hour').size()`\n- 'Highest-earning borough?' → `groupby('borough')['fare_amount'].sum()`\n- 'Weekday vs weekend tipping?' → `groupby('pickup_dow')['tip_rate'].mean()`\n\nOnce groupby clicks, you can answer almost any descriptive question in one line. It is the pandas equivalent of SQL GROUP BY."
+            },
+            {
               "kind": "video",
-              "title": "Make a bar chart with pandas (10 min)",
-              "url": "https://www.youtube.com/results?search_query=pandas+plot+bar+chart+beginner+tutorial",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "title": "Aggregation in pandas with groupby() and agg()",
+              "url": "https://www.youtube.com/watch?v=wqqkONaTGgg",
+              "duration_min": 8,
+              "creator": "Corey Schafer",
+              "why": "The clearest groupby tutorial on YouTube. First 8 minutes."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Answer all three questions\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\n# Q1: busiest hour\nby_hour = df.groupby('pickup_hour').size().reset_index(name='trips')\nprint(by_hour.sort_values('trips', ascending=False).head(3))\n#    pickup_hour   trips\n#             18  217843   <- 6pm busiest\n#             17  213654\n#             19  211022\n\n# Q2: tip rate by distance bucket\ndf['dist_bucket'] = pd.cut(df['trip_distance'],\n    bins=[0,2,5,10,100], labels=['short','medium','long','very long'])\nprint(df.groupby('dist_bucket')['tip_rate'].mean().round(3))\n# short       0.167\n# medium      0.181\n# long        0.192\n# very long   0.211   <- longer trips tip MORE\n\n# Q3: average fare by day of week\nprint(df.groupby('pickup_dow')['fare_amount'].mean().round(2))\n# 0  16.82  Mon\n# 5  18.43  Sat\n# 6  18.91  Sun  <- Sunday highest\n```\nCheck guesses.txt. If you were wrong — that is a real finding."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.groupby('pickup_hour').size()` counts the number of rows per hour.",
+                  "answer": true,
+                  "whenRight": "Right — .size() after groupby counts rows per group.",
+                  "whenWrong": "It does — .size() counts rows per group. Result is a Series indexed by pickup_hour.",
+                  "sim": "df.groupby('pickup_hour').size()\n# 0     83241\n# 1     62018\n# ..."
+                },
+                {
+                  "prompt": "After `groupby().mean()`, the result has the same number of rows as the original DataFrame.",
+                  "answer": false,
+                  "whenRight": "groupby collapses rows. 24 unique hours produce 24 rows in the result, not 3.2M.",
+                  "whenWrong": "groupby is a collapsing operation. 24 hours -> 24 rows in the result.",
+                  "sim": "3.2M rows -> groupby 24 hours -> 24 rows"
+                },
+                {
+                  "prompt": "`.reset_index(name='trips')` turns the groupby result index into a regular column.",
+                  "answer": true,
+                  "whenRight": "Right — after groupby, the key is the index. reset_index() makes it a normal column.",
+                  "whenWrong": "It does — after groupby, the group key is the index. reset_index() promotes it to a column.",
+                  "sim": "# With reset_index:\n#  pickup_hour  trips\n#           18  217843"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Count trips by hour and plot them",
-              "body": "Make a new notebook '04-busiest-hour.ipynb'.\n\nCELL 1 — Load the cleaned data.\n      import pandas as pd\n      import matplotlib.pyplot as plt\n      df = pd.read_parquet('data/clean.parquet')\n      print('Working with', len(df), 'trips')\n\nCELL 2 — Count how many trips started in each hour.\n      trips_per_hour = df.groupby('pickup_hour').size()\n      print(trips_per_hour)\n  YOU SHOULD SEE: 24 lines, one for each hour 0 to 23, with a count next to each.\n\nCELL 3 — Plot it as a bar chart.\n      trips_per_hour.plot(kind='bar', figsize=(12, 5), color='steelblue')\n      plt.title('NYC Yellow Taxi trips by hour of day — October 2023')\n      plt.xlabel('Hour of day (0 = midnight, 23 = 11pm)')\n      plt.ylabel('Number of trips')\n      plt.tight_layout()\n      plt.savefig('busiest_hour.png', dpi=150)\n      plt.show()\n  YOU SHOULD SEE: a bar chart inside the notebook. The tallest bar is your busiest hour.\n\nCELL 4 — Print the answer in plain English.\n      busiest = trips_per_hour.idxmax()\n      busiest_count = trips_per_hour.max()\n      print(f'The busiest hour is {busiest}:00, with {busiest_count:,} trips.')\n\n  Write down the answer in a markdown cell below the chart:\n      # Answer to Q1: The busiest hour in October 2023 was XX:00, with about XXX,XXX trips.\n  Compare with your guess from Day 1. Were you right?"
+              "title": "Your turn — answer all three questions",
+              "body": "[CODE] In `notebooks/03-questions.ipynb`:\n1. GroupBy pickup_hour to find the top 3 busiest hours.\n2. GroupBy distance bucket — do longer trips tip more?\n3. GroupBy pickup_dow to find the highest-average-fare day.\n4. Open guesses.txt, add one line after each guess: 'I was right/wrong. Actual: X.'"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Answer Questions 2 and 3",
-          "summary": "Two more charts, two more answers. By tonight you have everything for Sunday's polish.",
+          "title": "Visualise with matplotlib",
+          "summary": "A chart that surprises you is a finding. A chart that confirms you is decoration.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "matplotlib — the floor of Python visualisation",
+              "body": "## Three things to know\n```python\nimport matplotlib.pyplot as plt\n\n# Bar chart\nplt.figure(figsize=(12, 4))\nplt.bar(x, y, color='#3b82f6')\nplt.xlabel('Pickup hour')\nplt.ylabel('Trips')\nplt.title('NYC Yellow Taxi trips by hour, Oct 2023')\nplt.tight_layout()\nplt.savefig('charts/trips_by_hour.png', dpi=150)   # BEFORE show()\nplt.show()\n\n# Scatter with alpha for dense data\nplt.scatter(df['trip_distance'], df['fare_amount'], alpha=0.02, s=1)\n```\n\n## The save habit\nAlways call `savefig()` BEFORE `show()`. show() flushes the figure. After show(), savefig() saves a blank canvas.\n\n## Alpha trick for dense scatter plots\n3.2 million points at alpha=1 is a black blob. At alpha=0.02, only dense overlapping areas appear dark — revealing density instead of hiding it."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build the two core TaxiPulse charts\n```python\nimport pandas as pd, matplotlib.pyplot as plt, os\ndf = pd.read_parquet('data/clean.parquet')\nos.makedirs('charts', exist_ok=True)\n\n# Chart 1 — trips by hour\nby_hour = df.groupby('pickup_hour').size()\nplt.figure(figsize=(12, 4))\nplt.bar(by_hour.index, by_hour.values, color='#3b82f6')\nplt.xlabel('Hour (24h)'); plt.ylabel('Trip count')\nplt.title('Trips per hour, October 2023')\nplt.xticks(range(0, 24)); plt.tight_layout()\nplt.savefig('charts/trips_by_hour.png', dpi=150); plt.close()\n\n# Chart 2 — distance vs fare, 50k sample\ns = df.sample(50_000, random_state=42)\nplt.figure(figsize=(8, 5))\nplt.scatter(s['trip_distance'], s['fare_amount'], alpha=0.05, s=4, color='#f59e0b')\nplt.xlabel('Distance (mi)'); plt.ylabel('Fare')\nplt.xlim(0, 30); plt.ylim(0, 100)\nplt.title('Distance vs fare, 50k sample')\nplt.tight_layout()\nplt.savefig('charts/distance_vs_fare.png', dpi=150); plt.close()\n# Horizontal band at ~52 = JFK flat-rate trips (real finding)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`plt.savefig()` must be called BEFORE `plt.show()`, otherwise it saves a blank image.",
+                  "answer": true,
+                  "whenRight": "Correct — show() flushes the figure. Call savefig() first.",
+                  "whenWrong": "show() flushes the figure buffer. After show(), savefig() saves a blank canvas.",
+                  "sim": "plt.savefig('chart.png')  # FIRST\nplt.show()               # SECOND"
+                },
+                {
+                  "prompt": "`alpha=0.02` makes scatter dots more transparent — useful for millions of points.",
+                  "answer": true,
+                  "whenRight": "Right — low alpha reveals density. Overlapping dots compound to look darker.",
+                  "whenWrong": "alpha=0.02 means 98% transparent. Dense areas look dark; sparse areas near invisible.",
+                  "sim": "plt.scatter(x, y, alpha=0.02)\n# dense areas: dark\n# sparse areas: near invisible"
+                },
+                {
+                  "prompt": "`plt.close()` after each chart prevents plots bleeding into each other.",
+                  "answer": true,
+                  "whenRight": "Right — without close(), the next plt.figure() stacks on the open canvas.",
+                  "whenWrong": "Always call close() after saving. Without it, the next chart inherits the previous axes.",
+                  "sim": "plt.savefig('a.png'); plt.close()\nplt.figure()  # <- clean canvas"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Tip percentage vs trip distance",
-              "body": "Make a new notebook called `05-tips-and-fares.ipynb`. Build it cell by cell.\n\nCODE CELL — Load the data.\n      import pandas as pd\n      import matplotlib.pyplot as plt\n      df = pd.read_parquet('data/clean.parquet')\n\nCODE CELL — Group trips by distance bucket and average the tip percent.\n      df['distance_bucket'] = pd.cut(df['trip_distance'], bins=[0, 1, 3, 5, 10, 100], labels=['0-1 mi', '1-3 mi', '3-5 mi', '5-10 mi', '10+ mi'])\n      tip_by_distance = df.groupby('distance_bucket')['tip_percent'].mean()\n      print(tip_by_distance)\n\nYou should see five lines, one per distance bucket, each with an average tip percent.\n\nCODE CELL — Plot the tip-by-distance chart.\n      tip_by_distance.plot(kind='bar', figsize=(10, 5), color='seagreen')\n      plt.title('Average tip % by trip distance, NYC Yellow Taxi, Oct 2023')\n      plt.xlabel('Trip distance')\n      plt.ylabel('Average tip (% of fare)')\n      plt.tight_layout()\n      plt.savefig('tip_by_distance.png', dpi=150)\n      plt.show()\n\nCODE CELL — Average fare by day of week.\n      days_in_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\n      fare_by_day = df.groupby('pickup_dayofweek')['fare_amount'].mean().reindex(days_in_order)\n      print(fare_by_day)\n\nCODE CELL — Plot the day-of-week fare chart.\n      fare_by_day.plot(kind='bar', figsize=(10, 5), color='tomato')\n      plt.title('Average fare by day of week, NYC Yellow Taxi, Oct 2023')\n      plt.xlabel('Day of week')\n      plt.ylabel('Average fare ($)')\n      plt.xticks(rotation=45)\n      plt.tight_layout()\n      plt.savefig('fare_by_day.png', dpi=150)\n      plt.show()\n\nMARKDOWN CELL — Write your three answers in plain English.\n      ## Answers\n      - Q1, busiest hour: [example: 17:00]\n      - Q2, tips vs distance: short trips tip about [example: 18%], long trips about [example: 12%], so tips fall as distance rises\n      - Q3, highest-fare day: [example: Sunday, at $26.40 average]\n\nNow compare all three answers with the guesses you wrote on Day 1. How many did you get right?"
+              "title": "Your turn — three charts",
+              "body": "[CODE] In `notebooks/04-charts.ipynb`, build and save:\n1. `charts/trips_by_hour.png` — bar chart of trips per hour\n2. `charts/distance_vs_fare.png` — scatter of distance vs fare, 50k sample, alpha=0.05\n3. `charts/tip_by_dow.png` — bar chart of average tip_rate by day of week\nEach: title, axis labels, dpi=150, saved before show()."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Polish the notebook and ship it",
-          "summary": "Today you turn the messy notebooks into one clean story anyone could read. This is the artifact you put on your CV.",
+          "title": "Push to GitHub — TaxiPulse v0.1 ships",
+          "summary": "The deliverable is a public URL with your name on it.",
           "items": [
             {
-              "kind": "reading",
-              "title": "GitHub — sign up (free)",
-              "url": "https://github.com/signup",
-              "why": "Click 'Open' to make a free GitHub account if you don't have one. You will push your project here today."
+              "kind": "lesson",
+              "title": "Git, GitHub, and the README that lets strangers run your code",
+              "body": "## The four git commands you will use forever\n```bash\ngit init          # once per project\ngit add .\ngit commit -m 'v0.1: load + clean + 3 questions'\ngit push\n```\n\n## What a production README needs\nOne job: let a stranger clone your repo, get the data, and run the notebooks in two commands.\n\n```text\n# TaxiPulse\nAnalyse 3.5M NYC yellow-cab trips — October 2023.\n\n## What I found\n- Busiest hour: 6pm (217,843 trips)\n- Longer trips tip more: very long avg 21.1% vs short 16.7%\n- Highest average fare: Sunday\n\n## Data\nDownload yellow_tripdata_2023-10.parquet from NYC TLC:\nhttps://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n\n## Run\npip install pandas matplotlib pyarrow\njupyter notebook notebooks/01-inspect.ipynb\n```\n\nEvery recruiter you meet looks at GitHub. A repo with no README is invisible."
             },
             {
-              "kind": "reading",
-              "title": "Create a new GitHub repo",
-              "url": "https://github.com/new",
-              "why": "Click 'Open' when you're ready to make a new public repo. Name it: taxipulse-nyc"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "You should commit the raw 50MB Parquet file to GitHub so others can reproduce your work.",
+                  "answer": false,
+                  "whenRight": "Never commit large files. Link to the source in the README. Git history is permanent.",
+                  "whenWrong": "Large files bloat the repo forever. Add *.parquet to .gitignore and link to the source.",
+                  "sim": "# .gitignore\ndata/*.parquet\ndata/*.csv"
+                },
+                {
+                  "prompt": "A commit message 'v0.1: load + clean + 3 questions answered' is better than 'update'.",
+                  "answer": true,
+                  "whenRight": "Descriptive messages let you reconstruct project history without reading diffs.",
+                  "whenWrong": "'update' tells you nothing. Write what changed and why in every commit message."
+                },
+                {
+                  "prompt": "GitHub renders .ipynb files so anyone can read your notebook without installing Python.",
+                  "answer": true,
+                  "whenRight": "Right — GitHub's notebook renderer makes your analysis readable by anyone with a browser.",
+                  "whenWrong": "GitHub does render notebooks. That is why Jupyter is the standard for sharing analytical work.",
+                  "sim": "github.com/you/taxipulse/.../01-inspect.ipynb\n# renders in browser, no Python needed"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Final acceptance — TaxiPulse v0.1",
-              "body": "Make ONE final notebook called `TaxiPulse-Final.ipynb`. Copy your best cells from the earlier notebooks into it, in the order below. In Jupyter you switch a cell between Code and Markdown with the dropdown at the top.\n\n───────── NOTEBOOK STRUCTURE ─────────\n\nMARKDOWN CELL — Title and summary.\n      # TaxiPulse NYC: what 3 million taxi trips reveal about October 2023\n      Your name, today's date\n\n      ## TL;DR\n      - Busiest hour: [example: 17:00, about 210,000 trips]\n      - Tipping: short trips about [example: 18%], long trips about [example: 12%] (tips fall as distance rises)\n      - Highest-fare day: [example: Sunday, $26.40 average]\n\n      ## The data\n      All NYC Yellow Taxi trips from October 2023.\n      Source: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n      Cleaned to about 3.4M rows after removing zero-distance, zero-fare, wrong-month, and impossibly-long trips.\n\nCODE CELL — Load and clean the data (paste your cleaning cell from Day 5).\n\nMARKDOWN CELL — Finding 1 heading.\n      ## Finding 1: The busiest hour\n\nCODE CELL — Your hour-of-day bar chart.\n\nMARKDOWN CELL — Finding 1, in words.\n      [WRITE] Two sentences: which hour is busiest, and why you think it happens.\n\nMARKDOWN CELL — Finding 2 heading.\n      ## Finding 2: Tipping vs distance\n\nCODE CELL — Your tip-percent-by-distance chart.\n\nMARKDOWN CELL — Finding 2, in words.\n      [WRITE] Two sentences: do tips rise or fall with distance, and by how much.\n\nMARKDOWN CELL — Finding 3 heading.\n      ## Finding 3: Fares by day of week\n\nCODE CELL — Your average-fare-by-day chart.\n\nMARKDOWN CELL — Finding 3, in words.\n      [WRITE] Two sentences: which day has the highest average fare, and the figure.\n\nMARKDOWN CELL — What I would do next.\n      ## What I would do next\n      - Compare October to another month\n      - Break the busiest hour down by borough\n      - Try to predict fare from trip distance\n\n───────── PUSH TO GITHUB ─────────\n\nSTEP 1 — Make a free GitHub account at github.com if you do not have one.\n\nSTEP 2 — On github.com click '+' (top right), then 'New repository'. Name it taxipulse-nyc, make it Public, and click 'Create repository'.\n\nSTEP 3 — In your terminal, inside the taxipulse folder, run these one at a time.\n      git init\n      echo 'data/' > .gitignore\n      git add .\n      git commit -m \"TaxiPulse v0.1: answered 3 questions about NYC taxis, Oct 2023\"\n      git branch -M main\n      git remote add origin https://github.com/YOUR-USERNAME/taxipulse-nyc.git\n      git push -u origin main\n\nReplace YOUR-USERNAME with your real GitHub username, and log in when asked.\n\nSTEP 4 — Open your repo on github.com and click `TaxiPulse-Final.ipynb`. GitHub renders Jupyter notebooks right in the browser.\n\nSTEP 5 — Add a README. On github.com click 'Add a README', paste the block below, then commit.\n      # TaxiPulse NYC\n      A small data-science analysis of NYC Yellow Taxi trips in October 2023.\n\n      ## Findings\n      1. Busiest hour: [example: 17:00]\n      2. Tips: short trips about [example: 18%], long trips about [example: 12%]\n      3. Highest-fare day: [example: Sunday, $26.40 average]\n\n      ## Open the notebook\n      [TaxiPulse-Final.ipynb](TaxiPulse-Final.ipynb)\n\n      ## Data\n      https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n\n───────── PASS CRITERIA ─────────\n☐ All three questions answered with specific numbers\n☐ TaxiPulse-Final.ipynb follows the structure above\n☐ Three charts saved as PNG files\n☐ Repo pushed to GitHub and public\n☐ README written with the three findings\n☐ You can send the GitHub URL to a friend and they can read the notebook in their browser\n\nShare the GitHub URL in your forge dashboard check-in. You just shipped your first real data-science project."
-            },
-            {
-              "kind": "reflection",
-              "title": "Be honest with yourself",
-              "body": "Look at your three findings. Could a NYC reporter or a taxi company actually use any of this? If yes — which one and how? If no — what else would you need to add to make it useful?"
+              "title": "Your turn — ship TaxiPulse v0.1",
+              "body": "[PRODUCE] By end of day:\n1. Create GitHub repo `taxipulse`.\n2. Add `.gitignore` excluding `data/*.parquet`.\n3. Commit all notebooks and charts/ folder.\n4. Write README.md: findings (3 bullets), data source, how to run.\n5. Push. Paste the GitHub URL into guesses.txt.\n\nPASS:\n[x] Repo is public on GitHub\n[x] README has findings + data source + run instructions\n[x] .gitignore excludes Parquet files\n[x] 4+ notebooks committed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Installing Python (Anaconda)",
-        "Opening and using a terminal",
-        "Using Jupyter notebooks",
-        "Loading data with pandas",
-        "Cleaning real-world messy data",
-        "Group-by and aggregations in pandas",
-        "Making bar charts with matplotlib",
-        "Pushing a project to GitHub"
-      ],
-      "tasks": [
-        "Install Anaconda and verify Python works",
-        "Open Jupyter and create your first notebook",
-        "Download the NYC Yellow Taxi October 2023 dataset",
-        "Clean the data (remove impossible trips)",
-        "Answer Q1 — find the busiest hour with a bar chart",
-        "Answer Q2 and Q3 — tipping by distance and fares by day",
-        "Polish into one final notebook and push to GitHub"
-      ],
-      "project": "TaxiPulse NYC v0.1 — a Jupyter notebook that answers three specific questions about real NYC Yellow Taxi trips in October 2023. Busiest hour, tip percentage vs trip distance, and average fare by day of week. The notebook is pushed to a public GitHub repo called taxipulse-nyc, with a README that lists the three findings. This is your first data-science project on your CV.",
-      "exercises": [
-        "Add a fourth chart of your choice — anything interesting you spotted in the data",
-        "Group the busiest-hour chart by pickup borough — does the busy hour change by location?",
-        "Plot trip_minutes as a histogram — what shape does it have?",
-        "Find one trip that surprised you (very long, very expensive, very tipped) and write one sentence about it"
-      ],
-      "questions": [
-        "Why did we drop trips with fare_amount of 0?",
-        "What's the difference between mean and median tip — which is more honest here?",
-        "Where did you make a choice that another analyst might disagree with?",
-        "If you had weather data for October 2023 in NYC too, what new question could you ask?"
-      ],
-      "outputs": [
-        "Public GitHub repo named taxipulse-nyc",
-        "TaxiPulse-Final.ipynb with three answered questions",
-        "Three saved chart PNGs",
-        "A README listing the three findings"
-      ],
-      "mastery_questions": [
-        "Run df.shape after loading the parquet file. Paste it. Three and a half million rows — if you scrolled through them one per second without sleeping, it would take you 40 days. Now pick one column you do not recognise (RatecodeID, store_and_fwd_flag, congestion_surcharge — there are several) and find what it means in the NYC TLC data dictionary. Paste the column name and what it actually means in your own words. The five-minute habit of asking \"what is this column actually\" is what separates someone who works with data from someone who pretends to.",
-        "Run df['fare_amount'].describe(). Look at the min and the max. The min is probably zero or negative. The max is probably absurd — try $400,000 for a single ride. Before you delete anything, pause and write down two reasons those weird rows might exist (broken meters? test transactions? software bugs? returned fares?). Then write the filter that drops the impossible ones, and explain why your cutoff is fair rather than arbitrary. Paste the filter. The cleaning IS the analysis — every decision here is a small story about what you count as real.",
-        "Group by hour: df.groupby(df['tpep_pickup_datetime'].dt.hour).size().sort_values(ascending=False). Now — before you read the result — what was your prediction on the paper? Paste both numbers: yours, and the data's. If you were wrong, write one honest sentence about what assumption was off. Maybe tourists wake up later than you thought. Maybe people take cabs home from bars more than to work. Whatever the explanation is, name it. The moments your prediction is wrong are gold — they are literally how you build intuition for a city you may not live in.",
-        "Pick one of the three week-questions and answer it in code. Then write a two-sentence interpretation of what you found. The bad interpretation is \"average tip is 18%\". The good one is \"average tip is 18%, which is suspicious because that's exactly the middle option on the card reader — most people probably tap the default rather than thinking about it.\" The number is the easy part. The reading of the number is the actual skill, and it is what hiring managers test for in every data interview you will ever sit.",
-        "Push the notebook to GitHub and paste the URL. Now open it in an incognito tab and read it as a stranger would — someone who has never seen this dataset and does not know you. Is the question stated clearly at the top? Are the charts labelled? Could a non-technical friend follow the logic without you explaining it out loud? If the answer is no, fix it before you call the week done. This is the first piece of public evidence that you do this kind of work — read it once like the reader, not the writer."
-      ],
-      "ai_assist": "Paste any pandas error into Claude with the surrounding code - you'll get the fix faster than Googling. Ask it to explain a method you don't recognize (like .resample('H')). Use it to draft your README opening paragraph.",
-      "pre_flight": "Before you run a single line of code, get a pen. Write down your guesses for two things and do NOT look them up: (1) which hour of the day do you think has the most yellow taxi pickups in NYC, and (2) what tip percentage do you think New Yorkers actually leave on average. Fold the paper, set it next to your laptop, and we will check on Sunday. This habit — predict, then check — is the single highest-ROI move in the whole field. Every analyst who is any good does this on every new dataset. You start now.",
-      "common_mistakes": [
-        "Forgetting .dt.hour and grouping by the raw datetime column instead. You end up with 3.5 million groups (one per second) and a chart that looks like static. If your group count is in the millions, you grouped by the wrong thing.",
-        "Running .mean() on a column that has NaN values and getting a confusingly tiny or huge number. Pandas is mostly graceful about nulls but not always — when in doubt, run df['col'].isna().sum() first and decide whether to drop them or fill them.",
-        "Pushing the notebook to GitHub with the output cells still full of raw print(df) dumps from when you were debugging. Run \"Restart Kernel & Run All\" once before committing, then delete the noisy cells.",
-        "Treating the filter step as a chore. Every row you drop is a judgement call — be able to defend it. \"I dropped fares above $500 because the 99.9th percentile is $250\" is a defensible sentence. \"I dropped them because they looked weird\" is not.",
-        "Spending three days on installation problems because of conda vs pip vs system Python. If you are stuck on environments past day two, ask for help on the channel. Do not let plumbing eat the week."
-      ],
-      "debug_help": "When you see a red traceback, read it from the BOTTOM up. The last line is what Python actually thinks the problem is. Everything above it is the trail of calls that led there — usually irrelevant. Most pandas errors this week will be one of three things: (1) KeyError: 'column_name' means that column literally does not exist by that exact name (run df.columns and look — often a capital letter or a space is the problem); (2) ValueError: cannot convert string to float means a column you thought was numeric has text in it somewhere; (3) AttributeError: 'DataFrame' object has no attribute 'X' means you typed a method name slightly wrong or forgot the parentheses. If you cannot solve it in 15 minutes, paste the full error AND the line of code that produced it into Claude. Ask Claude to explain what is happening before you copy any fix. The point this week is to learn the shape of pandas errors so future weeks feel easier.",
-      "stretch": [
-        "Compare October 2023 to October 2022 (same parquet pattern, swap the year). What changed? Is total trip volume up or down? Tip percentages? Average distance? This is your first taste of comparative analysis — the question every real business asks is \"compared to what?\".",
-        "Plot pickup density on a map using folium. Hint: each row has pickup_longitude and pickup_latitude — well, in older datasets it does; the 2023 data uses location ID, which you can join to the TLC zone lookup table. Worth the detour if you want a real \"wow\" deliverable for the portfolio.",
-        "Find the median trip rather than the mean, and explain in two sentences why the difference matters for fare data. (Hint: a $400 airport ride pulls the mean up but barely moves the median. Most real reporting uses median for exactly this reason.)"
-      ],
-      "concept_widget": {
-        "id": "df-inspector",
-        "caption": "Click each expression to see exactly what pandas returns — and why a mask isn't a filter yet."
-      }
+      ]
     },
     {
       "number": 2,
       "title": "Math you actually need (lin alg + prob + stats)",
       "phase": "Foundations",
-      "commitment_hours": "12-18",
+      "commitment_hours": "12-15",
       "context": "Last week you loaded 3.5 million taxi trips and asked them questions. This week you go one floor deeper and learn what was actually happening underneath your code.\n\nEvery time you called df['fare_amount'].mean() last week, your laptop did a dot product — it multiplied a vector of numbers by a vector of ones and divided by the length. Every histogram you plotted was a probability distribution. Every \"remove the impossible rows\" decision you made was, implicitly, a Bayesian update. You did the math already. This week you find out it was math.\n\nI am going to be honest with you about something. A lot of people skip this week. They tell themselves they will come back to the math later, after they have built more projects. They almost never do, and you can spot them in interviews from a mile away — they can call a model but they cannot tell you why it makes the prediction it makes. They are stuck doing junior work forever because they outsourced the part of the job that is hardest to outsource.\n\nFive days of math. That is the entire ask. No abstract textbook proofs — every concept you learn this week, you will compute on your actual TaxiPulse data from last week. Vectors will be columns from your dataframe. Probability distributions will be your fare data. Bayes theorem will be a real question about taxi rides (\"given that a trip ended at JFK, what is the probability the rider tipped over 20%?\"). Linear regression you will solve by hand using the normal equation, and your coefficients will match the actual NYC metered taxi rate to two decimal places. That last part is the moment the math stops being academic and becomes a tool you trust.\n\nBy Sunday you will have a math notebook in your taxipulse repo where every concept is applied to real data. More importantly, you will have stopped being afraid of equations. The next time you read a paper that says \"let X be a matrix in R^{n×d}\", you will know exactly what they mean because you spent a week treating your own data that way.",
+      "concept_check": [
+        {
+          "q": "A linear model predicts fare by: dot product of weights and [distance, hour, day]. This operation is called:",
+          "choices": [
+            "Matrix inversion",
+            "A dot product",
+            "Gradient descent",
+            "A convolution"
+          ],
+          "correct": 1,
+          "explain": "Multiplying a feature vector by a weights vector is a dot product. It is the fundamental operation inside every linear model and neural network layer."
+        },
+        {
+          "q": "The 68-95-99.7 rule says 95% of values in a normal distribution fall within:",
+          "choices": [
+            "1 standard deviation of the mean",
+            "2 standard deviations of the mean",
+            "3 standard deviations of the mean",
+            "The interquartile range"
+          ],
+          "correct": 1,
+          "explain": "68% within 1sd, 95% within 2sd, 99.7% within 3sd. This lets you judge how extreme any value is."
+        },
+        {
+          "q": "Pearson r = 0.87 between distance and fare means:",
+          "choices": [
+            "87% of trips are correctly predicted by distance",
+            "Strong positive linear relationship — longer trips tend to cost more",
+            "Distance causes fare to increase",
+            "87% of fare variance is explained by distance"
+          ],
+          "correct": 1,
+          "explain": "r measures linear association. 0.87 is strong and positive. r says nothing about causation, and R-squared (r squared = 0.757) — not r — is the variance-explained metric."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "Why this week matters",
-          "summary": "Most beginners skip math and hit a wall in Week 8 when models become opaque. Don't.",
+          "title": "Vectors — the atom of machine learning",
+          "summary": "Every feature row, weight update, and embedding is a vector.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Vectors and the dot product",
+              "body": "## What a vector is\nA **vector** is an ordered list of numbers. In data science it represents one observation with all features packed together:\n\n```text\ntrip = [2.3, 17, 4]   # [distance_miles, pickup_hour, day_of_week]\n```\n\nThat single array is the input to every model you will ever train.\n\n## The dot product — the operation that powers ML\nMultiply corresponding elements and sum:\n\n```text\ntrip    = [2.3,  17,   4  ]\nweights = [3.0,  0.1, -0.2]\n\ndot = 2.3*3.0 + 17*0.1 + 4*(-0.2)\n    = 6.9 + 1.7 - 0.8\n    = 7.8   <- predicted fare contribution\n```\n\nThis is literally what linear regression does when it predicts. Weights are what training learns.\n\n## Why it matters\nNeural networks are stacks of dot products followed by non-linear functions. Transformers use dot products to compute attention. Recommendation systems find similar users by dot product. This is the atom of modern AI."
+            },
+            {
               "kind": "video",
-              "title": "Essence of Linear Algebra — 3Blue1Brown (15 min Ep 1)",
+              "title": "Essence of Linear Algebra — Ep 1: Vectors",
               "url": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
               "duration_min": 15,
               "creator": "3Blue1Brown",
-              "why": "Watch Ep 1 today. Visual intuition for vectors."
+              "why": "The most visual introduction to vectors ever made. Watch after reading the lesson."
             },
             {
-              "kind": "reflection",
-              "title": "Three things",
-              "body": "Write in notes.txt: (1) Why do ML models use VECTORS? (2) What's the dot product really doing? (3) What's a probability distribution in 1 sentence?"
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## NumPy dot products on real taxi data\n```python\nimport numpy as np\n\ntrip    = np.array([2.3, 17.0, 4.0])\nweights = np.array([3.0, 0.1, -0.2])\n\npred = np.dot(trip, weights)\nprint(round(pred, 2))\n# 7.8\n\n# Cosine similarity — are two trips 'similar'?\ntrip2 = np.array([2.1, 18.0, 4.0])\nsim = np.dot(trip, trip2) / (np.linalg.norm(trip) * np.linalg.norm(trip2))\nprint(round(sim, 4))\n# 0.9999  <- nearly identical trips\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The dot product of [1,2,3] and [4,5,6] equals 1*4 + 2*5 + 3*6 = 32.",
+                  "answer": true,
+                  "whenRight": "Correct — multiply corresponding elements then sum: 4+10+18=32.",
+                  "whenWrong": "Walk through it: 1*4=4, 2*5=10, 3*6=18, sum=32.",
+                  "sim": "np.dot([1,2,3],[4,5,6])\n# 32"
+                },
+                {
+                  "prompt": "Training a linear model means finding the weights vector that minimises prediction error.",
+                  "answer": true,
+                  "whenRight": "Exactly — training = optimise weights to minimise loss (e.g. sum of squared errors).",
+                  "whenWrong": "That is what training is. Weights start random and are updated to reduce error."
+                },
+                {
+                  "prompt": "Two vectors pointing in the same direction have cosine similarity close to 0.",
+                  "answer": false,
+                  "whenRight": "Cosine similarity = cos(angle). Same direction = 0 degrees, cos(0) = 1, not 0.",
+                  "whenWrong": "Same direction means angle=0, cos(0)=1. Orthogonal vectors have similarity 0.",
+                  "sim": "cos_sim([1,1],[2,2])\n# 1.0  (same direction)"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — vectors on real data",
+              "body": "[CODE] In `notebooks/05-math.ipynb`:\n1. Take 5 random trips from `data/clean.parquet` as NumPy arrays [trip_distance, pickup_hour, pickup_dow].\n2. Compute dot product of each trip with weights=[3.5, 0.05, -0.15].\n3. Compute cosine similarity between trip 1 and every other trip.\n4. Which trip is most similar to trip 1? Interpret in a markdown cell."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Vectors + matrices on real data",
-          "summary": "",
+          "title": "Matrices — why neural nets are just table operations",
+          "summary": "A matrix transforms vectors. Every model layer is one matrix.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Matrix multiplication — inside every model layer",
+              "body": "## What a matrix is\nA matrix is a 2D array (rows x columns). In ML:\n- A dataset of N trips with F features is an N x F matrix\n- A neural network layer is a weight matrix W that maps one space to another\n- The entire forward pass: output = W2 * ReLU(W1 * input + b1) + b2\n\n## The multiplication rule\nTo multiply A (m x n) by B (n x p): dot-product each row of A with each column of B.\n\n```text\nA = [[1,2],[3,4]]   B = [[5,6],[7,8]]\nA*B = [[1*5+2*7, 1*6+2*8],\n       [3*5+4*7, 3*6+4*8]]\n    = [[19,22],[43,50]]\n```\n\nConstraint: A's column count must equal B's row count.\n\n## Batch prediction\nWhen sklearn calls model.predict(X) on 10,000 rows, it computes X @ weights in one matrix multiply — not 10,000 separate dot products. That is why NumPy ML is fast."
+            },
+            {
               "kind": "video",
-              "title": "Linear Algebra for ML — 3Blue1Brown Ep 2",
+              "title": "Essence of Linear Algebra — Ep 3: Matrix multiplication",
               "url": "https://www.youtube.com/watch?v=k7RM-ot2NWY",
-              "duration_min": 12,
+              "duration_min": 10,
               "creator": "3Blue1Brown",
-              "why": ""
+              "why": "Geometric intuition for why matrices transform space."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Batch prediction as matrix multiplication\n```python\nimport numpy as np\n\n# 5 trips: [distance, hour, dow]\nX = np.array([\n    [2.3, 17, 4],\n    [0.8,  9, 2],\n    [5.1, 22, 5],\n    [1.2, 13, 1],\n    [3.7,  8, 0],\n])\nW = np.array([[3.5],[0.05],[-0.15]])   # weights (3x1)\nb = 4.0\n\npreds = (X @ W + b).flatten()\nprint(preds.round(2))\n# [16.15  9.25 23.02 12.27 18.83]\n# All 5 predictions in one matrix multiply\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "To multiply matrix A (3x4) by matrix B, B must have exactly 4 rows.",
+                  "answer": true,
+                  "whenRight": "Right — inner dimensions must match: A's columns (4) = B's rows (4). Result: 3 x B_cols.",
+                  "whenWrong": "Inner dimensions must match. A is 3x4, so B must start with 4 rows.",
+                  "sim": "A (3x4) @ B (4x2) -> result (3x2)"
+                },
+                {
+                  "prompt": "In Python, `A @ B` and `np.dot(A, B)` are equivalent for 2D arrays.",
+                  "answer": true,
+                  "whenRight": "For 2D matrices, @ and np.dot() give the same result. @ is the preferred modern syntax.",
+                  "whenWrong": "For 2D matrices they are equivalent. Use @ — it is cleaner and standard since Python 3.5."
+                },
+                {
+                  "prompt": "Predicting 1 million rows takes 1 million times longer than 1 row in NumPy.",
+                  "answer": false,
+                  "whenRight": "NumPy BLAS parallelises matrix ops. 1M rows might be 100x slower per call, not 1M times.",
+                  "whenWrong": "NumPy batch operations are highly parallelised. 1M predictions is far less than 1M times slower than 1."
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "NumPy fluency",
-              "body": "In your taxipulse repo, create math.ipynb. Run:\n      import numpy as np\n      import pandas as pd\n      df = pd.read_parquet('data/clean.parquet')\n      X = df[['trip_distance','trip_minutes']].values  # shape (N, 2)\n      print('Shape:', X.shape)\n      print('Mean per column:', X.mean(axis=0))\n      print('Std per column:', X.std(axis=0))\n      print('Dot product of first two rows:', np.dot(X[0], X[1]))\n      # Normalize: subtract mean, divide by std\n      Xn = (X - X.mean(axis=0)) / X.std(axis=0)\n      print('Normalized mean (should be ~0):', Xn.mean(axis=0))\nWrite 1 sentence under each: what does each operation MEAN for taxi data?"
+              "title": "Your turn — matrix prediction",
+              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Load 1000 random trips as a NumPy array [trip_distance, pickup_hour, pickup_dow].\n2. Use matrix multiplication (X @ weights + bias) to predict all 1000 fares at once.\n3. Compute MAE between predictions and actual fare_amount.\n4. Compute baseline MAE (always predict the mean fare).\n5. Is the matrix model better than the baseline?"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Probability distributions",
-          "summary": "",
+          "title": "Probability — the language models reason in",
+          "summary": "Every prediction is a probability. Learn the language.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Probability and Bayes",
+              "body": "## The rules you need\n\n**Joint probability** (independent events):\nP(A and B) = P(A) * P(B)\n\n**Conditional probability**:\nP(A | B) = P(A and B) / P(B)\n'Given it is Friday, what is P(rain)?'\n\n**Bayes theorem**:\nP(A | B) = P(B | A) * P(A) / P(B)\n'Given this email has free money, what is P(spam)?'\n\n## Why ML models are probability machines\nEvery classifier outputs a probability. 0.87 from a fraud model means 87% confidence — not 'this IS fraud'. Language models sample the next word from a probability distribution over the entire vocabulary.\n\n## Where this fits in TaxiPulse\nDoes rush hour change tipping behaviour? Compute P(tip > 0 | rush hour) and compare to P(tip > 0). If they are equal, rush hour and tipping are independent."
+            },
+            {
               "kind": "video",
-              "title": "Probability primer for ML (20 min)",
-              "url": "https://www.youtube.com/results?search_query=probability+basics+machine+learning+beginner+2024",
-              "duration_min": 20,
-              "creator": "various",
-              "why": ""
+              "title": "Bayes theorem, intuitively — 3Blue1Brown",
+              "url": "https://www.youtube.com/watch?v=HZGCoVF3YvM",
+              "duration_min": 15,
+              "creator": "3Blue1Brown",
+              "why": "The most intuitive Bayes explanation on the internet. Worth every minute."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Conditional probability on taxi data\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\np_tip = (df['tip_amount'] > 0).mean()\nprint(f'P(tip > 0):       {p_tip:.3f}')\n# P(tip > 0):       0.673\n\nrush = df['pickup_hour'].isin([7, 8, 17, 18, 19])\np_tip_rush = (df[rush]['tip_amount'] > 0).mean()\nprint(f'P(tip>0|rush):    {p_tip_rush:.3f}')\n# P(tip>0|rush):    0.681\n\nprint(f'Lift: {p_tip_rush / p_tip:.3f}')\n# Lift: 1.012  <- effectively no effect\n# Rush hour does NOT change tipping behaviour\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "P(A | B) = P(B | A) — conditional probability is symmetric.",
+                  "answer": false,
+                  "whenRight": "They are almost never equal. P(spam | 'free money') is not P('free money' | spam). Bayes theorem is needed to flip them.",
+                  "whenWrong": "Not symmetric. P(disease | positive test) is not P(positive test | disease). That asymmetry is the whole point of Bayes."
+                },
+                {
+                  "prompt": "If P(tip > 0 | rush hour) equals P(tip > 0), rush hour and tipping are independent.",
+                  "answer": true,
+                  "whenRight": "Right — independence means conditioning on B does not change P(A).",
+                  "whenWrong": "Independence means P(A|B) = P(A). If conditioning on rush hour does not change tip probability, they are independent."
+                },
+                {
+                  "prompt": "A fraud model outputting 0.87 means the transaction IS fraudulent.",
+                  "answer": false,
+                  "whenRight": "0.87 is a confidence estimate, not a verdict. A threshold converts it to yes/no.",
+                  "whenWrong": "0.87 is a probability estimate. You still need a threshold. The model is wrong ~13% of the time at that score."
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Plot real distributions",
-              "body": "      import matplotlib.pyplot as plt\n      df['fare_amount'].hist(bins=50, range=(0,80))\n      plt.title('Distribution of NYC taxi fares')\n      plt.savefig('figures/fare_dist.png')\n      # Compute key stats\n      print('Mean fare:', df['fare_amount'].mean())\n      print('Median fare:', df['fare_amount'].median())\n      print('Std:', df['fare_amount'].std())\n      print('Skewness:', df['fare_amount'].skew())\nIs the distribution normal or skewed? Why does that matter for modelling?"
+              "title": "Your turn — conditional probability",
+              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Compute P(tip > 0) for the full dataset.\n2. Compute P(tip > 0 | pickup_dow == 5) — Saturday.\n3. Compute P(tip > 0 | pickup_dow == 0) — Monday.\n4. Compute lift for both days.\n5. Markdown conclusion: does day of week predict whether a passenger tips?"
             }
           ]
         },
         {
           "number": 4,
-          "title": "Bayes intuition",
-          "summary": "",
+          "title": "Normal distribution and the CLT",
+          "summary": "The shape of data tells you which model to use and where it fails.",
           "items": [
             {
-              "kind": "video",
-              "title": "Bayes theorem visual — 3Blue1Brown",
-              "url": "https://www.youtube.com/watch?v=HZGCoVF3YvM",
-              "duration_min": 15,
-              "creator": "3Blue1Brown",
-              "why": "P(A|B) = P(B|A) × P(A) / P(B) — Bayes will haunt your career."
+              "kind": "lesson",
+              "title": "Normal distribution, CLT, and why they matter for ML",
+              "body": "## The normal distribution\nFully described by two numbers: mean (mu) and std deviation (sigma).\n\n**68-95-99.7 rule**: 68% within 1sd, 95% within 2sd, 99.7% within 3sd.\n\nTaxi fares are NOT normally distributed — they are right-skewed (skewness ~2.3). A model that assumes normality for fares will produce wrong confidence intervals.\n\n## Central Limit Theorem\n**Even when individual data is not normal, the MEAN of a large sample is approximately normal.**\n\nThis is why t-tests and confidence intervals work on non-normal data when samples are large: you are testing the distribution of means, not individual values.\n\n## Why it matters for models\nLinear regression assumes residuals (errors) are normally distributed. When they are not, your p-values and confidence intervals are wrong. Checking residual distribution after fitting is non-optional."
             },
             {
-              "kind": "reflection",
-              "title": "A Bayes problem",
-              "body": "In a city, 5% of flights are delayed >15 min. A weather alert is issued for 30% of delayed flights but only 8% of on-time flights. If you see a weather alert, what's the probability the flight is delayed? Show your math. Answer below.\n\nP(D|A) = P(A|D)·P(D) / P(A) = 0.30 × 0.05 / (0.30·0.05 + 0.08·0.95) = 0.015 / 0.091 ≈ 16.5%\n\nNotice: even with the alert, most flights still aren't delayed. THIS is why intuition fails on conditional probability."
+              "kind": "video",
+              "title": "The Normal Distribution explained clearly",
+              "url": "https://www.youtube.com/watch?v=rzFX5NWojp0",
+              "duration_min": 10,
+              "creator": "StatQuest",
+              "why": "The clearest explanation of the normal distribution and the 68-95-99.7 rule."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Distribution check and CLT demonstration\n```python\nimport pandas as pd, numpy as np\nfrom scipy import stats\n\ndf = pd.read_parquet('data/clean.parquet')\nfares = df['fare_amount']\n\nprint(f'Mean:     {fares.mean():.2f}')\nprint(f'Std:      {fares.std():.2f}')\nprint(f'Skewness: {fares.skew():.2f}')\n# Mean:     16.42\n# Std:      11.18\n# Skewness:  2.31  <- heavily right-skewed\n\n# CLT: sample means ARE normal\nmeans = [fares.sample(500).mean() for _ in range(1000)]\nstat, p = stats.normaltest(means)\nprint(f'Normality test on sample means: p={p:.3f}')\n# p=0.382  <- cannot reject normality, CLT works\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "For a right-skewed distribution, the mean is higher than the median.",
+                  "answer": true,
+                  "whenRight": "Right — the long right tail pulls the mean above the 50th percentile.",
+                  "whenWrong": "Right skew = long tail to the right = large values pull mean above median.",
+                  "sim": "fares.mean()   # 16.42\nfares.median() # 12.00  <- lower"
+                },
+                {
+                  "prompt": "The CLT says sample means become normal regardless of how small the sample is.",
+                  "answer": false,
+                  "whenRight": "CLT requires large samples (typically n >= 30). Tiny samples may not converge.",
+                  "whenWrong": "CLT requires large n. Very small samples may not converge to normal."
+                },
+                {
+                  "prompt": "Linear regression assumes the MODEL RESIDUALS are normally distributed, not the raw input data.",
+                  "answer": true,
+                  "whenRight": "Exactly — the assumption is on errors, not features. Non-normal inputs are fine.",
+                  "whenWrong": "The assumption is on residuals, not features. Non-normal inputs are fine; non-normal residuals invalidate p-values.",
+                  "sim": "# Check residuals, not raw data:\nresid = y_actual - y_predicted\n# these should be normal"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — distribution check",
+              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Print mean, std, and skewness for tip_rate.\n2. Plot a histogram of tip_rate (50 bins), save as `charts/tip_rate_dist.png`.\n3. Run CLT demo: draw 1000 samples of n=500, compute means, plot as histogram.\n4. Markdown: is tip_rate normally distributed? How do you know?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Derivatives + gradient descent intuition",
-          "summary": "",
+          "title": "Mean, variance, std — the analyst's three numbers",
+          "summary": "These three describe any column. Everything else elaborates.",
           "items": [
             {
-              "kind": "video",
-              "title": "Gradient descent visualized — 3Blue1Brown",
-              "url": "https://www.youtube.com/watch?v=IHZwWFHWa-w",
-              "duration_min": 21,
-              "creator": "3Blue1Brown",
-              "why": "Every ML model uses this. Watch carefully."
+              "kind": "lesson",
+              "title": "Mean, variance, std — and when each lies",
+              "body": "## The three numbers\n**Mean** = sum / count. Pulled by outliers. Use when data is symmetric.\n**Variance** = mean of (value minus mean) squared. In squared units.\n**Std** = square root of variance. Back in original units.\n\n```text\nfares = [8, 12, 14, 16, 150]\nmean   = 40     <- distorted by 150\nmedian = 14     <- resistant to the outlier\nstd    = 55.3   <- enormous due to 150\n```\n\n## Mean vs median — when to use which\n- **Mean**: symmetric data, few outliers (heights, test scores)\n- **Median**: skewed data or outliers (income, house prices, taxi fares)\n\n## Correlation\nPearson r measures linear relationship: -1 (perfect inverse), 0 (none), +1 (perfect positive).\n\nr(distance, fare) ~ 0.87  -> strong linear\nr(fare, tip_rate) ~ 0.09  -> almost no linear relationship"
             },
             {
-              "kind": "reflection",
-              "title": "In your own words",
-              "body": "Write 1 paragraph in notes.txt: in plain English, what does 'gradient descent' actually do when training a model?"
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Descriptive stats and correlation on TaxiPulse\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\nprint(df[['fare_amount','trip_distance','tip_rate']]\n      .agg(['mean','median','std']).round(2))\n#           fare_amount  trip_distance  tip_rate\n# mean            16.42           2.87      0.17\n# median          12.00           1.76      0.17\n# std             11.18           3.21      0.13\n\ncorr = df[['fare_amount','trip_distance','tip_amount','tip_rate']].corr().round(2)\nprint(corr)\n#               fare_amount  trip_distance  tip_amount  tip_rate\n# fare_amount          1.00           0.87        0.61      0.09\n# trip_distance        0.87           1.00        0.54      0.07\n# tip_rate             0.09           0.07        0.58      1.00\n# Insight: fare predicts tip AMOUNT (0.61) but tip RATE barely (0.09)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "For skewed data like taxi fares, the median is a more honest summary than the mean.",
+                  "answer": true,
+                  "whenRight": "Right — the mean is pulled by outliers. For right-skewed fares: mean=16.42, median=12.00.",
+                  "whenWrong": "With right skew, the mean is pulled above the typical value. Median is more representative.",
+                  "sim": "mean   = 16.42\nmedian = 12.00  <- more typical trip"
+                },
+                {
+                  "prompt": "r = 0.87 between distance and fare PROVES distance causes fare to increase.",
+                  "answer": false,
+                  "whenRight": "Correct — correlation never proves causation. Both could be driven by trip type.",
+                  "whenWrong": "Correlation never implies causation. r=0.87 says they co-vary; it says nothing about mechanism."
+                },
+                {
+                  "prompt": "Standard deviation has the same units as the original data.",
+                  "answer": true,
+                  "whenRight": "Right — variance is in squared units (dollars squared), but std = root(variance) = dollars.",
+                  "whenWrong": "Std IS in the original units. Variance is dollars squared. std = root(variance) = dollars.",
+                  "sim": "fare_amount.std()\n# 11.18  <- in dollars"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — descriptive stats memo",
+              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Print mean, median, std for fare_amount, trip_distance, tip_amount, tip_rate.\n2. For each: one sentence — 'I use mean/median because the data is symmetric/skewed'.\n3. Print the full 4x4 correlation matrix.\n4. Write 3-bullet markdown: 'The three strongest insights from the correlation matrix are...'"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Linear regression by hand",
-          "summary": "Connect math to ML. The math IS the model.",
+          "title": "Linear regression from scratch",
+          "summary": "Derive the formula that Week 5 hands to sklearn.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The Normal Equation — linear regression by hand",
+              "body": "## What linear regression minimises\n```text\npredicted_fare = w1 * distance + w2 * hour + b\n\nBest weights minimise: sum of (actual - predicted) squared\n```\n\nThe closed-form solution — the Normal Equation:\n```text\nW = inv(X_T @ X) @ X_T @ y\n```\nX is N x F feature matrix, y is N-length target, W is F-length weights.\n\n## Why derive it before using sklearn\nWeek 5 you call LinearRegression().fit() and it just works. Without understanding the Normal Equation you will not know:\n- Why it fails when features are perfectly correlated (X_T @ X becomes singular)\n- Why gradient descent exists for large datasets (matrix inversion scales O(n cubed))\n- What Ridge/Lasso regularisation actually modifies\n\nFormula first. Library second. Always."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Normal Equation on TaxiPulse\n```python\nimport pandas as pd, numpy as np\ndf = pd.read_parquet('data/clean.parquet').sample(50_000, random_state=42)\n\nX_raw = df[['trip_distance','pickup_hour']].values\ny     = df['fare_amount'].values\nX     = np.column_stack([X_raw, np.ones(len(X_raw))])  # add bias col\n\nW = np.linalg.inv(X.T @ X) @ X.T @ y\nw_dist, w_hour, bias = W\nprint(f'{w_dist:.2f} per mile,  {w_hour:.2f} per hour,  bias={bias:.2f}')\n# 3.48 per mile,  0.07 per hour,  bias=8.12\n# NYC meter rate is ~3.00 per mile — model found it from data alone\n\nmae      = np.mean(np.abs(y - X @ W))\nbaseline = np.mean(np.abs(y - y.mean()))\nprint(f'Model MAE: {mae:.2f}  |  Baseline MAE: {baseline:.2f}')\n# Model MAE: 6.14  |  Baseline MAE: 9.02  <- model beats baseline\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The Normal Equation fails when two features are perfectly correlated because X_T*X becomes non-invertible.",
+                  "answer": true,
+                  "whenRight": "Right — perfect multicollinearity makes X_T*X singular. sklearn uses gradient descent to avoid this.",
+                  "whenWrong": "Perfect correlation creates a singular matrix. sklearn avoids this with gradient descent."
+                },
+                {
+                  "prompt": "A model with MAE 6.14 is worse than a baseline MAE of 9.02.",
+                  "answer": false,
+                  "whenRight": "Lower MAE = better. 6.14 < 9.02: model beats 'always predict mean' by 32%.",
+                  "whenWrong": "Lower MAE = better. 6.14 < 9.02 means the model is 32% better than the baseline."
+                },
+                {
+                  "prompt": "The weight 3.48 per mile means each extra mile adds 3.48 to the predicted fare.",
+                  "answer": true,
+                  "whenRight": "That is the interpretation — coefficient = marginal effect of one unit of that feature.",
+                  "whenWrong": "That is the interpretation. One more mile adds 3.48 to the prediction, holding everything else constant."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Solve normal equation",
-              "body": "      # Closed-form linear regression: beta = (X^T X)^-1 X^T y\n      import numpy as np\n      X = df[['trip_distance','trip_minutes']].values\n      X = np.column_stack([np.ones(len(X)), X])  # add bias\n      y = df['fare_amount'].values\n      beta = np.linalg.inv(X.T @ X) @ X.T @ y\n      print('Intercept:', beta[0])\n      print('Per-mile:', beta[1])\n      print('Per-minute:', beta[2])\nCompare these numbers to NYC's real taxi base + per-mile rate. Match?"
+              "title": "Your turn — Normal Equation from scratch",
+              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Implement the Normal Equation using only NumPy (no sklearn).\n2. Train on 50k trips with features [trip_distance, pickup_hour, pickup_dow].\n3. Print the learned weights and interpret each in a sentence.\n4. Compute and print MAE vs baseline.\n5. Markdown: 'The model learns each mile costs X, each hour adds Y...'"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag math-w1",
-          "summary": "",
+          "title": "Apply the math — is distance linearly related to fare?",
+          "summary": "Close out the math notebook with a complete analytical argument.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "A complete analytical argument — four parts",
+              "body": "## From numbers to a finding\nA complete analytical argument has four parts:\n1. **Descriptive stats** — what do the distributions look like?\n2. **Visualisation** — does the scatter suggest linearity?\n3. **Correlation** — is Pearson r high?\n4. **Residual check** — are errors randomly distributed around zero?\n\nIf residuals fan out (larger errors at larger fares), the relationship is non-linear and a different model is needed.\n\n## What you will find in TaxiPulse\nAirport trips (JFK flat rate ~52 dollars) create a horizontal band in the scatter that a linear model fits poorly. The residuals for those trips cluster at +20 to +35 dollars — systematic, not random.\n\n**Systematic residuals always reveal structure your model missed.**\n\n## The deliverable\nA notebook that reads like an article: stats, chart, correlation, model, residual, conclusion. A recruiter who cannot code should be able to skim it and understand what you found."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "If residuals fan out (variance increases with fare amount), the linear model is misspecified.",
+                  "answer": true,
+                  "whenRight": "That is heteroscedasticity — non-constant variance violates linear regression's core assumption.",
+                  "whenWrong": "Fanning residuals = heteroscedasticity. Linear regression assumes constant variance."
+                },
+                {
+                  "prompt": "r = 0.87 means 87% of fare variance is explained by distance.",
+                  "answer": false,
+                  "whenRight": "R-squared = r squared = 0.87 squared = 0.757. About 75.7% is explained, not 87%.",
+                  "whenWrong": "R2 = r squared = 0.87 squared = 0.757. About 75.7% is explained, not 87%.",
+                  "sim": "r = 0.87\nR2 = 0.87**2  # 0.757"
+                },
+                {
+                  "prompt": "Systematic residuals (a cluster at +30 for long trips) reveal a pricing rule the model missed.",
+                  "answer": true,
+                  "whenRight": "Exactly — systematic = a pattern, not noise. JFK flat-rate trips cause this cluster.",
+                  "whenWrong": "Systematic residuals always reveal missed structure. Random residuals mean the model captured everything."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "Commit math.ipynb to taxipulse repo. Update README to add a 'Math notebook' link.\n      git add . && git commit -m 'math foundations notebook'\n\nPASS:\n  ☐ Computed mean/std/normalize with NumPy on real data\n  ☐ Plotted + interpreted fare distribution\n  ☐ Worked out a Bayes problem\n  ☐ Solved linear regression by hand (closed form)\n  ☐ Coefficients match real-world NYC rates"
+              "title": "Your turn — wrap up the math notebook",
+              "body": "[PRODUCE] Wrap up `notebooks/05-math.ipynb`:\n1. Add section '## Week 2 synthesis: distance vs fare'.\n2. Include: descriptive stats, Pearson r, Normal Equation weights, MAE vs baseline, residual scatter plot saved as `charts/residuals.png`.\n3. Write a 3-sentence conclusion: 'The relationship is [linear/non-linear]. The model explains X% of variance. It fails on [trip type] because [reason].'\n4. Commit: `git add . && git commit -m 'Week 2: math fundamentals complete'`"
             }
           ]
         }
-      ],
-      "topics": [
-        "NumPy vectors + matrices",
-        "Probability distributions + skewness",
-        "Bayes' theorem with conditional probabilities",
-        "Gradient descent intuition",
-        "Closed-form linear regression"
-      ],
-      "tasks": [
-        "Watch 3 of 3Blue1Brown's lin alg + Bayes + grad descent videos",
-        "Use NumPy on real TaxiPulse data — mean/std/normalize",
-        "Plot + interpret fare distribution",
-        "Solve a Bayes conditional probability problem by hand",
-        "Derive linear regression coefficients via the normal equation"
-      ],
-      "project": "Math notebook in taxipulse repo — applied math, not toy examples. Linear regression solved by hand matches real NYC taxi rates.",
-      "resources": [
-        {
-          "label": "Linear algebra Chapter 1 - 10 min - 3Blue1Brown",
-          "url": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
-          "note": "10 min. Vectors, what even are they? The most beautiful math video ever made."
-        },
-        {
-          "label": "Linear algebra Chapter 2 - 11 min - 3Blue1Brown",
-          "url": "https://www.youtube.com/watch?v=k7RM-ot2NWY",
-          "note": "11 min. Linear combinations, span, basis vectors."
-        },
-        {
-          "label": "Bayes Theorem in 15 min - 3Blue1Brown",
-          "url": "https://www.youtube.com/watch?v=HZGCoVF3YvM",
-          "note": "15 min. The clearest explanation of Bayes anywhere."
-        },
-        {
-          "label": "Gradient Descent in 6 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=sDv4f4s2SB8",
-          "note": "6 min. Walking downhill. Why learning rate matters."
-        },
-        {
-          "label": "Linear Regression in 27 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=nk2CQITm_eo",
-          "note": "27 min. The deepest 27-min explainer you will find. Watch BEFORE coding."
-        },
-        {
-          "label": "NumPy in 18 min - Real Python",
-          "url": "https://www.youtube.com/watch?v=8JfDAm9y_7s",
-          "note": "18 min. NumPy arrays = the foundation of pandas. Mean, std, normalize."
-        }
-      ],
-      "exercises": [
-        "Plot the same dist before/after log-transform",
-        "Compute the Pearson correlation between distance and fare by hand (no pandas .corr)",
-        "Solve another Bayes problem (medical test screening)"
-      ],
-      "questions": [
-        "When does linear regression fail and why?",
-        "What's the difference between sample mean and population mean?",
-        "Why does normalizing features help most ML models?"
-      ],
-      "outputs": [
-        "math.ipynb in taxipulse repo",
-        "Solved Bayes problem in notes.txt",
-        "Linear regression coefficients matching NYC real rates"
-      ],
-      "mastery_questions": [
-        "Take any numeric column from your taxi data (fare_amount, trip_distance, tip_amount — pick one). Use NumPy to compute the mean two ways: once with .mean() and once by hand using a dot product (np.dot(col, np.ones(len(col))) / len(col)). Paste both numbers — they should be identical to many decimal places. Now you have proven to yourself that the mean is a dot product. Why does this matter? Because everything sklearn does is matrix multiplication wearing different clothes. Once that clicks, you stop being intimidated by ML papers.",
-        "Plot a histogram of fare_amount with 50 bins. Look at the shape. Is it symmetric, or is the right tail much longer than the left? This is called right-skew (positive skew) and it is the single most common distribution shape you will see in real business data — incomes, prices, response times, anything that has a hard floor at zero but no ceiling. Compute the mean and median of the same column. The mean should be larger than the median. Explain in one sentence WHY that gap exists for skewed data. (Hint: a few $400 airport rides pull the mean up but cannot move the median past the middle person.) This is the most important sentence you will write about distributions all year.",
-        "Bayes by hand. Look at your data: among all trips that ended at JFK (RatecodeID 2 in NYC TLC data), what fraction had a tip over 20%? Now: among trips that did NOT end at JFK, what fraction had a tip over 20%? Paste both percentages. The gap between them tells you something real about behaviour — what is your hypothesis for WHY airport rides have a different tipping pattern? You just did a conditional probability calculation on a question that actually matters. P(tip > 20% | trip = JFK) — that notation will never feel scary again, because you just did it.",
-        "Linear regression by hand. Pick two columns: trip_distance (X) and fare_amount (y). Compute the slope and intercept using the closed-form normal equation: beta = (X^T X)^-1 X^T y. Paste your slope. NYC taxis charge roughly $3 per mile (the actual rate is $3.00/mile plus a $3 base fare as of 2023). Does your slope match? If yes, you just rediscovered a real-world pricing formula from raw data, which is what regression is for. If your slope is way off, your data probably needs cleaning — find the outliers, drop them, recompute. (This is exactly the iteration loop real data scientists run, by the way. The model lies until the data is honest.)",
-        "Watch StatQuest's Gradient Descent video. Then explain it back, in your own words, in 3 sentences. Use an analogy. (Common ones: rolling a ball down a hill, walking down a foggy mountain feeling for the slope with your foot, etc.) Now answer one question: what happens if your learning rate is too big? What happens if it is too small? Paste both answers. Knowing this saves you from the most common \"why is my model not converging\" mistake for the rest of your career."
-      ],
-      "ai_assist": "This is the week AI can short-circuit your learning if you let it. Do NOT ask Claude to \"solve linear regression for me.\" Ask it instead: \"I am trying to derive the normal equation from scratch — can you walk me through the steps WITHOUT giving me the final formula?\" Use AI as a slower teacher, not a faster calculator. The math only becomes intuitive if you do it yourself the first time. Second, when you watch the 3Blue1Brown videos and a moment confuses you, pause the video and ask Claude to re-explain that specific minute in different words. That targeted use is gold. Third — and this is the test of whether the math stuck — try explaining gradient descent BACK to Claude as if Claude were a beginner. If you can teach it, you understand it. If you cannot, you do not yet.",
-      "pre_flight": "Before you watch the videos: open last week's TaxiPulse notebook. Find the cell where you computed df['fare_amount'].mean(). Stare at it for a second. By Friday, you should be able to explain in two sentences what your computer literally did when it ran that line — at the level of \"it took the 3.5 million numbers, treated them as a vector, took the dot product with a vector of ones, and divided by the length.\" If you cannot say that yet, that is fine. That is what the week is for. But check yourself on Friday and be honest about whether you can or not.",
-      "common_mistakes": [
-        "Confusing population statistics with sample statistics. When you do .mean() on your 3.5M rows, that is a SAMPLE — October 2023. The population is \"all NYC taxi trips ever.\" Tiny distinction now, huge distinction once you start doing hypothesis tests.",
-        "Forgetting that NumPy operations on a column return a NumPy array, not a Series. Sometimes this matters (e.g., .iloc stops working). When something breaks weirdly after a NumPy call, the first check is type(your_variable).",
-        "Reading the Bayes formula and feeling stupid because the notation is unfamiliar. The notation is just shorthand — P(A|B) means \"the percentage of times A happens when we restrict our view to only the times B happens.\" If you write that sentence next to the formula, the formula stops being scary.",
-        "Solving the normal equation and getting wildly wrong coefficients because trip_distance has zeros in it (matrix is not invertible). Drop the zero-distance rows first. This is the same lesson as last week: the cleaning IS the analysis.",
-        "Watching the 3Blue1Brown videos at 2x speed to \"save time.\" Those videos are designed at 1x. Two-pass approach: watch once at normal speed without taking notes, then watch again pausing to actually compute the examples. The second watch is where the math sticks."
-      ],
-      "debug_help": "Two kinds of breakage this week. First kind: NumPy shape mismatches. When you see ValueError: shapes (3500000,) and (3500000,1) not aligned, NumPy is telling you your vectors have slightly different shapes — one is a 1D array, one is a 2D column. Use .reshape(-1, 1) to convert a 1D array to a column, or .flatten() to go the other way. This is the single most common NumPy error and it happens to everyone forever. Second kind: the math result feels wrong (your slope is negative when it should be positive, or your probability is 1.4). That is almost always an algebra slip — you forgot to transpose somewhere, or you divided by the wrong thing. Walk through the formula on paper, line by line, with tiny numbers (3 rows of fake data) before suspecting your data is wrong. The math on tiny data should match the math on big data exactly.",
-      "stretch": [
-        "Compute the covariance matrix of three columns (fare_amount, trip_distance, tip_amount) by hand using NumPy. Now do the same calculation with np.cov() and verify they match. This is the building block of PCA, which you will meet in a few weeks.",
-        "Take your linear regression coefficients from question 4 and use them to predict the fare for a hypothetical 5-mile trip. Compare your prediction to the actual mean fare of 5-mile trips in your data. How close did you get? The gap between them is called RESIDUAL — and the next month of ML is basically about shrinking it.",
-        "Read the Wikipedia page for \"Central Limit Theorem\" and write a 3-sentence summary in your notebook. Then verify it on your data: take 100 random samples of 30 trips each, compute the mean of each sample, plot the distribution of those 100 means. The shape should be approximately normal even though the underlying fare distribution is heavily skewed. That is the central limit theorem in action — and it is why most of statistics actually works."
-      ],
-      "concept_widget": {
-        "id": "distribution-stats",
-        "caption": "Shift and skew a distribution and watch the mean get pulled while the median holds."
-      }
+      ]
     },
     {
       "number": 3,
       "title": "TaxiPulse v0.2: Borough breakdown + multi-month",
       "phase": "Foundations",
-      "commitment_hours": "12-18",
+      "commitment_hours": "12-15",
       "context": "Last week you proved the math underneath pandas was not magic. This week you go back to the data and make the analysis bigger in two directions at once: more time (three months instead of one) and more geography (broken down by borough instead of treated as one undifferentiated New York).\n\nBoth are the same skill, dressed differently. You are learning to compare. The first time most beginners see \"October busiest hour is 6pm,\" they nod and move on. The analyst's instinct is different — they immediately want to know: was September the same? Is Manhattan the same as Queens? Was Q4 weird because of holidays? The interesting answer is never a single number. It is a number IN CONTEXT.\n\nYou are also going to meet your first real JOIN this week. Your taxi data has a column called PULocationID — that is a number from 1 to 263 that means nothing on its own. The NYC TLC publishes a separate lookup table that maps each LocationID to a borough name (Manhattan, Brooklyn, Queens, Bronx, Staten Island, EWR, Newark). Joining those two tables together is how you turn \"247\" into \"Astoria, Queens\" — and that exact mental move (linking a code to its meaning) is what 80% of professional data work actually is. Customers to subscriptions. Orders to products. User IDs to demographic segments. Same pattern, different industries.\n\nBy Sunday TaxiPulse v0.2 will show three months of data broken down by borough, with a chart that compares boroughs against each other, and a one-paragraph paragraph at the top of the notebook calling out one finding that surprised you.",
+      "concept_check": [
+        {
+          "q": "You have Oct, Nov, Dec taxi Parquet files. How do you combine them into one DataFrame?",
+          "choices": [
+            "Load each and write a for-loop appending rows",
+            "pd.concat([oct, nov, dec], ignore_index=True)",
+            "Merge on the trip ID column",
+            "Use df.append() three times"
+          ],
+          "correct": 1,
+          "explain": "pd.concat() stacks DataFrames vertically (same columns, more rows). merge() adds columns by key. append() is deprecated in modern pandas."
+        },
+        {
+          "q": "A pivot table with index='borough', columns='month', values='fare_amount', aggfunc='mean' shows:",
+          "choices": [
+            "One row per trip",
+            "Average fare per borough per month — a 5x3 summary table",
+            "Total fare per trip",
+            "Number of trips per borough"
+          ],
+          "correct": 1,
+          "explain": "pivot_table collapses rows into a 2D summary grid. One row per borough, one column per month, each cell = mean fare."
+        },
+        {
+          "q": "`df.resample('D').size()` requires which precondition?",
+          "choices": [
+            "A numeric index",
+            "A DatetimeIndex — set with df.set_index('tpep_pickup_datetime')",
+            "A sorted DataFrame",
+            "Columns named 'date' and 'value'"
+          ],
+          "correct": 1,
+          "explain": "resample() is a time-series operation. It requires a DatetimeIndex. Set it with df.set_index('tpep_pickup_datetime')."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "What's a borough?",
-          "summary": "NYC has 5: Manhattan, Brooklyn, Queens, Bronx, Staten Island. The taxi data uses pickup location IDs.",
+          "title": "Concatenate multiple months of data",
+          "summary": "pd.concat stacks DataFrames vertically — same columns, more rows.",
           "items": [
             {
-              "kind": "reading",
-              "title": "NYC TLC Taxi Zone Lookup",
-              "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv",
-              "why": "Click 'Open' to download a small CSV that maps LocationID to Borough + Zone."
+              "kind": "lesson",
+              "title": "pd.concat — combining files without a loop",
+              "body": "## What it is\npd.concat() stacks multiple DataFrames vertically — same columns, more rows.\n\n```python\nimport pandas as pd\n\noct = pd.read_parquet('data/yellow_tripdata_2023-10.parquet')\nnov = pd.read_parquet('data/yellow_tripdata_2023-11.parquet')\ndec = pd.read_parquet('data/yellow_tripdata_2023-12.parquet')\n\ndf3 = pd.concat([oct, nov, dec], ignore_index=True)\nprint(df3.shape)   # roughly (10M, 19)\n```\n\nignore_index=True resets row numbers to 0, 1, 2 ... instead of three overlapping 0-N sequences.\n\n## pd.concat vs pd.merge\n- **concat**: same columns, more rows (vertical stack)\n- **merge**: join on a shared key, add new columns (horizontal join)\n\nCombining three months is a concat. Joining trips to a zone-names lookup is a merge.\n\n## Why this matters\nWeek 1 was one month. Q4 (three months) is the minimum baseline for seasonal questions."
             },
             {
-              "kind": "reflection",
-              "title": "Hypotheses",
-              "body": "Which borough do you think:\n  1. Has the busiest hour LATEST in the day?\n  2. Has the highest average fare?\n  3. Tips the most?\nWrite your guesses."
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Load and concat Q4, then clean\n```python\nimport pandas as pd\n\nmonths = []\nfor m in ['10','11','12']:\n    df = pd.read_parquet(f'data/yellow_tripdata_2023-{m}.parquet')\n    df['month'] = int(m)\n    months.append(df)\n\ndf3 = pd.concat(months, ignore_index=True)\nprint('Raw:', df3.shape)\n# Raw: (10483621, 20)\n\ndf3 = df3.query('fare_amount >= 2.50 and fare_amount <= 200')\ndf3 = df3.query('trip_distance > 0 and trip_distance <= 100')\ndf3['pickup_hour'] = df3['tpep_pickup_datetime'].dt.hour\ndf3['pickup_dow']  = df3['tpep_pickup_datetime'].dt.dayofweek\ndf3['tip_rate']    = df3['tip_amount'] / df3['fare_amount'].clip(lower=0.01)\n\nprint('Clean:', df3.shape)\n# Clean: (9621834, 23)\ndf3.to_parquet('data/clean_q4.parquet', index=False)\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`pd.concat([a,b])` adds more rows; `pd.merge(a,b)` adds more columns.",
+                  "answer": true,
+                  "whenRight": "Right — concat is vertical (more rows). merge is horizontal (more columns via key).",
+                  "whenWrong": "concat is vertical (same columns, more rows). merge is horizontal (same rows, more columns via key).",
+                  "sim": "concat: (5 rows) + (5 rows) -> 10 rows\nmerge: 5 rows + new columns via key"
+                },
+                {
+                  "prompt": "`ignore_index=True` in pd.concat prevents duplicate index values across the three files.",
+                  "answer": true,
+                  "whenRight": "Right — each file starts at index 0. Without ignore_index, you get three overlapping 0-N sequences.",
+                  "whenWrong": "Without ignore_index, row 0 appears three times. ignore_index resets to a clean 0-N sequence."
+                },
+                {
+                  "prompt": "Adding a `month` column before concat makes per-month filtering impossible afterwards.",
+                  "answer": false,
+                  "whenRight": "The opposite — adding month BEFORE concat is exactly how you keep track of which file each row came from.",
+                  "whenWrong": "Adding month before concat is the RIGHT move. Tags each row with its source, making per-month analysis easy.",
+                  "sim": "df['month'] = 10  # before concat\n# after concat:\ndf[df['month'] == 10]  # October only"
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — load and concat Q4",
+              "body": "[CODE] Create `notebooks/06-borough.ipynb`.\n1. Download Nov and Dec 2023 Parquet files from NYC TLC into `data/`.\n2. Load all three months, add a `month` column to each, concat into df3.\n3. Apply the same cleaning filters as Week 1.\n4. Add pickup_hour, pickup_dow, tip_rate columns.\n5. Save to `data/clean_q4.parquet`. Print before/after shapes."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Load the lookup",
-          "summary": "",
+          "title": "GroupBy on multiple columns",
+          "summary": "One groupby key is a summary. Two keys reveal an interaction.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Multi-column groupby — finding interactions",
+              "body": "## What it is\nGrouping by two columns reveals how two variables interact:\n\n```python\n# Single: average fare by hour\ndf.groupby('pickup_hour')['fare_amount'].mean()\n\n# Multi: average fare by hour AND month\ndf.groupby(['pickup_hour','month'])['fare_amount'].mean()\n```\n\nSingle groupby answers 'which hour is most expensive?' The multi-key answers 'does the most expensive hour change by month?'\n\n## unstack() — from long to wide\nAfter a two-key groupby, unstack() pivots the second key into columns:\n\n```python\nhourly_by_month = (\n    df.groupby(['pickup_hour','month'])['fare_amount']\n    .mean()\n    .unstack('month')\n    .round(2)\n)\n# 24 rows (hours 0-23), 3 columns (Oct, Nov, Dec)\n# Each cell = average fare for that hour in that month\n```"
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Trip count by borough and month\n```python\nimport pandas as pd\ndf3 = pd.read_parquet('data/clean_q4.parquet')\n\nzones = pd.read_csv('data/taxi_zone_lookup.csv',\n                    usecols=['LocationID','Borough'])\nzones = zones.rename(columns={'LocationID':'PULocationID','Borough':'borough'})\ndf3 = df3.merge(zones, on='PULocationID', how='left')\n\nresult = (\n    df3.groupby(['borough','month'])\n    .size()\n    .unstack('month')\n    .fillna(0).astype(int)\n)\nprint(result)\n#                    10      11      12\n# Bronx           87432   82156   79844\n# Brooklyn       243187  229541  217633\n# Manhattan     1842341 1736218 1693872   <- dominates volume\n# Queens         412876  389234  374921\n# Staten Island    5234    4987    4812\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.groupby(['a','b']).mean()` returns a DataFrame with a MultiIndex.",
+                  "answer": true,
+                  "whenRight": "Right — two groupby keys produce a MultiIndex. unstack() converts one level into columns.",
+                  "whenWrong": "Two keys produce a MultiIndex. The result has (a_value, b_value) tuples as the index.",
+                  "sim": "groupby(['borough','month'])\n# index: (Bronx, 10), (Bronx, 11), ..."
+                },
+                {
+                  "prompt": "`.unstack('month')` after a two-key groupby pivots month values into columns.",
+                  "answer": true,
+                  "whenRight": "Right — unstack promotes a MultiIndex level into column headers.",
+                  "whenWrong": "unstack() takes a MultiIndex level and makes it the column axis.",
+                  "sim": "# Before: long (borough, month) index\n# After: wide, one column per month"
+                },
+                {
+                  "prompt": "A groupby on two keys always produces more rows than a groupby on one key.",
+                  "answer": false,
+                  "whenRight": "Not always — if the second key has only one unique value, row count is the same.",
+                  "whenWrong": "Two-key groupby produces at most (unique_a * unique_b) rows. If one key has 1 value, same rows."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Join zone data",
-              "body": "Save taxi_zone_lookup.csv into your taxipulse/data/ folder.\n\nIn a new notebook 06-borough.ipynb:\n      import pandas as pd\n      df = pd.read_parquet('data/clean.parquet')\n      zones = pd.read_csv('data/taxi_zone_lookup.csv')\n      df = df.merge(zones[['LocationID','Borough']], left_on='PULocationID', right_on='LocationID')\n      df = df.rename(columns={'Borough':'pickup_borough'})\n      print(df['pickup_borough'].value_counts())"
+              "title": "Your turn — multi-column groupby",
+              "body": "[CODE] Continuing in `notebooks/06-borough.ipynb`:\n1. Join the taxi zone lookup CSV to get borough names.\n2. GroupBy borough + month, compute mean fare_amount. Unstack month into columns.\n3. GroupBy borough + pickup_hour, compute mean tip_rate. Unstack pickup_hour.\n4. Markdown: which borough has the highest average fare? Does the pattern hold all three months?"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Plot busy hour by borough",
-          "summary": "",
+          "title": "Pivot tables in pandas",
+          "summary": "pivot_table turns a long DataFrame into a readable 2D summary grid.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "pd.pivot_table — from rows to a grid",
+              "body": "## What it is\npd.pivot_table() creates a 2D summary grid directly:\n\n```python\npivot = pd.pivot_table(\n    df,\n    values='fare_amount',    # what to aggregate\n    index='borough',         # rows\n    columns='month',         # columns\n    aggfunc='mean'           # how to aggregate\n)\n```\n\n## pivot_table vs groupby + unstack\nBoth produce the same result. Use pivot_table when you want the 2D grid in one line. Use groupby + unstack when you need intermediate steps between groupby and pivoting.\n\n## margins=True — add totals\n```python\npivot = pd.pivot_table(\n    df, values='fare_amount',\n    index='borough', columns='month',\n    aggfunc='mean', margins=True   # adds 'All' row + column\n)\n```\nThe 'All' column is the overall mean across months — useful for ranking boroughs."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Pivot: average fare by borough and month\n```python\nimport pandas as pd\ndf3 = pd.read_parquet('data/clean_q4.parquet')\n\npivot = pd.pivot_table(\n    df3, values='fare_amount',\n    index='borough', columns='month',\n    aggfunc='mean', margins=True\n).round(2)\n\nprint(pivot)\n#                    10     11     12    All\n# Bronx           12.34  12.41  12.29  12.35\n# Brooklyn        14.82  14.91  14.77  14.83\n# Manhattan       16.42  16.51  16.38  16.44\n# Queens          22.17  22.43  22.08  22.23   <- highest (airports)\n# Staten Island   18.95  19.12  18.87  18.98\n# All             16.88  17.02  16.79  16.90\n# Queens highest: JFK + LaGuardia flat-rate trips\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`pd.pivot_table()` and `df.groupby().unstack()` always produce identical results.",
+                  "answer": false,
+                  "whenRight": "Not always — pivot_table handles duplicate (index, column) pairs by aggregating. groupby+unstack may error.",
+                  "whenWrong": "They can differ: pivot_table aggregates duplicates automatically; groupby+unstack may error on duplicate pairs."
+                },
+                {
+                  "prompt": "`margins=True` adds a row and column named 'All' showing overall totals/averages.",
+                  "answer": true,
+                  "whenRight": "Right — margins adds the grand total/average as an extra row and column.",
+                  "whenWrong": "margins=True adds an 'All' row and column with the grand total/average across the table."
+                },
+                {
+                  "prompt": "Queens having the highest average fare means Queens trips are always longer than Manhattan trips.",
+                  "answer": false,
+                  "whenRight": "Queens has many JFK/LaGuardia airport trips with flat-rate pricing (~52 dollars). High fare does not mean long distance.",
+                  "whenWrong": "Queens airport flat-rate trips inflate the average fare. A 6-mile JFK trip at the flat rate looks expensive per mile vs a 1-mile Manhattan trip.",
+                  "sim": "Queens avg fare: 22.17\nQueens avg dist: 4.1 mi\nManhattan avg fare: 16.42\nManhattan avg dist: 2.5 mi"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Multi-borough chart",
-              "body": "      import matplotlib.pyplot as plt\n      for b in ['Manhattan','Brooklyn','Queens','Bronx','Staten Island']:\n          sub = df[df['pickup_borough'] == b]\n          by_hour = sub.groupby('pickup_hour').size()\n          by_hour.plot(label=b)\n      plt.title('Trips by hour, by borough')\n      plt.legend(); plt.savefig('hour_by_borough.png'); plt.show()"
+              "title": "Your turn — pivot table analysis",
+              "body": "[CODE] Continuing in `notebooks/06-borough.ipynb`:\n1. Build pivot: rows=borough, columns=month, values=fare_amount, aggfunc=mean, margins=True.\n2. Build second pivot: rows=borough, columns=pickup_dow, values=tip_rate, aggfunc=mean.\n3. Visualise both as heatmaps using matplotlib imshow and save to charts/.\n4. Markdown: two findings from the pivot tables that are not obvious from raw numbers."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Download Sept + Nov data",
-          "summary": "",
+          "title": "Matplotlib subplots — side-by-side comparisons",
+          "summary": "Subplots let you compare multiple charts in one visual.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Sept 2023 Yellow Taxi",
-              "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-09.parquet",
-              "why": "Click 'Open' to download."
+              "kind": "lesson",
+              "title": "plt.subplots — a grid of axes on one canvas",
+              "body": "## What it is\nplt.subplots(rows, cols) creates a grid of Axes objects:\n\n```python\nfig, axes = plt.subplots(1, 3, figsize=(15, 4))\n# axes is an array of 3 Axes objects\n\naxes[0].bar(x, y_oct, color='#3b82f6')\naxes[0].set_title('October')\naxes[1].bar(x, y_nov, color='#f59e0b')\naxes[1].set_title('November')\naxes[2].bar(x, y_dec, color='#10b981')\naxes[2].set_title('December')\n\nfig.tight_layout()\nfig.savefig('charts/monthly_comparison.png', dpi=150)\n```\n\n## Use ax, not plt, in subplots\nWhen using subplots, call methods on the **axis object**:\n- axes[i].set_title() not plt.title()\n- axes[i].set_xlabel() not plt.xlabel()\n\nCalling plt.xlabel() in a subplot loop always modifies only the LAST axis."
             },
             {
-              "kind": "reading",
-              "title": "Nov 2023 Yellow Taxi",
-              "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-11.parquet",
-              "why": "Click 'Open' to download."
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Three-month comparison chart\n```python\nimport pandas as pd, matplotlib.pyplot as plt\ndf3 = pd.read_parquet('data/clean_q4.parquet')\n\nfig, axes = plt.subplots(1, 3, figsize=(15, 4), sharey=True)\ncolors = ['#3b82f6','#f59e0b','#10b981']\ntitles = ['October','November','December']\n\nfor i, (month, color, title) in enumerate(zip([10,11,12], colors, titles)):\n    sub = df3[df3['month'] == month]\n    by_hour = sub.groupby('pickup_hour').size()\n    axes[i].bar(by_hour.index, by_hour.values, color=color)\n    axes[i].set_title(title, fontsize=13, fontweight='bold')\n    axes[i].set_xlabel('Hour of day')\n    if i == 0:\n        axes[i].set_ylabel('Trip count')\n\nfig.suptitle('NYC Yellow Taxi, trips per hour, Q4 2023', fontsize=14)\nfig.tight_layout()\nfig.savefig('charts/monthly_comparison.png', dpi=150)\nplt.close()\n# Peak stays at 17-19h in all three months\n# December lower overall volume — holiday effect\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "In a subplot loop, `plt.xlabel('Hour')` labels only the last axis, not each one.",
+                  "answer": true,
+                  "whenRight": "Right — plt.xlabel() targets the currently active (last) axis. Use axes[i].set_xlabel() in a loop.",
+                  "whenWrong": "plt.xlabel() targets the current axis — always the last one created. Use axes[i].set_xlabel() specifically.",
+                  "sim": "# Wrong: plt.xlabel('Hour')  # only last axis\n# Right: axes[i].set_xlabel('Hour')  # each axis"
+                },
+                {
+                  "prompt": "`sharey=True` makes all subplots use the same y-axis scale — good for honest comparisons.",
+                  "answer": true,
+                  "whenRight": "Right — shared y-axis prevents one chart using 0-100k and another 0-200k, making equal patterns look different.",
+                  "whenWrong": "sharey=True forces a common y-range. Without it, auto-scaling can make a 10% difference look like 10x."
+                },
+                {
+                  "prompt": "`fig.tight_layout()` prevents subplot labels from overlapping each other.",
+                  "answer": true,
+                  "whenRight": "Right — tight_layout() automatically adjusts spacing between subplots.",
+                  "whenWrong": "tight_layout() is the fix for overlapping labels. Always call it before savefig.",
+                  "sim": "fig.tight_layout()   # <- before savefig\nfig.savefig('chart.png')"
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Concat 3 months",
-              "body": "Save both to data/. In a new notebook:\n      sept = pd.read_parquet('data/yellow_tripdata_2023-09.parquet')\n      oct = pd.read_parquet('data/taxi.parquet')\n      nov = pd.read_parquet('data/yellow_tripdata_2023-11.parquet')\n      df3 = pd.concat([sept, oct, nov])\n      print(len(df3))  # about 10M rows\n\nRun the same cleaning steps. Save as data/q4_2023.parquet."
+              "title": "Your turn — monthly comparison chart",
+              "body": "[CODE] Continuing in `notebooks/06-borough.ipynb`:\n1. Build a 1x3 subplot showing trips-per-hour for Oct, Nov, Dec.\n2. Use sharey=True, matching colors, individual titles.\n3. Add fig.suptitle() and fig.tight_layout().\n4. Save as `charts/monthly_comparison.png`, dpi=150.\n5. Markdown: does the peak hour shift between months? Any unusual dips?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Trip count over 3 months",
-          "summary": "",
+          "title": "Time-series resampling",
+          "summary": "resample() collapses a DatetimeIndex into any time bucket — daily, weekly, monthly.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "pandas resample — time-series aggregation",
+              "body": "## What it is\nresample() is groupby for time. Instead of grouping by a column value, it groups by a time window:\n\n```python\n# Requires DatetimeIndex\ndf = df.set_index('tpep_pickup_datetime')\n\ndaily   = df.resample('D').size()           # trips per day\nweekly  = df.resample('W').size()           # trips per week\nmonthly = df['fare_amount'].resample('ME').mean()  # mean fare per month-end\n```\n\nCommon frequency aliases: 'D' day, 'W' week, 'ME' month-end, 'h' hour.\n\n## rolling() — smoothing noisy time series\nresample collapses. rolling computes a moving window:\n\n```python\ndaily    = df.resample('D').size()\nsmoothed = daily.rolling(7, center=True).mean()  # 7-day rolling avg\n```\n\nA 7-day rolling average removes day-of-week noise and reveals the underlying trend."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Q4 2023 daily trip trend\n```python\nimport pandas as pd, matplotlib.pyplot as plt\ndf3 = pd.read_parquet('data/clean_q4.parquet')\ndf3 = df3.set_index('tpep_pickup_datetime')\n\ndaily    = df3.resample('D').size().rename('trips')\nsmoothed = daily.rolling(7, center=True).mean()\n\nplt.figure(figsize=(12, 4))\nplt.plot(daily.index, daily.values,\n         alpha=0.3, color='#3b82f6', label='Daily')\nplt.plot(smoothed.index, smoothed.values,\n         color='#1d4ed8', linewidth=2, label='7-day avg')\nplt.xlabel('Date'); plt.ylabel('Trips')\nplt.title('NYC Yellow Taxi daily trips, Q4 2023')\nplt.legend(); plt.tight_layout()\nplt.savefig('charts/daily_trend.png', dpi=150); plt.close()\n\nprint(daily.idxmin(), daily.min())\n# 2023-12-25   142834  <- Christmas: lowest day\nprint(daily.idxmax(), daily.max())\n# 2023-10-06   118973  <- Friday Oct 6: busiest\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`df.resample('D').size()` requires the DataFrame index to be a DatetimeIndex.",
+                  "answer": true,
+                  "whenRight": "Right — resample operates on the index. Set it with df.set_index('tpep_pickup_datetime') first.",
+                  "whenWrong": "resample requires a DatetimeIndex. Call df.set_index('tpep_pickup_datetime') before resample.",
+                  "sim": "df = df.set_index('tpep_pickup_datetime')\ndaily = df.resample('D').size()  # now works"
+                },
+                {
+                  "prompt": "`.rolling(7).mean()` computes a 7-day trailing average by default.",
+                  "answer": true,
+                  "whenRight": "Right — default rolling is trailing (7 days up to and including current day). Add center=True for a centred window.",
+                  "whenWrong": "Default is trailing. Add center=True to use a centred window (3 before + current + 3 after).",
+                  "sim": "# trailing: day 7 = avg of days 1-7\n# center=True: day 4 = avg of days 1-7"
+                },
+                {
+                  "prompt": "Christmas Day showing the fewest trips in Q4 is an anomaly that should be removed from the dataset.",
+                  "answer": false,
+                  "whenRight": "Christmas is a real business effect, not a data error. Low demand on a holiday is a genuine pattern.",
+                  "whenWrong": "Low trips on Christmas is real behaviour — a holiday effect. Remove only data errors, not real events.",
+                  "sim": "# Christmas low = real signal (keep it)\n# fare_amount = -52 = data error (remove it)"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Daily series",
-              "body": "      df3['date'] = df3['tpep_pickup_datetime'].dt.date\n      daily = df3.groupby('date').size()\n      daily.plot(figsize=(12,4), title='NYC Yellow Taxi trips per day, Q4 2023')\n      plt.savefig('daily_q4.png')\nLook for the dip on Thanksgiving + Halloween."
+              "title": "Your turn — Q4 daily trend",
+              "body": "[CODE] Continuing in `notebooks/06-borough.ipynb`:\n1. Set the datetime column as the index.\n2. Resample to daily counts. Plot with a 7-day rolling average overlay.\n3. Save as `charts/daily_trend.png`.\n4. Find the highest and lowest trip-count days in Q4.\n5. Markdown: what explains the outlier days you found?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Add to final report",
-          "summary": "",
+          "title": "Build the full borough breakdown",
+          "summary": "Integration day — concat, groupby, pivot, subplots, and resample into one analysis.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Integration day — the v0.2 analysis in one notebook",
+              "body": "## What you are building\nTaxiPulse v0.2 answers three questions Week 1 could not:\n1. Which borough generates the most revenue?\n2. Does the busiest hour differ by borough?\n3. Which month in Q4 was the busiest?\n\nThe output is a notebook that reads like a report: question, analysis, chart, finding.\n\n## The 80/20 of notebook polish\nTwo rules make a notebook readable by a non-coder:\n1. Every chart has a title, axis labels, and a one-line finding below it (markdown cell)\n2. Every section starts with a markdown heading that states the FINDING, not the method\n\n'Borough analysis' is a method title.\n'Queens earns 31% more per trip than Brooklyn — airport routes explain why' is a finding title.\n\nWrite the second kind. Always."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Revenue by borough\n```python\nimport pandas as pd, matplotlib.pyplot as plt\ndf3 = pd.read_parquet('data/clean_q4.parquet')\n\nborough_rev = (\n    df3.groupby('borough')['fare_amount']\n    .agg(['sum','mean','count'])\n    .sort_values('sum', ascending=False)\n)\nborough_rev['sum_M'] = (borough_rev['sum'] / 1e6).round(1)\nprint(borough_rev[['sum_M','mean','count']])\n#               sum_M    mean    count\n# Manhattan     118.4   16.44  7193847\n# Queens         38.7   22.24  1740384   <- highest mean fare\n# Brooklyn       22.1   14.87   948812\n# Bronx           4.1   12.37   331234\n# Staten Island   0.9   19.03    47232\n# Manhattan dominates by volume; Queens dominates by average fare\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The borough with the highest total revenue always has the highest average fare.",
+                  "answer": false,
+                  "whenRight": "Manhattan has the highest total revenue by volume; Queens has the highest average fare (airports). Different metrics.",
+                  "whenWrong": "Total revenue = volume * average. Manhattan wins on total despite lower average because it has 4x more trips.",
+                  "sim": "Manhattan: 7.2M trips * 16.44 = 118M\nQueens:    1.7M trips * 22.24 = 38M"
+                },
+                {
+                  "prompt": "'Queens earns 31% more per trip than Brooklyn' is a better heading than 'Borough analysis'.",
+                  "answer": true,
+                  "whenRight": "Exactly — finding headings communicate value. Method headings communicate work. Recruiters want findings.",
+                  "whenWrong": "Findings headings are always better. They let a reader skim and understand without reading every cell."
+                },
+                {
+                  "prompt": "A notebook with 30 code cells and no markdown headings is acceptable if the code is correct.",
+                  "answer": false,
+                  "whenRight": "Correct code with no structure is not a portfolio piece. Markdown headings and findings make it a communication artifact.",
+                  "whenWrong": "Correct code with no structure is not a portfolio piece. Headings + findings turn a script into a report."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Update TaxiPulse-Final",
-              "body": "Add a new section '## Borough breakdown' with the hour-by-borough chart. Add '## Q4 trend' with the daily chart. Update TL;DR to mention any cross-month finding."
+              "title": "Your turn — build the borough analysis section",
+              "body": "[CODE] In `notebooks/06-borough.ipynb`, add section '## Borough breakdown' with:\n1. Revenue by borough bar chart (total and average, side-by-side) -> `charts/borough_revenue.png`\n2. Pivot heatmap: borough x pickup_dow, values=tip_rate -> `charts/borough_tip_heatmap.png`\n3. Each chart followed by a one-sentence finding\n4. A '## Q4 trend' section with the daily trend chart from Day 5"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.2",
-          "summary": "",
+          "title": "Ship TaxiPulse v0.2",
+          "summary": "Tag, commit, update README — the same ritual every project closes with.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The ship ritual — same every week",
+              "body": "## What shipping means\nShipping is not just pushing to GitHub. It is making the project usable to a stranger. Three things make that true:\n\n**1. Updated README with new findings**\n```text\n## v0.2: Borough breakdown + Q4 trend\n- Queens highest average fare (22.24) — airport flat-rates explain it\n- Manhattan generates 74% of Q4 revenue by volume\n- Christmas Day (Dec 25) is the lowest-volume day in Q4 (-38% vs average)\n```\n\n**2. Git tag**\n```bash\ngit add .\ngit commit -m 'v0.2: borough breakdown + multi-month trend'\ngit tag v0.2\ngit push && git push --tags\n```\n\n**3. Every PASS item checked**\nBefore closing the notebook, every bullet on the PASS list is checked. If one is unchecked, the week is not done."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A git tag `v0.2` permanently marks the commit that shipped this version.",
+                  "answer": true,
+                  "whenRight": "Right — tags are immutable pointers to specific commits. git checkout v0.2 restores the exact state at shipping.",
+                  "whenWrong": "Tags mark specific commits permanently. git checkout v0.2 restores the codebase exactly as it was."
+                },
+                {
+                  "prompt": "You should update the README only when the whole project is finished.",
+                  "answer": false,
+                  "whenRight": "Update the README after EVERY version. Someone may look at your repo before v1.0 is done.",
+                  "whenWrong": "Update the README with every shipped version. The repo is public. Someone may look today."
+                },
+                {
+                  "prompt": "Adding version sections (v0.1, v0.2 ...) to the README makes the project's progress story visible.",
+                  "answer": true,
+                  "whenRight": "Exactly — a changelog README shows iterative shipping, ownership of findings, and clear communication.",
+                  "whenWrong": "Version sections are a portfolio feature. They show iterative process, not just a final result."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "      git add . && git commit -m 'v0.2: borough breakdown + 3 months'\n      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ Borough lookup joined\n  ☐ Hour-by-borough chart saved\n  ☐ Q4 daily series chart saved\n  ☐ Final notebook updated\n  ☐ v0.2 tag"
+              "title": "Your turn — ship TaxiPulse v0.2",
+              "body": "[PRODUCE] By end of day:\n1. Ensure `notebooks/06-borough.ipynb` has markdown headings for every section.\n2. Add a 'v0.2' section to README.md with 3 bullet findings.\n3. Commit: `git add . && git commit -m 'v0.2: borough breakdown + Q4 trend'`\n4. Tag: `git tag v0.2 && git push && git push --tags`\n\nPASS:\n[x] clean_q4.parquet built from 3 months\n[x] Borough revenue pivot table present\n[x] Monthly comparison subplot saved\n[x] Q4 daily trend chart with rolling average\n[x] README updated with v0.2 findings\n[x] Git tag v0.2 pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Merging on foreign keys (LocationID → Borough)",
-        "Multi-borough comparison plots",
-        "Concatenating multiple parquet files",
-        "Daily time series visualization",
-        "Updating a publishable notebook iteratively"
-      ],
-      "tasks": [
-        "Download the TLC zone lookup CSV",
-        "Merge zone data into your trips dataframe",
-        "Plot trips-by-hour for each borough",
-        "Download Sept and Nov 2023 parquets and concat",
-        "Plot daily trip volume across Q4",
-        "Update TaxiPulse-Final.ipynb"
-      ],
-      "project": "TaxiPulse v0.2 — same analysis extended to 3 months (Q4 2023) and broken down by borough. Updated publishable notebook.",
-      "resources": [
-        {
-          "label": "Pandas merge in 20 min - Corey Schafer",
-          "url": "https://www.youtube.com/watch?v=iYWKfUOtGaw",
-          "note": "20 min. INNER, LEFT, RIGHT, OUTER joins for combining 2 dataframes."
-        },
-        {
-          "label": "TLC Taxi Zone Lookup (direct CSV)",
-          "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi+_zone_lookup.csv",
-          "note": "Direct download. Maps PULocationID to borough names."
-        },
-        {
-          "label": "Pandas concat in 10 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Pandas%20concat",
-          "note": "10 min. Stack Sept + Oct + Nov into one dataframe. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "Seaborn heatmaps in 12 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Seaborn%20heatmaps",
-          "note": "12 min. Hour × day-of-week heatmap. Cleaner than matplotlib. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "Parquet vs CSV in 8 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Parquet%20vs%20CSV",
-          "note": "8 min. Parquet is 10x smaller and faster. Why. (Click the FIRST video in the search results - it is the intended one.)"
-        }
-      ],
-      "exercises": [
-        "Plot tip% by borough",
-        "Find the single day in Q4 with the fewest trips — what happened?",
-        "Build a heatmap of trips by hour × day-of-week",
-        "Compare weekday vs weekend traffic by borough"
-      ],
-      "questions": [
-        "What's a foreign key in a merge?",
-        "Why concat 3 files instead of redownloading one big file?",
-        "How big is the .parquet vs the equivalent CSV?",
-        "When is more data NOT better?"
-      ],
-      "outputs": [
-        "Updated TaxiPulse-Final.ipynb with borough section",
-        "data/q4_2023.parquet (gitignored)",
-        "2 new figures committed",
-        "v0.2 tag"
-      ],
-      "mastery_questions": [
-        "Load the TLC zone lookup CSV. Run lookup.head() and paste the columns. Now JOIN your taxi data to the lookup on LocationID. Paste your merge() line. The number of rows BEFORE and AFTER the merge should be almost identical — if it changed by more than 1% you probably did an inner join when you wanted a left join. Explain in one sentence which kind of join you used and why.",
-        "Group trips by borough and compute the mean tip percentage for each. Paste the result. Did Manhattan come out highest? If not — what borough did, and what is your hypothesis for why? (Higher fare? Different rider demographics? Tourism patterns? Suburb-to-city longer rides?) The number is the easy part; the explanation is the analyst skill.",
-        "Concatenate three months (Oct + Nov + Dec 2023) into one dataframe. Paste df.shape before and after. Then plot total trips per day across the three months. Are there visible dips? Mark December 25, January 1, and Thanksgiving on the chart. Holidays, weather events, and one-off shutdowns are visible in volume data — train your eye to spot them now, because every business dashboard you ever look at will have them.",
-        "Make a single chart that compares ALL FIVE boroughs on the SAME axis (e.g., average fare by hour, one line per borough). This is harder than it sounds — small multiples vs single chart is a real design decision. Paste the chart code. Which borough's pattern surprised you most?",
-        "Update your TaxiPulse README with one paragraph titled \"What changed from v0.1.\" It should describe: what new data you added, what new question you can now answer that you could not answer with one month, and one finding you did not expect. Paste the paragraph. This is how real analysts communicate iteration to non-technical readers — they tell a story about what NEW now exists."
-      ],
-      "ai_assist": "Use Claude to translate between SQL and pandas — give it your merge() line and ask \"what would this look like as a SQL JOIN?\" Seeing the same operation in two languages locks the concept in. Do NOT ask Claude to \"improve my plot.\" Ask it instead \"what is one thing about this chart that a critical reader would call out?\" Forcing AI to critique rather than rewrite is how you grow taste. And when you write the README paragraph, draft it yourself first, then ask Claude \"is there anything in this paragraph that sounds like AI wrote it? Be brutal.\" Most students never do that step — that is why their portfolios all sound the same.",
-      "pre_flight": "Before you load anything: write down your prediction for which borough has the highest average tip percentage. Manhattan? Staten Island? You probably have an intuition — most people guess Manhattan because it has tourists. Write the guess down. Also predict: did total trip volume go UP or DOWN between October and December 2023? (Holidays, weather, conference season — there are reasons either way.) On Sunday, check both. Wrong predictions are not embarrassing — they are how you learn the actual shape of the city you are studying.",
-      "common_mistakes": [
-        "Using pd.concat without ignore_index=True. Your row numbers will reset weirdly and any .iloc[42] you do later will give a confusing result.",
-        "Joining on LocationID but forgetting that the lookup table has it as integer while your taxi data has it as string (or vice versa). The join silently produces zero matches. Always check df['LocationID'].dtype on both sides before merging.",
-        "Plotting all five boroughs on one chart without different colors or a legend. The reader has to guess which line is which. Use df.plot() with hue= or pass each borough explicitly with a label.",
-        "Computing \"tip percentage\" as tip_amount / fare_amount and not dividing by total_amount. There is no single right answer — but you have to pick one and stick to it, and tell the reader which definition you used. Same metric name, different formulas, is the source of half of all corporate-dashboard arguments."
-      ],
-      "debug_help": "Merge problems are the #1 thing that breaks this week. The symptom is usually \"my row count exploded\" or \"my row count collapsed to almost nothing.\" Both mean your join keys are not matching the way you thought. Run this diagnostic: df['LocationID'].isin(lookup['LocationID']).mean() — that tells you the fraction of taxi rows whose location key actually exists in the lookup. If that number is below 95%, the lookup is missing rows or your dtypes do not match. Print three sample keys from each side: print(df['LocationID'].head(3), lookup['LocationID'].head(3)). Look at them. The mismatch is almost always visible to the naked eye once you stop staring at the error.",
-      "stretch": [
-        "Add a fourth month (September 2023) and see if your seasonality story changes. Three months of data feels solid until you look at four and realise you were over-interpreting noise.",
-        "Plot trips per day per borough as five small-multiple charts (one per borough) instead of one combined chart. Compare the two visualisations side by side. Which is more honest? Which is more dramatic? Designers fight about this constantly.",
-        "Find the day with the LOWEST trip count across all three months. Look up what happened in NYC on that day. Real-world events show up in time-series data, and learning to read them is a senior-analyst skill."
-      ],
-      "concept_widget": {
-        "id": "groupby-aggregator",
-        "caption": "Pick an aggregation and watch many rows collapse into one per group — the borough breakdown, live."
-      }
+      ]
     },
     {
       "number": 4,
