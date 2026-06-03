@@ -75,9 +75,13 @@ export function parseCommitmentHours(s: string): number {
  * Compile a week from the JSON into the Task model's `detail` text.
  * Includes topics, tasks, exercises in a single readable Markdown block.
  */
-/** Scrub asterisks, em-dashes, en-dashes anywhere in a rendered string. */
-function clean(s: string): string {
-  return s
+/** Scrub asterisks, em-dashes, en-dashes anywhere in a rendered string.
+ *  Defensive: roadmap JSON occasionally carries a field as an array/object
+ *  where a string was expected (e.g. `ai_assist` as a list of prompts). Coerce
+ *  rather than throw — a single bad field must never 500 the whole seed. */
+function clean(s: unknown): string {
+  const str = typeof s === "string" ? s : s == null ? "" : Array.isArray(s) ? s.join("\n") : String(s);
+  return str
     .replace(/\*\*/g, "")    // markdown bold
     .replace(/\*/g, "")      // any stray asterisks
     .replace(/—/g, "-")      // em-dash -> hyphen
@@ -131,10 +135,14 @@ export function weekToTaskDetail(week: RoadmapWeek): string {
   // AI assist - threaded through every week. Tells the student EXACTLY how to
   // use Cursor / Claude / ChatGPT on THIS week's work. No more "AI is a one-week
   // module" - it's a permanent part of the workflow.
-  const aiAssist = (week as { ai_assist?: string }).ai_assist;
-  if (aiAssist) {
+  const aiAssist = (week as { ai_assist?: string | string[] }).ai_assist;
+  if (aiAssist && (Array.isArray(aiAssist) ? aiAssist.length : true)) {
     lines.push("AI ASSIST");
-    lines.push(clean(aiAssist));
+    if (Array.isArray(aiAssist)) {
+      aiAssist.forEach((a) => lines.push(`- ${clean(a)}`));
+    } else {
+      lines.push(clean(aiAssist));
+    }
     lines.push("");
   }
   // Stretch - optional challenges for students finishing early.
