@@ -289,7 +289,7 @@ export default async function DashboardPage() {
                 <Link href="/dashboard/checkin" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
                   <Send size={14} /> Submit work
                 </Link>
-                <Link href="/dashboard/notes" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+                <Link href={`/dashboard/notes?task=${releasedWeek.id}`} className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
                   Message mentor
                 </Link>
               </div>
@@ -310,7 +310,7 @@ export default async function DashboardPage() {
             <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", marginBottom: "1rem" }}>
               This week closed on {lastClosed.closedAt && new Date(lastClosed.closedAt).toLocaleDateString()}. You can't access the content until your mentor extends the deadline or reopens it.
             </p>
-            <Link href="/dashboard/notes" className="forge-btn forge-btn-primary">Ask {primaryMentor?.name?.split(" ")[0] ?? "your mentor"} to extend</Link>
+            <Link href={`/dashboard/notes?task=${lastClosed.id}&intent=extend`} className="forge-btn forge-btn-primary">Ask {primaryMentor?.name?.split(" ")[0] ?? "your mentor"} to extend</Link>
           </div>
         )}
 

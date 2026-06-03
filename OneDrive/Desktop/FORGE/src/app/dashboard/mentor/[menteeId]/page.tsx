@@ -234,8 +234,6 @@ export default function MenteeDrilldownPage() {
               throw new Error(data.error || "Could not verify");
             }
             await load();
-          } catch (e) {
-            setDialog({ kind: "alert", title: "Verify failed", message: e instanceof Error ? e.message : "Something went wrong" });
           } finally {
             setPosting(null);
           }
@@ -269,8 +267,6 @@ export default function MenteeDrilldownPage() {
             throw new Error(data.error || `Could not ${action}`);
           }
           await load();
-        } catch (e) {
-          setDialog({ kind: "alert", title: "Action failed", message: e instanceof Error ? e.message : "Something went wrong" });
         } finally {
           setPosting(null);
         }
@@ -304,8 +300,6 @@ export default function MenteeDrilldownPage() {
             throw new Error(data.error || `Could not ${mode}`);
           }
           await load();
-        } catch (e) {
-          setDialog({ kind: "alert", title: `Could not ${mode}`, message: e instanceof Error ? e.message : "Something went wrong" });
         } finally {
           setPosting(null);
         }
@@ -335,8 +329,8 @@ export default function MenteeDrilldownPage() {
             throw new Error(data.error || `Failed (${res.status})`);
           }
           await load();
-        } catch (e) {
-          setDialog({ kind: "alert", title: "Couldn't assign roadmap", message: e instanceof Error ? e.message : "Something went wrong" });
+          // Success — Dialog closes itself. Any throw above stays visible
+          // inline in the dialog instead of being swallowed by the close.
         } finally {
           setSeedingSlug(null);
         }
@@ -356,20 +350,16 @@ export default function MenteeDrilldownPage() {
       danger: true,
       minLength: 3,
       onSubmit: async (reason) => {
-        try {
-          const res = await fetch("/api/mentor/ban", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ menteeId, action: "ban", reason }),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error || `Failed (${res.status})`);
-          }
-          await load();
-        } catch (e) {
-          setDialog({ kind: "alert", title: "Could not suspend", message: e instanceof Error ? e.message : "Something went wrong" });
+        const res = await fetch("/api/mentor/ban", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ menteeId, action: "ban", reason }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || `Failed (${res.status})`);
         }
+        await load();
       },
     });
   };

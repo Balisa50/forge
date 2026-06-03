@@ -45,6 +45,22 @@ export default function MentorNotesPage() {
   const [error, setError] = useState<string | null>(null);
   const [reply, setReply] = useState<Record<string, string>>({});
   const [sending, setSending] = useState<string | null>(null);
+  // A specific week the mentee arrived here to message about (e.g. clicked
+  // "Ask mentor to extend" on a closed week). We always show a composer for it,
+  // even if the mentor hasn't started a thread yet — otherwise the page is a
+  // dead end with no way to reach the mentor.
+  const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
+  const [focusIntent, setFocusIntent] = useState<string | null>(null);
+  const [prefilled, setPrefilled] = useState(false);
+
+  // Read ?task= & ?intent= from the URL once on mount (no useSearchParams so we
+  // avoid the Suspense-boundary requirement for a single read).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    setFocusTaskId(params.get("task"));
+    setFocusIntent(params.get("intent"));
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -59,6 +75,7 @@ export default function MentorNotesPage() {
       const ids = Array.from(new Set([
         ...data.comments.map((c) => c.taskId),
         ...data.resources.map((r) => r.taskId),
+        ...(focusTaskId ? [focusTaskId] : []),
       ]));
       if (ids.length > 0) {
         const taskRes = await fetch(`/api/tasks/meta?ids=${ids.join(",")}`);
@@ -74,7 +91,7 @@ export default function MentorNotesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [focusTaskId]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -133,6 +150,10 @@ export default function MentorNotesPage() {
       byTask[r.taskId] ??= { task: tasks[r.taskId], comments: [], resources: [] };
       byTask[r.taskId].resources.push(r);
     }
+    // Always include a composer group for the focused week, even with no thread.
+    if (focusTaskId && !byTask[focusTaskId]) {
+      byTask[focusTaskId] = { task: tasks[focusTaskId], comments: [], resources: [] };
+    }
     // Sort each task by most recent activity
     return Object.entries(byTask)
       .map(([taskId, g]) => ({
@@ -141,12 +162,33 @@ export default function MentorNotesPage() {
         comments: g.comments.slice().reverse(), // oldest → newest in display
         resources: g.resources,
         lastActivity: Math.max(
+          0,
           ...g.comments.map((c) => +new Date(c.createdAt)),
           ...g.resources.map((r) => +new Date(r.createdAt)),
         ),
       }))
-      .sort((a, b) => b.lastActivity - a.lastActivity);
-  }, [comments, resources, tasks]);
+      // Focused week first (so its composer is immediately visible), then by
+      // most recent activity.
+      .sort((a, b) => {
+        if (a.taskId === focusTaskId) return -1;
+        if (b.taskId === focusTaskId) return 1;
+        return b.lastActivity - a.lastActivity;
+      });
+  }, [comments, resources, tasks, focusTaskId]);
+
+  // Prefill a polite extension request when the mentee arrived via
+  // "Ask mentor to extend" on a closed week.
+  useEffect(() => {
+    if (prefilled || !focusTaskId || focusIntent !== "extend") return;
+    setReply((prev) => {
+      if (prev[focusTaskId]) return prev;
+      return {
+        ...prev,
+        [focusTaskId]: "Hi — this week closed on its deadline before I could finish. Could you extend the deadline or reopen it so I can complete the work? Thank you.",
+      };
+    });
+    setPrefilled(true);
+  }, [focusTaskId, focusIntent, prefilled]);
 
   if (loading) {
     return (

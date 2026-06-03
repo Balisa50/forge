@@ -66,12 +66,18 @@ export default function Dialog({ config, onClose }: Props) {
   const [date, setDate] = useState("");
   const [note, setNote] = useState("");
   const [rating, setRating] = useState<number | null>(null);
+  // Surfaces an error thrown by a confirm/submit handler. Without this, a
+  // handler that failed (e.g. the seed-roadmap POST 500'd) was invisible: the
+  // dialog just closed and the click looked dead. Now the error shows inline
+  // and the dialog stays open so the user actually sees what went wrong.
+  const [actionError, setActionError] = useState<string | null>(null);
   const firstFocusRef = useRef<HTMLButtonElement | HTMLInputElement | null>(null);
 
   // Reset form state every time the dialog opens with a new config
   useEffect(() => {
     setBusy(false);
     setRating(null);
+    setActionError(null);
     if (config?.kind === "release") {
       setDate(config.defaultDate);
       setNote("");
@@ -97,6 +103,22 @@ export default function Dialog({ config, onClose }: Props) {
 
   if (!config) return null;
 
+  // Run a handler, closing the dialog only on success. If the handler throws,
+  // keep the dialog open and show the error inline so the action never looks
+  // like it silently did nothing.
+  const runHandler = async (fn: () => void | Promise<void>) => {
+    setBusy(true);
+    setActionError(null);
+    try {
+      await fn();
+      onClose();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleConfirm = async () => {
     if (config.kind === "alert") {
       onClose();
@@ -107,43 +129,19 @@ export default function Dialog({ config, onClose }: Props) {
       if (Number.isNaN(parsed.getTime()) || parsed.getTime() <= Date.now()) {
         return; // invalid — let the user try again, validation message below
       }
-      setBusy(true);
-      try {
-        await config.onSubmit(parsed.toISOString(), note.trim());
-        onClose();
-      } finally {
-        setBusy(false);
-      }
+      await runHandler(() => config.onSubmit(parsed.toISOString(), note.trim()));
       return;
     }
     if (config.kind === "prompt") {
       if (note.trim().length < (config.minLength ?? 1)) return;
-      setBusy(true);
-      try {
-        await config.onSubmit(note.trim());
-        onClose();
-      } finally {
-        setBusy(false);
-      }
+      await runHandler(() => config.onSubmit(note.trim()));
       return;
     }
     if (config.kind === "verify") {
-      setBusy(true);
-      try {
-        await config.onSubmit(rating);
-        onClose();
-      } finally {
-        setBusy(false);
-      }
+      await runHandler(() => config.onSubmit(rating));
       return;
     }
-    setBusy(true);
-    try {
-      await config.onConfirm();
-      onClose();
-    } finally {
-      setBusy(false);
-    }
+    await runHandler(() => config.onConfirm());
   };
 
   const releaseDateInvalid =
@@ -399,6 +397,29 @@ export default function Dialog({ config, onClose }: Props) {
             </div>
           )}
         </div>
+
+        {/* Inline error from a failed confirm/submit handler */}
+        {actionError && (
+          <div
+            role="alert"
+            style={{
+              margin: "0 1.25rem 0.5rem",
+              padding: "0.625rem 0.75rem",
+              background: "rgba(239,68,68,0.1)",
+              border: "1px solid rgba(239,68,68,0.4)",
+              borderRadius: 8,
+              color: "var(--red)",
+              fontSize: "0.8125rem",
+              lineHeight: 1.45,
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "0.5rem",
+            }}
+          >
+            <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: "0.1rem" }} />
+            <span>{actionError}</span>
+          </div>
+        )}
 
         {/* Footer */}
         <div
