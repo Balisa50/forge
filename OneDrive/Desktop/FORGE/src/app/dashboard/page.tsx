@@ -6,7 +6,6 @@ import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import ForgePactCard from "@/components/ForgePactCard";
 import ShippedChain from "@/components/ShippedChain";
-import BuildFeed from "@/components/BuildFeed";
 
 /** Map a seeded Roadmap.title back to its curated slug so we can deep-link into
  *  /learn. Keyed by the CANONICAL JSON titles that the seeding actually writes to
@@ -249,8 +248,6 @@ export default async function DashboardPage() {
         <ForgePactCard />
 
         <ShippedChain shipped={verifiedTasks} total={totalTasks} streak={streakWeeks} />
-
-        <BuildFeed />
 
         {/* Current released week */}
         {releasedWeek && (() => {
