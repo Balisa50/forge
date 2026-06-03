@@ -1260,190 +1260,389 @@
       "phase": "Foundations",
       "commitment_hours": "12-15",
       "context": "Pandas is a language about a dataframe in your laptop's memory. SQL is a language about data in a database somewhere else — usually a much larger somewhere else than your laptop could hold. Almost every data science job you will ever interview for assumes you can write SQL. Most beginners learn pandas first and SQL never, and then get caught flat in interviews when the question is \"write a query that finds the top 3 customers per region.\"\n\nYou already know how to answer that question in pandas. This week you learn to say the same thing in SQL.\n\nThe two languages are mostly the same shape, with different verbs:\n\n  pandas: df.groupby('region').agg({'sales': 'sum'})\n  SQL:    SELECT region, SUM(sales) FROM df GROUP BY region\n\nThat is the joke. SQL is just pandas with the keywords in capitals. The week is short because the lesson is short — but the muscle memory matters. By Friday you will write 10 queries against a local SQLite copy of your TaxiPulse data, each one replicating something you already did in pandas. Then you will validate them: the SQL result and the pandas result must match exactly. That cross-check is how you know you actually understand both.\n\nOne more thing: window functions are the part of SQL that intimidates people the most, and they are also the part that comes up in every senior-analyst interview. We will spend day three on them specifically. By Friday you will be able to write \"rank customers by sales within each region\" without Googling.",
+      "concept_check": [
+        {
+          "q": "In pandas you write df.groupby('region')['sales'].sum(). What is the SQL equivalent?",
+          "choices": [
+            "SELECT region FROM sales WHERE sum > 0",
+            "SELECT region, SUM(sales) FROM t GROUP BY region",
+            "GROUP region BY SUM(sales)",
+            "SELECT SUM(region) FROM sales"
+          ],
+          "correct": 1,
+          "explain": "GROUP BY region + SUM(sales) is the SQL twin of pandas groupby+sum. Same operation, different verbs: SELECT the group key and the aggregate, GROUP BY the key."
+        },
+        {
+          "q": "Why do data science jobs assume SQL even when you know pandas?",
+          "choices": [
+            "SQL is faster to type",
+            "Production data lives in databases too large for a laptop's memory; SQL queries it in place",
+            "pandas is being deprecated",
+            "SQL produces prettier charts"
+          ],
+          "correct": 1,
+          "explain": "pandas operates on data already loaded into RAM. SQL runs against databases holding far more than a laptop could hold — the query runs on the server, returning only the result. That is most real-world data."
+        },
+        {
+          "q": "Which SQL feature finds the top 3 trips per borough — something awkward to do in pandas?",
+          "choices": [
+            "A WHERE clause",
+            "A window function with ROW_NUMBER() OVER (PARTITION BY ...)",
+            "A LEFT JOIN",
+            "SELECT DISTINCT"
+          ],
+          "correct": 1,
+          "explain": "Window functions compute a ranking WITHIN each group without collapsing rows. ROW_NUMBER() OVER (PARTITION BY borough ORDER BY trips DESC) numbers rows per borough so you can filter to rn <= 3."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "SQL is not Excel",
-          "summary": "",
+          "title": "SQL is not Excel — the relational mental model",
+          "summary": "Tables, rows, columns, and declaring WHAT you want, not HOW.",
           "items": [
             {
-              "kind": "video",
-              "title": "SQL crash course (1 hour)",
-              "url": "https://www.youtube.com/results?search_query=sql+crash+course+beginner+full+2024",
-              "duration_min": 60,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "What SQL is and how it differs from pandas",
+              "body": "## What it is\n**SQL (Structured Query Language)** is the language for querying **relational databases** — data organised into tables of rows and columns, with relationships between tables. You describe the result you want; the database engine figures out how to compute it.\n\nThat last point is the key difference from pandas. pandas is **imperative** — you spell out each step (filter, then group, then sum). SQL is **declarative** — you state the shape of the answer and the engine plans the execution:\n\n```sql\nSELECT pickup_hour, COUNT(*) AS trips\nFROM taxi\nWHERE fare_amount > 0\nGROUP BY pickup_hour\nORDER BY trips DESC;\n```\n\n## pandas → SQL, same shape, different verbs\n| pandas | SQL |\n|---|---|\n| `df[df.fare > 0]` | `WHERE fare > 0` |\n| `df.groupby('hour')` | `GROUP BY hour` |\n| `.sum()` / `.mean()` | `SUM()` / `AVG()` |\n| `.sort_values()` | `ORDER BY` |\n| `.head(5)` | `LIMIT 5` |\n\n## Why it matters\nAlmost every DS interview includes a SQL question. You already know how to answer 'top 3 customers per region' in pandas — this week you learn to say the same thing in SQL, the language production data actually lives in."
             },
             {
-              "kind": "reading",
-              "title": "SQLite Online — in-browser SQL",
-              "url": "https://sqliteonline.com/",
-              "why": "Click 'Open'. No install. Run queries instantly."
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "The fastest orientation to what SQL is and why every data job uses it."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## The same TaxiPulse question, in both languages\n```python\n# pandas (Week 1)\ndf.groupby('pickup_hour').size().sort_values(ascending=False).head(3)\n# pickup_hour\n# 18    217843\n# 17    213654\n# 19    211022\n```\n\n```sql\n-- SQL (this week) — identical result\nSELECT pickup_hour, COUNT(*) AS trips\nFROM taxi\nGROUP BY pickup_hour\nORDER BY trips DESC\nLIMIT 3;\n-- pickup_hour | trips\n-- 18          | 217843\n-- 17          | 213654\n-- 19          | 211022\n```\nSame answer, same shape of thinking. The verbs differ; the logic is the one you already learned."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "SQL is declarative — you describe the result you want, and the engine decides how to compute it.",
+                  "answer": true,
+                  "whenRight": "Right — you state the WHAT; the query planner handles the HOW. pandas is the opposite (imperative).",
+                  "whenWrong": "SQL is declarative. You write the shape of the answer; the database engine plans the execution steps.",
+                  "sim": "-- you write WHAT:\nSELECT hour, COUNT(*) FROM taxi GROUP BY hour;\n-- engine decides HOW to run it"
+                },
+                {
+                  "prompt": "`GROUP BY` in SQL is the direct equivalent of `.groupby()` in pandas.",
+                  "answer": true,
+                  "whenRight": "Right — same operation, different verb. Pair it with an aggregate (COUNT, SUM, AVG) just like pandas.",
+                  "whenWrong": "GROUP BY is the SQL twin of pandas .groupby(). Both collapse rows into one per group.",
+                  "sim": "df.groupby('hour').size()\n# ==\nSELECT hour, COUNT(*) FROM t GROUP BY hour"
+                },
+                {
+                  "prompt": "SQL can only query data that already fits in your laptop's RAM, just like pandas.",
+                  "answer": false,
+                  "whenRight": "Right — the opposite. SQL runs on the database server, querying data far larger than your RAM.",
+                  "whenWrong": "That's pandas' limit, not SQL's. SQL runs server-side against datasets far bigger than a laptop holds."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — map pandas to SQL",
+              "body": "[WRITE] In a file `sql_notes.md`, write the SQL equivalent of each pandas operation (don't run them yet, just translate):\n1. `df[df['fare_amount'] > 50]`\n2. `df.groupby('pickup_dow')['tip_rate'].mean()`\n3. `df.sort_values('trip_distance', ascending=False).head(10)`\nCheck each against the pandas→SQL table in the lesson."
             }
           ]
         },
         {
           "number": 2,
           "title": "Load TaxiPulse data into SQL",
-          "summary": "",
+          "summary": "Get a real table you can query — the foundation for the week.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Databases, tables, and loading a CSV into SQLite",
+              "body": "## What it is\nA **database** holds one or more **tables**. A table is exactly what you'd expect: named columns, typed values, many rows. To practise SQL you need real data in a real table.\n\n**SQLite** is the simplest possible database — a single file, no server to install. `sqliteonline.com` runs it in your browser, so you can import a CSV and start querying in two minutes. (The SQL you write here is the same SQL that runs on BigQuery, Postgres, and Snowflake — you learn the language once.)\n\n## Why a sample, not the full 3.2M rows\nBrowser SQLite handles ~100k rows comfortably; 3.2 million would choke it. You export a 100k random sample from `clean.parquet` to CSV. A random sample preserves the distributions, so your query *answers* will closely match the full-data pandas results — close enough to verify correctness.\n\n## Where this fits\nToday you create the `taxi` table from a sample of your cleaned data. Every query the rest of the week runs against it. Tomorrow you'll confirm each SQL answer matches the pandas answer you already trust."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Export a sample, then load it\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet').sample(100_000, random_state=42)\ndf.to_csv('data/taxi_sample.csv', index=False)\nprint(df.shape)\n# (100000, 22)\n```\n\n```sql\n-- In sqliteonline.com: + -> Import -> CSV -> taxi_sample.csv -> table 'taxi'\nSELECT COUNT(*) FROM taxi;\n-- 100000\n\nSELECT * FROM taxi LIMIT 3;\n-- eyeball the columns: fare_amount, trip_distance, pickup_hour, ...\n```\n`SELECT COUNT(*)` is the SQL 'did it load?' check — the equivalent of `df.shape` after a read."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A random 100k sample preserves the data's distributions, so SQL answers closely match full-data pandas answers.",
+                  "answer": true,
+                  "whenRight": "Right — random sampling keeps proportions intact, so averages and rankings stay close. Good enough to verify your SQL is correct.",
+                  "whenWrong": "A random sample keeps the shape of the data. Means and top-N rankings will closely match the full dataset.",
+                  "sim": "full mean fare: 16.42\n100k sample mean: ~16.4\n# close enough to verify"
+                },
+                {
+                  "prompt": "The SQL you write in browser SQLite is fundamentally different from SQL on BigQuery or Postgres.",
+                  "answer": false,
+                  "whenRight": "Right — core SQL (SELECT/WHERE/GROUP BY/JOIN) is the same everywhere. You learn the language once.",
+                  "whenWrong": "Core SQL is portable. SELECT, WHERE, GROUP BY, JOIN, window functions work the same across SQLite, Postgres, BigQuery."
+                },
+                {
+                  "prompt": "`SELECT COUNT(*) FROM taxi;` is a good first check that your data loaded correctly.",
+                  "answer": true,
+                  "whenRight": "Right — it's the SQL equivalent of checking df.shape. Confirms the row count before you trust any query.",
+                  "whenWrong": "COUNT(*) is the load check — it tells you how many rows made it in. Run it right after importing.",
+                  "sim": "SELECT COUNT(*) FROM taxi;\n-- 100000  -> loaded correctly"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CSV → SQL",
-              "body": "Convert clean.parquet to CSV (small sample for SQL):\n      import pandas as pd\n      df = pd.read_parquet('data/clean.parquet').sample(100_000)\n      df.to_csv('data/taxi_sample.csv', index=False)\n\nOpen sqliteonline.com. Click '+' → Import → CSV → upload taxi_sample.csv. Table named 'taxi'.\nTest: SELECT COUNT(*) FROM taxi;"
+              "title": "Your turn — load the data",
+              "body": "[CODE] 1. Export a 100k random sample of `data/clean.parquet` to `data/taxi_sample.csv` (random_state=42).\n2. Open sqliteonline.com, import the CSV as a table named `taxi`.\n3. Run `SELECT COUNT(*) FROM taxi;` — confirm 100000.\n4. Run `SELECT * FROM taxi LIMIT 5;` and note the column names you'll query this week."
             }
           ]
         },
         {
           "number": 3,
           "title": "SELECT, WHERE, GROUP BY",
-          "summary": "",
+          "summary": "The three clauses that answer 80% of analytical questions.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The core query — SELECT / WHERE / GROUP BY / ORDER BY",
+              "body": "## What it is\nFour clauses, always in this order, answer most analytical questions:\n\n```sql\nSELECT   pickup_hour, COUNT(*) AS trips   -- which columns + aggregates\nFROM     taxi                             -- which table\nWHERE    fare_amount > 0                   -- filter rows BEFORE grouping\nGROUP BY pickup_hour                       -- collapse into one row per hour\nORDER BY trips DESC                         -- sort the result\nLIMIT    5;                                 -- keep the top 5\n```\n\n## The execution order that trips people up\nYou *write* SELECT first, but the engine *runs* it almost last. The logical order is: **FROM → WHERE → GROUP BY → SELECT → ORDER BY → LIMIT**. That's why you can't use a `SELECT` alias inside `WHERE` (the alias doesn't exist yet) but you can in `ORDER BY` (it does by then).\n\n## Aggregates\n`COUNT(*)`, `SUM(col)`, `AVG(col)`, `MIN(col)`, `MAX(col)` collapse a group into one number. Every non-aggregated column in SELECT must appear in GROUP BY — the engine needs to know how to fold the rest.\n\n## Where this fits\nToday you rewrite your Week 1 TaxiPulse findings (busiest hour, fare by day) as SQL, and confirm each result matches the pandas version. Matching answers = you've learned the translation."
+            },
+            {
+              "kind": "video",
+              "title": "SQL SELECT, WHERE, GROUP BY explained",
+              "url": "https://www.youtube.com/watch?v=H-dDf3of04s",
+              "duration_min": 10,
+              "creator": "Socratica",
+              "why": "Clear walkthrough of the core query clauses with real examples."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Answer Week 1 questions in SQL\n```sql\n-- Busiest hours (matches pandas Week 1)\nSELECT pickup_hour, COUNT(*) AS trips\nFROM taxi\nGROUP BY pickup_hour\nORDER BY trips DESC\nLIMIT 5;\n-- 18 | 6189   17 | 6071   19 | 6004 ...  (per 100k sample)\n\n-- Average fare by day of week, weekdays only\nSELECT pickup_dow, ROUND(AVG(fare_amount), 2) AS avg_fare\nFROM taxi\nWHERE pickup_dow < 5\nGROUP BY pickup_dow\nORDER BY avg_fare DESC;\n-- 4 | 16.51   3 | 16.40 ...\n```\nNote `WHERE pickup_dow < 5` filters rows *before* grouping — only weekdays enter the averages."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "WHERE filters rows BEFORE they are grouped by GROUP BY.",
+                  "answer": true,
+                  "whenRight": "Right — WHERE runs before GROUP BY in execution order. To filter AFTER aggregating, you use HAVING.",
+                  "whenWrong": "WHERE filters pre-grouping. (HAVING filters post-aggregation.) Execution order: FROM, WHERE, GROUP BY, SELECT.",
+                  "sim": "WHERE fare > 0      -- before grouping\nGROUP BY hour\nHAVING COUNT(*) > 5 -- after grouping"
+                },
+                {
+                  "prompt": "Every non-aggregated column in SELECT must also appear in GROUP BY.",
+                  "answer": true,
+                  "whenRight": "Right — the engine needs to know how to fold the other columns. Aggregates (COUNT, AVG) are the exception.",
+                  "whenWrong": "Any column you SELECT but don't aggregate must be in GROUP BY, or the engine can't collapse the rows.",
+                  "sim": "SELECT borough, hour, COUNT(*)\nGROUP BY borough, hour  -- both non-aggregates listed"
+                },
+                {
+                  "prompt": "`ORDER BY trips DESC` sorts the result with the largest trip count first.",
+                  "answer": true,
+                  "whenRight": "Right — DESC = descending (largest first). ASC (or omitting) sorts smallest first.",
+                  "whenWrong": "DESC sorts high-to-low. Pair with LIMIT to get a 'top N' result.",
+                  "sim": "ORDER BY trips DESC LIMIT 5\n-- top 5 busiest"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Rewrite Q1 in SQL",
-              "body": "      -- Q1: trips by hour (from your TaxiPulse Week 1)\n      SELECT pickup_hour, COUNT(*) AS trips\n      FROM taxi\n      GROUP BY pickup_hour\n      ORDER BY trips DESC\n      LIMIT 5;\n\nSave in queries.sql. Compare to your pandas result — match?"
+              "title": "Your turn — SELECT/WHERE/GROUP BY",
+              "body": "[CODE] In `queries.sql`, write and run:\n1. Trips by pickup_hour, sorted busiest-first, top 5.\n2. Average fare by pickup_dow for weekends only (pickup_dow >= 5).\n3. Count of trips where tip_amount = 0 (cash trips with no recorded tip).\nFor each, add a `-- comment` and confirm the answer matches your pandas result from Weeks 1-3."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Joins (LEFT, INNER)",
-          "summary": "",
+          "title": "Joins — combining tables on a key",
+          "summary": "LEFT and INNER joins connect taxi trips to borough names.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "JOINs — the relational superpower",
+              "body": "## What it is\nReal databases split data across tables to avoid repetition. Your `taxi` table has `PULocationID` (a number); a separate `zones` table maps each ID to a borough name. A **JOIN** stitches them together on the shared key:\n\n```sql\nSELECT z.Borough, COUNT(*) AS trips\nFROM taxi t\nLEFT JOIN zones z ON z.LocationID = t.PULocationID\nGROUP BY z.Borough;\n```\n\n## INNER vs LEFT — the difference that causes bugs\n- **INNER JOIN** keeps only rows that match in *both* tables. A trip with a `PULocationID` not in `zones` vanishes.\n- **LEFT JOIN** keeps *every* row from the left (taxi) table; unmatched rows get NULL for the zone columns.\n\nThis matters: if you INNER JOIN and some location IDs are missing from your lookup, you silently lose trips and your counts come out wrong. LEFT JOIN surfaces the gap instead of hiding it (you'll see NULL boroughs).\n\n## Table aliases\n`taxi t` and `zones z` give short nicknames so you can write `t.PULocationID` and `z.Borough`. Standard practice in every real query.\n\n## Where this fits\nToday you join trips to zones to get the borough breakdown — the same analysis you did in pandas with `.merge()` in Week 3, now in SQL."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Borough breakdown via JOIN\n```sql\n-- Import taxi_zone_lookup.csv as table 'zones' first\nSELECT z.Borough, COUNT(*) AS trips,\n       ROUND(AVG(t.fare_amount), 2) AS avg_fare\nFROM taxi t\nLEFT JOIN zones z ON z.LocationID = t.PULocationID\nGROUP BY z.Borough\nORDER BY trips DESC;\n-- Borough    | trips | avg_fare\n-- Manhattan  | 71938 | 16.44\n-- Queens     | 17404 | 22.24\n-- Brooklyn   |  9488 | 14.87\n-- (NULL)     |   210 | 13.10   <- IDs missing from the lookup\n```\nThat `(NULL)` row is the LEFT JOIN earning its keep — it shows you trips whose location wasn't in the lookup. An INNER JOIN would have silently dropped them."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An INNER JOIN keeps only rows that have a match in BOTH tables.",
+                  "answer": true,
+                  "whenRight": "Right — unmatched rows from either side are dropped. Use it when you only want confirmed matches.",
+                  "whenWrong": "INNER = intersection. Rows without a match on either side disappear. LEFT keeps all left-table rows.",
+                  "sim": "taxi INNER JOIN zones\n# trips with no matching zone: dropped"
+                },
+                {
+                  "prompt": "A LEFT JOIN can silently drop rows from the taxi table when a location ID is missing from zones.",
+                  "answer": false,
+                  "whenRight": "Right — LEFT JOIN KEEPS all taxi rows; missing matches become NULL. It's INNER JOIN that drops them.",
+                  "whenWrong": "LEFT JOIN never drops left-table rows — that's its purpose. Unmatched rows get NULL columns, visible to you.",
+                  "sim": "LEFT JOIN: trip kept, Borough = NULL\nINNER JOIN: trip dropped entirely"
+                },
+                {
+                  "prompt": "Table aliases like `taxi t` let you write `t.column` instead of the full table name.",
+                  "answer": true,
+                  "whenRight": "Right — a nickname that keeps multi-table queries readable. Standard in every real-world query.",
+                  "whenWrong": "Aliases are shorthand: `FROM taxi t` lets you say `t.fare_amount`. Essential once you join two+ tables."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Add zone lookup",
-              "body": "Import taxi_zone_lookup.csv as 'zones'.\n      SELECT z.Borough, COUNT(*) AS trips\n      FROM taxi t\n      LEFT JOIN zones z ON z.LocationID = t.PULocationID\n      GROUP BY z.Borough\n      ORDER BY trips DESC;"
+              "title": "Your turn — joins",
+              "body": "[CODE] In `queries.sql`:\n1. Import `taxi_zone_lookup.csv` as a table `zones`.\n2. LEFT JOIN taxi to zones to get trips + avg_fare per Borough, sorted by trips.\n3. Run the same query with INNER JOIN. How many rows differ? What happened to the unmatched trips?\n4. Add a comment explaining which join you'd use for a revenue report and why."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Window functions",
-          "summary": "",
+          "title": "Window functions — ranking within groups",
+          "summary": "ROW_NUMBER() does what pandas can't do cleanly: top-N per group.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Window functions — compute across rows without collapsing them",
+              "body": "## What it is\nA **window function** computes a value across a set of rows **related to the current row**, without collapsing them into one. Unlike GROUP BY (which folds many rows into one), a window function adds a computed column while keeping every row.\n\n```sql\nROW_NUMBER() OVER (PARTITION BY borough ORDER BY trips DESC) AS rn\n```\n\nRead it right to left:\n- **PARTITION BY borough** — restart the numbering for each borough\n- **ORDER BY trips DESC** — within a borough, rank busiest first\n- **ROW_NUMBER()** — assign 1, 2, 3, … in that order\n\n## Why it matters — the 'top N per group' problem\n'Top 3 busiest hours *per borough*' is genuinely awkward in pandas (groupby + apply + nlargest gymnastics). In SQL it's one window function: number the rows per borough, then filter to `rn <= 3`. This is a classic interview question precisely because window functions are the clean answer.\n\n## Other window functions\n`RANK()` (ties share a rank, leaving gaps), `DENSE_RANK()` (ties share, no gaps), `SUM(...) OVER (...)` (running totals), `LAG()`/`LEAD()` (previous/next row — great for month-over-month change).\n\n## Where this fits\nToday you answer 'top 3 hours per borough' — a question that shows off exactly the SQL skill interviewers probe for."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Top 3 busiest hours per borough\n```sql\nSELECT * FROM (\n  SELECT z.Borough, t.pickup_hour, COUNT(*) AS trips,\n         ROW_NUMBER() OVER (\n           PARTITION BY z.Borough ORDER BY COUNT(*) DESC\n         ) AS rn\n  FROM taxi t\n  LEFT JOIN zones z ON z.LocationID = t.PULocationID\n  GROUP BY z.Borough, t.pickup_hour\n)\nWHERE rn <= 3;\n-- Borough   | pickup_hour | trips | rn\n-- Manhattan | 18          | 4821  | 1\n-- Manhattan | 17          | 4760  | 2\n-- Manhattan | 19          | 4655  | 3\n-- Queens    | 15          | 1102  | 1   <- airport afternoon peak, different!\n-- Queens    | 14          | 1071  | 2\n```\nQueens peaks in the afternoon (airport arrivals), Manhattan in the evening. The window function surfaced a per-borough pattern that a global 'busiest hour' would have hidden."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A window function adds a computed column while keeping every original row (unlike GROUP BY).",
+                  "answer": true,
+                  "whenRight": "Right — GROUP BY collapses; a window function annotates. Every row survives, with a new ranking/total alongside.",
+                  "whenWrong": "Window functions don't collapse rows. They compute across a 'window' of rows but return one value per row.",
+                  "sim": "GROUP BY: 100 rows -> 5 rows\nWINDOW:   100 rows -> 100 rows + rank col"
+                },
+                {
+                  "prompt": "`PARTITION BY borough` restarts the row numbering separately for each borough.",
+                  "answer": true,
+                  "whenRight": "Right — PARTITION BY is like GROUP BY for the window: numbering resets at each new borough.",
+                  "whenWrong": "PARTITION BY defines the window's groups. ROW_NUMBER() restarts at 1 for each partition.",
+                  "sim": "Manhattan: 1,2,3...\nQueens:    1,2,3...  <- restarted"
+                },
+                {
+                  "prompt": "Finding the top 3 rows per group is easier in pandas than with a SQL window function.",
+                  "answer": false,
+                  "whenRight": "Right — it's the reverse. SQL's ROW_NUMBER + filter is the clean way; pandas needs groupby+apply gymnastics.",
+                  "whenWrong": "Top-N-per-group is where window functions shine and pandas gets awkward. SQL wins here decisively."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Top 3 per borough",
-              "body": "      SELECT * FROM (\n        SELECT z.Borough, t.pickup_hour, COUNT(*) AS trips,\n               ROW_NUMBER() OVER (PARTITION BY z.Borough ORDER BY COUNT(*) DESC) AS rn\n        FROM taxi t LEFT JOIN zones z ON z.LocationID = t.PULocationID\n        GROUP BY z.Borough, t.pickup_hour\n      ) WHERE rn <= 3;\n\nThis is impossible cleanly in pandas. SQL wins."
+              "title": "Your turn — window functions",
+              "body": "[CODE] In `queries.sql`:\n1. Write a query using ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...) to find the top 3 busiest pickup_hours per Borough.\n2. Wrap it in an outer query filtering to rn <= 3.\n3. In a comment, note one borough whose peak hour differs from Manhattan's — and your hypothesis for why."
             }
           ]
         },
         {
           "number": 6,
-          "title": "CTEs (WITH ...)",
-          "summary": "",
+          "title": "CTEs — readable multi-step queries",
+          "summary": "WITH clauses break a complex query into named, legible steps.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Common Table Expressions (CTEs) — name your intermediate steps",
+              "body": "## What it is\nA **CTE (Common Table Expression)** is a named temporary result you define with `WITH`, then reference like a table. It turns a tangled nested query into readable, sequential steps:\n\n```sql\nWITH busy AS (\n  SELECT pickup_hour, COUNT(*) AS trips\n  FROM taxi GROUP BY pickup_hour\n),\navg_busy AS (\n  SELECT AVG(trips) AS avg_trips FROM busy\n)\nSELECT b.pickup_hour, b.trips,\n       ROUND(100.0 * (b.trips - a.avg_trips) / a.avg_trips, 1) AS pct_vs_avg\nFROM busy b CROSS JOIN avg_busy a\nORDER BY pct_vs_avg DESC;\n```\n\n## Why it matters — readability is correctness\nThe alternative to a CTE is nesting subqueries inside subqueries — quickly unreadable, and unreadable queries hide bugs. A CTE reads top-to-bottom like a recipe: 'first compute `busy`, then `avg_busy`, then compare them.' Each step is named, testable, and reusable within the query.\n\nOn a team, the query someone else can read and modify six months later is the correct one, even if a clever nested version is shorter.\n\n## Where this fits\nToday you express 'how does each hour compare to the average hour?' as a clean two-CTE query — a multi-step calculation that would be ugly nested."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Each hour vs the average hour\n```sql\nWITH busy AS (\n  SELECT pickup_hour, COUNT(*) AS trips\n  FROM taxi GROUP BY pickup_hour\n),\navg_busy AS (\n  SELECT AVG(trips) AS avg_trips FROM busy\n)\nSELECT b.pickup_hour, b.trips,\n       ROUND(100.0 * (b.trips - a.avg_trips) / a.avg_trips, 1) AS pct_vs_avg\nFROM busy b CROSS JOIN avg_busy a\nORDER BY pct_vs_avg DESC;\n-- pickup_hour | trips | pct_vs_avg\n-- 18          | 6189  | +48.6\n-- 17          | 6071  | +45.8\n-- 4           | 612   | -85.3   <- 4am is 85% below the average hour\n```\nReads like a recipe: compute per-hour counts (`busy`), compute their average (`avg_busy`), then express each hour as a % deviation. Try writing that nested — it gets ugly fast."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A CTE (WITH clause) lets you name an intermediate result and reference it later in the same query.",
+                  "answer": true,
+                  "whenRight": "Right — WITH name AS (...) defines a named step you can SELECT from, like a temporary table.",
+                  "whenWrong": "That's exactly a CTE: a named, reusable intermediate result defined with WITH at the top of the query.",
+                  "sim": "WITH busy AS (...)\nSELECT * FROM busy  -- reference it"
+                },
+                {
+                  "prompt": "CTEs mainly exist to make queries run faster than the equivalent nested subqueries.",
+                  "answer": false,
+                  "whenRight": "Right — their main value is READABILITY, not speed. Most engines optimise both similarly.",
+                  "whenWrong": "CTEs are about readability and maintainability, not performance. They make multi-step logic legible."
+                },
+                {
+                  "prompt": "You can define multiple CTEs in one query, separated by commas, each able to reference earlier ones.",
+                  "answer": true,
+                  "whenRight": "Right — chain them: WITH a AS (...), b AS (... from a ...). Each step builds on the last.",
+                  "whenWrong": "You can chain CTEs with commas, and later ones can reference earlier ones — a clean pipeline of steps.",
+                  "sim": "WITH a AS (...),\n     b AS (SELECT ... FROM a)\nSELECT ... FROM b"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Multi-step analysis",
-              "body": "      WITH busy AS (\n        SELECT pickup_hour, COUNT(*) AS trips FROM taxi GROUP BY pickup_hour\n      ),\n      avg_busy AS (SELECT AVG(trips) AS avg_trips FROM busy)\n      SELECT b.pickup_hour, b.trips,\n             ROUND(100.0 * (b.trips - a.avg_trips) / a.avg_trips, 1) AS pct_vs_avg\n      FROM busy b CROSS JOIN avg_busy a\n      ORDER BY pct_vs_avg DESC;"
+              "title": "Your turn — CTEs",
+              "body": "[CODE] In `queries.sql`, write a query using at least two CTEs that answers: 'Which borough's average fare is furthest above the city-wide average fare, in percent?'\n1. CTE 1: average fare per borough (join to zones).\n2. CTE 2: the city-wide average fare.\n3. Final SELECT: each borough's % deviation, sorted descending. Comment each step."
             }
           ]
         },
         {
           "number": 7,
           "title": "Save 10 queries + push",
-          "summary": "",
+          "summary": "Ship the SQL version of TaxiPulse as a portfolio artifact.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Packaging a query file as a deliverable",
+              "body": "## What it is\nA `queries.sql` file with 10 well-commented queries that reproduce your TaxiPulse analysis is a genuine portfolio artifact. Recruiters filter for SQL; a clean query file that demonstrably matches your pandas results is concrete proof you have the skill.\n\n## What makes a query file professional\n1. **Every query has a comment** stating the business question it answers\n2. **Queries are ordered** simple → complex (SELECT/WHERE/GROUP BY first, then JOINs, then window functions and CTEs)\n3. **Results are verified** against your pandas equivalents — same answer, two languages\n4. At least **one window function and one CTE** appear, proving you're past beginner SQL\n\n## Why it matters\n'I know SQL' is a claim. A public `queries.sql` that answers real questions on real data — and whose answers you can show match your pandas notebooks — is evidence. Evidence is what gets you past the screening round.\n\n## Where this fits\nToday you assemble the 10 queries from this week into one committed, commented file and push it. The SQL version of TaxiPulse is now part of the repo recruiters will read."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A queries.sql file where each query has a comment stating its business question is more valuable than bare queries.",
+                  "answer": true,
+                  "whenRight": "Right — the comment turns a query into a documented answer a reviewer can follow without reverse-engineering it.",
+                  "whenWrong": "Comments make the file readable and reviewable. A bare query forces the reader to reverse-engineer intent."
+                },
+                {
+                  "prompt": "Verifying that your SQL answers match your pandas answers is a waste of time once the query runs without errors.",
+                  "answer": false,
+                  "whenRight": "Right — running without error is NOT the same as correct. A wrong JOIN runs fine but gives wrong numbers. Verify against pandas.",
+                  "whenWrong": "A query can run cleanly and still be wrong (e.g. an INNER JOIN that drops rows). Cross-checking pandas catches that."
+                },
+                {
+                  "prompt": "Including at least one window function and one CTE signals you're past beginner SQL.",
+                  "answer": true,
+                  "whenRight": "Right — those two features are the line between 'can SELECT' and 'can actually query'. Interviewers look for them.",
+                  "whenWrong": "Window functions and CTEs are the intermediate-skill markers. Demonstrating both shows real fluency."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "queries.sql ships",
-              "body": "Save 10 SQL queries answering your TaxiPulse questions. Each with a comment.\n      git add queries.sql data/taxi_zone_lookup.csv\n      git commit -m 'SQL version of TaxiPulse analysis'\n\nPASS:\n  ☐ 10 commented queries in queries.sql\n  ☐ Each result matches pandas equivalent\n  ☐ At least 1 window function + 1 CTE used"
+              "title": "Your turn — ship the SQL version",
+              "body": "[PRODUCE] Assemble `queries.sql` with 10 commented queries reproducing your TaxiPulse analysis. Then:\n`git add queries.sql data/taxi_zone_lookup.csv`\n`git commit -m 'SQL version of TaxiPulse analysis'`\n`git push`\n\nPASS:\n[x] 10 commented queries in queries.sql\n[x] Each result verified against its pandas equivalent\n[x] At least 1 window function used\n[x] At least 1 CTE used\n[x] Pushed to GitHub"
             }
           ]
         }
-      ],
-      "topics": [
-        "SELECT/WHERE/GROUP BY",
-        "JOIN types (INNER, LEFT)",
-        "Window functions (ROW_NUMBER, RANK)",
-        "CTEs / WITH clauses",
-        "Validating SQL against pandas"
-      ],
-      "tasks": [
-        "Set up SQLite Online",
-        "Import 100k taxi rows + zone lookup",
-        "Rewrite 3 TaxiPulse pivots in SQL",
-        "Use a window function for 'top-N per group'",
-        "Use a CTE for multi-step analysis",
-        "Commit 10 commented queries"
-      ],
-      "project": "TaxiPulse SQL — 10 queries that replicate your pandas analysis. queries.sql committed.",
-      "resources": [
-        {
-          "label": "SQL in 100 seconds - Fireship",
-          "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-          "note": "2 min. The whole world runs on SQL."
-        },
-        {
-          "label": "SELECT WHERE GROUP BY in 12 min - Alex The Analyst",
-          "url": "https://www.youtube.com/watch?v=7mz73uXD9DA",
-          "note": "12 min. The 3 most-used verbs."
-        },
-        {
-          "label": "JOINs in 10 min - Alex The Analyst",
-          "url": "https://www.youtube.com/watch?v=9yeOJ0ZMUYw",
-          "note": "10 min. Venn diagrams + working queries."
-        },
-        {
-          "label": "Window Functions in 14 min - Alex The Analyst",
-          "url": "https://www.youtube.com/watch?v=Ww71knvhQ-s",
-          "note": "14 min. Top-N-per-group, running totals, rankings."
-        },
-        {
-          "label": "CTEs in 8 min - Alex The Analyst",
-          "url": "https://www.youtube.com/watch?v=K1WeoKxLZ5o",
-          "note": "8 min. WITH clauses. Readable multi-step queries."
-        },
-        {
-          "label": "SQLite Online",
-          "url": "https://sqliteonline.com/",
-          "note": "Zero install. Import CSV, query in browser."
-        }
-      ],
-      "exercises": [
-        "Try BigQuery's public NYC TLC dataset (it's free + faster)",
-        "Write a query that finds outlier trips (fare > 99th pct of distance bucket)",
-        "Convert one query to a stored procedure"
-      ],
-      "questions": [
-        "When is SQL faster than pandas? When isn't it?",
-        "What's a window function vs a GROUP BY?",
-        "Why use a CTE instead of nested subqueries?"
-      ],
-      "outputs": [
-        "queries.sql with 10 commented queries",
-        "Validation: SQL = pandas results",
-        "1 window function + 1 CTE"
-      ],
-      "mastery_questions": [
-        "Load your TaxiPulse parquet into SQLite using pandas: df.to_sql('trips', conn). Run a SELECT COUNT(*) FROM trips. Paste the count. It should match the df.shape from week 1 (3.5M). You just put 3.5 million rows into a real database. Now you can query them with SQL.",
-        "Write a SQL query that gives the average fare per borough. Run the same calculation in pandas. Paste both results side by side. They should match to multiple decimal places. If they do not — find the bug. Usually it is a NULL handling difference (SQL ignores NULLs in AVG, pandas does too, but only after you decide what to do with them).",
-        "Write a query using a CTE (WITH clause) that finds the top 5 pickup locations by trip count for each borough. Use ROW_NUMBER() OVER (PARTITION BY borough ORDER BY trips DESC) and filter to row_num <= 5. Paste the query. This is the canonical \"top N per group\" interview question and you will see it again at every level of every interview process.",
-        "Write a LEFT JOIN between trips and the zone lookup table. Now count rows where the borough is NULL. If there are any, that means there are LocationIDs in your trip data that do NOT exist in the lookup. Paste the count. What does that tell you about the data quality? (And what should you do about those rows — drop them silently, flag them, or investigate them?)",
-        "Validate: pick any three queries you wrote this week, run them in SQL and again in pandas, and paste the side-by-side numbers. They MUST match. If you find a mismatch you cannot explain, that is one of the most valuable bugs you will hit this month — it almost always reveals a hidden assumption you were making about NULLs, types, or implicit casting."
-      ],
-      "ai_assist": "SQL is the field where AI is most useful and most dangerous at the same time. Most dangerous: copying a generated query that runs without error but returns subtly wrong numbers. The fix is the validation habit — every AI-generated query gets cross-checked against pandas this week. Most useful: asking \"explain this query line by line\" on a complex one (especially window functions). The third move that nobody talks about: when you write a query yourself, paste it into Claude and ask \"is there a more idiomatic way to write this?\" — that is how you absorb professional patterns without anyone teaching you.",
-      "pre_flight": "Before writing any SQL, pick ONE pandas analysis you did in week 1 or week 3 — your favourite, the one you understood best. Write it out as a sentence first: \"I want to find the average fare for each borough, sorted highest to lowest.\" Now translate that sentence to SQL in your head before you write it. You will be surprised how often the SQL writes itself once you have the English sentence clear. The translation step (English → query) is half the skill.",
-      "common_mistakes": [
-        "Forgetting that GROUP BY needs to include EVERY non-aggregated column you SELECT. SELECT borough, hour, AVG(fare) requires GROUP BY borough, hour — not just GROUP BY borough.",
-        "Using = NULL instead of IS NULL. NULL is not equal to anything, including itself. WHERE col = NULL returns zero rows always.",
-        "Aliasing a column with AS and then trying to reference the alias in WHERE. WHERE runs before SELECT — you cannot use the alias there. Use HAVING (which runs after) or wrap in a subquery.",
-        "Joining on the wrong key by accident. Always check the result row count before celebrating a successful query. A \"successful\" join that silently returned 10x too many rows is worse than one that errored.",
-        "Trying to write the perfect query in one shot. Write it ugly first, run it, see the wrong answer, then refine. SQL is iterative — even seniors write garbage first drafts."
-      ],
-      "debug_help": "SQL error messages are short and unhelpful by tradition. \"Syntax error near GROUP\" tells you almost nothing. The trick: when a query errors, isolate. Comment out the GROUP BY and ORDER BY and see if the bare SELECT works. Then add them back one at a time. If a query runs but returns wrong numbers, run it against a tiny subset (LIMIT 10) and check by hand. The mistake is almost always either (1) wrong join key, (2) NULL behaviour you forgot about, or (3) you grouped by the wrong column. When you cannot find it after 20 minutes, paste the query AND the table schemas AND the expected vs actual result into Claude. Most of the time it spots the bug instantly.",
-      "stretch": [
-        "Set up a free Postgres database (Supabase or Neon — both free tier) and upload your TaxiPulse data to it. Re-run your queries against the real Postgres. Postgres is what every job uses; SQLite is what you learn on.",
-        "Write a CTE-based query that calculates the day-over-day change in trip volume. (Hint: LAG() window function.) This pattern shows up in every business dashboard you will ever see — sales today vs sales yesterday.",
-        "Write the same \"top N per group\" query (mastery #3) using a correlated subquery instead of a window function. Both work. The window function version is faster and more readable, but knowing both lets you read old codebases."
-      ],
-      "concept_widget": {
-        "id": "join-visualiser",
-        "caption": "Switch join types and watch which rows survive and where NULLs appear."
-      }
+      ]
     },
     {
       "number": 5,
@@ -1451,187 +1650,397 @@
       "phase": "Foundations",
       "commitment_hours": "12-18",
       "context": "You have spent four weeks describing the data. Now you train your first real machine learning model and ask the data a different kind of question — not \"what is the average fare?\" but \"given a trip's distance and pickup hour, can I PREDICT its fare?\"\n\nThat distinction — describe vs predict — is the whole field, in a sentence. Last week you did description. This week you start prediction. Everything from here on out is variations on this theme.\n\nYou will train two models and compare them. First a plain linear regression — the same equation you derived by hand in week 2, but this time sklearn does it for you and you focus on the workflow: split your data into train and test, fit on train, evaluate on test, look at the residuals. Then XGBoost — a tree-based model that is the workhorse of every Kaggle competition and most tabular ML in production. You will see XGBoost win on accuracy and lose on interpretability. That trade-off (accuracy vs. explainability) is a real one you will navigate forever.\n\nYour goal: a model that predicts fare within $5 on average (MAE < 5). The baseline of just guessing the mean fare gives you MAE around $8. Anything below $5 means your model has actually learned something about the relationship between distance, time, and price. By Sunday TaxiPulse v0.3 will have a working model + an honest evaluation + one chart showing where the model fails (residuals analysis). The \"where it fails\" part is what separates a real ML notebook from a tutorial.",
+      "concept_check": [
+        {
+          "q": "What is the core difference between regression and classification?",
+          "choices": [
+            "Regression uses more data",
+            "Regression predicts a continuous number (a fare); classification predicts a category (a label)",
+            "Regression is always more accurate",
+            "Classification cannot use sklearn"
+          ],
+          "correct": 1,
+          "explain": "Regression outputs a continuous value — a fare of $14.32. Classification outputs a discrete label — 'will tip' vs 'won't tip'. Predicting the fare amount is a regression problem."
+        },
+        {
+          "q": "Why split data into train and test sets before fitting a model?",
+          "choices": [
+            "To make training faster",
+            "To measure performance on data the model has never seen — the only honest estimate of real-world accuracy",
+            "Because sklearn requires it",
+            "To reduce the file size"
+          ],
+          "correct": 1,
+          "explain": "A model can memorise the data it trained on, scoring perfectly there while failing on new data (overfitting). Holding out a test set the model never sees is the only honest measure of how it will perform in production."
+        },
+        {
+          "q": "Your linear model has MAE $4.20; the 'always predict the mean' baseline has MAE $8.00. What does this tell you?",
+          "choices": [
+            "The model is broken",
+            "The model learned real signal — it roughly halves the average error vs guessing the mean",
+            "MAE is meaningless",
+            "The model overfit"
+          ],
+          "correct": 1,
+          "explain": "The baseline (always guess the average fare) is the bar any model must beat. MAE $4.20 vs $8.00 means the model's predictions are about twice as close to reality as guessing — it learned a real relationship between the features and fare."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "Regression vs classification",
-          "summary": "",
+          "title": "Regression vs classification — and the ML workflow",
+          "summary": "The describe-to-predict leap, and the workflow every model follows.",
           "items": [
             {
-              "kind": "video",
-              "title": "Linear regression in 15 minutes",
-              "url": "https://www.youtube.com/results?search_query=linear+regression+beginner+15+minutes",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "Supervised learning: regression, classification, and the train/test split",
+              "body": "## What it is\n**Supervised learning** trains a model on examples where you know the answer (the 'label'), so it can predict the answer for new examples. Two flavours:\n\n- **Regression** — predict a continuous *number*. 'What will this trip's fare be?' → $14.32\n- **Classification** — predict a discrete *category*. 'Will this rider tip?' → yes/no\n\nThis week is regression: predict `fare_amount` from `trip_distance`, `trip_minutes`, and `pickup_hour`.\n\n## The workflow that never changes\nEvery supervised model follows the same five steps:\n```text\n1. SPLIT   data into train (80%) and test (20%)\n2. FIT     the model on the training set only\n3. PREDICT on the test set\n4. EVALUATE predictions vs the true answers (MAE, R2)\n5. INSPECT where it fails (residuals)\n```\n\n## Why the split is sacred\nIf you evaluate on the same data you trained on, the model can simply memorise it and look perfect — while failing on real new trips. That's **overfitting**. The held-out test set is the only honest estimate of real-world performance. Never let test data touch training.\n\n## Where this fits\nThis week TaxiPulse stops describing and starts predicting. By Sunday: a trained fare model with MAE under $5 and an honest residual analysis showing exactly where it's wrong."
             },
             {
-              "kind": "reflection",
-              "title": "Pick predictors",
-              "body": "To predict fare_amount, which features do you think matter most?\n  - trip_distance (obviously)\n  - trip_minutes (yes — time-based pricing)\n  - pickup_hour (peak hours?)\n  - pickup_borough\n  - passenger_count?"
+              "kind": "video",
+              "title": "Machine Learning Fundamentals: Bias and Variance / overfitting",
+              "url": "https://www.youtube.com/watch?v=EuBBz3bI-aA",
+              "duration_min": 7,
+              "creator": "StatQuest",
+              "why": "Why the train/test split exists, and what overfitting actually looks like."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## The describe vs predict distinction, in one screen\n```python\n# DESCRIBE (Weeks 1-4): what happened?\ndf['fare_amount'].mean()\n# 16.42  — a summary of the past\n\n# PREDICT (this week): what WILL this trip cost?\nfrom sklearn.linear_model import LinearRegression\nmodel.predict([[2.3, 11, 18]])   # distance, minutes, hour\n# array([14.07])  — an estimate for a trip that hasn't happened\n```\nSame data, a fundamentally different question. Everything from here is variations on 'train a model to predict something.'"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Predicting a trip's fare amount (a dollar value) is a regression problem, not classification.",
+                  "answer": true,
+                  "whenRight": "Right — a continuous number = regression. A category (tip / no-tip) would be classification.",
+                  "whenWrong": "Fare is a continuous number, so it's regression. Classification predicts discrete labels.",
+                  "sim": "fare = $14.32   -> regression\n'will tip?' yes/no -> classification"
+                },
+                {
+                  "prompt": "It's fine to evaluate your model on the same data you trained it on, as long as you have a lot of data.",
+                  "answer": false,
+                  "whenRight": "Right — never. The model can memorise training data and look perfect while failing on new trips. Always hold out a test set.",
+                  "whenWrong": "Evaluating on training data hides overfitting. The model may have memorised it. You need unseen test data for an honest score.",
+                  "sim": "train on 80% -> fit\ntest on held-out 20% -> honest MAE"
+                },
+                {
+                  "prompt": "Overfitting is when a model performs great on training data but poorly on new, unseen data.",
+                  "answer": true,
+                  "whenRight": "Right — it memorised the training set instead of learning the general pattern. The test set exposes it.",
+                  "whenWrong": "That's the definition of overfitting: low training error, high test error. The model memorised rather than generalised."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the problem",
+              "body": "[WRITE] In a markdown cell at the top of a new notebook `07-fare-model.ipynb`, write:\n1. Is predicting fare a regression or classification problem? Why?\n2. Which 3 columns will you use as features, and which is the target?\n3. In one sentence, why must the test set stay separate from training?"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Build training data",
-          "summary": "",
+          "title": "Build the training data",
+          "summary": "Features, target, and the train_test_split.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Preparing X and y, and splitting honestly",
+              "body": "## What it is\nsklearn expects two objects:\n- **X** — the feature matrix: the columns the model learns *from* (distance, minutes, hour)\n- **y** — the target vector: the column you're predicting (fare_amount)\n\n```python\ny = df['fare_amount']\nX = df[['trip_distance', 'trip_minutes', 'pickup_hour']]\n```\n\n## Avoiding leakage\nA **leaky feature** is one that secretly contains the answer. `total_amount` (which includes the fare) would let the model 'predict' fare by basically reading it — perfect score in training, useless in production where you don't yet know the total. Drop anything that wouldn't be known *before* the trip's fare is set.\n\n## The split\n```python\nfrom sklearn.model_selection import train_test_split\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42)\n```\n`test_size=0.2` holds out 20% for honest evaluation. `random_state=42` makes the split reproducible — you and a reviewer get the identical partition.\n\n## Where this fits\nToday you build X, y, and the four split objects. Tomorrow you fit the model on the training half only."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build training data for the fare model\n```python\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split\n\ndf = pd.read_parquet('data/clean.parquet')\ndf = df.dropna(subset=['fare_amount','trip_distance','trip_minutes'])\n\ny = df['fare_amount']\nX = df[['trip_distance', 'trip_minutes', 'pickup_hour']]\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42)\n\nprint(X_train.shape, X_test.shape)\n# (2565956, 3) (641490, 3)\nprint('Train fare mean:', round(y_train.mean(), 2))\nprint('Test  fare mean:', round(y_test.mean(), 2))\n# Train fare mean: 16.42\n# Test  fare mean: 16.41   <- splits are representative\n```\nThe near-identical train/test means confirm the random split didn't accidentally bias one side."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "X is the feature matrix (what the model learns from); y is the target (what it predicts).",
+                  "answer": true,
+                  "whenRight": "Right — X = inputs (distance, minutes, hour), y = output (fare). The model learns the mapping X -> y.",
+                  "whenWrong": "X holds the features the model reads; y is the answer it predicts. Convention across all of sklearn.",
+                  "sim": "X = df[['distance','minutes','hour']]\ny = df['fare_amount']"
+                },
+                {
+                  "prompt": "Including `total_amount` (which contains the fare) as a feature would cause data leakage.",
+                  "answer": true,
+                  "whenRight": "Right — it secretly contains the answer. The model would 'cheat' in training and fail in production.",
+                  "whenWrong": "That's leakage: total_amount includes the fare. The model reads the answer instead of learning it. Drop it.",
+                  "sim": "# LEAKY: total_amount = fare + tip + tolls\n# model just subtracts -> fake accuracy"
+                },
+                {
+                  "prompt": "`random_state=42` in train_test_split makes the split reproducible across runs and machines.",
+                  "answer": true,
+                  "whenRight": "Right — fixing the seed gives you and any reviewer the identical partition every time.",
+                  "whenWrong": "random_state pins the random seed, so the split is reproducible. Essential for comparable results.",
+                  "sim": "random_state=42\n# same split every run, every machine"
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Prep X and y",
-              "body": "In new notebook 07-fare-model.ipynb:\n      import pandas as pd\n      from sklearn.model_selection import train_test_split\n      df = pd.read_parquet('data/clean.parquet')\n      # Drop obvious leakers\n      df = df.dropna(subset=['fare_amount','trip_distance','trip_minutes'])\n      y = df['fare_amount']\n      X = df[['trip_distance','trip_minutes','pickup_hour']]\n      X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)"
+              "title": "Your turn — build the split",
+              "body": "[CODE] In `07-fare-model.ipynb`:\n1. Load clean.parquet, drop nulls in fare_amount/trip_distance/trip_minutes.\n2. Build y = fare_amount and X = [trip_distance, trip_minutes, pickup_hour].\n3. train_test_split with test_size=0.2, random_state=42.\n4. Print the train/test shapes and confirm the train and test fare means are close (representative split)."
             }
           ]
         },
         {
           "number": 3,
           "title": "Train linear regression",
-          "summary": "",
+          "summary": "Fit, predict, and read MAE + R2.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Fitting your first model and reading the metrics",
+              "body": "## What it is\nThree lines train a linear regression — the same Normal Equation you derived by hand in Week 2, now handed to sklearn:\n\n```python\nfrom sklearn.linear_model import LinearRegression\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)        # learn the weights\npred = model.predict(X_test)       # predict held-out trips\n```\n\n## Two metrics to read\n- **MAE (Mean Absolute Error)** — the average dollars your prediction is off by. MAE $4.20 means 'on average, my fare estimate is $4.20 from the truth.' Same units as the target, so it's directly interpretable.\n- **R² (R-squared)** — the fraction of fare variance the model explains, 0 to 1. R² 0.85 means the features account for 85% of why fares differ.\n\n## Always compare to a baseline\nA metric alone is meaningless — meaningful *relative to what?* The baseline is 'always predict the mean fare'. If that baseline has MAE $8 and your model has MAE $4.20, the model halved the error: it learned something real. A model that can't beat the mean has learned nothing.\n\n## Where this fits\nToday you fit the model, predict on the test set, and read MAE + R² — your first honest measurement of a model you built."
+            },
+            {
+              "kind": "video",
+              "title": "Linear Regression, clearly explained",
+              "url": "https://www.youtube.com/watch?v=nk2CQITm_eo",
+              "duration_min": 10,
+              "creator": "StatQuest",
+              "why": "What fitting a line actually optimises, and how to read R-squared."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Fit and evaluate\n```python\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_absolute_error, r2_score\nimport numpy as np\n\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)\npred = model.predict(X_test)\n\nmae = mean_absolute_error(y_test, pred)\nr2  = r2_score(y_test, pred)\nprint(f'MAE: ${mae:.2f}')\nprint(f'R2:  {r2:.3f}')\n# MAE: $3.98\n# R2:  0.842\n\n# Baseline: always predict the mean\nbaseline_mae = mean_absolute_error(y_test, np.full(len(y_test), y_train.mean()))\nprint(f'Baseline MAE: ${baseline_mae:.2f}')\n# Baseline MAE: $8.01  <- model nearly halves it\n```\nMAE $3.98 vs baseline $8.01: the model's fare estimates are about twice as close to reality as guessing the average. R² 0.842: the three features explain 84% of fare variation."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "MAE is in the same units as the target — an MAE of $3.98 means predictions are off by ~$3.98 on average.",
+                  "answer": true,
+                  "whenRight": "Right — that direct interpretability is why MAE is a favourite. $3.98 = average dollars of error.",
+                  "whenWrong": "MAE is in the target's units (dollars here). $3.98 means your fare estimate is, on average, $3.98 from the truth.",
+                  "sim": "MAE = $3.98\n# avg prediction error = $3.98"
+                },
+                {
+                  "prompt": "An R-squared of 0.842 means the model's features explain about 84% of the variation in fare.",
+                  "answer": true,
+                  "whenRight": "Right — R2 is the fraction of target variance explained. 0.842 = 84.2%.",
+                  "whenWrong": "R2 = fraction of variance explained. 0.842 means the features account for ~84% of why fares differ.",
+                  "sim": "R2 = 0.842\n# 84.2% of fare variance explained"
+                },
+                {
+                  "prompt": "A model's MAE is meaningful on its own, without comparing it to any baseline.",
+                  "answer": false,
+                  "whenRight": "Right — meaningful relative to WHAT? Always compare to the 'predict the mean' baseline to know if you learned anything.",
+                  "whenWrong": "MAE needs a reference. $4 sounds fine — but if the mean-baseline is also $4, your model learned nothing. Always compare."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "First model",
-              "body": "      from sklearn.linear_model import LinearRegression\n      from sklearn.metrics import mean_absolute_error, r2_score\n      m = LinearRegression()\n      m.fit(X_train, y_train)\n      pred = m.predict(X_test)\n      print('MAE:', mean_absolute_error(y_test, pred))\n      print('R2:', r2_score(y_test, pred))\n      print('Coefficients:')\n      for c, v in zip(X.columns, m.coef_):\n          print(f'  {c}: {v:.3f}')"
+              "title": "Your turn — train linear regression",
+              "body": "[CODE] In `07-fare-model.ipynb`:\n1. Fit a LinearRegression on X_train, y_train.\n2. Predict on X_test, print MAE and R2.\n3. Compute the baseline MAE (always predict y_train.mean()).\n4. Markdown: state your MAE, R2, and how much you beat the baseline by. Did you hit MAE < $5?"
             }
           ]
         },
         {
           "number": 4,
-          "title": "Interpret coefficients",
-          "summary": "",
+          "title": "Interpret the coefficients",
+          "summary": "A model you can't explain is a model you can't trust.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Reading regression coefficients as dollars",
+              "body": "## What it is\nA fitted linear regression gives you one **coefficient** per feature. Each is the marginal effect: how much the prediction changes per one-unit increase in that feature, holding the others fixed.\n\n```python\nfor col, coef in zip(X.columns, model.coef_):\n    print(f'{col}: {coef:.3f}')\n# trip_distance: 2.78    -> each mile adds $2.78\n# trip_minutes:  0.31    -> each minute adds $0.31\n# pickup_hour:  -0.02    -> hour barely matters (treated as linear)\n```\n\n## Why interpretation matters\nA model that predicts well but that you can't explain is a liability. Interpreting coefficients lets you (a) **sanity-check** against reality and (b) **explain the model to a stakeholder** who'll never read your code.\n\nThe sanity check here is powerful: NYC's actual yellow-cab rate is ~$3.00/mile plus ~$0.70/minute in slow traffic. Your model learned ~$2.78/mile from data alone, with no knowledge of the rate card. When a model independently rediscovers a real-world rule, that's strong evidence it learned genuine structure, not noise.\n\n## The pickup_hour caveat\nLinear regression treats `pickup_hour` as a continuous number, so its tiny coefficient doesn't mean 'hour is irrelevant' — it means hour's effect isn't *linear* (hour 23 isn't '23x' anything). A tree model (tomorrow) handles that better.\n\n## Where this fits\nToday you extract and interpret each coefficient, then compare to the official NYC taxi rate."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Interpret the model\n```python\nprint(f'Intercept (base fare): ${model.intercept_:.2f}')\nfor col, coef in zip(X.columns, model.coef_):\n    print(f'  {col}: ${coef:.3f} per unit')\n# Intercept (base fare): $4.81\n#   trip_distance: $2.78 per mile\n#   trip_minutes:  $0.31 per minute\n#   pickup_hour:  -$0.02 per hour\n\n# Real NYC rate card: $3.00 base + $0.70/mile (+ time in traffic)\n# Model's $4.81 base + $2.78/mile is the same SHAPE, learned from data\n```\nThe model reconstructed the meter's logic — a base fare plus a per-mile rate — without ever being told the rules. That's the model earning your trust."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A linear regression coefficient of 2.78 on trip_distance means each extra mile adds ~$2.78 to the predicted fare.",
+                  "answer": true,
+                  "whenRight": "Right — a coefficient is the marginal effect: per one-unit increase in that feature, holding others fixed.",
+                  "whenWrong": "That's the interpretation: +1 mile -> +$2.78 predicted, all else equal. Coefficients are marginal effects.",
+                  "sim": "coef(distance) = 2.78\n# +1 mile -> +$2.78 fare"
+                },
+                {
+                  "prompt": "A model that predicts accurately but can't be explained is just as good as one you can interpret.",
+                  "answer": false,
+                  "whenRight": "Right — an unexplainable model is a liability. You can't sanity-check it or defend it to a stakeholder.",
+                  "whenWrong": "Interpretability matters. You must be able to sanity-check the model and explain it to non-coders. A black box you can't defend is risky."
+                },
+                {
+                  "prompt": "The model learning ~$2.78/mile, close to NYC's real ~$3.00/mile rate, is evidence it captured genuine structure.",
+                  "answer": true,
+                  "whenRight": "Right — independently rediscovering a real-world rule is strong evidence the model learned signal, not noise.",
+                  "whenWrong": "When a model reconstructs a known real rule from data alone, that's a powerful sign it learned true structure."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "What do the numbers say?",
-              "body": "In a markdown cell write:\n  - The model says each mile adds $X to the fare.\n  - Each minute adds $Y.\n  - Hour-of-day adds/subtracts $Z (probably ~0 — linear regression sees this as continuous).\n\nIs this consistent with the real NYC taxi rate? (Look up the official base + per-mile rates.)"
+              "title": "Your turn — interpret coefficients",
+              "body": "[CODE] In `07-fare-model.ipynb`:\n1. Print the intercept and each feature's coefficient.\n2. In a markdown cell: 'Each mile adds $X, each minute adds $Y, hour adds/subtracts $Z.'\n3. Look up the official NYC yellow-cab base fare and per-mile rate. Is your model consistent with it?\n4. Explain in one sentence why pickup_hour's coefficient is near zero (hint: linearity)."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Try gradient boosting",
-          "summary": "",
+          "title": "Try gradient boosting (XGBoost)",
+          "summary": "A stronger model — and the accuracy-vs-interpretability trade-off.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Gradient boosting and the accuracy/explainability trade-off",
+              "body": "## What it is\n**XGBoost** is a gradient-boosted tree model — the workhorse of tabular ML and most Kaggle winners. Instead of fitting one straight line, it builds many small decision trees, each correcting the previous one's errors. This lets it capture **non-linear** patterns and **interactions** a linear model can't — like 'hour matters, but only for airport trips.'\n\n```python\nfrom xgboost import XGBRegressor\nmodel2 = XGBRegressor(n_estimators=100, max_depth=5)\nmodel2.fit(X_train, y_train)\n```\n\n## The trade-off you'll navigate forever\nXGBoost will almost always beat linear regression on accuracy. But you lose easy interpretability: there's no single '$2.78 per mile' coefficient — the prediction emerges from 100 interacting trees. So:\n\n- **Linear regression**: lower accuracy, total transparency. Great when you must *explain*.\n- **XGBoost**: higher accuracy, opaque. Great when you must *predict well* and can tolerate a black box.\n\nThis **accuracy vs explainability** tension is real and permanent. A bank rejecting a loan must explain why (favours linear/interpretable). A system bidding on ad impressions just needs to be right (favours XGBoost). Choosing deliberately is the skill.\n\n## Where this fits\nToday you train XGBoost, compare its MAE to the linear model, and decide which one v0.3 ships with — and why."
+            },
+            {
+              "kind": "video",
+              "title": "Gradient Boost, clearly explained",
+              "url": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
+              "duration_min": 12,
+              "creator": "StatQuest",
+              "why": "How boosting builds trees that fix each other's mistakes."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Linear vs XGBoost, head to head\n```python\nfrom xgboost import XGBRegressor\nfrom sklearn.metrics import mean_absolute_error\n\nmodel2 = XGBRegressor(n_estimators=100, max_depth=5, random_state=42)\nmodel2.fit(X_train, y_train)\nmae_xgb = mean_absolute_error(y_test, model2.predict(X_test))\n\nprint(f'Linear  MAE: $3.98')\nprint(f'XGBoost MAE: ${mae_xgb:.2f}')\n# Linear  MAE: $3.98\n# XGBoost MAE: $3.12   <- 22% lower error\n\n# Feature importance (XGBoost's version of 'coefficients')\nfor col, imp in zip(X.columns, model2.feature_importances_):\n    print(f'  {col}: {imp:.2f}')\n#   trip_distance: 0.71   trip_minutes: 0.26   pickup_hour: 0.03\n```\nXGBoost cut MAE from $3.98 to $3.12 by capturing non-linear structure. The cost: 'feature importance' tells you distance matters most, but not a clean '$X per mile' you can quote to a regulator."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "XGBoost can capture non-linear patterns and feature interactions that a single linear regression cannot.",
+                  "answer": true,
+                  "whenRight": "Right — many trees model curves and 'X matters only when Y' interactions a straight line misses.",
+                  "whenWrong": "That's its strength: boosted trees fit non-linearities and interactions linear regression can't represent.",
+                  "sim": "linear: one straight line\nXGBoost: 100 trees -> curves + interactions"
+                },
+                {
+                  "prompt": "XGBoost gives you the same clean, single coefficient per feature that linear regression does.",
+                  "answer": false,
+                  "whenRight": "Right — it doesn't. You get 'feature importance' (relative), not an interpretable '$2.78/mile' coefficient.",
+                  "whenWrong": "XGBoost has no single coefficient — the prediction comes from 100 interacting trees. You trade interpretability for accuracy.",
+                  "sim": "linear:  $2.78 per mile (explainable)\nXGBoost: distance importance 0.71 (relative)"
+                },
+                {
+                  "prompt": "A loan-approval system that must legally explain each decision favours an interpretable model over a black box.",
+                  "answer": true,
+                  "whenRight": "Right — regulation requires explainability, so a transparent model (or explainability tooling) is needed despite lower accuracy.",
+                  "whenWrong": "When you must explain every decision (lending, hiring), interpretability outweighs raw accuracy. That drives model choice."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "XGBoost regression",
-              "body": "      from xgboost import XGBRegressor\n      m2 = XGBRegressor(n_estimators=100, max_depth=5)\n      m2.fit(X_train, y_train)\n      print('XGB MAE:', mean_absolute_error(y_test, m2.predict(X_test)))\nWhich is better — linear or XGBoost?"
+              "title": "Your turn — train XGBoost",
+              "body": "[CODE] In `07-fare-model.ipynb`:\n1. Train an XGBRegressor (n_estimators=100, max_depth=5, random_state=42).\n2. Print its test MAE next to the linear model's MAE.\n3. Print feature_importances_.\n4. Markdown: which model is more accurate? Which would you ship if you had to explain every prediction to a regulator? State your choice for v0.3 and why."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Plot residuals",
-          "summary": "",
+          "title": "Plot residuals — where the model fails",
+          "summary": "The 'where it's wrong' analysis that separates real ML from a tutorial.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Residual analysis — diagnosing your model honestly",
+              "body": "## What it is\nA **residual** is the error on one prediction: `actual - predicted`. Plotting residuals against the actual fare reveals *where* and *how* the model is wrong — information a single MAE number hides.\n\n```python\nresid = y_test - model.predict(X_test)\nplt.scatter(y_test, resid, alpha=0.05)\nplt.axhline(0, color='red')\n```\n\n## What to look for\n- **Symmetric around 0** — good. The model over- and under-predicts equally; errors are unbiased.\n- **A pattern (curve, fan)** — bad. Structure in the residuals = signal the model failed to capture.\n- **Heteroscedasticity** (residuals fan out as fare grows) — the model is reliable for cheap trips but increasingly uncertain for expensive ones.\n- **Clusters** — e.g. a band of large residuals around $52 = the JFK flat-rate airport trips the model systematically misses, because they don't follow the per-mile rule.\n\n## Why it matters\nAnyone can print an MAE. Showing *where* the model fails — and naming the cause — is what separates a real ML notebook from a copied tutorial. It's also honest: it tells a stakeholder exactly when to trust the model and when not to.\n\n## Where this fits\nToday you plot residuals, identify the failure pattern (look for the airport-trip cluster), and write the honest 'here's where it breaks' note that closes the analysis."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Residual plot\n```python\nimport matplotlib.pyplot as plt\n\nresid = y_test - model.predict(X_test)\nplt.figure(figsize=(8, 5))\nplt.scatter(y_test, resid, alpha=0.05, s=4)\nplt.axhline(0, color='red', linewidth=1)\nplt.xlabel('Actual fare ($)'); plt.ylabel('Residual ($)')\nplt.title('Residuals — linear fare model')\nplt.xlim(0, 80); plt.ylim(-30, 30)\nplt.tight_layout(); plt.savefig('charts/residuals.png', dpi=150); plt.close()\n\nprint('Residual std:', round(resid.std(), 2))\n# Residual std: 5.10\n# Visible: fan-out above $40 (heteroscedastic) + a cluster near $52 (JFK flat rate)\n```\nThe plot tells the story the MAE can't: the model is tight for normal trips but unreliable for expensive/airport ones. Now you can say *exactly* when to trust it."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A residual is actual minus predicted — the error on a single prediction.",
+                  "answer": true,
+                  "whenRight": "Right — residual = y_actual - y_predicted. Positive means the model under-predicted that trip.",
+                  "whenWrong": "Residual = actual - predicted. It's the per-row error. Plotting them reveals where the model struggles.",
+                  "sim": "actual $20, predicted $17\nresidual = +$3 (under-predicted)"
+                },
+                {
+                  "prompt": "Residuals that fan out as the fare grows (heteroscedasticity) mean the model is equally reliable at all fares.",
+                  "answer": false,
+                  "whenRight": "Right — the opposite. Fanning means error grows with fare: reliable for cheap trips, shaky for expensive ones.",
+                  "whenWrong": "Fanning residuals = growing uncertainty. The model is tight on small fares but increasingly off on large ones.",
+                  "sim": "small fares: residuals ±$2\nlarge fares: residuals ±$15  <- fan-out"
+                },
+                {
+                  "prompt": "A cluster of large residuals near $52 likely reflects JFK flat-rate trips the model systematically misses.",
+                  "answer": true,
+                  "whenRight": "Right — flat-rate airport trips don't follow the per-mile rule, so the model mis-predicts them in a tell-tale band.",
+                  "whenWrong": "Those are the airport flat-rate trips. They break the per-mile assumption, so the model misses them in a cluster."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Where is the model wrong?",
-              "body": "      import matplotlib.pyplot as plt\n      resid = y_test - m.predict(X_test)\n      plt.scatter(y_test, resid, alpha=0.05)\n      plt.axhline(0, color='red')\n      plt.xlabel('Actual fare'); plt.ylabel('Residual')\n      plt.title('Residuals — linear model'); plt.savefig('residuals.png')\nAre residuals symmetric around 0? Heteroscedastic (variance grows with fare)?"
+              "title": "Your turn — residual analysis",
+              "body": "[CODE] In `07-fare-model.ipynb`:\n1. Compute residuals (y_test - prediction) for your chosen model.\n2. Scatter residuals vs actual fare, with a red line at 0. Save `charts/residuals.png`.\n3. Markdown: Are residuals symmetric around 0? Do they fan out? Can you spot the airport-trip cluster?\n4. Write one honest sentence: 'This model is reliable for ___ but should not be trusted for ___.'"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.3",
-          "summary": "",
+          "title": "Ship TaxiPulse v0.3",
+          "summary": "Save the model, write up the finding, tag the release.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Closing v0.3 — model, write-up, and tag",
+              "body": "## What it is\nv0.3 turns TaxiPulse from a description project into a prediction project. Shipping it means three things are done:\n\n1. **The model is saved** — serialise the better model so it can be loaded without retraining (you'll deploy it in Week 7):\n```python\nimport joblib\njoblib.dump(model2, 'models/fare_model.pkl')\n```\n\n2. **The notebook reads as a write-up** — a '## Fare model' section stating the question, the two models compared, the MAE/R² result, and the honest residual finding.\n\n3. **The release is tagged** — `v0.3` marks the model milestone in git history.\n\n## Why save the model now\nA trained model is an artifact. Saving it (joblib/pickle) means Week 7 can load `fare_model.pkl` and serve predictions from an API without ever re-running the notebook. Re-training to deploy is the amateur move; saving the artifact is the professional one.\n\n## Why it matters\nv0.3 is the moment your portfolio shows you can *build a model that works* — trained honestly, evaluated against a baseline, and diagnosed for failure. That's a complete ML story, not a tutorial fragment.\n\n## Where this fits\nToday you save the model, write the '## Fare model' section, and tag v0.3. Week 7 will wrap this saved model in a deployed API."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Saving the trained model to disk (joblib/pickle) lets you deploy it later without retraining.",
+                  "answer": true,
+                  "whenRight": "Right — the model is an artifact. Save it once, load it anywhere (the API in Week 7) without re-running the notebook.",
+                  "whenWrong": "Save the model with joblib. Week 7's API loads fare_model.pkl directly — no retraining needed to deploy.",
+                  "sim": "joblib.dump(model, 'models/fare_model.pkl')\n# later: joblib.load(...) -> predict"
+                },
+                {
+                  "prompt": "A v0.3 that reports MAE but never compares two models or inspects residuals is a complete ML write-up.",
+                  "answer": false,
+                  "whenRight": "Right — it's incomplete. A real write-up compares models, beats a baseline, and shows where it fails.",
+                  "whenWrong": "A bare MAE isn't the story. The complete version: baseline comparison, two models, and an honest residual analysis."
+                },
+                {
+                  "prompt": "Tagging v0.3 marks the model milestone so the repo's history shows the project's progression.",
+                  "answer": true,
+                  "whenRight": "Right — v0.1 described, v0.2 was custom domain (DevOps) / SQL, v0.3 predicts. Tags tell the growth story.",
+                  "whenWrong": "The tag pins the model milestone. Anyone reading the repo sees the iterative progression v0.1 -> v0.2 -> v0.3."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.3",
-              "body": "Add a '## Fare model' section to the final notebook. Save the better model.\n      git add . && git commit -m 'v0.3: fare regression model'\n      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Linear + XGBoost both trained\n  ☐ MAE < $5 on test\n  ☐ Coefficients interpreted\n  ☐ Residual plot saved\n  ☐ v0.3 tag"
+              "title": "Your turn — ship v0.3",
+              "body": "[PRODUCE] 1. Save the better model: `joblib.dump(model, 'models/fare_model.pkl')`.\n2. Add a '## Fare model' section to your final notebook: question, two models compared, MAE/R2, residual finding.\n3. Commit + tag:\n`git add . && git commit -m 'v0.3: fare prediction model'`\n`git tag v0.3 && git push && git push --tags`\n\nPASS:\n[x] Linear + XGBoost both trained\n[x] MAE < $5 on the test set\n[x] Coefficients interpreted vs the real NYC rate\n[x] Residual plot saved\n[x] Model saved to models/fare_model.pkl\n[x] v0.3 tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Regression vs classification",
-        "Linear regression with sklearn",
-        "Mean Absolute Error + R²",
-        "Interpreting linear coefficients",
-        "XGBoost regressor",
-        "Residual analysis"
-      ],
-      "tasks": [
-        "Pick features for fare prediction",
-        "Train LinearRegression baseline",
-        "Interpret coefficients against real NYC rates",
-        "Train XGBoost regressor for comparison",
-        "Plot residuals to spot where the model fails"
-      ],
-      "project": "TaxiPulse v0.3 — predicts trip fare from distance + duration + hour. Linear and XGBoost compared. MAE < $5 on test set.",
-      "resources": [
-        {
-          "label": "Linear Regression coding in 14 min - sklearn",
-          "url": "https://www.youtube.com/watch?v=cTjj3LE8E90",
-          "note": "14 min. Direct sklearn walkthrough. Fit, predict, evaluate."
-        },
-        {
-          "label": "XGBoost in 13 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=OtD8wVaFm6E",
-          "note": "13 min. The model that wins most Kaggle competitions."
-        },
-        {
-          "label": "Feature Engineering basics in 14 min",
-          "url": "https://www.youtube.com/watch?v=6WDFfaYtN6s",
-          "note": "14 min. Pick the right features. Matters more than picking the model."
-        },
-        {
-          "label": "Residual plots in 8 min - StatQuest (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Residual%20plots%20-%20StatQuest",
-          "note": "8 min. Where your model is failing. Look at the pattern. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "joblib save and load models in 5 min",
-          "url": "https://www.youtube.com/watch?v=KfnhNlD8WZI",
-          "note": "5 min. joblib > pickle for sklearn. Save your trained model."
-        }
-      ],
-      "exercises": [
-        "Add passenger_count as a feature — does it help?",
-        "Build a model just for trips inside Manhattan",
-        "Try predicting tip_amount instead of fare_amount",
-        "Find 5 test rows the model is hugely wrong on and inspect why"
-      ],
-      "questions": [
-        "Why is fare easier to predict than delay?",
-        "What does R² of 0.85 mean?",
-        "Why are residuals heteroscedastic for fares?",
-        "How would a regulator misuse a fare model?"
-      ],
-      "outputs": [
-        "Two models trained + compared",
-        "Residual plot in figures/",
-        "Fare model section in the publishable notebook",
-        "v0.3 tag"
-      ],
-      "mastery_questions": [
-        "Split your data into 80% train, 20% test using train_test_split with random_state=42. Paste the train and test shapes. Why do we hold out test data and never look at it during training? (Hint: if you train and evaluate on the same data, the model can memorize instead of learn. You are testing whether it generalises.)",
-        "Train a LinearRegression on three features: trip_distance, trip_duration_minutes, pickup_hour. Compute MAE on the test set. Paste your MAE. Also paste the coefficients. The coefficient on trip_distance should be roughly $3 — the NYC per-mile rate. Coefficients you can interpret like that are the superpower of linear models, and the reason every senior analyst still uses them as a baseline.",
-        "Train an XGBoost regressor on the same features. Paste the test MAE. It should be lower (better) than the linear model — usually by $0.50–$1.50 on this dataset. Why? Because XGBoost can capture nonlinear patterns (rush hour multiplier, JFK flat rate, etc.) that linear regression cannot. But — and this is the catch — you cannot read the XGBoost coefficients the way you read the linear ones. You traded interpretability for accuracy.",
-        "Plot the residuals (y_true - y_pred) on the test set. Are they centred on zero? Is the spread the same for cheap trips and expensive trips? If the spread grows with the predicted value (a funnel shape), that is called heteroscedasticity and it means the model is more wrong on expensive trips than cheap ones. Paste the chart and one sentence describing what you see. Reading residuals is the skill that separates \"I built a model\" from \"I know whether my model is any good.\"",
-        "Pick the 10 trips where your model was MOST WRONG (highest absolute residual). What do they have in common? Are they all JFK trips? All very long trips? All super short? This is called \"error analysis\" and it is the most underrated skill in ML. The pattern in your model's biggest mistakes tells you exactly what feature to add next. Paste your findings."
-      ],
-      "ai_assist": "Ask Claude to explain the difference between MAE, MSE, and RMSE — and which one to use when. (Hint: MAE if you care about being off by the same dollar amount regardless of trip price; MSE/RMSE if you want to penalise large errors more heavily.) Do NOT ask Claude to \"build me an XGBoost model.\" Build it yourself, then paste the working code and ask \"what is one thing I could improve about how I split the data?\" Specific, scoped questions teach. Open-ended \"do my work\" prompts do not.",
-      "pre_flight": "Before training anything, write down a number: what do you think the average error (MAE) of a \"just predict the average fare for every trip\" model would be? Take a guess. We will check on Tuesday after the baseline runs. Knowing your baseline before you build the fancy model is what stops you from being impressed by mediocre results. Many beginners proudly post \"my model got 70% accuracy!\" — and a class-balanced random model would have gotten 50%. You start with the dumb baseline first, always.",
-      "common_mistakes": [
-        "Forgetting to drop the actual fare column (y) from your X features. Easy to do, and the model gets perfect accuracy because it is literally being told the answer. If your MAE is suspiciously close to zero, this is the bug.",
-        "Training on data that includes the test rows. random_state matters; calling train_test_split twice without setting it can give you a different split each time and pollute your evaluation.",
-        "Comparing two models using different test sets. Always evaluate both models on the EXACT same X_test, y_test. Otherwise the comparison is meaningless.",
-        "Reporting only the mean error and ignoring the distribution. MAE = $4 with most errors near zero and a few enormous outliers is very different from MAE = $4 with consistent $4 errors everywhere. Plot the histogram of errors, do not just report the mean.",
-        "Calling XGBoost a \"neural network.\" It is not. It is a gradient-boosted decision tree ensemble. The wrong term in an interview is a tell."
-      ],
-      "debug_help": "The most common bug this week is feature/target leakage — your model is somehow seeing the answer. Symptoms: MAE near zero, R² near 1, you feel suspicious because it seems too good. Check your X.columns and make sure 'fare_amount' is not in there. Also check for columns that are derived from fare (total_amount, tip_amount calculated from fare — anything correlated almost perfectly with the target). If the model uses a feature that would not be available at PREDICTION time, that is leakage. The rule of thumb: at the moment you would need to predict, what do you actually know? Drop everything else.",
-      "stretch": [
-        "Add a one-hot encoded \"borough\" feature and retrain XGBoost. Did MAE improve? By how much? Each feature you add should be justified by a measurable accuracy gain.",
-        "Use sklearn's GridSearchCV to tune XGBoost's max_depth and n_estimators. Show the test MAE before and after tuning. Hyperparameter tuning is a real skill and worth seeing it in action once.",
-        "Pick a single trip from the test set, print its features, then walk through (by hand if necessary) how the linear regression model arrived at its prediction. Being able to do this for at least the linear model is what makes ML stop being a black box for you."
-      ],
-      "concept_widget": {
-        "id": "regression-slider",
-        "caption": "Drag the slope and intercept by hand, then let least-squares snap the line into place."
-      }
+      ]
     },
     {
       "number": 6,
