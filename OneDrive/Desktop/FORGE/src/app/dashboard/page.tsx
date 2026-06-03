@@ -3,32 +3,39 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass, BookOpen, Send } from "lucide-react";
-import { loadAllRoadmaps } from "@/lib/roadmaps";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import ForgePactCard from "@/components/ForgePactCard";
 import ShippedChain from "@/components/ShippedChain";
 import BuildFeed from "@/components/BuildFeed";
 
-/** Map a Roadmap.title back to its curated slug so we can deep-link into /learn.
- *  Built from the actual roadmap JSON (the same source the seeding uses), so the
- *  key always matches the seeded Roadmap.title exactly — the client picker titles
- *  ("DevOps and Cloud") differ from the canonical JSON titles ("DevOps & Cloud")
- *  for a few tracks, which previously broke the deep-link and bounced the mentee
- *  to the check-in page. A normalised fallback guards against any future drift. */
-const ROADMAP_TITLE_SLUG: Array<{ title: string; slug: string }> = loadAllRoadmaps().map(
-  (r) => ({ title: r.title, slug: r.slug }),
-);
-const TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
-  ROADMAP_TITLE_SLUG.map((r) => [r.title, r.slug]),
-);
+/** Map a seeded Roadmap.title back to its curated slug so we can deep-link into
+ *  /learn. Keyed by the CANONICAL JSON titles that the seeding actually writes to
+ *  the DB (loadRoadmap().title) — these differ from the onboarding picker titles
+ *  for a few tracks (e.g. DB "DevOps & Cloud" vs picker "DevOps and Cloud",
+ *  "Cybersecurity Engineering" vs "Cybersecurity", "BI Analytics" vs "Business
+ *  Intelligence"). That mismatch returned a null slug and bounced the mentee to
+ *  the check-in page. Hardcoded (not loaded via fs) so it's reliable in the
+ *  Vercel page bundle; a normalised fallback guards against future drift. */
+const CANONICAL_TITLE_TO_SLUG: Record<string, string> = {
+  "AI Engineering": "ai-engineering",
+  "ML Engineering": "ml-engineering",
+  "Full Stack Web": "full-stack-web",
+  "Mobile Engineering": "mobile-engineering",
+  "DevOps & Cloud": "devops-cloud",
+  "Cybersecurity Engineering": "cybersecurity",
+  "Data Science": "data-science",
+  "Data Analysis": "data-analysis",
+  "BI Analytics": "bi-analytics",
+  "AI Automation": "ai-automation",
+};
 const normaliseTitle = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
 const NORM_TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(
-  ROADMAP_TITLE_SLUG.map((r) => [normaliseTitle(r.title), r.slug]),
+  Object.entries(CANONICAL_TITLE_TO_SLUG).map(([title, slug]) => [normaliseTitle(title), slug]),
 );
 /** Resolve a roadmap title to its slug, tolerant of "&"/"and" and punctuation drift. */
 function resolveSlug(title: string | null | undefined): string | null {
   if (!title) return null;
-  return TITLE_TO_SLUG[title] ?? NORM_TITLE_TO_SLUG[normaliseTitle(title)] ?? null;
+  return CANONICAL_TITLE_TO_SLUG[title] ?? NORM_TITLE_TO_SLUG[normaliseTitle(title)] ?? null;
 }
 
 /** Pull the week number out of a task title like "Week 7: Build the dashboard". */
