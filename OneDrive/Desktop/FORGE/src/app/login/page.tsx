@@ -159,11 +159,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
+    <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem", boxSizing: "border-box", overflowX: "hidden" }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ width: "100%", maxWidth: "420px" }}
+        style={{ width: "100%", maxWidth: "420px", boxSizing: "border-box" }}
       >
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", color: "var(--text-secondary)", fontSize: "0.875rem", fontFamily: "var(--font-mono)", marginBottom: "1.25rem", textDecoration: "none" }}>
           <ArrowLeft size={14} /> Back to Home

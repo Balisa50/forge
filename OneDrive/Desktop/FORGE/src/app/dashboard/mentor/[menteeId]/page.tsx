@@ -1125,7 +1125,7 @@ export default function MenteeDrilldownPage() {
                           </div>
 
                           {/* New comment */}
-                          <div className="flex-col-on-mobile" style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem", alignItems: "flex-start", flexWrap: "wrap" }}>
+                          <div className="flex-col-on-mobile" style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem", alignItems: "flex-end", flexWrap: "wrap" }}>
                             <textarea
                               value={draft[task.id] ?? ""}
                               onChange={(e) => setDraft({ ...draft, [task.id]: e.target.value })}
