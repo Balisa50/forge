@@ -159,10 +159,11 @@ export default function LoginPage() {
   };
 
   return (
-    // margin:auto on the inner card centres it on both axes when it fits and keeps
-    // the top reachable/scrollable when taller than the viewport. width:100vw +
-    // overflowX:hidden make centring immune to parent sizing and child overflow.
-    <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100vw", maxWidth: "100%", display: "flex", padding: "1.5rem", boxSizing: "border-box", overflowX: "hidden" }}>
+    // width:100% (NOT 100vw — 100vw includes the scrollbar and overflows by its
+    // width, pushing the card off the right edge). flex + justify-content:center
+    // centres horizontally; margin:auto on the card also centres vertically and
+    // keeps the top reachable when the card is taller than the viewport.
+    <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100%", display: "flex", justifyContent: "center", padding: "1.5rem", boxSizing: "border-box" }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
