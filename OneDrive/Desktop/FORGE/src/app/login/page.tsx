@@ -159,13 +159,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100%", display: "flex", padding: "1.5rem", boxSizing: "border-box", overflowX: "hidden" }}>
+    {/* margin:auto on the card centres it on both axes when it fits and keeps the
+        top reachable/scrollable when taller than the viewport — robust against the
+        off-centre / cut-off look. overflowX hidden guards against any child overflow. */}
+    <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100vw", maxWidth: "100%", display: "flex", padding: "1.5rem", boxSizing: "border-box", overflowX: "hidden" }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        // margin:auto centers the card on BOTH axes when it fits, and—unlike
-        // align/justify center—keeps the top reachable + scrollable when the
-        // card is taller than the viewport. Prevents the off-centre / cut-off look.
         style={{ width: "100%", maxWidth: "420px", margin: "auto", boxSizing: "border-box" }}
       >
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", color: "var(--text-secondary)", fontSize: "0.875rem", fontFamily: "var(--font-mono)", marginBottom: "1.25rem", textDecoration: "none" }}>
