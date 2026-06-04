@@ -38,6 +38,60 @@
       "context": "Security work starts with adversarial thinking. Before you can defend anything, you need to understand how attackers reason: they are looking for the cheapest path to their objective, not the most clever one. That means misconfigurations, unpatched dependencies, weak credentials, and human error are attacked far more often than exotic zero-days.\n\nThis week you build that mental model. You learn the attack lifecycle (recon → exploit → persist → exfil), the difference between vulnerability and exploit, and how OWASP Top 10 maps to real breaches. You also set up your lab environment so you have a safe place to practise everything that follows.\n\nThe Juice Shop is a deliberately vulnerable Node.js app maintained by OWASP. Every bug in it maps to a real vulnerability class. Finding bugs there is not cheating — it is the point.",
       "days": [
         {
+          "number": 0,
+          "title": "Your Coding Environment — Terminal, VirtualBox / WSL, Kali Lab",
+          "summary": "A safe lab environment for hacking practice. Foundation for every cybersec day.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "What this environment is — and why before anything else",
+              "body": "## What it is\nYou **cannot** practice security tools on your everyday laptop's OS. Two reasons:\n1. Half the tools you'll run are flagged as malware (correctly — they're attack tools).\n2. You need to break things, and breaking your daily-driver is bad.\n\nThe answer: a **virtual machine** with a security-focused OS like **Kali Linux**. Inside the VM you can install / break / re-image as much as you want without touching your host.\n\n## What you'll do today\n1. Install **VirtualBox** (Windows / Mac / Linux) OR **WSL2 with Kali** (Windows-only, lighter).\n2. Download the Kali VM image (or `wsl --install -d kali-linux`).\n3. Boot it.\n4. Open the terminal inside Kali and run `nmap --version` → confirm output."
+            },
+            {
+              "kind": "video",
+              "title": "Install Kali Linux in VirtualBox (or WSL2)",
+              "url": "https://www.youtube.com/watch?v=ROjZy1WbCIA",
+              "duration_min": 15,
+              "creator": "NetworkChuck / various",
+              "why": "Watch first. You see the VM setup, the Kali boot, and the first command. Then repeat in your own environment."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in action — the exact steps, with what you should see",
+              "body": "## Walkthrough\nDo every step.\n\nWINDOWS (WSL path, fastest):\n1. Open PowerShell as Admin: `wsl --install -d kali-linux`.\n2. Reboot. Open 'Kali Linux' from Start.\n3. First-run prompts you for a username + password. Set them.\n4. `sudo apt update && sudo apt install -y nmap`.\n5. `nmap --version`.\n\nMAC / LINUX (VirtualBox path):\n1. Install **VirtualBox** from virtualbox.org.\n2. Download Kali pre-built VirtualBox VM from kali.org/get-kali.\n3. Import into VirtualBox, boot it.\n4. Inside the VM: `nmap --version`.\n\n## Verify\nPASS:\n[x] Kali boots\n[x] `nmap --version` prints a version inside Kali"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "You should install security tools like nmap directly on your everyday laptop OS.",
+                  "answer": false,
+                  "whenRight": "Right — no. Use a VM. Half these tools are flagged by antivirus and you don't want to break your daily-driver.",
+                  "whenWrong": "Use a VM. Daily-driver should stay clean; the VM is your lab."
+                },
+                {
+                  "prompt": "WSL2 with Kali is a lighter alternative to a full VirtualBox VM on Windows.",
+                  "answer": true,
+                  "whenRight": "Right — WSL2 reuses your kernel, no full hypervisor. Faster boots, less RAM.",
+                  "whenWrong": "Yes — WSL2 is the lightweight option on Windows. VirtualBox is heavier but works everywhere."
+                },
+                {
+                  "prompt": "Kali Linux ships with nmap, metasploit and most security tools pre-installed.",
+                  "answer": true,
+                  "whenRight": "Right — that's its whole point. A pre-loaded toolkit for security work.",
+                  "whenWrong": "Yes — Kali's the 'batteries included' distro for security work. You install fewer things by hand."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — set it up",
+              "body": "[CODE] Do every step.\n\nWINDOWS (WSL path, fastest):\n1. Open PowerShell as Admin: `wsl --install -d kali-linux`.\n2. Reboot. Open 'Kali Linux' from Start.\n3. First-run prompts you for a username + password. Set them.\n4. `sudo apt update && sudo apt install -y nmap`.\n5. `nmap --version`.\n\nMAC / LINUX (VirtualBox path):\n1. Install **VirtualBox** from virtualbox.org.\n2. Download Kali pre-built VirtualBox VM from kali.org/get-kali.\n3. Import into VirtualBox, boot it.\n4. Inside the VM: `nmap --version`.\n\nPASS:\n[x] Kali boots\n[x] `nmap --version` prints a version inside Kali"
+            }
+          ]
+        },
+        {
           "number": 1,
           "title": "The ethics contract — non-negotiable",
           "summary": "Today you sign a contract. You only attack what you own.",

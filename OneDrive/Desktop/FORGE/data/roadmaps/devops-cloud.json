@@ -38,6 +38,60 @@
       "context": "Before containers, Kubernetes, or Terraform, you need to understand what a server is: a computer running software that listens for network connections and responds to them. Strip away all the abstraction, and that is the whole thing. This week you operate a raw Linux server without any help from managed platforms. Everything you do manually this week is something you will later automate — but you cannot automate what you do not understand.\n\nA VPS (Virtual Private Server) is a slice of a physical server running as an isolated virtual machine. You get root access. There is no UI. You interact via SSH. The operating system is Linux (Ubuntu is the standard choice — large community, long-term support releases, most documentation assumes it). You are responsible for everything: updates, firewall rules, web server configuration, process management.\n\nSSH (Secure Shell) is how you connect. You authenticate with a key pair (more secure than a password). The private key stays on your machine; the public key goes on the server. When you SSH, you prove you have the private key without ever sending it.\n\nWhat a web server is: nginx or Apache listens on port 80 (HTTP) and 443 (HTTPS). When a request arrives, it reads the request line (GET / HTTP/1.1), the Host header (which domain is being requested), and routes the request to the appropriate application (a Node process, a static file, a Python app). The web server is a reverse proxy — it sits in front of your application and handles the HTTP protocol details.\n\nProcess management: your Node.js application is a process. If it crashes, you want it to restart automatically. systemd is the Linux init system that manages processes — it can start a service on boot, restart it on crash, and provide logs. This week you manage your Node process with systemd.\n\nThe capstone project for this track is Edge Portfolio: a portfolio site deployed on real infrastructure, progressively hardened over the first 4 weeks.",
       "days": [
         {
+          "number": 0,
+          "title": "Your Coding Environment — Terminal, Git, GitHub",
+          "summary": "A working shell, git installed, GitHub account, your first commit. The bedrock of every DevOps day after this.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "What this environment is — and why before anything else",
+              "body": "## What it is\nDevOps work happens in a **terminal**. You'll spend hours in it — running git commands, ssh-ing into servers, applying Terraform, watching CI output. If you're not comfortable opening a terminal and running a command, every later week is harder than it needs to be.\n\nThree things you must have by the end of today:\n1. A terminal you can open and navigate (Anaconda Prompt or PowerShell on Windows; Terminal on Mac/Linux).\n2. **Git** installed and configured with your name + email.\n3. A **GitHub** account, with `git push` working from your laptop to a test repo.\n\n## Why before anything else\nEvery project on this track gets pushed to GitHub. Every Terraform run is committed to git. Every CI/CD pipeline starts with `git push`. Skip this day and Week 1 falls over the first time you're told to push.\n\n## What you'll do today\nInstall git, configure name + email, create a GitHub account, clone an empty test repo, make a commit, push it. Then you're ready for the rest of the week."
+            },
+            {
+              "kind": "video",
+              "title": "Your First Git + GitHub Push in 10 minutes",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "why": "Watch first. Web Dev Simplified takes you from zero to a successful push. Then repeat the steps yourself in your own terminal."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in action — the exact steps, with what you should see",
+              "body": "## Walkthrough\nDo every step.\n\n1. Install **git** from git-scm.com (skip if `git --version` already works).\n2. Configure: `git config --global user.name \"Your Name\"` and `git config --global user.email you@example.com`.\n3. Create a free GitHub account at github.com if you don't have one.\n4. On GitHub: New Repository → name it `forge-warmup`, leave it public, add a README.\n5. In your terminal: `git clone https://github.com/YOU/forge-warmup.git && cd forge-warmup`.\n6. Edit README.md (add any line), then run: `git add . && git commit -m 'first commit' && git push`.\n\n## Verify\nPASS:\n[x] `git --version` prints a version\n[x] forge-warmup repo exists on your GitHub\n[x] Your `first commit` shows up on the repo page after push"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`git --version` is the quickest way to confirm git is installed.",
+                  "answer": true,
+                  "whenRight": "Right — if it prints a version, git is on your PATH. If 'command not found', install it.",
+                  "whenWrong": "It is — `git --version` is the install check. If it errors, install git from git-scm.com."
+                },
+                {
+                  "prompt": "You can push to GitHub without configuring `user.email` first.",
+                  "answer": false,
+                  "whenRight": "Right — git will refuse to commit without a configured email + name. Set them once globally.",
+                  "whenWrong": "git config user.name / user.email are required before your first commit. One-time setup."
+                },
+                {
+                  "prompt": "Every DevOps project on this track gets pushed to GitHub.",
+                  "answer": true,
+                  "whenRight": "Right — git is the lingua franca. Every Terraform repo, every CI pipeline starts with a push.",
+                  "whenWrong": "Yes — every project. Without git + GitHub working today, every later week stalls at 'push your code'."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — set it up",
+              "body": "[CODE] Do every step.\n\n1. Install **git** from git-scm.com (skip if `git --version` already works).\n2. Configure: `git config --global user.name \"Your Name\"` and `git config --global user.email you@example.com`.\n3. Create a free GitHub account at github.com if you don't have one.\n4. On GitHub: New Repository → name it `forge-warmup`, leave it public, add a README.\n5. In your terminal: `git clone https://github.com/YOU/forge-warmup.git && cd forge-warmup`.\n6. Edit README.md (add any line), then run: `git add . && git commit -m 'first commit' && git push`.\n\nPASS:\n[x] `git --version` prints a version\n[x] forge-warmup repo exists on your GitHub\n[x] Your `first commit` shows up on the repo page after push"
+            }
+          ]
+        },
+        {
           "number": 1,
           "title": "What is the cloud?",
           "summary": "Watch and write today.",

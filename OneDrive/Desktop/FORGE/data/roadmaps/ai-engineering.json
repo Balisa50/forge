@@ -38,6 +38,60 @@
       "context": "AI engineering is the craft of building software where the intelligence is delegated to a language model rather than written as explicit logic. That distinction matters more than it sounds. When you write a traditional web endpoint, you control every if-statement. When you build an AI feature, you write instructions in English, call an API, and get back text that you have to decide what to do with. The skill set shifts: less algorithmic thinking, more about designing prompts, handling failure gracefully, and measuring whether the model's output is actually good.\n\nThis week you build Polyglot v0.1 — an English-to-Spanish translator that runs in your terminal. It is deliberately small. The terminal keeps friction low so you can focus on the primitives: calling the API, reading the response, tracking what it costs, and handling errors. Every AI feature you build from here is a variation of this loop.\n\nThe API key is the most important environmental concern right now. Never put it in your code. Never commit it. Never paste it into a file that gets pushed anywhere. Store it in a .env file that is listed in .gitignore. This is not paranoia — leaked keys get abused automatically within minutes. Set the discipline now while the project is small.\n\nCost tracking is not optional housekeeping. Every API call returns a usage object that contains the input and output token counts. Track them from the start. The difference between a profitable AI feature and an expensive one often comes down to whether the engineer understood what they were spending per call. Build the cost-tracking habit before you have a reason to regret skipping it.\n\nWhen you push the project to GitHub, write a README that lets a complete stranger clone the repo, add their own API key, and run the translator with one command. That is the minimum bar for a professional project. You will ship eight projects on this roadmap. Every one of them should meet that bar.",
       "days": [
         {
+          "number": 0,
+          "title": "Your Coding Environment — Python, Anaconda, and an OpenAI / Anthropic API Key",
+          "summary": "Python ready, an editor open, and your first API key safely in a .env file. Foundation for every AI Eng week.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "What this environment is — and why before anything else",
+              "body": "## What it is\nAI engineering means calling a language model (Claude, GPT) from code. You need three things by the end of today:\n1. **Python** installed (via Anaconda — same one-install approach).\n2. An editor (VS Code) and a terminal you're comfortable in.\n3. An **API key** from OpenAI or Anthropic, stored in a `.env` file — **not** committed to git, ever.\n\n## Why the key safety today\nLeaked API keys are scraped from public GitHub repos and abused within minutes. You'll burn through your free credits in hours if you commit a key once. Today you set up the `.env + .gitignore` pattern so it never happens.\n\n## What you'll do today\nInstall Anaconda, install VS Code, create a project folder with a `.env` and `.gitignore`, get an API key, run `python hello.py` that prints a model response."
+            },
+            {
+              "kind": "video",
+              "title": "Python setup + your first OpenAI / Anthropic call",
+              "url": "https://www.youtube.com/watch?v=YYXdXT2l-Gg",
+              "duration_min": 15,
+              "creator": "various",
+              "why": "Watch first. You see the install, the API key setup, and the first model call working end to end. Then repeat the steps yourself."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in action — the exact steps, with what you should see",
+              "body": "## Walkthrough\nDo every step.\n\n1. Install **Anaconda** from anaconda.com/download.\n2. Install **VS Code** from code.visualstudio.com.\n3. `mkdir hello-ai && cd hello-ai && code .`\n4. Sign up at console.anthropic.com or platform.openai.com. Generate one API key.\n5. Create a `.env` file with `ANTHROPIC_API_KEY=sk-...` (or OPENAI_API_KEY).\n6. Create a `.gitignore` containing `.env`.\n7. Create `hello.py`: load the env, call the model with `'Say hello to the Forge in one sentence.'`, print the response.\n8. Run `python hello.py` and see the reply.\n\n## Verify\nPASS:\n[x] `.env` exists with your key\n[x] `.gitignore` excludes `.env`\n[x] `python hello.py` prints a model reply"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An API key in a `.env` file is safe to commit to a public GitHub repo.",
+                  "answer": false,
+                  "whenRight": "Right — never. Bots scrape committed keys within minutes. Always gitignore `.env`.",
+                  "whenWrong": "Never commit keys. The `.env` file lives ONLY on your machine; `.gitignore` keeps it out of git."
+                },
+                {
+                  "prompt": "The `.gitignore` file tells git which files to leave out of commits.",
+                  "answer": true,
+                  "whenRight": "Right — exact purpose. List `.env` there before your first commit and you're safe.",
+                  "whenWrong": "Yes — it's a list of patterns git ignores. Always add `.env` before pushing anything."
+                },
+                {
+                  "prompt": "Anaconda is one way to get Python installed cleanly without managing system Python.",
+                  "answer": true,
+                  "whenRight": "Right — bundled, isolated, no PATH conflicts. Same advice as the DA / DS tracks.",
+                  "whenWrong": "Anaconda gives you Python + Jupyter + libraries in one install. Cleanest start."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — set it up",
+              "body": "[CODE] Do every step.\n\n1. Install **Anaconda** from anaconda.com/download.\n2. Install **VS Code** from code.visualstudio.com.\n3. `mkdir hello-ai && cd hello-ai && code .`\n4. Sign up at console.anthropic.com or platform.openai.com. Generate one API key.\n5. Create a `.env` file with `ANTHROPIC_API_KEY=sk-...` (or OPENAI_API_KEY).\n6. Create a `.gitignore` containing `.env`.\n7. Create `hello.py`: load the env, call the model with `'Say hello to the Forge in one sentence.'`, print the response.\n8. Run `python hello.py` and see the reply.\n\nPASS:\n[x] `.env` exists with your key\n[x] `.gitignore` excludes `.env`\n[x] `python hello.py` prints a model reply"
+            }
+          ]
+        },
+        {
           "number": 1,
           "title": "What is AI Engineering?",
           "summary": "Today is mostly watching. Build the mental picture of what you will be doing.",

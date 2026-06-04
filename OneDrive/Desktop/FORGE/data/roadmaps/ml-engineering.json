@@ -38,6 +38,60 @@
       "context": "Machine learning is the discipline of building systems that improve from data rather than from explicit rules. The rule-based alternative to a flight delay predictor would require someone to enumerate every condition that causes delays — carrier, weather, airport congestion, time of day, season — and write if-else logic for each. ML learns those relationships directly from historical records where the delays either happened or did not. Your job is to get the data, prepare it, train a model, and verify the model learned something real.\n\nFlightWise v0.1 predicts whether a US domestic flight will be 15 or more minutes late. You train logistic regression on historical flight records from the Bureau of Transportation Statistics. The model takes departure features as input and produces a probability. The threshold at which you call a flight \"will be late\" is a decision, not a mathematical fact — you set it based on what costs more, false positives or false negatives.\n\nThe split between training and test data is not bureaucracy. The model has seen the training data. If you evaluate on training data, you are asking \"does the model remember what it was shown?\" rather than \"does the model generalise?\" Those are different questions with wildly different answers. Always evaluate on held-out data the model has never seen.\n\nA confusion matrix gives you more information than accuracy alone. A model that predicts \"not late\" for every flight gets 80% accuracy on a dataset where 80% of flights are on time — and is completely useless. The confusion matrix shows true positives, false positives, true negatives, and false negatives separately. From it you can calculate precision (of flights it predicted late, how many were actually late) and recall (of flights that were actually late, how many did it catch). Those are the metrics that translate into product value.\n\nJupyter notebooks are the right environment for this week. They let you see data, run code, and visualise results incrementally. Use one notebook per iteration. By week 20, you will have moved to proper Python modules and pipelines — but starting in a notebook is correct.",
       "days": [
         {
+          "number": 0,
+          "title": "Your Coding Environment — Conda + Google Colab GPUs",
+          "summary": "Conda for local work, Colab for GPU jobs. Two environments you will use for every ML week.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "What this environment is — and why before anything else",
+              "body": "## What it is\nML engineering is two environments, not one:\n1. **Local (Anaconda / conda)** — for cleaning data, prototyping a model, writing tests. Your laptop CPU is fine here.\n2. **Google Colab** — for training anything that needs a **GPU**. Free Colab gives you a T4 GPU for hours of compute per session.\n\nBy the end of today you'll have both working. Most weeks you'll prototype locally, then train on Colab when the model gets serious.\n\n## What you'll do today\nInstall Anaconda, create a Python 3.11 conda env, install scikit-learn locally. Open a Colab notebook, enable a T4 GPU, run `import torch; torch.cuda.is_available()` and confirm `True`."
+            },
+            {
+              "kind": "video",
+              "title": "Google Colab + GPU setup for ML",
+              "url": "https://www.youtube.com/watch?v=RLYoEyIHL6A",
+              "duration_min": 12,
+              "creator": "various",
+              "why": "Watch first. You see how to switch on a T4 GPU and confirm CUDA works. Then repeat the steps yourself."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in action — the exact steps, with what you should see",
+              "body": "## Walkthrough\nDo every step.\n\nLOCAL:\n1. Install **Anaconda** from anaconda.com/download.\n2. `conda create -n forge-ml python=3.11 -y && conda activate forge-ml`.\n3. `pip install scikit-learn`.\n4. `python -c \"from sklearn.linear_model import LinearRegression; print('ok')\"` → prints `ok`.\n\nCOLAB:\n5. Go to colab.research.google.com (free Google account).\n6. New notebook. Runtime → Change runtime type → T4 GPU. Save.\n7. In the first cell:\n   ```python\n   import torch\n   print(torch.cuda.is_available(), torch.cuda.get_device_name(0))\n   ```\n8. Run it. Confirm `True Tesla T4`.\n\n## Verify\nPASS:\n[x] Local conda env imports sklearn\n[x] Colab shows `True` for `cuda.is_available()`\n[x] Colab is running on a T4"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Google Colab gives you a free GPU for training small ML models.",
+                  "answer": true,
+                  "whenRight": "Right — T4 GPU, hours per session, free. Reach for it whenever training is slow on CPU.",
+                  "whenWrong": "Yes — free T4 GPU access via Colab is the standard 'don't have a beefy laptop' answer."
+                },
+                {
+                  "prompt": "You should train every model on Colab, even tiny ones.",
+                  "answer": false,
+                  "whenRight": "Right — small models train faster locally. Save Colab for jobs that actually need a GPU.",
+                  "whenWrong": "Local is faster for tiny models (no upload, no session). Use Colab when CPU training drags."
+                },
+                {
+                  "prompt": "`torch.cuda.is_available()` returning False on Colab means you forgot to enable the GPU.",
+                  "answer": true,
+                  "whenRight": "Right — Runtime → Change runtime type → T4 GPU. Without it, Colab is CPU-only.",
+                  "whenWrong": "Yes — Colab defaults to CPU. Switch the runtime to GPU and re-run for True."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — set it up",
+              "body": "[CODE] Do every step.\n\nLOCAL:\n1. Install **Anaconda** from anaconda.com/download.\n2. `conda create -n forge-ml python=3.11 -y && conda activate forge-ml`.\n3. `pip install scikit-learn`.\n4. `python -c \"from sklearn.linear_model import LinearRegression; print('ok')\"` → prints `ok`.\n\nCOLAB:\n5. Go to colab.research.google.com (free Google account).\n6. New notebook. Runtime → Change runtime type → T4 GPU. Save.\n7. In the first cell:\n   ```python\n   import torch\n   print(torch.cuda.is_available(), torch.cuda.get_device_name(0))\n   ```\n8. Run it. Confirm `True Tesla T4`.\n\nPASS:\n[x] Local conda env imports sklearn\n[x] Colab shows `True` for `cuda.is_available()`\n[x] Colab is running on a T4"
+            }
+          ]
+        },
+        {
           "number": 1,
           "title": "What does ML actually do?",
           "summary": "Watch and think. No coding today.",

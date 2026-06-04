@@ -33,6 +33,60 @@
       "context": "A mobile app is not a scaled-down website. It runs on a different operating system (iOS or Android), uses different interaction paradigms (touch gestures, not clicks), has access to hardware (camera, GPS, accelerometer, biometrics), and is distributed through app stores instead of web servers. React Native bridges this gap: you write JavaScript and React, and the framework compiles to native components. This is different from a web view (showing a website inside an app shell) — React Native renders real native UI components.\n\nThe project for the first 4 weeks is Hydra: a habit tracker. Simple enough to build in a weekend, complex enough to touch every foundational mobile concept — navigation, state, local storage, notifications, forms, TypeScript. By W4, Hydra is a real app that you use personally.\n\nW1 builds Hydra v0.1: a list of habits you can check off each day. This week you understand how React Native differs from React for web. The component library is different: View instead of div, Text instead of p or h1, TouchableOpacity or Pressable instead of button. There is no CSS — styles are applied via StyleSheet objects or inline objects. StyleSheet.create is a performance optimisation that flattens style definitions at creation time. Flexbox is the only layout system (no grid, no floats, no positioning with left/top in the web sense).\n\nNavigation is handled by a library because mobile apps do not have URLs. React Navigation is the standard. It manages a navigation stack (push and pop screens, like browser history), tab bars (bottom navigation), and drawer menus. Each screen is a React component; the navigator renders the currently active screen.\n\nExpo is the toolchain. It provides a managed workflow that eliminates native build configuration for the first several months. The Expo Go app on your phone reads your code and renders it in real time. When you need native APIs not in Expo's managed set, you eject to a bare workflow — but stay in managed for now.",
       "days": [
         {
+          "number": 0,
+          "title": "Your Coding Environment — Node + Expo + Your Phone",
+          "summary": "Node, Expo, and your phone running Expo Go. The foundation for every mobile day.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "What this environment is — and why before anything else",
+              "body": "## What it is\nMobile development needs more setup than web. You need:\n1. **Node.js LTS** — same as web.\n2. **Expo CLI** — `npx create-expo-app` will scaffold your projects.\n3. **Expo Go** on your phone (iOS App Store / Google Play) — runs your app live, no native build needed.\n\nBy the end of today you have all three. You scaffold a starter app, run `npx expo start`, scan the QR code with Expo Go on your phone, and see your app live.\n\n## Why before anything else\nWeek 1 says 'create a screen and see it on your phone.' Without Expo Go set up today, that's impossible. Get it working now so the rest of the week is just code."
+            },
+            {
+              "kind": "video",
+              "title": "Expo + React Native setup in 10 minutes",
+              "url": "https://www.youtube.com/watch?v=mkualZPRZCs",
+              "duration_min": 12,
+              "creator": "various",
+              "why": "Watch first. You see the install, the phone QR-code workflow, and the first running app. Then repeat the steps yourself."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in action — the exact steps, with what you should see",
+              "body": "## Walkthrough\nDo every step.\n\n1. Install **Node.js LTS** from nodejs.org if you haven't already.\n2. Install **Expo Go** on your phone: search 'Expo Go' on the App Store / Google Play.\n3. In a terminal: `npx create-expo-app hello-forge` → confirm yes to install dependencies.\n4. `cd hello-forge && npx expo start`.\n5. A QR code appears in the terminal. Open Expo Go on your phone → Scan QR.\n6. The starter app loads on your phone.\n\n## Verify\nPASS:\n[x] `node --version` works\n[x] Expo Go installed on your phone\n[x] The starter app loads when you scan the QR code"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Expo Go lets you run your React Native app on your phone without a native build.",
+                  "answer": true,
+                  "whenRight": "Right — that's the speed advantage. Edit code on your laptop, save, see changes on phone.",
+                  "whenWrong": "Yes — Expo Go runs your code live. No Xcode / Android Studio needed to see your app."
+                },
+                {
+                  "prompt": "Your laptop and phone must be on the SAME Wi-Fi network for Expo Go to connect.",
+                  "answer": true,
+                  "whenRight": "Right — Expo Go connects over the LAN by default. Same Wi-Fi or Tunnel mode.",
+                  "whenWrong": "Same Wi-Fi for the default LAN mode. If they're not, use Tunnel mode (slower)."
+                },
+                {
+                  "prompt": "You need an Apple Developer account to test on iPhone with Expo Go.",
+                  "answer": false,
+                  "whenRight": "Right — no. Expo Go is free, no developer account needed for daily testing.",
+                  "whenWrong": "Expo Go is a free app — no developer account needed to test daily. That's later, when publishing."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — set it up",
+              "body": "[CODE] Do every step.\n\n1. Install **Node.js LTS** from nodejs.org if you haven't already.\n2. Install **Expo Go** on your phone: search 'Expo Go' on the App Store / Google Play.\n3. In a terminal: `npx create-expo-app hello-forge` → confirm yes to install dependencies.\n4. `cd hello-forge && npx expo start`.\n5. A QR code appears in the terminal. Open Expo Go on your phone → Scan QR.\n6. The starter app loads on your phone.\n\nPASS:\n[x] `node --version` works\n[x] Expo Go installed on your phone\n[x] The starter app loads when you scan the QR code"
+            }
+          ]
+        },
+        {
           "number": 1,
           "title": "Why Expo + React Native?",
           "summary": "Today is mostly watching. Get the picture.",
