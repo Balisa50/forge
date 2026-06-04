@@ -230,7 +230,10 @@ export default function LoginPage() {
               onClick={handleQuickReturn}
               disabled={menteeLoading}
               className="forge-btn forge-btn-primary"
-              style={{ width: "100%", padding: "0.625rem", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
+              // display:flex (NOT inline-flex which the class sets by default —
+              // inline-flex hugs content so width:100% doesn't fully stretch).
+              // Result: button matches the input width above it, centred content.
+              style={{ width: "100%", padding: "0.625rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", boxSizing: "border-box" }}
             >
               <KeyRound size={14} />
               {menteeLoading ? "Signing in..." : "Continue"}
@@ -273,7 +276,15 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button type="submit" className="forge-btn forge-btn-primary" style={{ width: "100%", marginTop: "0.5rem", padding: "0.75rem" }} disabled={loading}>
+          <button
+            type="submit"
+            className="forge-btn forge-btn-primary"
+            // display:flex (NOT the class's default inline-flex) so width:100%
+            // stretches the button to match the email/password inputs above.
+            // justify-content:center keeps the label dead-centre.
+            style={{ width: "100%", marginTop: "0.5rem", padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}
+            disabled={loading}
+          >
             {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
