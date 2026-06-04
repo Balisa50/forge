@@ -229,11 +229,12 @@ export default function LoginPage() {
               type="button"
               onClick={handleQuickReturn}
               disabled={menteeLoading}
-              className="forge-btn forge-btn-primary"
-              // display:flex (NOT inline-flex which the class sets by default —
-              // inline-flex hugs content so width:100% doesn't fully stretch).
-              // Result: button matches the input width above it, centred content.
-              style={{ width: "100%", padding: "0.625rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", boxSizing: "border-box" }}
+              // forge-btn-full is the documented opt-out (in globals.css) for
+              // the @media min-width:1025px rule that caps .forge-btn-primary
+              // at max-width:280px. Without it, the button stays small + left
+              // on desktop no matter what inline width we set.
+              className="forge-btn forge-btn-primary forge-btn-full"
+              style={{ padding: "0.625rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", boxSizing: "border-box" }}
             >
               <KeyRound size={14} />
               {menteeLoading ? "Signing in..." : "Continue"}
@@ -278,11 +279,12 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="forge-btn forge-btn-primary"
-            // display:flex (NOT the class's default inline-flex) so width:100%
-            // stretches the button to match the email/password inputs above.
-            // justify-content:center keeps the label dead-centre.
-            style={{ width: "100%", marginTop: "0.5rem", padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}
+            // forge-btn-full is the documented escape from the @media
+            // min-width:1025px cap on .forge-btn-primary (fit-content +
+            // max-width:280px). Without it the Sign In button stays narrower
+            // than the email/password inputs on every desktop screen.
+            className="forge-btn forge-btn-primary forge-btn-full"
+            style={{ marginTop: "0.5rem", padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}
             disabled={loading}
           >
             {loading ? "Signing In..." : "Sign In"}
