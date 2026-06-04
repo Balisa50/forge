@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Search, AlertTriangle, Shield, Flame, ChevronDown, UserPlus } from "lucide-react";
 
 interface Student {
@@ -144,16 +145,22 @@ export default function StudentsPage() {
           <div style={{ padding: "2rem 1.5rem", color: "var(--text-dim)", fontSize: "0.875rem", textAlign: "center" }}>No students found.</div>
         ) : (
           filtered.map((s) => (
-            <div key={s.user.id} style={{
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 80px 80px 80px 80px 60px",
-              padding: "0.875rem 1.5rem",
-              borderBottom: "1px solid var(--border)",
-              alignItems: "center",
-              transition: "background 0.1s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(245,158,11,0.02)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            <Link
+              key={s.user.id}
+              href={`/log/${s.user.id}`}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1fr 80px 80px 80px 80px 60px",
+                padding: "0.875rem 1.5rem",
+                borderBottom: "1px solid var(--border)",
+                alignItems: "center",
+                transition: "background 0.1s",
+                color: "inherit",
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(245,158,11,0.04)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
             >
               {/* Student info */}
               <div className="flex items-center gap-3">
@@ -217,7 +224,7 @@ export default function StudentsPage() {
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-dim)" }}>0</span>
                 )}
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>

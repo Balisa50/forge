@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft, ArrowRight, Clock, Lock } from "lucide-react";
+import { ArrowLeft, Clock, Lock } from "lucide-react";
 import { loadAllRoadmaps, loadRoadmap, ROADMAP_META } from "@/lib/roadmaps";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -95,6 +95,40 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
     select: { id: true },
   });
 
+  // Latest submission for this (user, task), if any — so the Submission tab
+  // can show "Resubmit" instead of "Submit" and surface a preview of what
+  // was sent last time. Limited fields only; we never ship file payloads
+  // down to the client here.
+  const latestSubmission = ownTask
+    ? await prisma.checkin.findFirst({
+        where: { userId: session.user.id, taskId: ownTask.id },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          status: true,
+          attemptNum: true,
+          evidenceType: true,
+          evidenceUrl: true,
+          createdAt: true,
+          interrogation: {
+            select: { mentorReviewedAt: true, passed: true, feedback: true },
+          },
+        },
+      })
+    : null;
+  const submissionProp = latestSubmission
+    ? {
+        status: latestSubmission.status as string,
+        attemptNum: latestSubmission.attemptNum,
+        evidenceType: latestSubmission.evidenceType,
+        evidenceUrl: latestSubmission.evidenceUrl,
+        submittedAt: latestSubmission.createdAt.toISOString(),
+        reviewed: !!latestSubmission.interrogation?.mentorReviewedAt,
+        passed: latestSubmission.interrogation?.passed ?? null,
+        feedback: latestSubmission.interrogation?.feedback ?? null,
+      }
+    : null;
+
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
       {/* Slim banner */}
@@ -116,127 +150,18 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-8">
-        <WeekPageTabs week={w} slug={roadmap.slug} taskId={ownTask?.id ?? null} />
+        {/* Week nav (Previous / Next) is rendered INSIDE the tabs component so
+            it can be scoped to the Content tab only — it has no business on the
+            Submission or Mentor Review tabs. */}
+        <WeekPageTabs
+          week={w}
+          slug={roadmap.slug}
+          taskId={ownTask?.id ?? null}
+          prev={prev ? { number: prev.number, title: prev.title } : null}
+          next={next ? { number: next.number, title: next.title } : null}
+          submission={submissionProp}
+        />
       </section>
-
-      <nav
-        aria-label="Week navigation"
-        style={{
-          maxWidth: "64rem",
-          margin: "0 auto",
-          padding: "0 1.5rem 3.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "stretch",
-          gap: "0.75rem",
-          flexWrap: "wrap",
-        }}
-      >
-        {/* Previous — sized to content. flex: 0 1 auto means: don't grow,
-            shrink if necessary, base width = content. So the card hugs its
-            title instead of stretching to half the page. */}
-        {prev ? (
-          <Link
-            href={`/learn/${roadmap.slug}/${prev.number}`}
-            style={{
-              flex: "0 1 auto",
-              maxWidth: "22rem",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              padding: "0.75rem 1rem",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--bg-panel)",
-              color: "var(--text-primary)",
-              textDecoration: "none",
-              transition: "border-color 0.15s, background 0.15s",
-              minWidth: 0,
-            }}
-          >
-            <ArrowLeft size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
-            <span style={{ minWidth: 0, display: "block" }}>
-              <span style={{
-                display: "block",
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.625rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--text-dim)",
-                lineHeight: 1,
-                marginBottom: "0.25rem",
-              }}>
-                Previous
-              </span>
-              <span style={{
-                display: "block",
-                fontFamily: "var(--font-body)",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                lineHeight: 1.25,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                color: "var(--text-primary)",
-              }}>
-                Week {prev.number}: {prev.title}
-              </span>
-            </span>
-          </Link>
-        ) : <span aria-hidden />}
-
-        {/* Next */}
-        {next ? (
-          <Link
-            href={`/learn/${roadmap.slug}/${next.number}`}
-            style={{
-              flex: "0 1 auto",
-              maxWidth: "22rem",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              padding: "0.75rem 1rem",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--bg-panel)",
-              color: "var(--text-primary)",
-              textDecoration: "none",
-              transition: "border-color 0.15s, background 0.15s",
-              minWidth: 0,
-              marginLeft: prev ? 0 : "auto",
-            }}
-          >
-            <span style={{ minWidth: 0, display: "block", textAlign: "right" }}>
-              <span style={{
-                display: "block",
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.625rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--text-dim)",
-                lineHeight: 1,
-                marginBottom: "0.25rem",
-              }}>
-                Next
-              </span>
-              <span style={{
-                display: "block",
-                fontFamily: "var(--font-body)",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                lineHeight: 1.25,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                color: "var(--text-primary)",
-              }}>
-                Week {next.number}: {next.title}
-              </span>
-            </span>
-            <ArrowRight size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
-          </Link>
-        ) : null}
-      </nav>
     </main>
   );
 }

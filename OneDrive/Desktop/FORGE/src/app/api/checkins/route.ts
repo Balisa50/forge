@@ -184,17 +184,31 @@ export async function POST(req: NextRequest) {
   });
   if (!roadmap) return NextResponse.json({ error: "Roadmap not found" }, { status: 404 });
 
-  // Check duplicate today
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const existing = await prisma.checkin.findFirst({
-    where: { userId, roadmapId, createdAt: { gte: today, lt: tomorrow }, status: "passed" },
+  // ── ONE ROW PER (USER, TASK) — see /api/mentee/review-answers for the
+  // same pattern. If a Checkin already exists for this (user, task), we will
+  // UPDATE it instead of creating a duplicate. Same-day double-submits across
+  // DIFFERENT tasks of the same roadmap are still blocked (the daily-check-in
+  // rhythm only allows one per day).
+  const existingForTask = await prisma.checkin.findFirst({
+    where: { userId, taskId },
+    orderBy: { createdAt: "desc" },
+    include: { interrogation: true },
   });
-  if (existing) {
-    return NextResponse.json({ error: "Already checked in successfully today" }, { status: 409 });
+
+  if (!existingForTask) {
+    // Only run the same-day guard on first submission. Resubmits for the
+    // same task ignore the daily limit — by design, a mentor reopen invites
+    // a same-day rework.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dailyDuplicate = await prisma.checkin.findFirst({
+      where: { userId, roadmapId, createdAt: { gte: today, lt: tomorrow }, status: "passed" },
+    });
+    if (dailyDuplicate) {
+      return NextResponse.json({ error: "Already checked in successfully today" }, { status: 409 });
+    }
   }
 
   // Build evidenceType, evidenceUrl, evidenceData
@@ -278,21 +292,35 @@ export async function POST(req: NextRequest) {
   });
   const hasMentor = !!activeMentorLink;
 
-  const checkin = await prisma.checkin.create({
-    data: {
-      userId,
-      roadmapId,
-      trackId,
-      taskId,
-      description: "",
-      evidenceType,
-      evidenceUrl,
-      evidenceData: evidenceData as object,
-      // placeholder. Journal + dashboard derive the user-facing status from
-      // Interrogation.mentorReviewedAt + passed when an interrogation exists.
-      status: "passed",
-    },
-  });
+  // UPSERT: update the existing Checkin row for this (user, task) if one
+  // exists; otherwise create the first one. Bump attemptNum on every
+  // resubmission so the audit trail is honest.
+  const checkin = existingForTask
+    ? await prisma.checkin.update({
+        where: { id: existingForTask.id },
+        data: {
+          evidenceType,
+          evidenceUrl,
+          evidenceData: evidenceData as object,
+          status: "passed", // reset placeholder; pill derives from interrogation
+          attemptNum: existingForTask.attemptNum + 1,
+        },
+      })
+    : await prisma.checkin.create({
+        data: {
+          userId,
+          roadmapId,
+          trackId,
+          taskId,
+          description: "",
+          evidenceType,
+          evidenceUrl,
+          evidenceData: evidenceData as object,
+          // placeholder. Journal + dashboard derive the user-facing status
+          // from Interrogation.mentorReviewedAt + passed when one exists.
+          status: "passed",
+        },
+      });
 
   await prisma.task.update({
     where: { id: taskId },
@@ -311,18 +339,37 @@ export async function POST(req: NextRequest) {
 
   if (mentorQuestions.length > 0 || hasMentor) {
     try {
-      await prisma.interrogation.create({
-        data: {
-          checkinId: checkin.id,
-          mode: "mentor_async",
-          isDefence: mentorQuestions.length > 0,
-          mentorReviewerId: mentorQuestions[0]?.mentorId ?? activeMentorLink?.mentorId ?? null,
-          transcript: transcript as unknown as object,
-          completedAt: new Date(),
-        },
-      });
+      // UPSERT the interrogation too: a resubmit replaces the prior
+      // transcript on the existing row instead of inserting a duplicate.
+      // This keeps the Journal at exactly one entry per (user, task).
+      if (existingForTask?.interrogation) {
+        await prisma.interrogation.update({
+          where: { id: existingForTask.interrogation.id },
+          data: {
+            transcript: transcript as unknown as object,
+            mentorReviewedAt: null,
+            passed: false,
+            overallScore: 0,
+            feedback: null,
+            completedAt: new Date(),
+            mentorReviewerId: mentorQuestions[0]?.mentorId ?? activeMentorLink?.mentorId ?? null,
+            isDefence: mentorQuestions.length > 0,
+          },
+        });
+      } else {
+        await prisma.interrogation.create({
+          data: {
+            checkinId: checkin.id,
+            mode: "mentor_async",
+            isDefence: mentorQuestions.length > 0,
+            mentorReviewerId: mentorQuestions[0]?.mentorId ?? activeMentorLink?.mentorId ?? null,
+            transcript: transcript as unknown as object,
+            completedAt: new Date(),
+          },
+        });
+      }
     } catch (err) {
-      console.warn("[checkins] interrogation create failed:", err instanceof Error ? err.message : err);
+      console.warn("[checkins] interrogation upsert failed:", err instanceof Error ? err.message : err);
     }
   }
 

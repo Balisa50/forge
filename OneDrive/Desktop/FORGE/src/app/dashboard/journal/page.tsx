@@ -7,30 +7,46 @@ import { formatDate } from "@/lib/utils";
  *
  * IMPORTANT: a check-in is NEVER displayed as "PASSED" automatically just
  * because the student submitted it. The display status is derived:
- *   - If the check-in has a mentor_async Interrogation that the mentor has
- *     not yet reviewed (mentorReviewedAt is null) -> "AWAITING REVIEW"
- *   - If the mentor reviewed and passed=true   -> "PASSED" (+ score + rating)
- *   - If the mentor reviewed and passed=false  -> "NEEDS REWORK"
- *   - If there is no interrogation (no mentor questions)
- *       -> fall back to checkin.status (the FORGE solo-learner default)
+ *   - Mentor reopened the week (checkin.status = "failed" + interrogation
+ *     not reviewed) -> "NEEDS REVISION" — student should resubmit
+ *   - Interrogation exists but mentor hasn't reviewed -> "AWAITING REVIEW"
+ *   - Mentor reviewed + passed=true   -> "PASSED" (+ score + rating)
+ *   - Mentor reviewed + passed=false  -> "NEEDS REWORK"
+ *   - No interrogation -> fall back to checkin.status (solo-learner default)
  *
- * The mentor's 1-5 rating (Task.mentorRating) and final feedback are surfaced
- * here too, so the student sees how they performed without hunting for it.
+ * There is exactly ONE row per (user, task). Reopens UPDATE the row in place
+ * instead of creating a duplicate; resubmits do the same. The mentor's 1–5
+ * rating (Task.mentorRating) and final feedback are surfaced here so the
+ * student sees how they performed without hunting for it.
  */
 export default async function JournalPage() {
   const session = await auth();
   const userId = session!.user!.id!;
 
-  const checkins = await prisma.checkin.findMany({
+  const rawCheckins = await prisma.checkin.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    take: 50,
+    take: 80, // pull a few extra so dedupe doesn't truncate
     include: {
       interrogation: true,
       task: { select: { title: true, mentorRating: true } },
       track: { select: { title: true, color: true } },
     },
   });
+
+  // DEDUPE by taskId — keep only the most recent row per (user, task). Going
+  // forward our submission endpoints upsert in place, so each task has exactly
+  // one row. For any legacy rows that landed before that fix shipped, this
+  // pass hides the older duplicates from the journal — the student sees one
+  // entry per week, with the latest verdict.
+  const seenTasks = new Set<string>();
+  const checkins = rawCheckins
+    .filter((c) => {
+      if (seenTasks.has(c.taskId)) return false;
+      seenTasks.add(c.taskId);
+      return true;
+    })
+    .slice(0, 50);
 
   return (
     <div>
@@ -46,11 +62,20 @@ export default async function JournalPage() {
         <div className="flex flex-col gap-4">
           {checkins.map((c) => {
             const interrogation = c.interrogation;
-            const awaitingReview = !!interrogation && !interrogation.mentorReviewedAt;
+            // Reopened-by-mentor state: checkin.status was flipped to "failed"
+            // when the mentor reopened the week and the interrogation was
+            // un-reviewed (mentorReviewedAt cleared). The student now needs
+            // to resubmit — pill says NEEDS REVISION, not AWAITING REVIEW.
+            const reopenedNeedsRevision =
+              !!interrogation && !interrogation.mentorReviewedAt && c.status === "failed";
+            const awaitingReview =
+              !!interrogation && !interrogation.mentorReviewedAt && c.status !== "failed";
             const mentorPassed = !!interrogation && !!interrogation.mentorReviewedAt && interrogation.passed;
             const mentorRejected = !!interrogation && !!interrogation.mentorReviewedAt && !interrogation.passed;
             const display: { label: string; tone: "green" | "red" | "yellow" } =
-              awaitingReview
+              reopenedNeedsRevision
+                ? { label: "NEEDS REVISION", tone: "yellow" }
+                : awaitingReview
                 ? { label: "AWAITING REVIEW", tone: "yellow" }
                 : mentorPassed
                 ? { label: "PASSED", tone: "green" }

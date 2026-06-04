@@ -89,6 +89,22 @@
     border-radius: 10px;
   }
 
+  /* A clickable panel — used when the whole card is wrapped in a <Link>.
+     Gives the user a visible hover affordance + a pointer cursor so the
+     row never reads as decorative. The forge-panel base supplies the
+     border + background; we just light up the accent on hover. */
+  .forge-panel-link {
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+  .forge-panel-link:hover {
+    border-color: var(--accent);
+    background: rgba(245,158,11,0.04);
+  }
+  .forge-panel-link:active {
+    transform: translateY(1px);
+  }
+
   .forge-card {
     background: var(--bg-card);
     border: 1px solid var(--border);

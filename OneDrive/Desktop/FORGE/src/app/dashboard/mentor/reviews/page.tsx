@@ -152,7 +152,16 @@ export default function MentorReviewsPage() {
 
       {/* Inline review panel */}
       {active && (
-        <div className="forge-panel" style={{ padding: "1.5rem", marginTop: "1.5rem" }}>
+        <div className="forge-panel" style={{
+          padding: "1.5rem",
+          marginTop: "1.5rem",
+          // Keep ALL children inside the card on every viewport. Without this,
+          // long button labels like "Send Back (Needs Rework)" can poke outside
+          // the rounded border on a 375 px phone.
+          overflow: "hidden",
+          maxWidth: "100%",
+          boxSizing: "border-box",
+        }}>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.25rem" }}>{active.checkin.task.title}</h2>
           <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginBottom: "1rem" }}>
             By {active.checkin.user.name ?? active.checkin.user.email}
@@ -269,17 +278,45 @@ export default function MentorReviewsPage() {
               })}
           </ol>
 
+          {/* ── Feedback ─────────────────────────────────────────────── */}
+          <label
+            style={{
+              display: "block",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.6875rem",
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Feedback for the mentee <span style={{ color: "var(--text-dim)", textTransform: "none", letterSpacing: 0 }}>— optional, visible on their week + Journal</span>
+          </label>
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Feedback for the mentee (optional). They see this on the week page + Journal."
-            rows={2}
-            style={{ width: "100%", padding: "0.5rem 0.75rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text-primary)", fontSize: "0.875rem", marginBottom: "1rem", resize: "vertical" }}
+            placeholder="What landed, what to rework, what to read next."
+            rows={3}
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              padding: "0.625rem 0.75rem",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              color: "var(--text-primary)",
+              fontSize: "0.9375rem",
+              marginBottom: "1.25rem",
+              resize: "vertical",
+              fontFamily: "var(--font-body)",
+              lineHeight: 1.5,
+            }}
           />
 
-          {/* 1-5 rating selector. Saved to Task.mentorRating so the student
-              sees it on the Mentor Review section + Journal. */}
-          <div style={{ marginBottom: "1rem" }}>
+          {/* ── 1-5 rating selector ──────────────────────────────────────
+              Saved to Task.mentorRating so the student sees it on the
+              Mentor Review section + Journal. */}
+          <div style={{ marginBottom: "1.5rem" }}>
             <label
               style={{
                 display: "block",
@@ -335,14 +372,67 @@ export default function MentorReviewsPage() {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <button onClick={() => submit(true)} disabled={submitting} className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.5rem 1rem" }}>
-              {submitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={13} />} Mark Passed
+          {/* ── Actions ───────────────────────────────────────────────────
+              Two primary actions sit side by side and EACH gets `flex: 1 1 200px`
+              so they grow together on a wide card and wrap stacked on a 375 px
+              phone. `minWidth: 0` lets them shrink past their content width if
+              the viewport is even narrower. Cancel is the third item — it
+              wraps onto its own line on small screens and never crowds the
+              other two. */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "0.625rem",
+              alignItems: "stretch",
+              width: "100%",
+              maxWidth: "100%",
+            }}
+          >
+            <button
+              onClick={() => submit(true)}
+              disabled={submitting}
+              className="forge-btn forge-btn-primary forge-btn-full"
+              style={{
+                flex: "1 1 200px",
+                minWidth: 0,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.4rem",
+                padding: "0.625rem 1rem",
+              }}
+            >
+              {submitting ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />} Mark Passed
             </button>
-            <button onClick={() => submit(false)} disabled={submitting} className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.5rem 1rem", color: "var(--red)", borderColor: "rgba(239,68,68,0.3)" }}>
-              <XCircle size={13} /> Send Back (Needs Rework)
+            <button
+              onClick={() => submit(false)}
+              disabled={submitting}
+              className="forge-btn forge-btn-ghost forge-btn-full"
+              style={{
+                flex: "1 1 200px",
+                minWidth: 0,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.4rem",
+                padding: "0.625rem 1rem",
+                color: "var(--red)",
+                borderColor: "rgba(239,68,68,0.3)",
+              }}
+            >
+              <XCircle size={14} /> Send Back (Needs Rework)
             </button>
-            <button onClick={() => setActiveId(null)} className="forge-btn forge-btn-ghost" style={{ padding: "0.5rem 1rem" }}>Cancel</button>
+            <button
+              onClick={() => setActiveId(null)}
+              className="forge-btn forge-btn-ghost"
+              style={{
+                flex: "0 1 auto",
+                padding: "0.625rem 1.25rem",
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2, Play, FileText, PenLine, Circle, Lock, Target, Code2, HelpCircle,
-  ExternalLink, ChevronDown, ArrowRight, Sparkles, BookOpen,
+  ExternalLink, ChevronDown, ArrowLeft, ArrowRight, Sparkles, BookOpen,
 } from "lucide-react";
 import type { RoadmapWeek } from "@/lib/roadmaps";
 import ResourceViewer from "@/components/ResourceViewer";
@@ -43,7 +44,40 @@ function shouldOpenInNewTab(_url: string): boolean {
 
 type ActiveTab = "content" | "submission" | "mentorReview";
 
-export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek; slug: string; taskId?: string | null }) {
+interface WeekNeighbour {
+  number: number;
+  title: string;
+}
+
+/** Server-rendered summary of the student's latest submission for this
+ *  (user, task) — passed in so the Submission tab can show "Resubmit"
+ *  instead of "Submit" and preview what was sent last time. */
+export interface SubmissionSummary {
+  status: string;
+  attemptNum: number;
+  evidenceType: string;
+  evidenceUrl: string | null;
+  submittedAt: string;
+  reviewed: boolean;
+  passed: boolean | null;
+  feedback: string | null;
+}
+
+export default function WeekPageTabs({
+  week,
+  slug,
+  taskId,
+  prev = null,
+  next = null,
+  submission = null,
+}: {
+  week: RoadmapWeek;
+  slug: string;
+  taskId?: string | null;
+  prev?: WeekNeighbour | null;
+  next?: WeekNeighbour | null;
+  submission?: SubmissionSummary | null;
+}) {
   const hasDays = !!week.days && week.days.length > 0;
   const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
   // Active tab — defaults to "content" so existing learners see the day stream
@@ -280,28 +314,131 @@ export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek
         </div>
       )}
 
-      {/* Submission tab — explains the submission flow and links to it. */}
-      {activeTab === "submission" && (
-        <div
-          className="forge-panel"
-          style={{ padding: "1.5rem", border: "1px solid rgba(212,175,55,0.4)" }}
-        >
-          <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>
-            Submit your work for this week
-          </h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, marginBottom: "1rem" }}>
-            Daily check-in is where you upload your proof of work — a URL, a GitHub repo, or a file.
-            Your mentor reviews it alongside any questions they&apos;ve set, then marks it passed.
-          </p>
-          <a
-            href="/dashboard/checkin"
-            className="forge-btn forge-btn-primary"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.625rem 1rem" }}
+      {/* Submission tab — explains the submission flow and links to it.
+          When a prior submission exists, the button flips to "Resubmit" /
+          "Update submission" and a preview of what was last sent appears
+          so the student isn't guessing whether their work landed. */}
+      {activeTab === "submission" && (() => {
+        const hasSubmission = !!submission;
+        // After a reopen the server sets checkin.status="failed" with the
+        // interrogation un-reviewed. That's the "needs revision" state —
+        // the student MUST resubmit, and we surface that copy explicitly.
+        const reopenedForRevision =
+          !!submission && !submission.reviewed && submission.status === "failed";
+        const awaitingReview =
+          !!submission && !submission.reviewed && submission.status !== "failed";
+        const buttonLabel = hasSubmission
+          ? reopenedForRevision || (submission!.reviewed && submission!.passed === false)
+            ? "Resubmit your work"
+            : "Update submission"
+          : "Submit your work for this week";
+        return (
+          <div
+            className="forge-panel"
+            style={{
+              padding: "1.5rem",
+              border: reopenedForRevision
+                ? "1px solid rgba(239,68,68,0.45)"
+                : "1px solid rgba(212,175,55,0.4)",
+              background: reopenedForRevision ? "rgba(239,68,68,0.04)" : undefined,
+              overflow: "hidden",
+              maxWidth: "100%",
+              boxSizing: "border-box",
+            }}
           >
-            Open the daily check-in
-          </a>
-        </div>
-      )}
+            <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>
+              Submit your work for this week
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, marginBottom: "1rem" }}>
+              {reopenedForRevision
+                ? "Your mentor reopened this week and asked for revisions. Update your work and resubmit — your previous submission is shown below for reference."
+                : awaitingReview
+                  ? "Your work is in your mentor's queue. You can update your submission while it's still awaiting review."
+                  : hasSubmission && submission!.passed
+                    ? "You already passed this week. You can still update your submission if you want to add to the record."
+                    : "Upload your proof of work — a URL, a GitHub repo, or a file. Your mentor reviews it alongside any questions they've set, then marks it passed."}
+            </p>
+
+            {/* Previous submission preview — only when one exists. Shows the
+                evidence type + URL + when it was sent + attempt count. */}
+            {hasSubmission && (
+              <div
+                style={{
+                  marginBottom: "1rem",
+                  padding: "0.75rem 0.875rem",
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  fontSize: "0.875rem",
+                  color: "var(--text-secondary)",
+                  wordBreak: "break-word",
+                }}
+              >
+                <div style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "var(--text-dim)",
+                  marginBottom: "0.375rem",
+                }}>
+                  Your previous submission · attempt {submission!.attemptNum}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", alignItems: "baseline" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
+                    {new Date(submission!.submittedAt).toLocaleString()}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--accent)" }}>
+                    {submission!.evidenceType}
+                  </span>
+                </div>
+                {submission!.evidenceUrl && (
+                  <a
+                    href={submission!.evidenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-block",
+                      marginTop: "0.5rem",
+                      color: "var(--blue)",
+                      fontSize: "0.875rem",
+                      wordBreak: "break-all",
+                    }}
+                  >
+                    {submission!.evidenceUrl}
+                  </a>
+                )}
+                {submission!.feedback && (
+                  <p style={{
+                    marginTop: "0.5rem",
+                    paddingTop: "0.5rem",
+                    borderTop: "1px solid var(--border)",
+                    fontSize: "0.8125rem",
+                    fontStyle: "italic",
+                    color: submission!.passed === false ? "var(--red)" : "var(--text-dim)",
+                  }}>
+                    Mentor note: &ldquo;{submission!.feedback}&rdquo;
+                  </p>
+                )}
+              </div>
+            )}
+
+            <a
+              href="/dashboard/checkin"
+              className="forge-btn forge-btn-primary"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                padding: "0.625rem 1.25rem",
+                maxWidth: "100%",
+              }}
+            >
+              {buttonLabel}
+            </a>
+          </div>
+        );
+      })()}
 
       {/* Mentor Review tab — the questions/answers/verdict panel. */}
       {activeTab === "mentorReview" && taskId && <MentorReviewSection taskId={taskId} />}
@@ -654,6 +791,118 @@ export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek
           </article>
         );
       })}
+
+      {/* Previous / Next week navigation — CONTENT TAB ONLY. Lives here so the
+          Submission and Mentor Review tabs don't get visual clutter that
+          confuses students about where to act. */}
+      {activeTab === "content" && (prev || next) && (
+        <nav
+          aria-label="Week navigation"
+          style={{
+            marginTop: "1.5rem",
+            paddingTop: "1rem",
+            borderTop: "1px solid var(--border)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "stretch",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+          }}
+        >
+          {prev ? (
+            <Link
+              href={`/learn/${slug}/${prev.number}`}
+              className="forge-panel-link"
+              style={{
+                flex: "0 1 auto",
+                maxWidth: "22rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                padding: "0.75rem 1rem",
+                borderRadius: 10,
+                border: "1px solid var(--border)",
+                background: "var(--bg-panel)",
+                color: "var(--text-primary)",
+                textDecoration: "none",
+                minWidth: 0,
+              }}
+            >
+              <ArrowLeft size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
+              <span style={{ minWidth: 0, display: "block" }}>
+                <span style={{
+                  display: "block",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--text-dim)",
+                  lineHeight: 1,
+                  marginBottom: "0.25rem",
+                }}>Previous</span>
+                <span style={{
+                  display: "block",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  lineHeight: 1.25,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  color: "var(--text-primary)",
+                }}>Week {prev.number}: {prev.title}</span>
+              </span>
+            </Link>
+          ) : <span aria-hidden />}
+
+          {next ? (
+            <Link
+              href={`/learn/${slug}/${next.number}`}
+              className="forge-panel-link"
+              style={{
+                flex: "0 1 auto",
+                maxWidth: "22rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                padding: "0.75rem 1rem",
+                borderRadius: 10,
+                border: "1px solid var(--border)",
+                background: "var(--bg-panel)",
+                color: "var(--text-primary)",
+                textDecoration: "none",
+                minWidth: 0,
+                marginLeft: prev ? 0 : "auto",
+              }}
+            >
+              <span style={{ minWidth: 0, display: "block", textAlign: "right" }}>
+                <span style={{
+                  display: "block",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--text-dim)",
+                  lineHeight: 1,
+                  marginBottom: "0.25rem",
+                }}>Next</span>
+                <span style={{
+                  display: "block",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  lineHeight: 1.25,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  color: "var(--text-primary)",
+                }}>Week {next.number}: {next.title}</span>
+              </span>
+              <ArrowRight size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
+            </Link>
+          ) : null}
+        </nav>
+      )}
 
       {/* Ship-it section — Content tab, only when every day is done */}
       {activeTab === "content" && allDone && (

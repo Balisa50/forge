@@ -148,6 +148,36 @@ export async function PATCH(
       break;
   }
 
+  // ── REOPEN: reset the existing Checkin's Interrogation so the SAME row
+  // returns to the mentor's queue instead of the next student submission
+  // creating a duplicate. This is the data-layer half of "one entry per
+  // student per week". The prior transcript (questions + answers + scores)
+  // stays intact for audit; only the review verdict is cleared.
+  if (action === "reopen") {
+    const latest = await prisma.checkin.findFirst({
+      where: { userId: menteeId, taskId },
+      orderBy: { createdAt: "desc" },
+      include: { interrogation: true },
+    });
+    if (latest?.interrogation) {
+      await prisma.interrogation.update({
+        where: { id: latest.interrogation.id },
+        data: {
+          mentorReviewedAt: null,
+          passed: false,
+          feedback: "Reopened by mentor — make revisions and resubmit.",
+        },
+      });
+      // The Checkin status itself flips back so the Journal pill no longer
+      // shows the green "passed" placeholder; the journal entry derives
+      // "NEEDS REVISION" from interrogation.passed=false + reviewed=false.
+      await prisma.checkin.update({
+        where: { id: latest.id },
+        data: { status: "failed" },
+      });
+    }
+  }
+
   // CLEAN SLATE ON SIGN-OFF: when a week is verified, archive its previously
   // pinned notes from the mentee's Notes page so they start the next week
   // fresh. The week's own thread keeps the full history for the record, and the

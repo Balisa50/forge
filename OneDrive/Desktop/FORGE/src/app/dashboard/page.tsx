@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Shield, Target, Flame, Lock, Hourglass, BookOpen, Send } from "lucide-react";
+import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Target, Flame, Lock, Hourglass, BookOpen } from "lucide-react";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import ForgePactCard from "@/components/ForgePactCard";
 import ShippedChain from "@/components/ShippedChain";
@@ -311,9 +311,9 @@ export default async function DashboardPage() {
                     </Link>
                   );
                 })()}
-                <Link href="/dashboard/checkin" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
-                  <Send size={14} /> Submit work
-                </Link>
+                {/* "Submit work" button removed — submission lives inside the
+                    Submission tab once the student opens the week. Avoids
+                    duplicate entry points to the same flow. */}
                 <Link href={`/dashboard/notes?task=${releasedWeek.id}`} className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
                   Message mentor
                 </Link>

@@ -62,14 +62,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Answer every question before submitting." }, { status: 400 });
   }
 
-  // Refuse to double-submit: if an unreviewed mentor_async interrogation
-  // already exists for this task + user, return it instead of creating another.
+  // ── ONE ROW PER (USER, TASK) ────────────────────────────────────────
+  // We do NOT create a new Checkin row on every submission. If one already
+  // exists for this (user, task), we UPDATE it in place — the Checkin is
+  // the student's slot for this week, full stop. attemptNum tracks how
+  // many times they've resubmitted.
+  //
+  // Block re-submit only in one specific case: the prior submission is sitting
+  // in the mentor's queue, awaiting first review, AND the mentor has not
+  // touched it (no reopen). Otherwise (reopen invited resubmission, OR no
+  // prior submission, OR prior was rejected) — let the student submit.
   const existing = await prisma.checkin.findFirst({
     where: { userId, taskId },
     orderBy: { createdAt: "desc" },
     include: { interrogation: true },
   });
-  if (existing?.interrogation && !existing.interrogation.mentorReviewedAt) {
+
+  const awaitingFirstReview =
+    !!existing?.interrogation &&
+    !existing.interrogation.mentorReviewedAt &&
+    existing.status !== "failed"; // status="failed" means mentor reopened — invited resubmission
+  if (awaitingFirstReview) {
     return NextResponse.json(
       { error: "You've already submitted answers — your mentor is reviewing them.", kind: "already-submitted" },
       { status: 409 },
@@ -93,11 +106,52 @@ export async function POST(req: NextRequest) {
     });
   });
 
-  // Transactionally: create a placeholder Checkin + Interrogation. The
-  // Checkin is necessary because Interrogation.checkinId is @unique non-null;
-  // its evidenceType "review_answers" lets the UI tell it apart from a
-  // proof-of-work check-in if it ever needs to.
+  // Transactionally: either UPDATE the existing Checkin + Interrogation
+  // (resubmission after reopen / rejection) or CREATE both fresh (first
+  // submission). The Checkin is the authoritative slot for this (user, task).
   const result = await prisma.$transaction(async (tx) => {
+    if (existing) {
+      // Resubmit path: bump attemptNum, reset placeholder status, swap
+      // transcript on the existing interrogation. If the interrogation
+      // somehow doesn't exist (legacy row), create it now.
+      const checkin = await tx.checkin.update({
+        where: { id: existing.id },
+        data: {
+          status: "passed", // placeholder — pill derives from interrogation
+          attemptNum: existing.attemptNum + 1,
+          description: "Answers submitted for mentor review.",
+        },
+      });
+      let interrogation;
+      if (existing.interrogation) {
+        interrogation = await tx.interrogation.update({
+          where: { id: existing.interrogation.id },
+          data: {
+            transcript: transcript as unknown as object,
+            mentorReviewedAt: null,
+            passed: false,
+            overallScore: 0,
+            feedback: null,
+            completedAt: new Date(),
+            mentorReviewerId: questions[0].mentorId,
+          },
+        });
+      } else {
+        interrogation = await tx.interrogation.create({
+          data: {
+            checkinId: checkin.id,
+            mode: "mentor_async",
+            isDefence: true,
+            mentorReviewerId: questions[0].mentorId,
+            transcript: transcript as unknown as object,
+            completedAt: new Date(),
+          },
+        });
+      }
+      return { checkin, interrogation };
+    }
+
+    // First-ever submission path.
     const checkin = await tx.checkin.create({
       data: {
         userId,
