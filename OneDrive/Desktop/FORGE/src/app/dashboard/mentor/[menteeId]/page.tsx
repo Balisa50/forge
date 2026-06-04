@@ -445,7 +445,10 @@ export default function MenteeDrilldownPage() {
   const initials = (mentee.name ?? mentee.email).slice(0, 2).toUpperCase();
 
   return (
-    <div style={{ paddingBottom: "4rem" }}>
+    // overflowX:hidden on the root container is the belt to the email-wrap
+    // braces — guarantees no descendant can force horizontal scroll on this
+    // page on any screen size.
+    <div style={{ paddingBottom: "4rem", overflowX: "hidden" }}>
       {/* Back link */}
       <Link
         href="/dashboard/mentor"
@@ -455,8 +458,11 @@ export default function MenteeDrilldownPage() {
         <ArrowLeft size={12} /> all mentees
       </Link>
 
-      {/* Mentee header */}
-      <div className="flex items-start gap-4 mb-6">
+      {/* Mentee header — flex-wrap so the Suspend button drops to its own line
+          on mobile instead of clipping off the right edge. min-width:0 on the
+          name/email column lets it shrink below content size (otherwise the
+          long monospace email forces the row wider than the viewport). */}
+      <div className="flex items-start gap-4 mb-6" style={{ flexWrap: "wrap" }}>
         <div
           style={{
             width: 56, height: 56, borderRadius: 12,
@@ -467,9 +473,11 @@ export default function MenteeDrilldownPage() {
         >
           {initials}
         </div>
-        <div style={{ flex: 1 }}>
-          <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem" }}>{mentee.name ?? mentee.email}</h1>
-          <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}>{mentee.email}</p>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", overflowWrap: "anywhere" }}>{mentee.name ?? mentee.email}</h1>
+          {/* overflowWrap:anywhere lets the long mentee_xxxxxxx@forge.local
+              break mid-string instead of pushing the row off-screen. */}
+          <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", overflowWrap: "anywhere", wordBreak: "break-all" }}>{mentee.email}</p>
           <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
             <span>Tasks {stats.total} · {stats.verified} passed · {stats.failed} failed · {stats.pending} awaiting</span>
             {stats.lastCheckinLabel && (
