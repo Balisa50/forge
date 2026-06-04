@@ -12,6 +12,7 @@ import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
 import SwipeCards from "@/components/SwipeCards";
 import ForgeMarkdown from "@/components/ForgeMarkdown";
+import MentorReviewSection from "@/components/MentorReviewSection";
 
 /**
  * Single linear week flow — no tabs, no repetition.
@@ -40,7 +41,7 @@ function shouldOpenInNewTab(_url: string): boolean {
   return true;
 }
 
-export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: string }) {
+export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek; slug: string; taskId?: string | null }) {
   const hasDays = !!week.days && week.days.length > 0;
   const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
 
@@ -590,6 +591,12 @@ export default function WeekPageTabs({ week, slug }: { week: RoadmapWeek; slug: 
           <ShipItSection week={week} />
         </div>
       )}
+
+      {/* Mentor Review — surfaces the mentor's questions, the student's
+          answers, and the mentor's verdict/score/rating directly on the
+          week page. Hidden when there are no mentor questions, so solo
+          learners see nothing. */}
+      {taskId && <MentorReviewSection taskId={taskId} />}
 
       {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
 

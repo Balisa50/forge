@@ -119,8 +119,12 @@ export default async function DashboardPage() {
     return d.getTime() === today.getTime();
   });
 
-  // Re-entry flow: detect if user has been absent 3+ days
-  const lastCheckin = recentCheckins.find((c) => c.status === "passed");
+  // Re-entry flow: detect if user has been absent 3+ days.
+  // Any submitted check-in counts as activity — including ones still
+  // awaiting mentor review (we used to filter by status === "passed",
+  // which mis-flagged active mentees as "absent" because their check-ins
+  // sit at awaiting_review until graded).
+  const lastCheckin = recentCheckins[0] ?? null;
   const daysSinceLastCheckin = lastCheckin
     ? Math.floor((Date.now() - new Date(lastCheckin.createdAt).getTime()) / (1000 * 60 * 60 * 24))
     : null;

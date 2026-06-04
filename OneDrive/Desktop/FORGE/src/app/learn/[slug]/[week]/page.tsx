@@ -40,7 +40,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           phase: { track: { roadmap: { userId: session.user.id } } },
           title: { startsWith: `Week ${wNum}:` },
         },
-        select: { status: true, closedAt: true, releasedAt: true },
+        select: { id: true, status: true, closedAt: true, releasedAt: true },
       });
       const blocked =
         !task ||
@@ -82,6 +82,19 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const backHref = isMentee ? "/dashboard" : `/learn/${roadmap.slug}`;
   const backLabel = isMentee ? "Dashboard" : roadmap.title;
 
+  // Resolve THIS user's Task row for this week, so the WeekPageTabs can render
+  // the Mentor Review section directly underneath the days (questions, answers,
+  // mentor verdict + rating — all in one place, no chat-thread hunting).
+  // We do this for every signed-in user; the MentorReviewSection renders nothing
+  // when there are no mentor questions, so solo learners see no change.
+  const ownTask = await prisma.task.findFirst({
+    where: {
+      phase: { track: { roadmap: { userId: session.user.id } } },
+      title: { startsWith: `Week ${wNum}:` },
+    },
+    select: { id: true },
+  });
+
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
       {/* Slim banner */}
@@ -103,7 +116,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-8">
-        <WeekPageTabs week={w} slug={roadmap.slug} />
+        <WeekPageTabs week={w} slug={roadmap.slug} taskId={ownTask?.id ?? null} />
       </section>
 
       <nav
