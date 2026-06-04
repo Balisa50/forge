@@ -133,6 +133,52 @@ For the next agent picking up where I stopped. Read this first, in order.
 - new: `data/roadmaps/data-analysis.json` (W2 Day 0)
 - new: `scripts/da-w2-day0.js`
 
+## Curriculum: the zero-assumptions rule (read before adding ANY week)
+
+When you add or rebuild any week, walk through the days in order and ask:
+**does this day assume the student already knows a tool that no earlier day
+has taught?** If yes, **stop and add a setup lesson first.**
+
+The setup lesson shape (proven on DA W2 Day 0 + every track's W1 Day 0):
+
+1. `lesson` — *what this environment is + why before anything else*
+2. `video` — a 10–30 min walkthrough by a known-good channel (Corey Schafer,
+   Fireship, NetworkChuck, StatQuest…). Real `watch?v=` URLs, never search
+   links — the renderer iframes them.
+3. `lesson` — *see it in action* with the exact commands the student will
+   type and the exact output they should see
+4. `swipe` — 3 retention cards
+5. `exercise` — a PASS checklist (`[x]` boxes) the student literally completes
+
+Examples of "stop and add setup":
+- A pandas day appears with no Jupyter day before it → add a Jupyter Day 0
+- A SQL day appears with no SQL client setup → walk through SQLite Online or
+  pgAdmin first
+- A Docker day appears with no Docker installed → add an "install Docker
+  Desktop, run `docker run hello-world`" lesson
+- A `pip install streamlit && streamlit run` task appears with no Streamlit
+  intro → walk through the install + first script first
+- An AWS S3 day appears with no AWS Free Tier setup → add an MFA + billing
+  alarm setup day before
+
+Tracks already covered for **W1**:
+- data-analysis (Day 0 W2: Jupyter) + every other track (Day 0 W1)
+  See `scripts/add-day0-all-tracks.js` for the template and the per-track
+  recipes.
+
+Audit owed for **W2+** in every track: walk through each week and apply
+the rule. The two most common gaps observed so far:
+- SQL weeks: students need a working SQL client. Even sqliteonline.com
+  needs a 2-minute "open this URL, create a table, paste a CSV" tour.
+- Docker weeks: students need Docker installed and the docker daemon
+  running before any `docker run`. A `docker --version` sanity check
+  belongs on day 1 of any Docker week.
+
+If you spot a gap, fix it inline in the JSON (don't punt to a TODO).
+Renumber existing days only if you must — the renderer iterates by array
+order and accepts any `number` including `0`, so inserting "Day 0" without
+renumbering is the safest move.
+
 ## Working pattern that works for the user
 
 - **Always show pushed commit hash + remote HEAD after every push.**

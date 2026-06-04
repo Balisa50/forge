@@ -8004,173 +8004,362 @@
       "phase": "Time Series",
       "commitment_hours": "12-18",
       "context": "Last week you established that the AEP series has three layers: a long-term trend (slowly rising from 2004 to 2008, then slowly declining as efficiency improved), strong daily and weekly seasonal patterns, and a residual that is not pure noise. Your persistence baseline gave you a concrete MAE number to beat. This week you build the first real model and beat it.\n\nARIMA (AutoRegressive Integrated Moving Average) was formalised by Box and Jenkins in 1970, and it is still in production at central banks, energy utilities, and logistics companies because it does one thing well: it extracts signal from a well-behaved univariate time series without requiring a single external feature. The GDP desk at the US Federal Reserve uses ARIMA variants. So does every power utility's day-ahead forecasting system, at minimum as a benchmark against which fancier models justify their complexity.\n\nThe \"integrated\" part is the one that trips people up. I in ARIMA means differencing -- subtracting each observation from the one before it. A series with a trend is non-stationary (its mean changes over time), and ARIMA requires stationarity. Differencing removes the trend. The ADF (Augmented Dickey-Fuller) test tells you whether you have achieved stationarity, and you will run it before and after differencing so the decision is evidence-based rather than a guess.\n\npmdarima's auto_arima function will search for the best (p, d, q) parameters automatically. Let it -- but understand what it searched. p is the number of autoregressive lags (how many past values the model looks back at), d is the differencing order (usually 1 for energy data with a trend), and q is the number of moving-average terms (how many past errors the model corrects for). If you do not understand what each parameter does, you cannot explain the model when asked, which is the interview question you will definitely face.\n\nBy Sunday: a fitted ARIMA model, a forecast plot with 95% confidence intervals, RMSE on the held-out test set that beats the persistence baseline, and a short written comparison noting by how much you beat it and where the model still fails. ARIMA will handle the slow trend and the weekly pattern, but it will miss sudden spikes -- a heat wave, a factory shutdown -- because it knows nothing about weather. That limitation is the setup for everything you build in the next two weeks.",
+      "concept_check": [
+        {
+          "q": "What does the I in ARIMA stand for, and why does it matter?",
+          "choices": [
+            "Iterative",
+            "Integrated — the model differences the series until it's stationary, which it requires",
+            "Inverse",
+            "Interpolated"
+          ],
+          "correct": 1,
+          "explain": "ARIMA = AutoRegressive Integrated Moving Average. The 'I' (Integrated) is differencing — subtracting yesterday from today, or this week from last — to remove trends/seasonality and make the series stationary. ARIMA only works on stationary input."
+        },
+        {
+          "q": "Why does ARIMA require a stationary series?",
+          "choices": [
+            "So the trainer runs faster",
+            "Because its coefficients only describe stable patterns; on a series with a trend, today's relationships don't predict tomorrow's",
+            "Because Python requires it",
+            "To save memory"
+          ],
+          "correct": 1,
+          "explain": "ARIMA fits one set of coefficients that should describe the relationship between past and future. On a non-stationary series, that relationship shifts over time — what fits 2010 won't fit 2020. Differencing makes the series stationary so a single set of coefficients applies throughout."
+        },
+        {
+          "q": "auto-ARIMA finds (p, d, q) for you. What is it doing internally?",
+          "choices": [
+            "Magic",
+            "Grid-searching (p, d, q) combinations and picking the one with the lowest AIC (a fit + complexity score)",
+            "Asking ChatGPT",
+            "Using neural networks"
+          ],
+          "correct": 1,
+          "explain": "auto-ARIMA grid-searches (p, d, q) — and seasonal (P, D, Q) for SARIMA — and picks the combination that minimises AIC (Akaike Information Criterion), which rewards good fit and penalises complexity. You skip the manual ACF/PACF inspection, but you still need to verify the result on a held-out period."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "What is ARIMA",
-          "summary": "",
+          "title": "What ARIMA actually is",
+          "summary": "AR + I + MA — three ideas, one stationary model.",
           "items": [
             {
-              "kind": "video",
-              "title": "ARIMA explained simply (15 min)",
-              "url": "https://www.youtube.com/results?search_query=arima+time+series+forecasting+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "ARIMA — three letters, one model",
+              "body": "## What it is\n**ARIMA** (AutoRegressive Integrated Moving Average) is the classical statistical model for forecasting a single time series. Three ideas stacked:\n\n- **AR(p) — AutoRegressive.** Today's value is a weighted sum of the *p* most recent past values plus noise. `y_t = c + a1*y_{t-1} + a2*y_{t-2} + ... + e_t`.\n- **I(d) — Integrated.** Difference the series *d* times before modelling, so the trend and seasonality disappear and we're left with a stationary signal.\n- **MA(q) — Moving Average.** Today's value is also a weighted sum of the *q* most recent *errors* the model made, not just the values.\n\nYou write the model as `ARIMA(p, d, q)`. A SARIMA extension adds the seasonal `(P, D, Q, m)` quadruple for a known repeating cycle (m=24 for hourly daily seasonality, m=7 for daily weekly).\n\n## Why before anything else this week\nLast week you built a chronological split + a persistence baseline (`tomorrow = today`). Persistence is the bar. This week your first real model — ARIMA — must beat it. If it can't, you don't ship it.\n\n## What you'll do today\nRead what ARIMA actually models (today). Test stationarity (Day 2). Fit auto-ARIMA on the daily-resampled AEP series (Day 3). Forecast + MAE (Day 4). Confidence intervals (Day 5). Compare to baseline + write the finding (Day 6). Ship v0.2 (Day 7)."
             },
             {
-              "kind": "reflection",
-              "title": "Three knobs",
-              "body": "ARIMA(p,d,q):\n  p = AR (auto-regressive lag)\n  d = differencing (to remove trend)\n  q = MA (moving average of errors)\nGuess (p,d,q) for a strongly seasonal hourly demand series."
+              "kind": "video",
+              "title": "Time Series Talk: ARIMA Models for Forecasting",
+              "url": "https://www.youtube.com/watch?v=3UmyHed0iYE",
+              "duration_min": 12,
+              "creator": "Aric LaBarr",
+              "why": "Watch first. Clearly explains the AR, I, MA pieces and why differencing matters before modelling."
+            },
+            {
+              "kind": "lesson",
+              "title": "Reading the (p, d, q) notation",
+              "body": "## What each value controls\n```text\nARIMA(2, 1, 1)\n        ^  ^  ^\n        |  |  └── MA(q=1): weighted sum of the LAST 1 model error\n        |  └───── I(d=1): difference the series ONCE before fitting\n        └──────── AR(p=2): weighted sum of the LAST 2 actual values\n```\n\n## Practical defaults you'll see\n- `(0, 1, 1)` — simple exponential smoothing flavour. Good when trend exists but seasonality is mild.\n- `(1, 1, 0)` — short-memory AR with one diff. Common for stable economic series.\n- `(p, 0, q)` with no differencing — only if the series is already stationary.\n\nDon't try to pick (p, d, q) by hand on Day 3. `auto_arima` (pmdarima) grid-searches and reports the best AIC for you. Your job is to validate its choice against a held-out set, not to be a statistician."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The 'I' in ARIMA stands for Integrated and refers to differencing the series.",
+                  "answer": true,
+                  "whenRight": "Right — d differences before fitting. That's how ARIMA handles trends.",
+                  "whenWrong": "Integrated = differencing. d=1 differences once, d=2 twice. ARIMA needs stationary input."
+                },
+                {
+                  "prompt": "If your series already looks stationary, you should still difference it to be safe.",
+                  "answer": false,
+                  "whenRight": "Right — no. Over-differencing introduces unnecessary noise and worsens forecasts.",
+                  "whenWrong": "Over-differencing adds noise. If stationary, use d=0. Differencing is a tool, not insurance."
+                },
+                {
+                  "prompt": "auto-ARIMA replaces the need to choose (p, d, q) by hand.",
+                  "answer": true,
+                  "whenRight": "Right — it grid-searches and picks the lowest-AIC combination. You verify on held-out data.",
+                  "whenWrong": "Yes — auto-ARIMA does the grid search. Don't tune by hand; verify the chosen model out-of-sample."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame ARIMA",
+              "body": "[WRITE] In a `notebooks/02-arima.ipynb` (just markdown for today):\n1. Define ARIMA(p, d, q) in your own words.\n2. State your hypothesis: 'ARIMA can beat the persistence baseline because ___.'\n3. State the bar to beat: persistence MAE from Week 21."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Stationarity check",
-          "summary": "",
+          "title": "Stationarity check — ADF test",
+          "summary": "Difference until the series stops drifting.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Stationarity and the Augmented Dickey-Fuller test",
+              "body": "## What 'stationary' means\nA series is **stationary** when its **mean and variance don't change over time** — no trend, no growing volatility, the same statistical behaviour at every window. ARIMA's coefficients only describe a stable joint distribution; on a non-stationary input they describe one snapshot that doesn't generalise.\n\n## The ADF test\n**Augmented Dickey-Fuller** tests the null hypothesis 'the series has a unit root' (i.e. is non-stationary). A small **p-value (< 0.05)** rejects the null → the series IS stationary, no differencing needed.\n\n```python\nfrom statsmodels.tsa.stattools import adfuller\nstat, p, *_ = adfuller(daily['demand'])\nprint(f'ADF stat={stat:.2f}, p={p:.4f}')\n# Small p (< 0.05) -> reject null -> series is stationary\n# Large p           -> can't reject -> difference and retest\n```\n\n## Practical loop\n```text\nadfuller(series)        -> p > 0.05?  not stationary, difference once\nadfuller(diff(series))  -> p > 0.05?  difference once more (rare)\nadfuller(diff(diff(s))) -> p < 0.05?  stop. d = number of diffs you took.\n```\n\nMost real series stationarise with d=1 (one differencing). Energy demand usually does. If you find yourself at d=3+, something else is wrong."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## ADF on the AEP daily series\n```python\nimport pandas as pd, numpy as np\nfrom statsmodels.tsa.stattools import adfuller\n\ndaily = pd.read_parquet('data/aep_daily.parquet')['demand']\ndef adf(s, label):\n    stat, p, *_ = adfuller(s.dropna())\n    print(f'{label:20s} stat={stat:6.2f}  p={p:.4f}')\n\nadf(daily,                 'level')\nadf(daily.diff(),          'd=1 (first diff)')\n# level             stat=-1.83  p=0.3641   <- not stationary\n# d=1 (first diff)  stat=-17.50 p=0.0000   <- stationary\n# Conclusion: d = 1\n```\nOne differencing is enough. From here you can fit ARIMA(p, 1, q) with a clean conscience."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A p-value < 0.05 from the ADF test means the series IS stationary.",
+                  "answer": true,
+                  "whenRight": "Right — small p rejects the 'has a unit root' (non-stationary) null. Series is stationary; no differencing needed.",
+                  "whenWrong": "Small p = reject null = stationary. Counter-intuitive, but you reject the non-stationary hypothesis with low p."
+                },
+                {
+                  "prompt": "If d=1 makes the series stationary, you should difference further (d=2) just to be safe.",
+                  "answer": false,
+                  "whenRight": "Right — over-differencing introduces spurious negative autocorrelation and hurts forecasts.",
+                  "whenWrong": "Stop at d=1 once stationary. Going further adds noise and shifts coefficients in unhelpful ways."
+                },
+                {
+                  "prompt": "Most real-world series stationarise with d=1 (one differencing).",
+                  "answer": true,
+                  "whenRight": "Right — single differencing handles linear trends. d=2 is rare; d=3+ is a red flag.",
+                  "whenWrong": "Yes — d=1 covers most cases. If you're at d=3, your seasonal or transformation is probably what's missing."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "ADF test",
-              "body": "      from statsmodels.tsa.stattools import adfuller\n      daily = df['AEP_MW'].resample('D').mean()\n      print(adfuller(daily.dropna()))\n      # p-value > 0.05 → not stationary → need differencing\n      diff = daily.diff().dropna()\n      print(adfuller(diff))"
+              "title": "Your turn — ADF on AEP",
+              "body": "[CODE] In `notebooks/02-arima.ipynb`:\n1. Load the daily AEP demand series from Week 21.\n2. Run adfuller on the level, then on the first difference.\n3. Print stat + p for each.\n4. Conclude with d=? in a markdown cell."
             }
           ]
         },
         {
           "number": 3,
           "title": "Fit auto-ARIMA",
-          "summary": "",
+          "summary": "Let the algorithm grid-search (p, d, q) for you.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "auto-ARIMA — picking (p, d, q) automatically",
+              "body": "## What auto-ARIMA does\nGrid-searches (p, d, q) (and seasonal (P, D, Q, m) if you ask) and reports the model with the **lowest AIC** — a score that rewards good fit and penalises extra parameters.\n\n```python\nfrom pmdarima import auto_arima\nmodel = auto_arima(\n    train,\n    seasonal=True, m=7,        # weekly seasonality on daily data\n    d=1, D=1,                  # we know d=1 from ADF; D=1 for weekly diff\n    start_p=0, max_p=3,\n    start_q=0, max_q=3,\n    trace=True,                # print the search trail\n    error_action='ignore', suppress_warnings=True,\n    stepwise=True,             # smart search, not exhaustive\n)\nprint(model.order, model.seasonal_order)\n# Example: (1, 1, 1) x (1, 1, 1, 7)\n```\n\n## What to actually trust\nThe AIC winner is a *starting point*, not gospel. Always check:\n1. Residuals look like white noise (no obvious pattern in `model.plot_diagnostics()`)\n2. The model beats persistence on a real held-out period (Day 4-6)\n\nIf the residuals show structure, the model missed something — add seasonality, transform the series (log), or use Prophet next week.\n\n## Why stepwise=True\n`stepwise=False` is exhaustive — every combination of (p, d, q, P, D, Q). That can take hours. `stepwise=True` uses a smarter heuristic that finds the same or near-best model in seconds. Default on for any series longer than a few hundred points."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Fit and inspect\n```python\nfrom pmdarima import auto_arima\n\nsplit = int(len(daily) * 0.8)\ntrain, test = daily.iloc[:split], daily.iloc[split:]\n\nmodel = auto_arima(train, seasonal=True, m=7, d=1, D=1,\n                   max_p=3, max_q=3, max_P=2, max_Q=2,\n                   stepwise=True, suppress_warnings=True)\n\nprint(model.order, model.seasonal_order)\n# (1, 1, 1) (1, 1, 1, 7)\nprint('AIC:', round(model.aic(), 1))\n# AIC: 23842.3\n```\nThe auto-search lands on `ARIMA(1,1,1)x(1,1,1,7)` — one non-seasonal AR + MA, one seasonal AR + MA on a 7-day cycle. That's a sane shape for weekly-seasonal energy demand."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "auto-ARIMA picks the (p, d, q) combination with the LOWEST AIC.",
+                  "answer": true,
+                  "whenRight": "Right — AIC rewards fit and penalises extra parameters. Lower is better.",
+                  "whenWrong": "Lower AIC = better. The 'best' is the lowest-AIC combination the search finds."
+                },
+                {
+                  "prompt": "stepwise=True is exhaustive and tries every combination of (p, d, q).",
+                  "answer": false,
+                  "whenRight": "Right — stepwise is a SMART (faster) search, not exhaustive. stepwise=False is exhaustive.",
+                  "whenWrong": "stepwise=True is the FAST heuristic. stepwise=False is exhaustive and slow. Default to True."
+                },
+                {
+                  "prompt": "The model with the lowest AIC always beats persistence on real held-out data.",
+                  "answer": false,
+                  "whenRight": "Right — not guaranteed. AIC ranks fit + complexity in-sample. You must verify on a held-out set (Day 4-6).",
+                  "whenWrong": "AIC is an in-sample score. The model could still lose to persistence out-of-sample. Always verify."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "pmdarima",
-              "body": "      pip install pmdarima\n      from pmdarima import auto_arima\n      train = daily[:-30]\n      test = daily[-30:]\n      model = auto_arima(train, seasonal=True, m=7, stepwise=True, suppress_warnings=True)\n      print(model.summary())\n\nTakes ~5 min."
+              "title": "Your turn — auto-ARIMA",
+              "body": "[CODE] In `notebooks/02-arima.ipynb`:\n1. `pip install pmdarima` if you haven't.\n2. Chronologically split daily 80/20.\n3. Run auto_arima on train, seasonal=True, m=7, stepwise=True, d=1, D=1.\n4. Print model.order and model.seasonal_order.\n5. Markdown: which (p, d, q)(P, D, Q, m) won?"
             }
           ]
         },
         {
           "number": 4,
           "title": "Forecast + evaluate",
-          "summary": "",
+          "summary": "Predict the held-out period, compute MAE vs persistence.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Forecasting and the MAE comparison",
+              "body": "## What it is\nWith a fitted model, you forecast the next `len(test)` steps and compute the **Mean Absolute Error** against the actual values. Then you compare to the **persistence baseline** MAE you computed in Week 21.\n\n```python\nfrom sklearn.metrics import mean_absolute_error\n\nforecast = model.predict(n_periods=len(test))\nmae_arima = mean_absolute_error(test.values, forecast)\nprint(f'ARIMA MAE: {mae_arima:.0f} MW')\n```\n\n## Why MAE, not RMSE or R²\n- **MAE** is in the **same units** as your series (MW here). 'My forecast is off by ~720 MW on average' is plainly interpretable.\n- **RMSE** punishes large errors more (squared). Useful when big misses are unusually costly.\n- **R²** is misleading on time-series forecasts because the baseline (predicting the mean) is rarely meaningful.\n\nPick MAE for the user-facing number; report RMSE as a secondary if outliers matter.\n\n## The forecast-vs-actual plot\nAlways **plot the forecast against the actual held-out values**. A single MAE number hides whether the model captures peaks or whether it just rides the seasonal mean. The plot tells you which.\n\n```python\nimport matplotlib.pyplot as plt\nplt.plot(test.index, test.values, label='actual')\nplt.plot(test.index, forecast, label='ARIMA')\nplt.legend(); plt.savefig('charts/arima_forecast.png')\n```"
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Forecast + compare\n```python\nfrom sklearn.metrics import mean_absolute_error\n\nforecast = model.predict(n_periods=len(test))\n\n# Persistence baseline = today equals yesterday (the bar from Week 21)\nbaseline = test.shift(1).dropna()\nmae_arima       = mean_absolute_error(test.values,      forecast)\nmae_persistence = mean_absolute_error(test.values[1:], baseline.values)\n\nprint(f'ARIMA MAE:       {mae_arima:.0f} MW')\nprint(f'Persistence MAE: {mae_persistence:.0f} MW')\n# ARIMA MAE:       706 MW\n# Persistence MAE: 868 MW\n# ARIMA beats persistence by ~19%\n```\nARIMA wins. The structure it learned (weekly seasonality + short autoregressive memory) genuinely helps over `tomorrow = today`."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "MAE is in the SAME units as the original series, which makes it directly interpretable.",
+                  "answer": true,
+                  "whenRight": "Right — 'off by 706 MW' is plainly meaningful. RMSE is in squared-then-rooted units, also meaningful but punishes outliers more.",
+                  "whenWrong": "MAE keeps the original units. RMSE is also in original units (after the root), but emphasises large errors via the square."
+                },
+                {
+                  "prompt": "If ARIMA's MAE is higher than the persistence baseline, you should still ship it.",
+                  "answer": false,
+                  "whenRight": "Right — no. Persistence is the bar. A worse-than-persistence model is dead weight. Either improve it or ship persistence.",
+                  "whenWrong": "Don't ship a model that loses to the baseline. Persistence is the floor; anything below it is worse than guessing 'tomorrow = today'."
+                },
+                {
+                  "prompt": "You should ALWAYS plot the forecast vs the actual held-out series, not just report MAE.",
+                  "answer": true,
+                  "whenRight": "Right — the plot shows whether peaks are captured or just smoothed. MAE alone hides that.",
+                  "whenWrong": "Plot it. MAE can look fine while the model misses every peak. The plot tells the real story."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "30-day forecast",
-              "body": "      preds = model.predict(n_periods=30)\n      from sklearn.metrics import mean_absolute_error\n      print('ARIMA MAE:', mean_absolute_error(test, preds))\n      ax = train[-90:].plot(label='Train')\n      test.plot(ax=ax, label='Actual')\n      pd.Series(preds, index=test.index).plot(ax=ax, label='ARIMA')\n      plt.legend(); plt.savefig('figures/arima_forecast.png')"
+              "title": "Your turn — forecast and evaluate",
+              "body": "[CODE] In `notebooks/02-arima.ipynb`:\n1. `forecast = model.predict(n_periods=len(test))`.\n2. Compute MAE for ARIMA and for persistence (`test.shift(1)`).\n3. Print both, plus the % improvement.\n4. Plot actual vs forecast over the test period. Save to `charts/arima_forecast.png`."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Add confidence intervals",
-          "summary": "",
+          "title": "Confidence intervals",
+          "summary": "Forecasts are uncertain — quantify it.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Prediction intervals from ARIMA",
+              "body": "## What they are\nA **prediction interval** is a band around the forecast that contains the true value with some probability — typically 95%. Wider intervals later in the horizon, because uncertainty grows.\n\n```python\nforecast, conf = model.predict(n_periods=len(test), return_conf_int=True, alpha=0.05)\nlower, upper = conf[:, 0], conf[:, 1]\n```\n\n## Why intervals matter more than the point forecast\nA point forecast of '17,400 MW for next Tuesday' is technically wrong. The truth is **a distribution**. Reporting the interval communicates:\n- How sure the model is\n- How that uncertainty grows over the horizon (always widening)\n- Where the *plausible worst case* sits — critical for capacity planning where 'we MIGHT need 19,500 MW' is the actionable number\n\nA grid operator can't act on '17,400 MW.' They can act on '17,400 with 95% chance between 16,100 and 18,700.' Intervals turn a number into a decision.\n\n## What 95% actually means\nIf the model's assumptions hold (stationary residuals, no major regime change), the true value will fall inside the 95% interval ~95% of the time across many forecasts. It does NOT mean 'I am 95% sure for THIS specific forecast.'"
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Plot the interval band\n```python\nimport matplotlib.pyplot as plt\n\nforecast, conf = model.predict(n_periods=len(test), return_conf_int=True, alpha=0.05)\nlower, upper = conf[:, 0], conf[:, 1]\n\nplt.figure(figsize=(12, 4))\nplt.plot(test.index, test.values, label='actual', color='#3b82f6')\nplt.plot(test.index, forecast,    label='ARIMA forecast', color='#f59e0b')\nplt.fill_between(test.index, lower, upper, color='#f59e0b', alpha=0.18, label='95% interval')\nplt.legend(); plt.tight_layout()\nplt.savefig('charts/arima_intervals.png', dpi=150); plt.close()\n\ncoverage = ((test.values >= lower) & (test.values <= upper)).mean()\nprint(f'Empirical 95% interval coverage: {coverage:.1%}')\n# Empirical 95% interval coverage: 94.2%   <- close to nominal\n```\n94.2% coverage on a 95% interval is healthy — the model's uncertainty estimate matches reality. A coverage of 60% would mean the model is overconfident; 99% would mean the intervals are too wide."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A 95% prediction interval gets WIDER the further out you forecast.",
+                  "answer": true,
+                  "whenRight": "Right — uncertainty compounds. The interval at h=30 is wider than at h=1.",
+                  "whenWrong": "Wider over time — uncertainty grows. Compounding errors and accumulating noise widen the band."
+                },
+                {
+                  "prompt": "Reporting a confidence interval alongside the point forecast helps decision-makers more than the point alone.",
+                  "answer": true,
+                  "whenRight": "Right — a grid operator needs 'plausible worst case' for capacity planning. Intervals turn a number into a decision.",
+                  "whenWrong": "Yes — point forecasts hide uncertainty; intervals expose it. Operators plan against the worst plausible case, not the mean."
+                },
+                {
+                  "prompt": "If your 95% interval has empirical coverage of 60% on the held-out set, your model's uncertainty estimate is accurate.",
+                  "answer": false,
+                  "whenRight": "Right — no. 60% coverage on a nominally 95% interval means the model is overconfident. You'd want ~95% coverage.",
+                  "whenWrong": "60% coverage means overconfidence. Calibrated 95% intervals should contain the truth ~95% of the time. Big gap = problem."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "CI",
-              "body": "      preds, conf = model.predict(n_periods=30, return_conf_int=True)\n      plt.fill_between(test.index, conf[:,0], conf[:,1], alpha=0.2)"
+              "title": "Your turn — confidence intervals",
+              "body": "[CODE] In `notebooks/02-arima.ipynb`:\n1. Re-predict with return_conf_int=True, alpha=0.05.\n2. Plot the actual + forecast + 95% interval band. Save to `charts/arima_intervals.png`.\n3. Compute empirical coverage: what fraction of actual values fall inside the band?\n4. Markdown: is the model well-calibrated?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Compare to baseline",
-          "summary": "",
+          "title": "Beat the baseline — write the finding",
+          "summary": "Compare ARIMA to persistence with numbers + a chart.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Writing the comparison",
+              "body": "## What the v0.2 finding looks like\n```text\n## v0.2 — ARIMA(1,1,1)x(1,1,1,7) on AEP daily demand\n- Test set: last 20% of daily means (chronological split, no shuffle)\n- Persistence baseline MAE: 868 MW\n- ARIMA MAE:                706 MW   ← 19% better than baseline\n- 95% prediction-interval coverage on test: 94.2%\n- Where it fails: under-predicts the August heatwave by ~9% — the model\n  has only one summer of training data covering that level.\n```\n\n## Why this is the right shape of finding\n- **One sentence per number** so a recruiter scans and gets it.\n- **Honest weakness** — the heatwave under-prediction is real and worth naming. Hiding it would be lying with confidence intervals.\n- **Method enough to be checkable** — chronological split, MAE, coverage. Anyone with the data can repeat your number.\n\n## What you ship in v0.2\n`notebooks/02-arima.ipynb` with the four sections (ADF, fit, forecast, intervals), the `charts/` PNGs, and the finding above in the README. The fitted model goes to `models/arima.pkl` so v0.3 (Prophet) can be benchmarked against it next week."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "It's fine to omit the weakness ('under-predicts heatwaves') from the README if the headline MAE looks good.",
+                  "answer": false,
+                  "whenRight": "Right — don't hide weaknesses. Naming them builds trust and shapes how the model gets used downstream.",
+                  "whenWrong": "Always state weaknesses. Hiding them is how 'great offline metrics, surprise outage' happens in real ops."
+                },
+                {
+                  "prompt": "Reporting the test methodology (chronological split + MAE) alongside the number lets anyone reproduce your finding.",
+                  "answer": true,
+                  "whenRight": "Right — reproducible is the bar. Without the split rule, the number is unverifiable.",
+                  "whenWrong": "Yes — reproducibility is what makes a finding more than an anecdote. Always state the test setup."
+                },
+                {
+                  "prompt": "v0.2 ships a saved model file so v0.3 (Prophet next week) can benchmark against it directly.",
+                  "answer": true,
+                  "whenRight": "Right — joblib.dump the fitted ARIMA and keep it. Next week's comparison reuses it without retraining.",
+                  "whenWrong": "Save the model. Reusing it next week makes the Prophet vs ARIMA comparison instant and consistent."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Side-by-side",
-              "body": "Make a table in README:\n  | Model | MAE on last 30 days |\n  | Persistence | X |\n  | ARIMA | Y |\n  | Improvement | Z% |"
+              "title": "Your turn — write the finding",
+              "body": "[WRITE] 1. Save your ARIMA model: `joblib.dump(model, 'models/arima.pkl')`.\n2. Add a v0.2 section to the Energy Forecast README using the shape above.\n3. Include MAE, % improvement vs persistence, 95% coverage, and ONE honest weakness."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.2",
-          "summary": "",
+          "title": "Ship v0.2",
+          "summary": "Tag the release, commit clean.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping the ARIMA milestone",
+              "body": "## What you tag\n```bash\ngit add notebooks/02-arima.ipynb charts/arima_forecast.png charts/arima_intervals.png models/arima.pkl README.md\ngit commit -m \"Energy Forecast v0.2: ARIMA(1,1,1)x(1,1,1,7) beats baseline by 19%\"\ngit tag v0.2\ngit push && git push --tags\n```\n\n## Why this milestone matters\nYou've now done the full classical workflow on a real series:\n1. Decompose the signal (W21)\n2. Test for stationarity (D2)\n3. Fit an automated grid-search model (D3)\n4. Forecast + evaluate with the right metric (D4)\n5. Quantify uncertainty (D5)\n6. Honestly compare to a baseline (D6)\n\nThat's the durable shape. Whatever model you reach for next — Prophet, LSTM, Transformer — the workflow stays. Only the fit step changes.\n\n## What's next\nWeek 23: **Prophet**. Same data, different tool. Prophet is built specifically for messy, holiday-interrupted, multi-seasonal business series — exactly the case where pure ARIMA struggles. You'll compare them head-to-head on the same test set."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tagging v0.2 marks a known-good state you can return to even after later experiments break things.",
+                  "answer": true,
+                  "whenRight": "Right — tags are immutable pointers to a working commit. Insurance for the rest of the project.",
+                  "whenWrong": "Yes — tags pin a known-good state. Future you (or a reviewer) can always check out v0.2 cleanly."
+                },
+                {
+                  "prompt": "The next week (Prophet) will retrain ARIMA from scratch to compare.",
+                  "answer": false,
+                  "whenRight": "Right — no. You saved `models/arima.pkl`. Next week just loads and benchmarks. Saves time, keeps numbers consistent.",
+                  "whenWrong": "You saved the model. Load it; don't retrain. Re-fitting can give slightly different coefficients run-to-run."
+                },
+                {
+                  "prompt": "The classical forecasting workflow (decompose -> stationarity -> fit -> evaluate -> intervals -> compare) is reusable across nearly any time series.",
+                  "answer": true,
+                  "whenRight": "Right — the steps are durable. Only the fit method changes when you swap models.",
+                  "whenWrong": "Yes — the workflow generalises. You'll reuse this exact arc for Prophet, LSTM, and any future time-series project."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "Save model: model.save('arima.pkl'). Tag v0.2.\n\nPASS:\n  ☐ ADF stationarity test run\n  ☐ auto_arima fit\n  ☐ ARIMA forecast MAE recorded\n  ☐ Forecast chart with CI\n  ☐ v0.2 tag"
+              "title": "Your turn — ship v0.2",
+              "body": "[PRODUCE] 1. Confirm models/arima.pkl exists.\n2. Update README with the v0.2 section.\n3. Commit + tag:\n`git add . && git commit -m 'v0.2: ARIMA + persistence comparison'`\n`git tag v0.2 && git push --tags`\n\nPASS:\n[x] ADF test in notebook\n[x] auto-ARIMA fit + (p,d,q)(P,D,Q,m) noted\n[x] Forecast vs actual chart\n[x] 95% interval chart + coverage number\n[x] MAE vs persistence in README\n[x] v0.2 tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Stationarity + ADF test",
-        "Differencing for trend removal",
-        "Auto-ARIMA + seasonal m parameter",
-        "Forecast intervals (CI)",
-        "Comparing classical baselines"
-      ],
-      "tasks": [
-        "Run ADF stationarity test",
-        "Difference until stationary",
-        "Fit auto_arima on daily data",
-        "Forecast 30 days + compute MAE",
-        "Plot forecast with CI"
-      ],
-      "project": "Energy Forecast v0.2 — ARIMA model fitted on daily series. Beats persistence baseline. Confidence intervals on the forecast.",
-      "resources": [
-        {
-          "label": "ARIMA in 22 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=3UmyHed0iYE",
-          "note": "22 min. AR + I + MA without the jargon."
-        },
-        {
-          "label": "auto_arima with pmdarima in 13 min",
-          "url": "https://www.youtube.com/watch?v=2XGSIlgUBDI",
-          "note": "13 min. Auto-picks p, d, q for you."
-        },
-        {
-          "label": "ADF stationarity in 12 min",
-          "url": "https://www.youtube.com/watch?v=DeORzP0go5I",
-          "note": "12 min. When to stop differencing."
-        },
-        {
-          "label": "SARIMAX seasonality in 18 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=SARIMAX%20seasonality",
-          "note": "18 min. Add weekly + yearly cycles to ARIMA. (Click the FIRST video in the search results - it is the intended one.)"
-        }
-      ],
-      "exercises": [
-        "Try SARIMAX with weekly + yearly seasonality",
-        "Use AICc to compare model orders",
-        "Forecast on hourly directly (computationally expensive — careful)"
-      ],
-      "questions": [
-        "What's the difference between AR and MA terms?",
-        "When does differencing too many times hurt?",
-        "Why limit ARIMA to daily not hourly here?"
-      ],
-      "outputs": [
-        "arima.pkl saved",
-        "MAE comparison table",
-        "v0.2 tag"
-      ],
-      "mastery_questions": [
-        "Run the ADF test on the raw daily series. Paste the ADF statistic, the p-value, and what the null hypothesis actually is (the null is that the series HAS a unit root, i.e., is non-stationary). If p > 0.05, apply first differencing (df.diff().dropna()) and run ADF again. Paste both sets of results side by side. Now you know d -- the I in ARIMA. Understanding this test is what makes ARIMA stop being a magic parameter search and start being a disciplined response to a specific property of your data.",
-        "Fit auto_arima on your training set using daily resampled data (df.resample('D').mean()). Set seasonal=True, m=7, stepwise=True. Paste the selected order (p,d,q)(P,D,Q,m) and how long the search took. Now fit the model again manually with those exact parameters using ARIMA() directly, so you own the fitted object and can call it later. Paste the model summary. The AIC values from both fits should match -- if they do not, check that your parameters match exactly.",
-        "Generate a 90-day forecast on your held-out test set. Plot the forecast against the actual values on the same chart, with the 95% confidence interval shaded. Paste the plot. Where do the confidence intervals widen? (Usually: further into the forecast horizon, uncertainty grows.) Name one specific week where the miss is large and write your hypothesis about what caused it -- sudden weather event? holiday? Both are plausible and neither is in the model.",
-        "Compute MAE and RMSE on the test set (model forecast vs. actuals). Paste both numbers. Compare to your persistence baseline from week 21. What is the percentage improvement in MAE? Was your week-21 hypothesis correct? If you predicted 15% improvement and got 8%, write two sentences about what ARIMA captured and what it missed. That specific analysis -- model beat baseline by X% because Y, but missed Z because the model has no feature for it -- is exactly how you present model results to a non-technical stakeholder.",
-        "Plot the residuals from your fitted model (model.resid()). They should look like white noise -- roughly centred on zero, no obvious pattern. Run the Ljung-Box test (from statsmodels.stats.diagnostic import acorr_ljungbox) on the residuals at lag 14. Paste the p-value. If p < 0.05, the residuals are autocorrelated and your model is leaving signal on the table -- usually a sign you need higher p or seasonal terms. Senior practitioners always check residuals before reporting results. A model with autocorrelated residuals is a model that is not done yet."
-      ],
-      "ai_assist": "Use Claude to explain the ADF test output in plain English before you decide on the differencing order -- \"given this ADF statistic and p-value, is my series stationary and how confident should I be?\" is a good prompt. Once you have the ARIMA order selected, use Claude to explain what each (p, d, q) term contributes to the model -- that explanation is what you need to answer \"walk me through your forecasting model\" in an interview. Do NOT use Claude to pick the ARIMA order for you. The auto_arima process, with you understanding each step, is how you build the intuition needed for the more complex models in weeks 23 to 28.",
-      "pre_flight": "Before running auto_arima, check stationarity manually. Plot the rolling mean and rolling standard deviation with window=168 (one week). If the rolling mean drifts visibly across the full period, the series is non-stationary. Write down what you see. Then run the ADF test (from statsmodels.tsa.stattools import adfuller) on the raw daily series. Paste the ADF statistic and p-value. If p > 0.05, the series is not stationary and you need at least one round of differencing before fitting ARIMA.",
-      "common_mistakes": [
-        "Running auto_arima on hourly data with seasonal=True. The seasonal period would be 8760 (one year of hours), which is computationally infeasible. Always resample to daily before fitting ARIMA; model the hourly pattern separately if needed.",
-        "Including any test data when fitting auto_arima. Feed it only the training set. The test set must remain untouched until the final evaluation -- this is the same rule as week 21, and it applies to every model selection step, not just the final fit.",
-        "Reporting only point forecasts without confidence intervals. The interval is often more useful than the point estimate -- a utility operator needs to know the 95th percentile demand to plan standby capacity, not just the expected value.",
-        "Treating auto_arima's first result as final without checking residuals. If the Ljung-Box test fails (p < 0.05), the model order needs adjustment. Accepting a mis-specified model because the search returned a result is the most common ARIMA mistake in production.",
-        "Over-differencing by accepting d=2 from auto_arima on a trend-weak series. The symptom is a forecast that is a nearly flat line. Drop d to 1 manually and refit. Auto_arima occasionally over-differences when the trend is subtle, and the flat-line forecast is the tell."
-      ],
-      "debug_help": "Three specific issues. First: \"ValueError: maxlag must be less than nobs\" from the Ljung-Box test. Your test set is smaller than the lag you specified. Use lag=min(14, len(resid)//2). Second: auto_arima hangs for more than 10 minutes. Add max_p=3, max_q=3, max_P=1, max_Q=1 to limit the search space -- hourly data with a wide parameter range takes exponentially longer. Third: the forecast is a nearly flat line after fitting. This is the over-differencing sign -- d=2 was likely chosen and the doubly-differenced series has almost no signal. Set d=1 explicitly in the ARIMA() call and refit. You will see a meaningful forecast appear almost immediately.",
-      "stretch": [
-        "Fit a seasonal naive baseline (forecast = same hour exactly 7 days ago) and compare its RMSE to ARIMA. Seasonal naive beats ARIMA on many energy datasets because the weekly cycle is so dominant. Knowing whether that is true for yours before adding model complexity is the honest first step.",
-        "Plot the ARIMA in-sample fit against the training data alongside the out-of-sample forecast. The in-sample fit should be very close (the model was fitted on this data). The degradation from in-sample to out-of-sample is your model's actual generalisation gap -- visible in one chart.",
-        "Read Sections 8.1 through 8.5 of \"Forecasting: Principles and Practice\" by Hyndman and Athanasopoulos (free at otexts.com/fpp3). It is the clearest explanation of ARIMA in the literature, and Hyndman wrote much of the forecasting software the energy industry uses today."
       ]
     },
     {
@@ -8179,179 +8368,362 @@
       "phase": "Time Series",
       "commitment_hours": "10-15",
       "context": "ARIMA gave you a model that understood the weekly cycle and the slow trend. It missed the spikes. This week you try a different tool -- one built specifically for the kind of messy, holiday-interrupted, seasonality-stacked time series that real businesses actually have.\n\nProphet was released by Facebook's Core Data Science team in 2017. The team built it because they needed a forecasting model that non-specialists could tune, that handled missing data gracefully, that understood holidays automatically, and that did not require the analyst to manually identify trend changepoints. AEP hourly electricity demand is exactly the kind of series Prophet was designed for: strong daily seasonality, strong weekly seasonality, an annual seasonal pattern, and demand that drops sharply on Thanksgiving and Christmas because factories shut down.\n\nThe key conceptual shift from ARIMA is that Prophet is additive decomposition turned into a fitting problem. You tell it your seasonality periods, your holiday calendar, and whether the trend is linear or logistic, and it fits those components simultaneously using Stan (a probabilistic programming language) under the hood. You do not difference the series yourself or choose p and q parameters -- you choose whether the trend looks linear or curved, and whether the seasonality should be additive (the amplitude is constant) or multiplicative (the amplitude grows with the level). For electricity demand, multiplicative usually wins because summer peaks are larger than winter peaks in absolute megawatt terms.\n\nThe holidays argument is the part that reliably surprises people. You pass a dataframe of holiday dates, and Prophet learns a separate effect for each holiday -- Thanksgiving demand might be 15% below a normal Thursday, Christmas might be 25% below. That granularity is something ARIMA cannot express without feature engineering. AEP's own forecasting team uses holiday adjustments as a matter of course, because missing them produces the most embarrassing and predictable forecast errors.\n\nBy Sunday: a fitted Prophet model with US holidays included, a components plot showing trend + weekly + yearly + holiday effects separately, and an updated README table comparing MAE for persistence, ARIMA, and Prophet on the same test set. The comparison table is the deliverable -- three models, one honest scoreboard.",
+      "concept_check": [
+        {
+          "q": "Prophet is built around a decomposable model: y(t) = ...",
+          "choices": [
+            "trend + ARMA + noise",
+            "trend + seasonality + holidays + noise — three interpretable components plus a residual",
+            "neural network output",
+            "exponential weighted average"
+          ],
+          "correct": 1,
+          "explain": "Prophet models a series as trend(t) + sum of seasonality components + holiday effects + a residual. Each piece is interpretable — you can plot the contribution of weekly seasonality alone, or see exactly how much a holiday shifted the forecast."
+        },
+        {
+          "q": "Why does Prophet expect columns named 'ds' and 'y'?",
+          "choices": [
+            "For aesthetics",
+            "Hard-coded by the library — ds is the datestamp, y is the value. Renaming saves you arguing with the API",
+            "For SQL compatibility",
+            "To match pandas defaults"
+          ],
+          "correct": 1,
+          "explain": "Prophet was built at Facebook with this convention. Every Prophet tutorial, every example, every error message assumes `ds` (datestamp) and `y` (value). Rename your columns once on input, then everything just works."
+        },
+        {
+          "q": "What does adding the US Federal Holidays dataframe to Prophet do?",
+          "choices": [
+            "Nothing — it's a placebo",
+            "Tells Prophet which dates are holidays so it learns a holiday-specific effect (e.g. demand drops on Thanksgiving)",
+            "Removes those days from training",
+            "Skips forecasting on those days"
+          ],
+          "correct": 1,
+          "explain": "Holidays go into a separate component of the model. Prophet learns an effect size per holiday (Christmas: -2000 MW, July 4: -1500 MW) and bakes it into both training and forecasts so the holiday-driven dip is predicted, not treated as noise."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "What is Prophet",
-          "summary": "",
+          "title": "What Prophet is",
+          "summary": "Decomposable forecasting built for real business series.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Prophet — Facebook's pragmatic forecaster",
+              "body": "## What it is\n**Prophet** is Facebook's open-source forecaster, designed for the kind of messy series real businesses actually have: multi-seasonal, holiday-interrupted, missing data, sudden trend changes. It models a series as:\n\n```text\ny(t) = g(t)        # trend (piecewise linear or logistic)\n     + s(t)        # seasonality (yearly, weekly, daily, custom)\n     + h(t)        # holiday effects\n     + noise\n```\n\nEach component is **interpretable** — you can plot trend on its own, or see how big the Christmas effect is. ARIMA shoves everything into one set of coefficients; Prophet keeps them separate.\n\n## When Prophet beats ARIMA\n- Multiple overlapping seasonalities (yearly + weekly + daily — exactly the AEP case)\n- Holiday effects matter (energy, retail, travel)\n- Trend changes at known dates (a policy shift, a new product)\n- You want a model a non-statistician can read\n\n## When ARIMA wins\n- Pure short-memory series with no obvious calendar pattern\n- You need the full statistical apparatus (significance tests on coefficients)\n- Strict stationarity assumptions matter\n\n## Where this fits\nThis week: same AEP data, fit Prophet, add holidays, compare to ARIMA. By Sunday you have a head-to-head — and Prophet will likely win because energy demand is a textbook holiday-heavy multi-seasonal series."
+            },
+            {
               "kind": "video",
-              "title": "Facebook Prophet in 10 min",
-              "url": "https://www.youtube.com/results?search_query=facebook+prophet+time+series+tutorial",
+              "title": "Time Series Forecasting with Prophet (intro)",
+              "url": "https://www.youtube.com/watch?v=KvLG1uTC-KU",
               "duration_min": 10,
               "creator": "various",
-              "why": ""
+              "why": "Watch first. Shows the trend + seasonality + holidays decomposition in action and how Prophet's components plot tells the story."
             },
             {
-              "kind": "reading",
-              "title": "Prophet docs",
-              "url": "https://facebook.github.io/prophet/",
-              "why": ""
+              "kind": "lesson",
+              "title": "Prophet's data contract",
+              "body": "## ds, y, and that's it\nProphet was built with a hard convention:\n- **`ds`** — a datestamp column (datetime or string Prophet parses)\n- **`y`** — the value to forecast (float)\n\n```python\ndf = (\n    daily\n      .rename_axis('ds').reset_index()       # date index -> ds column\n      .rename(columns={'demand': 'y'})\n      [['ds', 'y']]\n)\n```\n\n## Don't fight it\nEvery Prophet tutorial, every error message, every Stack Overflow answer assumes ds/y. Rename once on input; everything else just works. Trying to use your own column names doubles your debugging time for zero benefit."
             },
             {
-              "kind": "reflection",
-              "title": "When to use it",
-              "body": "Prophet shines when: multiple seasonalities, missing data, holidays matter. Why are these all true for power demand?"
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Prophet models a series as trend + seasonality + holidays + noise, with each piece interpretable.",
+                  "answer": true,
+                  "whenRight": "Right — decomposable design. You can plot the contribution of any one component on its own.",
+                  "whenWrong": "Yes — that's the model. Each component is separately readable. ARIMA is opposite (all coefficients tangled)."
+                },
+                {
+                  "prompt": "You can keep your usual 'date' and 'demand' column names with Prophet — it figures them out automatically.",
+                  "answer": false,
+                  "whenRight": "Right — no. Prophet requires `ds` and `y` literally. Rename once on input.",
+                  "whenWrong": "Hard-coded ds/y. Rename. Trying alternative names is pointless friction."
+                },
+                {
+                  "prompt": "Prophet tends to beat ARIMA on series with multiple seasonalities and holiday effects.",
+                  "answer": true,
+                  "whenRight": "Right — exactly its design point. Energy / retail / travel series are Prophet's sweet spot.",
+                  "whenWrong": "Yes — Prophet's decomposed model fits multi-seasonal holiday-heavy series better than vanilla ARIMA."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame Prophet vs ARIMA",
+              "body": "[WRITE] In a `notebooks/03-prophet.ipynb`:\n1. Define Prophet's components y(t) = g(t) + s(t) + h(t) + noise.\n2. State your hypothesis: 'Prophet will outperform ARIMA because ___.'\n3. Bar to beat: ARIMA MAE from v0.2."
             }
           ]
         },
         {
           "number": 2,
           "title": "Install + format data",
-          "summary": "",
+          "summary": "ds, y, and you're ready.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Setup",
+              "body": "## Install\n```bash\npip install prophet\n```\n\nOn older Python versions you might see `pystan` build errors — that's the old version. The new Prophet (`pip install prophet`, not `fbprophet`) uses CmdStan and installs cleanly on 3.9+.\n\n## Load + reshape\n```python\nimport pandas as pd\ndaily = pd.read_parquet('data/aep_daily.parquet')\n# daily has a DatetimeIndex named 'date' and a 'demand' column\n\ndf = (\n    daily.rename_axis('ds').reset_index()\n         .rename(columns={'demand': 'y'})\n         [['ds', 'y']]\n)\nsplit = int(len(df) * 0.8)\ntrain, test = df.iloc[:split], df.iloc[split:]\nprint(train.tail(2))\n#             ds       y\n# 4032 2017-09-25  16210.6\n# 4033 2017-09-26  16104.2\n```\n\n## Same chronological split, every model\nReuse the **exact same split** as ARIMA (Week 22). That's how the comparison stays fair: both models forecast the identical held-out period."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The same chronological train/test split must be used for ARIMA and Prophet for a fair comparison.",
+                  "answer": true,
+                  "whenRight": "Right — different splits = unfair comparison. Same dates, same target, only model differs.",
+                  "whenWrong": "Always identical splits across model comparisons. Otherwise MAE differences are confounded by data, not model."
+                },
+                {
+                  "prompt": "On modern Python, you install Prophet with `pip install fbprophet`.",
+                  "answer": false,
+                  "whenRight": "Right — that's the old name. New is `pip install prophet`. fbprophet hits pystan build errors.",
+                  "whenWrong": "New name is `prophet`. fbprophet is the legacy package with build pain on modern Python."
+                },
+                {
+                  "prompt": "You should keep your original column names (date, demand) and pass them to Prophet directly.",
+                  "answer": false,
+                  "whenRight": "Right — rename to ds/y first. Prophet is hard-coded to those names.",
+                  "whenWrong": "Rename once on input. Prophet requires ds, y. Trying to use your own names is wasted debugging."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Prophet format",
-              "body": "Prophet needs columns named 'ds' (date) and 'y' (value).\n      from prophet import Prophet\n      daily = df['AEP_MW'].resample('D').mean()\n      pdf = daily.reset_index().rename(columns={'Datetime':'ds','AEP_MW':'y'})\n      train = pdf.iloc[:-30]\n      test = pdf.iloc[-30:]"
+              "title": "Your turn — set up",
+              "body": "[CODE] 1. `pip install prophet`.\n2. Load daily AEP. Reshape to ds/y columns.\n3. Chronological 80/20 split — SAME dates as v0.2 ARIMA.\n4. Print train.shape and test.shape."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Fit",
-          "summary": "",
+          "title": "Fit Prophet",
+          "summary": "Three lines to a fitted multi-seasonal model.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Fitting Prophet",
+              "body": "## The minimal fit\n```python\nfrom prophet import Prophet\nm = Prophet(weekly_seasonality=True, yearly_seasonality=True, daily_seasonality=False)\nm.fit(train)\n```\n\nThree lines. Prophet detects the time scale (daily here) and auto-fits trend + weekly + yearly seasonality.\n\n## What `daily_seasonality=False` means\nOur series is **daily** (one value per day). Daily seasonality would mean a within-day cycle — which we don't have at this resolution. If you ever fit Prophet on hourly data, you'd flip `daily_seasonality=True`.\n\n## Forecasting\n```python\nfuture = m.make_future_dataframe(periods=len(test), freq='D')\nforecast = m.predict(future)\nprint(forecast[['ds','yhat','yhat_lower','yhat_upper']].tail(3))\n```\n`yhat` is the point forecast; `yhat_lower/yhat_upper` are the 80% interval (Prophet's default — change with `interval_width=0.95` on the Prophet() constructor).\n\n## Why a future dataframe?\nProphet wants you to be explicit about *which* future dates you're forecasting. `make_future_dataframe(periods=n)` extends the training timeline by n periods at the right frequency. Then `predict()` returns yhat for every row — historical *and* future."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Fit, forecast, peek\n```python\nfrom prophet import Prophet\nm = Prophet(weekly_seasonality=True, yearly_seasonality=True, daily_seasonality=False, interval_width=0.95)\nm.fit(train)\n# INFO:prophet: ... using approximate sampling\n\nfuture = m.make_future_dataframe(periods=len(test), freq='D')\nforecast = m.predict(future)\nprint(forecast.tail(2)[['ds','yhat','yhat_lower','yhat_upper']].round(0))\n#             ds     yhat  yhat_lower  yhat_upper\n# 5039 2018-04-02  16920       15410       18440\n# 5040 2018-04-03  17105       15580       18640\n```\nProphet returns a fully populated forecast dataframe — yhat for every date past and future, plus 95% intervals."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Prophet's `yhat` column is the point forecast; `yhat_lower` and `yhat_upper` are the interval bounds.",
+                  "answer": true,
+                  "whenRight": "Right — these three columns are what you'll plot. Default 80% interval; set `interval_width=0.95` for 95%.",
+                  "whenWrong": "yhat = point; yhat_lower/upper = the interval. Adjust width with interval_width on Prophet()."
+                },
+                {
+                  "prompt": "On a series with one value per day, you should set `daily_seasonality=True`.",
+                  "answer": false,
+                  "whenRight": "Right — no. Daily seasonality models a within-day cycle; on daily data there's no within-day cycle to model.",
+                  "whenWrong": "daily_seasonality models a within-day cycle. Daily data has none of that resolution. Set it to False."
+                },
+                {
+                  "prompt": "`make_future_dataframe(periods=n)` extends the training timeline by n periods at the given frequency.",
+                  "answer": true,
+                  "whenRight": "Right — it builds the date range Prophet then predicts over. Required input to predict().",
+                  "whenWrong": "Yes — it generates the future dates. predict() then returns yhat for both history and future."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "First Prophet",
-              "body": "      m = Prophet(yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False)\n      m.fit(train)\n      future = m.make_future_dataframe(periods=30)\n      forecast = m.predict(future)\n      fig = m.plot(forecast); fig.savefig('figures/prophet.png')\n      fig2 = m.plot_components(forecast); fig2.savefig('figures/prophet_components.png')"
+              "title": "Your turn — fit Prophet",
+              "body": "[CODE] In `notebooks/03-prophet.ipynb`:\n1. `from prophet import Prophet`. Construct with weekly+yearly seasonality, daily=False, interval_width=0.95.\n2. m.fit(train).\n3. make_future_dataframe(periods=len(test), freq='D').\n4. m.predict(future).\n5. Inspect the tail of forecast[['ds','yhat','yhat_lower','yhat_upper']]."
             }
           ]
         },
         {
           "number": 4,
           "title": "Add holidays",
-          "summary": "",
+          "summary": "Tell Prophet about US Federal Holidays.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Holiday effects in Prophet",
+              "body": "## Why holidays matter for energy\nElectricity demand drops on Thanksgiving, Christmas, July 4. Without telling Prophet, the model treats those drops as noise and over-predicts demand on every holiday. With them, it learns 'Thanksgiving day demand = baseline minus ~1700 MW' as an explicit effect.\n\n## Adding a built-in country's holidays\n```python\nm = Prophet(weekly_seasonality=True, yearly_seasonality=True, daily_seasonality=False)\nm.add_country_holidays(country_name='US')\nm.fit(train)\n```\n\nOne line. Prophet loads the holiday calendar from the bundled `holidays` package — federal holidays for the US, GB, FR, etc.\n\n## Inspecting what it learned\n```python\nforecast = m.predict(future)\nprint(forecast[forecast['holidays'].abs() > 0][['ds','holidays']].tail(5))\n#             ds  holidays\n# 2017-11-23   -1670.4   ← Thanksgiving\n# 2017-12-25   -2310.2   ← Christmas\n```\nNow you can quote: 'Prophet learned Christmas reduces demand by 2,310 MW.' That's a number a grid operator can plan with.\n\n## Custom holidays\nFor non-federal events (a sports final, a local event), you pass a dataframe of `{holiday, ds, lower_window, upper_window}` rows. Same mechanism — Prophet learns an effect size for each."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Fit with holidays + inspect effects\n```python\nfrom prophet import Prophet\n\nm = Prophet(weekly_seasonality=True, yearly_seasonality=True,\n             daily_seasonality=False, interval_width=0.95)\nm.add_country_holidays(country_name='US')\nm.fit(train)\n\nfuture = m.make_future_dataframe(periods=len(test), freq='D')\nforecast = m.predict(future)\n\n# Show learned holiday effects (negative = demand drop)\nholiday_effects = forecast[['ds','holidays']]\\\n    .loc[forecast['holidays'].abs() > 0]\\\n    .groupby(forecast['ds'].dt.strftime('%m-%d'))['holidays'].mean()\\\n    .sort_values().head()\nprint(holiday_effects.round(0))\n# ds\n# 12-25   -2310   <- Christmas: biggest drop\n# 11-23   -1670   <- Thanksgiving\n# 07-04   -1320   <- July 4\n# 01-01   -1180\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`m.add_country_holidays(country_name='US')` is enough for US federal holidays — no custom DataFrame needed.",
+                  "answer": true,
+                  "whenRight": "Right — one line, Prophet loads the bundled US holiday calendar.",
+                  "whenWrong": "Yes — one method call. Prophet pulls holidays from the `holidays` package for the country code."
+                },
+                {
+                  "prompt": "Without holidays declared, Prophet treats Thanksgiving's demand drop as noise and over-predicts that day.",
+                  "answer": true,
+                  "whenRight": "Right — without telling the model, it has no way to learn the holiday is special. Result: systematic over-prediction.",
+                  "whenWrong": "Yes — undeclared holidays look like noise. Declared, they get a learned effect."
+                },
+                {
+                  "prompt": "Custom holidays (local events, sports finals) can't be added — only built-in country lists work.",
+                  "answer": false,
+                  "whenRight": "Right — you can pass a DataFrame of {holiday, ds, lower_window, upper_window} for custom events.",
+                  "whenWrong": "Custom holidays are supported — pass a DataFrame. Built-in country lists are just a convenience."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "US holidays",
-              "body": "      from prophet.make_holidays import make_holidays_df\n      hols = make_holidays_df(year_list=range(2002,2025), country='US')\n      m = Prophet(holidays=hols, yearly_seasonality=True, weekly_seasonality=True)\n      m.fit(train)\n      # Re-evaluate MAE"
+              "title": "Your turn — add holidays",
+              "body": "[CODE] 1. Refit Prophet with `m.add_country_holidays(country_name='US')` before .fit.\n2. Predict.\n3. Show the top 5 holiday effects (most negative first).\n4. Markdown: which holiday drops demand the most, and by how much?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Evaluate",
-          "summary": "",
+          "title": "Evaluate vs ARIMA",
+          "summary": "Head-to-head on the same test set.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Comparing Prophet to ARIMA",
+              "body": "## The comparison\nSame test period, same MAE metric, same actual values.\n\n```python\nimport joblib\nfrom sklearn.metrics import mean_absolute_error\n\n# Load v0.2 ARIMA (don't retrain — it could drift)\narima = joblib.load('models/arima.pkl')\narima_forecast = arima.predict(n_periods=len(test))\n\n# Prophet on the test slice\nprophet_forecast = forecast.loc[forecast['ds'].isin(test['ds']), 'yhat'].values\n\nactual = test['y'].values\nmae_arima   = mean_absolute_error(actual, arima_forecast)\nmae_prophet = mean_absolute_error(actual, prophet_forecast)\nprint(f'ARIMA   MAE: {mae_arima:.0f} MW')\nprint(f'Prophet MAE: {mae_prophet:.0f} MW')\n# ARIMA   MAE: 706 MW\n# Prophet MAE: 612 MW   ← Prophet wins by ~13%\n```\n\n## Why the gap\nProphet captures the holiday drops (Thanksgiving, Christmas) that ARIMA treated as residual noise. On weeks containing a holiday, Prophet is dramatically better. On normal weeks the two are close.\n\n## Don't conclude 'Prophet always wins'\nIt wins HERE because energy demand is heavily holiday-influenced and multi-seasonal — Prophet's home turf. On a series with no calendar effects (a financial return), ARIMA can equal or beat it.\n\n## The plot that tells the story\nPlot ARIMA, Prophet, and actual together over the test period. The visible holiday weeks are where Prophet pulls ahead — you can literally see it."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Three-way chart\n```python\nimport matplotlib.pyplot as plt\n\nplt.figure(figsize=(12, 4))\nplt.plot(test['ds'], actual,           label='actual',  color='#3b82f6', lw=1.5)\nplt.plot(test['ds'], arima_forecast,   label='ARIMA',   color='#ef4444', lw=1)\nplt.plot(test['ds'], prophet_forecast, label='Prophet', color='#22c55e', lw=1)\nplt.title('AEP daily demand — ARIMA vs Prophet on the test period')\nplt.legend(); plt.tight_layout()\nplt.savefig('charts/prophet_vs_arima.png', dpi=150); plt.close()\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Loading the saved ARIMA from v0.2 (instead of refitting) keeps the comparison consistent.",
+                  "answer": true,
+                  "whenRight": "Right — fitted-once-then-reused beats fit-again-and-hope-the-RNG-agrees.",
+                  "whenWrong": "Reuse the saved model. Refitting can give slightly different coefficients and muddies the comparison."
+                },
+                {
+                  "prompt": "Prophet winning on AEP energy demand means it always beats ARIMA on every time series.",
+                  "answer": false,
+                  "whenRight": "Right — no. Prophet wins HERE because of heavy calendar effects. On financial returns ARIMA can equal it.",
+                  "whenWrong": "Wins are domain-specific. Energy/retail favour Prophet; clean stationary series can favour ARIMA."
+                },
+                {
+                  "prompt": "The three-line chart (actual + ARIMA + Prophet) makes the holiday-driven advantage visible.",
+                  "answer": true,
+                  "whenRight": "Right — you literally see Prophet hug the actual on Thanksgiving / Christmas while ARIMA over-predicts.",
+                  "whenWrong": "Yes — the plot is more convincing than the MAE number alone. Always include it."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Prophet MAE",
-              "body": "      from sklearn.metrics import mean_absolute_error\n      pred_30 = forecast['yhat'].iloc[-30:].values\n      print('Prophet MAE:', mean_absolute_error(test['y'].values, pred_30))\n\nUpdate your model-comparison table in the README."
+              "title": "Your turn — head-to-head",
+              "body": "[CODE] 1. Load models/arima.pkl from v0.2.\n2. Predict both ARIMA and Prophet on the same test period.\n3. Print both MAEs.\n4. Plot actual + ARIMA + Prophet together. Save to charts/prophet_vs_arima.png."
             }
           ]
         },
         {
           "number": 6,
           "title": "Inspect components",
-          "summary": "",
+          "summary": "Plot trend, seasonality, holidays separately.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The components plot — Prophet's superpower",
+              "body": "## What it is\n```python\nfig = m.plot_components(forecast)\nfig.savefig('charts/prophet_components.png', dpi=150)\n```\n\nProphet plots each component on its own axis: **trend**, **weekly seasonality**, **yearly seasonality**, **holidays**. You see exactly what the model thinks each is contributing.\n\n## Why this matters more than the forecast itself\nA grid operator asking 'why is demand higher in summer?' gets an actionable answer: 'Trend is flat; the yearly seasonality plot shows +1800 MW between July and September because of cooling.' That's a finding, not a number.\n\n## What to look for\n- **Trend**: smooth, no obvious sudden jumps mid-series\n- **Weekly**: a clear weekday > weekend gap (industrial load)\n- **Yearly**: peaks in summer (AC) and winter (heating), troughs in spring/autumn\n- **Holidays**: negative spikes on the big federal holidays\n\nIf something looks weird (e.g. weekly seasonality says Sunday > Wednesday), the model has learned wrong — investigate before trusting any forecast.\n\n## The interpretability moat\nARIMA gives you `(p, d, q)` coefficients you can't intuitively read. Prophet gives you four labelled charts. For communicating to a non-technical stakeholder, this is the whole game."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Plot + read the components\n```python\nfig = m.plot_components(forecast)\nfig.savefig('charts/prophet_components.png', dpi=150)\n\n# Quick numeric readouts you can quote:\nweekly = forecast.groupby(forecast['ds'].dt.day_name())['weekly'].mean().round(0)\nprint('Weekly effect (MW):'); print(weekly)\n# Monday      +560\n# Tuesday     +680\n# ...\n# Saturday    -1280\n# Sunday      -1450\n# Industrial load tails off on weekends -> Sat/Sun are negative\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`m.plot_components(forecast)` shows trend, weekly, yearly, and holiday contributions on separate axes.",
+                  "answer": true,
+                  "whenRight": "Right — Prophet's interpretability win. Each component plotted alone.",
+                  "whenWrong": "Yes — that's the function. Four separate plots, one per component, instantly readable."
+                },
+                {
+                  "prompt": "If the weekly seasonality plot shows Sunday > Wednesday, the model is broken or the data is wrong.",
+                  "answer": true,
+                  "whenRight": "Right — that's the wrong direction for industrial energy. Investigate before trusting any forecast.",
+                  "whenWrong": "Yes — suspicious. Energy demand should be weekday > weekend. If the model says otherwise, find the bug."
+                },
+                {
+                  "prompt": "Components plots are mostly aesthetic — they don't actually help anyone understand the model.",
+                  "answer": false,
+                  "whenRight": "Right — they're load-bearing. They turn the model into an explanation a non-technical stakeholder can act on.",
+                  "whenWrong": "They're the interpretability win. A grid operator can read the chart; they can't read ARIMA coefficients."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "What does the model see?",
-              "body": "Look at the components plot. What's the trend doing? When are the seasonal peaks? Which holidays impact demand most? Write 3 observations."
+              "title": "Your turn — components",
+              "body": "[CODE] 1. `fig = m.plot_components(forecast); fig.savefig('charts/prophet_components.png')`.\n2. Print the average weekly effect by day name.\n3. Markdown: name the highest-demand day, lowest-demand day, and the dollar/MW size of the weekend dip."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.3",
-          "summary": "",
+          "title": "Ship v0.3",
+          "summary": "Tag the Prophet milestone with the head-to-head.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping v0.3",
+              "body": "## The README finding\n```text\n## v0.3 — Prophet (US holidays + weekly + yearly seasonality)\n- Same chronological 80/20 split as v0.2.\n- ARIMA MAE:   706 MW   (v0.2 baseline)\n- Prophet MAE: 612 MW   ← 13% better than ARIMA\n- Largest learned holiday effects: Christmas (-2310 MW), Thanksgiving (-1670 MW), July 4 (-1320 MW)\n- Weekly seasonality: weekday demand ~+650 MW above weekend\n- Components plot: charts/prophet_components.png\n```\n\n```bash\ngit add notebooks/03-prophet.ipynb charts/ models/prophet.pkl README.md\ngit commit -m \"Energy Forecast v0.3: Prophet beats ARIMA by 13% on holiday weeks\"\ngit tag v0.3\ngit push && git push --tags\n```\n\n## Save the model\n```python\nimport joblib\njoblib.dump(m, 'models/prophet.pkl')\n```\nWeek 24 (LSTM) compares its results against both ARIMA and Prophet. Both fitted models need to be on disk to make the head-to-head trivial.\n\n## Why this milestone matters\nYou've now compared a classical statistical model (ARIMA) to a decomposable component model (Prophet) on real data with honest methodology. Next week (LSTM) brings deep learning to the same series — the third leg of the comparison."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Saving the fitted Prophet to models/prophet.pkl lets next week's LSTM week compare against it without refitting.",
+                  "answer": true,
+                  "whenRight": "Right — joblib.dump, reload next week. Consistent comparison, zero refit cost.",
+                  "whenWrong": "Save it. Refits drift between runs; saved models keep numbers identical."
+                },
+                {
+                  "prompt": "Reporting BOTH MAE numbers (ARIMA AND Prophet) is more useful than reporting only the winner.",
+                  "answer": true,
+                  "whenRight": "Right — the COMPARISON is the finding, not the absolute number. Both numbers + the gap is the story.",
+                  "whenWrong": "Yes — the gap matters as much as the winner. Report both, name the improvement %."
+                },
+                {
+                  "prompt": "v0.3 closes the project — no more weeks needed on Energy Forecast.",
+                  "answer": false,
+                  "whenRight": "Right — no. Week 24 (LSTM) and Week 27 (v1.0 ship + retro) are still ahead.",
+                  "whenWrong": "Project continues: W24 LSTM, W25 MLOps, W26 cloud, W27 v1.0 ship. v0.3 is a milestone, not a finish line."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.3",
-              "body": "      git tag v0.3 && git push --tags\n\nPASS:\n  ☐ Prophet fit + forecast\n  ☐ US holidays included\n  ☐ Components chart saved\n  ☐ MAE in comparison table\n  ☐ v0.3 tag"
+              "title": "Your turn — ship v0.3",
+              "body": "[PRODUCE] 1. Save the model: joblib.dump(m, 'models/prophet.pkl').\n2. README v0.3 section with both MAEs, % improvement, top holiday effects, components chart link.\n3. Commit + tag:\n`git add . && git commit -m 'v0.3: Prophet + US holidays + ARIMA comparison'`\n`git tag v0.3 && git push --tags`\n\nPASS:\n[x] Prophet fitted with holidays\n[x] ARIMA reloaded, same test set\n[x] Three-line comparison chart saved\n[x] Components chart saved\n[x] models/prophet.pkl on disk\n[x] v0.3 tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Prophet's piecewise-linear trend",
-        "Prophet's multiplicative vs additive seasonality",
-        "Adding holiday effects",
-        "make_holidays_df helper",
-        "Components plot interpretation"
-      ],
-      "tasks": [
-        "Format data as ds/y",
-        "Fit baseline Prophet",
-        "Add US holidays",
-        "Evaluate on 30-day test",
-        "Plot components + interpret"
-      ],
-      "project": "Energy Forecast v0.3 — Prophet model with holidays. Compared against persistence + ARIMA in the README table.",
-      "resources": [
-        {
-          "label": "Prophet in 18 min - Greg Hogg",
-          "url": "https://www.youtube.com/watch?v=KvLG1uTC-KU",
-          "note": "18 min. Built for business forecasting. Handles holidays automatically."
-        },
-        {
-          "label": "Prophet docs - holidays + changepoints",
-          "url": "https://facebook.github.io/prophet/docs/seasonality,_holiday_effects,_and_regressors.html",
-          "note": "Reference. Use after the Greg Hogg video."
-        },
-        {
-          "label": "Prophet with extra regressors in 11 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Prophet%20with%20extra%20regressors",
-          "note": "11 min. Add temperature as a feature. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "NOAA historical weather (data)",
-          "url": "https://www.ncei.noaa.gov/cdo-web/datatools/lcd",
-          "note": "Free hourly weather. Pick a station near AEP service."
-        }
-      ],
-      "exercises": [
-        "Add temperature as an extra regressor (download from NOAA)",
-        "Try the changepoint_prior_scale parameter",
-        "Forecast 90 days instead of 30"
-      ],
-      "questions": [
-        "When would Prophet lose to ARIMA?",
-        "Why is Prophet popular in industry?",
-        "What's a 'changepoint' and why does it matter?"
-      ],
-      "outputs": [
-        "prophet model saved",
-        "Components plot in figures/",
-        "v0.3 tag"
-      ],
-      "mastery_questions": [
-        "Install prophet and prepare your DataFrame in the format Prophet requires: two columns named ds (datetime) and y (the value). Use the daily resampled series. Paste the head of the prepared DataFrame and df.dtypes. The ds column must be datetime, not a string -- Prophet will silently misbehave if you pass strings. Fit the model with model.fit(df_train) and paste the output lines confirming the Stan optimiser converged. If it did not converge, the fit is unreliable.",
-        "Create the US holidays DataFrame with make_holidays_df(year_list=[2004,2005,...,2018], country='US') and pass it as the holidays argument when initialising Prophet. Refit and paste the first 10 rows of the holidays DataFrame. Now look at the components plot (model.plot_components(forecast)) and find the holiday subplot. Which holiday has the largest negative effect on demand? Is it the one you predicted in pre-flight? Write one sentence about the mechanism -- why that specific holiday causes the dip.",
-        "Fit two versions of the model: one with seasonality_mode='additive' and one with 'multiplicative'. Generate forecasts for both. Paste the test-set MAE for each. Which wins on the AEP data? Now explain in one sentence why multiplicative seasonality makes physical sense for electricity demand (hint: the absolute swing in megawatts between a summer weekday peak and a summer overnight trough is larger than the equivalent swing in winter).",
-        "Generate a 90-day forecast and plot it against actuals using model.plot(forecast). Paste the plot. The shaded band is Prophet's uncertainty interval -- wider means less confident. Where does it widen most? (Usually: further into the forecast, and around holidays where historical patterns are sparse.) Compare the forecast visually to your ARIMA forecast from week 22. Where does Prophet track better? Where does ARIMA track better?",
-        "Update the README comparison table with all three models: persistence baseline, ARIMA, Prophet. Columns: model, MAE, RMSE, notes. Paste the table. Write one honest sentence under it summarising which model you would choose for production and why -- factoring in accuracy, interpretability, and maintenance complexity. \"Prophet wins on MAE\" is a complete answer only if it also wins on every other axis. Usually it does not."
-      ],
-      "ai_assist": "Use Claude to explain the difference between Prophet's Fourier series representation of seasonality and ARIMA's autoregressive representation. Ask \"why does Prophet use Fourier terms for seasonality instead of ARIMA-style lags?\" The answer changes how you think about both models. Do NOT ask Claude to choose your seasonality mode or changepoint parameters -- those decisions depend on your specific series, and making them yourself with a reasoning sentence (\"I chose multiplicative because the peak amplitude scales with the level\") is what you will be asked to defend.",
-      "pre_flight": "Before fitting Prophet, look up the US federal holidays for 2017 (the last full year in your test window). Write down the three holidays you expect to have the biggest impact on AEP demand -- and your prediction of whether each one pushes demand up or down relative to a normal day. Factories, offices, and commercial buildings shutting down is the mechanism. After you fit the model, the components plot will show you the actual estimated effect for each holiday. Check your predictions against it.",
-      "common_mistakes": [
-        "Passing the hourly series directly to Prophet. Prophet on hourly data with yearly seasonality requires fourier_order tuning that takes significant compute and expertise. Resample to daily, fit on daily, then extrapolate back to hourly if needed.",
-        "Not checking for Stan convergence. Prophet prints warnings when the optimiser does not converge. A non-converged fit produces a forecast that looks plausible but is not reliable. Always read the fit output, not just the chart.",
-        "Forgetting to call make_future_dataframe before generating a forecast. Prophet requires you to create a future DataFrame explicitly: future = model.make_future_dataframe(periods=90). Calling predict on anything else produces an error or an empty result.",
-        "Using additive seasonality when the series has growth. If the level of the series changes significantly over the training window (AEP demand fell from 2008 to 2018), multiplicative seasonality better represents the changing amplitude of peaks and troughs.",
-        "Comparing models on different test sets. All three models (persistence, ARIMA, Prophet) must be evaluated on the exact same held-out window to produce a fair comparison table. If you used different split dates, the comparison is meaningless."
-      ],
-      "debug_help": "Two Prophet-specific issues. First: \"ValueError: Found NaN in column y.\" Prophet will not fit on NaN values. Run df['y'].isna().sum() before fitting, and either drop or forward-fill any gaps. Second: the components plot shows a holiday effect of exactly zero for some holidays. This means those dates did not appear in the training set -- either the holiday happened only in the test window, or the date format did not match. Check that your holiday dates align with the ds column format (both should be pandas Timestamps, not strings). If holiday effects look suspiciously uniform across all holidays, your make_holidays_df call may be passing the wrong country code.",
-      "stretch": [
-        "Add changepoint detection visualisation: model.plot(forecast) marks trend changepoints with vertical lines. Do the detected changepoints correspond to real events -- the 2008 financial crisis (manufacturing slowdown), the 2012-2014 period (energy efficiency push)? Matching changepoints to real events is how you validate that the model is picking up real signal.",
-        "Fit Prophet on a retail time series (the classic \"Air Passengers\" dataset or any Kaggle sales dataset) and compare the holiday effects. The holiday pattern for retail is the opposite of energy -- Christmas causes demand spikes, not drops. Seeing both directions makes the holiday component intuitive.",
-        "Read the original Prophet paper: \"Forecasting at Scale\" by Taylor and Letham (2018). It is short, practical, and explains the design tradeoffs that make Prophet what it is. Knowing the paper is knowing why the defaults are the defaults."
       ]
     },
     {
@@ -8360,172 +8732,367 @@
       "phase": "Time Series",
       "commitment_hours": "15-20",
       "context": "You have now fitted ARIMA and Prophet on the same series. Both are classical models -- they decompose the signal into interpretable components and fit them explicitly. This week you try the deep learning approach: an LSTM (Long Short-Term Memory network), which learns the pattern instead of decomposing it.\n\nThe sales pitch for LSTMs in time series forecasting is compelling. They can theoretically learn arbitrary long-range dependencies without you specifying a lag order. They are expressive enough to capture non-linear interactions between past values. They power the time series layers inside many production forecasting systems at Amazon and Google. All of that is true.\n\nThe honest version is also true. LSTMs on univariate energy demand data with a few years of history often do not beat a well-tuned ARIMA or Prophet. The reason is data scale: deep learning models need a lot of data to outperform classical methods, and 121,000 hourly rows sounds like a lot until you consider that an LSTM trained on this will see fewer unique seasonal cycles than a classical model would use. The value of this week is not \"LSTM wins\" -- it is learning to build a sliding-window dataset, write a training loop in PyTorch, and understand when deep learning is and is not the right tool.\n\nThe sliding-window setup is the non-obvious part. You cannot feed an LSTM a raw time series directly. You reshape it into sequences: take the last N hours as input, predict the next hour as output. With N=168 (one week of hourly data), each training example is a 168-step sequence. You slide that window across the entire training set, generating thousands of (input, target) pairs. That reshaping step is where most bugs live.\n\nBy Sunday: a trained LSTM model, a forecast plotted against actuals, and honest MAE and RMSE numbers added to the comparison table. If the LSTM loses to Prophet or ARIMA on this dataset, you document that. The notebook that shows an LSTM finishing third but explains why is more impressive than one that cherry-picks metrics to hide it.",
+      "concept_check": [
+        {
+          "q": "What core problem does an LSTM solve that a plain RNN doesn't?",
+          "choices": [
+            "Vanishing gradients — LSTMs use gates to preserve information across long sequences",
+            "Faster training",
+            "Smaller models",
+            "Better at images"
+          ],
+          "correct": 0,
+          "explain": "Vanilla RNNs lose information over long sequences because gradients vanish. LSTMs add a CELL STATE plus FORGET / INPUT / OUTPUT gates that explicitly choose what to keep, add, and emit. That's how they learn long-range temporal dependencies."
+        },
+        {
+          "q": "Why do we need windowed (sequence) input for an LSTM forecaster?",
+          "choices": [
+            "It's required by PyTorch",
+            "The model takes a SEQUENCE of past N values and outputs the next value(s) — you slide a window across the series to make (X, y) training pairs",
+            "It saves memory",
+            "To handle missing data"
+          ],
+          "correct": 1,
+          "explain": "LSTMs are sequence-to-sequence. You decide a lookback (e.g. 14 days) and a horizon (e.g. 1 day). Every row of X is a 14-day sequence; the matching y is the value on day 15. Sliding the window across the series generates thousands of training pairs from one series."
+        },
+        {
+          "q": "Why scale (normalise) the inputs before feeding them to the LSTM?",
+          "choices": [
+            "Pretty plots",
+            "Neural networks train MUCH better on inputs near 0-1; raw MW values in the thousands make gradients explode or vanish",
+            "PyTorch requires it",
+            "To make the model smaller"
+          ],
+          "correct": 1,
+          "explain": "Gradients on raw values in the thousands become huge; tanh/sigmoid activations saturate; training stalls. MinMax or Standard scaling brings inputs near 0-1, gradients stay healthy, the model converges. ALWAYS scale time-series inputs to a neural network, and remember to inverse-scale the predictions back to original units before reporting MAE."
+        }
+      ],
       "days": [
         {
           "number": 1,
-          "title": "What's an LSTM",
-          "summary": "",
+          "title": "What an LSTM is",
+          "summary": "Memory cells with gates that learn what to remember.",
           "items": [
             {
-              "kind": "video",
-              "title": "LSTM explained (15 min)",
-              "url": "https://www.youtube.com/results?search_query=lstm+long+short+term+memory+explained+beginner",
-              "duration_min": 15,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "LSTM — Long Short-Term Memory in one read",
+              "body": "## What it is\nAn **LSTM** is a recurrent neural network designed to learn from sequences. Where ARIMA writes explicit equations for `y_t = f(y_{t-1}, ..., y_{t-p})`, the LSTM **learns** that function from the data.\n\nThe key mechanism is the **cell state** — a memory line that flows through the sequence, modified by three **gates**:\n\n- **Forget gate** — decides which parts of the cell state to drop\n- **Input gate** — decides which new information to write\n- **Output gate** — decides what to emit at this time step\n\nEach gate is a small neural network with a sigmoid (0 = drop / closed, 1 = keep / open). Training learns the gates' weights so the network keeps useful memory across long sequences.\n\n## Why LSTM (not a plain RNN)\nVanilla RNNs suffer **vanishing gradients** — useful signal from far in the past fades to noise during backprop. LSTMs preserve it via the cell state, which is why they handle long sequences (hundreds of steps) where RNNs fail.\n\n## When LSTMs beat ARIMA / Prophet\n- Non-linear dynamics (saturation, threshold effects)\n- Multiple input features (e.g. demand + temperature + day-of-week)\n- Very long history matters (RNN/LSTM remembers further back than ARIMA's small p)\n\n## When they don't\n- Small series (<1000 points) — overfits easily\n- Clean seasonal/holiday data — Prophet wins on interpretability + speed\n- You need uncertainty intervals — much harder with neural nets than ARIMA/Prophet\n\n## Where this fits\nThis week: build an LSTM in PyTorch on the AEP daily series. Compare to ARIMA and Prophet. By Sunday you have a three-model head-to-head."
             },
             {
-              "kind": "reflection",
-              "title": "Honest expectation",
-              "body": "LSTMs sometimes lose to Prophet on simple univariate forecasting. Set your expectation: we're learning the tooling, not necessarily winning."
+              "kind": "video",
+              "title": "Illustrated Guide to LSTMs and GRUs",
+              "url": "https://www.youtube.com/watch?v=8HyCNIVRbSU",
+              "duration_min": 10,
+              "creator": "Michael Phi",
+              "why": "Watch first. The clearest visual explanation of gates and the cell state. The animations make the gating concept click."
+            },
+            {
+              "kind": "lesson",
+              "title": "Why scale and window",
+              "body": "## Two things you must do before training\n\n### 1. Scale the inputs\nRaw electricity demand is in thousands of MW. Plug those directly into an LSTM and gradients explode or saturate tanh/sigmoid. Always scale first:\n\n```python\nfrom sklearn.preprocessing import MinMaxScaler\nscaler = MinMaxScaler()\ntrain_scaled = scaler.fit_transform(train[['y']].values)\n# values now between 0 and 1\n```\nAnd invert the scaler when reporting MAE so you're back in MW.\n\n### 2. Window the data\n```text\nraw:   [d1, d2, d3, d4, d5, d6, d7, ...]\n\nwith lookback=3:\nX[0] = [d1, d2, d3]   y[0] = d4\nX[1] = [d2, d3, d4]   y[1] = d5\nX[2] = [d3, d4, d5]   y[2] = d6\n```\nYou slide a window of length `lookback` across the series. Each window is one training example. With ~4000 days and lookback=14, you get ~3986 training pairs.\n\n## Lookback choice\n- Too short (1-3 days) — model can't see the weekly cycle\n- Too long (200 days) — too many noisy inputs, hard to learn\n- Sweet spot for daily data with weekly seasonality: **14-30 days**\n\nYou'll start with `lookback=14` (two weeks) so the model sees two complete weekly cycles per example."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An LSTM's cell state + gates are what let it preserve information across long sequences (avoiding vanishing gradients).",
+                  "answer": true,
+                  "whenRight": "Right — the cell state is the memory line; the gates control what's kept, added, and emitted.",
+                  "whenWrong": "Yes — that's exactly the LSTM's mechanism. The cell state survives backprop where a plain RNN's hidden state doesn't."
+                },
+                {
+                  "prompt": "You can feed raw electricity demand values (in thousands of MW) directly into an LSTM.",
+                  "answer": false,
+                  "whenRight": "Right — no. Always scale first. Raw values blow up gradients and saturate activations.",
+                  "whenWrong": "Always scale. Raw values in thousands make sigmoids saturate and gradients vanish or explode. MinMax or Standard scaling first."
+                },
+                {
+                  "prompt": "Windowing turns a flat time series into many (X, y) training pairs where X is a fixed-length sequence.",
+                  "answer": true,
+                  "whenRight": "Right — slide a lookback-length window across the series. Each window = one training example.",
+                  "whenWrong": "Yes — windowing is how you build training data from a single series. Lookback length is the window size."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the LSTM",
+              "body": "[WRITE] In `notebooks/04-lstm.ipynb`:\n1. State why we use LSTM (not vanilla RNN).\n2. Choose your lookback (suggest: 14 days). Justify briefly.\n3. State the bar: ARIMA + Prophet MAEs from v0.2 and v0.3."
             }
           ]
         },
         {
           "number": 2,
           "title": "Prepare windowed data",
-          "summary": "",
+          "summary": "Scale, window, batch.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Building (X, y) tensors",
+              "body": "## The full preparation\n```python\nimport numpy as np, torch\nfrom sklearn.preprocessing import MinMaxScaler\n\n# 1. Scale on TRAIN ONLY, then transform train and test with the same scaler\nscaler = MinMaxScaler()\ntrain_arr = scaler.fit_transform(train[['y']].values).flatten()\ntest_arr  = scaler.transform(test[['y']].values).flatten()\n\n# 2. Window into (X, y) pairs\nLOOKBACK = 14\ndef make_windows(series, lookback):\n    X, y = [], []\n    for i in range(len(series) - lookback):\n        X.append(series[i:i + lookback])\n        y.append(series[i + lookback])\n    return np.array(X), np.array(y)\n\nX_train, y_train = make_windows(train_arr, LOOKBACK)\nX_test,  y_test  = make_windows(test_arr,  LOOKBACK)\n\n# 3. To PyTorch tensors. LSTM expects (batch, seq_len, features).\nX_train = torch.tensor(X_train, dtype=torch.float32).unsqueeze(-1)  # add feature dim\ny_train = torch.tensor(y_train, dtype=torch.float32).unsqueeze(-1)\nX_test  = torch.tensor(X_test,  dtype=torch.float32).unsqueeze(-1)\ny_test  = torch.tensor(y_test,  dtype=torch.float32).unsqueeze(-1)\nprint(X_train.shape)\n# torch.Size([4019, 14, 1])   <- 4019 sequences, 14 days each, 1 feature\n```\n\n## Critical: scale on train only\n`scaler.fit_transform(train)`, then `scaler.transform(test)`. Fitting on the full series leaks future statistics into training — a subtle but common mistake.\n\n## Shape conventions PyTorch expects\n`(batch_size, sequence_length, n_features)`. For a univariate forecaster, n_features=1. `unsqueeze(-1)` adds that trailing dimension."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Output shapes you should see\n```python\nprint('Train X:', X_train.shape, 'y:', y_train.shape)\nprint('Test  X:', X_test.shape,  'y:', y_test.shape)\n# Train X: torch.Size([4019, 14, 1]) y: torch.Size([4019, 1])\n# Test  X: torch.Size([1006, 14, 1]) y: torch.Size([1006, 1])\n\n# Sanity: first training example\nprint(X_train[0].squeeze().numpy().round(3))\n# [0.421 0.412 0.398 0.385 0.367 0.340 0.349 ...]   <- 14 scaled values\nprint(y_train[0].item())\n# 0.358   <- the next day, scaled\n```\n~4000 training sequences from one series. That's enough for an LSTM to learn structure without overfitting."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "You should fit the scaler on the train set ONLY, then transform both train and test with the same scaler.",
+                  "answer": true,
+                  "whenRight": "Right — fitting on all data leaks future statistics into training. Train-only fit + apply to test is the correct pattern.",
+                  "whenWrong": "Always fit on train only. Fitting on all data leaks future info; the model 'cheats' on test."
+                },
+                {
+                  "prompt": "PyTorch LSTM expects input shape (batch, seq_len, features).",
+                  "answer": true,
+                  "whenRight": "Right — three-dim tensor with batch first (default). For univariate forecasting features=1.",
+                  "whenWrong": "Yes — three dims: batch first, then seq, then features. unsqueeze(-1) adds the trailing feature dim."
+                },
+                {
+                  "prompt": "A lookback of 1 day works as well as 14 days for energy demand.",
+                  "answer": false,
+                  "whenRight": "Right — no. With lookback=1, the model can't see the weekly cycle. 14 is two complete weeks of context.",
+                  "whenWrong": "Lookback=1 is essentially the persistence baseline. 14 gives the model enough history to see the weekly pattern."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Sliding windows",
-              "body": "Use 30 days of history to predict the next day:\n      import numpy as np\n      vals = daily.values\n      mean, std = vals.mean(), vals.std()\n      norm = (vals - mean) / std\n      WINDOW = 30\n      X = np.array([norm[i:i+WINDOW] for i in range(len(norm)-WINDOW-1)])\n      y = norm[WINDOW+1:WINDOW+1+len(X)]\n      print(X.shape, y.shape)"
+              "title": "Your turn — prepare data",
+              "body": "[CODE] In `notebooks/04-lstm.ipynb`:\n1. Fit MinMaxScaler on train['y'] only. Transform both train and test.\n2. Window with LOOKBACK=14.\n3. Convert to PyTorch tensors with shape (N, 14, 1) for X and (N, 1) for y.\n4. Print all four shapes."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Build LSTM",
-          "summary": "",
+          "title": "Build the LSTM",
+          "summary": "One LSTM layer + a Linear head.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The model architecture",
+              "body": "## Minimal forecasting LSTM\n```python\nimport torch.nn as nn\n\nclass LSTMForecaster(nn.Module):\n    def __init__(self, input_size=1, hidden_size=32, num_layers=1):\n        super().__init__()\n        self.lstm = nn.LSTM(input_size, hidden_size,\n                            num_layers=num_layers, batch_first=True)\n        self.head = nn.Linear(hidden_size, 1)\n\n    def forward(self, x):\n        # x: (batch, seq_len, input_size)\n        out, _ = self.lstm(x)              # (batch, seq_len, hidden_size)\n        last  = out[:, -1, :]              # take final time step only\n        return self.head(last)             # (batch, 1)\n\nmodel = LSTMForecaster(hidden_size=32)\nprint(sum(p.numel() for p in model.parameters()))\n# ~4385 parameters — small, won't overfit easily\n```\n\n## Why take only the last time step\n`out` has shape `(batch, seq_len, hidden_size)` — one hidden representation per time step in the sequence. For one-step-ahead forecasting, the most relevant representation is the LAST one (it has seen the entire sequence). Take `out[:, -1, :]` and project to 1 output.\n\n## Why batch_first=True\nPyTorch's default LSTM expects `(seq_len, batch, features)` which is counter-intuitive. `batch_first=True` makes it `(batch, seq_len, features)` — the same as your data tensors. Set this and stop fighting axis order.\n\n## hidden_size and num_layers\n- `hidden_size=32` — small. Enough capacity for a single-variable forecast with ~4000 examples. Bigger isn't always better.\n- `num_layers=1` — start here. Stacking more layers helps on big datasets, not small ones.\n\n## The parameter count check\nPrint the parameter count. ~4k is right; if you see 400k, you've over-sized for this data and will overfit fast."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build + sanity check\n```python\nmodel = LSTMForecaster(input_size=1, hidden_size=32, num_layers=1)\nprint(model)\n# LSTMForecaster(\n#   (lstm): LSTM(1, 32, batch_first=True)\n#   (head): Linear(in_features=32, out_features=1, bias=True)\n# )\n\n# Forward pass smoke test\nwith torch.no_grad():\n    yhat = model(X_train[:4])\nprint(yhat.shape)\n# torch.Size([4, 1])   <- batch of 4 inputs -> 4 predictions\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "batch_first=True makes PyTorch's LSTM expect (batch, seq_len, features) instead of the default (seq_len, batch, features).",
+                  "answer": true,
+                  "whenRight": "Right — turns the counter-intuitive default into the natural shape. Use it always.",
+                  "whenWrong": "Yes — set batch_first=True. Otherwise you spend hours flipping axes for no reason."
+                },
+                {
+                  "prompt": "For one-step-ahead forecasting, you take the LAST time step's hidden state and project it to the output.",
+                  "answer": true,
+                  "whenRight": "Right — out[:, -1, :] then Linear -> 1. The last hidden has seen the whole sequence.",
+                  "whenWrong": "Yes — last step output. It has the full sequence context. Earlier steps haven't seen the whole window yet."
+                },
+                {
+                  "prompt": "Bigger hidden_size always means better forecasts.",
+                  "answer": false,
+                  "whenRight": "Right — no. Bigger model + small dataset = overfit. Start small (32-64), grow only if needed.",
+                  "whenWrong": "Capacity > data = overfit. With ~4000 windows, hidden_size=32 is plenty. Don't start at 256."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "PyTorch model",
-              "body": "      import torch\n      import torch.nn as nn\n      class Forecaster(nn.Module):\n          def __init__(self):\n              super().__init__()\n              self.lstm = nn.LSTM(input_size=1, hidden_size=32, num_layers=1, batch_first=True)\n              self.linear = nn.Linear(32, 1)\n          def forward(self, x):\n              out, _ = self.lstm(x)\n              return self.linear(out[:, -1, :]).squeeze(-1)\n      model = Forecaster()"
+              "title": "Your turn — build it",
+              "body": "[CODE] In `notebooks/04-lstm.ipynb`:\n1. Define LSTMForecaster as above. hidden_size=32, num_layers=1.\n2. Instantiate the model.\n3. Print the model.\n4. Forward pass on X_train[:4] to confirm output shape (4, 1)."
             }
           ]
         },
         {
           "number": 4,
           "title": "Train",
-          "summary": "",
+          "summary": "Loss = MSE, optimiser = Adam, watch for overfit.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The training loop",
+              "body": "## Loop\n```python\nloss_fn  = nn.MSELoss()\noptim    = torch.optim.Adam(model.parameters(), lr=1e-3)\nepochs   = 30\nbatch    = 64\n\nfrom torch.utils.data import DataLoader, TensorDataset\nloader = DataLoader(TensorDataset(X_train, y_train), batch_size=batch, shuffle=True)\n\nhistory = {'train': [], 'test': []}\nfor ep in range(epochs):\n    model.train()\n    running = 0.0\n    for xb, yb in loader:\n        optim.zero_grad()\n        loss = loss_fn(model(xb), yb)\n        loss.backward()\n        optim.step()\n        running += loss.item() * len(xb)\n    train_loss = running / len(X_train)\n\n    model.eval()\n    with torch.no_grad():\n        test_loss = loss_fn(model(X_test), y_test).item()\n\n    history['train'].append(train_loss)\n    history['test'].append(test_loss)\n    if ep % 5 == 0:\n        print(f'ep {ep:2d}  train {train_loss:.5f}  test {test_loss:.5f}')\n```\n\n## What loss should look like\nBoth train and test loss drop together for the first ~10 epochs. Then test loss flattens or starts rising while train loss keeps falling — that's **overfit**. Stop there (early stopping).\n\n```text\nep  0  train 0.04212  test 0.04501\nep  5  train 0.00890  test 0.00921\nep 10  train 0.00604  test 0.00643   <- still improving\nep 15  train 0.00521  test 0.00638   <- test stalling\nep 20  train 0.00482  test 0.00645   <- test rising -> overfit\n```\n\n## Why shuffle=True on the loader\nWithin a training epoch, batch order should be random — gradients become less correlated, generalisation improves. The CHRONOLOGICAL split (train = early dates, test = late dates) stays intact; only batches WITHIN train are shuffled."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Train + watch the curves\n```python\n# After the loop\nimport matplotlib.pyplot as plt\nplt.plot(history['train'], label='train')\nplt.plot(history['test'],  label='test')\nplt.xlabel('epoch'); plt.ylabel('MSE')\nplt.legend(); plt.tight_layout()\nplt.savefig('charts/lstm_loss.png', dpi=150); plt.close()\nprint('Final test MSE:', round(history['test'][-1], 6))\n# Final test MSE: 0.00642\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "MSE is the standard loss for regression-style LSTM forecasting.",
+                  "answer": true,
+                  "whenRight": "Right — predict a real-valued next step, minimise (y - yhat)^2. Standard choice.",
+                  "whenWrong": "Yes — MSE for continuous targets. MAE works too but MSE has nicer gradients."
+                },
+                {
+                  "prompt": "Shuffling batches within an epoch breaks the chronological order of the underlying time series.",
+                  "answer": false,
+                  "whenRight": "Right — no. The chronological train/test SPLIT stays. Only the order batches are SAMPLED within train is shuffled. Each batch still contains complete windowed examples in proper order.",
+                  "whenWrong": "Shuffle is fine — the windows are self-contained. The chronological split between train and test is what matters; batch order within train doesn't break causality."
+                },
+                {
+                  "prompt": "If test loss flattens while train loss keeps falling, you're overfitting and should stop training.",
+                  "answer": true,
+                  "whenRight": "Right — the textbook overfit signature. Save the model from the epoch where test loss was lowest.",
+                  "whenWrong": "Yes — that divergence is overfit. Stop, or use early stopping to roll back to the best epoch automatically."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Training loop",
-              "body": "      X_train = X[:-30]; y_train = y[:-30]\n      X_test = X[-30:]; y_test = y[-30:]\n      Xtr = torch.tensor(X_train.reshape(-1, WINDOW, 1), dtype=torch.float32)\n      ytr = torch.tensor(y_train, dtype=torch.float32)\n      opt = torch.optim.Adam(model.parameters(), lr=1e-3)\n      loss_fn = nn.MSELoss()\n      for epoch in range(50):\n          opt.zero_grad()\n          pred = model(Xtr)\n          loss = loss_fn(pred, ytr)\n          loss.backward(); opt.step()\n          if epoch % 10 == 0:\n              print(f'epoch {epoch}: loss {loss.item():.4f}')"
+              "title": "Your turn — train",
+              "body": "[CODE] In `notebooks/04-lstm.ipynb`:\n1. Build loss_fn = MSELoss, optim = Adam(lr=1e-3).\n2. Wrap (X_train, y_train) in DataLoader(batch_size=64, shuffle=True).\n3. Train 30 epochs, recording train + test loss per epoch.\n4. Plot the two curves to charts/lstm_loss.png.\n5. Note the epoch where test loss bottoms out."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Evaluate",
-          "summary": "",
+          "title": "Evaluate + inverse-scale",
+          "summary": "Back to MW and compare to ARIMA / Prophet.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Predicting + inverse scaling",
+              "body": "## The full eval\n```python\nmodel.eval()\nwith torch.no_grad():\n    preds_scaled = model(X_test).numpy().flatten()\n\n# Inverse-scale BOTH predictions and actuals back to MW\npreds_mw  = scaler.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()\nactual_mw = scaler.inverse_transform(y_test.numpy().reshape(-1, 1)).flatten()\n\nfrom sklearn.metrics import mean_absolute_error\nmae_lstm = mean_absolute_error(actual_mw, preds_mw)\nprint(f'LSTM MAE: {mae_lstm:.0f} MW')\n# LSTM MAE: 654 MW\n```\n\n## Forgetting to inverse-scale is the #1 bug here\nIf you compute MAE on scaled values (0-1), you get a misleadingly tiny number that's not comparable to ARIMA's MAE (706 MW) or Prophet's (612 MW). Always inverse-transform predictions AND ground truth back to original units before reporting MAE.\n\n## What the LSTM number actually means\n```text\nPersistence:  868 MW\nARIMA:        706 MW\nProphet:      612 MW\nLSTM:         654 MW   <- close to Prophet, beats ARIMA\n```\nLSTM is competitive with Prophet but doesn't dominate. That's typical for a small dataset where Prophet's domain priors (holidays + seasonality) hard-encoded carry it past a model that has to learn everything from data."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Side-by-side\n```python\nimport joblib\nfrom sklearn.metrics import mean_absolute_error\n\n# Load v0.2 and v0.3 models\narima  = joblib.load('models/arima.pkl')\nprophet = joblib.load('models/prophet.pkl')\n\n# Test slice aligned for all three\n# (Each model produces a forecast for the same dates.)\ncomparison = pd.DataFrame({\n    'date':     test['ds'].iloc[LOOKBACK:].values,\n    'actual':   actual_mw,\n    'arima':    arima.predict(n_periods=len(test))[LOOKBACK:],\n    'prophet':  prophet.predict(prophet.make_future_dataframe(periods=len(test), freq='D')).iloc[-len(test) + LOOKBACK:]['yhat'].values,\n    'lstm':     preds_mw,\n})\nfor col in ['arima', 'prophet', 'lstm']:\n    print(f'{col:8s} MAE: {mean_absolute_error(comparison.actual, comparison[col]):.0f}')\n# arima    MAE: 706\n# prophet  MAE: 612\n# lstm     MAE: 654\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Computing MAE on scaled (0-1) values gives a number directly comparable to ARIMA's MAE in MW.",
+                  "answer": false,
+                  "whenRight": "Right — no. Scaled MAE is in scaled units, not MW. Always inverse-transform before reporting.",
+                  "whenWrong": "Inverse-scale first. MAE on 0-1 values is meaningless next to ARIMA's MW units. Apples-to-apples means all in MW."
+                },
+                {
+                  "prompt": "An LSTM doesn't always beat Prophet — especially on small datasets with strong calendar effects.",
+                  "answer": true,
+                  "whenRight": "Right — Prophet's hard-coded priors carry it past models that have to learn everything from scratch.",
+                  "whenWrong": "Yes — LSTMs need more data than Prophet on calendar-heavy series. Small data + strong priors = Prophet wins."
+                },
+                {
+                  "prompt": "Always call `model.eval()` and wrap inference in `torch.no_grad()` for prediction speed and to avoid building a backward graph.",
+                  "answer": true,
+                  "whenRight": "Right — eval() turns off dropout/batchnorm-training behaviour; no_grad() skips gradient bookkeeping. Faster + lighter.",
+                  "whenWrong": "Yes — eval() + no_grad() for inference. Saves memory and avoids accidentally training during forecasting."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "MAE",
-              "body": "      Xte = torch.tensor(X_test.reshape(-1, WINDOW, 1), dtype=torch.float32)\n      with torch.no_grad():\n          preds = model(Xte).numpy()\n      # Denormalize\n      preds_real = preds * std + mean\n      true_real = y_test * std + mean\n      from sklearn.metrics import mean_absolute_error\n      print('LSTM MAE:', mean_absolute_error(true_real, preds_real))"
+              "title": "Your turn — evaluate",
+              "body": "[CODE] In `notebooks/04-lstm.ipynb`:\n1. Predict with model.eval() and torch.no_grad().\n2. Inverse-transform predictions AND actuals back to MW.\n3. Compute LSTM MAE.\n4. Load arima.pkl and prophet.pkl; compute their MAEs on the same test period.\n5. Print all three MAEs."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Plot vs others",
-          "summary": "",
+          "title": "Three-way plot",
+          "summary": "ARIMA vs Prophet vs LSTM, on one chart.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The head-to-head visualisation",
+              "body": "## What it is\n```python\nimport matplotlib.pyplot as plt\n\nplt.figure(figsize=(13, 4.5))\nplt.plot(comparison.date, comparison.actual,  label='actual',  color='#1f2937', lw=1.5)\nplt.plot(comparison.date, comparison.arima,   label='ARIMA',   color='#ef4444', lw=1)\nplt.plot(comparison.date, comparison.prophet, label='Prophet', color='#22c55e', lw=1)\nplt.plot(comparison.date, comparison.lstm,    label='LSTM',    color='#3b82f6', lw=1)\nplt.title('AEP daily demand — three models on the same test period')\nplt.ylabel('MW'); plt.legend(); plt.tight_layout()\nplt.savefig('charts/three_way.png', dpi=150); plt.close()\n```\n\n## What the chart should show\n- Actual (dark line) is the ground truth.\n- Around weekly cycles, all three should track closely.\n- Around holidays, **Prophet leans further down** because it learned the holiday effect explicitly.\n- During heatwaves or unusual stretches, **LSTM can adapt** because it learned non-linear dynamics.\n- **ARIMA tends to smooth** — close on average, but misses extremes.\n\n## The honest framing\nNo model dominates everywhere. The chart turns 'which is best?' into 'where does each excel?' That's the answer a senior data scientist gives — not 'LSTM won.'"
+            },
+            {
+              "kind": "lesson",
+              "title": "The findings table",
+              "body": "## What you'll quote in the README\n```text\nModel        Test MAE    Strength                             Weakness\n-----------  ---------   -----------------------------------  ----------------------------------\nPersistence  868 MW      Free, no model                       Misses every trend or seasonal swing\nARIMA        706 MW      Captures weekly cycle + short memory  Treats holidays as noise\nProphet      612 MW      Explicit holidays + components        Linear assumptions on trend\nLSTM         654 MW      Learns non-linear dynamics            Needs more data; opaque to stakeholders\n```\n\n## Why all four matter\nShowing the **whole ladder** (including the worst model) is more convincing than just showing the winner. It demonstrates you ran a fair comparison and have a defensible reason to ship the model you chose.\n\n## What you ship\nFor this project, **Prophet** is the model that goes to production (smallest MAE on holiday-heavy energy series, interpretable for the grid operator audience). LSTM goes in the repo as a documented alternative.\n\nReality check: in some industries (high-stakes finance, where uncertainty intervals matter most), ARIMA wins despite worse MAE. Don't pick on MAE alone."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "On a head-to-head chart, no single model usually wins everywhere — each has a regime where it excels.",
+                  "answer": true,
+                  "whenRight": "Right — that's the honest framing. The chart turns 'best' into 'best for what'.",
+                  "whenWrong": "Yes — different models excel in different regimes. Honest comparison shows that, not 'this one wins'."
+                },
+                {
+                  "prompt": "You should ship the model with the lowest MAE without considering stakeholder needs.",
+                  "answer": false,
+                  "whenRight": "Right — no. MAE matters; so do uncertainty intervals, interpretability, latency, retraining cost. Pick on the whole picture.",
+                  "whenWrong": "MAE is one factor. Audience, interpretability, intervals, retraining cost matter too. Pick by all of them."
+                },
+                {
+                  "prompt": "Showing ARIMA, Prophet, and LSTM in one chart is more convincing than reporting only the winner.",
+                  "answer": true,
+                  "whenRight": "Right — the full ladder demonstrates a fair comparison and defensible pick. Hiding losers looks suspicious.",
+                  "whenWrong": "Yes — full ladder = honest. Hiding the runners-up makes a reviewer wonder what you're omitting."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Final comparison chart",
-              "body": "Plot all 3 models (Persistence, ARIMA, Prophet, LSTM) on the same chart against actuals. Save as figures/all_models.png."
+              "title": "Your turn — three-way chart",
+              "body": "[CODE] 1. Build the comparison DataFrame (date, actual, arima, prophet, lstm).\n2. Plot all four lines on one chart. Save to `charts/three_way.png`.\n3. Write a findings table (Model, MAE, Strength, Weakness) in a markdown cell."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag v0.4",
-          "summary": "",
+          "title": "Ship v0.4",
+          "summary": "Save the LSTM, write the comparison, tag.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping v0.4",
+              "body": "## What goes in the README\n```text\n## v0.4 — LSTM (PyTorch) and three-way comparison\nAll on the same chronological 80/20 split:\n  Persistence: 868 MW\n  ARIMA:       706 MW\n  Prophet:     612 MW   ← shipping this one\n  LSTM:        654 MW\n\nWhy Prophet for production:\n  - Lowest MAE on this holiday-heavy series\n  - Interpretable components plot for the grid-operator audience\n  - Explicit uncertainty intervals\n  - LSTM is in the repo as a documented alternative\n\nCharts: charts/three_way.png, charts/prophet_components.png, charts/lstm_loss.png\n```\n\n## Save the LSTM\n```python\ntorch.save(model.state_dict(), 'models/lstm.pt')\n# scaler too — predictions need it to inverse-transform later\nimport joblib; joblib.dump(scaler, 'models/lstm_scaler.pkl')\n```\nSave BOTH the model weights AND the scaler. Loading the model later without the scaler is useless — the predictions come out scaled and you can't recover the MW units.\n\n```bash\ngit add notebooks/04-lstm.ipynb charts/ models/lstm.pt models/lstm_scaler.pkl README.md\ngit commit -m \"Energy Forecast v0.4: LSTM + three-way comparison; shipping Prophet\"\ngit tag v0.4\ngit push && git push --tags\n```\n\n## What this milestone proves\nYou can fit a deep-learning model on a time series, evaluate it honestly against classical baselines, and make a defensible production choice. That sequence — frame, model, compare, choose, ship — is exactly the workflow a senior data scientist runs."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "You must save BOTH the LSTM weights AND the fitted scaler — predictions are useless without inverse-scaling.",
+                  "answer": true,
+                  "whenRight": "Right — joblib.dump(scaler), torch.save(model.state_dict()). Lose the scaler, lose the ability to report MW.",
+                  "whenWrong": "Yes — both. The scaler is part of the model effectively. Predictions inverse-transform through it."
+                },
+                {
+                  "prompt": "Shipping Prophet (not the lowest-MAE possible model in absolute terms) is acceptable when interpretability + intervals matter more.",
+                  "answer": true,
+                  "whenRight": "Right — pick by the whole story. Prophet's intervals + components plot earn it the production slot here.",
+                  "whenWrong": "Yes — you pick by full requirements, not just MAE. Interpretability and intervals are real production needs."
+                },
+                {
+                  "prompt": "v0.4 ships the LSTM as the production model.",
+                  "answer": false,
+                  "whenRight": "Right — no. The README explicitly picks Prophet for production. LSTM stays in repo as a documented alternative.",
+                  "whenWrong": "Prophet wins on this dataset; LSTM is a documented alternative. The repo holds both; production runs Prophet."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.4",
-              "body": "      git tag v0.4 && git push --tags\n\nPASS:\n  ☐ LSTM trained 50 epochs\n  ☐ LSTM MAE recorded\n  ☐ Comparison chart with all 4 models\n  ☐ Updated MAE table in README\n  ☐ v0.4 tag"
+              "title": "Your turn — ship v0.4",
+              "body": "[PRODUCE] 1. torch.save(model.state_dict(), 'models/lstm.pt') and joblib.dump(scaler, 'models/lstm_scaler.pkl').\n2. README v0.4 with the full ladder (Persistence/ARIMA/Prophet/LSTM MAEs), the production pick + reasoning, chart links.\n3. Commit + tag:\n`git add . && git commit -m 'v0.4: LSTM + three-way comparison'`\n`git tag v0.4 && git push --tags`\n\nPASS:\n[x] Windowed data + scaling done correctly (train-only fit)\n[x] LSTM trained, loss curves saved\n[x] LSTM MAE in MW (after inverse-scaling)\n[x] Three-way comparison chart saved\n[x] Production-model choice + reasoning in README\n[x] v0.4 tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "LSTM intuition + use cases",
-        "Sliding-window data prep",
-        "PyTorch nn.Module + training loop",
-        "Normalization + denormalization for forecasting",
-        "Comparing models on a single test set"
-      ],
-      "tasks": [
-        "Build sliding windows of length 30",
-        "Define + train a small LSTM",
-        "Predict next-day demand for 30 days",
-        "Compare to all previous models"
-      ],
-      "project": "Energy Forecast v0.4 — LSTM forecasting model. Honest comparison against Prophet and ARIMA — sometimes loses, that's a fact you document.",
-      "resources": [
-        {
-          "label": "PyTorch basics in 25 min - Patrick Loeber",
-          "url": "https://www.youtube.com/watch?v=EMXfZB8FVUA",
-          "note": "25 min. Tensors, autograd, training loop."
-        },
-        {
-          "label": "LSTM for time series in 21 min",
-          "url": "https://www.youtube.com/watch?v=AvKSPZ7oyVg",
-          "note": "21 min. Sliding windows + LSTM in PyTorch. Direct walkthrough."
-        },
-        {
-          "label": "Why LSTMs in 9 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=YCzL96nL7j0",
-          "note": "9 min. Why vanilla RNNs forget long sequences."
-        },
-        {
-          "label": "GRU vs LSTM in 11 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=8HyCNIVRbSU",
-          "note": "11 min. Often equally good, simpler."
-        }
-      ],
-      "exercises": [
-        "Increase WINDOW to 60 days",
-        "Add a second LSTM layer",
-        "Try a GRU instead of LSTM"
-      ],
-      "questions": [
-        "Why must you normalize before training a neural net?",
-        "Why is LSTM not always the answer?",
-        "Why 50 epochs and not 500?"
-      ],
-      "outputs": [
-        "LSTM model saved",
-        "4-model comparison chart",
-        "v0.4 tag"
-      ],
-      "mastery_questions": [
-        "Write the sliding-window function: given a series and a window size, return X (each window as a row) and y (the value immediately after each window). Use window_size=168 (one week hourly). Paste the function and the resulting X_train.shape and y_train.shape. Now normalise using MinMaxScaler fit on training data only (not the full series -- fitting on the full series leaks test statistics into training). Paste the scaler.fit call and confirm the scaler was fit on X_train before transforming X_test.",
-        "Define your LSTM model as a PyTorch nn.Module. At minimum: one LSTM layer (hidden_size=64 or 128), one linear layer to project from hidden to output. Paste the class definition. Then write the training loop: forward pass, MSE loss, backward pass, optimizer.step(). Train for 20 epochs. Paste the loss at epoch 1 and epoch 20. If the loss at epoch 20 is higher than at epoch 1, your learning rate is too high or your data has not been normalised -- name which and fix it.",
-        "Generate predictions on the test set. Remember to denormalise with scaler.inverse_transform before comparing to actuals. Paste the MAE and RMSE. Add them to the comparison table. Where in the forecast horizon does the LSTM do best -- the first few days or further out? (LSTMs often do better on short horizons where the sliding window is densely informative, and worse further out where the error compounds.)",
-        "Plot LSTM predictions against actuals for a two-week window. On the same plot, overlay ARIMA predictions for the same window. Paste the plot. Write one specific sentence about a moment where the LSTM tracks better, and one where ARIMA tracks better. If one model handles holiday dips and the other handles weekday spikes, that tells you something useful about what each architecture learned.",
-        "Update the README comparison table: persistence, ARIMA, Prophet, LSTM -- all on the same test window, MAE and RMSE for each. Paste the table. Now write a two-sentence production recommendation: given these four numbers, which model would you deploy for AEP day-ahead forecasting, and what is the one factor that could change that answer? The answer is not necessarily \"the best MAE\" -- interpretability and operational simplicity matter, and a model that fails silently is worse than a slightly less accurate one that fails visibly."
-      ],
-      "ai_assist": "Use Claude to explain what the LSTM's hidden state actually stores -- in plain English, not equations. \"What information does an LSTM hidden state carry between timesteps, and why does that make it suitable for time series?\" Once you understand it, you can explain your model to a non-technical stakeholder in one sentence. Do NOT ask Claude to write the training loop. Writing a PyTorch training loop from scratch -- even a simple one -- is the single most important skill you build this week, and copying one blindly means you will not know how to debug it when it fails.",
-      "pre_flight": "Before writing any PyTorch code, draw the data flow on paper. Raw series → sliding window reshape → (X_train, y_train) → LSTM → single-step prediction → denormalise → compare to actual. For each step, write the shape: if your window is 168 and you have 30,000 training hours, what is the shape of X_train? (30000 - 168, 168, 1). Getting the shapes right before touching code saves two hours of dimension mismatch errors.",
-      "common_mistakes": [
-        "Fitting the MinMaxScaler on the full dataset before splitting. The scaler's min and max will include test data statistics, leaking future information into the normalisation. Always fit on training data only, then transform train and test separately.",
-        "Reshaping X for the LSTM incorrectly. PyTorch's LSTM expects (batch_size, sequence_length, input_size). If you pass (batch_size, sequence_length) without the third dimension, you get a confusing error about expected 3D input. Add .unsqueeze(-1) to your input tensor.",
-        "Using the same window for training and test without respecting the time boundary. Every test window must start after the last training observation. If your sliding window overlaps the train/test boundary, you are feeding the model future training data during evaluation.",
-        "Training for too many epochs on a small dataset and overfitting. Watch validation loss alongside training loss. When validation loss starts climbing while training loss continues falling, stop. Continuing to train is not improving the model -- it is memorising training sequences.",
-        "Comparing LSTM to ARIMA without matching the forecast horizon. If ARIMA was evaluated on 90-day ahead forecasts and LSTM on 1-day ahead, the comparison is not fair. Both must predict the same horizon on the same test period."
-      ],
-      "debug_help": "Three errors specific to this week. First: \"RuntimeError: Expected 3D input, got 2D.\" Your X tensor is missing the feature dimension. Add x = x.unsqueeze(-1) before passing to the LSTM. Second: loss is NaN from epoch 1. Almost always means unnormalised data -- electricity values in the thousands multiplied through an LSTM produce gradients that overflow. Normalise first, then train. Third: predictions are a flat line near the mean of the series. This means the model learned to predict the mean (a safe but useless strategy). Try increasing hidden_size, reducing learning rate, or checking that your y_train is normalised consistently with X_train.",
-      "stretch": [
-        "Try a multi-layer LSTM (num_layers=2) and compare test MAE to the single-layer version. The improvement (or lack of it) on this dataset is informative -- more layers help when there is more complex temporal structure to learn.",
-        "Replace your LSTM with a simple 1D CNN + linear head. Convolutional models for time series are faster to train and often competitive. Knowing both architectures -- and when one beats the other -- is more useful than defaulting to LSTM.",
-        "Read \"Are Transformers Effective for Time Series Forecasting?\" (Zeng et al., 2023). The finding is surprising: on many standard benchmarks, a single linear layer beats attention-based transformers. Knowing this paper protects you from following hype uncritically."
       ]
     },
     {
@@ -8534,180 +9101,362 @@
       "phase": "Production",
       "commitment_hours": "12-18",
       "context": "You have trained four models and compared them in a table. That is good science. The problem is that it is a snapshot -- the table reflects how those models performed the day you evaluated them. In production, data drifts. The distribution of AEP electricity demand in 2024 looks different from 2018 because of electric vehicles, distributed solar, remote work, and grid-scale batteries. A model trained on 2004-2017 data and deployed in 2024 is degrading silently, and without monitoring you will not know until someone calls you.\n\nMLflow is the experiment tracking layer. Every time you train a model, MLflow logs the parameters (window size, LSTM hidden units, ARIMA order), the metrics (MAE, RMSE), and the model artifact itself. You can compare 20 training runs in a browser UI, tag one as \"prod,\" and roll back to a previous version if the new model fails. Databricks and many large tech companies use MLflow as the standard experiment tracking layer. The alternative -- keeping notes in a notebook or a Slack message -- sounds fine until the third time you cannot remember which hyperparameter produced your best result.\n\nEvidently is the drift monitoring layer. It compares a reference dataset (your training data) to a production dataset (recent incoming data) and reports whether the input distribution has shifted. If the distribution of hourly temperatures underlying electricity demand has shifted -- say, five consecutive years of hotter summers -- Evidently will flag it before the model's accuracy quietly collapses. This is the kind of monitoring that the ML team at any serious company runs on every production model, because the cost of a drifted model making bad decisions is always higher than the cost of checking.\n\nBy Sunday: every model training run from this project logged in MLflow with params and metrics, the best model tagged as \"prod,\" and an Evidently drift report comparing your 2004-2015 training distribution to your 2016-2018 test distribution. The report will probably flag drift -- the series did shift during that window. Document what you found.",
+      "concept_check": [
+        {
+          "q": "What does MLflow give you that a notebook + saved .pkl files don't?",
+          "choices": [
+            "Nothing meaningful",
+            "A tracking server that records every experiment (params, metrics, artefacts) and a model registry so any past run is reproducible and any model is loadable by name + version",
+            "Faster training",
+            "Built-in models"
+          ],
+          "correct": 1,
+          "explain": "MLflow does four things: tracks experiments (every hyperparameter + metric of every run), stores artefacts (saved models, charts), provides a UI to compare runs, and has a model registry where production models live by name + version + stage (Staging/Production). Notebooks lose all of this when you re-run them."
+        },
+        {
+          "q": "What is 'data drift', and why does it eventually break a model?",
+          "choices": [
+            "Data files get corrupted",
+            "The distribution of inputs in production diverges from the training distribution, so the model's learned relationships no longer apply",
+            "The server crashes",
+            "Pandas versions change"
+          ],
+          "correct": 1,
+          "explain": "Models learn relationships between input distributions and outputs. When inputs shift (new customer segment, seasonal change, sensor drift), the relationships the model learned no longer match reality. The model still PRODUCES predictions; they're just systematically wrong now. Drift detection catches this BEFORE the wrong predictions cause damage."
+        },
+        {
+          "q": "Why use the KS (Kolmogorov-Smirnov) test to detect drift?",
+          "choices": [
+            "It's the only available option",
+            "Non-parametric — works without assuming a distribution; compares two empirical CDFs and returns a small p-value when they differ significantly",
+            "Required by MLflow",
+            "To beat ARIMA"
+          ],
+          "correct": 1,
+          "explain": "KS compares two distributions by their empirical cumulative distribution functions. No assumption of normality, no parameter to choose — just 'how different are these two samples?'. Small p-value = they're meaningfully different. Run KS between a sliding window of recent inputs and a fixed reference window from training data; raise an alert when p drops below a threshold."
+        }
+      ],
       "days": [
         {
           "number": 1,
           "title": "Why MLOps",
-          "summary": "",
+          "summary": "Models in notebooks are toys. Models in production rot.",
           "items": [
             {
-              "kind": "video",
-              "title": "What is MLOps? (10 min)",
-              "url": "https://www.youtube.com/results?search_query=mlops+explained+beginner+2024",
-              "duration_min": 10,
-              "creator": "various",
-              "why": ""
+              "kind": "lesson",
+              "title": "MLOps — the day-2 problem",
+              "body": "## What it is\nYou've built four models (persistence, ARIMA, Prophet, LSTM) and chose Prophet for production. That's Day 1 work. **MLOps is everything that happens after that** — the discipline of running the model in production reliably:\n\n- **Experiment tracking** — every run's parameters, metrics, and outputs are recorded forever, not lost when you re-run the notebook.\n- **Model registry** — production models live in one place, with a name + version + lifecycle stage (Staging / Production / Archived).\n- **Drift detection** — alarms when the distribution of inputs in production drifts away from training data.\n- **Retraining** — when drift fires, you retrain on fresh data and promote a new model version.\n- **Observability** — dashboards that show forecast accuracy, prediction latency, request volume.\n\n## Why this matters for Energy Forecast\nThe Prophet model was trained on 2004-2017 data. Demand patterns in 2024 look different: more solar means daytime demand drops; more EVs means evening demand rises. A model frozen in 2017 silently mis-forecasts 2024. Drift detection is what tells you it's time to retrain.\n\n## What you'll do this week\n1. Install MLflow locally and start its tracking server.\n2. Log every Prophet experiment (params, MAE, the saved model).\n3. Compare runs in the MLflow UI.\n4. Compute drift between training-period and held-out-period demand.\n5. Wire a simple alert that fires when drift crosses a threshold.\n6. Ship as `mlops-w1`.\n\n## The shift in mindset\nUp to now: 'I built a model that scores X on the test set.' From here: 'I built a model that's monitored, versioned, and replaceable when it stops working.' That second framing is what working data scientists actually do."
             },
             {
-              "kind": "reflection",
-              "title": "Three problems",
-              "body": "Real MLOps solves:\n  1. 'Which model is in prod?' (no versioning)\n  2. 'Why did it suddenly do worse?' (no drift detection)\n  3. 'I lost the experiment notes' (no tracking)"
+              "kind": "video",
+              "title": "MLOps explained simply",
+              "url": "https://www.youtube.com/watch?v=Z6KZBvLkroI",
+              "duration_min": 13,
+              "creator": "various",
+              "why": "Watch first. Frames why notebooks + saved files don't survive contact with production and what MLOps tools add."
+            },
+            {
+              "kind": "lesson",
+              "title": "MLOps in three concrete habits",
+              "body": "## 1. Every experiment is logged\nWhen you change a hyperparameter and rerun, the old result doesn't disappear. MLflow stores every run with its parameters, metrics, and artefacts. You can answer 'what was the MAE on the run with `seasonality_prior_scale=15`?' six months later.\n\n## 2. Every production model has a version\nModels aren't files on a laptop — they're registered artefacts with names, versions, and stages. `EnergyForecast/Production` resolves to a specific version that's been promoted by you (or by CI). Rollback is a single API call.\n\n## 3. Inputs are monitored\nDrift detection runs continuously. When the distribution of recent inputs differs significantly from training distribution, an alert fires. You investigate, decide whether to retrain, and promote a new model version if needed.\n\n## Why this is hireable\nMost data scientists can train a model. Far fewer can describe what happens next. Showing MLflow tracking + drift monitoring on your portfolio answers the 'and then what?' question that separates a junior from a senior."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "MLOps is mainly about training better models.",
+                  "answer": false,
+                  "whenRight": "Right — no. MLOps is the discipline of running, monitoring, and replacing models in production. Training quality is mostly upstream.",
+                  "whenWrong": "MLOps is post-training. Tracking, registry, drift, retraining — the lifecycle, not the modelling."
+                },
+                {
+                  "prompt": "A model trained in 2017 will still work in 2024 if the data pipeline is unchanged.",
+                  "answer": false,
+                  "whenRight": "Right — no. Input distributions drift over years (EVs, solar, behaviour). The pipeline can be perfect; the model still mis-forecasts.",
+                  "whenWrong": "Models age. Even with a perfect pipeline, drift in input distributions makes 2017's relationships wrong for 2024."
+                },
+                {
+                  "prompt": "MLflow stores every experiment with its parameters and metrics so you can compare runs later.",
+                  "answer": true,
+                  "whenRight": "Right — that's exactly the experiment-tracking piece. Compare runs in the UI, find the best by metric.",
+                  "whenWrong": "Yes — that's MLflow's tracking. Every run logged with params + metrics + artefacts. Compareable forever."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame MLOps",
+              "body": "[WRITE] In `notebooks/05-mlops.ipynb`:\n1. Define the three MLOps habits in your own words.\n2. List two ways the AEP Prophet model could silently mis-forecast in 2024 vs 2017.\n3. State this week's bar: 'I will be able to compare three Prophet runs side by side and detect drift in the test period.'"
             }
           ]
         },
         {
           "number": 2,
           "title": "Install + start MLflow",
-          "summary": "",
+          "summary": "Local tracking server in two commands.",
           "items": [
             {
-              "kind": "reading",
-              "title": "MLflow docs",
-              "url": "https://mlflow.org/docs/latest/index.html",
-              "why": "Click 'Open'. Bookmark."
+              "kind": "lesson",
+              "title": "Setting up MLflow",
+              "body": "## Install + start\n```bash\npip install mlflow\nmlflow ui --port 5000\n```\n\nThat opens MLflow's web UI at `http://localhost:5000`. Initially empty — no runs yet.\n\n## What gets stored where\nBy default MLflow writes everything to `./mlruns/` in the current directory:\n- `mlruns/0/<run-id>/params/...` — every parameter\n- `mlruns/0/<run-id>/metrics/...` — every metric logged over time\n- `mlruns/0/<run-id>/artifacts/...` — saved files (models, charts)\n- `mlruns/0/<run-id>/meta.yaml` — run metadata\n\nFor a real team you'd point at a remote tracking server (S3 / Postgres) — but local file storage is perfect for a learner project.\n\n## .gitignore the mlruns folder\n```\n# .gitignore\nmlruns/\n```\nIt can grow to gigabytes with model artefacts. Keep it local; the production registry would be remote anyway.\n\n## The Python client\n```python\nimport mlflow\nmlflow.set_tracking_uri('http://localhost:5000')\nmlflow.set_experiment('EnergyForecast')\n```\nFrom here every `with mlflow.start_run(): ...` block creates a new run, ready to log params and metrics."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Smoke test — log a fake run\n```python\nimport mlflow\nmlflow.set_tracking_uri('http://localhost:5000')\nmlflow.set_experiment('EnergyForecast')\n\nwith mlflow.start_run(run_name='smoke-test'):\n    mlflow.log_param('changepoint_prior_scale', 0.05)\n    mlflow.log_metric('mae_mw', 612.0)\nprint('Run logged — refresh http://localhost:5000')\n```\n\nOpen the UI. You should see one experiment 'EnergyForecast' with one run 'smoke-test' showing param `changepoint_prior_scale=0.05` and metric `mae_mw=612.0`. If you see that, you're ready for the real runs tomorrow."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "By default, MLflow stores runs in a local mlruns/ folder you can .gitignore.",
+                  "answer": true,
+                  "whenRight": "Right — local files, easy to start, easy to ignore. Production teams swap in S3 + Postgres.",
+                  "whenWrong": "Yes — local mlruns/. Add it to .gitignore (artefacts can be huge). Production uses remote storage."
+                },
+                {
+                  "prompt": "`mlflow ui --port 5000` opens the experiment-tracking web UI.",
+                  "answer": true,
+                  "whenRight": "Right — and then you point your Python client at http://localhost:5000 with set_tracking_uri.",
+                  "whenWrong": "Yes — that command runs the UI server. Your scripts log via set_tracking_uri to the same URL."
+                },
+                {
+                  "prompt": "Logging a parameter and a metric is enough to make a run appear in the MLflow UI.",
+                  "answer": true,
+                  "whenRight": "Right — `with start_run(): log_param(...); log_metric(...)` is the minimal viable run. The UI shows it immediately.",
+                  "whenWrong": "Yes — that's the minimum. Once params and metrics are logged inside a start_run block, the UI knows about it."
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "First run",
-              "body": "      pip install mlflow\nStart the UI:\n      mlflow ui --port 5000\nOpen localhost:5000. Empty dashboard."
+              "title": "Your turn — start MLflow",
+              "body": "[CODE] 1. `pip install mlflow`.\n2. In a separate terminal: `mlflow ui --port 5000`.\n3. Add `mlruns/` to .gitignore.\n4. Log a smoke-test run with one param + one metric using set_tracking_uri + set_experiment + start_run.\n5. Refresh the UI to confirm the run appears."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Track Prophet experiments",
-          "summary": "",
+          "title": "Track three Prophet experiments",
+          "summary": "Sweep the prior scale, log every run.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Tracking hyperparameter sweeps",
+              "body": "## What it is\nSweep Prophet's `changepoint_prior_scale` — the hyperparameter that controls how flexible the trend is — and log every value's MAE.\n\n```python\nimport mlflow, joblib\nfrom prophet import Prophet\nfrom sklearn.metrics import mean_absolute_error\nimport pandas as pd\n\ndaily = pd.read_parquet('data/aep_daily.parquet')\ndf = daily.rename_axis('ds').reset_index().rename(columns={'demand': 'y'})[['ds','y']]\nsplit = int(len(df) * 0.8)\ntrain, test = df.iloc[:split], df.iloc[split:]\n\nmlflow.set_experiment('EnergyForecast')\n\nfor prior in [0.01, 0.05, 0.5]:\n    with mlflow.start_run(run_name=f'prophet-cps={prior}'):\n        m = Prophet(weekly_seasonality=True, yearly_seasonality=True,\n                    daily_seasonality=False, changepoint_prior_scale=prior)\n        m.add_country_holidays(country_name='US')\n        m.fit(train)\n        future = m.make_future_dataframe(periods=len(test), freq='D')\n        forecast = m.predict(future)\n        preds = forecast.loc[forecast['ds'].isin(test['ds']), 'yhat'].values\n        mae = mean_absolute_error(test['y'].values, preds)\n\n        mlflow.log_param('changepoint_prior_scale', prior)\n        mlflow.log_metric('mae_mw', mae)\n        joblib.dump(m, f'models/prophet_cps_{prior}.pkl')\n        mlflow.log_artifact(f'models/prophet_cps_{prior}.pkl', 'model')\n        print(f'cps={prior}  MAE={mae:.0f}')\n```\n\n## What `changepoint_prior_scale` does\nIt's a regularisation on trend flexibility:\n- **0.01** — almost-rigid trend. Underfits sharp shifts.\n- **0.05** — Prophet's default. Good middle ground.\n- **0.5** — very flexible. Captures recent shifts but risks overfit.\n\nSweeping shows you whether the default was correct or whether a different value beats it. With MLflow logging every run, the comparison is in the UI."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## What you'll see\n```text\ncps=0.01  MAE=678\ncps=0.05  MAE=612   <- default wins here\ncps=0.5   MAE=634\n```\n\nThen refresh the MLflow UI → EnergyForecast experiment → you see three runs side by side. Click 'Compare' to plot MAE vs `changepoint_prior_scale`. The flexibility sweet spot at 0.05 is visible immediately.\n\n## Why this is a real workflow win\nWithout MLflow, you'd manually copy MAE numbers into a notebook cell and compare by eye. With MLflow, the sweep is in the UI forever, comparable to next month's sweep, and the saved models are downloadable by clicking the run."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`mlflow.log_artifact(path)` uploads a file (e.g. a saved model) to that run's storage.",
+                  "answer": true,
+                  "whenRight": "Right — files attached to a run. Downloadable later by clicking the run in the UI.",
+                  "whenWrong": "Yes — log_artifact stores files alongside the run. Saved models, charts, anything. Reachable from the UI."
+                },
+                {
+                  "prompt": "Higher changepoint_prior_scale always means a better Prophet model.",
+                  "answer": false,
+                  "whenRight": "Right — no. Higher = more flexible trend, which can overfit. There's a sweet spot.",
+                  "whenWrong": "More flexibility helps until it overfits. There's a U-shaped sweet spot; the sweep finds it."
+                },
+                {
+                  "prompt": "MLflow's Compare view lets you plot a metric against a parameter across all logged runs.",
+                  "answer": true,
+                  "whenRight": "Right — select runs in the UI, hit Compare, choose metric + param axes. Instant sweep visualisation.",
+                  "whenWrong": "Yes — the Compare view does sweep visualisation for free. Select runs, plot metric vs param."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Log a run",
-              "body": "In your energy-forecast repo, create train.py:\n      import mlflow, pandas as pd\n      from prophet import Prophet\n      from sklearn.metrics import mean_absolute_error\n\n      mlflow.set_experiment('energy-prophet')\n      df = pd.read_csv('data/AEP_hourly.csv', parse_dates=['Datetime'])\n      daily = df.set_index('Datetime')['AEP_MW'].resample('D').mean().reset_index()\n      pdf = daily.rename(columns={'Datetime':'ds','AEP_MW':'y'})\n      train, test = pdf[:-30], pdf[-30:]\n\n      with mlflow.start_run():\n          mlflow.log_param('seasonality_mode', 'multiplicative')\n          m = Prophet(seasonality_mode='multiplicative', yearly_seasonality=True)\n          m.fit(train)\n          forecast = m.predict(test[['ds']])\n          mae = mean_absolute_error(test['y'], forecast['yhat'])\n          mlflow.log_metric('mae', mae)\n          print(f'MAE: {mae:.1f}')\n\nRun it. Refresh localhost:5000 — you see the run."
+              "title": "Your turn — sweep",
+              "body": "[CODE] In `notebooks/05-mlops.ipynb`:\n1. Sweep changepoint_prior_scale in {0.01, 0.05, 0.5}.\n2. For each, fit Prophet, predict, compute MAE.\n3. Log each as its own MLflow run with the prior as a param, MAE as a metric, and the saved model as an artifact.\n4. Open the UI Compare view and screenshot the param vs MAE plot."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Compare multiple runs",
-          "summary": "",
+          "title": "Compare runs in the UI",
+          "summary": "Pick the best run programmatically.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Programmatic comparison",
+              "body": "## Why programmatic\nVisual comparison in the UI is great for exploration. **Programmatic** comparison is what you use in CI/CD: 'find the lowest-MAE run for this experiment and promote it to Production.'\n\n```python\nfrom mlflow.tracking import MlflowClient\nclient = MlflowClient()\n\nexp = client.get_experiment_by_name('EnergyForecast')\nruns = client.search_runs(\n    experiment_ids=[exp.experiment_id],\n    order_by=['metrics.mae_mw ASC'],\n    max_results=3,\n)\nbest = runs[0]\nprint(f'Best run: {best.info.run_id}')\nprint(f'  cps  = {best.data.params[\"changepoint_prior_scale\"]}')\nprint(f'  MAE  = {best.data.metrics[\"mae_mw\"]:.0f}')\n# Best run: 7f1c...\n#   cps  = 0.05\n#   MAE  = 612\n```\n\n## Registering a model\nPromote the best run's model into the registry:\n```python\nmlflow.register_model(\n    model_uri=f'runs:/{best.info.run_id}/model',\n    name='EnergyForecast',\n)\n```\n\nNow `EnergyForecast` is a registered model. Each registration becomes a new version (1, 2, 3...). You promote a version through stages (None → Staging → Production → Archived):\n\n```python\nclient.transition_model_version_stage(\n    name='EnergyForecast', version=1, stage='Production'\n)\n```\n\n## The production loadable URI\n```python\nimport mlflow\nmodel = mlflow.pyfunc.load_model('models:/EnergyForecast/Production')\n```\nThat URI doesn't change as you promote new versions. Your production code stays identical; promotion is a single API call. Rollback (revert to v1) is also one call."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Build the leaderboard\n```python\nimport pandas as pd\nrows = []\nfor r in client.search_runs([exp.experiment_id], order_by=['metrics.mae_mw ASC']):\n    rows.append({\n        'run_id':   r.info.run_id[:8],\n        'cps':      r.data.params.get('changepoint_prior_scale'),\n        'mae_mw':   r.data.metrics.get('mae_mw'),\n        'name':     r.data.tags.get('mlflow.runName'),\n    })\nprint(pd.DataFrame(rows))\n#      run_id     cps  mae_mw          name\n# 0  7f1c2d3e   0.05   612.0  prophet-cps=0.05\n# 1  a8b9c0d1    0.5   634.0  prophet-cps=0.5\n# 2  e5f6a7b8   0.01   678.0  prophet-cps=0.01\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "MlflowClient().search_runs() with order_by lets you pull the best run programmatically.",
+                  "answer": true,
+                  "whenRight": "Right — sortable query in the tracking store. The basis of CI auto-promotion.",
+                  "whenWrong": "Yes — programmatic search is the CI/CD primitive. You don't visually scan; you sort."
+                },
+                {
+                  "prompt": "Loading from `models:/EnergyForecast/Production` returns whichever version is currently in Production stage.",
+                  "answer": true,
+                  "whenRight": "Right — stage-based URIs decouple production code from specific versions. Promotion = one API call.",
+                  "whenWrong": "Yes — the URI binds to a stage, not a version. Promotion / rollback don't touch your production code."
+                },
+                {
+                  "prompt": "Once a version is in Production, you can't roll back to an older version.",
+                  "answer": false,
+                  "whenRight": "Right — no. Rollback is `transition_model_version_stage(version=N-1, stage='Production')`. One call.",
+                  "whenWrong": "Rollback is trivial — transition a previous version back to Production. The stage URI silently follows."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Hyperparameter sweep",
-              "body": "Loop over 3 changepoint_prior_scale values:\n      for cps in [0.05, 0.1, 0.5]:\n          with mlflow.start_run():\n              mlflow.log_param('cps', cps)\n              m = Prophet(changepoint_prior_scale=cps)\n              m.fit(train)\n              ...\n              mlflow.log_metric('mae', mae)\n\nIn MLflow UI, sort by MAE. Pick the winner. Tag it 'prod'."
+              "title": "Your turn — programmatic best",
+              "body": "[CODE] In `notebooks/05-mlops.ipynb`:\n1. Use MlflowClient to find the lowest-MAE run.\n2. Register that run's model as 'EnergyForecast'.\n3. Transition v1 to 'Production' stage.\n4. Load with `mlflow.pyfunc.load_model('models:/EnergyForecast/Production')` and predict one point."
             }
           ]
         },
         {
           "number": 5,
           "title": "Detect data drift",
-          "summary": "",
+          "summary": "KS test between training and held-out distributions.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Drift detection with the KS test",
+              "body": "## What you're testing\nTwo samples: a **reference** (distribution from training data) and a **current** (distribution from recent production data). KS asks: are these two empirical distributions meaningfully different?\n\n```python\nfrom scipy.stats import ks_2samp\n\nreference = train['y'].values            # what the model learned on\ncurrent   = test['y'].iloc[-90:].values  # last 90 days of held-out\nstat, p = ks_2samp(reference, current)\nprint(f'KS stat={stat:.4f}, p={p:.4f}')\n# KS stat=0.1124, p=0.0008\n# Small p -> distributions are significantly different -> drift\n```\n\n## What the numbers mean\n- **KS stat** — the largest gap between the two empirical CDFs. Bigger = more different.\n- **p-value** — probability of seeing a gap this large if the distributions were actually the same. Small p (< 0.01 is a common alert threshold) means 'these distributions are NOT the same.'\n\n## Why KS specifically\n- **Non-parametric** — no assumption that the data is normal.\n- **Works on any continuous variable** — demand in MW, temperature, prices.\n- **Simple to explain** to non-statisticians ('the two distributions look meaningfully different').\n\nFor categorical inputs you'd use a chi-square test instead — same principle, different test.\n\n## The reference window\nIn production, you'd fix the reference to training-period data (or a known-good baseline period). The current window slides forward each day. When KS crosses the threshold, an alert fires."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Detect drift across the test period\n```python\nimport numpy as np\nfrom scipy.stats import ks_2samp\n\nreference = train['y'].values\nwindow_days = 60\nalerts = []\nfor i in range(window_days, len(test)):\n    current = test['y'].iloc[i - window_days:i].values\n    stat, p = ks_2samp(reference, current)\n    if p < 0.01:\n        alerts.append({\n            'date_end': test['ds'].iloc[i],\n            'ks_stat':  round(stat, 4),\n            'p':        round(p, 5),\n        })\n\nprint(f'Total alerts: {len(alerts)}')\nfor a in alerts[:5]:\n    print(a)\n# Total alerts: 47\n# {'date_end': '2017-12-04', 'ks_stat': 0.142, 'p': 0.00031}\n# {'date_end': '2018-01-22', 'ks_stat': 0.171, 'p': 0.00002}\n# ...\n```\n\n## What to do with this\nMost of these will cluster around real distributional shifts (heatwaves, cold snaps). The signal is that your model's inputs have moved out of the trained range — investigate, decide whether to retrain."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The KS test is non-parametric — it doesn't assume the data is normally distributed.",
+                  "answer": true,
+                  "whenRight": "Right — works on any distribution. Compares empirical CDFs directly.",
+                  "whenWrong": "Yes — non-parametric. No normality assumption. That's exactly why it's the default for drift detection."
+                },
+                {
+                  "prompt": "A small KS p-value means the two distributions ARE the same.",
+                  "answer": false,
+                  "whenRight": "Right — opposite. Small p = unlikely they're the same = drift detected.",
+                  "whenWrong": "Small p -> reject 'same distribution' -> distributions differ. Counter-intuitive but standard hypothesis-testing logic."
+                },
+                {
+                  "prompt": "In a production drift monitor, the reference window stays fixed (training data); the current window slides forward in time.",
+                  "answer": true,
+                  "whenRight": "Right — reference is the known-good baseline. Current is fresh data. You compare them daily.",
+                  "whenWrong": "Yes — reference fixed, current slides. That's how you detect drift away from the trained baseline."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Drift check with evidently",
-              "body": "      pip install evidently\n      from evidently.report import Report\n      from evidently.metric_preset import DataDriftPreset\n      ref = daily.head(1000)['AEP_MW']  # historical\n      cur = daily.tail(100)['AEP_MW']    # recent\n      r = Report(metrics=[DataDriftPreset()])\n      r.run(reference_data=pd.DataFrame({'val': ref}), current_data=pd.DataFrame({'val': cur}))\n      r.save_html('drift.html')\nOpen drift.html. Drifted? Why might that be?"
+              "title": "Your turn — detect drift",
+              "body": "[CODE] In `notebooks/05-mlops.ipynb`:\n1. Set reference = training-period demand.\n2. For each day in the test period (after a 60-day warmup), compute KS between reference and the trailing 60-day window.\n3. Record dates where p < 0.01.\n4. Print the count + first few alerts."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Trigger alert on drift",
-          "summary": "",
+          "title": "Trigger an alert on drift",
+          "summary": "Turn the detection into an actionable signal.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "From detection to alert",
+              "body": "## What's missing\nYou can DETECT drift now. You can't yet ACT on it. Production needs:\n1. A clear threshold ('p < 0.01' is fine — anything above gets ignored)\n2. A delivery channel (Slack webhook, PagerDuty, email)\n3. De-duplication — one alert per drift event, not 50 alerts in a week\n\n## A minimal alert function\n```python\nimport requests, os\n\nSLACK_WEBHOOK = os.getenv('SLACK_WEBHOOK_URL')  # store in .env\n\ndef alert(msg: str):\n    \"\"\"Send a Slack notification. Falls back to print if no webhook configured.\"\"\"\n    if SLACK_WEBHOOK:\n        requests.post(SLACK_WEBHOOK, json={'text': msg})\n    else:\n        print('ALERT:', msg)\n\ndef check_drift_and_alert(reference, current, threshold=0.01):\n    stat, p = ks_2samp(reference, current)\n    if p < threshold:\n        alert(f'🚨 EnergyForecast drift detected: KS={stat:.3f}, p={p:.5f}. '\n              'Review model in MLflow.')\n        return True\n    return False\n```\n\n## De-duplication\n```python\n# Track last alert time to avoid spam\nfrom datetime import datetime, timedelta\nlast_alert = None\nCOOLDOWN = timedelta(days=7)  # max one alert per week per drift event\n\nif drifted and (last_alert is None or datetime.now() - last_alert > COOLDOWN):\n    alert(msg)\n    last_alert = datetime.now()\n```\n\n## The full production-style loop\n```text\nevery day:\n    current = last 60 days of demand\n    if KS(reference, current).p < 0.01 AND not in cooldown:\n        send slack alert with link to MLflow run\n        log alert to MLflow\n        humans investigate and decide whether to retrain\n```\n\n## Why this completes MLOps\nYou've now closed the loop: train → log → register → promote → monitor → alert. That's the lifecycle. Every production ML system has some version of these steps. Building each one yourself this week means you can recognise (and improve) any of them on the job."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Alerts without de-duplication can spam the team with one notification per day for a single drift event.",
+                  "answer": true,
+                  "whenRight": "Right — exactly the failure mode. Cooldown windows (per-week per-event) prevent it.",
+                  "whenWrong": "Yes — alert fatigue is real. De-dup with cooldown windows so one drift event = one notification."
+                },
+                {
+                  "prompt": "Storing the Slack webhook URL in `.env` (gitignored) is the standard pattern.",
+                  "answer": true,
+                  "whenRight": "Right — same as API keys. Never commit webhooks; load from environment.",
+                  "whenWrong": "Always .env + .gitignore for secrets. Webhooks, API keys, DB URLs — same rule."
+                },
+                {
+                  "prompt": "A drift alert is a fully automated retrain trigger.",
+                  "answer": false,
+                  "whenRight": "Right — no. Drift alerts wake humans up. The decision to retrain is judgment, not automation.",
+                  "whenWrong": "Drift fires alerts; humans decide whether to retrain. Auto-retrain on every alert is how bad models silently ship."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Simple alarm",
-              "body": "      summary = r.as_dict()\n      drifted = summary['metrics'][0]['result']['dataset_drift']\n      if drifted:\n          print('ALARM: data drift detected — consider retraining')\n          # In prod: send Slack/email here\nWrite a cron-like script that does this check daily."
+              "title": "Your turn — alert",
+              "body": "[CODE] In `notebooks/05-mlops.ipynb`:\n1. Write a check_drift_and_alert function that prints (or Slacks) when p < 0.01.\n2. Run it over the test period.\n3. Add a 7-day cooldown so back-to-back days don't double-fire.\n4. Note: in production you'd wire this to a Slack webhook stored in .env."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag mlops-w1",
-          "summary": "",
+          "title": "Ship mlops-w1",
+          "summary": "Tag the MLOps milestone.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping the MLOps work",
+              "body": "## What goes in the README\n```text\n## mlops-w1 — Tracking + drift monitoring\n- MLflow experiment 'EnergyForecast' with 3 logged Prophet runs (cps sweep)\n- Best run: cps=0.05, MAE=612 MW (registered as EnergyForecast v1, Production)\n- Drift monitor: KS test on a sliding 60-day window vs training-period reference\n- 47 drift alerts triggered across the test period (clustered around heatwaves\n  and the holiday season) — exactly the periods Prophet's MAE is worst on,\n  confirming the monitor catches real distribution shifts\n- Alert function with 7-day cooldown wired (prints locally; would Slack in prod)\n```\n\n```bash\ngit add notebooks/05-mlops.ipynb README.md\ngit commit -m \"MLOps: MLflow tracking + KS drift detection\"\ngit tag mlops-w1\ngit push && git push --tags\n```\n\n## What this milestone proves\nYou can take a model from notebook to lifecycle: tracked experiments, versioned registry, monitored production, alerts on drift. That's the senior-DS workflow translated to a real artefact on your portfolio.\n\n## What's next\nWeek 26 — Cloud + BigQuery. The model goes off your laptop, onto S3, and you query data at full scale.\n\nBy Week 27 you ship Energy Forecast v1.0 with a blog post, a demo dashboard, and a retro."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Committing the notebook + README is enough — mlruns/ stays local and gitignored.",
+                  "answer": true,
+                  "whenRight": "Right — artefacts live in mlruns/. The notebook + README document the workflow. Together they're the deliverable.",
+                  "whenWrong": "Yes — mlruns/ is gitignored. The notebook + README capture the workflow; the artefacts stay local (or remote in real teams)."
+                },
+                {
+                  "prompt": "Pushing the mlops-w1 tag marks the milestone and lets you reference 'the state of the project when MLOps was added.'",
+                  "answer": true,
+                  "whenRight": "Right — tags pin known-good points in the timeline. Future reviewers can check out mlops-w1 cleanly.",
+                  "whenWrong": "Yes — tags = immutable checkpoints. Anyone (you, a reviewer, CI) can refer to this exact state forever."
+                },
+                {
+                  "prompt": "MLOps work is invisible to interviewers because they only care about model accuracy.",
+                  "answer": false,
+                  "whenRight": "Right — no. Senior interviewers care MORE about MLOps than absolute accuracy. Anyone can fit; few can monitor.",
+                  "whenWrong": "Senior signal: training is table stakes; lifecycle is what separates juniors from seniors. MLOps is visible and valued."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance",
-              "body": "      git add . && git commit -m 'MLflow tracking + drift monitoring'\n\nPASS:\n  ☐ MLflow UI works locally\n  ☐ 3+ tracked experiments visible\n  ☐ Best model tagged 'prod'\n  ☐ Evidently drift report generated\n  ☐ Drift alarm script committed"
+              "title": "Your turn — ship mlops-w1",
+              "body": "[PRODUCE] 1. README: list the three MLflow runs + their MAEs, name the production pick, summarise the drift monitor (window size, threshold, total alerts).\n2. Commit + tag:\n`git add . && git commit -m 'MLOps: MLflow + drift detection'`\n`git tag mlops-w1 && git push --tags`\n\nPASS:\n[x] MLflow UI shows 3 EnergyForecast runs\n[x] Best run promoted to Production stage\n[x] KS drift function in notebook\n[x] Drift alert count over test period in README\n[x] mlops-w1 tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "MLflow basics (params/metrics/tags)",
-        "Experiment comparison + selection",
-        "Data drift definition",
-        "Evidently for drift reports",
-        "Simple alert pipelines"
-      ],
-      "tasks": [
-        "Install MLflow + start UI",
-        "Track a baseline Prophet run",
-        "Sweep 3 hyperparameter values",
-        "Tag the prod model",
-        "Run Evidently drift report",
-        "Build a daily drift-alarm script"
-      ],
-      "project": "Energy Forecast MLOps layer — MLflow experiment tracking + Evidently drift monitoring. Tagged 'prod' model + automated drift alarms.",
-      "resources": [
-        {
-          "label": "MLflow basics in 28 min - Krish Naik (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=MLflow%20basics%20-%20Krish%20Naik",
-          "note": "28 min. Track experiments, register models. Standard MLOps tool. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "Evidently AI drift in 12 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Evidently%20AI%20drift",
-          "note": "12 min. Open-source drift reports. HTML output. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "MLflow model registry in 9 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=MLflow%20model%20registry",
-          "note": "9 min. Staging vs Production vs Archived stages. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "Python to Slack webhook in 5 min",
-          "url": "https://www.youtube.com/watch?v=6gHvqXrfjuo",
-          "note": "5 min. Send drift alerts to a channel."
-        }
-      ],
-      "exercises": [
-        "Add a model registry stage transition (Staging → Production)",
-        "Send drift alerts to a Slack webhook",
-        "Track model artifacts (the .pkl file itself)"
-      ],
-      "questions": [
-        "Why is a metric-only view of model quality dangerous?",
-        "What's the difference between data drift and concept drift?",
-        "When should drift trigger automatic retraining vs human review?"
-      ],
-      "outputs": [
-        "MLflow tracking working",
-        "Drift report HTML",
-        "Daily alarm script committed"
-      ],
-      "mastery_questions": [
-        "Install mlflow and initialise a local experiment. Wrap one of your model training runs (pick ARIMA or Prophet) with mlflow.start_run(). Log at least three parameters (e.g., model_type, window_size, seasonal_period) and two metrics (MAE, RMSE) using mlflow.log_param and mlflow.log_metric. Paste the run ID. Open the MLflow UI (mlflow ui in the terminal, then http://localhost:5000) and paste a screenshot or describe what you see in the run detail page.",
-        "Log all four models (persistence, ARIMA, Prophet, LSTM) as separate MLflow runs in the same experiment. For each, log the params and test-set metrics. Paste the experiment comparison view (the table in the MLflow UI showing all four runs side by side). Now tag the best-performing model run with mlflow.set_tag(\"stage\", \"prod\"). This tag is how production systems know which model to load.",
-        "Save the Prophet model artifact to MLflow using mlflow.prophet.log_model (or mlflow.pyfunc.log_model for custom models). Paste the artifact URI. Now load it back using mlflow.pyfunc.load_model(artifact_uri) and run one prediction. Paste the prediction. This round-trip -- train, log, load, predict -- is the MLflow workflow that underpins every ML deployment you will encounter at companies using Databricks or Azure ML.",
-        "Install evidently and run a DataDriftPreset report. Your reference dataset is the training window (2004-2015 daily demand). Your current dataset is the test window (2016-2018). Paste the overall drift score and which features (if any) are flagged as drifted. If the report shows drift, write one sentence about what real-world change between 2015 and 2018 could explain it. If it shows no drift, write one sentence about why that might still be misleading (hint: overall distribution can be stable while tail behaviour shifts).",
-        "Set up a simple drift alarm: if the Evidently drift score crosses a threshold you define, print an alert message (in production this would be a Slack message or a PagerDuty call). Paste the alarm logic. Write one sentence about what you would do if this alarm fired in a real deployment -- not \"retrain the model\" in the abstract, but specifically: who gets notified, what data do you pull, what decision criteria determine whether to retrain or roll back."
-      ],
-      "ai_assist": "Use Claude to explain the difference between data drift, concept drift, and model performance drift -- three distinct failure modes that all get lumped together as \"the model degraded.\" Understanding the difference changes what you monitor and what you do when an alarm fires. Do NOT ask Claude to write your drift alarm logic -- that logic encodes a business decision (what threshold is worth waking someone up at 3am?), and that decision belongs to you and the stakeholder, not to a language model.",
-      "pre_flight": "Before touching MLflow, open the experiment tracking you have been doing so far -- probably scattered across notebook cells and the README table. Write down what information you would lose if you had to recreate this project from scratch tomorrow. That list is exactly what MLflow will capture going forward. The discipline of experiment tracking is easier to appreciate after you have lost something you cannot reconstruct.",
-      "common_mistakes": [
-        "Running MLflow tracking without setting an experiment name. All runs land in the \"Default\" experiment, which becomes unmanageable after 10 runs. Always call mlflow.set_experiment(\"energy-forecast\") before logging anything.",
-        "Logging metrics after the run context closes. mlflow.log_metric must be called inside the with mlflow.start_run(): block, or the metrics are silently dropped.",
-        "Comparing Evidently drift on raw hourly data instead of daily. The reference and current datasets should match the granularity at which your model was trained. Drift detected on hourly data may not mean anything for a daily model.",
-        "Treating \"no drift detected\" as a green light to stop monitoring. Evidently checks distribution-level drift; it does not check model performance drift. A model can be accurate on the new distribution while the new distribution is still meaningfully different. Always pair distribution drift with performance monitoring.",
-        "Not versioning the MLflow tracking directory. The local mlruns/ folder is the experiment database. If you delete it or do not commit it, you lose all your run history. Either commit it (fine for small projects) or point MLflow at a persistent backend (Postgres or S3 for team use)."
-      ],
-      "debug_help": "Two specific issues. First: MLflow UI shows runs but no metrics. Usually means you called mlflow.log_metric outside the run context (after the with block closed). Move all logging calls inside the with block and rerun. Second: Evidently raises \"Column not found\" or produces an empty report. This means the column names in your reference and current DataFrames do not match. Both must have the same column named consistently (e.g., 'AEP_MW'). Run reference.columns and current.columns side by side and align them before passing to the report.",
-      "stretch": [
-        "Set up MLflow tracking against a remote server by pointing MLFLOW_TRACKING_URI at a DagsHub or HuggingFace Spaces backend. Now your experiment history is accessible from any machine -- which is the minimum viable setup for any team project.",
-        "Add a model registry step: promote your \"prod\"-tagged model to the MLflow Model Registry and add a version description. The Model Registry is the difference between \"I have a tagged run\" and \"I have a versioned, auditable artifact I can roll back to.\"",
-        "Read Chip Huyen's \"Designing Machine Learning Systems\" Chapter 8 (Data Distribution Shifts). It is the best practical treatment of drift types and monitoring strategies available, and it is what the interviewers at ML-heavy companies expect you to have read."
       ]
     },
     {
