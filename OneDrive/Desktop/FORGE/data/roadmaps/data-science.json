@@ -9465,210 +9465,378 @@
       "phase": "Production",
       "commitment_hours": "10-12",
       "context": "Everything you have built so far runs on your laptop. That is fine for a project. It is not fine for a job. At some point in your first data science role you will be handed a dataset that is 200GB, a model that needs to run on a schedule, or a pipeline that needs to be reproducible on a machine that is not yours. That is what cloud infrastructure solves, and this week you get your first real exposure to it.\n\nThe AWS piece is practical and focused. You will create an account (if you do not have one), set up MFA and a billing alarm immediately -- AWS bills have surprised many engineers who left a GPU instance running over a weekend -- and install the AWS CLI. Then you will upload your best Energy Forecast model artifact to an S3 bucket and write a script that loads it from S3 using boto3. That pattern -- model stored in cloud object storage, loaded on demand by application code -- is how every production ML system you will encounter manages model artifacts. Hugging Face's model hub, MLflow's remote artifact store, and SageMaker all use S3 as the underlying layer.\n\nThe BigQuery piece is a different kind of cloud skill. BigQuery is Google's serverless analytics database, and it is where many large organisations run their analytical SQL workloads. The reason data scientists need BigQuery specifically is that it scales to petabytes without any infrastructure to manage -- you write SQL, BigQuery figures out the execution. Google makes several public datasets available in BigQuery for free, and you will use one of them to run a real analytical query at a scale that would crash pandas.\n\nThe goal this week is not to become a cloud engineer. It is to understand the two things data scientists most commonly need from the cloud: object storage (for models and data), and scalable querying (for analysis at sizes that do not fit in memory). Both of those come up in the first month of most DS roles.\n\nBy Sunday: a model artifact in S3, a working boto3 load script, a BigQuery query that returns a result you could not get on a laptop, and a one-page \"cloud hygiene\" note in your repo covering MFA, billing alarms, and IAM principles.",
+      "concept_check": [
+        {
+          "q": "Why does a data scientist need to know cloud storage even if they don't deploy services?",
+          "choices": [
+            "For show",
+            "Real datasets, models and pipelines outgrow a laptop — S3 / GCS / Azure Blob is where they actually live in any company past startup phase",
+            "Cloud is required by Python",
+            "To use more RAM"
+          ],
+          "correct": 1,
+          "explain": "Datasets you'll work on professionally don't fit on a laptop; trained models need a single canonical location your team can load from; pipelines run on machines that aren't yours. Cloud object storage (S3 + friends) is the universal place all three live. Knowing it puts you on speaking terms with the production half of the job."
+        },
+        {
+          "q": "What does BigQuery's free tier specifically give you?",
+          "choices": [
+            "A free server",
+            "1 TB of query processing and 10 GB of storage per month, no credit card required — enough to learn on public datasets",
+            "Free machine learning",
+            "Unlimited everything"
+          ],
+          "correct": 1,
+          "explain": "Google's free tier is 1 TB of query-bytes scanned + 10 GB of storage per month, no credit card. Google's public datasets (NYC taxi, GitHub commits, OpenStreetMap) are pre-loaded. You can scan whole years of trip records in a query and stay under the cap."
+        },
+        {
+          "q": "Why ALWAYS set a billing alarm before doing anything on AWS?",
+          "choices": [
+            "AWS requires it",
+            "A single misconfigured resource (open S3 bucket, runaway EC2, accidentally-public RDS) can cost hundreds before you notice — the alarm emails you at $5",
+            "It's for show",
+            "To enable services"
+          ],
+          "correct": 1,
+          "explain": "The classic cloud horror story: you spin up an instance for a tutorial, forget about it, and find a $400 bill weeks later. A CloudWatch billing alarm at $5 catches every common misconfiguration before it goes anywhere near painful. Set it on day 1, leave it on forever. Free."
+        }
+      ],
       "days": [
         {
           "number": 1,
           "title": "Why the cloud",
-          "summary": "No installs today — just understand the picture.",
+          "summary": "Datasets, models and pipelines that outgrow your laptop.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The three reasons cloud knowledge is non-optional",
+              "body": "## What it is\nYou've spent 25 weeks shipping projects that run on your laptop. That's perfect for learning. It's perfect for portfolios. It is **not** perfect for the actual job. In your first DS role you will hit one of three walls:\n\n1. **The data is too big.** A real customer or transactional dataset is 50-500 GB. You can't `pd.read_parquet` that on a 16 GB laptop. The data lives in **S3 (or GCS / Azure Blob)**; you query it from there with SQL (BigQuery, Athena, Snowflake) or stream it through Spark/Dask.\n2. **The model has to run on a schedule.** Not 'I ran it once.' 'It runs every Sunday at 3am whether or not I'm awake.' That means cron on a cloud machine, or a managed service (Lambda, Cloud Run, Step Functions).\n3. **Other people need to reach it.** Your model has to be loadable by other teams, your dashboard has to live somewhere your boss can click. None of that works from your laptop with the lid closed.\n\nAll three roads lead to **cloud object storage**. This week you set up the basics on AWS and Google Cloud — safely, with billing alarms — and run a meaningful task on both. By Sunday you have a working AWS account, a working BigQuery project, your Prophet model living in S3, and one full TaxiPulse query running on BigQuery's public NYC taxi dataset.\n\n## Why before the capstone\nThe W28-W30 capstone may well use a public dataset that's too big to download locally. The cloud setup you do this week unlocks that option."
+            },
+            {
               "kind": "video",
-              "title": "AWS in 10 minutes — Fireship",
-              "url": "https://www.youtube.com/watch?v=Z4AmZSm5OTI",
-              "duration_min": 10,
+              "title": "AWS in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=ZzI9JE0i6Lc",
+              "duration_min": 3,
               "creator": "Fireship",
-              "why": ""
+              "why": "Watch first. Frames what AWS actually is — the big services, the rough pricing model, why every company uses it."
             },
             {
               "kind": "video",
-              "title": "BigQuery explained (5 min)",
-              "url": "https://www.youtube.com/results?search_query=bigquery+beginner+5+minutes",
-              "duration_min": 5,
-              "creator": "various",
-              "why": ""
+              "title": "What is Google Cloud (and BigQuery) — 100 seconds",
+              "url": "https://www.youtube.com/watch?v=kzKFuHk8ovk",
+              "duration_min": 3,
+              "creator": "Fireship",
+              "why": "Watch second. Same orientation for Google Cloud, with BigQuery specifically called out as the data-analytics piece."
             },
             {
-              "kind": "reflection",
-              "title": "Two reasons",
-              "body": "Why does real DS work need the cloud?\n  1. Data too big for your laptop (NYC TLC = 50GB+, your laptop has limited RAM)\n  2. Models too slow on your laptop (training + serving need GPUs/many CPUs)\nWrite your answer in notes.txt."
+              "kind": "lesson",
+              "title": "The four cloud habits that protect your wallet",
+              "body": "## Set a billing alarm before anything else\nEvery cloud horror story (\"I owe AWS $1,800\") starts with someone spinning up a service for a tutorial and forgetting it. Habit #1 on every new cloud account: a billing alarm at $5 that emails you when costs creep up. Free, takes 60 seconds, prevents 100% of catastrophes.\n\n## Tag everything you create\nEvery resource you spin up — bucket, instance, function — gets a tag like `project=forge-w26 user=me`. When you later wonder \"what's this random thing costing me $3/month?\", the tag tells you exactly which project it belonged to. Real teams do this with Terraform; learners do it by hand and it's still worth the friction.\n\n## Delete what you stop using\nCloud bills are death by a thousand cuts. The 'oh I'll keep that around in case' attitude is what produces the $1,800 horror story. When you finish a week, **delete the bucket / instance / project** unless you have a concrete reason to keep it.\n\n## Never commit credentials\nSame rule from the AI-engineering Day 0. AWS access keys + GCS service-account JSON go in `~/.aws/credentials` or `gcloud auth login` profile — never in your repo. A leaked AWS key costs people thousands within hours of being scraped from a public commit.\n\nGet these habits right today and the cloud is a tool, not a liability."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A billing alarm at $5 protects against the most common cloud cost surprises.",
+                  "answer": true,
+                  "whenRight": "Right — runaway tutorial resources rarely make it past $5 before the alarm catches them.",
+                  "whenWrong": "Yes — set it day 1. Most accidents are caught before they get painful."
+                },
+                {
+                  "prompt": "If a cloud resource is small enough, it's safe to leave running forever without a billing alarm.",
+                  "answer": false,
+                  "whenRight": "Right — no. Even a tiny resource compounds, and 'small' once you add five of them isn't small anymore. Always alarm.",
+                  "whenWrong": "Never skip the alarm. 'Small' adds up; quietly leaking a few dollars per day for a year is a real bill."
+                },
+                {
+                  "prompt": "Committing AWS access keys to a public GitHub repo is mostly harmless because they're scoped.",
+                  "answer": false,
+                  "whenRight": "Right — no. Scraped within minutes; abused for crypto mining; you wake up to a $5k bill and a frozen account.",
+                  "whenWrong": "Never commit keys. They're scraped within minutes by bots; abuse costs real money before AWS rolls back."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — frame the week",
+              "body": "[WRITE] In `CLOUD.md`:\n1. Name the three walls a cloud-illiterate DS hits in a first role.\n2. State your goal for the week: 'By Sunday I will have a working AWS account with billing alarm, a working GCP project with BigQuery, and one meaningful query run on each.'\n3. Commit to deleting any resource you create that you don't actively need by Sunday night."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Set up AWS Free Tier (safely)",
-          "summary": "The careful steps. Skip nothing.",
+          "title": "AWS Free Tier — safely",
+          "summary": "Sign up, MFA, billing alarm, IAM user, CLI.",
           "items": [
             {
-              "kind": "reading",
-              "title": "AWS Free Tier signup",
-              "url": "https://portal.aws.amazon.com/billing/signup",
-              "why": "Click 'Open'. You need a credit card. Cost this week: $0 if you stay in free tier."
+              "kind": "lesson",
+              "title": "AWS account setup, done right",
+              "body": "## What you'll do\n1. Sign up at https://aws.amazon.com/free with a real email + credit card. Pick **Basic Support — Free**.\n2. Turn on **MFA** on the root user. Authenticator app (Google Authenticator / Authy).\n3. Set a **billing alarm at $5** via CloudWatch.\n4. Create an **IAM user** called `forge-dev` with AdministratorAccess. Never use root again.\n5. Install **AWS CLI**, run `aws configure`, paste the IAM user's access key.\n6. Verify with `aws sts get-caller-identity` → you see the IAM user ARN, not root.\n\n## Why each step\n- **MFA on root** — the only account that can do truly catastrophic things. Locking it behind a phone is the difference between a stolen password being a scare and a disaster.\n- **Billing alarm** — see Day 1.\n- **IAM user (not root)** — the same idea as 'don't use the admin Windows account for everyday browsing.' If your credentials leak, the IAM user gets locked down; the root account is untouched.\n- **`aws sts get-caller-identity`** — your sanity check that the CLI is correctly authenticated as the IAM user.\n\n## Free Tier is generous but not infinite\nMost learning tasks fit comfortably inside Free Tier: S3 (5 GB storage + 20k GET / 2k PUT per month), Lambda (1M requests/month), small EC2 t2.micro hours. Things that escape Free Tier: anything 'larger' (m5, NAT Gateway, RDS), anything you forgot to stop.\n\nThe billing alarm + 'delete what you stop using' habit (Day 1) keeps you safely inside."
             },
             {
               "kind": "video",
-              "title": "AWS account setup with MFA + billing alarm",
-              "url": "https://www.youtube.com/results?search_query=aws+free+tier+safe+setup+mfa+billing+alarm+2024",
+              "title": "AWS Free Tier setup with MFA + billing alarm",
+              "url": "https://www.youtube.com/watch?v=Ip-fqIMG6KU",
               "duration_min": 15,
               "creator": "various",
-              "why": "Watch BEFORE signing up. Important."
+              "why": "Watch first. Walks you through the exact clicks on AWS's console for MFA + billing alarm + IAM user."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "After creating an IAM user, the CLI should authenticate as that user, NOT the root account.",
+                  "answer": true,
+                  "whenRight": "Right — verify with `aws sts get-caller-identity`. The ARN should mention forge-dev, not 'root'.",
+                  "whenWrong": "Yes — root is for emergencies. Day-to-day is the IAM user. The CLI knows the difference via aws configure."
+                },
+                {
+                  "prompt": "You should write down or paste your access keys into a text file in your project repo for convenience.",
+                  "answer": false,
+                  "whenRight": "Right — never. `aws configure` stores them in `~/.aws/credentials` which is outside any repo and properly secured.",
+                  "whenWrong": "Never in a repo. `aws configure` puts them in ~/.aws/credentials — outside any git tracking by default."
+                },
+                {
+                  "prompt": "MFA on the root account is excessive for a learner project.",
+                  "answer": false,
+                  "whenRight": "Right — no. Root MFA is the cheapest mistake-prevention you'll ever buy. Always on.",
+                  "whenWrong": "Root MFA is non-negotiable. Cost: 30 seconds setup. Benefit: catastrophic mistakes become merely uncomfortable."
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "Safe AWS setup",
-              "body": "STEP 1 — Sign up. Real email, real card. Choose 'Basic Support — Free'.\n\nSTEP 2 — Enable MFA (multi-factor authentication) on the root user.\n  AWS Console → your name (top right) → Security credentials → MFA → Add.\n  Use Google Authenticator or Authy on your phone.\n\nSTEP 3 — Set a billing alarm at $5.\n  Console search 'CloudWatch' → Alarms → Create alarm → Billing → Total Estimated Charge → $5 threshold → notify your email.\n\nSTEP 4 — Create an IAM user for daily use (NEVER use root again).\n  Console search 'IAM' → Users → Create user.\n  Name: forge-dev. Attach policy: 'AmazonS3FullAccess' for this week.\n  Create access key. Save Access Key ID + Secret Key in a password manager."
+              "title": "Your turn — AWS setup",
+              "body": "[CODE] 1. Sign up at aws.amazon.com/free (Basic Support — Free).\n2. Turn on MFA on the root user (authenticator app).\n3. Set CloudWatch billing alarm at $5 USD.\n4. Create IAM user `forge-dev` with AdministratorAccess. Save the access key in a password manager.\n5. Install AWS CLI. Run `aws configure`. Paste the key.\n6. Run `aws sts get-caller-identity` → confirm you see your IAM user ARN.\n\nPASS:\n[x] AWS account exists\n[x] Root MFA on\n[x] Billing alarm at $5\n[x] IAM user authenticated via CLI"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Upload your model to S3",
-          "summary": "Cloud storage you control.",
+          "title": "Upload your Prophet model to S3",
+          "summary": "From local file to cloud artefact.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Creating a bucket + uploading",
+              "body": "## Create a bucket\n```bash\n# bucket names are GLOBALLY unique. Pick something namespaced.\naws s3 mb s3://forge-yourname-models --region us-east-1\n# make_bucket: forge-yourname-models\n```\n\n## Upload the v0.3 Prophet model\n```bash\naws s3 cp models/prophet.pkl s3://forge-yourname-models/energy-forecast/prophet.pkl\n# upload: models/prophet.pkl to s3://...\n\naws s3 ls s3://forge-yourname-models/energy-forecast/\n#                           PRE energy-forecast/\n# 2026-... 12345  prophet.pkl\n```\n\n## Buckets aren't public by default — keep it that way\nS3 buckets are **private** by default. Don't change that. You'll load from this bucket using IAM credentials from your machine; nothing on the public internet needs to touch it. The cloud's biggest visible failures (Capital One, accidentally-public datasets) all start with 'someone made an S3 bucket public.'\n\n## Versioning is one click and worth it\n```bash\naws s3api put-bucket-versioning \\\n  --bucket forge-yourname-models \\\n  --versioning-configuration Status=Enabled\n```\nWith versioning on, every upload of `prophet.pkl` keeps the previous version too. Accidentally overwrite with a worse model? Roll back in one CLI call. Costs almost nothing for sub-100MB artefacts."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## A clean upload flow\n```bash\n# Create the bucket (one time)\naws s3 mb s3://forge-yourname-models --region us-east-1\n\n# Turn on versioning\naws s3api put-bucket-versioning \\\n  --bucket forge-yourname-models \\\n  --versioning-configuration Status=Enabled\n\n# Upload from v0.3 of Energy Forecast\naws s3 cp models/prophet.pkl s3://forge-yourname-models/energy-forecast/prophet.pkl\n\n# Verify it lives there\naws s3 ls s3://forge-yourname-models/energy-forecast/\n# 2026-XX-XX HH:MM:SS   123456 prophet.pkl\n```\n\n## What you just made possible\nAny machine with your IAM credentials can now load `prophet.pkl` with three lines of code (Day 4). That means:\n- A teammate on a different laptop can use the same model.\n- A scheduled job on Lambda or Cloud Run can load it without bundling it into the deploy artefact.\n- Future you, on a fresh machine in a year, can pull v0.3 of the model back instantly via the versioning history."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "S3 bucket names are globally unique across all AWS customers.",
+                  "answer": true,
+                  "whenRight": "Right — yours doesn't exist anywhere on AWS. Namespace with your username to avoid collisions.",
+                  "whenWrong": "Yes — global namespace. Pick something unique like forge-yourname-models."
+                },
+                {
+                  "prompt": "Making an S3 bucket public is a normal way to share data with your team.",
+                  "answer": false,
+                  "whenRight": "Right — no. Keep buckets private; teammates use IAM credentials. Public-by-mistake is the #1 cloud breach source.",
+                  "whenWrong": "Never public. IAM credentials, presigned URLs, or VPC endpoints are the right tools for team sharing."
+                },
+                {
+                  "prompt": "Versioning on a bucket lets you recover the previous version of a file after overwriting it.",
+                  "answer": true,
+                  "whenRight": "Right — every PUT stores a new version; previous ones stay accessible by version ID.",
+                  "whenWrong": "Yes — versioning preserves history. Overwrote prophet.pkl with junk? Roll back in one command."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Install AWS CLI + upload",
-              "body": "STEP 1 — Install the AWS CLI on your computer:\n  MAC: brew install awscli\n  WINDOWS: download installer from https://aws.amazon.com/cli/\n  LINUX: sudo apt install awscli OR follow official instructions\n\nSTEP 2 — Verify:\n      aws --version\n  YOU SHOULD SEE: 'aws-cli/2.x.x ...'\n\nSTEP 3 — Configure your IAM user:\n      aws configure\n  Paste your Access Key ID + Secret. Region: us-east-1. Output: json.\n\nSTEP 4 — Create a bucket (replace YOUR-NAME):\n      aws s3 mb s3://YOUR-NAME-models-2026\n  YOU SHOULD SEE: 'make_bucket: YOUR-NAME-models-2026'\n\nSTEP 5 — Upload your reddit-sentiment model:\n      cd Desktop/reddit-sentiment\n      aws s3 cp models/baseline.pkl s3://YOUR-NAME-models-2026/baseline.pkl\n      aws s3 ls s3://YOUR-NAME-models-2026/\n  YOU SHOULD SEE: your file listed."
+              "title": "Your turn — upload",
+              "body": "[CODE] 1. Create an S3 bucket with a namespaced name (forge-yourname-models). Versioning on.\n2. `aws s3 cp models/prophet.pkl s3://your-bucket/energy-forecast/prophet.pkl`.\n3. `aws s3 ls s3://your-bucket/energy-forecast/` to confirm it's there.\n4. Markdown: paste the listing into your notebook for the record."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Load model FROM S3 in code",
-          "summary": "The whole point: anywhere your code runs, it can reach the model.",
+          "title": "Load the model FROM S3 in code",
+          "summary": "Inference that doesn't depend on local files.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Loading from S3 in Python",
+              "body": "## The clean pattern\n```python\nimport io, joblib, boto3\n\nBUCKET = 'forge-yourname-models'\nKEY    = 'energy-forecast/prophet.pkl'\n\ns3   = boto3.client('s3')\ndata = s3.get_object(Bucket=BUCKET, Key=KEY)['Body'].read()\nmodel = joblib.load(io.BytesIO(data))\n\n# Now make a prediction without any local file dependency\nforecast = model.predict(model.make_future_dataframe(periods=7, freq='D'))\nprint(forecast[['ds','yhat']].tail())\n```\n\n## Why `io.BytesIO`\n`joblib.load` expects a file-like object. `s3.get_object` returns the raw bytes; wrapping in `BytesIO` gives joblib something it can read from without ever touching a file on disk. Clean and works on serverless environments where the filesystem is ephemeral.\n\n## boto3 finds your credentials automatically\nBecause you ran `aws configure` on Day 2, `boto3.client('s3')` automatically reads `~/.aws/credentials`. No keys in code. If the same script runs on EC2 / Lambda / Cloud Run, it would pick up the service's IAM role automatically — same code, no changes.\n\n## What you've actually built\nA model artefact and a loading pattern that work identically on:\n- Your laptop\n- A scheduled cron on a cloud VM\n- A Lambda function\n- A teammate's machine\n\nThat's portability. That's the cloud's main gift to a data scientist."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Minimal end-to-end inference\n```python\nimport io, joblib, boto3, pandas as pd\n\ns3 = boto3.client('s3')\nraw = s3.get_object(Bucket='forge-yourname-models',\n                    Key='energy-forecast/prophet.pkl')['Body'].read()\nmodel = joblib.load(io.BytesIO(raw))\n\nfuture = model.make_future_dataframe(periods=14, freq='D')\nforecast = model.predict(future)\nprint(forecast[['ds','yhat','yhat_lower','yhat_upper']].tail(3).round(0))\n#            ds     yhat  yhat_lower  yhat_upper\n# 5044  2018-04-07  16670       15140       18180\n# 5045  2018-04-08  16410       14860       17920\n# 5046  2018-04-09  16895       15370       18450\n```\nNo `prophet.pkl` on the local filesystem. The model is pulled fresh from S3 every run."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "boto3 finds credentials automatically via `~/.aws/credentials` (or an IAM role when running on EC2 / Lambda).",
+                  "answer": true,
+                  "whenRight": "Right — same code on laptop or in the cloud. Credentials come from the environment.",
+                  "whenWrong": "Yes — that's the magic. Local: credentials file. Cloud: IAM role. Code is identical."
+                },
+                {
+                  "prompt": "joblib.load can read directly from a bytes buffer like `io.BytesIO`.",
+                  "answer": true,
+                  "whenRight": "Right — that's how you avoid writing a temp file. Get bytes from S3, wrap, load.",
+                  "whenWrong": "Yes — file-like input is fine. BytesIO turns raw bytes into something joblib understands."
+                },
+                {
+                  "prompt": "Loading the model from S3 every run is wasteful and you should always cache to local disk.",
+                  "answer": false,
+                  "whenRight": "Right — depends. For batch jobs that re-run sporadically, fresh-from-S3 is correct (always latest). For latency-sensitive services, cache after first load.",
+                  "whenWrong": "Context-dependent. Caching helps latency but risks staleness. For batch jobs, fresh-each-run is right."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "boto3 load",
-              "body": "      pip install boto3 joblib\n\n      import boto3, joblib, tempfile\n      s3 = boto3.client('s3')\n      with tempfile.NamedTemporaryFile() as f:\n          s3.download_file('YOUR-NAME-models-2026', 'baseline.pkl', f.name)\n          model = joblib.load(f.name)\n      print('Loaded model:', model)\n\nNow your Flask/Streamlit/HF Spaces deployment can pull the model from S3 instead of bundling it in the container."
+              "title": "Your turn — load from S3",
+              "body": "[CODE] In a fresh notebook `notebooks/06-cloud.ipynb`:\n1. Use boto3 to pull `prophet.pkl` from your bucket.\n2. joblib.load from BytesIO.\n3. Predict 14 days ahead. Print the tail.\n4. Delete `models/prophet.pkl` LOCALLY (or move it). Re-run — the code should still work because it reads from S3."
             }
           ]
         },
         {
           "number": 5,
           "title": "Set up BigQuery (free, no credit card)",
-          "summary": "Google's serverless data warehouse.",
+          "summary": "Google Cloud's free analytics warehouse.",
           "items": [
             {
-              "kind": "reading",
-              "title": "Google Cloud Console",
-              "url": "https://console.cloud.google.com",
-              "why": "Click 'Open'. Sign in with a Google account. Create a new project named 'forge-bq'."
+              "kind": "lesson",
+              "title": "BigQuery in plain English",
+              "body": "## What it is\n**BigQuery** is Google's serverless data warehouse. You write SQL; Google runs it on however many machines it takes to finish in seconds — even on terabytes. You pay per byte scanned, not per machine-hour.\n\n## Why the free tier is so good\n- **1 TB of query bytes scanned per month** — for context, querying every NYC taxi trip from 2009 scans ~5 GB. You'd need to run ~200 such queries before hitting the cap.\n- **10 GB of storage**\n- **No credit card required to start**\n- **Free access to Google's public datasets** (NYC taxi, GitHub commits, Wikipedia, OpenStreetMap, Patents)\n\n## Setup, the path of least resistance\n1. Sign in at https://console.cloud.google.com with a free Google account.\n2. Create a project (any name — `forge-bq` is fine).\n3. Enable the BigQuery API (the console prompts you the first time you open BigQuery).\n4. That's it. No billing setup required for the free tier.\n\n## The BigQuery console\nAt `https://console.cloud.google.com/bigquery` you get a SQL editor in the browser. Write a query, hit Run, results in seconds with the bytes-scanned cost shown right above. **Look at the bytes-scanned number before clicking Run** — if it says 10 GB on a query you didn't think was that big, abort and add a `WHERE` clause first.\n\n## Python client\n```bash\npip install google-cloud-bigquery\ngcloud auth application-default login   # browser opens, you sign in\n```\nAfter that, Python code can run queries without API keys in code — same idea as AWS's IAM. Credentials live in your local config; production code uses service accounts."
+            },
+            {
+              "kind": "lesson",
+              "title": "Your first BigQuery query",
+              "body": "## Public NYC taxi data, in three lines\n```sql\n-- In the BigQuery console SQL editor\nSELECT\n  EXTRACT(HOUR FROM pickup_datetime) AS hour,\n  COUNT(*) AS trips\nFROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2019`\nWHERE pickup_datetime BETWEEN '2019-06-01' AND '2019-06-08'\nGROUP BY hour\nORDER BY hour;\n```\n\n## What you'll see\n```text\nhour | trips\n-----+-------\n 0   | 81233\n 1   | 51019\n ...\n 18  | 167482   <- rush hour\n 19  | 161904\n\nThis query will process 1.2 GB when run.\n```\n\n## Why this is real cloud work\nYou scanned one week of every yellow-taxi trip in NYC (millions of rows) in <5 seconds. The same query as a `pd.read_parquet` would need the file downloaded locally first — which for a year of yellow-taxi data is ~25 GB. BigQuery flips that: data stays put, query goes to it.\n\nThat model is how cloud data warehouses (Snowflake, Databricks, Redshift) all work. Once you can write BigQuery SQL, the others are 80% identical syntax."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "BigQuery's free tier gives you 1 TB of query processing per month with no credit card.",
+                  "answer": true,
+                  "whenRight": "Right — enough to learn meaningfully on real public datasets. Plenty of headroom for a learner.",
+                  "whenWrong": "Yes — 1 TB scanned + 10 GB storage. Public datasets included. No card to start."
+                },
+                {
+                  "prompt": "BigQuery charges per byte SCANNED, not per machine-hour.",
+                  "answer": true,
+                  "whenRight": "Right — pricing model = bytes read by the query. The same query on the same data costs roughly the same regardless of machine pool.",
+                  "whenWrong": "Yes — per byte scanned. That's why a tight WHERE clause is cost-effective; it scans fewer bytes."
+                },
+                {
+                  "prompt": "You should always click Run immediately; checking bytes-scanned first is paranoid.",
+                  "answer": false,
+                  "whenRight": "Right — no. Bytes-scanned is your cost preview. A SELECT * with no filter on a big table can scan TB.",
+                  "whenWrong": "Always read bytes-scanned first. A no-WHERE-clause query on a TB table costs as much as a TB. Filter first."
+                }
+              ]
             },
             {
               "kind": "exercise",
-              "title": "First BigQuery query",
-              "body": "STEP 1 — In Google Cloud Console, search 'BigQuery'. Open it.\n\nSTEP 2 — Run your first query. Click 'New query', paste:\n      SELECT COUNT(*) AS total_trips\n      FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2023`;\n\nSTEP 3 — Click Run.\n  YOU SHOULD SEE: a count of ~38 million trips. You just queried 38M rows in 3 seconds.\n\nYour laptop can never do this with pandas + a CSV. The cloud just did it in 3 seconds."
+              "title": "Your turn — first BigQuery",
+              "body": "[CODE] 1. console.cloud.google.com → create project `forge-bq`.\n2. Open BigQuery (the console prompts you to enable the API).\n3. Paste the NYC taxi SQL from above into the SQL editor.\n4. CHECK the bytes-scanned number before clicking Run.\n5. Run. Screenshot the results.\n6. Markdown: how many trips happened in the peak hour, and how many GB did the query scan?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Run your TaxiPulse analysis at full scale",
-          "summary": "All 38M rows, not just 3M sample.",
+          "title": "Run TaxiPulse at full scale",
+          "summary": "Reproduce your Week 1-3 analysis on the whole multi-year dataset.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Scaling TaxiPulse to multiple years",
+              "body": "## What you'll do\nTake the busiest-hour analysis from TaxiPulse W1 — a single month — and run it on every yellow-taxi trip BigQuery has (multiple years). On your laptop this would mean downloading and processing tens of GB. On BigQuery it's a few seconds.\n\n```sql\nWITH hours AS (\n  SELECT EXTRACT(HOUR FROM pickup_datetime) AS hour,\n         EXTRACT(YEAR FROM pickup_datetime) AS year,\n         COUNT(*) AS trips\n  FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2015`\n  WHERE fare_amount BETWEEN 2.5 AND 200\n  GROUP BY year, hour\n  UNION ALL\n  SELECT EXTRACT(HOUR FROM pickup_datetime), EXTRACT(YEAR FROM pickup_datetime), COUNT(*)\n  FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2016`\n  WHERE fare_amount BETWEEN 2.5 AND 200\n  GROUP BY 2, 1\n  UNION ALL\n  SELECT EXTRACT(HOUR FROM pickup_datetime), EXTRACT(YEAR FROM pickup_datetime), COUNT(*)\n  FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2017`\n  WHERE fare_amount BETWEEN 2.5 AND 200\n  GROUP BY 2, 1\n)\nSELECT year, hour, trips\nFROM hours\nORDER BY year, trips DESC;\n```\n\n## What you'll find\nSame shape as your W1 finding: 6-7pm is the busiest hour, but now you'll see the **trend across years** — total trips dropping as ride-share (Uber, Lyft) eats yellow-cab share. That's the story your W1 single-month dataset couldn't tell.\n\n## Compare with what `pd.read_parquet` would cost\n```text\n3 years of yellow-taxi parquets ~ 75 GB to download\n  Bandwidth + disk + laptop RAM: practically impossible.\nBigQuery: query runs in ~10 seconds, scans ~15 GB on Google's side.\n```\nThis week's cost: ~$0 (well inside free tier). What you'd pay for a single laptop capable of processing it locally: thousands.\n\n## Pull the result into Python\n```python\nfrom google.cloud import bigquery\nclient = bigquery.Client()\nsql = open('queries/multi_year_hours.sql').read()\ndf = client.query(sql).to_dataframe()\nprint(df.head())\n```\n`to_dataframe()` returns a pandas DataFrame from the query result. From there, plotting and downstream analysis are identical to anything you've done locally."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## End to end\n```python\nfrom google.cloud import bigquery\nimport matplotlib.pyplot as plt\n\nclient = bigquery.Client()\nsql = '''\n  SELECT EXTRACT(YEAR FROM pickup_datetime) AS year,\n         COUNT(*)                              AS trips\n  FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2015`\n  WHERE fare_amount BETWEEN 2.5 AND 200\n  GROUP BY year\n  UNION ALL\n  SELECT 2016, COUNT(*) FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2016`\n  WHERE fare_amount BETWEEN 2.5 AND 200\n  UNION ALL\n  SELECT 2017, COUNT(*) FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2017`\n  WHERE fare_amount BETWEEN 2.5 AND 200\n  ORDER BY year\n'''\ndf = client.query(sql).to_dataframe()\nprint(df)\n#   year      trips\n# 0 2015  146112989\n# 1 2016  131165043   <- down 10%\n# 2 2017  113496231   <- down 13%\n# That's the Uber effect, visible at last.\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "BigQuery lets you ask questions of data far too big to fit on your laptop.",
+                  "answer": true,
+                  "whenRight": "Right — 75 GB of taxi data, queried in seconds without leaving Google's infra.",
+                  "whenWrong": "Yes — that's the whole pitch. Data stays in cloud storage; queries reach it."
+                },
+                {
+                  "prompt": "`client.query(sql).to_dataframe()` returns a pandas DataFrame from a BigQuery result.",
+                  "answer": true,
+                  "whenRight": "Right — direct integration. Everything downstream is identical to local pandas work.",
+                  "whenWrong": "Yes — to_dataframe() bridges BigQuery and pandas. From there, plotting and analysis are your normal tools."
+                },
+                {
+                  "prompt": "Running this query 100 times on the free tier will go over the 1 TB limit.",
+                  "answer": false,
+                  "whenRight": "Right — no. Each run scans ~5 GB. 100 runs ≈ 500 GB. Still inside the 1 TB free monthly cap.",
+                  "whenWrong": "100 runs of a 5 GB query = 500 GB. Still inside the 1 TB monthly cap. You have a lot of headroom."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Full-scale Q1",
-              "body": "Re-run your TaxiPulse 'busiest hour' question on the ENTIRE 2023 dataset:\n\n      SELECT\n        EXTRACT(HOUR FROM pickup_datetime) AS hour,\n        COUNT(*) AS trips\n      FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2023`\n      WHERE pickup_datetime IS NOT NULL\n      GROUP BY hour\n      ORDER BY trips DESC\n      LIMIT 5;\n\nCompare to your local sample answer. Same hour? Different?\n\nCost: ~$0.01 of your $300 free credits."
+              "title": "Your turn — multi-year",
+              "body": "[CODE] In `notebooks/06-cloud.ipynb`:\n1. `pip install google-cloud-bigquery pandas-gbq pyarrow`.\n2. Run a BigQuery query that fetches trip counts per year for 2015, 2016, 2017 (yellow-taxi).\n3. `to_dataframe()` and print the result.\n4. Plot the year-over-year trend. Save chart to `charts/taxi_yoy.png`.\n5. Markdown: name the trend you see and one plausible explanation."
             }
           ]
         },
         {
           "number": 7,
-          "title": "Tag cloud-aware + document",
-          "summary": "Push proof you can work in production conditions.",
+          "title": "Tag cloud-aware",
+          "summary": "Document + commit + tag what you just built.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping the cloud milestone",
+              "body": "## What goes in the README\n```text\n## cloud-aware — AWS + GCP set up safely\n- AWS: account with root MFA, billing alarm at $5, IAM user forge-dev, CLI authenticated\n- S3 bucket: forge-yourname-models (versioning on), prophet.pkl stored at energy-forecast/\n- Inference now loads model from S3 (notebooks/06-cloud.ipynb) — no local file dependency\n- GCP: project forge-bq, BigQuery enabled, console + gcloud client both working\n- TaxiPulse multi-year scan: 2015→2017 yellow-taxi trip counts (charts/taxi_yoy.png)\n  -10% yoy 2015→2016, -13% yoy 2016→2017 — Uber-effect visible at last\n- Habits enforced: every resource tagged; tear-down planned before billing rolls over\n```\n\n## What you ship\n```bash\ngit add notebooks/06-cloud.ipynb charts/taxi_yoy.png queries/*.sql README.md CLOUD.md\ngit commit -m \"Cloud aware: AWS S3 + BigQuery on free tier, model artifact in S3\"\ngit tag cloud-aware\ngit push && git push --tags\n```\n\n## What this milestone proves\nYou're no longer laptop-bound. You can:\n- Store a model in a place your team can reach\n- Run analytics on datasets too big for your machine\n- Do all of this without leaking credentials or surprise bills\n\nThat's the production-aware data scientist. Most learner projects never cross this line.\n\n## Tear-down checklist before billing rolls over\n- [ ] S3 bucket still needed? Keep (it's a few cents/month) or delete + reupload next time.\n- [ ] AWS billing alarm verified working (test by setting threshold to $0.01 temporarily, confirm email, reset).\n- [ ] BigQuery project — keep it, no charges accrue under free tier.\n- [ ] No EC2 / RDS / NAT Gateway accidentally left running."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tagging `cloud-aware` marks the moment your portfolio crossed from laptop-only to cloud-native.",
+                  "answer": true,
+                  "whenRight": "Right — meaningful checkpoint. Reviewers can see exactly when you stopped being purely local.",
+                  "whenWrong": "Yes — the tag is the marker. Anyone checking out cloud-aware sees your first cloud-native commit."
+                },
+                {
+                  "prompt": "After this week, you can store models and query data without your laptop being the bottleneck.",
+                  "answer": true,
+                  "whenRight": "Right — the cloud half of the job is now within reach. Same SQL, same Python, just hosted somewhere bigger.",
+                  "whenWrong": "Yes — your data + model artefacts live in places your laptop's size doesn't constrain."
+                },
+                {
+                  "prompt": "After tagging, you can ignore the resources you created — cloud accounts manage themselves.",
+                  "answer": false,
+                  "whenRight": "Right — no. Bills accumulate quietly. Run the tear-down checklist; delete what you don't actively need.",
+                  "whenWrong": "Cloud accounts never self-manage. Always tear down or alarm. The end-of-week ritual prevents surprise bills."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance — cloud v0.1",
-              "body": "STEP 1 — Add CLOUD.md to your reddit-sentiment repo:\n      # Cloud Setup\n      \n      ## S3 model storage\n      Bucket: s3://YOUR-NAME-models-2026/\n      Models: baseline.pkl, distilbert/\n      \n      ## BigQuery TaxiPulse at scale\n      Re-ran the busiest-hour query on 38M rows. Result: hour XX:00 with YY,YYY,YYY trips.\n      Cost: ~$0.01 in BigQuery.\n      \n      ## How to fork this work\n      [step-by-step for someone reading your CV]\n\nSTEP 2 — Push:\n      git add . && git commit -m 'add cloud setup notes + BigQuery scale-up'\n\nPASS:\n  ☐ AWS account with MFA + billing alarm + IAM dev user\n  ☐ S3 bucket with at least 1 model uploaded\n  ☐ Code that loads the model FROM S3 (not local)\n  ☐ BigQuery project created\n  ☐ Re-ran TaxiPulse Q1 on full 38M-row dataset\n  ☐ CLOUD.md committed"
+              "title": "Your turn — ship cloud-aware",
+              "body": "[PRODUCE] 1. README cloud-aware section with: AWS bucket, S3-loaded model, BigQuery YoY finding + chart, the cost stats (bytes scanned, $0).\n2. Commit + tag:\n`git add . && git commit -m 'cloud-aware: S3 + BigQuery setup'`\n`git tag cloud-aware && git push --tags`\n3. Tear-down checklist:\n- [ ] S3 bucket reviewed (keep or delete)\n- [ ] AWS billing alarm verified\n- [ ] No accidental resources running\n\nPASS:\n[x] AWS account with billing alarm + IAM user\n[x] Prophet model in S3\n[x] notebooks/06-cloud.ipynb loads from S3\n[x] BigQuery multi-year query + chart in README\n[x] cloud-aware tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Why DS needs the cloud",
-        "AWS account hygiene (MFA, IAM, billing alarms)",
-        "AWS CLI install + configure",
-        "S3 bucket + uploading models",
-        "Loading models from S3 in Python with boto3",
-        "Google Cloud + BigQuery basics",
-        "Querying public datasets at scale"
-      ],
-      "tasks": [
-        "Sign up for AWS Free Tier safely",
-        "Install + configure AWS CLI",
-        "Upload a model to S3",
-        "Load model from S3 in Python code",
-        "Create a Google Cloud project + open BigQuery",
-        "Re-run TaxiPulse Q1 on 38M-row public dataset",
-        "Document setup in CLOUD.md"
-      ],
-      "project": "Cloud v0.1 — model in S3, code that pulls it down, BigQuery analysis at full data scale. Real production muscle on your CV.",
-      "resources": [
-        {
-          "label": "AWS Free Tier safely in 15 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=AWS%20Free%20Tier%20safely",
-          "note": "15 min. Set budget alerts first. Avoid surprise bills. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "boto3 (AWS SDK) basics in 18 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=boto3%20AWS%20SDK%20basics",
-          "note": "18 min. Upload + download from S3. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "BigQuery + Python in 12 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=BigQuery%20%2B%20Python",
-          "note": "12 min. Query the public NYC TLC dataset from Python. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "S3 cost gotchas in 9 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=S3%20cost%20gotchas",
-          "note": "9 min. The 5 things that quietly run up your bill. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "s3fs in 8 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=s3fs",
-          "note": "8 min. pandas.read_csv('s3://...') just works after this. (Click the FIRST video in the search results - it is the intended one.)"
-        }
-      ],
-      "exercises": [
-        "Mount S3 as a fake filesystem with s3fs and load it like a local file",
-        "Save your final FlightWise predictions to BigQuery",
-        "Compute BigQuery cost for 3 different query patterns"
-      ],
-      "questions": [
-        "What's the difference between S3 (object storage) and a database?",
-        "When does BigQuery beat your laptop's pandas?",
-        "What's the AWS Free Tier cliff — when do you start paying?"
-      ],
-      "outputs": [
-        "S3 bucket with model uploaded",
-        "BigQuery project + 1 working query at scale",
-        "CLOUD.md documenting setup"
-      ],
-      "mastery_questions": [
-        "Create an S3 bucket with a unique name (no public access -- leave all public access blocked by default). Upload your best Energy Forecast model artifact to the bucket using the AWS CLI: aws s3 cp ./model-artifact s3://your-bucket-name/models/energy-forecast-v1/. Paste the CLI command and the output confirming the upload. Now list the bucket contents with aws s3 ls s3://your-bucket-name/models/ and paste the result. This is the same command ML engineers at every AWS shop run to confirm a model deployment landed correctly.",
-        "Write a Python script that loads the model artifact from S3 using boto3. Paste the script. Now time the download: how many seconds does it take to pull the artifact to your local machine over your connection? In production this download happens inside the same AWS region (milliseconds), not over the public internet (seconds). That latency difference is why production inference services run inside the same region as their artifact store.",
-        "Set up a BigQuery project in Google Cloud Console (free tier). Open the BigQuery console and run a query on a public dataset -- start with bigquery-public-data.usa_names.usa_1910_current: SELECT name, SUM(number) as total FROM bigquery-public-data.usa_names.usa_1910_current GROUP BY name ORDER BY total DESC LIMIT 10. Paste the result and the bytes processed. Now run the same aggregation using a WHERE clause to filter to one state. Paste the bytes processed for that filtered query. Why is it smaller? (Hint: BigQuery is columnar -- filtering before aggregating reduces the scan.)",
-        "Write a BigQuery query that would take more than your laptop's RAM to process locally -- try one of the Wikipedia or GitHub public datasets at petabyte scale. Paste the query, the bytes processed, and the result. Now explain in one sentence why BigQuery can do this without you provisioning a cluster: it dynamically distributes the query across thousands of worker nodes managed entirely by Google. That sentence is the answer to \"why BigQuery over Spark on EC2?\" in 80% of conversations.",
-        "Write the one-page cloud hygiene note (CLOUD-HYGIENE.md) for your repo. Cover: MFA on the root account, creating an IAM user for daily use (never use root credentials in code), setting a billing alarm, principle of least privilege (your IAM user should only have permissions it needs). Paste the file. This document exists in the onboarding repo of every well-run engineering team. Writing it for yourself is the first step to writing it for a team."
-      ],
-      "ai_assist": "Use Claude to explain IAM policies in plain English -- specifically, how to read a JSON IAM policy document and understand what permissions it grants. \"What does this IAM policy actually allow?\" with the JSON pasted is a genuinely useful prompt because IAM policy syntax is dense. Do NOT use Claude to generate IAM policies for you without understanding them. An AI-generated policy that is too permissive is worse than no policy -- it gives a false sense of security.",
-      "pre_flight": "Before creating the AWS account, set aside a credit card you are comfortable being charged on and write down a hard monthly spend limit (e.g., $10). AWS free tier covers most of what you need this week, but a misconfigured resource can exceed it. Setting the billing alarm before doing anything else is the same discipline that every AWS solutions architect certifies engineers on before giving them production access. Do that first, not last.",
-      "common_mistakes": [
-        "Hardcoding AWS credentials in Python scripts or Jupyter notebooks. If the notebook goes to GitHub, your credentials go public. Use environment variables (os.environ['AWS_ACCESS_KEY_ID']) or AWS credential profiles (~/.aws/credentials) instead.",
-        "Forgetting to set a bucket region. S3 buckets without an explicit region default to us-east-1, but data transfer costs and latency are real if your compute is in a different region. Always specify the region explicitly when creating a bucket.",
-        "Using the root AWS account for daily work. Root has unlimited permissions and cannot be scoped. Create an IAM user with the minimum permissions needed (S3 read/write to your specific bucket), give that user programmatic access, and use those credentials.",
-        "Running large BigQuery queries without checking the estimated bytes first. The BQ console shows \"This query will process X GB\" before you run it. Free tier gives you 1TB per month -- a single careless query on a petabyte table can consume your monthly quota. Always check the estimate first.",
-        "Leaving S3 buckets with public read access by default. AWS now blocks this during bucket creation by default, but older workflows enable it for \"convenience.\" A public S3 bucket containing model artifacts that include training data is a GDPR incident waiting to happen."
-      ],
-      "debug_help": "Two specific issues. First: \"NoCredentialsError\" from boto3. Either you did not run aws configure, or the credentials file at ~/.aws/credentials is malformed. Run aws sts get-caller-identity from the terminal -- if that works, boto3 will work too. Second: BigQuery \"Access Denied\" error on a public dataset. You need to enable billing on your project even for free-tier queries -- BigQuery requires a billing account to be attached before it will process any query, even queries within the free 1TB limit. Enable billing in Cloud Console and retry.",
-      "stretch": [
-        "Set up an S3 lifecycle policy that automatically deletes objects older than 90 days from a \"staging\" prefix. This is how production systems keep storage costs from growing indefinitely as model iterations accumulate.",
-        "Run a BigQuery ML query: CREATE MODEL my_dataset.my_model OPTIONS(model_type='linear_reg') AS SELECT ... You are training a linear regression model inside the database, with no Python, no sklearn. BigQuery ML exists, is used in production, and occasionally outperforms offline models on very large datasets.",
-        "Read the AWS Well-Architected Framework's \"Operational Excellence\" pillar (free, 30 minutes). The five design principles it describes are the mental model every senior engineer uses when evaluating cloud architecture decisions."
       ]
     },
     {
@@ -9677,160 +9845,344 @@
       "phase": "Time Series",
       "commitment_hours": "10-15",
       "context": "Energy Forecast has been running since week 21. You built four models, compared them honestly, added MLflow tracking, set up drift monitoring, and put artifacts in the cloud. This week you ship it the same way you shipped Reddit Sentiment -- with a blog post, a demo video, and a public dashboard.\n\nThe production model decision is the first real deliverable. You have four candidates: persistence, ARIMA, Prophet, LSTM. They have different MAE numbers, different interpretability levels, different maintenance burdens, and different failure modes. The right choice is not automatically the lowest MAE. If Prophet and ARIMA are within 5% of each other on MAE but ARIMA is faster, has no dependencies on Stan, and is easier to retrain on new data, ARIMA might be the production choice. Writing out that reasoning explicitly is the skill -- the analysis behind the model selection, not just the number.\n\nThe Streamlit dashboard for Energy Forecast is simpler than Reddit Sentiment's because you are not hitting a live API -- you are generating a forecast for future dates using the fitted model. The user picks a date range, the app generates the forecast with confidence intervals, and the chart appears. The time-series snapshot pattern from week 18 applies here too: log each forecast request with the timestamp and the requested range, so you can audit what the model predicted versus what actually happened.\n\nThe retro this time should feel different from week 20's. You have now shipped two complete projects. The patterns that show up in both retros are the ones worth paying attention to -- the skills you underestimated, the steps that always take longer than planned, the decisions you made in week 1 that constrained week 6. Those recurring patterns are what you should fix in Project 4.\n\nBy Sunday: best model deployed in a Streamlit dashboard at a public URL, a published blog post that covers the full arc from EDA to deployment, a demo video, and a RETRO.md that names at least one thing you would change that is different from the week 20 retro. The project is done when a stranger can use the dashboard, read the post, and understand what you built without you in the room.",
+      "concept_check": [
+        {
+          "q": "Why ship Energy Forecast v1.0 the same way Reddit Sentiment shipped (blog post + demo + readers + retro)?",
+          "choices": [
+            "Tradition",
+            "The shipping ritual proves you can communicate the work AND hardens it — outsider feedback always exposes things you can't see yourself",
+            "More commits",
+            "To use more disk space"
+          ],
+          "correct": 1,
+          "explain": "Building the model is half the work. Communicating it is the other half. The blog post forces you to explain the choices a non-DS reader can follow; the demo gives them something to click; three readers expose what's confusing; the retro extracts portable lessons. Every project gets harder if you skip this ritual — and the lessons compound across projects."
+        },
+        {
+          "q": "Which is the right model to put in the live demo for Energy Forecast?",
+          "choices": [
+            "LSTM — it's the most modern",
+            "Prophet — lowest MAE on this holiday-heavy series and interpretable component plots a stakeholder can read",
+            "Persistence — simplest",
+            "Whichever you trained most recently"
+          ],
+          "correct": 1,
+          "explain": "Prophet wins on this dataset (612 MAE vs LSTM 654, ARIMA 706, persistence 868) AND its components plot turns the forecast into an explanation a grid operator can act on. LSTM goes in the repo as a documented alternative; the demo shows the production pick."
+        },
+        {
+          "q": "Why send the post + repo to THREE outside readers, not just one?",
+          "choices": [
+            "Three is a magic number",
+            "One reader's confusion could be idiosyncratic; three converging on the same point of confusion is a reliable signal",
+            "More feedback = better",
+            "Because you'd ignore one"
+          ],
+          "correct": 1,
+          "explain": "Three readers gives you the statistical signal that one doesn't. If all three got lost at the same paragraph, you have your highest-value edit. If three readers all skip different things, you've probably built a good piece. One reader is a sample of one; you don't act on a sample of one."
+        }
+      ],
       "days": [
         {
           "number": 1,
           "title": "Pick the winner",
-          "summary": "",
+          "summary": "One model. One story. One link.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Which model ships?",
-              "body": "Based on MAE: which model do you ship as 'the' model? Document the trade-off: simplicity vs accuracy."
+              "kind": "lesson",
+              "title": "Closing out the modeling choice",
+              "body": "## What it is\nYou've built four models across W21-W25 (persistence baseline, ARIMA, Prophet, LSTM). MLflow has them all logged. This week ships **one** — the production pick — with a public link a recruiter can click.\n\n## The pick\nOn this dataset, **Prophet** wins. Reasoning, written for the README:\n\n- **Lowest MAE on a holiday-heavy series.** 612 vs LSTM 654, ARIMA 706, persistence 868.\n- **Interpretable component plot.** A non-technical reader can look at the trend / weekly / yearly / holiday breakdown and explain why demand is what it is. ARIMA's coefficients and the LSTM's weights don't enable that conversation.\n- **Explicit uncertainty intervals.** Grid-operator audiences plan against worst-plausible, not mean. Prophet's intervals are usable as-is; LSTM intervals require extra Bayesian-NN work that isn't worth it for the gain.\n- **Fast to retrain.** Drift fires (W25); we retrain Prophet in seconds on a few hundred MB of recent data. LSTM is hours of GPU.\n\n## What this means for the demo\nThe live dashboard shows Prophet's forecast + intervals + component plot. The other three models stay in the repo as documented alternatives with their MAEs in the comparison table.\n\n## Where this fits\nBy tonight: production pick is explicit + justified. Tomorrow: a small Streamlit dashboard around it. Wednesday: deploy. Thursday: blog. Friday: demo video. Saturday: outside readers. Sunday: retro + tag v1.0."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Picking ONE model for the demo (with the others documented in the repo) is clearer than showing all four in the live UI.",
+                  "answer": true,
+                  "whenRight": "Right — the live demo tells one story. Comparison table goes in the repo where reviewers want depth.",
+                  "whenWrong": "Yes — one story for the demo, depth in the repo. Don't make the live app a museum."
+                },
+                {
+                  "prompt": "Prophet is the right pick for this project mainly because it has the lowest MAE.",
+                  "answer": false,
+                  "whenRight": "Right — MAE alone isn't the reason. Interpretability + intervals + retrain speed all reinforce the choice.",
+                  "whenWrong": "MAE matters but so do intervals, interpretability, retrain cost. Pick on the whole story."
+                },
+                {
+                  "prompt": "Keeping the other models in the repo as alternatives is more credible than deleting them.",
+                  "answer": true,
+                  "whenRight": "Right — comparison shows you measured. Reviewers see you didn't pick the trendy choice unjustified.",
+                  "whenWrong": "Yes — keep them. The comparison is half the story. Reviewers respect documented losers."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — write the pick",
+              "body": "[WRITE] In a new section of the Energy Forecast README:\n1. Headline: 'Production model: Prophet. Why.'\n2. Three reasons (MAE, intervals, interpretability) with the actual numbers.\n3. Tell the reader where ARIMA + LSTM live in the repo and what they're useful for.\n4. End with: 'Demo dashboard ships this week.'"
             }
           ]
         },
         {
           "number": 2,
-          "title": "Build a small dashboard",
-          "summary": "",
+          "title": "Build a small Streamlit dashboard",
+          "summary": "Forecast + interval + components plot, one page.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The dashboard structure",
+              "body": "## What it is\nA single-page Streamlit app that:\n1. Loads the Prophet model from S3 (Week 26 setup paying off).\n2. Lets the user pick a forecast horizon (slider, 7-30 days).\n3. Shows the forecast plot with the 95% interval shaded.\n4. Shows the components plot (trend / weekly / yearly / holidays).\n5. Shows a small table: 'next 7 days forecast + interval'.\n\n## Why Streamlit\nFor a portfolio dashboard with no real users, Streamlit is the fastest path. Same reason the Reddit Sentiment dashboard used it. ~80 lines of Python and you have something deployable.\n\n## File layout\n```text\napp/\n  streamlit_app.py        # main entry point\n  load_model.py           # boto3 + joblib helper (from W26)\n  requirements.txt        # streamlit, prophet, boto3, joblib, matplotlib\n```\n\n## Cache the model load\nThe Prophet model is several MB. Without caching, Streamlit reloads it on every interaction. With `@st.cache_resource`, it loads once per session.\n```python\n@st.cache_resource\ndef get_model():\n    return load_prophet_from_s3()\n```\n\n## What you'll see by end of day\n`streamlit run app/streamlit_app.py` opens the browser at localhost:8501. Slider works. Forecast updates. Components render. That's the local prototype that goes live tomorrow."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Minimal streamlit_app.py\n```python\nimport streamlit as st\nimport pandas as pd\nfrom load_model import get_model\n\nst.set_page_config(page_title='Energy Forecast', layout='wide')\nst.title('AEP Energy Demand Forecast')\n\nhorizon = st.slider('Forecast horizon (days)', 7, 30, 14)\n\n@st.cache_resource\ndef cached():\n    return get_model()\n\nmodel = cached()\nfuture = model.make_future_dataframe(periods=horizon, freq='D')\nforecast = model.predict(future).tail(horizon)\n\ncol1, col2 = st.columns([2, 1])\nwith col1:\n    st.subheader('Forecast')\n    fig = model.plot(model.predict(model.make_future_dataframe(periods=horizon, freq='D')))\n    st.pyplot(fig)\nwith col2:\n    st.subheader('Next ' + str(horizon) + ' days')\n    st.dataframe(forecast[['ds','yhat','yhat_lower','yhat_upper']].round(0))\n\nst.subheader('Components')\nst.pyplot(model.plot_components(model.predict(model.make_future_dataframe(periods=horizon, freq='D'))))\n```\n\n## What this gives the viewer\nIn ~50 lines: a usable forecaster with intervals and explainability. They drag the slider; the forecast updates; the components plot tells them WHY. That's a complete demo."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "`@st.cache_resource` prevents Streamlit from re-loading the model on every interaction.",
+                  "answer": true,
+                  "whenRight": "Right — cached once per session. Without it, every slider drag re-downloads from S3.",
+                  "whenWrong": "Yes — cache the expensive thing. Models, DB connections, anything slow to set up."
+                },
+                {
+                  "prompt": "Showing the components plot in the demo is more useful than just showing the forecast.",
+                  "answer": true,
+                  "whenRight": "Right — the forecast is one number; the components explain it. Reviewers see the story, not the punchline.",
+                  "whenWrong": "Yes — components is the story. The forecast is the punchline. Show both."
+                },
+                {
+                  "prompt": "For a portfolio demo, you should hand-build the dashboard in React + a Python API to look more impressive.",
+                  "answer": false,
+                  "whenRight": "Right — no. Streamlit ships in hours; React+API ships in weeks. Spend time on the model + story, not the chrome.",
+                  "whenWrong": "Streamlit is the right tool for a learner demo. React + API for portfolios is over-engineering."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Streamlit forecast viewer",
-              "body": "Create app.py — Streamlit page that shows:\n  - The chosen model's 30-day forecast\n  - Past 90 days of actuals\n  - MAE comparison table\n  - 'Refresh' button (no live data, just for demo)"
+              "title": "Your turn — local demo",
+              "body": "[CODE] 1. Create `app/streamlit_app.py` with the structure above.\n2. `pip install streamlit prophet boto3 joblib matplotlib`.\n3. `streamlit run app/streamlit_app.py`.\n4. Confirm: slider works, forecast updates, components render.\n5. Screenshot for the README."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Deploy",
-          "summary": "",
+          "title": "Deploy the dashboard",
+          "summary": "Streamlit Community Cloud (free) or Hugging Face Spaces.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Going live in 20 minutes",
+              "body": "## Streamlit Community Cloud (recommended)\nFree, no card. The path:\n1. Push your `app/` folder + `requirements.txt` to a GitHub repo (even your existing Energy Forecast repo works — point Streamlit at the `app/` subfolder).\n2. Sign in at https://share.streamlit.io with GitHub.\n3. New app → pick the repo → main file is `app/streamlit_app.py`.\n4. Add **secrets**: AWS access key + secret for the S3 model download. Streamlit's secrets UI keeps them out of git.\n5. Deploy. ~3 minutes later you have a public `https://your-app.streamlit.app` URL.\n\n## Why not Vercel or AWS\nVercel is for Next.js/Node, not Python. Direct AWS deployment (EC2, ECS, Lambda) takes hours and requires more infra knowledge than this project demands. Streamlit Cloud is the path of least resistance for a single Python script.\n\n## Hugging Face Spaces as a fallback\nIf Streamlit Cloud is down or you've hit its app limit, Hugging Face Spaces deploys the same Streamlit app from a different repo (their Spaces system supports Streamlit out of the box). Same deploy effort.\n\n## Test the public URL\nOpen it in an incognito window (no auth, no cached creds) — confirm it loads, the slider works, the components plot renders. That's the URL going in the blog post."
+            },
+            {
+              "kind": "lesson",
+              "title": "Secrets, the safe way",
+              "body": "## Why you absolutely don't commit AWS keys\nYou set this rule on W26 Day 2. The deployed app needs to load from S3, which means credentials — but those credentials live in Streamlit's secrets, never in your repo.\n\n## In Streamlit Cloud's UI\nApp settings → Secrets → paste a TOML block:\n```toml\n[aws]\naccess_key_id     = \"AKIAxxxxxxxxxxxx\"\nsecret_access_key = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\nregion            = \"us-east-1\"\n```\n\n## In your Python code\n```python\nimport streamlit as st\nimport boto3\n\ndef s3_client():\n    creds = st.secrets['aws']\n    return boto3.client(\n        's3',\n        aws_access_key_id=creds['access_key_id'],\n        aws_secret_access_key=creds['secret_access_key'],\n        region_name=creds['region'],\n    )\n```\n\n## Why this is the right pattern\n- Secrets stay in Streamlit Cloud's encrypted store, never on disk.\n- Your repo is safe to be public.\n- Rotation is one paste in the secrets UI, no redeploy.\n\n## What you'll have live by end of day\nA public URL serving the dashboard. You can text it to a friend. It loads anywhere. That's the demo link the blog post and the demo video both point at."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Streamlit Cloud's free tier is enough for a portfolio dashboard.",
+                  "answer": true,
+                  "whenRight": "Right — free, public URL, decent uptime. Perfect for portfolio + interview demos.",
+                  "whenWrong": "Yes — generous free tier. Cold-start latency is the trade-off, fine for a demo."
+                },
+                {
+                  "prompt": "AWS keys should be pasted into `streamlit_app.py` for the deploy.",
+                  "answer": false,
+                  "whenRight": "Right — never. Use Streamlit's secrets UI. The repo stays clean; rotation stays painless.",
+                  "whenWrong": "Never inline. Streamlit secrets → toml block. Code reads from st.secrets, repo stays safe."
+                },
+                {
+                  "prompt": "Testing the public URL in an incognito window verifies it works for someone who's NOT signed in to your accounts.",
+                  "answer": true,
+                  "whenRight": "Right — that's the demo experience. Cookies-clean test is the real check.",
+                  "whenWrong": "Yes — incognito mimics a recruiter. If it works there, it works for anyone you send the link to."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Streamlit Cloud",
-              "body": "Deploy the app. Free."
+              "title": "Your turn — deploy",
+              "body": "[CODE] 1. Push `app/` + `requirements.txt` to your Energy Forecast GitHub repo.\n2. share.streamlit.io → New app → pick repo, point at `app/streamlit_app.py`.\n3. Add AWS secrets in Streamlit's UI (toml block).\n4. Deploy. Wait for the public URL.\n5. Test in incognito. Slider, forecast, components — all working.\n6. Save the URL — it's going in the blog tomorrow."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Blog post",
-          "summary": "",
+          "title": "Write the blog post",
+          "summary": "One link in the world that tells the story.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The post structure",
+              "body": "## What it is\nA single dev.to (or Medium, or Substack) post. ~1,500 words. Written for a data-scientist reader who has heard of ARIMA but isn't a forecasting specialist. Tells the story of building Energy Forecast end-to-end.\n\n## The structure that works\n```text\n1. Hook — one paragraph: 'I forecast US electricity demand 7 days out. Here's how, and why Prophet beat ARIMA and a neural net.'\n2. The data — 1 paragraph. AEP hourly demand, ~15 years, public.\n3. Persistence baseline — 1 paragraph. The bar to beat. MAE = 868.\n4. ARIMA — 2 paragraphs. The classical approach, what it captured, what it missed.\n5. Prophet — 2 paragraphs. Decomposable model, holiday effects, why it pulled ahead.\n6. LSTM — 2 paragraphs. The deep-learning attempt, what it learned, why it didn't beat Prophet on this data.\n7. The verdict — 1 paragraph. Prophet, with reasoning (MAE, intervals, interpretability, retrain speed).\n8. Live demo — 1 line + a link. The Streamlit URL from Day 3.\n9. Code + retros — link to repo.\n10. What I'd do differently — 2 short bullet points. Honest weaknesses (heatwave under-prediction; need more recent data).\n```\n\n## Why this structure\n- **Hook with a result, not a setup.** Readers leave halfway; deliver value early.\n- **Comparison structure mirrors the project.** Anyone reading sees the same workflow they'd run themselves.\n- **Demo link before the deep dive.** Even a reader who only skims gets to the working thing.\n- **Weaknesses at the end.** Builds trust; shows you know your model's limits.\n\n## What to put in vs. leave out\nIn: numbers (MAE), one chart per model, the verdict reasoning.\nOut: code snippets longer than 5 lines (link to repo), implementation trivia (which scaler you used), library version pinning.\n\n## The headline matters more than the body\nWrite 5 candidate titles. Pick the one that promises something specific:\n- Good: 'Why I shipped Prophet (not the LSTM) for forecasting US electricity demand'\n- Mediocre: 'My time series forecasting project'\n- Bad: 'Energy Forecasting with Machine Learning'"
+            },
+            {
+              "kind": "lesson",
+              "title": "Practical writing tips",
+              "body": "## Open in markdown\nWrite the post locally in a `.md` file. Copy/paste into dev.to or Medium when done. Editing in those rich-text editors is slow + risky.\n\n## Reuse your charts\nThe three-way model comparison chart from W24, the components plot, the residual analysis — all of them go directly in the post. You already have them.\n\n## Honest tone beats polished tone\n'I expected the LSTM to win and it didn't. Here's why.' is more memorable than 'In this exhaustive comparison...'\n\n## Keep code blocks short\nMaximum ~10 lines per code block in the post. For longer code, link to the GitHub file: `[full training loop on GitHub](https://github.com/.../w24-lstm.py)`.\n\n## Read the post out loud before publishing\nYou catch ~80% of awkward sentences this way. The 'too jargon-y' sections especially become obvious."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Putting the live demo URL near the top of the post is more effective than at the end.",
+                  "answer": true,
+                  "whenRight": "Right — even skim readers see the working thing. The demo proves the story before the story is read.",
+                  "whenWrong": "Yes — demo early. Most readers skim; reward them with a working link before they bounce."
+                },
+                {
+                  "prompt": "You should include long code blocks in the blog post so readers don't have to leave for GitHub.",
+                  "answer": false,
+                  "whenRight": "Right — no. Long code blocks kill flow. 10-line snippets max; link to the repo for full files.",
+                  "whenWrong": "Keep blocks short. Long code in posts disrupts reading. Link to GitHub for the full thing."
+                },
+                {
+                  "prompt": "An honest section about what you'd do differently makes the post more credible, not weaker.",
+                  "answer": true,
+                  "whenRight": "Right — owning limits builds trust. 'Everything was perfect' reads as marketing.",
+                  "whenWrong": "Yes — honesty hardens credibility. Polished without weaknesses reads as sales pitch."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "'Forecasting energy demand with Prophet vs LSTM'",
-              "body": "Write 1000-1500 words. Be honest about what didn't work."
+              "title": "Your turn — blog post",
+              "body": "[WRITE] 1. Write the post in markdown locally (`docs/blog.md`).\n2. Follow the 10-part structure.\n3. Include the live Streamlit URL near the top.\n4. Embed the 3-way comparison chart + the components plot.\n5. Publish on dev.to.\n6. Paste the published URL into the README."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Demo video",
-          "summary": "",
+          "title": "Record a demo video",
+          "summary": "90-second walkthrough of the live dashboard.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The video that earns interviews",
+              "body": "## What it is\nA 60-90 second screen recording of the live dashboard. No editing, no music, no intro — just a clear walkthrough of what the project does. Posted unlisted to YouTube. Linked from the README and the blog post.\n\n## Why this is high-leverage\nMost portfolio projects have screenshots. A working video earns more attention because (1) it proves the link works, (2) recruiters can watch on the train, (3) you can speak to nuance the static post can't.\n\n## The script (literally read this)\n```text\n[0:00-0:10]  'This is Energy Forecast, a 7-day demand forecaster for AEP\n              electricity built on 15 years of public hourly data.'\n[0:10-0:30]  Show the slider. Drag from 7 to 30 days. Point at the forecast\n              line, the shaded interval. 'Prophet model. 95% interval.'\n[0:30-0:55]  Scroll to the components plot. 'You can see the long-term trend,\n              the weekly cycle — weekdays higher than weekends because of\n              industrial load — and the holiday effects. Christmas drops\n              demand by about 2300 MW, which the model learned from data.'\n[0:55-1:15]  Switch to the dev.to post. 'Full write-up here. Compared three\n              models — Prophet won by 13% on MAE.'\n[1:15-1:30]  Switch to the GitHub repo. 'Code, models, MLflow runs, all here.'\n```\n\n## Tools\n- Loom (free tier, 5-min cap), OBS Studio (free, unlimited), or Mac's QuickTime/Screen Recording.\n- Mic: built-in laptop mic is fine for unlisted YouTube. Don't overthink audio.\n\n## One take, then maybe one more\nDon't try to make it perfect. Stumble through the script once; if you're embarrassed, do it once more. Three takes max. The video is a tool, not a film."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A 90-second demo video is more effective than a 6-minute one for a portfolio.",
+                  "answer": true,
+                  "whenRight": "Right — 90 seconds gets watched; 6 minutes gets bounced. Front-load the story.",
+                  "whenWrong": "Yes — short is watched. Recruiters skim. Cut everything past 90 seconds."
+                },
+                {
+                  "prompt": "You should script the video word-for-word before recording.",
+                  "answer": true,
+                  "whenRight": "Right — a short script keeps the take tight and prevents rambling. Read it on the second take.",
+                  "whenWrong": "Yes — script first. Unscripted demos meander. A 10-line script is the difference between watchable and boring."
+                },
+                {
+                  "prompt": "Posting the video as Unlisted on YouTube is fine — Public adds little.",
+                  "answer": true,
+                  "whenRight": "Right — unlisted = anyone with the link sees it; doesn't surface in search to be ranked against polished channels.",
+                  "whenWrong": "Yes — unlisted is enough. Public competes against millions; unlisted serves your one purpose (recruiter link)."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "90-second walkthrough",
-              "body": "Record. Upload. Embed in README."
+              "title": "Your turn — record",
+              "body": "[PRODUCE] 1. Write a 10-line script (use the template above).\n2. Open the live dashboard.\n3. Record 60-90 seconds (Loom / OBS / QuickTime).\n4. Upload to YouTube Unlisted. Get the URL.\n5. Embed the video in the dev.to post and link it from the README."
             }
           ]
         },
         {
           "number": 6,
-          "title": "Get 3 readers",
-          "summary": "",
+          "title": "Get 3 outside readers",
+          "summary": "Three real humans confused = three real edits.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The reader review process",
+              "body": "## What it is\nSend the blog post URL (NOT the dashboard, NOT the repo — just the post) to **three** people who are NOT data scientists. Ask one question: 'Where did you get lost?'\n\n## Why three\n- One reader's confusion could be them. Three readers converging on the same spot is signal.\n- Three is also small enough to actually get back from people in a day.\n- More than three is diminishing returns + analysis-paralysis.\n\n## Who counts as 'not a data scientist'\nFriends, family, coworkers from other functions, friends-from-bootcamp who do something else. The goal is **non-expert intelligent readers** — people who can follow a clear explanation but won't pretend to understand jargon you didn't define.\n\n## How to ask\n```text\nSubject: 90 seconds — where did you get lost?\nBody:\n  I wrote up a project: <link>. \n  Could you read it (~5 min) and tell me the FIRST place\n  you got lost or bored? That's the most useful thing I\n  can hear right now. No need to read past that point.\n  Thanks!\n```\n\n## The pattern to look for\n- **All three got lost at the same paragraph** → priority #1 edit. Rewrite that section.\n- **All three got lost at different paragraphs** → the post is roughly clear; minor edits.\n- **All three say 'it was fine' but you can tell they're being polite** → ask a more pointed question: 'What was the main point?' If they can't answer, the post buried it.\n\n## Don't argue\nIf a reader was confused, the post is unclear at that spot — full stop. Their experience IS the data. The temptation to explain 'but I meant...' is wrong; the fix is to edit the post so the next reader doesn't have the same problem.\n\n## What 'address the feedback' looks like\nOn the spot in the post:\n- Add a sentence of context\n- Define a term inline\n- Break a long paragraph in half\n- Replace jargon with the plain word"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "If all three readers get lost at the same paragraph, you have your highest-priority edit.",
+                  "answer": true,
+                  "whenRight": "Right — converging confusion is the strongest signal. Rewrite that paragraph first.",
+                  "whenWrong": "Yes — convergence = priority. Three independent readers stuck at the same line is the cleanest possible bug report."
+                },
+                {
+                  "prompt": "If a reader is confused, you should respond by explaining what you meant — they'll understand after that.",
+                  "answer": false,
+                  "whenRight": "Right — no. The post is what the reader sees; conversation doesn't scale. Edit the post.",
+                  "whenWrong": "Don't defend. Edit. The reader's confusion is data; the temptation to argue is the bug."
+                },
+                {
+                  "prompt": "Sending to three non-data-scientist readers is more useful than sending to three data scientists.",
+                  "answer": true,
+                  "whenRight": "Right — non-experts will tell you where jargon kicks in. Experts read past your weaknesses out of professional courtesy.",
+                  "whenWrong": "Yes — non-experts are tougher reviewers. Experts smooth over gaps they'd want to fill themselves."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Feedback",
-              "body": "3 readers. Apply 1 piece of feedback from each."
+              "title": "Your turn — three readers",
+              "body": "[WRITE] 1. Pick three non-DS readers.\n2. Send each the post URL + the 'where did you get lost' email.\n3. Wait for replies.\n4. Note their confusion points in `docs/reader_feedback.md`.\n5. Edit the post to address whatever 2+ readers converged on.\n6. Update dev.to with the edits."
             }
           ]
         },
         {
           "number": 7,
           "title": "Tag v1.0 + retro",
-          "summary": "",
+          "summary": "Ship the project, extract the lessons.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping v1.0",
+              "body": "## The retro\nAt the bottom of the repo's README, add a section:\n```text\n## Retro (W21-W27, Energy Forecast)\n\nWhat worked\n- Persistence baseline first (W21) — gave every later week a clear bar.\n- Prophet's components plot - actually made the model defensible to a non-DS reader.\n- MLflow tracking - made the cps sweep (W25) trivial to compare.\n- Reader review on the blog - rewrote the LSTM section after 2/3 confusion.\n\nWhat didn't\n- Heatwave under-prediction stayed unsolved. Would need recent training data + \n  possibly an exogenous temperature regressor.\n- LSTM intervals — punted on those entirely. Bayesian NN was out of scope.\n- Real-time drift alerts (W25) print locally; never wired up to a real Slack.\n\nWhat I'd do differently\n- Add a temperature regressor in week 22 (when fitting ARIMA), not week 27.\n- Build the Streamlit demo earlier (week 25) so feedback shaped the model choice.\n- Push the blog post to two outside readers, not three — diminishing returns past two.\n\nWhat I learned\n- The shipping ritual matters as much as the model. Half the value of W27 was reader feedback,\n  not new code.\n- Forecast intervals are the deliverable most non-DS readers actually care about.\n  Point forecasts feel wrong; intervals feel honest.\n- MLflow + model registry pays off the first time you do a small sweep. Before that, it's overhead.\n```\n\n## Tag v1.0\n```bash\ngit add docs/blog.md README.md app/ docs/reader_feedback.md\ngit commit -m \"Energy Forecast v1.0: Prophet in production, dashboard live, blog published\"\ngit tag v1.0\ngit push && git push --tags\n```\n\n## What you've actually shipped\n7 weeks. 4 models trained and honestly compared. A live dashboard. A blog post with three rounds of reader review. A demo video. A registered model in MLflow. A monitored production pipeline.\n\nThat's not a tutorial project. That's a finished data-science project at the level a junior DS would ship in their first job. Which is exactly what the capstone (W28-W30) gives you a chance to do once more, on a topic you pick."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A retro is more valuable when it includes things that didn't work, not just wins.",
+                  "answer": true,
+                  "whenRight": "Right — wins teach less than failures. The 'what I'd do differently' section is what compounds.",
+                  "whenWrong": "Yes — failures + alternatives drive the lesson. A wins-only retro doesn't earn its name."
+                },
+                {
+                  "prompt": "Tagging v1.0 marks the project as finished and the lessons as locked in.",
+                  "answer": true,
+                  "whenRight": "Right — the tag is the milestone. The lessons in the retro carry to the capstone next.",
+                  "whenWrong": "Yes — v1.0 = finished. The retro extracts what was learned; the capstone gets to apply it."
+                },
+                {
+                  "prompt": "The capstone (W28+) is a fresh project that can ignore the lessons from this one.",
+                  "answer": false,
+                  "whenRight": "Right — no. The whole point of the retro is to make the capstone go better. Carry the lessons forward.",
+                  "whenWrong": "The retro feeds the capstone. Lessons compound. Re-reading the retro on W28 Day 1 is non-optional."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v1.0 — PROJECT 3 DONE",
-              "body": "Write RETRO.md.\n      git tag v1.0 && git push --tags\n\nPASS:\n  ☐ Live Streamlit URL\n  ☐ Blog post published\n  ☐ Demo video\n  ☐ 3 readers + feedback addressed\n  ☐ RETRO.md\n  ☐ v1.0 tag\n\nPROJECT 3 COMPLETE."
+              "title": "Your turn — tag v1.0",
+              "body": "[PRODUCE] 1. Write the retro in the README (four sections).\n2. Commit + tag:\n`git add . && git commit -m 'Energy Forecast v1.0'`\n`git tag v1.0 && git push --tags`\n3. Verify everything:\n[x] Live demo URL works in incognito\n[x] Blog post published\n[x] Video uploaded + linked\n[x] Three readers gave feedback\n[x] Retro written\n[x] v1.0 tag pushed\n4. Take the rest of the day off. You earned it."
             }
           ]
         }
-      ],
-      "topics": [
-        "Choosing a production model based on trade-offs",
-        "Streamlit deployment",
-        "Writing honest project posts",
-        "Soliciting feedback at scale"
-      ],
-      "tasks": [
-        "Pick the winning model",
-        "Build dashboard",
-        "Deploy",
-        "Write blog post + video",
-        "Get feedback + retro"
-      ],
-      "project": "Energy Forecast v1.0 — Project 3 complete. Best model deployed in a Streamlit dashboard. Blog post + demo video published.",
-      "resources": [
-        {
-          "label": "Streamlit dashboard in 28 min - Misra Turp",
-          "url": "https://www.youtube.com/watch?v=ZZ4B0QUHuNc",
-          "note": "28 min. Re-watch. Build the forecasts dashboard."
-        },
-        {
-          "label": "Posting to Hacker News in 9 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Posting%20to%20Hacker%20News",
-          "note": "9 min. Show HN rules + titles that get traction. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "1000-word tech post structure - 12 min Tina Huang (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=1000-word%20tech%20post%20structure%20-%2012%20min%20Tina%20Huang",
-          "note": "12 min. The template that gets read. (Click the FIRST video in the search results - it is the intended one.)"
-        }
-      ],
-      "exercises": [
-        "Submit the blog to Hacker News",
-        "Send the post to the PJM data team",
-        "Make a Kaggle notebook version"
-      ],
-      "questions": [
-        "What's the cost of choosing the simpler model in production?",
-        "What questions do readers still have?",
-        "What would you do next week if you had to keep working on this?"
-      ],
-      "outputs": [
-        "v1.0 tag",
-        "PROJECT 3 COMPLETE",
-        "Blog + video URLs"
-      ],
-      "mastery_questions": [
-        "Write a one-page model selection memo (MODEL-SELECTION.md). Structure: candidates considered, metrics for each (MAE, RMSE, training time, inference time), the decision, and the reasoning. The reasoning should include at least one non-accuracy factor -- interpretability, maintenance complexity, dependency footprint, or failure mode. Paste the file. A team that inherits your project six months from now should be able to read this file and understand why you chose the model you chose, without needing to rerun all the experiments.",
-        "Deploy the chosen model in a Streamlit dashboard. The user selects a date range, the app generates a forecast with 95% confidence intervals, and the chart renders. Paste the URL. Now log each forecast request to a CSV (timestamp, requested_start, requested_end, model_version). Paste three sample rows from the log. This audit trail is what lets you answer \"what did the model predict for last week's peak?\" six months later.",
-        "Write and publish the blog post. This one should cover the full arc: why energy forecasting matters, the four models you tried, the honest comparison, the production decision, and one thing you learned that surprised you. Minimum 700 words. Paste the URL. The \"one thing that surprised you\" sentence is the most-read part -- readers skip to it, and it should be specific (\"LSTM finished third on this dataset, behind a 50-year-old classical model, because we had fewer than 15 years of data and LSTMs need more\").",
-        "Record the demo video. Three to five minutes. Open the live dashboard, generate a forecast for the next 30 days, show the confidence intervals, then pull up the MLflow comparison table and walk through why you chose the production model. Paste the URL. The MLflow table in the video is the detail that signals to a technical interviewer that you ran a real experiment and did not just train one model.",
-        "Write RETRO.md for Energy Forecast. Three sections: What worked, What did not, What is different from the week-20 retro. The third section is the most important -- if the same things went wrong twice, you have identified a habit to change. If different things went wrong, your problem-solving is growing. Paste the file."
-      ],
-      "ai_assist": "Use Claude to proofread the blog post for clarity -- specifically, ask it to flag any sentence that assumes the reader already knows what ARIMA or Prophet is. \"Identify sentences where I assume background knowledge the reader might not have, and suggest how to briefly explain the concept in context.\" Then decide for each flag whether to add the explanation or trust the reader's patience. The post should be readable by a smart non-technical person, not just by other data scientists.",
-      "stakeholder_moment": "Audience for your Energy Forecast blog is a working DS who might recommend hiring you. They look for: did you pick the right model for the right reason? Lead with the model comparison table, then the chosen model, then the why.",
-      "pre_flight": "Make the production model decision before opening your laptop. Read the README comparison table. For each model, write one sentence about its biggest operational risk -- not its MAE, but the thing most likely to go wrong in production. ARIMA's biggest risk is different from LSTM's biggest risk. The model with the lowest operational risk for a solo-maintained project is not always the one with the lowest MAE.",
-      "common_mistakes": [
-        "Choosing the production model solely by MAE without mentioning the trade-offs. \"Prophet wins\" is a one-sentence conclusion that does not demonstrate the thinking a senior interviewer is looking for. The reasoning is the answer, not the number.",
-        "Deploying the Streamlit dashboard without testing it on a date range outside the training window. The model is predicting the future -- make sure the app correctly handles dates past the last training observation and does not silently return training-period fitted values instead of forecasts.",
-        "Writing the blog post before deciding on the production model. The post should reflect the actual decision, not a draft that gets revised. Write the MODEL-SELECTION.md first, then write the post.",
-        "Making the demo video before the dashboard is stable. Record once, when everything works. A video where you apologise for a broken chart is worse than no video.",
-        "Writing a retro that avoids naming the specific thing that went wrong. \"The modelling phase took longer than expected\" is not a retro entry. \"I spent 3 days debugging the LSTM's flat-line predictions before realising the data was not normalised\" is."
-      ],
-      "debug_help": "The most common blocker this week is the same one as week 20: the blog post. The same advice applies. A 700-word draft posted on Thursday that you polish on Friday is infinitely more useful than a draft you never publish because it is not quite right. The second most common blocker is the Streamlit dashboard generating errors for future dates -- usually because the model's make_future_dataframe call or the sliding window function was not designed to handle dates past the training window. Add a simple check: if the requested end date is more than 90 days past the last training observation, show a warning that the forecast confidence intervals are unreliable at that horizon.",
-      "stretch": [
-        "Set up a GitHub Action that retrains the production model on new data monthly and logs the new run to MLflow. If the new model's MAE is more than 5% worse than the tagged \"prod\" model, the action sends a GitHub issue as the alert. This is a minimal automated retraining pipeline -- the same pattern used in production at most data-driven companies.",
-        "Add an \"actual vs. forecast\" section to the dashboard that shows, for past forecast windows, how close the predictions were to the actual AEP values (downloadable from the EIA website). The model accountability loop -- prediction, then measurement of accuracy -- is what earns trust with stakeholders over time.",
-        "Write a one-sentence executive summary of Energy Forecast: what it does, what it achieved, and what it would take to put it in production at a real utility. The constraint on the last part is not technical. Knowing the non-technical constraints on ML deployment is what makes a data scientist useful beyond the notebook."
       ]
     },
     {
@@ -9839,161 +10191,329 @@
       "phase": "Capstone",
       "commitment_hours": "10-15",
       "context": "You have shipped two complete projects. TaxiPulse proved you can load and analyse a large public dataset. Reddit Sentiment proved you can build a full NLP pipeline from labelling to production API. Energy Forecast proved you can do time series work end to end. Three projects, three domains, a real skill stack. The capstone is the fourth -- the one you choose entirely yourself.\n\nChoosing is the hard part. Not because there are no good ideas, but because the instinct is to choose the most impressive-sounding one. Resist that. The right capstone topic is the intersection of three things: a domain where you have genuine curiosity, a publicly available dataset that you have already downloaded and confirmed contains real signal, and a problem where you can define \"done\" in a sentence. A capstone on climate data sounds better than a capstone on Airbnb pricing until you realise climate data requires domain expertise you do not have, and three weeks in you are still arguing with netCDF files.\n\nThe spec document is the week's main deliverable. Not code. A SPEC.md that states the question in one sentence, names the dataset and where you got it, defines the baseline you will beat, lists what is explicitly out of scope, and describes what the v1.0 output will look like. The out-of-scope list is the one most people skip and the one that most determines whether the project finishes on time. If you write \"I will not build a real-time API\" and \"I will not train on data after 2022\" before you start, you cannot scope-creep past them without noticing.\n\nThe prototype is the other deliverable. Before committing to three weeks of work, you run a 2-hour proof of concept: load the dataset, run one basic model, check whether there is detectable signal. If the naive baseline and a simple model produce identical results, either the dataset is wrong, the question is wrong, or the task is harder than it looks. Finding that out in 2 hours costs nothing. Finding it out in week 2 of the capstone costs you the capstone.\n\nBy Sunday: a SPEC.md that a stranger could read and understand, a prototype notebook with at least one real result showing detectable signal, and a written paragraph stating why you chose this topic over the other two you considered.",
+      "concept_check": [
+        {
+          "q": "What's the right way to pick a capstone topic?",
+          "choices": [
+            "Pick the trendiest model",
+            "Pick a question you genuinely want answered + a dataset that exists + a 3-week scope you can finish",
+            "Pick the easiest",
+            "Pick whatever your friend is doing"
+          ],
+          "correct": 1,
+          "explain": "A finished mediocre project beats a half-built impressive one every time. The pick is: a question you'd care about even if no one was watching, data that actually exists and is downloadable, and scope that fits the 3 weeks ahead. Anything that fails one of the three is a wrong pick."
+        },
+        {
+          "q": "A 'tiny prototype' on Day 5 is for what?",
+          "choices": [
+            "Showing off",
+            "De-risking the project — confirming your data + question + approach are viable BEFORE committing two weeks to them",
+            "Filling time",
+            "Practice"
+          ],
+          "correct": 1,
+          "explain": "The prototype's job is to falsify the project. If you can't even load the data, the choice is wrong. If a quick baseline already gets 95% on your target, the question is too easy and you'll have nothing to write about. Day 5 is when you decide whether to commit or pivot."
+        },
+        {
+          "q": "Why is 'I'll do EVERYTHING — model + dashboard + API + paper + demo' the wrong scope?",
+          "choices": [
+            "It's not",
+            "Trying to do all of them at adequate quality in 3 weeks means doing none of them at portfolio quality",
+            "Some are forbidden",
+            "You need permission"
+          ],
+          "correct": 1,
+          "explain": "The shipping-ritual lesson from W27: half the value is in the polish. A model + a blog post + a Streamlit demo + a retro at full quality is plenty for a capstone. Add an API only if it genuinely adds to your story. 'Everything at 60%' is invisible to a recruiter; 'half of those at 95%' is hireable."
+        }
+      ],
       "days": [
         {
           "number": 1,
           "title": "Capstone options",
-          "summary": "",
+          "summary": "Pick the question, not the model.",
           "items": [
             {
-              "kind": "reflection",
-              "title": "Pick ONE",
-              "body": "Pick one of these 3 capstones:\n  A. Stock news sentiment → returns: scrape financial news, label sentiment, correlate with next-day stock return\n  B. Weather → energy demand: combine your energy model with NOAA weather, predict demand from weather forecast\n  C. GitHub trending: predict which repos will trend in 7 days from their week-1 commit + star pattern\n\nPick the one that excites you most. The other 2 die."
+              "kind": "lesson",
+              "title": "How to pick a capstone topic",
+              "body": "## What it is\nThe capstone is your fourth shipped project. Unlike the previous three (TaxiPulse, Reddit Sentiment, Energy Forecast), **you pick everything**: domain, question, dataset, models, deliverable shape. That freedom is also the danger.\n\n## Three filters every candidate must pass\n\n### 1. A question you actually care about\nYou're going to stare at this for 3 weeks. If the question is 'what gets a recruiter excited' rather than 'what would I want to know,' you'll burn out in the data-cleaning phase. Pick something that you'd still want answered if no one ever saw your work.\n\n### 2. A dataset that exists, is downloadable, and is workable\n- **Public** is easiest: Kaggle, BigQuery public datasets, government open-data portals, Hugging Face datasets.\n- **Scrapeable** is allowed but adds a week.\n- **'I'll work for this company and use their data'** is not allowed unless you have explicit, written permission — it's the legal version of committing AWS keys.\n\n### 3. Scope you can finish in 3 weeks\nLook at how long Energy Forecast took (7 weeks for 4 models + dashboard + blog). Your capstone is 3 weeks for analysis + model + demo + blog + retro. If your idea has 'I'll train 5 models' or 'I'll build a full microservice,' you've over-scoped. Cut it in half.\n\n## Three example capstones that work\n- **Predicting Marathon finishing times from training data.** Question: do high-volume runners actually finish faster than high-intensity runners? Data: Strava-style activity exports from your local running club or Kaggle's running datasets.\n- **Classifying NPR podcast episodes by topic from transcripts.** Question: how distinct are 'tech' and 'science' episode topics, really? Data: NPR's public transcript API.\n- **Forecasting SF housing prices by neighborhood.** Question: which neighborhoods diverged from the city trend during 2020-2022? Data: SF open-data portal + Zillow research.\n\nNotice what they share: a specific question, public data, model is one ingredient not the centerpiece.\n\n## Bad capstone shapes\n- 'I will build an end-to-end production NLP system' — no question, just architecture.\n- 'I will use a transformer to do X' — model-first, no question.\n- 'I will study my own personal data' — usually too small, no story for a stranger."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A capstone question you'd want answered EVEN IF NO ONE SAW YOUR WORK is a better pick than one designed to impress recruiters.",
+                  "answer": true,
+                  "whenRight": "Right — intrinsic interest survives the boring data-cleaning weeks. Recruiter-bait projects don't.",
+                  "whenWrong": "Yes — the boring weeks kill projects you don't personally care about. Intrinsic interest is your fuel."
+                },
+                {
+                  "prompt": "Using your employer's private data without explicit permission is fine for a capstone.",
+                  "answer": false,
+                  "whenRight": "Right — never. It's the legal-and-firing version of committing AWS keys. Public data only unless you have written permission.",
+                  "whenWrong": "Never private data without permission. Capstones go on public repos. Get permission or use public data."
+                },
+                {
+                  "prompt": "A capstone with a clear question + public data + 3-week scope is more likely to ship than one with novel architecture and 6 weeks of work.",
+                  "answer": true,
+                  "whenRight": "Right — shipped > impressive. A finished readable project at v1.0 beats an unfinished ambitious one every time.",
+                  "whenWrong": "Yes — finished beats novel. Reviewers see one v1.0 + retro; they don't see your unfinished work-in-progress."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn — list options",
+              "body": "[WRITE] In `capstone/IDEAS.md`:\n1. Write down 5 candidate questions you'd want answered.\n2. For each, in 1 line: what dataset would you use? How would you measure success?\n3. Cross off any that fail the three filters (interest / data exists / 3-week scope).\n4. You should have 2-3 left. Tomorrow you pick one and write the spec."
             }
           ]
         },
         {
           "number": 2,
           "title": "Write the spec",
-          "summary": "",
+          "summary": "One-page document. Commit before you build.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The capstone spec",
+              "body": "## What it is\nA one-page document that defines your capstone before you write a line of code. Commits you to a specific shape; protects future-you from scope creep.\n\n## The template\n```markdown\n# Capstone — <Project Name>\n\n## The question\n<One sentence. Specific enough that a yes/no answer at the end is possible.>\n\n## Why it matters (1 paragraph)\n<Who cares about the answer? What would they do differently if they knew?>\n\n## The dataset\n- Source: <URL>\n- Size: <rows / GB>\n- Coverage: <date range / geography>\n- License: <verified — capstone results are publishable>\n\n## Success looks like\n- Headline finding: <a quantified claim of the form 'X is true with magnitude Y'>\n- Demo: <a live thing a reader can interact with>\n- Blog: <a 1500-word post explaining the answer>\n\n## Out of scope\n- <List of things you WILL NOT do. Cuts that protect the timeline.>\n- e.g.: 'no model deployment to AWS; Streamlit Cloud only'\n- e.g.: 'no comparison of 5 architectures; baseline + 1 main model'\n- e.g.: 'no real-time pipeline; offline batch is enough'\n\n## Plan (3 weeks)\n- W28: prototype, scope adjustment\n- W29: build, baseline, evaluate\n- W30: polish, demo, blog, retro, v1.0 tag\n\n## Risks + mitigations\n- <Risk 1>: <what you'll do if it fires>\n- e.g.: 'Data is too sparse for neural net': fall back to gradient boosting + a regularised linear baseline\n- e.g.: 'Scraping the data takes 5 days': switch to a smaller pre-packaged Kaggle version\n```\n\n## Why this commits you\nOnce it's committed, scope creep becomes obvious. 'Oh, what if I also added X' meets the 'Out of scope' section and gets cut. The spec is the contract with yourself.\n\n## Sign the spec\nCommit it as `capstone/SPEC.md` to git on Day 2 of W28. Don't let yourself open the model code until the spec exists. This is the same discipline that makes engineers write design docs before kicking off projects."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A capstone spec is most useful when it includes an explicit 'Out of scope' section.",
+                  "answer": true,
+                  "whenRight": "Right — saying NO in writing protects you from scope creep later. 'I'll just also add X' meets 'Out of scope' and dies.",
+                  "whenWrong": "Yes — explicit NO is more powerful than implicit YES. The cuts are what keep the timeline."
+                },
+                {
+                  "prompt": "Spec first, then code. Writing the spec after starting work is fine — it documents what you did.",
+                  "answer": false,
+                  "whenRight": "Right — no. Specs are commitments before; documents after. Building first risks rationalizing whatever you happened to do.",
+                  "whenWrong": "Spec first. Otherwise it's a postmortem, not a plan. The commitment is the value."
+                },
+                {
+                  "prompt": "A specific question ('did X correlate with Y by region in 2018-2022?') is more useful in a spec than a vague theme ('I'll study housing').",
+                  "answer": true,
+                  "whenRight": "Right — specific questions force a measurable answer; vague themes can't be finished.",
+                  "whenWrong": "Yes — specificity = ship-ability. Vague themes never reach a clear end-state."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "SPEC.md",
-              "body": "Make a new repo: forge-capstone. Inside, SPEC.md:\n      # Capstone Spec\n      ## Question\n  (one sentence)\n      ## Data sources\n  (with URLs)\n      ## Method\n  (3 bullets)\n      ## Definition of success\n  (specific metric + threshold)\n      ## Definition of done\n  (deliverables list)\n      ## What's out of scope\n  (3 bullets — what you're NOT doing)"
+              "title": "Your turn — write the spec",
+              "body": "[WRITE] 1. Open `capstone/SPEC.md`.\n2. Fill in EVERY section of the template above. Don't skip 'Out of scope' or 'Risks.'\n3. Commit and tag: `git add capstone/SPEC.md && git commit -m 'capstone spec' && git tag capstone-spec && git push --tags`.\n4. From now on, every change to the project that doesn't match the spec is a deliberate, documented change."
             }
           ]
         },
         {
           "number": 3,
-          "title": "Find datasets",
-          "summary": "",
+          "title": "Find the dataset",
+          "summary": "Verify it actually exists, downloads, and works.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Real datasets, real verification",
+              "body": "## What it is\nIt's astonishingly common for a capstone to die on Day 3 of W29 because the dataset turned out to be: behind a paywall, deprecated, wrong format, license-restricted, or just empty. Today you de-risk by actually downloading + opening the data.\n\n## The verification checklist\n- [ ] **Download link works without an account** (or get an account today).\n- [ ] **File downloads in < 30 minutes** on your connection (or plan for it).\n- [ ] **File opens in pandas / your tool of choice** without arcane errors.\n- [ ] **The columns you need are actually in there** — don't trust the docs blindly.\n- [ ] **The date range / geography / categories you need are covered.**\n- [ ] **License is permissive** for a public portfolio repo. (Most public open-data is fine; doublecheck Kaggle datasets — some are explicitly non-redistributable.)\n- [ ] **You can answer one tiny version of your question** with it. Even 5 rows worth.\n\n## Sources, ranked\n1. **Kaggle Datasets** — best UX, clear licenses, often pre-cleaned.\n2. **Hugging Face Datasets** — great for NLP, easy loader.\n3. **BigQuery Public Datasets** — best for serious scale (W26 taught you this).\n4. **Government open data portals** — `data.gov`, `data.gov.uk`, city portals. Often messy, always free.\n5. **Direct from research papers** — most ML papers publish a github with data links. Quality varies.\n\n## Storage discipline\nOnce you've downloaded the data, **put it in S3** (if it's big) or in a `data/` folder in your repo (if it's small and license-compatible). Either way, your code should read from a single path; never have multiple copies floating around.\n\n## If verification fails\nEither pick another dataset that meets the criteria, or pivot the question to match what's actually available. Both are honorable; both protect the timeline. What's NOT honorable is plowing ahead with 'I'll figure it out later.'"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Downloading the dataset and actually opening it on Day 3 of W28 is paranoid.",
+                  "answer": false,
+                  "whenRight": "Right — no. It's the cheapest possible insurance. A 30-minute verification today prevents a W29 disaster.",
+                  "whenWrong": "Always verify early. Half of dead capstones die because the data wasn't what the docs claimed."
+                },
+                {
+                  "prompt": "License compatibility matters for a public portfolio repo.",
+                  "answer": true,
+                  "whenRight": "Right — non-redistributable datasets put you in legal grey zone if you commit them. Check before downloading.",
+                  "whenWrong": "Yes — license is the boring detail that bites you later. Verify on Day 3, not on W30."
+                },
+                {
+                  "prompt": "If the dataset doesn't quite match your question, you should plow ahead and adjust later.",
+                  "answer": false,
+                  "whenRight": "Right — no. Pivot the question or change the dataset NOW. Mismatches compound; they don't resolve.",
+                  "whenWrong": "Pivot or switch. Mismatched datasets produce findings that don't answer the question you asked."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Verify access",
-              "body": "Click through every dataset URL. Download a sample. Confirm it's free + accessible. If anything's blocked or paid, revise SPEC.md."
+              "title": "Your turn — verify",
+              "body": "[CODE] 1. Download the dataset you wrote into SPEC.md.\n2. Open in pandas. Print `df.head()` and `df.shape`.\n3. Confirm every column the spec relies on is actually there.\n4. Markdown in `capstone/data_check.md`: 'Verified on YYYY-MM-DD. <Size>. <Columns confirmed>. License: <details>.'\n5. If verification fails, edit SPEC.md TODAY (don't punt)."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Plan 3 weeks",
-          "summary": "",
+          "title": "Plan the 3 weeks",
+          "summary": "A day-by-day timeline. Then halve it.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The 3-week plan",
+              "body": "## What it is\nA concrete day-by-day plan covering W28 finish through W30 ship. Written in `capstone/PLAN.md`. Revisited every Sunday night.\n\n## The template\n```markdown\n# Capstone plan\n\n## W28 (this week)\n- D1-2: scope + spec (done)\n- D3: data verification (done)\n- D4: this plan\n- D5: tiny prototype — confirm the question is answerable\n- D6: adjust scope based on D5 findings\n- D7: v0.1 tag\n\n## W29 (build)\n- D1: clean the data; document every cleaning decision\n- D2: feature engineering — features the domain says matter\n- D3: baseline model. Persistence / always-predict-mean / simple regression.\n- D4: main model. ONE main model. Document why this one.\n- D5: iterate. Improve based on residuals / errors. NOT 'try a new model.'\n- D6: evaluate honestly. Held-out test set. MAE / accuracy / whatever metric the spec says.\n- D7: v0.2 tag\n\n## W30 (polish + ship)\n- D1: streamlit demo\n- D2: deploy demo\n- D3: blog post\n- D4: demo video\n- D5: 3 outside readers\n- D6: edits from feedback\n- D7: retro + v1.0 tag\n```\n\n## Halve the plan\nLook at the plan. Underline every day that has more than ONE concrete thing on it. Each underline is a day you've over-scoped. Halve it. The list above is already barely possible; if your version has more, cut.\n\n## Sunday night ritual\nEvery Sunday during the capstone, open PLAN.md and:\n- Mark what got done with `[x]`.\n- Move anything that didn't happen to the next week — or DELETE IT.\n- Adjust the plan if reality diverged.\n\n## Why this matters\nThe plan is the only thing standing between 'finished v1.0' and 'still iterating in week 5.' Most capstone failures are scope failures, not skill failures."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Halving the plan after writing it is a useful discipline, not a sign of low ambition.",
+                  "answer": true,
+                  "whenRight": "Right — your first plan is always over-scoped. Halving once gets you closer to what actually ships.",
+                  "whenWrong": "Yes — first plan is always over-scoped. Halve and ship. Real engineers under-promise and over-deliver."
+                },
+                {
+                  "prompt": "If a day in the plan has 4 concrete tasks, you should leave it alone — you'll just work harder.",
+                  "answer": false,
+                  "whenRight": "Right — no. 4 tasks/day = 0 finished tasks. Cut to one. Working harder is not a plan.",
+                  "whenWrong": "One concrete task per day. More than that means you've underestimated something. Cut, don't grind."
+                },
+                {
+                  "prompt": "The plan should be revisited every Sunday during the capstone.",
+                  "answer": true,
+                  "whenRight": "Right — weekly check-in catches drift while it's still small. Daily would be overkill; monthly would be too late.",
+                  "whenWrong": "Yes — Sunday ritual. The plan only works if you use it."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "ROADMAP.md",
-              "body": "      # Capstone Roadmap\n      ## W19\n  - Data collection + cleaning\n  - EDA\n  ## W20\n  - Modeling\n  - Evaluation\n  - Final dashboard + blog post"
+              "title": "Your turn — write the plan",
+              "body": "[WRITE] 1. Write `capstone/PLAN.md` using the template.\n2. Halve every overloaded day.\n3. Commit it.\n4. Set a recurring Sunday-night calendar event: 'capstone Sunday — update PLAN.md'."
             }
           ]
         },
         {
           "number": 5,
-          "title": "Build a tiny prototype",
-          "summary": "",
+          "title": "Tiny prototype",
+          "summary": "Smallest possible end-to-end. Prove the question is answerable.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "The de-risking prototype",
+              "body": "## What it is\nIn ONE day, build the simplest possible thing that answers your capstone question — even with bad accuracy, even on a tiny sample. The point is to prove every step works before you commit the next 2 weeks.\n\n## The prototype shape\n```text\n1. Load 1000 rows of the data.\n2. Compute the simplest possible answer to your question.\n   - Classification: predict majority class. Compute accuracy.\n   - Regression: predict mean. Compute MAE.\n   - Time series: predict yesterday. Compute MAE.\n   - Clustering: KMeans k=3. Look at one cluster.\n3. Print the result.\n```\n\n## What you're checking\n- [ ] The data loads (no surprise format issues).\n- [ ] The columns you need are populated (no surprise missing-data).\n- [ ] The trivial baseline produces a number (not an error).\n- [ ] The number is not already at 99% — if it is, the question is too easy.\n- [ ] The number is not chance — if it is (50% on binary classification), the signal might not be there at all.\n\n## The three outcomes\n- **Trivial baseline gets 60-80% accuracy / reasonable MAE** → you have signal. Good prospect. Commit.\n- **Trivial baseline gets 95%+** → question is too easy. Reframe to something harder. (E.g.: instead of 'classify cats vs cars,' do 'classify dog breeds' — same data, harder question.)\n- **Trivial baseline gets chance** → signal isn't there. Either the question doesn't match the data, or there's something wrong with how you're loading. Investigate today.\n\n## Why this matters\nThe cost of pivoting on D5 of W28 is ~1 day of work. The cost of pivoting on D5 of W29 is ~7 days of work. Today's prototype is cheap insurance."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A 'too easy' baseline (95%+ accuracy on Day 1) means you should pick a harder question, not celebrate.",
+                  "answer": true,
+                  "whenRight": "Right — a too-easy baseline gives you nothing to write about. Reframe to something harder.",
+                  "whenWrong": "Yes — too easy = no story. Reframe the question to where the trivial baseline doesn't already dominate."
+                },
+                {
+                  "prompt": "If the baseline gets chance accuracy, you should still proceed — the main model will fix it.",
+                  "answer": false,
+                  "whenRight": "Right — no. Chance accuracy usually means the signal isn't there or you're loading data wrong. Don't grind; investigate.",
+                  "whenWrong": "Chance accuracy is a red flag. Investigate the data + the question; don't trust a fancier model to bail you out."
+                },
+                {
+                  "prompt": "A prototype on Day 5 is faster than reading docs for 5 days.",
+                  "answer": true,
+                  "whenRight": "Right — code reveals what docs hide. Build the cheapest possible thing today.",
+                  "whenWrong": "Yes — prototypes find bugs docs miss. One day of working code teaches more than five of reading."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Prove it's possible",
-              "body": "Pull JUST ENOUGH data to verify the idea has signal. 100 rows, the simplest model, the laziest evaluation. If the signal isn't there with 100 rows, no amount of scaling will save it."
+              "title": "Your turn — prototype",
+              "body": "[CODE] In `capstone/prototype.ipynb`:\n1. Load 1000 rows.\n2. Build the dumbest possible model that answers your question (predict-the-mean, predict-the-majority, persistence, etc.).\n3. Compute the headline metric (accuracy, MAE, whatever the spec says).\n4. Markdown: which of the three outcomes did you get?\n5. If the question is too easy, edit SPEC.md TODAY to reframe."
             }
           ]
         },
         {
           "number": 6,
           "title": "Adjust scope",
-          "summary": "",
+          "summary": "One day to react to what the prototype taught you.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Re-aligning spec, plan, and prototype",
+              "body": "## What it is\nYesterday's prototype either confirmed the spec, suggested a reframe, or surfaced a blocker. Today you respond to whichever happened — adjust the spec + plan to match the new reality.\n\n## The three responses\n\n### Confirmed — prototype gave a sensible baseline\nUpdate SPEC.md with the actual baseline number you got. Update the 'Success looks like' section if needed (e.g. 'beat the baseline of MAE=120'). PLAN.md stays as-is. Move to v0.1 tag tomorrow.\n\n### Reframe — question was too easy or too hard\nEdit SPEC.md's 'The question' section. The new question must:\n- Use the same dataset (you've verified it).\n- Be answerable in the remaining timeline.\n- Still be something you actually care about.\n\nUpdate PLAN.md to point at the new question. Update the prototype quickly to confirm the new question shows signal.\n\n### Blocker — data missing columns, license issue, format problem\nThis is the painful one. Either:\n- **Switch dataset** to something with the same shape but cleaner. Re-do Day 3 verification on the new one.\n- **Restructure question** to match what the data actually contains.\n- **Abandon the topic** and pick from your IDEAS.md backlog. Faster than fighting the data for 2 more weeks.\n\n## Why this day exists\nMost projects skip 'adjust scope' and pay for it in week 2 or 3 with a half-finished, awkward result. Spending one explicit day on it is what professionals do."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Editing the SPEC.md after the prototype is a sign of good engineering, not flip-flopping.",
+                  "answer": true,
+                  "whenRight": "Right — specs respond to evidence. Yesterday's prototype IS evidence.",
+                  "whenWrong": "Yes — specs evolve as you learn. The first version is a hypothesis; the prototype tests it."
+                },
+                {
+                  "prompt": "If the data is missing columns the spec relies on, you should plow ahead and figure it out in week 2.",
+                  "answer": false,
+                  "whenRight": "Right — no. Switch dataset or restructure question NOW. Week-2 panic-fixes are how capstones die.",
+                  "whenWrong": "Pivot now, not later. A missing column doesn't fix itself; it forces a worse compromise next week."
+                },
+                {
+                  "prompt": "Abandoning the topic entirely on Day 6 of W28 is allowed if the prototype revealed a fundamental mismatch.",
+                  "answer": true,
+                  "whenRight": "Right — picking from your IDEAS.md backlog beats fighting a broken topic for 14 days. Honorable.",
+                  "whenWrong": "Yes — pivoting is allowed if the prototype proved the topic broken. Sunk cost is not a strategy."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Be honest",
-              "body": "If the prototype was disappointing, what's the smaller, more achievable version of the question? Edit SPEC.md."
+              "title": "Your turn — scope check",
+              "body": "[WRITE] 1. Read prototype results from Day 5.\n2. Decide: confirmed / reframe / blocker.\n3. Edit SPEC.md accordingly.\n4. Update PLAN.md if needed.\n5. Commit with message 'capstone scope adjusted after prototype' so future you sees the moment of decision."
             }
           ]
         },
         {
           "number": 7,
           "title": "Tag v0.1",
-          "summary": "",
+          "summary": "Lock in the scope. Next week is build week.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping v0.1",
+              "body": "## What it is\nv0.1 of the capstone is just paperwork — the spec, the plan, the prototype, the data verification. Zero modeling yet. But it's all the things that make the next two weeks possible.\n\n## What you tag\n```bash\ngit add capstone/SPEC.md capstone/PLAN.md capstone/IDEAS.md \\\n        capstone/data_check.md capstone/prototype.ipynb\ngit commit -m \"Capstone v0.1: spec, data verified, prototype shows signal\"\ngit tag capstone-v0.1\ngit push && git push --tags\n```\n\n## Why this matters as a tag\nTwo reasons:\n1. It's a contract with yourself. You can't scope-creep without acknowledging it (the diff against capstone-v0.1 will tell on you).\n2. The tag is a recoverable point. If next week's work explodes, you can `git checkout capstone-v0.1` and try a different direction without losing the spec and the dataset verification.\n\n## What you've actually finished\n- A specific question + a measurable success criterion\n- A verified dataset with a known license\n- A 3-week plan you halved into actually-possible chunks\n- A prototype that showed the question is answerable\n- Scope you've adjusted based on the prototype\n\nThis is week 1 of a real DS project. Most learners skip all of this and start training models on day 1. Doing it deliberately is the difference between 'finished v1.0' and 'still iterating.'\n\n## What's next\nWeek 29 — Build. One main model. Proper baseline. Honest evaluation. By Sunday W29 you have v0.2 with a working model."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tagging v0.1 with zero modeling code is fine — the spec and prototype are the deliverable.",
+                  "answer": true,
+                  "whenRight": "Right — paperwork-as-deliverable. Real engineering teams ship a design doc + scoping milestone exactly like this.",
+                  "whenWrong": "Yes — process is part of the work. v0.1 = scope locked. Modeling starts in v0.2."
+                },
+                {
+                  "prompt": "Skipping the spec + plan + prototype and going straight to model training is more efficient.",
+                  "answer": false,
+                  "whenRight": "Right — no. It feels faster on day 1 and costs you week 3. Front-load the scoping.",
+                  "whenWrong": "Skipping scoping feels fast but costs you later. Half of dead projects skipped this exact phase."
+                },
+                {
+                  "prompt": "The tag lets you checkout the scoped-but-not-built state if next week's work goes sideways.",
+                  "answer": true,
+                  "whenRight": "Right — recovery point. `git checkout capstone-v0.1` and try a different direction without losing the scope.",
+                  "whenWrong": "Yes — tags = recovery points. If W29 derails, v0.1 is your foundation to try again from."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.1",
-              "body": "      git tag v0.1 && git push --tags\n\nPASS:\n  ☐ SPEC.md committed\n  ☐ Datasets verified accessible\n  ☐ ROADMAP.md for W19 + W20\n  ☐ Prototype run with real data\n  ☐ v0.1 tag"
+              "title": "Your turn — tag v0.1",
+              "body": "[PRODUCE] 1. Verify all of: SPEC.md, PLAN.md, IDEAS.md, data_check.md, prototype.ipynb exist and are committed.\n2. `git commit` if anything's outstanding.\n3. `git tag capstone-v0.1 && git push --tags`.\n\nPASS:\n[x] SPEC.md complete (question, dataset, success criteria, out-of-scope, plan, risks)\n[x] Dataset downloaded + verified + licensed\n[x] PLAN.md exists and is halved\n[x] prototype.ipynb shows the question is answerable\n[x] capstone-v0.1 tag pushed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Scoping a project",
-        "Writing a SPEC",
-        "Prototype-first to validate signal",
-        "Definition of done",
-        "Out-of-scope explicit lists"
-      ],
-      "tasks": [
-        "Pick capstone topic",
-        "Write SPEC.md",
-        "Verify data sources",
-        "Plan W19-20",
-        "Build a 100-row prototype",
-        "Adjust scope based on what you saw"
-      ],
-      "project": "Capstone v0.1 — scoped, datasets verified, prototype proves there's signal, roadmap for the next 2 weeks.",
-      "resources": [
-        {
-          "label": "Scoping a project in 10 min - Andrew Ng style (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Scoping%20a%20project%20-%20Andrew%20Ng%20style",
-          "note": "10 min. Problem, data, metric, baseline. The 4-step framework. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "Picking a portfolio topic - 7 min Luke Barousse (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Picking%20a%20portfolio%20topic%20-%207%20min%20Luke%20Barousse",
-          "note": "7 min. Real-world topic beats toy dataset. (Click the FIRST video in the search results - it is the intended one.)"
-        },
-        {
-          "label": "Writing SPEC.md in 10 min (top YouTube result)",
-          "url": "https://www.youtube.com/results?search_query=Writing%20SPEC.md",
-          "note": "10 min. Problem, scope, non-goals, success metric, timeline. (Click the FIRST video in the search results - it is the intended one.)"
-        }
-      ],
-      "exercises": [
-        "Pitch your spec to one friend in 2 minutes",
-        "Search for similar projects on GitHub — what did they NOT do?",
-        "Pick the metric you'll be most embarrassed if it's bad"
-      ],
-      "questions": [
-        "Why prototype-first?",
-        "How is your spec falsifiable?",
-        "What's the smallest version that's still interesting?"
-      ],
-      "outputs": [
-        "SPEC.md + ROADMAP.md",
-        "Prototype notebook",
-        "v0.1 tag"
-      ],
-      "mastery_questions": [
-        "Write SPEC.md. Required sections: Question (one sentence), Dataset (source URL, file size, time range, licence), Baseline (the dumbest model that knows the domain -- what is it and what metric does it produce?), Out of scope (at least 3 explicit exclusions), Definition of done (what does v1.0 look like -- a notebook? a dashboard? an API? a blog post?), Why this topic (one paragraph, honest). Paste the file. A spec that takes more than 5 minutes to read is too long. A spec that leaves the baseline undefined is not a spec.",
-        "Download the dataset and open it. Run df.shape, df.dtypes, df.describe(), and df.isna().sum(). Paste all four outputs. Write one sentence for each suspicious thing you see: a column with 40% nulls, a max value that is 100x the mean, a date column that is stored as object instead of datetime. These are the issues that will bite you in week 29 -- document them now while you are still in exploration mode and not under pressure to ship.",
-        "Implement the baseline. It should be the simplest thing that knows about the domain: mean prediction, most-frequent-class, persistence, or a one-feature linear regression. Compute the baseline's metric on a proper train/test split. Paste the metric. This number is the floor. Every model you build in week 29 is only interesting if it beats it. If it does not beat the baseline, the baseline is what you deploy.",
-        "Run the prototype: load the data, run one real model (not the baseline), evaluate it on the test set, paste the metric. Is there a gap between the baseline and the model? If the gap is less than 1%, write one sentence about whether that is a data problem, a feature engineering problem, or a genuinely hard task. If the gap is 20%+, write one sentence about whether that improvement is real or a sign of data leakage.",
-        "Write a one-paragraph \"why this topic over the alternatives\" section in your SPEC. Name the two ideas you did NOT choose, and for each write one honest sentence about why you passed. \"The climate data was 50GB and required domain expertise I do not have\" is an honest reason. \"I thought it was not impressive enough\" is also an honest reason and worth writing -- it helps you notice if you are choosing based on appearance rather than tractability."
-      ],
-      "ai_assist": "Use Claude to stress-test your spec. Paste the SPEC.md and ask \"what assumptions am I making that could be wrong, and what would I discover in week 29 that would invalidate this spec?\" The answers will surface the risks you have not thought about. Do NOT use Claude to generate capstone ideas for you. The ideas it generates will be technically valid and personally meaningless -- a capstone built on genuine curiosity produces a better blog post and a more convincing interview answer than one picked for technical impressiveness.",
-      "pre_flight": "Write down three capstone ideas before you evaluate any of them. For each, write the question in one sentence and name the dataset. Then, for each idea, spend 15 minutes finding the actual data file and opening it. The idea that survives contact with the actual data -- real column names, real file size, real format -- is the one worth building. Ideas that cannot survive 15 minutes of data inspection should not survive 3 weeks of capstone.",
-      "common_mistakes": [
-        "Choosing a capstone topic based on how it sounds rather than whether the data is tractable. \"Predicting stock prices\" sounds impressive and has infinite public data. It also has the lowest signal-to-noise ratio of any domain in data science, and a model that beats random chance on stock returns is genuinely rare. Choose a domain where the signal is real and findable.",
-        "Skipping the prototype and going straight to building. The prototype exists to validate that the task is solvable in 3 weeks. Finding out in week 29 that the data does not contain the signal you assumed is a project-ending discovery. Finding it out in the prototype is a 2-hour lesson.",
-        "Writing a spec without an explicit baseline. Without a baseline, you cannot know whether your model is doing anything useful. \"I will build a classifier\" without \"the majority-class baseline is 73%\" means you have no floor and no way to evaluate success.",
-        "Leaving the out-of-scope section blank or vague. \"I will not do anything too complicated\" is not an out-of-scope list. \"I will not train on data after 2021, I will not build a real-time API, I will not handle multi-label classification\" is. Explicit exclusions are the mechanism that keeps capstones from expanding until they never finish.",
-        "Choosing a dataset you cannot get. Some datasets require institutional access, data sharing agreements, or payment. Confirm the data is downloadable and usable before writing the spec. A spec built around a dataset you cannot access is just planning fiction."
-      ],
-      "debug_help": "The most common stuck point this week is choosing the topic. If you have been going back and forth for more than 2 hours, use this rule: pick the idea where you have already found the data file and can describe what the first row looks like. Everything else is imagination. The second most common stuck point is a prototype that produces no signal. Before concluding the task is too hard, check three things: are you using the right metric (accuracy on an imbalanced dataset looks fine while the model fails on the minority class), is your train/test split correct (no future leakage), and have you tried at least one feature beyond the raw input (interaction terms, lag features, time-based features). If all three are correct and there is still no signal, that is real information -- consider a different question or a different dataset.",
-      "stretch": [
-        "Find one person who has built a similar project (check Kaggle, GitHub, or Medium) and read their write-up. Note one thing they did that you plan to do differently and why. Knowing the existing work in your domain is what separates a project from a contribution.",
-        "Write a risk register for your capstone: three things that could go wrong, how likely each is (low/medium/high), and what you would do if they happened. This is not pessimism -- it is the planning discipline that makes projects finish on time.",
-        "Check whether your chosen dataset has a Kaggle competition associated with it. If it does, look at the top public kernel approaches. You are not copying -- you are scoping: now you know what is possible at the ceiling, and you can plan your effort accordingly."
       ]
     },
     {
@@ -10002,160 +10522,334 @@
       "phase": "Capstone",
       "commitment_hours": "15-20",
       "context": "The spec is signed. The prototype showed signal. This week you build the real thing.\n\n\"Build\" means something specific here. It does not mean running every model in sklearn until one wins. It means: clean the data properly and document every decision, engineer the features that your domain knowledge says matter, train a baseline first and record the number, then try one or two more complex models and compare them honestly. The pipeline should be a sequence of reproducible steps -- a stranger who clones your repo should be able to run it top-to-bottom and get your exact numbers.\n\nThe most common way capstones fail at this stage is scope expansion. The data reveals something interesting that is adjacent to the original question, the curiosity pulls you toward it, and by Thursday you are 60% through a different project than the one in the spec. The spec exists to resist this. When the adjacent thing looks interesting, write it in the stretch section and keep building the thing you committed to. If the adjacent thing is actually more interesting, change the spec explicitly and document the pivot -- do not just drift.\n\nHonest evaluation is the non-negotiable. The comparison table must include: your baseline metric (from last week), at least one more complex model's metric, and a written sentence for each model about where it fails. A table that only shows accuracy on a balanced test set, for a project that matters because of its imbalanced minority class, is not honest evaluation. The metric you report should be the one that measures the thing the stakeholder actually cares about.\n\nBy Sunday: a clean, commented notebook with data cleaning, feature engineering, and model comparison documented. A comparison table with at least two models plus the baseline, with honest interpretation. And a written paragraph -- in the notebook -- about what you would do differently with two more weeks.",
+      "concept_check": [
+        {
+          "q": "What does 'build' specifically mean during the capstone build week?",
+          "choices": [
+            "Try every model sklearn has",
+            "Clean the data, engineer the features your domain knowledge demands, train ONE main model with a baseline, evaluate honestly",
+            "Whatever feels productive",
+            "Train as many models as possible"
+          ],
+          "correct": 1,
+          "explain": "'Build' means one main model trained well, on cleanly engineered features, against a documented baseline, with honest evaluation. NOT a model zoo. The blog post needs one clear winner with reasoning, not 'I tried 8 models and here's a table' which reads as scattershot."
+        },
+        {
+          "q": "Why does the baseline get its own day in the build week?",
+          "choices": [
+            "Filler",
+            "The baseline determines whether your main model is actually adding value — and you need an honest number to compare against",
+            "Tradition",
+            "Because baselines are slow"
+          ],
+          "correct": 1,
+          "explain": "Every shipped DS project lives or dies by 'did your model beat the baseline.' Without a baseline you've measured against, you can't claim improvement. Spending a full day on a strong baseline is the only way to know if your main model actually earned its complexity."
+        },
+        {
+          "q": "What does 'iterate' on Day 5 mean if it doesn't mean 'try a new model'?",
+          "choices": [
+            "Train longer",
+            "Look at where your model fails (residuals, confusion matrix), and improve the FEATURES or the DATA to fix those specific failures",
+            "Adjust hyperparameters randomly",
+            "Make the model bigger"
+          ],
+          "correct": 1,
+          "explain": "On a tight timeline, iterating on features beats iterating on models. Look at the rows your model got wrong; ask 'what would a human know that the model doesn't?'; encode that as a feature; refit. That's the 80/20 — model architecture matters far less than feature quality on tabular DS problems."
+        }
+      ],
       "days": [
         {
           "number": 1,
           "title": "Full data collection",
-          "summary": "",
+          "summary": "From sample to the whole thing.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Bringing in the full dataset",
+              "body": "## What it is\nIn W28 you used 1000 rows for the prototype. Today you ingest the **whole dataset** — every row, every column you'll need, into a single canonical location your downstream notebooks all read from.\n\n## The pattern\n```python\nimport pandas as pd\n\n# Read from the source (Kaggle download, S3, BigQuery, etc.)\nraw = pd.read_csv('data/raw/<your_file>.csv')\nprint(raw.shape)        # (rows, cols)\nprint(raw.dtypes)       # quick sanity\nprint(raw.head())\n\n# Save as parquet — faster + smaller than CSV for subsequent reads\nraw.to_parquet('data/raw.parquet', index=False)\n```\n\n## Why parquet, not CSV\n- 5-10x smaller on disk\n- 10x faster to read\n- Preserves column types (no more 'CSV ate my dates')\n- Skippable by column on read (`columns=['x', 'y']`)\n\nFrom here, every notebook in the project reads from `data/raw.parquet`. One canonical source. No copies floating around.\n\n## If the data is too big to load\n- **BigQuery / Snowflake** — query a sample once, store as parquet locally.\n- **Streaming through Dask** — works but adds complexity. Avoid for the capstone unless you must.\n- **Sample down** — explicitly document the sample method in SPEC.md if you have to.\n\n## Document what's in the file\nAdd `capstone/DATA_DICT.md` — a one-line description per column. Future-you (and any reviewer) will thank you. Five minutes today saves an hour next week."
+            },
+            {
+              "kind": "lesson",
+              "title": "See it in code (with output)",
+              "body": "## Canonical-source pattern\n```python\nimport pandas as pd\n\ndf = pd.read_parquet('data/raw.parquet')\nprint(f'{len(df):,} rows · {len(df.columns)} columns')\n# 1,247,891 rows · 23 columns\n\nprint(df.dtypes.value_counts())\n# float64    11\n# object      8\n# datetime    3\n# bool        1\n\n# Sanity: any all-null columns?\nnull_pct = (df.isna().mean() * 100).round(1)\nprint(null_pct[null_pct > 0].sort_values(ascending=False))\n# col_x    62.4  <-- mostly missing, consider dropping\n# col_y    18.2\n```"
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Saving the raw data as a parquet file once means every downstream notebook reads faster and gets the same types.",
+                  "answer": true,
+                  "whenRight": "Right — write once, read everywhere. Parquet is the default for any project beyond toy size.",
+                  "whenWrong": "Yes — write the parquet on day 1, never deal with CSV type-coercion issues again."
+                },
+                {
+                  "prompt": "Keeping multiple copies of the dataset around the project is fine — disk is cheap.",
+                  "answer": false,
+                  "whenRight": "Right — no. Multiple copies = drift. 'Which one did I update?' is a real, expensive bug. One canonical path.",
+                  "whenWrong": "Drift is the real cost. Multiple copies eventually disagree; you can't trust the analysis."
+                },
+                {
+                  "prompt": "Writing a one-line description per column in DATA_DICT.md is overkill for a learner project.",
+                  "answer": false,
+                  "whenRight": "Right — no. Five minutes today; an hour saved next week when you forget what 'col_q3' means.",
+                  "whenWrong": "DATA_DICT.md is the cheapest documentation you'll ever write. Saves you next week, saves reviewers always."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Scrape / download everything",
-              "body": "Pull all the data you need. Save it raw to data/raw/. Document each source's URL + download date in README."
+              "title": "Your turn — ingest",
+              "body": "[CODE] In `notebooks/01_ingest.ipynb`:\n1. Read the raw dataset (CSV / API / BigQuery — whatever source).\n2. Save as `data/raw.parquet`.\n3. Print shape, dtypes, null %.\n4. Create `capstone/DATA_DICT.md` with one line per column.\n5. Commit `data/raw.parquet` (or its sample if license disallows redistribution)."
             }
           ]
         },
         {
           "number": 2,
-          "title": "Clean",
-          "summary": "",
+          "title": "Clean — and document every decision",
+          "summary": "Cleaning IS the analysis.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Cleaning decisions are findings",
+              "body": "## What it is\nEvery decision you make about the data — drop a column, impute a value, exclude a date range, recode a category — is a finding worth documenting. Cleaning isn't pre-work; it's analysis you happen to do early.\n\n## The pattern\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/raw.parquet')\n\n# DECISION 1: drop rows where target is null (can't learn from them)\nbefore = len(df)\ndf = df.dropna(subset=['target'])\nprint(f'Dropped {before - len(df):,} rows with null target')\n\n# DECISION 2: drop col_x — 62% missing, no domain reason to impute\ndf = df.drop(columns=['col_x'])\n\n# DECISION 3: clip price outliers above $10k (legitimate but skew the regression)\n#   Keep but flag — the model will see them; the plot won't.\ndf['price_clipped'] = df['price'].clip(upper=10_000)\n\ndf.to_parquet('data/clean.parquet', index=False)\n```\n\n## Document each decision in CLEANING.md\n```markdown\n# Cleaning decisions\n\n- Dropped 1,234 rows with null `target`. Reason: can't train on them.\n- Dropped column `col_x`. Reason: 62% missing, no domain meaning.\n- Clipped `price` above $10,000 into `price_clipped`. Reason: legitimate\n  outliers (luxury sales) skew the linear fit; capping preserves info\n  without distorting the trend.\n- Recoded `category` 'OTHER' as 'misc' so it sorts last in tables.\n```\n\n## Why this matters\nWhen the blog post is written and a reviewer asks 'why did you drop those rows?' you have an answer ready in CLEANING.md. Without it, you'll have forgotten by W30 and the project's credibility crumbles at exactly the moment it shouldn't.\n\n## The 'cleaning is analysis' mindset\nIf a cleaning decision is interesting, it goes in the blog post. 'We had to drop 8% of rows because of missing target values. That 8% turned out to be older accounts with a different data-collection workflow — they're systematically different and excluding them is correct.' That's a finding."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Every cleaning decision should be documented with its reason — even simple ones.",
+                  "answer": true,
+                  "whenRight": "Right — future-you and the reviewer both forget your reasoning. Write it down.",
+                  "whenWrong": "Yes — document every choice. The blog post needs it; the reviewer asks for it."
+                },
+                {
+                  "prompt": "Cleaning is a chore separate from the real analysis.",
+                  "answer": false,
+                  "whenRight": "Right — no. Cleaning IS analysis. Half your final findings come from understanding why rows were excluded.",
+                  "whenWrong": "Cleaning is analysis. The decisions you make here are the project's findings as much as the model's outputs."
+                },
+                {
+                  "prompt": "Saving the clean version as a separate file (data/clean.parquet) is cleaner than overwriting raw.parquet.",
+                  "answer": true,
+                  "whenRight": "Right — keep raw untouched. Re-runnable from source, comparable to clean, auditable.",
+                  "whenWrong": "Yes — never overwrite raw. Keep both; every cleaning run is reproducible from raw.parquet."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "01-clean.ipynb",
-              "body": "Apply the same cleaning patterns from TaxiPulse: drop impossible rows, type-correct, derive features, save clean.parquet."
+              "title": "Your turn — clean",
+              "body": "[CODE] In `notebooks/02_clean.ipynb`:\n1. Read raw.parquet.\n2. Make every cleaning decision your spec implies (nulls, dtypes, outliers, recodes).\n3. Print before/after row counts for each drop.\n4. Save as `data/clean.parquet`.\n5. Write `capstone/CLEANING.md` listing every decision + reason."
             }
           ]
         },
         {
           "number": 3,
-          "title": "EDA",
-          "summary": "",
+          "title": "EDA + baseline",
+          "summary": "Understand the data; nail the bar to beat.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "EDA that pays off",
+              "body": "## What it is\nTwo hours of exploratory data analysis (EDA) followed by one strong baseline model. EDA's job is to find the features that obviously matter; the baseline's job is to be the bar your main model must beat.\n\n## EDA shape\nFor most capstones, the highest-value EDA fits on one page:\n- **Target distribution** — histogram. Is it heavily skewed? Bimodal? Long-tailed?\n- **Feature vs target** scatter / boxplot for the top 5-10 features.\n- **Pairwise correlations** for numeric features. `df.corr().style.background_gradient()` or seaborn heatmap.\n- **Missingness pattern** — already done in cleaning, but a quick chart.\n- **One surprise** — find ONE thing you didn't expect. That's the hook of the blog post.\n\n## The baseline\nStrong baselines for common problems:\n- **Regression**: Linear regression on the 5 most-correlated features.\n- **Classification**: Logistic regression on the 5 most-discriminating features (or majority-class predictor).\n- **Time series**: Persistence (yesterday's value).\n- **Recommendation**: Most popular item.\n\nTrain on train, evaluate on test. Report MAE / accuracy / whatever the spec metric is. Write it into `RESULTS.md`.\n\n## Why the baseline matters\nEvery model you train tomorrow gets compared to this number. If your gradient-boosted tree gets MAE 95 and your linear regression baseline was MAE 100, you've gained 5%. If they're both at MAE 95, you've gained nothing — the linear model was already enough.\n\nThis is the single highest-leverage piece of analysis you'll do in the build week. Don't skip it.\n\n## Save the baseline\n```python\nimport joblib\njoblib.dump(baseline, 'models/baseline.pkl')\n```\nYou'll re-load it in W30 for the final comparison."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Spending a day on EDA + baseline pays back for the entire rest of the project.",
+                  "answer": true,
+                  "whenRight": "Right — EDA finds the features that matter; baseline sets the bar. Both are reused all week.",
+                  "whenWrong": "Yes — high-leverage day. Skipping it means the main model has nothing to compare against."
+                },
+                {
+                  "prompt": "A 'baseline' has to be sophisticated for the comparison to be meaningful.",
+                  "answer": false,
+                  "whenRight": "Right — no. A simple, well-tuned baseline (linear regression, majority class) is exactly the right bar. Sophistication risks losing the 'simple' story.",
+                  "whenWrong": "Simple is the point. Beating a tuned linear regression by 10% is a real finding; beating a complicated baseline by 1% is not."
+                },
+                {
+                  "prompt": "Finding one surprise during EDA is more valuable than running 20 charts.",
+                  "answer": true,
+                  "whenRight": "Right — one surprise is the hook of the blog post. 20 unsurprising charts are wallpaper.",
+                  "whenWrong": "Yes — quality over quantity. The blog needs one surprising finding, not a museum of charts."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "3-5 charts",
-              "body": "Make charts that answer the most basic version of your question. Verify the signal is still there at full scale."
+              "title": "Your turn — EDA + baseline",
+              "body": "[CODE] In `notebooks/03_eda_baseline.ipynb`:\n1. Plot target distribution.\n2. Plot top 5-10 features vs target.\n3. Pairwise correlation heatmap.\n4. Train your baseline. Evaluate on held-out test.\n5. Save baseline.pkl. Record metric in `capstone/RESULTS.md`.\n6. Markdown: name ONE surprise in the data."
             }
           ]
         },
         {
           "number": 4,
-          "title": "Baseline model",
-          "summary": "",
+          "title": "Main model",
+          "summary": "ONE main model, well-trained, with a documented reason.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Picking + training the main model",
+              "body": "## What it is\nToday you train **one main model**. Not three. Not a comparison table. One. The one your spec + EDA suggested. Document why this one.\n\n## The shortlist by problem type\n- **Tabular regression / classification**: gradient-boosted trees (XGBoost, LightGBM). Reliably beats linear; less work than a neural net.\n- **Text classification**: fine-tuned DistilBERT (W15 work pays off here).\n- **Time series**: Prophet if calendar effects matter; ARIMA if not.\n- **Image classification**: fine-tuned ResNet50 or EfficientNet.\n- **Clustering**: KMeans with k chosen via silhouette score.\n- **Recommendation**: matrix factorization (implicit ALS, surprise).\n\nPick from this list unless your spec demands something exotic. Exotic models eat your timeline.\n\n## Training discipline\n```python\nfrom sklearn.model_selection import train_test_split\nfrom xgboost import XGBRegressor\n\nX = df.drop(columns=['target'])\ny = df['target']\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nmodel = XGBRegressor(n_estimators=500, max_depth=6, learning_rate=0.05,\n                     random_state=42, early_stopping_rounds=50)\nmodel.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)\n\nfrom sklearn.metrics import mean_absolute_error\nmae = mean_absolute_error(y_test, model.predict(X_test))\nprint(f'XGBoost MAE: {mae:.2f}')\n# Compare to baseline:\n# Baseline MAE: 100, XGBoost MAE: 87 — 13% improvement\n```\n\n## Why one model, not three\nFrom W24's lesson: a model comparison table is impressive only if it's a real comparison. Three half-tuned models with similar accuracy reads as scattershot. One well-tuned model that beat a strong baseline is a clear story.\n\nYou can mention 'I also tried logistic regression' in the blog post in one sentence. That's enough.\n\n## Save the model\n```python\njoblib.dump(model, 'models/main.pkl')\n```\nPlus the train/test split (or just the random_state and code that recreates it). Reproducibility matters."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Training one well-tuned main model is a better capstone deliverable than three half-tuned ones.",
+                  "answer": true,
+                  "whenRight": "Right — one clear winner with documented reasoning beats a scattershot table. Story over collection.",
+                  "whenWrong": "Yes — one main model. Three half-tuned models read as 'I didn't know what to pick.' One choice + reasoning reads as professional."
+                },
+                {
+                  "prompt": "Gradient-boosted trees (XGBoost, LightGBM) are a safe default for tabular DS problems.",
+                  "answer": true,
+                  "whenRight": "Right — reliably good; less tuning than neural nets; native handling of mixed types and missingness.",
+                  "whenWrong": "Yes — XGBoost is the default for tabular. Neural nets win only on enormous data; trees win otherwise."
+                },
+                {
+                  "prompt": "If your main model only beats the baseline by 1%, that's a successful project.",
+                  "answer": false,
+                  "whenRight": "Right — no. 1% improvement = the baseline was already enough. Reframe the question or pick a harder problem.",
+                  "whenWrong": "1% over a strong baseline means the baseline was sufficient. Reframe to where the harder model adds real value."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Simplest model first",
-              "body": "Whatever your problem is, the simplest baseline:\n  - Classification → LogisticRegression\n  - Regression → LinearRegression\n  - Time series → persistence\n  - Sentiment → pretrained model\n\nGet a number. Even if it's bad."
+              "title": "Your turn — main model",
+              "body": "[CODE] In `notebooks/04_main_model.ipynb`:\n1. Pick ONE main model. Document why in a markdown cell.\n2. Train with explicit train_test_split, eval_set, random_state.\n3. Evaluate against baseline. Record both metrics in RESULTS.md.\n4. Save as `models/main.pkl`.\n5. Markdown: how much did the main model beat the baseline by? Is it enough to be a story?"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Iterate",
-          "summary": "",
+          "title": "Iterate — on features, not models",
+          "summary": "Look at where the model fails. Add features that fix it.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Iterating the right way",
+              "body": "## What it is\nToday is the temptation day — when most learners think 'I'll try a different model.' Don't. On a tight timeline, **iterating on features beats iterating on models** 9 times out of 10.\n\n## The diagnostic\n```python\npreds = model.predict(X_test)\nresid = y_test - preds\n\n# 1. Where is the model wrong?\n#    Plot residuals against each feature. Look for patterns.\nfor col in important_features[:5]:\n    plt.figure()\n    plt.scatter(X_test[col], resid, alpha=0.3)\n    plt.title(f'Residuals vs {col}')\n\n# 2. Which rows are the worst predictions?\nworst = X_test.assign(actual=y_test, predicted=preds, resid=resid) \\\n             .nlargest(20, 'resid', keep='first')\nprint(worst[['feature_a','feature_b','actual','predicted','resid']])\n```\n\n## What you're looking for\n- **A subgroup the model systematically gets wrong** — e.g., the model under-predicts demand on holidays. Encode 'is_holiday' as a feature. Refit.\n- **A non-linearity** — model under-predicts at the high end. Try `log(target)` and refit.\n- **A missing interaction** — model gets X right, Y right, but X*Y wrong. Add the interaction as a column.\n\n## Why features beat models on a tight timeline\n- Feature engineering is fast to try, fast to measure.\n- A new feature that captures real domain knowledge can shift MAE by 10-20%.\n- Switching XGBoost for LightGBM might shift MAE by 1-3% and eat a whole day.\n\nThe best capstones spend Day 5 on 3-5 features added based on residual analysis. The model stays the same; the story is 'the features turned out to be the lever.'\n\n## When you SHOULD try a different model\nIf today's residual analysis shows the model is fundamentally wrong-shaped — e.g., your XGBoost regressor's residuals are heavily skewed and adding features doesn't help, indicating you need a different loss function. Document the diagnosis, then switch. Don't switch on a hunch."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "On a tight timeline, iterating on features beats iterating on models in most cases.",
+                  "answer": true,
+                  "whenRight": "Right — features can shift MAE 10-20%; model swaps shift it 1-3%. Feature work has higher ROI.",
+                  "whenWrong": "Yes — features compound; model swaps don't. Always check the residuals before switching models."
+                },
+                {
+                  "prompt": "If residuals show a subgroup is systematically wrong, that suggests a missing feature, not a bad model.",
+                  "answer": true,
+                  "whenRight": "Right — encode what the model can't see (the subgroup membership) as a feature. Refit.",
+                  "whenWrong": "Yes — systematic subgroup errors = missing signal in the features, not the wrong architecture."
+                },
+                {
+                  "prompt": "Switching models is always the first move when accuracy plateaus.",
+                  "answer": false,
+                  "whenRight": "Right — no. First look at residuals; add features; only then consider a different model.",
+                  "whenWrong": "Residuals first, features second, models third. Skipping the first two means you switch blind."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Better model",
-              "body": "ONE more model. Could be: XGBoost, fine-tuned transformer, Prophet, LSTM. Pick the one most relevant to your problem."
+              "title": "Your turn — iterate",
+              "body": "[CODE] In `notebooks/05_iterate.ipynb`:\n1. Compute residuals on test set.\n2. Plot residuals against your top 5 features. Identify ONE systematic miss.\n3. Add a feature that fixes that miss (subgroup flag, interaction, transform).\n4. Refit. Compare new MAE to old.\n5. Markdown: what feature did you add, what was the gain, why does the gain make sense?"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Evaluation",
-          "summary": "",
+          "title": "Honest evaluation",
+          "summary": "Held-out test, real metric, error analysis.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Final honest evaluation",
+              "body": "## What it is\nToday you run the **definitive** evaluation. Numbers from this run are what go in the blog post and the RESULTS.md file. After today, the model is frozen.\n\n## The evaluation discipline\n```python\n# Re-load the test split (the SAME one you trained against)\n# Use random_state from W29 D4 — reproducibility matters\nfrom sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score\n\npreds = main_model.predict(X_test)\n\nresults = {\n    'mae':  mean_absolute_error(y_test, preds),\n    'rmse': mean_squared_error(y_test, preds, squared=False),\n    'r2':   r2_score(y_test, preds),\n}\nbaseline_preds = baseline.predict(X_test)\nresults['baseline_mae']  = mean_absolute_error(y_test, baseline_preds)\nresults['improvement_%'] = 100 * (results['baseline_mae'] - results['mae']) / results['baseline_mae']\n\nprint(results)\n# {'mae': 86.4, 'rmse': 121.7, 'r2': 0.74, 'baseline_mae': 100.2, 'improvement_%': 13.8}\n```\n\n## Error analysis\n```python\n# Where is the model still wrong?\nresid = y_test - preds\nworst = X_test.assign(actual=y_test, predicted=preds, resid=resid).nlargest(20, 'resid')\nprint('Worst 20 cases:'); print(worst[['feature_a','feature_b','actual','predicted','resid']])\n\n# What fraction of the test set is the model within 10% of true value?\nwithin_10pct = (abs(resid) / y_test < 0.1).mean()\nprint(f'Within 10%: {within_10pct:.1%}')\n# Within 10%: 67.3%\n```\n\n## What goes in RESULTS.md\n```markdown\n# Capstone results\n\n## Headline\n<Project name> predicts <target> with MAE 86.4 (R² 0.74),\na 13.8% improvement over the linear baseline.\n67.3% of predictions are within 10% of the true value.\n\n## Where the model fails\n<Specific subgroups or value ranges where it still underperforms,\n with 1-line reasons for each.>\n\n## Honest weaknesses\n<2-3 things you'd improve if you had another week.>\n```\n\n## Why this is the day the model gets frozen\nAfter today, no more tweaking. Tomorrow is v0.2 tag; next week is polish + ship + retro. Locking the model now protects you from endless iteration."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Reporting the % improvement over the baseline is more meaningful than reporting just the absolute MAE.",
+                  "answer": true,
+                  "whenRight": "Right — absolute MAE is unitful and hard to judge in isolation. Improvement over baseline anchors the number.",
+                  "whenWrong": "Yes — readers need an anchor. '13.8% better than baseline' is interpretable; '86.4 MAE' alone isn't."
+                },
+                {
+                  "prompt": "Including a weakness section in the results page makes the project look weaker.",
+                  "answer": false,
+                  "whenRight": "Right — no. Naming weaknesses honestly builds trust. Reviewers test you on this; honesty wins.",
+                  "whenWrong": "Honesty wins. Hidden weaknesses get caught; named weaknesses build credibility."
+                },
+                {
+                  "prompt": "Freezing the model on Day 6 of W29 protects you from endless iteration in W30.",
+                  "answer": true,
+                  "whenRight": "Right — locking the model frees W30 to focus on polish, demo, blog, retro. Without the freeze, you're still tweaking on day 6 of ship week.",
+                  "whenWrong": "Yes — freeze date is a forcing function. W30 is about communication, not modeling."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Honest evaluation",
-              "body": "Compute every metric that matters. Write a table comparing the 2 models. If neither hits your SPEC's success threshold, revise: did the question need to be smaller?"
+              "title": "Your turn — final evaluation",
+              "body": "[CODE] In `notebooks/06_evaluate.ipynb`:\n1. Run main model + baseline on held-out test.\n2. Compute all metrics from the spec.\n3. Identify the worst-predicted cases. Markdown them.\n4. Compute 'fraction within X%' for whatever X feels right.\n5. Write RESULTS.md (headline, weaknesses, improvement % over baseline).\n6. Freeze the model. Tomorrow is v0.2 tag."
             }
           ]
         },
         {
           "number": 7,
           "title": "Tag v0.2",
-          "summary": "",
+          "summary": "Model trained. Results in. Next week: ship.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "Shipping v0.2",
+              "body": "## What you tag\n```bash\ngit add notebooks/01_ingest.ipynb notebooks/02_clean.ipynb \\\n        notebooks/03_eda_baseline.ipynb notebooks/04_main_model.ipynb \\\n        notebooks/05_iterate.ipynb notebooks/06_evaluate.ipynb \\\n        data/clean.parquet models/baseline.pkl models/main.pkl \\\n        capstone/SPEC.md capstone/PLAN.md capstone/CLEANING.md \\\n        capstone/RESULTS.md capstone/DATA_DICT.md\ngit commit -m \"Capstone v0.2: build complete. Main model beats baseline by X%.\"\ngit tag capstone-v0.2\ngit push && git push --tags\n```\n\n## What you've finished\n- Full dataset ingested + cleaned + documented\n- EDA that identified the features that mattered + one surprise\n- A strong baseline + a documented main model\n- One round of iteration based on residual analysis\n- Honest final evaluation with documented weaknesses\n\nThat's a complete piece of analysis. Everything from here is communication.\n\n## What's next — W30\n- D1: Streamlit dashboard\n- D2: deploy it\n- D3: blog post\n- D4: demo video\n- D5: 3 outside readers\n- D6: edits from feedback\n- D7: capstone v1.0 + retro\n\nSame shape as Energy Forecast W27. You've done this shipping ritual once already; the second time is faster.\n\n## Update PLAN.md\nSunday-night ritual: open PLAN.md, mark Week 29 done, look at Week 30, halve anything that looks ambitious. Then close the laptop. You've earned the rest of the day."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check — swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Tagging v0.2 with the model frozen is a discipline that protects W30 from endless iteration.",
+                  "answer": true,
+                  "whenRight": "Right — freeze date forces focus on communication. Without it, you're still tweaking the model on demo day.",
+                  "whenWrong": "Yes — the tag is a commit-to-ship. W30 is for polish, not more modeling."
+                },
+                {
+                  "prompt": "By v0.2, the analysis is complete and the remaining work is communication.",
+                  "answer": true,
+                  "whenRight": "Right — that's the framing. Model done; story still to write. Same as Energy Forecast W27.",
+                  "whenWrong": "Yes — v0.2 = analysis done. W30 is the storytelling half. Both halves matter; W30 is what reviewers actually see."
+                },
+                {
+                  "prompt": "Skipping the Sunday-night PLAN.md review is fine since the week is over.",
+                  "answer": false,
+                  "whenRight": "Right — no. Sunday review for W30 is exactly when you'd halve over-ambitious tasks. Skipping it = scope creep next week.",
+                  "whenWrong": "Sunday review is non-optional. It's the cheapest insurance against W30 over-scoping."
+                }
+              ]
+            },
+            {
               "kind": "exercise",
-              "title": "Acceptance v0.2",
-              "body": "      git tag v0.2 && git push --tags\n\nPASS:\n  ☐ All data collected + cleaned\n  ☐ EDA done\n  ☐ Baseline + 1 better model\n  ☐ Evaluation table\n  ☐ v0.2 tag"
+              "title": "Your turn — tag v0.2",
+              "body": "[PRODUCE] 1. Verify all notebooks, models, and docs are in.\n2. `git tag capstone-v0.2 && git push --tags`.\n3. Sunday-night ritual: update PLAN.md. Halve W30 if it looks ambitious.\n\nPASS:\n[x] data/clean.parquet exists\n[x] CLEANING.md documents every decision\n[x] models/baseline.pkl + models/main.pkl both saved\n[x] RESULTS.md has the headline, improvement %, weaknesses\n[x] capstone-v0.2 tag pushed\n[x] W30 plan halved if needed"
             }
           ]
         }
-      ],
-      "topics": [
-        "Full-scale data collection",
-        "Pipeline-driven notebook structure",
-        "Baseline-first modeling",
-        "Honest evaluation tables",
-        "Scope-cutting when results are weak"
-      ],
-      "tasks": [
-        "Collect all data",
-        "Clean everything",
-        "Run EDA",
-        "Train baseline + better model",
-        "Build comparison table"
-      ],
-      "project": "Capstone v0.2 — actual model trained, evaluated, comparison table written, real numbers.",
-      "resources": [
-        {
-          "label": "Baseline-first ML in 14 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=nk2CQITm_eo",
-          "note": "14 min. Always benchmark against linear regression / mean prediction first."
-        },
-        {
-          "label": "EDA in 20 min - Keith Galli",
-          "url": "https://www.youtube.com/watch?v=eMOA1pPVUc4",
-          "note": "20 min. First 20 minutes with any new dataset."
-        },
-        {
-          "label": "Cross-validation in 6 min - StatQuest",
-          "url": "https://www.youtube.com/watch?v=fSytzGwwBVw",
-          "note": "6 min. Why single train/test split is risky. K-fold fixes it."
-        }
-      ],
-      "exercises": [
-        "Try a 3rd model just for sport",
-        "Document one wrong path you took today",
-        "Save predictions for inspection later"
-      ],
-      "questions": [
-        "Where did the actual data disappoint vs the prototype?",
-        "What's the gap between your model and a great model?",
-        "What would you need to close that gap?"
-      ],
-      "outputs": [
-        "Trained models in models/",
-        "Eval table",
-        "v0.2 tag"
-      ],
-      "mastery_questions": [
-        "Complete the data cleaning pipeline. For each column, document the decision: kept as-is, transformed (how and why), or dropped (why). Paste the summary as a markdown table with columns: column_name, action, reason. The reason for dropping a column should be more specific than \"it was not useful\" -- \"dropped because 65% null and imputation would introduce more noise than signal\" is a defensible sentence.",
-        "Engineer at least two features that your domain knowledge suggests matter. If this is a time series project, lag features and rolling averages. If this is a text project, length, punctuation density, or topic-specific keyword counts. If it is tabular, interaction terms or binned continuous variables. Paste the feature engineering code and explain in one sentence per feature why you expected it to help.",
-        "Train the baseline and at least one more complex model. For each: the model type, the hyperparameters (even if defaults -- record them), the train-set metric, and the test-set metric. Paste the comparison table. If your more complex model scores lower on the test set than the baseline, do not delete the result -- document it and write one sentence about why (overfit? wrong model class? feature engineering issue?).",
-        "Find one specific case where your best model fails. A false negative, a large prediction error, a category it systematically misclassifies. Paste that case. Write one sentence about what the model missed and one sentence about whether that failure mode matters for the real-world use case. If the failure mode is \"it cannot predict demand during unprecedented heat waves,\" that is a meaningful limitation. If it is \"it occasionally mispredicts by 0.5%,\" that is probably acceptable.",
-        "Write the \"what I would do with two more weeks\" paragraph. It should name at least two specific things: one that would improve accuracy (a feature you did not have time to engineer, a model you did not have time to try), and one that would improve the deployment (an API, a monitoring layer, a scheduled retraining job). This paragraph is not padding -- it is the honest roadmap that makes the capstone a professional artefact instead of a finished homework assignment."
-      ],
-      "ai_assist": "Use Claude as a code reviewer for your feature engineering. Paste each new feature and ask \"is there a data leakage risk here?\" -- for example, if your feature uses information from the future that would not be available at prediction time, Claude will usually catch it. Do NOT ask Claude to do the feature engineering. The insight that \"average demand from the previous 7 days predicts tomorrow's demand\" needs to come from your understanding of electricity consumption, not from a language model generating plausible-sounding features.",
-      "pre_flight": "Before writing any code, re-read your SPEC.md and confirm that your definition of done is still achievable by Sunday. If the data cleaning is taking longer than expected (it almost always does), decide now which part of the modelling you will simplify to compensate. Making that trade-off decision on Monday is better than discovering on Saturday that you ran out of time.",
-      "common_mistakes": [
-        "Reporting train-set accuracy instead of test-set accuracy. A model with 99% train accuracy and 62% test accuracy is an overfit model, not a good model. Always report test-set metrics in the comparison table, and always report train-set metrics alongside them so the gap is visible.",
-        "Using accuracy as the only metric for an imbalanced classification task. If 5% of your rows are the minority class, a model that always predicts majority gets 95% accuracy. Report precision, recall, and F1 for each class, and make the minority-class metrics the headline numbers.",
-        "Not committing the cleaned data or the intermediate artifacts to the repo. If your notebook requires 4 hours of cleaning before you can run the model, the repo is not reproducible. Either commit the cleaned data (if it is small enough) or write a documented cleaning script that can be re-run.",
-        "Scope-expanding midweek without updating the spec. If you pivoted the question, update SPEC.md to reflect it. A spec that no longer matches the notebook is a sign that the project lost discipline, and that disconnect is visible to anyone reviewing the repo.",
-        "Skipping the failure-case analysis. A capstone that only shows the wins is less convincing than one that shows the wins and honestly names where it fails. Every production model at every company has known failure modes. Knowing yours is a sign of maturity."
-      ],
-      "debug_help": "The most common blocker midweek is a model that will not train -- usually a data type issue (a string column in a numeric pipeline), a dimensionality issue (too many one-hot encoded categories for the available data), or a memory issue (the full dataset does not fit in RAM). For data type issues: run df.dtypes and trace each non-numeric column through your pipeline. For dimensionality: use low-cardinality encoding or drop rare categories. For memory: sample the data for exploration, then run the full training on a cloud machine or overnight. Do not let any of these blockers eat more than 90 minutes before asking for help.",
-      "stretch": [
-        "Write an automated pipeline that runs the full notebook end-to-end in a single command (make run or python pipeline.py). Reproducibility is not a nice-to-have -- it is what separates a project from a script.",
-        "Try one model you have never used before -- XGBoost, CatBoost, or a Bayesian model -- and add its results to the comparison table. New models are most instructive when you read the documentation for the key hyperparameters before tuning, rather than grid-searching blindly.",
-        "Calculate the Shapley values for your best model's predictions (SHAP, as in week 16). The global importance plot for your capstone's feature set should tell you something surprising about which features actually matter. If it does not surprise you, the result is still useful confirmation."
       ]
     },
     {
