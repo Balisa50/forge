@@ -17,6 +17,13 @@ interface TranscriptEntry {
   timestamp?: string;
 }
 
+interface RubricEntry {
+  position: number;
+  prompt: string;
+  rubric: string | null;
+  idealAnswer: string | null;
+}
+
 interface Review {
   id: string;
   mode: string;
@@ -33,6 +40,7 @@ interface Review {
     user: { id: string; name: string | null; email: string };
     task: { id: string; title: string };
   };
+  questionBank?: RubricEntry[];
 }
 
 export default function MentorReviewsPage() {
@@ -203,10 +211,41 @@ export default function MentorReviewsPage() {
               .map((q, i) => {
                 const answer = active.transcript.find((t) => t.role === "user" && t.questionNumber === (q.questionNumber as number));
                 const question = (() => { try { return JSON.parse(q.content ?? "{}").question; } catch { return q.content; } })();
+                // Match the rubric by transcript position (1-based) -> question.position (0-based).
+                const rubricEntry = active.questionBank?.find((r) => r.position === i);
                 return (
                   <li key={i} style={{ padding: "0.75rem 0.875rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8 }}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--accent)", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: "0.25rem" }}>Q{i + 1}</p>
                     <p style={{ fontWeight: 500, marginBottom: "0.5rem" }}>{question}</p>
+                    {/* Mentor's private rubric / ideal answer (only mentors see this). */}
+                    {(rubricEntry?.rubric || rubricEntry?.idealAnswer) && (
+                      <div
+                        style={{
+                          marginBottom: "0.5rem",
+                          padding: "0.5rem 0.625rem",
+                          background: "rgba(212,175,55,0.07)",
+                          border: "1px dashed rgba(212,175,55,0.4)",
+                          borderRadius: 6,
+                        }}
+                      >
+                        <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--accent)", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: "0.25rem" }}>
+                          Your rubric / ideal answer (private)
+                        </p>
+                        {rubricEntry?.rubric && (
+                          <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", whiteSpace: "pre-wrap", lineHeight: 1.5 }}>
+                            <strong style={{ color: "var(--text-primary)" }}>Rubric:</strong> {rubricEntry.rubric}
+                          </p>
+                        )}
+                        {rubricEntry?.idealAnswer && (
+                          <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", whiteSpace: "pre-wrap", lineHeight: 1.5, marginTop: rubricEntry?.rubric ? "0.375rem" : 0 }}>
+                            <strong style={{ color: "var(--text-primary)" }}>Ideal:</strong> {rubricEntry.idealAnswer}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: "0.25rem" }}>
+                      Student answer
+                    </p>
                     <p style={{ fontSize: "0.875rem", color: "var(--text-primary)", whiteSpace: "pre-wrap", padding: "0.5rem 0.625rem", background: "var(--bg-panel)", borderRadius: 6, marginBottom: "0.5rem" }}>
                       {answer?.content ?? "(no answer)"}
                     </p>

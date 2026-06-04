@@ -41,9 +41,14 @@ function shouldOpenInNewTab(_url: string): boolean {
   return true;
 }
 
+type ActiveTab = "content" | "submission" | "mentorReview";
+
 export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek; slug: string; taskId?: string | null }) {
   const hasDays = !!week.days && week.days.length > 0;
   const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
+  // Active tab — defaults to "content" so existing learners see the day stream
+  // exactly as before. The tab strip only renders when taskId is set.
+  const [activeTab, setActiveTab] = useState<ActiveTab>("content");
 
   const storageKey = `forge:progress:${slug}:w${week.number}`;
   const [done, setDone] = useState<Record<string, boolean>>({});
@@ -217,21 +222,92 @@ export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Visual-first concept primer — uses authored content if present,
-          otherwise promotes the week's `context` paragraph. */}
-      {effectivePrimer && (
+      {/* Three-tab strip — Content / Submission / Mentor Review. Only renders
+          when a taskId is in scope (i.e. the user is enrolled in this week).
+          The 'mentorReview' tab is hidden for users with no mentor questions
+          via state below; submission always goes to /dashboard/checkin. */}
+      {taskId && (
+        <div
+          role="tablist"
+          aria-label="Week view"
+          style={{
+            display: "flex",
+            gap: "0.25rem",
+            borderBottom: "1px solid var(--border)",
+            marginBottom: "0.25rem",
+          }}
+        >
+          {(["content", "submission", "mentorReview"] as const).map((t) => {
+            const isActive = activeTab === t;
+            const label = t === "content" ? "Content" : t === "submission" ? "Submission" : "Mentor Review";
+            return (
+              <button
+                key={t}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveTab(t)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: isActive ? "2px solid var(--accent)" : "2px solid transparent",
+                  color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                  padding: "0.625rem 1rem",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  fontWeight: isActive ? 700 : 500,
+                  marginBottom: -1,
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Visual-first concept primer — only on the Content tab. */}
+      {activeTab === "content" && effectivePrimer && (
         <ConceptPrimer primer={effectivePrimer} imageUrl={week.concept_image_url} />
       )}
 
-      {/* Fallback inline intro for sparse-context weeks */}
-      {showInlineContext && (
+      {/* Fallback inline intro for sparse-context weeks — Content tab only. */}
+      {activeTab === "content" && showInlineContext && (
         <div style={{ marginBottom: "0.5rem" }}>
           <ForgeMarkdown>{week.context}</ForgeMarkdown>
         </div>
       )}
 
-      {/* Day stream */}
-      {week.days.map((d, idx) => {
+      {/* Submission tab — explains the submission flow and links to it. */}
+      {activeTab === "submission" && (
+        <div
+          className="forge-panel"
+          style={{ padding: "1.5rem", border: "1px solid rgba(212,175,55,0.4)" }}
+        >
+          <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>
+            Submit your work for this week
+          </h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, marginBottom: "1rem" }}>
+            Daily check-in is where you upload your proof of work — a URL, a GitHub repo, or a file.
+            Your mentor reviews it alongside any questions they&apos;ve set, then marks it passed.
+          </p>
+          <a
+            href="/dashboard/checkin"
+            className="forge-btn forge-btn-primary"
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.625rem 1rem" }}
+          >
+            Open the daily check-in
+          </a>
+        </div>
+      )}
+
+      {/* Mentor Review tab — the questions/answers/verdict panel. */}
+      {activeTab === "mentorReview" && taskId && <MentorReviewSection taskId={taskId} />}
+
+      {/* Day stream — Content tab only */}
+      {activeTab === "content" && week.days.map((d, idx) => {
         const pct = dayPct[idx];
         const isDone = pct === 100;
         const isLocked = idx > currentDayIdx;
@@ -579,8 +655,8 @@ export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek
         );
       })}
 
-      {/* Ship-it section — only when every day is done */}
-      {allDone && (
+      {/* Ship-it section — Content tab, only when every day is done */}
+      {activeTab === "content" && allDone && (
         <div className="forge-panel" style={{ padding: "1.25rem", border: "1px solid rgba(34,197,94,0.4)", background: "rgba(34,197,94,0.05)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.75rem" }}>
             <CheckCircle2 size={22} style={{ color: "var(--green)" }} />
@@ -591,12 +667,8 @@ export default function WeekPageTabs({ week, slug, taskId }: { week: RoadmapWeek
           <ShipItSection week={week} />
         </div>
       )}
-
-      {/* Mentor Review — surfaces the mentor's questions, the student's
-          answers, and the mentor's verdict/score/rating directly on the
-          week page. Hidden when there are no mentor questions, so solo
-          learners see nothing. */}
-      {taskId && <MentorReviewSection taskId={taskId} />}
+      {/* Mentor Review now lives in its own dedicated tab above — no duplicate
+          rendering at the bottom of the Content tab. */}
 
       {viewer && <ResourceViewer url={viewer.url} label={viewer.label} onClose={() => setViewer(null)} />}
 

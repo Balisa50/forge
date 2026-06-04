@@ -36,7 +36,30 @@ export async function GET() {
       },
     },
   });
-  return NextResponse.json({ reviews: rows });
+
+  // Attach the mentor's private rubric/idealAnswer for every task referenced,
+  // keyed by question position. The Reviews UI uses this to show the rubric
+  // side-by-side with each student answer.
+  const taskIds = Array.from(new Set(rows.map((r) => r.checkin.task.id)));
+  const rubricsByTask = new Map<string, { position: number; prompt: string; rubric: string | null; idealAnswer: string | null }[]>();
+  if (taskIds.length > 0) {
+    const questions = await prisma.mentorQuestion.findMany({
+      where: { taskId: { in: taskIds }, mentorId: session.user.id, isActive: true },
+      orderBy: { position: "asc" },
+      select: { taskId: true, position: true, prompt: true, rubric: true, idealAnswer: true },
+    });
+    for (const q of questions) {
+      const list = rubricsByTask.get(q.taskId) ?? [];
+      list.push({ position: q.position, prompt: q.prompt, rubric: q.rubric, idealAnswer: q.idealAnswer });
+      rubricsByTask.set(q.taskId, list);
+    }
+  }
+  const reviewsWithRubrics = rows.map((r) => ({
+    ...r,
+    questionBank: rubricsByTask.get(r.checkin.task.id) ?? [],
+  }));
+
+  return NextResponse.json({ reviews: reviewsWithRubrics });
 }
 
 export async function POST(req: NextRequest) {
@@ -83,6 +106,12 @@ export async function POST(req: NextRequest) {
     }
   }
   const totalScore = scores.reduce((s, n) => s + Math.max(0, Math.min(10, Math.round(Number(n)))), 0);
+  // No-questions case: a mentored student submitted proof of work but had no
+  // questions to answer. Overall score derives from pass/fail alone — no
+  // division-by-zero from `totalScore / (0 * 10)`.
+  const overallScore = scores.length === 0
+    ? (passed ? 10 : 0)
+    : Number(((totalScore / (scores.length * 10)) * 10).toFixed(2));
 
   const updated = await prisma.$transaction(async (tx) => {
     const i = await tx.interrogation.update({
@@ -90,7 +119,7 @@ export async function POST(req: NextRequest) {
       data: {
         transcript: transcript as unknown as object,
         passed,
-        overallScore: Number(((totalScore / (scores.length * 10)) * 10).toFixed(2)),
+        overallScore,
         feedback: feedback?.trim() || (passed ? "Mentor signed off." : "Mentor did not approve."),
         mentorReviewedAt: new Date(),
       },

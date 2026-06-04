@@ -265,6 +265,18 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Does this mentee have an active mentor? If yes, the user spec is strict:
+  // "A student passes only when I say they pass." That means EVERY submission
+  // by a mentored student must wait for explicit mentor approval, even when
+  // no mentor questions have been written. We enforce this by creating a
+  // placeholder Interrogation in mentor_async mode — the Journal/week page
+  // status pill derives 'AWAITING REVIEW' from it until the mentor grades.
+  const activeMentorLink = await prisma.mentorLink.findFirst({
+    where: { menteeId: userId, isActive: true },
+    select: { mentorId: true },
+  });
+  const hasMentor = !!activeMentorLink;
+
   const checkin = await prisma.checkin.create({
     data: {
       userId,
@@ -275,6 +287,8 @@ export async function POST(req: NextRequest) {
       evidenceType,
       evidenceUrl,
       evidenceData: evidenceData as object,
+      // placeholder. Journal + dashboard derive the user-facing status from
+      // Interrogation.mentorReviewedAt + passed when an interrogation exists.
       status: "passed",
     },
   });
@@ -284,21 +298,24 @@ export async function POST(req: NextRequest) {
     data: { status: "in_progress" },
   });
 
-  // Persist the mentee's answers as a mentor_async interrogation so they show
-  // up in the mentor's Reviews queue (one interrogation per check-in).
-  if (mentorQuestions.length > 0) {
-    const transcript: Array<Record<string, unknown>> = [];
-    mentorQuestions.forEach((q, i) => {
-      transcript.push({ role: "assistant", type: "MENTOR_AUTHORED", questionNumber: i + 1, content: JSON.stringify({ question: q.prompt }) });
-      transcript.push({ role: "user", questionNumber: i + 1, content: answerById.get(q.id) ?? "", pendingReview: true });
-    });
+  // Build the transcript. If the mentor wrote questions, lay them in pair-by-
+  // pair with the student's answers. Otherwise the transcript is empty — the
+  // Interrogation is still created so the mentor's Reviews queue picks it up
+  // and the student's Journal shows AWAITING REVIEW.
+  const transcript: Array<Record<string, unknown>> = [];
+  mentorQuestions.forEach((q, i) => {
+    transcript.push({ role: "assistant", type: "MENTOR_AUTHORED", questionNumber: i + 1, content: JSON.stringify({ question: q.prompt }) });
+    transcript.push({ role: "user", questionNumber: i + 1, content: answerById.get(q.id) ?? "", pendingReview: true });
+  });
+
+  if (mentorQuestions.length > 0 || hasMentor) {
     try {
       await prisma.interrogation.create({
         data: {
           checkinId: checkin.id,
           mode: "mentor_async",
-          isDefence: true,
-          mentorReviewerId: mentorQuestions[0].mentorId,
+          isDefence: mentorQuestions.length > 0,
+          mentorReviewerId: mentorQuestions[0]?.mentorId ?? activeMentorLink?.mentorId ?? null,
           transcript: transcript as unknown as object,
           completedAt: new Date(),
         },

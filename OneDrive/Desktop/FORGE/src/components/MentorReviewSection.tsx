@@ -3,25 +3,19 @@
 /**
  * Mentor Review section — lives at the bottom of the student's week page.
  *
- * Everything review-related the student needs for THIS WEEK in one place:
- *   - the mentor's questions, numbered and easy to read
- *   - an answer box under each question (when not yet submitted)
- *   - the student's submitted answers + the mentor's per-question score,
- *     overall score, written feedback, pass/fail verdict and 1–5 rating
- *     (once the mentor has reviewed)
+ * Single place to:
+ *   - read the mentor's questions, numbered cleanly
+ *   - type answers directly under each one (one textarea per question)
+ *   - click "Submit Answers" to send them to the mentor
+ *   - once reviewed, see the verdict (PASSED / NEEDS REWORK), per-question
+ *     scores, written feedback and the mentor's 1-5 rating
  *
- * Replaces the "where do my mentor's questions even live?" problem.
- * Questions are NEVER served from chat threads — they live here on the week
- * page, attached to the task.
- *
- * Submission of answers still goes through the daily check-in flow (the
- * existing engagement gate is intact), so this section's primary "submit"
- * affordance is a button that scrolls the student to the check-in page.
+ * Questions are never delivered via chat. Answers never live in another
+ * page. Everything is right here, attached to the week.
  */
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { CheckCircle2, Clock, Award, AlertTriangle, MessageSquare, ArrowRight } from "lucide-react";
+import { CheckCircle2, Clock, Award, AlertTriangle, MessageSquare, Send, Loader2 } from "lucide-react";
 
 interface ReviewQuestionState {
   id: string;
@@ -47,35 +41,76 @@ interface ReviewState {
 export default function MentorReviewSection({ taskId }: { taskId: string }) {
   const [state, setState] = useState<ReviewState | null>(null);
   const [loading, setLoading] = useState(true);
+  // Inline answer drafts. Keyed by questionId. Initialised once the state
+  // arrives and the student has not yet submitted.
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = async () => {
+    try {
+      const res = await fetch(`/api/mentee/review-state?taskId=${encodeURIComponent(taskId)}`);
+      if (!res.ok) {
+        setState(null);
+        return;
+      }
+      const data = (await res.json()) as ReviewState;
+      setState(data);
+      // Seed drafts (empty for each question) only if not yet submitted.
+      if (!data.submitted) {
+        const seed: Record<string, string> = {};
+        for (const q of data.questions) seed[q.id] = "";
+        setDrafts(seed);
+      }
+    } catch {
+      setState(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`/api/mentee/review-state?taskId=${encodeURIComponent(taskId)}`);
-        if (!res.ok) {
-          if (!cancelled) setState(null);
-          return;
-        }
-        const data = (await res.json()) as ReviewState;
-        if (!cancelled) setState(data);
-      } catch {
-        if (!cancelled) setState(null);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
+    setLoading(true);
+    refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskId]);
+
+  const allAnswered = state?.questions.every((q) => (drafts[q.id] ?? "").trim().length > 0) ?? false;
+
+  const submit = async () => {
+    if (!state || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/mentee/review-answers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskId,
+          answers: state.questions.map((q) => ({ questionId: q.id, answer: drafts[q.id] ?? "" })),
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Submission failed. Try again.");
+        return;
+      }
+      await refresh();
+    } catch {
+      setError("Network error — try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (loading) return null;
   if (!state) return null;
-
   // No mentor questions authored — nothing to render. Silent (no nag).
   if (!state.hasQuestions) return null;
 
   const reviewed = state.reviewed;
   const passed = !!state.passed;
+  const submitted = state.submitted;
   const rating = state.mentorRating ?? null;
 
   return (
@@ -117,84 +152,141 @@ export default function MentorReviewSection({ taskId }: { taskId: string }) {
         )}
       </header>
 
-      {/* Header sub-line that varies by state */}
       <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.55, marginBottom: "1rem" }}>
         {reviewed
           ? passed
             ? "Your mentor reviewed your answers and signed off on this week."
             : "Your mentor reviewed your answers. See feedback below — you can retry this week."
-          : state.submitted
+          : submitted
             ? "Your answers were submitted. Awaiting your mentor's review."
-            : `Your mentor has ${state.questions.length} question${state.questions.length === 1 ? "" : "s"} on this week. Answer them with your weekly check-in.`}
+            : `Your mentor has ${state.questions.length} question${state.questions.length === 1 ? "" : "s"} on this week. Answer each one below, then submit.`}
       </p>
 
-      {/* Questions and (if submitted) answers, one block per question */}
-      <ol style={{ display: "flex", flexDirection: "column", gap: "0.875rem", listStyle: "none", padding: 0, margin: 0 }}>
-        {state.questions.map((q) => (
-          <li key={q.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <div style={{ display: "flex", gap: "0.625rem", alignItems: "flex-start" }}>
-              <span
-                style={{
-                  flexShrink: 0,
-                  width: 26, height: 26,
-                  borderRadius: 999,
-                  background: "rgba(212,175,55,0.18)",
-                  color: "var(--accent)",
-                  display: "grid", placeItems: "center",
-                  fontFamily: "var(--font-mono)", fontSize: "0.75rem", fontWeight: 700,
-                }}
-              >
-                {q.position + 1}
-              </span>
-              <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", lineHeight: 1.55, fontWeight: 500 }}>
-                {q.prompt}
-              </p>
-            </div>
-
-            {/* Submitted answer (if any) */}
-            {q.answer && (
-              <div
-                style={{
-                  marginLeft: "2.125rem",
-                  padding: "0.5rem 0.75rem",
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  fontSize: "0.875rem",
-                  color: "var(--text-primary)",
-                  whiteSpace: "pre-wrap",
-                  lineHeight: 1.55,
-                }}
-              >
+      <ol style={{ display: "flex", flexDirection: "column", gap: "1rem", listStyle: "none", padding: 0, margin: 0 }}>
+        {state.questions.map((q) => {
+          const draft = drafts[q.id] ?? "";
+          return (
+            <li key={q.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <div style={{ display: "flex", gap: "0.625rem", alignItems: "flex-start" }}>
                 <span
                   style={{
-                    display: "inline-block",
-                    fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)",
-                    letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.25rem",
+                    flexShrink: 0,
+                    width: 26, height: 26,
+                    borderRadius: 999,
+                    background: "rgba(212,175,55,0.18)",
+                    color: "var(--accent)",
+                    display: "grid", placeItems: "center",
+                    fontFamily: "var(--font-mono)", fontSize: "0.75rem", fontWeight: 700,
                   }}
                 >
-                  Your answer
+                  {q.position + 1}
                 </span>
-                <div>{q.answer}</div>
-                {reviewed && q.score !== null && (
+                <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", lineHeight: 1.55, fontWeight: 500 }}>
+                  {q.prompt}
+                </p>
+              </div>
+
+              {/* The answer area: a textarea while drafting, a read-only block
+                  once the student has submitted. */}
+              {!submitted ? (
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDrafts((d) => ({ ...d, [q.id]: e.target.value }))}
+                  rows={3}
+                  placeholder="Type your answer..."
+                  className="forge-input"
+                  style={{
+                    marginLeft: "2.125rem",
+                    width: "calc(100% - 2.125rem)",
+                    boxSizing: "border-box",
+                    resize: "vertical",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.9375rem",
+                    lineHeight: 1.55,
+                  }}
+                />
+              ) : (
+                q.answer && (
                   <div
                     style={{
-                      marginTop: "0.375rem",
-                      fontFamily: "var(--font-mono)", fontSize: "0.6875rem",
-                      color: q.score >= 7 ? "var(--green)" : q.score >= 5 ? "var(--accent)" : "var(--red)",
-                      letterSpacing: "0.06em",
+                      marginLeft: "2.125rem",
+                      padding: "0.5rem 0.75rem",
+                      background: "var(--bg-card)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                      fontSize: "0.875rem",
+                      color: "var(--text-primary)",
+                      whiteSpace: "pre-wrap",
+                      lineHeight: 1.55,
                     }}
                   >
-                    Mentor scored this answer {q.score}/10
+                    <span
+                      style={{
+                        display: "inline-block",
+                        fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)",
+                        letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.25rem",
+                      }}
+                    >
+                      Your answer
+                    </span>
+                    <div>{q.answer}</div>
+                    {reviewed && q.score !== null && (
+                      <div
+                        style={{
+                          marginTop: "0.375rem",
+                          fontFamily: "var(--font-mono)", fontSize: "0.6875rem",
+                          color: q.score >= 7 ? "var(--green)" : q.score >= 5 ? "var(--accent)" : "var(--red)",
+                          letterSpacing: "0.06em",
+                        }}
+                      >
+                        Mentor scored this answer {q.score}/10
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            )}
-          </li>
-        ))}
+                )
+              )}
+            </li>
+          );
+        })}
       </ol>
 
-      {/* Mentor feedback block — only after review */}
+      {/* Submit button — only while there are unanswered questions */}
+      {!submitted && (
+        <div style={{ marginTop: "1.25rem", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "center" }}>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!allAnswered || submitting}
+            className="forge-btn forge-btn-primary forge-btn-full"
+            style={{
+              padding: "0.625rem 1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              boxSizing: "border-box",
+              opacity: !allAnswered || submitting ? 0.6 : 1,
+              cursor: !allAnswered || submitting ? "not-allowed" : "pointer",
+            }}
+          >
+            {submitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+            {submitting ? "Submitting…" : "Submit Answers"}
+          </button>
+          {!allAnswered && (
+            <span style={{ color: "var(--text-dim)", fontSize: "0.8125rem" }}>
+              Answer every question before submitting.
+            </span>
+          )}
+        </div>
+      )}
+
+      {error && (
+        <p style={{ marginTop: "0.75rem", color: "var(--red)", fontSize: "0.875rem" }} role="alert">
+          {error}
+        </p>
+      )}
+
+      {/* Mentor feedback panel — only after review */}
       {reviewed && state.feedback && (
         <div
           style={{
@@ -218,22 +310,6 @@ export default function MentorReviewSection({ taskId }: { taskId: string }) {
           <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
             {state.feedback}
           </p>
-        </div>
-      )}
-
-      {/* CTA — only when there are unanswered questions */}
-      {!state.submitted && (
-        <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
-          <Link
-            href="/dashboard/checkin"
-            className="forge-btn forge-btn-primary"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.5rem 1rem" }}
-          >
-            Answer in the daily check-in <ArrowRight size={14} />
-          </Link>
-          <span style={{ color: "var(--text-dim)", fontSize: "0.8125rem" }}>
-            Your answers are required to submit this week.
-          </span>
         </div>
       )}
     </section>
