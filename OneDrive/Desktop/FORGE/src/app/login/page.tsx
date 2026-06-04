@@ -159,15 +159,16 @@ export default function LoginPage() {
   };
 
   return (
-    // width:100% (NOT 100vw — 100vw includes the scrollbar and overflows by its
-    // width, pushing the card off the right edge). flex + justify-content:center
-    // centres horizontally; margin:auto on the card also centres vertically and
-    // keeps the top reachable when the card is taller than the viewport.
-    <div style={{ background: "var(--bg-base)", minHeight: "100vh", width: "100%", display: "flex", justifyContent: "center", padding: "1.5rem", boxSizing: "border-box" }}>
+    // Applying the user-specified centring recipe verbatim:
+    //   parent: display:flex; justify-content:center; align-items:center; min-height:100vh
+    //   card:   width:90%; max-width:450px; margin:0 auto
+    // No 100vw (it includes the scrollbar -> overflows to the right). No transform
+    // tricks. Overflow stays default so nothing gets clipped on either side.
+    <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "1.5rem", boxSizing: "border-box" }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ width: "100%", maxWidth: "420px", margin: "auto", boxSizing: "border-box" }}
+        style={{ width: "90%", maxWidth: "450px", margin: "0 auto", boxSizing: "border-box" }}
       >
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", color: "var(--text-secondary)", fontSize: "0.875rem", fontFamily: "var(--font-mono)", marginBottom: "1.25rem", textDecoration: "none" }}>
           <ArrowLeft size={14} /> Back to Home
