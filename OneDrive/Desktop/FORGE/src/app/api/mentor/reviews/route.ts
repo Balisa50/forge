@@ -45,14 +45,21 @@ export async function POST(req: NextRequest) {
   const mentorId = session.user.id;
 
   const body = await req.json().catch(() => ({}));
-  const { interrogationId, scores, feedback, passed } = body as {
+  const { interrogationId, scores, feedback, passed, mentorRating } = body as {
     interrogationId?: string;
     scores?: number[];
     feedback?: string;
     passed?: boolean;
+    mentorRating?: number | null;
   };
   if (!interrogationId || !Array.isArray(scores) || typeof passed !== "boolean") {
     return NextResponse.json({ error: "interrogationId, scores, passed required" }, { status: 400 });
+  }
+  // Validate 1-5 rating (clamped). null clears; undefined leaves untouched.
+  let cleanRating: number | null | undefined = undefined;
+  if (mentorRating === null) cleanRating = null;
+  else if (typeof mentorRating === "number" && mentorRating >= 1 && mentorRating <= 5) {
+    cleanRating = Math.round(mentorRating);
   }
 
   const interrogation = await prisma.interrogation.findUnique({
@@ -92,15 +99,20 @@ export async function POST(req: NextRequest) {
       where: { id: interrogation.checkinId },
       data: { status: passed ? "passed" : "failed" },
     });
+    // Task update: status changes based on pass/fail; mentorRating is updated
+    // only if the mentor sent one in this grade submission (undefined = leave
+    // any prior rating alone, null = clear).
+    const ratingPatch: { mentorRating?: number | null } = {};
+    if (cleanRating !== undefined) ratingPatch.mentorRating = cleanRating;
     if (passed) {
       await tx.task.update({
         where: { id: interrogation.checkin.task.id },
-        data: { status: "verified", verifiedAt: new Date() },
+        data: { status: "verified", verifiedAt: new Date(), ...ratingPatch },
       });
     } else {
       await tx.task.update({
         where: { id: interrogation.checkin.task.id },
-        data: { status: "available" }, // let them retry
+        data: { status: "available", ...ratingPatch }, // let them retry
       });
     }
     return i;

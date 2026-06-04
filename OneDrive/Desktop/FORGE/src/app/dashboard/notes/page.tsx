@@ -202,10 +202,26 @@ export default function MentorNotesPage() {
   return (
     <div style={{ paddingBottom: "4rem", maxWidth: 800 }}>
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.875rem" }}>Mentor</h1>
+        <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.875rem" }}>Mentor messages</h1>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginTop: "0.25rem" }}>
-          Everything your mentor has shared and every conversation you&apos;ve had with them, organised by week.
+          Messages, resources and notes your mentor has sent, grouped by week.
         </p>
+        {/* Anti-confusion banner: questions live ON THE WEEK, not in chat. */}
+        <div
+          role="note"
+          style={{
+            marginTop: "0.875rem",
+            padding: "0.75rem 0.875rem",
+            background: "rgba(212,175,55,0.06)",
+            border: "1px solid rgba(212,175,55,0.3)",
+            borderRadius: 8,
+            color: "var(--text-secondary)",
+            fontSize: "0.875rem",
+            lineHeight: 1.55,
+          }}
+        >
+          Looking for your <strong style={{ color: "var(--accent)" }}>mentor&apos;s questions</strong> for a week? Open the week from your dashboard — questions, answers, and your mentor&apos;s verdict + rating live in the <strong>Mentor Review</strong> section at the bottom of each week, not here.
+        </div>
       </div>
 
       {grouped.length === 0 ? (

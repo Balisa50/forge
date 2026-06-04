@@ -41,6 +41,9 @@ export default function MentorReviewsPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [scores, setScores] = useState<number[]>([]);
   const [feedback, setFeedback] = useState("");
+  // 1-5 rating saved to Task.mentorRating — visible to the student in the
+  // Mentor Review section + Journal. null = don't set/change the rating.
+  const [rating, setRating] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
@@ -62,6 +65,7 @@ export default function MentorReviewsPage() {
     const answerCount = r.transcript.filter((t) => t.role === "user" && typeof t.questionNumber === "number").length;
     setScores(Array(answerCount).fill(7));
     setFeedback("");
+    setRating(null);
   };
 
   const submit = async (passed: boolean) => {
@@ -71,7 +75,7 @@ export default function MentorReviewsPage() {
       const res = await fetch("/api/mentor/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ interrogationId: active.id, scores, feedback, passed }),
+        body: JSON.stringify({ interrogationId: active.id, scores, feedback, passed, mentorRating: rating }),
       });
       if (res.ok) {
         setActiveId(null);
@@ -229,17 +233,75 @@ export default function MentorReviewsPage() {
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Feedback for the mentee (optional)"
+            placeholder="Feedback for the mentee (optional). They see this on the week page + Journal."
             rows={2}
             style={{ width: "100%", padding: "0.5rem 0.75rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text-primary)", fontSize: "0.875rem", marginBottom: "1rem", resize: "vertical" }}
           />
 
+          {/* 1-5 rating selector. Saved to Task.mentorRating so the student
+              sees it on the Mentor Review section + Journal. */}
+          <div style={{ marginBottom: "1rem" }}>
+            <label
+              style={{
+                display: "block",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.6875rem",
+                color: "var(--text-dim)",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Mentor rating (1–5) <span style={{ color: "var(--text-dim)", textTransform: "none", letterSpacing: 0 }}>— optional, visible to mentee</span>
+            </label>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              {[1, 2, 3, 4, 5].map((n) => {
+                const selected = rating === n;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setRating(selected ? null : n)}
+                    aria-label={`Rate ${n} of 5`}
+                    style={{
+                      flex: 1,
+                      padding: "0.5rem 0.5rem",
+                      background: selected ? "rgba(212,175,55,0.18)" : "var(--bg-card)",
+                      border: selected ? "1px solid var(--accent)" : "1px solid var(--border)",
+                      borderRadius: 8,
+                      color: selected ? "var(--accent)" : "var(--text-secondary)",
+                      fontFamily: "var(--font-headline)",
+                      fontSize: "1rem",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {n}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "0.4rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.625rem",
+              color: "var(--text-dim)",
+              letterSpacing: "0.08em",
+            }}>
+              <span>1 · surface</span>
+              <span>3 · solid</span>
+              <span>5 · exceptional</span>
+            </div>
+          </div>
+
           <div className="flex gap-2">
             <button onClick={() => submit(true)} disabled={submitting} className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.5rem 1rem" }}>
-              {submitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={13} />} Pass
+              {submitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={13} />} Mark Passed
             </button>
             <button onClick={() => submit(false)} disabled={submitting} className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", padding: "0.5rem 1rem", color: "var(--red)", borderColor: "rgba(239,68,68,0.3)" }}>
-              <XCircle size={13} /> Fail
+              <XCircle size={13} /> Send Back (Needs Rework)
             </button>
             <button onClick={() => setActiveId(null)} className="forge-btn forge-btn-ghost" style={{ padding: "0.5rem 1rem" }}>Cancel</button>
           </div>
