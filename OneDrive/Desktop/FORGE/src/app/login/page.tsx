@@ -159,16 +159,29 @@ export default function LoginPage() {
   };
 
   return (
-    // Applying the user-specified centring recipe verbatim:
-    //   parent: display:flex; justify-content:center; align-items:center; min-height:100vh
-    //   card:   width:90%; max-width:450px; margin:0 auto
-    // No 100vw (it includes the scrollbar -> overflows to the right). No transform
-    // tricks. Overflow stays default so nothing gets clipped on either side.
-    <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "1.5rem", boxSizing: "border-box" }}>
+    // Bullet-proof centring that ignores every parent layout. The root layout
+    // <body className="flex flex-col"> + any auth/redirect wrapper can shift a
+    // normally-positioned flex container off the visual centre. Pulling the
+    // wrapper out of normal flow with position:fixed + inset:0 makes it span
+    // the full viewport unambiguously. Inside, display:grid + place-items:
+    // center is the most robust two-axis centring CSS has. overflow:auto keeps
+    // the page scrollable when the card is taller than the viewport.
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "var(--bg-base)",
+        display: "grid",
+        placeItems: "center",
+        padding: "1.5rem",
+        boxSizing: "border-box",
+        overflow: "auto",
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ width: "90%", maxWidth: "450px", margin: "0 auto", boxSizing: "border-box" }}
+        style={{ width: "100%", maxWidth: "450px", margin: "0 auto", boxSizing: "border-box" }}
       >
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", color: "var(--text-secondary)", fontSize: "0.875rem", fontFamily: "var(--font-mono)", marginBottom: "1.25rem", textDecoration: "none" }}>
           <ArrowLeft size={14} /> Back to Home
