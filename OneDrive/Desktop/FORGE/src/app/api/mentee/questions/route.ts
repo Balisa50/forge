@@ -24,7 +24,9 @@ export async function GET(req: NextRequest) {
   if (!owns) return NextResponse.json({ questions: [] });
 
   const questions = await prisma.mentorQuestion.findMany({
-    where: { taskId, isActive: true },
+    // publishedAt: { not: null } — drafts (publishedAt IS NULL) stay invisible
+    // to the student until the mentor clicks "Send Questions to Student."
+    where: { taskId, isActive: true, publishedAt: { not: null } },
     orderBy: { position: "asc" },
     select: { id: true, prompt: true, position: true },
   });

@@ -246,7 +246,8 @@ export async function POST(req: NextRequest) {
   // mentee must answer ALL of them to submit. Their answers become a
   // mentor_async interrogation that lands in the mentor's review queue.
   const mentorQuestions = await prisma.mentorQuestion.findMany({
-    where: { taskId, isActive: true },
+    // Only published (sent) questions block the check-in. Drafts stay invisible.
+    where: { taskId, isActive: true, publishedAt: { not: null } },
     orderBy: { position: "asc" },
   });
   const answerById = new Map<string, string>();

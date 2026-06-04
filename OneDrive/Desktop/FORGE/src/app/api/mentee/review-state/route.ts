@@ -39,7 +39,8 @@ export async function GET(req: NextRequest) {
   if (!task) return NextResponse.json({ status: "not-found" }, { status: 404 });
 
   const questions = await prisma.mentorQuestion.findMany({
-    where: { taskId, isActive: true },
+    // Drafts stay invisible to the student until the mentor publishes.
+    where: { taskId, isActive: true, publishedAt: { not: null } },
     orderBy: { position: "asc" },
     select: { id: true, prompt: true, position: true },
   });

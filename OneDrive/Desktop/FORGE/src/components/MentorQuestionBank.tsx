@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Loader2, Save, ListChecks, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Loader2, Save, ListChecks, ChevronDown, ChevronRight, Send } from "lucide-react";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 
 interface Question {
@@ -11,6 +11,8 @@ interface Question {
   prompt: string;
   rubric: string | null;
   idealAnswer: string | null;
+  /// NULL = draft (mentor-only). Date = published (sent to student).
+  publishedAt: string | null;
 }
 
 export default function MentorQuestionBank({ taskId, menteeId }: { taskId: string; menteeId: string }) {
@@ -91,6 +93,40 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
     });
   };
 
+  // Count drafts so we can show / disable the Send button accordingly.
+  const draftCount = questions.filter((q) => !q.publishedAt).length;
+  const sentCount = questions.length - draftCount;
+
+  /** "Send Questions to Student" — flips every draft on this task to
+   *  published. Student-side queries filter publishedAt IS NOT NULL, so this
+   *  is the moment the student actually sees them. */
+  const publish = () => {
+    setDialog({
+      kind: "confirm",
+      title: `Send ${draftCount} question${draftCount === 1 ? "" : "s"} to the student?`,
+      message:
+        "Drafts will become visible on the student's Mentor Review tab immediately. You can still edit each question's prompt or rubric afterwards.",
+      confirmText: "Send to student",
+      onConfirm: async () => {
+        setSaving(true);
+        try {
+          const res = await fetch("/api/mentor/questions/publish", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ taskId }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? "Send failed");
+          }
+          await load();
+        } finally {
+          setSaving(false);
+        }
+      },
+    });
+  };
+
   return (
     <div style={{ marginTop: "0.875rem", paddingTop: "0.875rem", borderTop: "1px dashed var(--border)" }}>
       <button
@@ -126,8 +162,9 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
       ) : (
         <>
           <p style={{ fontSize: "0.75rem", color: "var(--text-dim)", margin: "0.625rem 0 0.75rem", lineHeight: 1.55 }}>
-            When you author questions here, the mentee answers <strong>your questions</strong> instead of the AI&apos;s.
-            After they submit, you review and grade each answer. Skip this whole section if you want to use the AI&apos;s questions.
+            Add as many questions as you want — each starts as a <strong>draft</strong>, only visible to you.
+            When you&apos;re ready, click <strong>Send Questions to Student</strong> and they all appear on the student&apos;s Mentor Review tab at once.
+            You review and grade their answers from the <strong>Reviews</strong> page.
           </p>
           {questions.length > 0 && (
             <ul className="flex flex-col gap-2 mb-3">
@@ -137,6 +174,24 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
                   <li key={q.id} style={{ padding: "0.625rem 0.75rem", borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)" }}>
                     <div className="flex-col-on-mobile" style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", marginBottom: "0.375rem", flexWrap: "wrap" }}>
                       <span style={{ width: 22, height: 22, borderRadius: 6, background: "rgba(245,158,11,0.15)", color: "var(--accent)", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", display: "grid", placeItems: "center", flexShrink: 0 }}>Q{i + 1}</span>
+                      {/* Draft / Sent badge — quick visual scan of who's seen what. */}
+                      <span
+                        title={q.publishedAt ? `Sent ${new Date(q.publishedAt).toLocaleDateString()}` : "Draft — not visible to student yet"}
+                        style={{
+                          flexShrink: 0,
+                          padding: "0.125rem 0.5rem",
+                          borderRadius: 999,
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.625rem",
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          color: q.publishedAt ? "var(--green)" : "var(--text-dim)",
+                          background: q.publishedAt ? "rgba(34,197,94,0.1)" : "var(--bg-card)",
+                          border: q.publishedAt ? "1px solid rgba(34,197,94,0.35)" : "1px solid var(--border)",
+                        }}
+                      >
+                        {q.publishedAt ? "Sent" : "Draft"}
+                      </span>
                       <textarea
                         value={edit?.prompt ?? q.prompt}
                         onChange={(e) => setEdits({ ...edits, [q.id]: { ...edit, prompt: e.target.value } })}
@@ -174,6 +229,51 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
                 );
               })}
             </ul>
+          )}
+
+          {/* "Send Questions to Student" — visible only when there is at least
+              one draft. Until clicked, drafts stay invisible to the student. */}
+          {questions.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "0.75rem",
+                padding: "0.625rem 0.75rem",
+                marginBottom: "0.75rem",
+                borderRadius: 8,
+                background: draftCount > 0 ? "rgba(245,158,11,0.07)" : "rgba(34,197,94,0.07)",
+                border: `1px solid ${draftCount > 0 ? "rgba(245,158,11,0.3)" : "rgba(34,197,94,0.3)"}`,
+                flexWrap: "wrap",
+              }}
+            >
+              <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                {draftCount > 0
+                  ? `${draftCount} draft${draftCount === 1 ? "" : "s"} waiting to be sent`
+                  : `${sentCount} question${sentCount === 1 ? "" : "s"} already sent to the student.`}
+                {sentCount > 0 && draftCount > 0 ? ` (${sentCount} already sent)` : ""}
+              </span>
+              <button
+                type="button"
+                onClick={publish}
+                disabled={draftCount === 0 || saving}
+                className="forge-btn forge-btn-primary"
+                style={{
+                  padding: "0.4rem 0.875rem",
+                  fontSize: "0.8125rem",
+                  display: "inline-flex",
+                  gap: "0.375rem",
+                  alignItems: "center",
+                  opacity: draftCount === 0 || saving ? 0.6 : 1,
+                  cursor: draftCount === 0 || saving ? "not-allowed" : "pointer",
+                }}
+                title={draftCount === 0 ? "No drafts to send" : "Make every draft visible to the student"}
+              >
+                {saving ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                Send Questions to Student
+              </button>
+            </div>
           )}
 
           {/* New question form */}

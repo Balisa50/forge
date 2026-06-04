@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
 
   // Pull the active mentor questions.
   const questions = await prisma.mentorQuestion.findMany({
-    where: { taskId, isActive: true },
+    // Only published (sent) questions count toward the answer requirement.
+    where: { taskId, isActive: true, publishedAt: { not: null } },
     orderBy: { position: "asc" },
   });
   if (questions.length === 0) {

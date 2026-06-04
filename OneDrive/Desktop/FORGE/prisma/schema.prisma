@@ -306,6 +306,11 @@ model MentorQuestion {
   /// Optional reference answer the mentor wrote (helps when they grade later).
   idealAnswer  String?
   isActive     Boolean  @default(true)
+  /// When the mentor explicitly "sent" this question to the student. NULL means
+  /// it's still a draft (visible only to the mentor). Student-facing queries
+  /// filter on publishedAt IS NOT NULL. Existing rows are backfilled to
+  /// createdAt by the migration so nothing already in the wild changes.
+  publishedAt  DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -313,6 +318,7 @@ model MentorQuestion {
   mentor       User     @relation("MentorQuestionMentor", fields: [mentorId], references: [id], onDelete: Cascade)
 
   @@index([taskId, mentorId, isActive])
+  @@index([taskId, publishedAt])
 }
 
 model IntegrityLog {
