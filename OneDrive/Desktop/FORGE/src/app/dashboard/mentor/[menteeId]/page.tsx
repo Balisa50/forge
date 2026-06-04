@@ -1125,14 +1125,18 @@ export default function MenteeDrilldownPage() {
                           </div>
 
                           {/* New comment */}
-                          <div className="flex-col-on-mobile" style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem", alignItems: "flex-end", flexWrap: "wrap" }}>
+                          {/* Composer: textarea full-width on its own row, then
+                              Send + Pin side-by-side on a single row beneath.
+                              Two rows on every screen — never the vertical stack
+                              that flex-col-on-mobile produced before. */}
+                          <div style={{ marginTop: "0.875rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                             <textarea
                               value={draft[task.id] ?? ""}
                               onChange={(e) => setDraft({ ...draft, [task.id]: e.target.value })}
                               placeholder="Message about this week's work… (stays in this week's thread)"
                               rows={2}
                               style={{
-                                flex: 1,
+                                width: "100%",
                                 padding: "0.5rem 0.75rem",
                                 background: "var(--bg-card)",
                                 border: "1px solid var(--border)",
@@ -1141,28 +1145,40 @@ export default function MenteeDrilldownPage() {
                                 fontFamily: "var(--font-body)",
                                 fontSize: "0.875rem",
                                 resize: "vertical",
+                                boxSizing: "border-box",
                               }}
                             />
-                            <button
-                              type="button"
-                              onClick={() => handlePost(task, "message")}
-                              disabled={!(draft[task.id] ?? "").trim() || posting === task.id}
-                              className="forge-btn forge-btn-primary"
-                              style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center" }}
-                            >
-                              {posting === task.id ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
-                              Send message
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handlePost(task, "note")}
-                              disabled={!(draft[task.id] ?? "").trim() || posting === task.id}
-                              className="forge-btn forge-btn-ghost"
-                              title="Pin to the mentee's permanent Notes page instead of this week's thread"
-                              style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center" }}
-                            >
-                              <Pin size={13} /> Pin as note
-                            </button>
+                            <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", alignItems: "center" }}>
+                              {(() => {
+                                const empty = !(draft[task.id] ?? "").trim();
+                                const busy = posting === task.id;
+                                const dim = empty || busy;
+                                return (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() => handlePost(task, "note")}
+                                      disabled={dim}
+                                      className="forge-btn forge-btn-ghost"
+                                      title="Pin to the mentee's permanent Notes page instead of this week's thread"
+                                      style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center", opacity: dim ? 0.45 : 1, cursor: dim ? "not-allowed" : "pointer" }}
+                                    >
+                                      <Pin size={13} /> Pin as note
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handlePost(task, "message")}
+                                      disabled={dim}
+                                      className="forge-btn forge-btn-primary"
+                                      style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center", opacity: dim ? 0.6 : 1, cursor: dim ? "not-allowed" : "pointer" }}
+                                    >
+                                      {busy ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+                                      Send message
+                                    </button>
+                                  </>
+                                );
+                              })()}
+                            </div>
                           </div>
                         </div>
                       )}

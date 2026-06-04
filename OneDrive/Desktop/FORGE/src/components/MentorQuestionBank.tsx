@@ -298,8 +298,14 @@ export default function MentorQuestionBank({ taskId, menteeId }: { taskId: strin
                 placeholder="Ideal answer notes (optional)"
                 style={{ flex: 1, minWidth: 0, padding: "0.375rem 0.625rem", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.75rem" }}
               />
-              <button onClick={add} disabled={!draft.prompt.trim() || saving} className="forge-btn forge-btn-primary" style={{ padding: "0.375rem 0.75rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}>
-                {saving ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />} Add
+              <button
+                onClick={add}
+                disabled={!draft.prompt.trim() || saving}
+                className="forge-btn forge-btn-primary"
+                title="Adds this question as a DRAFT (only you see it). Use 'Send Questions to Student' above to actually deliver."
+                style={{ padding: "0.375rem 0.75rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.25rem", alignItems: "center" }}
+              >
+                {saving ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />} Add draft
               </button>
             </div>
           </div>

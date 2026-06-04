@@ -21,6 +21,7 @@ const GMAIL_FROM = process.env.GMAIL_USER ? `The Forge <${process.env.GMAIL_USER
 export type NotificationKind =
   | "mentor-left-note"
   | "mentor-shared-resource"
+  | "mentor-sent-questions"
   | "mentor-action"
   | "mentee-replied"
   | "mentee-requested-unlock"
@@ -89,6 +90,11 @@ function resolveHref(kind: NotificationKind, args: Args): string {
     case "mentor-left-note":
     case "mentor-shared-resource":
       return "/dashboard/notes";
+    // Mentee-facing: questions land on the week page (the new Mentor Review
+    // tab is where the student answers). Dashboard is the safe default
+    // when we don't have the slug + week number in scope.
+    case "mentor-sent-questions":
+      return "/dashboard";
     // Mentor-facing: a mentee replied, asked to unlock, or submitted a
     // check-in. Send the mentor straight to THAT mentee's page (the thread,
     // reply box, and submitted files all live there).
@@ -118,6 +124,14 @@ function renderTemplate(kind: NotificationKind, vars: Record<string, unknown>): 
         subject: `${a} shared a resource for ${t}`,
         body: `<p><strong>${a}</strong> recommended <a href="${escape(vars.url as string)}">${escape(vars.title as string)}</a> for <em>${t}</em>.</p>`,
       };
+    case "mentor-sent-questions": {
+      const count = Number(vars.count ?? 1);
+      const noun = count === 1 ? "question" : "questions";
+      return {
+        subject: `${a} sent you ${count} ${noun} on ${t}`,
+        body: `<p><strong>${a}</strong> sent you ${count} ${noun} on <em>${t}</em>. Open the week and answer them on the <strong>Mentor Review</strong> tab.</p>`,
+      };
+    }
     case "mentor-action":
       return {
         subject: `${a} ${vars.action as string} ${t}`,

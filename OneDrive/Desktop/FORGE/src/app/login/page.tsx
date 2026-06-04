@@ -233,8 +233,11 @@ export default function LoginPage() {
               // the @media min-width:1025px rule that caps .forge-btn-primary
               // at max-width:280px. Without it, the button stays small + left
               // on desktop no matter what inline width we set.
+              // width:100% on the inline style covers MOBILE (<1025px), where
+              // the desktop @media rule that forge-btn-full opts out of doesn't
+              // apply. Without it, mobile shows a content-sized clipped button.
               className="forge-btn forge-btn-primary forge-btn-full"
-              style={{ padding: "0.625rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "0.625rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", boxSizing: "border-box" }}
             >
               <KeyRound size={14} />
               {menteeLoading ? "Signing in..." : "Continue"}
@@ -284,7 +287,9 @@ export default function LoginPage() {
             // max-width:280px). Without it the Sign In button stays narrower
             // than the email/password inputs on every desktop screen.
             className="forge-btn forge-btn-primary forge-btn-full"
-            style={{ marginTop: "0.5rem", padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}
+            // width:100% covers mobile (<1025px), where forge-btn-full's media
+            // rule doesn't apply. See identical fix on the Continue button above.
+            style={{ width: "100%", marginTop: "0.5rem", padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}
             disabled={loading}
           >
             {loading ? "Signing In..." : "Sign In"}
