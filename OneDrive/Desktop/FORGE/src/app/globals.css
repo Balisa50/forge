@@ -325,6 +325,40 @@
   border-radius: 50%;
 }
 
+/* ─── Code blocks rendered inside ForgeMarkdown ─────────────────
+   Inline styles in ForgeMarkdown.tsx provide the desktop defaults
+   (left-aligned, tightened gutter); these CSS rules override the
+   `whiteSpace: "pre"` on `<td>` so code WRAPS on mobile and never
+   forces a horizontal swipe. The CodeBlock outer container also
+   enforces full-width + zero left margin so its left edge matches
+   surrounding paragraph text. */
+.forge-code-block {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.forge-code-scroll {
+  max-width: 100%;
+}
+@media (max-width: 768px) {
+  /* Mobile (≤768 px): force wrap, drop the horizontal scroll. Every
+     character of code must be readable at 375 px without swipe. */
+  .forge-code-block .forge-code-scroll {
+    overflow-x: hidden !important;
+  }
+  .forge-code-block .forge-code-line {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    padding: 0 0.625rem !important;
+  }
+  .forge-code-block .forge-code-gutter {
+    padding: 0 0.375rem 0 0.5rem !important;
+    min-width: 1.5rem !important;
+  }
+}
+
 /* ─── Mobile Responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   .grid-cols-2 { grid-template-columns: 1fr !important; }

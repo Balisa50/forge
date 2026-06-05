@@ -208,14 +208,24 @@ function CodeBlock({ content, label }: { content: string; label?: string }) {
   }, [content]);
 
   return (
-    <div style={{
-      borderRadius: 10,
-      overflow: "hidden",
-      border: "1px solid rgba(212,175,55,0.22)",
-      background: "rgba(5, 8, 15, 0.85)",
-      marginTop: "0.75rem",
-      marginBottom: "0.75rem",
-    }}>
+    <div
+      // The `.forge-code-block` class lets globals.css enforce two things that
+      // inline styles can't conditionally do: (1) wrap code lines on mobile so
+      // the student doesn't swipe sideways, (2) tighten the line-number
+      // gutter so the code column lines up with paragraph text on desktop.
+      className="forge-code-block"
+      style={{
+        borderRadius: 10,
+        overflow: "hidden",
+        border: "1px solid rgba(212,175,55,0.22)",
+        background: "rgba(5, 8, 15, 0.85)",
+        marginTop: "0.75rem",
+        marginBottom: "0.75rem",
+        marginLeft: 0,
+        marginRight: 0,
+        maxWidth: "100%",
+      }}
+    >
       {/* Code block header */}
       <div style={{
         display: "flex",
@@ -264,11 +274,14 @@ function CodeBlock({ content, label }: { content: string; label?: string }) {
       </div>
 
       {/* Lines */}
-      <div style={{
-        overflowX: "auto",
-        padding: "0.875rem 0",
-        WebkitOverflowScrolling: "touch",
-      }}>
+      <div
+        className="forge-code-scroll"
+        style={{
+          overflowX: "auto",
+          padding: "0.875rem 0",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
         <table style={{
           borderCollapse: "collapse",
           width: "100%",
@@ -279,20 +292,35 @@ function CodeBlock({ content, label }: { content: string; label?: string }) {
           <tbody>
             {lines.map((line, idx) => (
               <tr key={idx} style={{ verticalAlign: "top" }}>
-                <td style={{
-                  userSelect: "none",
-                  padding: "0 1rem 0 1rem",
-                  color: "rgba(255,255,255,0.18)",
-                  textAlign: "right",
-                  fontSize: "0.6875rem",
-                  minWidth: "2.5rem",
-                  lineHeight: 1.65,
-                  borderRight: "1px solid rgba(255,255,255,0.06)",
-                  verticalAlign: "top",
-                }}>
+                <td
+                  className="forge-code-gutter"
+                  style={{
+                    userSelect: "none",
+                    // Tightened from 1rem/1rem so the code column aligns
+                    // closer to paragraph text on desktop. Mobile shrinks
+                    // further via globals.css.
+                    padding: "0 0.5rem 0 0.625rem",
+                    color: "rgba(255,255,255,0.18)",
+                    textAlign: "right",
+                    fontSize: "0.6875rem",
+                    minWidth: "1.75rem",
+                    lineHeight: 1.65,
+                    borderRight: "1px solid rgba(255,255,255,0.06)",
+                    verticalAlign: "top",
+                  }}
+                >
                   {idx + 1}
                 </td>
-                <td style={{ padding: "0 1.25rem", whiteSpace: "pre", lineHeight: 1.65 }}>
+                <td
+                  className="forge-code-line"
+                  style={{
+                    // Tightened from 1.25rem; matches paragraph left padding
+                    // for a clean alignment with body text on desktop.
+                    padding: "0 0.875rem",
+                    whiteSpace: "pre",
+                    lineHeight: 1.65,
+                  }}
+                >
                   {colorize(line).map((chunk, ci) => (
                     <span key={ci} style={{ color: chunk.color ?? "#e2e8f0" }}>{chunk.text}</span>
                   ))}

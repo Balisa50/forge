@@ -230,30 +230,39 @@ export default async function MentorDashboardPage() {
               </span>
             </div>
 
-            {/* Recent sessions */}
-            {m.recentCheckins.length > 0 && (
-              <div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Recent Sessions</div>
-                <div className="flex flex-col gap-1">
-                  {m.recentCheckins.slice(0, 5).map((c) => (
-                    <div key={c.id} className="flex items-center justify-between" style={{ padding: "0.375rem 0", borderBottom: "1px solid var(--border)" }}>
-                      <div className="flex items-center gap-2">
-                        {c.status === "passed"
-                          ? <CheckCircle2 size={12} color="var(--green)" />
-                          : <XCircle size={12} color="var(--red)" />
-                        }
-                        <span style={{ fontSize: "0.8125rem" }}>{c.task?.title ?? "—"}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
-                          {new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                        </span>
-                      </div>
+            {/* Latest session — exactly one row, deduped by task. Keeps the
+                card compact regardless of how many checkins / weeks a mentee
+                has shipped. Legacy multi-row duplicates (pre-upsert era) are
+                collapsed here. */}
+            {(() => {
+              const seen = new Set<string>();
+              const latest = m.recentCheckins.find((c) => {
+                const k = c.taskId ?? c.id;
+                if (seen.has(k)) return false;
+                seen.add(k);
+                return true;
+              });
+              if (!latest) return null;
+              return (
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                    Latest session
+                  </div>
+                  <div className="flex items-center justify-between" style={{ padding: "0.375rem 0" }}>
+                    <div className="flex items-center gap-2">
+                      {latest.status === "passed"
+                        ? <CheckCircle2 size={12} color="var(--green)" />
+                        : <XCircle size={12} color="var(--red)" />
+                      }
+                      <span style={{ fontSize: "0.8125rem" }}>{latest.task?.title ?? "—"}</span>
                     </div>
-                  ))}
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
+                      {new Date(latest.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
             <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
                 Click to open roadmap · leave per-week notes
