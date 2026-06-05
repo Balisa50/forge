@@ -18,6 +18,7 @@
  * This is meant to be screenshotted. Learners will post it.
  */
 
+import Link from "next/link";
 import { useState } from "react";
 import { Check, Lock, Clock, X, Sparkles } from "lucide-react";
 
@@ -37,6 +38,9 @@ interface Props {
   weeks: NodeMapWeek[];
   /** Total weeks expected (so the bar caps at "Week 27 of 27") */
   totalWeeks?: number;
+  /** When set, unlocked weeks become Links to /learn/<slug>/<weekNumber>.
+   *  Locked weeks render as a plain div (no nav). */
+  slugForLinks?: string | null;
 }
 
 const GOLD = "#d4af37";
@@ -173,7 +177,7 @@ function ConnectorLine({ aboveVerified, belowVerified }: { aboveVerified: boolea
   );
 }
 
-export default function RoadmapNodeMap({ weeks, totalWeeks }: Props) {
+export default function RoadmapNodeMap({ weeks, totalWeeks, slugForLinks = null }: Props) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   if (weeks.length === 0) return null;
@@ -243,6 +247,60 @@ export default function RoadmapNodeMap({ weeks, totalWeeks }: Props) {
           const closed = !!week.closedAt && week.status !== "verified";
           const hovered = hoverIdx === idx;
 
+          const clickable = !!slugForLinks && week.status !== "locked";
+          const innerBody = (
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", position: "relative" }}>
+              {/* Node */}
+              <NodeIcon week={week} />
+
+              {/* Body */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.2em",
+                  color: closed ? "var(--red)" : week.status === "verified" ? GOLD : "var(--text-dim)",
+                  textTransform: "uppercase",
+                  marginBottom: "0.2rem",
+                }}>
+                  Week {week.number} · {statusLabel(week.status, closed)}
+                  {week.trackTitle && <span style={{ color: "var(--text-dim)" }}> · {week.trackTitle}</span>}
+                </div>
+                <div style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "0.9375rem",
+                  fontWeight: 600,
+                  color: week.status === "locked"
+                    ? "var(--text-dim)"
+                    : "var(--text-primary)",
+                  lineHeight: 1.35,
+                  opacity: week.status === "locked" ? 0.7 : 1,
+                }}>
+                  {stripWeekPrefix(week.title)}
+                </div>
+                {/* Hover detail */}
+                {hovered && (
+                  <div style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.625rem",
+                    color: "var(--text-secondary)",
+                    letterSpacing: "0.06em",
+                    marginTop: "0.35rem",
+                  }}>
+                    {week.status === "verified" && week.verifiedAt && (
+                      <>Verified {new Date(week.verifiedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</>
+                    )}
+                    {(week.status === "available" || week.status === "in_progress") && week.deadline && (
+                      <>Deadline {new Date(week.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</>
+                    )}
+                    {week.status === "locked" && <>Locked — finish earlier weeks first.</>}
+                    {closed && <>Closed without verification — ask your mentor to extend.</>}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+
           return (
             <div
               key={week.id}
@@ -253,58 +311,16 @@ export default function RoadmapNodeMap({ weeks, totalWeeks }: Props) {
               {idx < weeks.length - 1 && (
                 <ConnectorLine aboveVerified={week.status === "verified"} belowVerified={belowV} />
               )}
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", position: "relative" }}>
-                {/* Node */}
-                <NodeIcon week={week} />
-
-                {/* Body */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.625rem",
-                    letterSpacing: "0.2em",
-                    color: closed ? "var(--red)" : week.status === "verified" ? GOLD : "var(--text-dim)",
-                    textTransform: "uppercase",
-                    marginBottom: "0.2rem",
-                  }}>
-                    Week {week.number} · {statusLabel(week.status, closed)}
-                    {week.trackTitle && <span style={{ color: "var(--text-dim)" }}> · {week.trackTitle}</span>}
-                  </div>
-                  <div style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.9375rem",
-                    fontWeight: 600,
-                    color: week.status === "locked"
-                      ? "var(--text-dim)"
-                      : week.status === "verified"
-                        ? "var(--text-primary)"
-                        : "var(--text-primary)",
-                    lineHeight: 1.35,
-                    opacity: week.status === "locked" ? 0.7 : 1,
-                  }}>
-                    {stripWeekPrefix(week.title)}
-                  </div>
-                  {/* Hover detail */}
-                  {hovered && (
-                    <div style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "0.625rem",
-                      color: "var(--text-secondary)",
-                      letterSpacing: "0.06em",
-                      marginTop: "0.35rem",
-                    }}>
-                      {week.status === "verified" && week.verifiedAt && (
-                        <>Verified {new Date(week.verifiedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</>
-                      )}
-                      {(week.status === "available" || week.status === "in_progress") && week.deadline && (
-                        <>Deadline {new Date(week.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</>
-                      )}
-                      {week.status === "locked" && <>Locked — your mentor releases it when you're ready.</>}
-                      {closed && <>Closed without verification — ask your mentor to extend.</>}
-                    </div>
-                  )}
-                </div>
-              </div>
+              {clickable ? (
+                <Link
+                  href={`/learn/${slugForLinks}/${week.number}`}
+                  style={{ textDecoration: "none", color: "inherit", display: "block", borderRadius: 8 }}
+                >
+                  {innerBody}
+                </Link>
+              ) : (
+                innerBody
+              )}
             </div>
           );
         })}

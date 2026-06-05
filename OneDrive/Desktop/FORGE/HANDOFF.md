@@ -14,7 +14,22 @@ Companion docs:
 
 ---
 
-## 0 · Solo-learner mode — design notes (added this session)
+## 0a · One-source-of-truth rule — page contracts
+
+After repeated duplication bugs across dashboard / roadmap / week pages, these are the hard contracts. **Never render the same content in two places.**
+
+| Page | Owns | Must NOT render |
+|---|---|---|
+| Dashboard `/dashboard` | Forge Pact card · Check-in CTA · Progress + Deadline row · **Current Focus** (title only + Resume button). | Track-progress bars (live on roadmap page). Recent Sessions (lives on Journal). Inline week lessons (live on the week page). Long `task.detail` dumps. |
+| Roadmap `/dashboard/roadmap` | **Journey** node map (the vertical timeline of weeks). Clicking an unlocked node navigates to that week. | Track tabs. Phase accordion. Per-task inline `WeekPageTabs`. Per-task resource lists. Anything that duplicates the week page. |
+| Week `/learn/<slug>/<week>` | Tabs (Content, Submission, optional Mentor Review). The full lesson stream. Prev/Next nav scoped to Content tab only. | Anything that belongs to the dashboard summary. |
+| Journal `/dashboard/journal` | The full session record, one row per (user, task). | Anything mentor-dashboard-flavoured. |
+
+**Navigation contract:** every "back" arrow on the week page goes to `/dashboard`. Solo + mentee both. Never back to `/learn/<slug>` (the public curriculum index) — that's for unauthenticated visitors only.
+
+---
+
+## 0 · Solo-learner mode — design notes (added previous session)
 
 Solo learners are detected by **absence of any active `MentorLink` for the viewer**. When solo:
 - `WeekPageTabs` drops the **Mentor Review** tab; only Content + Submission render.
@@ -464,6 +479,7 @@ Compiled from real mistakes this and prior sessions. Don't repeat any of these.
 2. **A YouTube search URL is not a video.** `youtube.com/results?search_query=...` opens a search page. Don't paper over a missing video with a search link.
 3. **Use the `KNOWN_GOOD` allowlist.** It is in `scripts/audit-videos.js`. Adding to that list is a deliberate act — only after viewing the URL.
 4. **Run `node scripts/audit-videos.js` after any video-adding patch.** Any REVIEW count > 0 means you have unverified URLs in the curriculum.
+5. **When asked to "replace" a removed video — be honest.** If you don't have a confident URL, DO NOT invent one to look responsive. Thicken the lesson body (the in-text material a video would carry: diagrams in ASCII, contrast examples, mental models) and add a canonical docs reading. See `scripts/ai-eng-w1-d1-thicken.js` for the exact pattern. The student gets the same content; the curriculum stays truthful.
 
 ### 11.4 Voice failure modes
 1. **Don't bury the lead.** First sentence of every lesson says what's in it.

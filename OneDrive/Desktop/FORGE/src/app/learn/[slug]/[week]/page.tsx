@@ -71,16 +71,17 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   const hours = w.commitment_hours ? w.commitment_hours.replace(/—|--/g, "–").trim() : "";
 
-  // Mentees navigate from their dashboard ("Open this week" button) — the
-  // roadmap browse page isn't useful to them since they're gated to the
-  // released week anyway. Route the back-arrow back to their dashboard
-  // instead of the curriculum index.
+  // EVERY authenticated learner arrives here from their dashboard or roadmap
+  // page — back should land them back there, not on the public curriculum
+  // index. Previously solo learners were bounced to /learn/<slug> which
+  // broke the perceived navigation contract; now Back always means "back to
+  // your own dashboard".
   const isMentee = await prisma.mentorLink.findFirst({
     where: { menteeId: session.user.id, isActive: true },
     select: { id: true },
   });
-  const backHref = isMentee ? "/dashboard" : `/learn/${roadmap.slug}`;
-  const backLabel = isMentee ? "Dashboard" : roadmap.title;
+  const backHref = "/dashboard";
+  const backLabel = "Dashboard";
 
   // Resolve THIS user's Task row for this week, so the WeekPageTabs can render
   // the Mentor Review section directly underneath the days (questions, answers,

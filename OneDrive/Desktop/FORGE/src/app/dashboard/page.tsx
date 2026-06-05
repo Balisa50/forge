@@ -554,77 +554,13 @@ export default async function DashboardPage() {
             );
           })()}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Track Progress */}
-            <div className="forge-panel" style={{ padding: "1.5rem" }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>{activeRoadmap.title}</h2>
-                <Link href="/dashboard/roadmap" style={{ color: "var(--blue)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", display: "flex", alignItems: "center", gap: "0.25rem" }}>View <ArrowRight size={12} /></Link>
-              </div>
-              {activeRoadmap.tracks.map((track) => {
-                const total = track.phases.reduce((sum, p) => sum + p.tasks.length, 0);
-                const done = track.phases.reduce((sum, p) => sum + p.tasks.filter((t) => t.status === "verified").length, 0);
-                const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-                return (
-                  <div key={track.id} style={{ marginBottom: "1.25rem" }}>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: track.color }} />
-                        <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9375rem" }}>{track.title}</span>
-                      </div>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>{pct}%</span>
-                    </div>
-                    <div style={{ height: "4px", background: "var(--border)", borderRadius: "2px" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, background: track.color, borderRadius: "2px", transition: "width 0.5s" }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Recent Sessions */}
-            <div className="forge-panel" style={{ padding: "1.5rem" }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>Recent Sessions</h2>
-                <Link href="/dashboard/journal" style={{ color: "var(--blue)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", display: "flex", alignItems: "center", gap: "0.25rem" }}>Journal <ArrowRight size={12} /></Link>
-              </div>
-              {recentCheckins.length === 0 ? (
-                <div style={{ color: "var(--text-dim)", fontSize: "0.875rem", padding: "1rem 0" }}>
-                  No sessions yet. Complete your first check-in to see your history here.
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {recentCheckins.slice(0, 5).map((c) => (
-                    <div key={c.id} className="flex items-center justify-between" style={{ padding: "0.625rem 0", borderBottom: "1px solid var(--border)" }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.875rem" }}>{new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</div>
-                        <div style={{ color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.description.slice(0, 60)}</div>
-                      </div>
-                      <div className="flex items-center gap-3" style={{ flexShrink: 0 }}>
-                        {c.interrogation && (
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: c.interrogation.passed ? "var(--green)" : "var(--red)" }}>
-                            {c.interrogation.overallScore.toFixed(1)}
-                          </span>
-                        )}
-                        <div style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "0.6875rem",
-                          padding: "0.125rem 0.5rem",
-                          borderRadius: "4px",
-                          background: c.status === "passed" ? "rgba(34,197,94,0.1)" : c.status === "failed" ? "rgba(239,68,68,0.1)" : "rgba(234,179,8,0.1)",
-                          color: c.status === "passed" ? "var(--green)" : c.status === "failed" ? "var(--red)" : "var(--yellow)",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.05em",
-                        }}>
-                          {c.status}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Track-progress + Recent-Sessions cards were removed —
+              both duplicated content that already lives elsewhere:
+                • Roadmap page (Journey card) shows track progress better.
+                • Journal page shows sessions in full fidelity.
+              Keeping them here created two sources of truth and a cluttered
+              overview. The dashboard is now: Pact → Check-in → Progress
+              row → Current Focus. Done. */}
         </>
       )}
     </div>

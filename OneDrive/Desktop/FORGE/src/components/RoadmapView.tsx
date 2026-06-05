@@ -227,17 +227,15 @@ function DetailBlock({
 export default function RoadmapView({
   roadmap,
   curatedSlug,
-  weekByTaskId,
 }: {
   roadmap: Roadmap;
   curatedSlug?: string | null;
+  /** Deprecated — used to inline WeekPageTabs inside each task on this
+   *  page. That duplicated the week page content; the inline expansion
+   *  is gone. Prop kept on the signature so the dashboard/roadmap server
+   *  page does not need to change shape. */
   weekByTaskId?: Record<string, RoadmapWeek>;
 }) {
-  const [activeTrack, setActiveTrack] = useState(roadmap.tracks[0]?.id ?? "");
-  const [expandedPhase, setExpandedPhase] = useState<string | null>(roadmap.tracks[0]?.phases[0]?.id ?? null);
-  const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
-
-  const track = roadmap.tracks.find((t) => t.id === activeTrack);
 
   // Build the flat node-map list across ALL tracks so the journey reads end-to-end,
   // not per-track. Each task is one week.
@@ -254,17 +252,43 @@ export default function RoadmapView({
         trackTitle: roadmap.tracks.length > 1 ? tr.title : undefined,
         status: t.status as NodeMapWeek["status"],
         verifiedAt: t.verifiedAt,
-        // The Task type at this file is local — closedAt + deadline + releasedAt
-        // may exist on the prisma side but aren't on the local interface. We
-        // pass undefined which the NodeMap renders gracefully.
       })),
     ),
   );
 
+  // Journey card only. The previous track-tabs + phase-accordion + per-task
+  // inline-week-tabs structure was removed because it duplicated the lesson
+  // content that already lives on /learn/<slug>/<weekNum>. One source of
+  // truth: the week page itself. Clicking a node here navigates there.
   return (
     <div>
-      {/* Linear vertical node map — the journey itself */}
-      <RoadmapNodeMap weeks={nodeMapWeeks} />
+      <RoadmapNodeMap weeks={nodeMapWeeks} slugForLinks={curatedSlug ?? null} />
+    </div>
+  );
+}
+
+// The legacy track-tabs + phase-accordion renderer is kept below in case
+// we want to expose it again from a debug page, but it is not used.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function LegacyTracksAccordion({
+  roadmap,
+  curatedSlug,
+  weekByTaskId,
+}: {
+  roadmap: Roadmap;
+  curatedSlug?: string | null;
+  weekByTaskId?: Record<string, RoadmapWeek>;
+}) {
+  const [activeTrack, setActiveTrack] = useState(roadmap.tracks[0]?.id ?? "");
+  const [expandedPhase, setExpandedPhase] = useState<string | null>(roadmap.tracks[0]?.phases[0]?.id ?? null);
+  const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
+
+  const track = roadmap.tracks.find((t) => t.id === activeTrack);
+
+  return (
+    <div>
+      {/* (legacy) */}
+      <span style={{ display: "none" }} />
 
       {/* Track tabs */}
       {roadmap.tracks.length > 1 && (
