@@ -153,14 +153,6 @@
               "body": "## What PyTorch is\nPyTorch is the deep-learning library most modern AI work uses. Whether you ever build a neural net from scratch or just fine-tune an off-the-shelf one, you read PyTorch code.\n\n```bash\npip install torch\n```\n```python\nimport torch\n```\n\n## Two ideas that are the whole library\n### 1. Tensor — a multi-dimensional array (like NumPy, but on GPU)\n```python\nx = torch.tensor([[1., 2.], [3., 4.]])\ny = x @ x.T              # @ is matrix multiply, same as NumPy\n```\n\n### 2. Autograd — automatic gradient tracking\n```python\nw = torch.tensor([2.0], requires_grad=True)  # we'll learn this\nloss = (w * 3 - 6) ** 2\nloss.backward()\nprint(w.grad)            # PyTorch computed dloss/dw automatically\n```\n\nTensor + autograd → you can write a training loop in 15 lines. That's the whole point of PyTorch.\n\n## Move work to GPU\n```python\ndevice = 'cuda' if torch.cuda.is_available() else 'cpu'\nx = x.to(device); model = model.to(device)\n```\n\n## When you'll see PyTorch next\nEvery neural-net / fine-tuning week on this track. Tensors + autograd + .to(device) is the prerequisite — the rest you learn week by week."
             },
             {
-              "kind": "video",
-              "title": "PyTorch in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=ORMx45xqWkA",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch second. 100-second mental model — tensors, autograd, train loop. Hits the same beats as the lesson."
-            },
-            {
               "kind": "reading",
               "title": "PyTorch — Quickstart tutorial (official)",
               "url": "https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html",
@@ -9615,22 +9607,6 @@
               "body": "## What it is\nYou've spent 25 weeks shipping projects that run on your laptop. That's perfect for learning. It's perfect for portfolios. It is **not** perfect for the actual job. In your first DS role you will hit one of three walls:\n\n1. **The data is too big.** A real customer or transactional dataset is 50-500 GB. You can't `pd.read_parquet` that on a 16 GB laptop. The data lives in **S3 (or GCS / Azure Blob)**; you query it from there with SQL (BigQuery, Athena, Snowflake) or stream it through Spark/Dask.\n2. **The model has to run on a schedule.** Not 'I ran it once.' 'It runs every Sunday at 3am whether or not I'm awake.' That means cron on a cloud machine, or a managed service (Lambda, Cloud Run, Step Functions).\n3. **Other people need to reach it.** Your model has to be loadable by other teams, your dashboard has to live somewhere your boss can click. None of that works from your laptop with the lid closed.\n\nAll three roads lead to **cloud object storage**. This week you set up the basics on AWS and Google Cloud — safely, with billing alarms — and run a meaningful task on both. By Sunday you have a working AWS account, a working BigQuery project, your Prophet model living in S3, and one full TaxiPulse query running on BigQuery's public NYC taxi dataset.\n\n## Why before the capstone\nThe W28-W30 capstone may well use a public dataset that's too big to download locally. The cloud setup you do this week unlocks that option."
             },
             {
-              "kind": "video",
-              "title": "AWS in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=ZzI9JE0i6Lc",
-              "duration_min": 3,
-              "creator": "Fireship",
-              "why": "Watch first. Frames what AWS actually is — the big services, the rough pricing model, why every company uses it."
-            },
-            {
-              "kind": "video",
-              "title": "What is Google Cloud (and BigQuery) — 100 seconds",
-              "url": "https://www.youtube.com/watch?v=kzKFuHk8ovk",
-              "duration_min": 3,
-              "creator": "Fireship",
-              "why": "Watch second. Same orientation for Google Cloud, with BigQuery specifically called out as the data-analytics piece."
-            },
-            {
               "kind": "lesson",
               "title": "The four cloud habits that protect your wallet",
               "body": "## Set a billing alarm before anything else\nEvery cloud horror story (\"I owe AWS $1,800\") starts with someone spinning up a service for a tutorial and forgetting it. Habit #1 on every new cloud account: a billing alarm at $5 that emails you when costs creep up. Free, takes 60 seconds, prevents 100% of catastrophes.\n\n## Tag everything you create\nEvery resource you spin up — bucket, instance, function — gets a tag like `project=forge-w26 user=me`. When you later wonder \"what's this random thing costing me $3/month?\", the tag tells you exactly which project it belonged to. Real teams do this with Terraform; learners do it by hand and it's still worth the friction.\n\n## Delete what you stop using\nCloud bills are death by a thousand cuts. The 'oh I'll keep that around in case' attitude is what produces the $1,800 horror story. When you finish a week, **delete the bucket / instance / project** unless you have a concrete reason to keep it.\n\n## Never commit credentials\nSame rule from the AI-engineering Day 0. AWS access keys + GCS service-account JSON go in `~/.aws/credentials` or `gcloud auth login` profile — never in your repo. A leaked AWS key costs people thousands within hours of being scraped from a public commit.\n\nGet these habits right today and the cloud is a tool, not a liability."
@@ -9675,14 +9651,6 @@
               "kind": "lesson",
               "title": "AWS account setup, done right",
               "body": "## What you'll do\n1. Sign up at https://aws.amazon.com/free with a real email + credit card. Pick **Basic Support — Free**.\n2. Turn on **MFA** on the root user. Authenticator app (Google Authenticator / Authy).\n3. Set a **billing alarm at $5** via CloudWatch.\n4. Create an **IAM user** called `forge-dev` with AdministratorAccess. Never use root again.\n5. Install **AWS CLI**, run `aws configure`, paste the IAM user's access key.\n6. Verify with `aws sts get-caller-identity` → you see the IAM user ARN, not root.\n\n## Why each step\n- **MFA on root** — the only account that can do truly catastrophic things. Locking it behind a phone is the difference between a stolen password being a scare and a disaster.\n- **Billing alarm** — see Day 1.\n- **IAM user (not root)** — the same idea as 'don't use the admin Windows account for everyday browsing.' If your credentials leak, the IAM user gets locked down; the root account is untouched.\n- **`aws sts get-caller-identity`** — your sanity check that the CLI is correctly authenticated as the IAM user.\n\n## Free Tier is generous but not infinite\nMost learning tasks fit comfortably inside Free Tier: S3 (5 GB storage + 20k GET / 2k PUT per month), Lambda (1M requests/month), small EC2 t2.micro hours. Things that escape Free Tier: anything 'larger' (m5, NAT Gateway, RDS), anything you forgot to stop.\n\nThe billing alarm + 'delete what you stop using' habit (Day 1) keeps you safely inside."
-            },
-            {
-              "kind": "video",
-              "title": "AWS Free Tier setup with MFA + billing alarm",
-              "url": "https://www.youtube.com/watch?v=Ip-fqIMG6KU",
-              "duration_min": 15,
-              "creator": "various",
-              "why": "Watch first. Walks you through the exact clicks on AWS's console for MFA + billing alarm + IAM user."
             },
             {
               "kind": "swipe",
@@ -11008,14 +10976,6 @@
               "body": "## What it is\nA single-page Streamlit app around your frozen v0.2 model. Same shape as the Energy Forecast dashboard from W27, scaled to your capstone's specifics:\n\n- Loads the main model from disk (or S3 if you put it there in W26)\n- Takes user input that maps to your model's features (sliders, dropdowns, text)\n- Shows the prediction + uncertainty if applicable\n- Shows the components / explanation if the model supports it (SHAP, feature importance, attention)\n\n## The pattern\n```python\nimport streamlit as st\nimport joblib\n\n@st.cache_resource\ndef get_model():\n    return joblib.load('models/main.pkl')\n\nst.title('<Your capstone>')\nst.write('<one-sentence what it does>')\n\n# Input widgets that map to your features\nfeature_a = st.slider('Feature A', ...)\nfeature_b = st.selectbox('Feature B', [...])\n\nmodel = get_model()\nif st.button('Predict'):\n    pred = model.predict([[feature_a, feature_b, ...]])\n    st.metric('Predicted', f'{pred[0]:.2f}')\n```\n\n## Why one page, not many\nFor a portfolio demo with no real users, one page that does one thing well > five pages that each do something half. Reviewers see the working thing in 5 seconds; they don't navigate."
             },
             {
-              "kind": "video",
-              "title": "Streamlit in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=R2nr1uZ8ffc",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Refresher on what Streamlit is and how fast it ships. Same tool as W27."
-            },
-            {
               "kind": "lesson",
               "title": "Polish that pays off",
               "body": "## Three small touches that make the demo feel finished\n\n### 1. A title and one-line description at the top\nVisitors land knowing what it does in 2 seconds. Don't make them read the blog post first.\n\n### 2. Sensible defaults on every input\nOn first load the demo should already show A prediction. Empty defaults = blank screen = nobody clicks Predict.\n\n### 3. A link to the blog post and the GitHub repo\nIn the sidebar or footer. The demo proves the model works; the post explains it; the repo lets them check your code. Three artifacts, three links, one journey."
@@ -11439,14 +11399,6 @@
               "body": "## What it is\nA single-page site at yourname.com that shows:\n1. **Header**: your name + one-line positioning (e.g., 'Data scientist focused on time series + NLP. Shipping projects since 2026.')\n2. **4 project cards**: thumbnail + name + one-line description + Live demo + Blog + Repo links\n3. **Brief about**: 2-3 sentences max. Who you are, what you've done.\n4. **Contact**: email + LinkedIn + GitHub\n\nThat's it. 4 sections. ~400 words total.\n\n## Tech: Next.js + Tailwind on Vercel\nYou already know how to deploy Next.js (FORGE-relevant stack). One npx command, one push, live in 2 minutes.\n\n```bash\nnpx create-next-app@latest portfolio --typescript --tailwind --app\ncd portfolio\n# edit src/app/page.tsx\ngit add . && git commit -m 'initial portfolio'\ngit push to a new GitHub repo\n# Vercel: New Project → import the repo → deploy\n```\n\n## DNS\nOn Vercel: Project → Settings → Domains → Add `yourname.com`. Vercel gives you DNS records to paste into Namecheap. ~10 minutes propagation.\n\n## Inspiration without theft\nLook at 5-10 DS / engineering portfolios for layout ideas:\n- brittanychiang.com\n- chrisachard.com\n- raycast.com (overkill but shows the pattern)\n\nSteal layout patterns; write your own copy.\n\n## Don't over-design\nThe portfolio's job is to surface the projects. Animations + 3D backgrounds + complex grids distract. Recruiters spend 30 seconds. Make sure the 4 cards are clickable in those 30 seconds."
             },
             {
-              "kind": "video",
-              "title": "Next.js in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Sklc_fQBmcs",
-              "duration_min": 3,
-              "creator": "Fireship",
-              "why": "Refresher on what Next.js gives you for free."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -11694,14 +11646,6 @@
               "kind": "lesson",
               "title": "LoRA in plain English",
               "body": "## What it is\nFine-tuning a 7B-parameter model means updating 7 billion weights. That's expensive: gigabytes of optimizer state, multiple GPUs, hours per epoch.\n\n**LoRA** (Low-Rank Adaptation, 2021) makes a key observation: the *update* needed to specialize a pretrained model is much smaller-dimensional than the model itself. Instead of computing the full update ΔW (a huge matrix), LoRA represents it as a product of two small matrices: ΔW = A·B, where A is (d × r) and B is (r × d) with r being a tiny rank (typically 8-16).\n\n```text\nOriginal weight W:    d × d   (millions of params)\nLoRA decomposition:   A (d×r) · B (r×d)  with r=8\n                                          \ne.g. d=4096, r=8:\n  W is 4096×4096 = 16.7M params\n  A·B is 4096×8 + 8×4096 = 65k params  (0.4% of W)\n```\n\nTraining updates only A and B. The base model W stays frozen. At inference, the effective weight is W + A·B.\n\n## Why this works\nEmpirically: the *adaptations* needed to make a general model good at a specific task have low intrinsic rank. Most of the model's capacity is already-correct general knowledge; only a thin slice needs to change for specialization.\n\n## What this unlocks for you\n- Fine-tune 7B models on a single Colab T4 (16GB GPU)\n- Store the adapter as a ~50MB file (vs the 14GB base model)\n- Swap adapters at inference time — base model + adapter A for legal docs, base + adapter B for medical, etc.\n\n## This week\nPick a small task. Fine-tune a 3B-7B model with LoRA on Colab. Evaluate. Ship the adapter to Hugging Face. Total compute: ~$0."
-            },
-            {
-              "kind": "video",
-              "title": "LoRA explained (paper walkthrough)",
-              "url": "https://www.youtube.com/watch?v=DhRoTONcyZE",
-              "duration_min": 15,
-              "creator": "various",
-              "why": "Watch first. The low-rank intuition with visuals — easier than reading the paper."
             },
             {
               "kind": "swipe",
@@ -12050,14 +11994,6 @@
               "body": "## What it is\nYou want an LLM to answer questions over YOUR documents — contracts, support tickets, internal wiki, etc. The LLM doesn't know your stuff (it was trained on public web).\n\n**RAG = Retrieval-Augmented Generation**. The architecture:\n\n```text\nOFFLINE (once, per document update):\n  1. Split each document into chunks (~500 tokens each)\n  2. Embed each chunk: text → vector (1536 floats)\n  3. Store: { chunk_text, vector, source_metadata } in a vector DB\n\nAT QUERY TIME (per user question):\n  4. Embed the question: question → vector\n  5. Vector search: find the top-5 chunks closest to question vector\n  6. Build a prompt:\n       'Context:\\n<top-5 chunks>\\n\\nQuestion: <user question>\\nAnswer:'\n  7. Send to LLM. LLM answers using the chunks.\n  8. Show the answer + cite which chunks it came from.\n```\n\n## Why this won in 2023-2024\nEvery enterprise needed 'a chatbot over our docs.' Fine-tuning was expensive and stale. RAG was cheap, kept the LLM stateless, and updated whenever the documents updated. Same playbook at every company.\n\n## Where it fails\n- **Bad chunking**: too-big chunks dilute; too-small chunks lose context\n- **Pure vector search**: misses exact-string queries (names, IDs)\n- **No citations**: model 'hallucinates' or quotes things not in the chunks\n- **Stale embeddings**: documents updated but vector DB didn't refresh\n\n## What you'll build this week\nA working RAG system over a corpus you pick (10-100 documents). Hybrid search. Citations. Evaluation. Deployed."
             },
             {
-              "kind": "video",
-              "title": "RAG explained simply (5 min)",
-              "url": "https://www.youtube.com/watch?v=T-D1OfcDW1M",
-              "duration_min": 6,
-              "creator": "various",
-              "why": "Watch first. The retrieve → augment → generate loop with visuals."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -12387,14 +12323,6 @@
               "kind": "lesson",
               "title": "CV in one read",
               "body": "## What it is\nComputer vision = teaching models to extract meaning from images. The dominant architecture for the last decade is **CNNs (Convolutional Neural Networks)**. Recently **Vision Transformers (ViTs)** have caught up and surpassed CNNs at large scale.\n\n## CNN intuition\n```text\ninput image (224×224×3)\n  → conv layer 1: detects EDGES, COLOR BLOBS (low-level)\n  → pool / conv 2: detects TEXTURES, simple SHAPES\n  → conv 3-N: detects PARTS (wheels, eyes, windows)\n  → final layers: detects OBJECTS (cars, faces, buildings)\n  → output: predicted class\n```\nEach conv layer takes the previous feature maps and learns spatial filters. The filters in early layers find simple things; later layers compose them into complex things. That's it.\n\n## Transfer learning\nTraining a CNN from scratch needs millions of labeled images. **Pretrained CNNs** (ResNet50, EfficientNet) have already learned the early-layer feature extractors from ImageNet (14M images, 1000 classes).\n\nWhen you fine-tune for YOUR task:\n- Keep the pretrained feature extractor (don't retrain the early layers — they're already good)\n- Replace the final classification head with one matching your task\n- Train only the new head (or fine-tune the last few layers gently)\n\nResult: 10-30x less data needed to match training-from-scratch quality.\n\n## Vision Transformers\nNewer architecture (2021). Instead of convolutions:\n- Split image into a grid of patches (e.g., 16×16 each)\n- Embed each patch as a vector\n- Run self-attention (like an LLM) over the sequence of patch embeddings\n- Classification head on the [CLS] token\n\nTrade-off: less inductive bias than CNNs (no built-in locality) but more expressive when you have lots of data. For learner projects, fine-tune a pretrained ViT — same pattern as CNN.\n\n## This week\nPick an image classification task. Fine-tune ResNet50. Try ViT. Compare. Deploy with Gradio. Same shape as the LoRA / RAG weeks."
-            },
-            {
-              "kind": "video",
-              "title": "Convolutional Neural Networks Explained",
-              "url": "https://www.youtube.com/watch?v=YRhxdVk_sIs",
-              "duration_min": 13,
-              "creator": "various",
-              "why": "Watch first. CNN visuals — filters, feature maps, pooling. The intuition stays even as architectures change."
             },
             {
               "kind": "swipe",
@@ -12743,22 +12671,6 @@
               "body": "## What it is\nYou've spent 34 weeks building predictive models. They answer: 'given these features, what's the most likely outcome?' That's correlation — it's enough for ranking, recommendation, anomaly detection, demand forecasting.\n\nBut every model that influences a DECISION eventually gets asked a different question: **'if we CHANGE this, what will happen?'**\n\n- Pricing team: 'if we raise the price 10%, what happens to revenue?'\n- Marketing: 'if we send this email, will conversions go up?'\n- Product: 'if we add this feature, will retention improve?'\n- Policy: 'if we offer this benefit, will employee turnover drop?'\n\nNone of these are answerable from a correlational model. The features that correlate with the outcome might not be the features that CAUSE the outcome.\n\n## The classic example\nIce cream sales correlate strongly with drowning deaths. Both are higher in summer. Neither causes the other.\n\n```text\n  Ice cream sales ←─── SUMMER HEAT ───→ Drowning deaths\n                       (confounder)\n```\n\nA predictive model that includes 'ice cream sales' will gladly tell you they 'predict' drowning. A causal model will tell you they don't cause it. Banning ice cream won't save lives. Building beaches with lifeguards will.\n\n## What this week is for\nThree tools that let you go from correlational claim to defensible causal claim on OBSERVATIONAL data (no A/B test required):\n1. **DAGs** (directed acyclic graphs) — draw your assumed causal structure before you analyse\n2. **Propensity Score Matching** — approximate randomisation with observational data\n3. **Sensitivity analysis** — quantify how much an unobserved confounder would have to bias the result to overturn your conclusion\n\nPlus difference-in-differences if you have a treatment-moment in time-series data.\n\n## Why this hires\nSenior DS roles increasingly ask causal questions. Junior candidates who can only build predictive models compete for the same jobs; candidates who can speak to causation move into different conversations entirely — pricing, growth, policy, experimentation."
             },
             {
-              "kind": "video",
-              "title": "Correlation vs Causation explained",
-              "url": "https://www.youtube.com/watch?v=8B271L3NtAw",
-              "duration_min": 4,
-              "creator": "various",
-              "why": "Watch first. Plain-English explanation of why correlation is not causation, with classic examples."
-            },
-            {
-              "kind": "video",
-              "title": "Causal Inference Crash Course (15 min)",
-              "url": "https://www.youtube.com/watch?v=gRkUhg9Wb-I",
-              "duration_min": 15,
-              "creator": "various",
-              "why": "Watch second. Visual overview of DAGs, confounders, and what causal inference actually does. Frames the rest of the week."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -13095,22 +13007,6 @@
               "body": "## What it is\nEvery model you've shipped this year made decisions. The Reddit classifier labelled posts. The Energy Forecast allocated demand-prediction attention. Your capstone classifier assigned categories.\n\nIf any of those models were deployed in a real product, they would be making decisions about real people AT SCALE — and some of those decisions would be systematically WORSE for specific groups. That's not theory; that's the documented behaviour of essentially every ML system that's ever been audited.\n\n## The three core definitions of group fairness\n```text\n1. DEMOGRAPHIC PARITY\n   P(prediction=positive | group=A) = P(prediction=positive | group=B)\n   'The model selects each group at the same RATE.'\n   Use when: selection itself is the issue (e.g., hiring screening,\n             loan offers). Implies equal outcomes regardless of base rates.\n\n2. EQUAL OPPORTUNITY (TPR parity)\n   P(prediction=positive | actual=positive, group=A) = same for group=B\n   'Among people who actually deserve the positive outcome, the model\n    correctly identifies them at the same rate for each group.'\n   Use when: missing a true positive is the harm (e.g., medical diagnosis,\n             qualified candidates being filtered out).\n\n3. EQUALISED ODDS (TPR + FPR parity)\n   Both true-positive AND false-positive rates equal across groups.\n   Use when: both kinds of error matter equally (e.g., risk scoring\n             where false positives have costs too).\n```\n\n## You can't satisfy all of them at once\nMathematical fact (Chouldechova 2017, Kleinberg et al 2017): if base rates differ across groups, you cannot simultaneously satisfy demographic parity AND equal opportunity AND calibration. You pick which one is the relevant fairness for your context, and you live with the others not being fully met.\n\n## Why this is hard\n- Different stakeholders prefer different definitions\n- Different definitions can disagree about whether the same model is fair\n- The 'right' definition depends on the social context of the decision, not just the math\n\nThis is why a real audit isn't a number — it's a document that names the choice and the tradeoffs.\n\n## What you'll build this week\nTake ONE of your existing models. Pick a protected attribute. Run a Fairlearn audit. Quantify the disparity. Name three mitigation options. Write a BIAS.md document. Publish it next to the model."
             },
             {
-              "kind": "video",
-              "title": "ML fairness explained",
-              "url": "https://www.youtube.com/watch?v=jIXIuYdnyyk",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Watch first. Plain-English overview of fairness definitions with worked examples. Frames the rest of the week."
-            },
-            {
-              "kind": "video",
-              "title": "Why removing the sensitive attribute isn't enough",
-              "url": "https://www.youtube.com/watch?v=fMym_BKWQzk",
-              "duration_min": 6,
-              "creator": "various",
-              "why": "Watch second. Proxy variables, why 'fairness through unawareness' fails, with concrete cases."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -13440,14 +13336,6 @@
               "kind": "lesson",
               "title": "From notebooks to pipeline",
               "body": "## What it is\nRight now your capstone runs as a sequence of notebooks: `01_ingest.ipynb`, `02_clean.ipynb`, ..., `06_evaluate.ipynb`. To reproduce your results, someone has to:\n1. Clone the repo\n2. Install the right dependency versions\n3. Open Jupyter\n4. Run each notebook in order\n5. Hope nothing in the environment drifted\n\nThat's fragile. Today you replace it with a **pipeline**: one command, end-to-end, deterministic. The same input always produces the same output.\n\n## Two viable tools\n\n### Makefile (simplest, no extra deps)\n```makefile\n.PHONY: all clean ingest preprocess train evaluate\n\nall: evaluate\n\ndata/raw.parquet: src/ingest.py\n\tpython src/ingest.py\n\ndata/clean.parquet: data/raw.parquet src/clean.py\n\tpython src/clean.py\n\nmodels/main.pkl: data/clean.parquet src/train.py\n\tpython src/train.py\n\nreports/metrics.json: models/main.pkl src/evaluate.py\n\tpython src/evaluate.py\n\nevaluate: reports/metrics.json\n\nclean:\n\trm -rf data/*.parquet models/*.pkl reports/*.json\n```\n\nRun: `make` — only rebuilds what needs rebuilding (Make checks file timestamps).\n\n### DVC (data-versioning + pipeline)\n```bash\npip install dvc\ndvc init\ndvc stage add -n ingest -d src/ingest.py -o data/raw.parquet python src/ingest.py\ndvc stage add -n clean -d src/clean.py -d data/raw.parquet -o data/clean.parquet python src/clean.py\ndvc stage add -n train -d src/train.py -d data/clean.parquet -o models/main.pkl python src/train.py\ndvc stage add -n eval  -d src/evaluate.py -d models/main.pkl -m reports/metrics.json python src/evaluate.py\n\ndvc repro\n```\n\nDVC tracks data file HASHES (not just timestamps), and metrics are first-class. Heavier than Make; better when datasets are big or pinned to S3.\n\n## Convert your notebooks to scripts FIRST\n```bash\njupyter nbconvert --to script notebooks/01_ingest.ipynb --output ../src/ingest\n# repeat for the rest, then clean up the auto-generated cruft\n```\n\nNotebooks stay for exploration; scripts run the pipeline.\n\n## Pin dependency versions\n```bash\npip freeze > requirements.txt\n```\n\nOr better: `pyproject.toml` with pinned versions. The point is reproducibility — `pandas` works differently in 1.5 vs 2.0; pin it.\n\n## Pin the random seed\nIn every place randomness matters (train/test split, model init, sample weights):\n```python\nimport numpy as np, random, torch\nSEED = 42\nnp.random.seed(SEED); random.seed(SEED); torch.manual_seed(SEED)\n```\n\n## What you'll have by end of day\n- Notebooks → scripts in `src/`\n- Makefile (or `dvc.yaml`) that runs the whole pipeline\n- Pinned `requirements.txt`\n- One global SEED in `src/config.py`\n- `make clean && make` reproduces all metrics exactly"
-            },
-            {
-              "kind": "video",
-              "title": "Make for ML pipelines",
-              "url": "https://www.youtube.com/watch?v=lcnxdmkU3RM",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Watch first. Make basics applied to data pipelines — the patterns transfer to any project."
             },
             {
               "kind": "swipe",
@@ -13820,14 +13708,6 @@
               "kind": "lesson",
               "title": "The 5-test discipline",
               "body": "## What it is\nFive `pytest` tests, each covering ONE critical path. After today, breaking any of these tests means a real regression — you'll catch it before deploying.\n\n## The five to write\n```text\n1. test_clean_drops_null_targets()\n   The cleaning step removes rows with null target.\n   Without this, training silently includes NaN targets.\n\n2. test_split_is_deterministic()\n   Two calls to the splitter with the same SEED give identical splits.\n   Without this, reproducibility is a lie.\n\n3. test_model_loads_and_predicts()\n   Load main.pkl. Pass a sample input. Get a prediction of the expected shape.\n   Without this, deploys can break silently when the model loads but inference fails.\n\n4. test_metric_calc_handles_empty()\n   The metric calculation doesn't crash on edge cases (empty subgroups,\n   single-class predictions). It returns NaN or 0, not an exception.\n   Without this, the eval pipeline crashes on real-world weirdness.\n\n5. test_inference_round_trip()\n   Take a known-good input from the test set, push it through the\n   loaded model, assert the prediction is within 0.001 of what it was\n   on the day of training.\n   Without this, model drift in pickle format goes unnoticed.\n```\n\n## The pytest pattern\n```python\n# tests/test_critical_paths.py\nimport pytest, pickle, numpy as np, pandas as pd\nfrom src.clean import clean\nfrom src.train import build_split\nfrom src.evaluate import compute_metrics\nfrom src.config import SEED\n\n@pytest.fixture\ndef model():\n    with open('models/main.pkl', 'rb') as f:\n        return pickle.load(f)\n\n@pytest.fixture\ndef sample():\n    return pd.read_parquet('reports/predictions.parquet').head(10)\n\ndef test_clean_drops_null_targets():\n    raw = pd.DataFrame({'feature_a': [1, 2, 3], 'target': [1, None, 0]})\n    cleaned = clean(raw)\n    assert cleaned['target'].notna().all()\n    assert len(cleaned) == 2\n\ndef test_split_is_deterministic():\n    X = pd.DataFrame({'a': range(100)})\n    y = pd.Series([0, 1] * 50)\n    s1 = build_split(X, y, seed=SEED)\n    s2 = build_split(X, y, seed=SEED)\n    assert (s1[0].index == s2[0].index).all()\n    assert (s1[1].index == s2[1].index).all()\n\ndef test_model_loads_and_predicts(model, sample):\n    preds = model.predict(sample.drop(columns=['index','y_true','y_pred','y_proba'], errors='ignore'))\n    assert preds.shape == (10,)\n    assert np.isin(preds, [0, 1]).all()\n\ndef test_metric_calc_handles_empty():\n    out = compute_metrics(y_true=np.array([]), y_pred=np.array([]))\n    assert all(np.isnan(v) or v == 0 for v in out.values())\n\ndef test_inference_round_trip(model, sample):\n    feats = sample.drop(columns=['index','y_true','y_pred','y_proba'], errors='ignore')\n    fresh = model.predict_proba(feats)[:, 1]\n    stored = sample['y_proba'].values\n    np.testing.assert_allclose(fresh, stored, atol=1e-6)\n```\n\n## Run them\n```bash\npip install pytest\npytest tests/ -v\n```\n\nAll five should pass before you go to bed.\n\n## Add to CI later (W38 D3 onward — not required today)\nGitHub Actions can run pytest on every push. Worth setting up; not the focus today."
-            },
-            {
-              "kind": "video",
-              "title": "pytest in 90 seconds",
-              "url": "https://www.youtube.com/watch?v=cHYq1MRoyI0",
-              "duration_min": 2,
-              "creator": "various",
-              "why": "Watch first. pytest patterns: fixtures, parametrize, assertions. Refresher."
             },
             {
               "kind": "swipe",
@@ -14459,22 +14339,6 @@
               "body": "## What it is\nSupervised learning: you give the model labelled examples; it learns to predict labels.\nReinforcement learning: you give the model an environment + a set of actions + a reward signal; it learns a policy by TRYING things and observing the consequences.\n\n## The contract\n```text\nAt each step t:\n  - Agent observes state s_t (what the world looks like right now)\n  - Agent picks action a_t (from the available actions)\n  - Environment returns next state s_{t+1} and reward r_t\n  - Agent updates its policy π(a | s) based on the reward\n\nThe goal: maximise cumulative discounted reward over time.\n```\n\n## The two flavours you'll meet this week\n```text\nDEEP RL (W40 Day 2 — CartPole)\n  - Multi-step, sequential decisions\n  - Rewards often DELAYED (you balance the pole for a while, then it falls)\n  - Needs Q-learning or policy gradients\n  - Examples: game-playing, robotics, navigation\n\nCONTEXTUAL BANDITS (W40 Day 4 — the practical version)\n  - Single-step decisions\n  - Reward IMMEDIATE (click or no click; bought or not)\n  - Simpler math — basically online classification + exploration\n  - Examples: which ad to show, which item to recommend, which email subject to send\n```\n\n## What this matters for you\nJunior DS learners often confuse 'I want to learn RL' with 'I'm going to deploy DQN at work'. The realistic version is:\n- You'll see deep RL in interview questions about how things like AlphaGo work\n- You'll DEPLOY contextual bandits in product work (ad selection, recommendation, A/B test scoring)\n- Knowing both — and the boundary between them — is the practical skill\n\n## This week\n- Day 2: Q-learning on CartPole — the 'hello world' of deep RL\n- Day 3: ε-greedy vs UCB — the exploration question, made concrete\n- Day 4: Contextual bandits — the algorithm that actually ships in product\n- Day 5: When RL is right (and when it's a misuse)\n- Day 6: Document a real product use case\n- Day 7: Ship + tag"
             },
             {
-              "kind": "video",
-              "title": "RL in 100 seconds",
-              "url": "https://www.youtube.com/watch?v=wOK0NtdGsKI",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch first. Frames RL vs supervised in 100 seconds. The intuition before the math."
-            },
-            {
-              "kind": "video",
-              "title": "Reinforcement Learning, Briefly Explained",
-              "url": "https://www.youtube.com/watch?v=JgvyzIkgxF0",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Watch second. 10-min visual walkthrough of the agent-environment loop, exploration vs exploitation, and what 'policy' actually means."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -14514,14 +14378,6 @@
               "kind": "lesson",
               "title": "Q-learning on CartPole — the hello world",
               "body": "## What it is\nCartPole: a pole balanced on a cart. The agent applies left/right force; reward is +1 for each step the pole stays up. Episode ends when the pole tips past 12° or the cart leaves the screen.\n\nYou'll implement Q-learning: the canonical value-based RL algorithm.\n\n## Q-learning, the equation\n```text\nQ(s, a) ← Q(s, a) + α · [ r + γ · max Q(s', a') − Q(s, a) ]\n                            └── target ──┘   └─ current ─┘\n\nα = learning rate (how fast to update)\nγ = discount factor (how much to value future reward, typically 0.99)\nr = immediate reward\ns' = next state\n```\n\nThat update rule is the whole algorithm. Everything else is plumbing.\n\n## The pattern with stable-baselines3 (the fast way)\n```python\n# pip install gymnasium stable-baselines3\nimport gymnasium as gym\nfrom stable_baselines3 import DQN\n\nenv = gym.make('CartPole-v1')\nmodel = DQN('MlpPolicy', env, verbose=0, learning_rate=1e-3, buffer_size=10_000)\nmodel.learn(total_timesteps=50_000)\n\n# Evaluate\nobs, _ = env.reset()\ntotal_reward = 0\nfor _ in range(500):\n    action, _ = model.predict(obs, deterministic=True)\n    obs, r, done, trunc, _ = env.step(action)\n    total_reward += r\n    if done or trunc: break\nprint(f'eval reward: {total_reward}')\n# eval reward: 500.0  (the max — pole balanced for full episode)\n```\n\n## The pattern from scratch (the educational way)\n```python\nimport numpy as np\nimport gymnasium as gym\n\nenv = gym.make('CartPole-v1')\n\n# Discretise the continuous state\ndef discretise(obs):\n    bins = [\n        np.linspace(-2.4, 2.4, 6),     # cart position\n        np.linspace(-3.0, 3.0, 6),     # cart velocity\n        np.linspace(-0.21, 0.21, 12),  # pole angle\n        np.linspace(-3.0, 3.0, 12),    # pole angular velocity\n    ]\n    return tuple(int(np.digitize(o, b)) for o, b in zip(obs, bins))\n\nQ = np.zeros((7, 7, 13, 13, 2))  # state-bins × n_actions\nalpha, gamma, eps = 0.1, 0.99, 1.0\n\nfor episode in range(2000):\n    obs, _ = env.reset()\n    s = discretise(obs)\n    done = False\n    while not done:\n        # ε-greedy action\n        if np.random.rand() < eps:\n            a = env.action_space.sample()\n        else:\n            a = int(np.argmax(Q[s]))\n        obs, r, done, trunc, _ = env.step(a)\n        s_ = discretise(obs)\n        # Q-learning update\n        Q[s][a] += alpha * (r + gamma * Q[s_].max() - Q[s][a])\n        s = s_\n        if trunc: break\n    eps = max(0.05, eps * 0.995)  # anneal exploration\n```\n\n## What you'll see\n```text\nepisode  100: avg reward over last 100 = 22\nepisode  500: avg reward over last 100 = 68\nepisode 1000: avg reward over last 100 = 152\nepisode 1500: avg reward over last 100 = 380\nepisode 2000: avg reward over last 100 = 472   <- close to the max of 500\n```\n\nThat's learning in action — the agent goes from 'falls instantly' to 'balances for the full episode' through pure trial + error + Q updates.\n\n## Render it\n```python\nenv = gym.make('CartPole-v1', render_mode='human')\n# ... run inference with the trained model\n```\n\nWatch the cart actually balance. That's the moment RL clicks."
-            },
-            {
-              "kind": "video",
-              "title": "Q-learning explained visually",
-              "url": "https://www.youtube.com/watch?v=qhRNvCVVJaA",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Watch first. Walks through the Q-learning update visually with a grid-world example. The equation makes sense after this."
             },
             {
               "kind": "swipe",
@@ -14812,14 +14668,6 @@
               "kind": "lesson",
               "title": "Three generations, one problem",
               "body": "## What it is\nRecommender systems = 'given a user, surface items they'll like'. The biggest interview topic at consumer tech (Amazon, Netflix, Spotify, TikTok, YouTube). Three generations of algorithms:\n\n```text\nGEN 1 — Collaborative Filtering (2000s)\n  Idea: users similar to you liked X → recommend X.\n  Tool: user-user similarity, item-item similarity\n  Strength: simple, interpretable, no item features needed\n  Weakness: doesn't scale; cold-start; sparse data\n\nGEN 2 — Matrix Factorization (2006-2015)\n  Idea: learn small embeddings per user and per item; rec = dot product.\n  Tool: SVD, ALS, FunkSVD\n  Strength: scales to millions of users; fast inference; better accuracy\n  Weakness: still cold-start; linear model of interaction\n\nGEN 3 — Deep / Two-Tower Models (2016+)\n  Idea: neural networks produce user + item embeddings from RICH features.\n  Tool: two-tower networks, transformers, graph nets\n  Strength: handles cold-start via features; non-linear interactions\n  Weakness: more compute; less interpretable; more data needed\n```\n\nThis week you implement one from each generation. Same dataset. Compare honestly.\n\n## The dataset: MovieLens\nMovieLens is the textbook recsys benchmark. 25M ratings, 162k users, 62k movies, freely available.\n\n```python\n# pip install pandas requests\nimport pandas as pd, zipfile, io, requests\n\nurl = 'https://files.grouplens.org/datasets/movielens/ml-25m.zip'\nr = requests.get(url)\nwith zipfile.ZipFile(io.BytesIO(r.content)) as zf:\n    ratings = pd.read_csv(zf.open('ml-25m/ratings.csv'))\n    movies  = pd.read_csv(zf.open('ml-25m/movies.csv'))\n\nprint(ratings.shape, movies.shape)\n# (25,000,095, 4) (62,423, 3)\n```\n\nFor learner work, use the smaller `ml-latest-small` (100k ratings) — fits in seconds, same patterns.\n\n## What's in the ratings file\n```text\nuserId  movieId  rating  timestamp\n1       296      5.0     1147880044\n1       306      3.5     1147868817\n...\n```\n\nThat's all you need for the entire week. Three columns: who, what, score.\n\n## The split\n```python\n# Time-based split (closest to production reality)\nratings = ratings.sort_values('timestamp')\ncutoff = int(len(ratings) * 0.8)\ntrain = ratings.iloc[:cutoff]\ntest  = ratings.iloc[cutoff:]\n```\n\nRandom splits LEAK in recsys — they let the model see future ratings during training. Time-based splits respect causality.\n\n## This week\n- Day 2: User-based CF (the simple one)\n- Day 3: Matrix factorization (SVD/ALS)\n- Day 4: Two-tower deep model in PyTorch\n- Day 5: Cold-start mitigation\n- Day 6: Multi-metric eval (precision@K, recall@K, NDCG)\n- Day 7: Streamlit demo + ship"
-            },
-            {
-              "kind": "video",
-              "title": "How Netflix recommends movies (overview)",
-              "url": "https://www.youtube.com/watch?v=f8OK1HBEgn0",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Watch first. Frames the production recsys problem at scale — what your week's models are doing in miniature."
             },
             {
               "kind": "swipe",
@@ -15153,14 +15001,6 @@
               "body": "## What it is\nDask gives you the pandas/numpy APIs you already know — backed by a lazy task graph that can run on a single multi-core machine OR a cluster.\n\n```text\npandas DataFrame:   in-memory, one core, ~RAM-sized data\nDask DataFrame:     partitioned, all cores, larger-than-RAM via spill-to-disk\n                    or scaled to a cluster\n```\n\nFor most learners and small teams, Dask on a single laptop solves the 'my data is 10GB and pandas is OOMing' problem without needing a cluster.\n\n## Install + first run\n```bash\npip install dask[complete] pyarrow\n```\n\n```python\nimport dask.dataframe as dd\n\n# Read a multi-file parquet dataset (works on local glob or s3://)\ndf = dd.read_parquet('data/big/*.parquet')\n\n# Inspect WITHOUT loading everything\nprint(df.npartitions)        # number of partitions\nprint(df.dtypes)             # column types\nprint(df.head())             # only loads first partition\n\n# Compute a GROUPBY across all partitions\nresult = df.groupby('user_id')['amount'].sum().compute()\n# .compute() = 'actually execute the lazy graph and return a pandas DataFrame'\n```\n\n## The mental model\nDask is LAZY by default. Every operation builds a task graph; nothing executes until you call `.compute()` or `.persist()`. This lets it optimize execution across the whole pipeline.\n\n## Try it on a real-ish dataset\nNYC Taxi data: ~5GB compressed parquet per year, hundreds of millions of rows.\n\n```python\n# Download e.g. 4 months of yellow-taxi 2019 parquet from\n# https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\ndf = dd.read_parquet('data/yellow_2019_*.parquet')\nprint(f'{df.npartitions} partitions, {len(df):,} rows total')\n# 4 partitions, 32,150,832 rows\n\n# Same query as TaxiPulse week 1, but at scale\nby_hour = (\n    df.assign(hour=df['tpep_pickup_datetime'].dt.hour)\n      .groupby('hour')['fare_amount']\n      .agg(['count', 'mean'])\n      .compute()\n)\nprint(by_hour.sort_values('count', ascending=False).head())\n```\n\nOn a typical laptop that runs in ~30 seconds. Same query in pandas needs the data loaded all at once — typically OOM on the same machine.\n\n## Dashboard\n```python\nfrom dask.distributed import Client\nclient = Client()  # spins up a local cluster + dashboard\nprint(client.dashboard_link)\n# http://127.0.0.1:8787/status\n```\n\nOpen the dashboard while a query runs. You SEE the task graph executing in real time. Profoundly useful for understanding distributed execution."
             },
             {
-              "kind": "video",
-              "title": "Dask in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=ods97a5Pzw0",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch first. Fast Dask overview — what it is, why it exists, how it compares to pandas + Spark."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -15200,14 +15040,6 @@
               "kind": "lesson",
               "title": "PySpark — the enterprise paradigm",
               "body": "## What it is\nPySpark is the Python API for Apache Spark, the most-deployed distributed-compute framework in production data engineering and ML. Different from Dask in three ways:\n\n```text\n1. SEPARATE API — pyspark.sql.DataFrame, not pandas.\n   The patterns are SQL-like; you'll feel at home if you know SQL.\n\n2. BIGGER ECOSYSTEM — MLlib (ML), Streaming, SQL, GraphX, Delta Lake.\n   Same framework solves data engineering + analytics + ML.\n\n3. MORE OPERATIONAL — Real production deploys use cluster managers (YARN,\n   Kubernetes, Databricks). Heavier than Dask but proven at scale.\n```\n\n## Local install\n```bash\npip install pyspark\n# Java 11 or 17 required; install if not present\n```\n\n```python\nfrom pyspark.sql import SparkSession\n\nspark = (\n    SparkSession.builder\n    .appName('DistML')\n    .master('local[*]')          # all available cores on this machine\n    .config('spark.driver.memory', '8g')\n    .getOrCreate()\n)\n\nprint(spark.version)\n# 3.5.x\n```\n\n## Read the same NYC taxi parquet\n```python\ndf = spark.read.parquet('data/yellow_2019_*.parquet')\ndf.printSchema()\n# root\n#  |-- VendorID: integer (nullable = true)\n#  |-- tpep_pickup_datetime: timestamp (nullable = true)\n#  ...\n\nprint(df.count())\n# 32,150,832\n```\n\n## The same groupby in Spark SQL\n```python\nfrom pyspark.sql.functions import hour, col, count, mean\n\nby_hour = (\n    df.withColumn('hour', hour('tpep_pickup_datetime'))\n      .groupBy('hour')\n      .agg(count('*').alias('trips'), mean('fare_amount').alias('avg_fare'))\n      .orderBy('trips', ascending=False)\n)\nby_hour.show(5)\n# +----+--------+----------+\n# |hour|   trips|  avg_fare|\n# +----+--------+----------+\n# |  18| 2010491|     13.45|\n# ...\n```\n\n## Or write actual SQL\n```python\ndf.createOrReplaceTempView('trips')\nspark.sql(\"\"\"\n    SELECT hour(tpep_pickup_datetime) AS hour, COUNT(*) AS trips\n    FROM trips\n    GROUP BY hour\n    ORDER BY trips DESC\n\"\"\").show(5)\n```\n\n## The Spark UI\n```python\n# While the session is running, open:\n#   http://localhost:4040\n# You'll see: jobs, stages, executors, SQL queries\n```\n\nSpark's UI is the production-monitoring equivalent of Dask's dashboard. You'll use it for debugging slow queries in real jobs.\n\n## When to reach for Spark over Dask\n```text\n- Your team / company already runs Spark — interoperability\n- You need the Spark ecosystem (MLlib, Delta Lake, structured streaming)\n- You're on Databricks, EMR, Glue, Synapse — Spark is native\n- Data scale truly exceeds what Dask handles cleanly (multi-TB)\n\n- Quick prototyping in pandas-style → Dask\n- Solo / small team, just need to scale beyond RAM → Dask\n```"
-            },
-            {
-              "kind": "video",
-              "title": "PySpark in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=cZS5xYYIPzk",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch first. What Spark is, why every enterprise runs it, and what PySpark gives you."
             },
             {
               "kind": "swipe",
@@ -15500,14 +15332,6 @@
               "body": "## What it is\nThe naive approach to privacy: remove names, addresses, social security numbers. Call the result 'anonymous'. Release.\n\nFor three decades, this has been demonstrably broken — but it's still the default in most organizations.\n\n## Case 1 — Sweeney (2000)\nLatanya Sweeney showed that ZIP code + date of birth + sex uniquely identifies about 87% of US adults. She purchased the 'anonymized' Massachusetts state employee medical records and identified the governor's records by cross-referencing voter rolls.\n\n```text\nAnonymized record:  ZIP 02138, born 1945-07-31, male\nVoter roll:         William Weld, 02138, born 1945-07-31, male, governor\n```\n\n## Case 2 — Netflix Prize (2008)\nNetflix released an 'anonymized' dataset: 100M ratings, 500k users (user IDs replaced with numbers). Narayanan + Shmatikov cross-referenced ratings with public IMDB profiles. Identified specific users by their ratings of obscure films.\n\nResult: lawsuit, dataset withdrawn, no second Netflix Prize. The technique now has a name: linkage attack.\n\n## Case 3 — NYC Taxi Medallions (2014)\nNYC released 'anonymized' taxi trip data. Researchers reversed the hash on medallion numbers (the hash space was small enough to brute-force) and identified individual drivers' entire 2013 trip history — including drivers' homes inferred from end-of-shift trips.\n\n## Case 4 — AOL Search Logs (2006)\nAOL released 'anonymized' search queries from 650k users (user IDs replaced with numbers). The New York Times identified specific user 4417749 (Thelma Arnold) from her searches for nearby businesses + family members' names.\n\n## The pattern\nAcross decades + industries: anonymization is the appearance of privacy, not actual privacy. Auxiliary data is everywhere; combination attacks are cheap; reidentification is the rule.\n\n## What this means for your data\n```text\nEvery dataset you have worked with this year contained real information\nabout real entities — taxi trips, Reddit posts, electricity meters,\ncustomer records. Treat them all as 'potentially re-identifiable'.\n\nEspecially: if you train a model on private data, the MODEL ITSELF can\nleak information — membership inference attacks (Shokri 2017) can tell\nwhether a specific person's data was in the training set.\n```\n\n## This week\nThe structured fix for these failures is **differential privacy**: a mathematical framework that GUARANTEES limits on what any output can reveal about any individual. By Friday you'll have implemented:\n- A DP count query (Day 3)\n- A DP-SGD trained model (Day 4)\n- Awareness of federated learning (Day 5)\n- A PRIVACY.md document for one project (Day 6)\n- Tagged + shipped (Day 7)"
             },
             {
-              "kind": "video",
-              "title": "How they unmasked the Netflix Prize winners",
-              "url": "https://www.youtube.com/watch?v=KkX_zSZHL0M",
-              "duration_min": 10,
-              "creator": "various",
-              "why": "Watch first. Walks through the Narayanan + Shmatikov de-anonymization. Concrete, visceral, the kind of example that lands."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
@@ -15547,14 +15371,6 @@
               "kind": "lesson",
               "title": "DP in plain English",
               "body": "## The core idea\nDifferential privacy says: the OUTPUT of any query / model should be essentially the SAME whether or not any specific individual is in the dataset.\n\n```text\nDataset D₁ = 1000 people (Alice included)\nDataset D₂ = 999 people (same, minus Alice)\n\nDP guarantee: any query Q must satisfy:\n   Q(D₁) and Q(D₂) are statistically indistinguishable\n   (their output distributions differ by at most a factor of e^ε)\n```\n\nIf that holds, an attacker observing Q's output learns essentially nothing about Alice. Whether she's in or out, the answer looks the same.\n\n## How you achieve it\nAdd CALIBRATED NOISE to the query result. The noise size is calibrated to the SENSITIVITY of the query (how much one person can change it) and the desired privacy budget ε.\n\n```text\nTrue count: 532\nSensitivity: 1 (each person changes count by ≤ 1)\nε = 1 → Laplace noise scale = 1\nNoisy count: 532 + Laplace(scale=1) = 531.7\n```\n\nThat answer is close enough to 532 to be useful; the noise is enough to make Alice's presence ambiguous.\n\n## The privacy budget — the only knob that matters\n```text\nε (epsilon) is the privacy budget. Smaller = more privacy + more noise.\n\nε = 0.1   very private. Heavy noise. US Census uses this kind of budget.\nε = 1     a good default for most applications.\nε = 10    weak privacy. Useful as research baseline but not for production.\n```\n\nThere's no 'right' ε — it's a privacy policy decision, not a technical one.\n\n## Composition — privacy budgets add up\n```text\nRun 5 queries each at ε = 0.2 → total ε ≤ 1.0\nTrain a model with DP-SGD for 100 steps each at ε = 0.01 → total ε ≤ 1.0\n```\n\nComposition is why production DP systems carefully ALLOCATE budget across queries. Run too many noisy queries; the total budget drains away; privacy is lost.\n\n## What DP does NOT do\n- Doesn't prevent legitimate aggregate insights — that's the whole point\n- Doesn't replace data minimization (don't collect what you don't need)\n- Doesn't fix bad-actor INPUT (if Alice told you she has cancer, you knew it)\n- Doesn't apply retroactively to data already released non-DP\n\n## Production deployments of DP (real)\n- **US Census 2020** — entire census released with DP. ε=1 effective. Heavy controversy + iteration.\n- **Apple iOS telemetry** — DP for emoji preferences, browser bug reporting.\n- **Google Chrome (RAPPOR)** — DP for usage statistics.\n- **Microsoft Windows telemetry** — DP for crash reports.\n\nThese aren't research papers. They're how real privacy-preserving data collection works in 2025-2026."
-            },
-            {
-              "kind": "video",
-              "title": "Differential Privacy — visually",
-              "url": "https://www.youtube.com/watch?v=4nqbITGcqjk",
-              "duration_min": 12,
-              "creator": "various",
-              "why": "Watch first. 12-min visual explainer of ε, Laplace mechanism, composition. The intuition before code."
             },
             {
               "kind": "swipe",

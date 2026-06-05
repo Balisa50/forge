@@ -279,11 +279,8 @@ export default async function DashboardPage() {
                   </p>
                 </div>
               )}
-              {releasedWeek.detail && (
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1rem", maxWidth: 700 }}>
-                  {releasedWeek.detail.slice(0, 240)}{releasedWeek.detail.length > 240 ? "…" : ""}
-                </p>
-              )}
+              {/* Detail body removed — the full lesson lives on the week page.
+                  The dashboard card is the gateway, not the lesson itself. */}
               {deadlineDate && (
                 <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.875rem", borderRadius: 8, background: urgent ? "rgba(239,68,68,0.1)" : "rgba(245,158,11,0.1)", border: `1px solid ${urgent ? "rgba(239,68,68,0.3)" : "rgba(245,158,11,0.3)"}`, marginBottom: "1rem" }}>
                   <Hourglass size={14} color={urgent ? "var(--red)" : "var(--accent)"} />
@@ -521,34 +518,41 @@ export default async function DashboardPage() {
             );
           })()}
 
-          {/* Current Focus — full width, most important card */}
-          {currentTask && (
-            <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
-              <div className="flex items-center gap-2 mb-4">
-                <Zap size={16} color="var(--accent)" strokeWidth={2} />
-                <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>Current Focus</h2>
-              </div>
-              <div style={{ borderLeft: `3px solid ${currentTask.trackColor}`, paddingLeft: "1rem", marginBottom: "1rem" }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: currentTask.trackColor, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.375rem" }}>
-                  {currentTask.trackTitle} → {currentTask.phaseTitle}
+          {/* Current Focus — compact card. NO long body dump. The full lesson
+              lives on the week page; this card is the gateway, not the lesson. */}
+          {currentTask && (() => {
+            // Map the curated roadmap title back to its slug so the Resume
+            // button takes the learner DIRECTLY to /learn/<slug>/<weekNum>
+            // (which opens on the Content tab) instead of the dashboard's
+            // legacy generic /dashboard/checkin route.
+            const slug = activeRoadmap ? resolveSlug(activeRoadmap.title) : null;
+            const wNum = parseWeekNumber(currentTask.title);
+            const resumeHref = slug && wNum ? `/learn/${slug}/${wNum}` : "/dashboard/roadmap";
+            return (
+              <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+                <div className="flex items-center gap-2 mb-4">
+                  <Zap size={16} color="var(--accent)" strokeWidth={2} />
+                  <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>Current Focus</h2>
                 </div>
-                <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1.0625rem", marginBottom: "0.5rem" }}>
-                  {currentTask.title}
-                </div>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6 }}>
-                  {currentTask.detail}
-                </p>
-                {currentTask.estimatedHours && (
-                  <div className="flex items-center gap-1 mt-3" style={{ color: "var(--text-dim)", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
-                    <Clock size={12} /> ~{currentTask.estimatedHours}h estimated
+                <div style={{ borderLeft: `3px solid ${currentTask.trackColor}`, paddingLeft: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: currentTask.trackColor, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.375rem" }}>
+                    {currentTask.trackTitle} → {currentTask.phaseTitle}
                   </div>
-                )}
+                  <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1.0625rem", marginBottom: currentTask.estimatedHours ? "0.5rem" : 0 }}>
+                    {currentTask.title}
+                  </div>
+                  {currentTask.estimatedHours && (
+                    <div className="flex items-center gap-1" style={{ color: "var(--text-dim)", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
+                      <Clock size={12} /> ~{currentTask.estimatedHours}h estimated
+                    </div>
+                  )}
+                </div>
+                <Link href={resumeHref} className="forge-btn forge-btn-primary" style={{ marginTop: "0.25rem", padding: "0.75rem 2rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                  Resume this week <ArrowRight size={14} />
+                </Link>
               </div>
-              <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary" style={{ marginTop: "0.75rem", padding: "0.75rem 2rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                Check In <ArrowRight size={14} />
-              </Link>
-            </div>
-          )}
+            );
+          })()}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Track Progress */}

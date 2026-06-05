@@ -14,6 +14,18 @@ Companion docs:
 
 ---
 
+## 0 · Solo-learner mode — design notes (added this session)
+
+Solo learners are detected by **absence of any active `MentorLink` for the viewer**. When solo:
+- `WeekPageTabs` drops the **Mentor Review** tab; only Content + Submission render.
+- The Submission tab swaps from "submit and wait for mentor" to a `SoloCompletePanel` widget: optional Proof URL input + Mark Complete button.
+- Mark Complete calls **`POST /api/me/mark-week-complete`** which: (1) verifies the user owns the task, (2) verifies no mentor link exists (else 403 — solo path is solo-only), (3) upserts a Checkin row with `evidenceType: "self_complete"`, (4) flips `Task.status = "verified"`, (5) idempotent on re-POST.
+- The "Current Focus" card on the dashboard no longer dumps `task.detail` — it's a gateway, not a lesson. The Resume button now navigates **directly to `/learn/<slug>/<weekNum>`** which opens on the Content tab.
+- Solo-learner UX rule: **never assume a mentor exists**. No mentor questions, no mentor ratings, no pending reviews, no send-back buttons. The platform gets out of the way.
+- The mentor-and-also-learner case (`User.isAlsoLearning = true` + no inbound `MentorLink`) is treated as solo for their own learning view, which is what the dashboard layout already does.
+
+---
+
 ## 1 · What shipped this session
 
 In commit-order (most recent first). Every entry was pushed to `main`.
@@ -273,15 +285,19 @@ Every track has a continuous **project arc** that ships incrementally:
 - Every project ends with a written **retro** (what worked / what didn't / what next).
 
 ### 8.5 Video rules — non-negotiable
-1. **Real videos only.** If you are not sure the URL works, **don't include the video.** Replace with a richer text lesson + a canonical docs reading.
+1. **Real videos only.** If you are not sure the URL works, **don't include the video.** Replace with a richer text lesson + a canonical docs reading. This session removed 33 unverified video URLs across DS and AI-eng — see §11.5 for the lesson.
 2. **No fabrications.** Don't invent creators. Don't invent durations. Don't invent titles.
 3. **Hard cap: 15 minutes.** Preferred ≤10. Best ≤5.
 4. **No crash courses.** No "freeCodeCamp 4-hour tutorial". Short, sharp, focused — the antithesis of bootcamp video walls.
-5. **Confident video URL library** (use these freely):
-   - Fireship — "X in 100 Seconds" series (Git, SQL, Docker, Pandas, Python, etc.). Always ≤2 min. URL pattern checked.
-   - 3Blue1Brown — Essence of Linear Algebra. ~15 min per ep. Visual gold.
-   - Python Programmer (Giles McMullen-Klein) — "Learn NumPy in 5 minutes". ~5 min.
-6. **If no confident URL exists for a tool** (scikit-learn, matplotlib, OpenAI SDK currently fall here), DON'T add a video. Write the lesson rich enough that no video is needed, link the official docs.
+5. **No YouTube search-URL videos.** A `youtube.com/results?search_query=...` URL is not a video — it's a search page. The VideoEmbed component falls back to "Open" link card for these, which functions but is a poor student experience. Use a real video or skip the video entirely.
+6. **Confident video URL library** (the `KNOWN_GOOD` set in `scripts/audit-videos.js` — use these freely):
+   - Fireship — "X in 100 Seconds" series: **Git** `hwP7WQkmECE`, **SQL** `zsjvFFKOm3c`, **Docker** `Gjnup-PuquQ`, **Pandas** `dcqPhpY7tWk`. Always ≤2 min. URL pattern checked.
+   - 3Blue1Brown — Essence of Linear Algebra Ep 1: **Vectors** `fNk_zzaMoSs`. ~15 min. Visual gold.
+   - Python Programmer (Giles McMullen-Klein) — **Learn NumPy in 5 minutes** `xECXZ3tyONo`. ~5 min.
+7. **If no confident URL exists for a tool** (scikit-learn, matplotlib, OpenAI SDK currently fall here), DON'T add a video. Write the lesson rich enough that no video is needed, link the official docs.
+8. **Two audit + cleanup scripts** live in `scripts/`:
+   - `audit-videos.js` — lists every video URL across all tracks and flags any YouTube ID not in `KNOWN_GOOD` as "REVIEW". Spot-check those in a browser before declaring them safe.
+   - `remove-videos-by-id.js` — takes a list of YouTube IDs and removes those video items from every track in one pass. Use this whenever you find a dead URL.
 
 ### 8.6 The teach-from-zero rule
 Before any concept appears in code, the student must have been taught it. This is enforced by `scripts/audit-prerequisites.js`. If you reference `np.dot` in a code block, NumPy must have been taught earlier (same week or prior week — same week is acceptable if the teach lesson comes BEFORE the using lesson in the items array). Currently audit-clean at 0 / 0; **keep it that way.**
@@ -326,11 +342,11 @@ Status per track (as of 2026-06-05):
 - **W3-W24 stub-shaped.** W3-W7 explicitly paused mid-session (task #8) to let the platform fixes ship first.
 - Topics that need real enrichment: W3 GitHub Actions CI/CD, W4 Monitoring + logs, W5 Docker fundamentals, W6 Docker Compose + inner loop, W7 Image hardening + Trivy + SBOM, W8+ Terraform / IaC, Kubernetes basics, EKS/GKE, secrets, observability, SRE patterns.
 
-### data-analysis (28 weeks) — STUB + PREREQS
-- Base outline content exists.
-- This session added W1 D1 prereqs (NumPy, matplotlib, Git, SQL).
-- **W1-W28 lessons still need to be rebuilt to §8 bar.**
-- Project arc to design: an Excel-/SQL-first analytics journey ending in a shipped dashboard + memo.
+### data-analysis (28 weeks) — ENRICHED, ABOVE THE BAR
+- W1-W28 all rebuilt to teach→swipe→project standard (Abdoulie confirmed in this session).
+- Project arc: Superstore v0.1 → v1.0 across W1-W17 (Excel → pandas → SQL → dashboards), then capstone weeks.
+- W1 D1 prereqs (NumPy, matplotlib, Git, SQL) prepended in this session to satisfy the prereq audit; the rest of the track was already enriched.
+- **Status: production-quality. Same reference tier as data-science.**
 
 ### ml-engineering (24 weeks) — STUB + PREREQS
 - This session added W1 D1 prereqs (pandas, scikit-learn, matplotlib, PyTorch, Git).
@@ -366,18 +382,18 @@ Status per track (as of 2026-06-05):
 | Track | Bar-quality | Stub + prereqs | Roughly to do |
 |---|---|---|---|
 | data-science | W1-W43 (all 43) | — | 0 weeks |
+| data-analysis | W1-W28 (all 28) | — | 0 weeks |
 | ai-engineering | W1-W5 | W6-W24 | **19 weeks** |
 | devops-cloud | W1-W2 | W3-W24 | **22 weeks** |
-| data-analysis | — | W1-W28 | **28 weeks** |
 | ml-engineering | — | W1-W24 | **24 weeks** |
 | full-stack-web | — | W1-W24 | **24 weeks** |
 | mobile-engineering | — | W1-W24 | **24 weeks** |
 | cybersecurity | — | W1-W24 | **24 weeks** |
 | bi-analytics | — | W1-W17 | **17 weeks** |
 | ai-automation | — | W1-W20 | **20 weeks** |
-| **TOTAL REMAINING** | | | **~202 weeks** |
+| **TOTAL REMAINING** | | | **~174 weeks** |
 
-At a steady 5-week-per-script-batch cadence: 40+ batches. Plan accordingly. This is the work.
+At a steady 5-week-per-script-batch cadence: ~35 batches. Plan accordingly. This is the work.
 
 ---
 
@@ -442,6 +458,12 @@ Compiled from real mistakes this and prior sessions. Don't repeat any of these.
 3. **Don't commit without pushing.** Abdoulie's rule: commit AND push by default. No asking first.
 4. **Don't claim "done" without receipts.** The audit output, the tsc output, the file diff — show them.
 5. **Don't paste literal Loom / screenshot requests at Abdoulie.** "You will not send me screenshots. You will not send me Loom videos. I cannot provide those and I do not want them. You will write a clear summary of what you changed." Direct quote.
+
+### 11.5 Video failure modes — the dead-URL lesson
+1. **Don't fabricate YouTube IDs from memory.** This session shipped 33 video items with URLs picked from memory; a student found at least one dead one. All 33 were removed by `scripts/remove-videos-by-id.js` and the trust cost was real. Lesson: only ship a video URL after viewing it in a browser.
+2. **A YouTube search URL is not a video.** `youtube.com/results?search_query=...` opens a search page. Don't paper over a missing video with a search link.
+3. **Use the `KNOWN_GOOD` allowlist.** It is in `scripts/audit-videos.js`. Adding to that list is a deliberate act — only after viewing the URL.
+4. **Run `node scripts/audit-videos.js` after any video-adding patch.** Any REVIEW count > 0 means you have unverified URLs in the curriculum.
 
 ### 11.4 Voice failure modes
 1. **Don't bury the lead.** First sentence of every lesson says what's in it.

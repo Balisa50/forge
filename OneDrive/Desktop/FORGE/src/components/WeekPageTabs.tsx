@@ -70,6 +70,7 @@ export default function WeekPageTabs({
   prev = null,
   next = null,
   submission = null,
+  hasMentor = false,
 }: {
   week: RoadmapWeek;
   slug: string;
@@ -77,6 +78,10 @@ export default function WeekPageTabs({
   prev?: WeekNeighbour | null;
   next?: WeekNeighbour | null;
   submission?: SubmissionSummary | null;
+  /** True when the viewer has an active mentor link. Solo learners get a
+   *  trimmed tab set (Content + Submission only) and a self-verify
+   *  Mark Complete button in place of the mentor-review flow. */
+  hasMentor?: boolean;
 }) {
   const hasDays = !!week.days && week.days.length > 0;
   const [viewer, setViewer] = useState<{ url: string; label: string } | null>(null);
@@ -271,7 +276,10 @@ export default function WeekPageTabs({
             marginBottom: "0.25rem",
           }}
         >
-          {(["content", "submission", "mentorReview"] as const).map((t) => {
+          {((hasMentor
+            ? (["content", "submission", "mentorReview"] as const)
+            : (["content", "submission"] as const))
+          ).map((t) => {
             const isActive = activeTab === t;
             const label = t === "content" ? "Content" : t === "submission" ? "Submission" : "Mentor Review";
             return (
@@ -314,11 +322,15 @@ export default function WeekPageTabs({
         </div>
       )}
 
-      {/* Submission tab — explains the submission flow and links to it.
-          When a prior submission exists, the button flips to "Resubmit" /
-          "Update submission" and a preview of what was last sent appears
-          so the student isn't guessing whether their work landed. */}
-      {activeTab === "submission" && (() => {
+      {/* Submission tab — branches on hasMentor.
+          - hasMentor=true:  full submit-and-wait-for-mentor-review flow.
+          - hasMentor=false (solo): a self-verify Mark Complete widget. No
+            mentor talk in copy, no "your mentor reviewed" affordances. */}
+      {activeTab === "submission" && !hasMentor && taskId && (
+        <SoloCompletePanel taskId={taskId} alreadyComplete={submission?.status === "passed" && !!submission?.reviewed === false && !!submission} />
+      )}
+
+      {activeTab === "submission" && hasMentor && (() => {
         const hasSubmission = !!submission;
         // After a reopen the server sets checkin.status="failed" with the
         // interrogation un-reviewed. That's the "needs revision" state —
@@ -986,6 +998,136 @@ export default function WeekPageTabs({
 }
 
 /** End-of-week summary: project + exercises + reflection. Compact, no tabs. */
+/** Solo-learner self-verify widget. No mentor copy. Optional URL field so the
+ *  learner can store a link to what they shipped; click Mark Complete and the
+ *  current Task flips to verified, the Journal logs a row, and the next week
+ *  unlocks (since gating is based on Task.status). */
+function SoloCompletePanel({ taskId, alreadyComplete }: { taskId: string; alreadyComplete: boolean }) {
+  const [evidenceUrl, setEvidenceUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(alreadyComplete);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async () => {
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/me/mark-week-complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId, evidenceUrl: evidenceUrl.trim() || null }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setError(j.error ?? "Could not mark complete.");
+        return;
+      }
+      setDone(true);
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <div
+        className="forge-panel"
+        style={{
+          padding: "1.5rem",
+          border: "1px solid rgba(34,197,94,0.4)",
+          background: "rgba(34,197,94,0.05)",
+        }}
+      >
+        <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.375rem", color: "var(--green)" }}>
+          Week complete
+        </h3>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, marginBottom: "0.75rem" }}>
+          You marked this week done. The next week is unlocked on your roadmap.
+        </p>
+        <a href="/dashboard/roadmap" className="forge-btn forge-btn-ghost" style={{ padding: "0.5rem 1rem" }}>
+          Open the next week →
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="forge-panel"
+      style={{
+        padding: "1.5rem",
+        border: "1px solid rgba(212,175,55,0.4)",
+        overflow: "hidden",
+        maxWidth: "100%",
+        boxSizing: "border-box",
+      }}
+    >
+      <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>
+        Mark this week complete
+      </h3>
+      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, marginBottom: "1rem" }}>
+        Solo mode — you are your own bar. When you have finished the work for this week,
+        click Mark Complete. The next week unlocks immediately.
+        Optional: paste a URL (your repo, demo, or notes) so it lives in your Journal.
+      </p>
+
+      <label style={{
+        display: "block",
+        fontFamily: "var(--font-mono)",
+        fontSize: "0.6875rem",
+        color: "var(--text-dim)",
+        letterSpacing: "0.12em",
+        textTransform: "uppercase",
+        marginBottom: "0.375rem",
+      }}>
+        Proof URL (optional)
+      </label>
+      <input
+        type="url"
+        value={evidenceUrl}
+        onChange={(e) => setEvidenceUrl(e.target.value)}
+        placeholder="https://github.com/you/your-repo  ·  https://your-demo.app  ·  blank is fine"
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: "0.625rem 0.75rem",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
+          color: "var(--text-primary)",
+          fontSize: "0.9375rem",
+          marginBottom: "1rem",
+          fontFamily: "var(--font-body)",
+        }}
+      />
+
+      <button
+        type="button"
+        onClick={submit}
+        disabled={submitting}
+        className="forge-btn forge-btn-primary"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.4rem",
+          padding: "0.625rem 1.25rem",
+          opacity: submitting ? 0.7 : 1,
+        }}
+      >
+        {submitting ? "Marking…" : "Mark complete"}
+      </button>
+
+      {error && (
+        <p style={{ marginTop: "0.75rem", color: "var(--red)", fontSize: "0.875rem" }} role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function ShipItSection({ week }: { week: RoadmapWeek }) {
   return (
     <div className="flex flex-col gap-5">

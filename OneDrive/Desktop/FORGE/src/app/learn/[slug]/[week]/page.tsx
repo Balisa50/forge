@@ -133,7 +133,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
       {/* Slim banner */}
       <section className={`border-b border-[color:var(--border)] bg-gradient-to-r ${meta?.gradient ?? "from-cyan-500 to-blue-600"}`} style={{ color: "white" }}>
-        <div className="mx-auto max-w-5xl px-6 py-5">
+        <div className="mx-auto max-w-[1200px] px-6 py-5">
           <div className="flex items-center justify-between gap-3 text-xs opacity-90">
             <Link href={backHref} className="inline-flex items-center gap-1.5 hover:opacity-100" style={{ fontFamily: "var(--font-mono)" }}>
               <ArrowLeft size={12} /> {backLabel}
@@ -149,7 +149,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-8">
+      <section className="mx-auto max-w-[1200px] px-6 py-8">
         {/* Week nav (Previous / Next) is rendered INSIDE the tabs component so
             it can be scoped to the Content tab only — it has no business on the
             Submission or Mentor Review tabs. */}
@@ -160,6 +160,11 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           prev={prev ? { number: prev.number, title: prev.title } : null}
           next={next ? { number: next.number, title: next.title } : null}
           submission={submissionProp}
+          // No active MentorLink for this user = SOLO learner. The tabs
+          // component drops the Mentor Review tab and the Submission tab
+          // shows a self-verify Mark Complete button instead of waiting for
+          // a mentor that will never grade.
+          hasMentor={!!isMentee}
         />
       </section>
     </main>

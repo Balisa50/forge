@@ -67,14 +67,6 @@
               "body": "## What PyTorch is\nPyTorch is the deep-learning library most modern AI work uses. Whether you ever build a neural net from scratch or just fine-tune an off-the-shelf one, you read PyTorch code.\n\n```bash\npip install torch\n```\n```python\nimport torch\n```\n\n## Two ideas that are the whole library\n### 1. Tensor — a multi-dimensional array (like NumPy, but on GPU)\n```python\nx = torch.tensor([[1., 2.], [3., 4.]])\ny = x @ x.T              # @ is matrix multiply, same as NumPy\n```\n\n### 2. Autograd — automatic gradient tracking\n```python\nw = torch.tensor([2.0], requires_grad=True)  # we'll learn this\nloss = (w * 3 - 6) ** 2\nloss.backward()\nprint(w.grad)            # PyTorch computed dloss/dw automatically\n```\n\nTensor + autograd → you can write a training loop in 15 lines. That's the whole point of PyTorch.\n\n## Move work to GPU\n```python\ndevice = 'cuda' if torch.cuda.is_available() else 'cpu'\nx = x.to(device); model = model.to(device)\n```\n\n## When you'll see PyTorch next\nEvery neural-net / fine-tuning week on this track. Tensors + autograd + .to(device) is the prerequisite — the rest you learn week by week."
             },
             {
-              "kind": "video",
-              "title": "PyTorch in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=ORMx45xqWkA",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch second. 100-second mental model — tensors, autograd, train loop. Hits the same beats as the lesson."
-            },
-            {
               "kind": "reading",
               "title": "PyTorch — Quickstart tutorial (official)",
               "url": "https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html",
