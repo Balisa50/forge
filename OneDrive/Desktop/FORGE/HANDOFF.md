@@ -1,7 +1,12 @@
 # FORGE — Session Handoff
 
 **Last updated:** 2026-06-05 · this session.
-**Scope:** what shipped in this run, what state the platform + curriculum are in, and what the next pickup can do without re-discovering anything.
+**Scope:** what shipped in this run, what state the platform + curriculum are in, what the bar is, and what the next pickup can do without re-discovering anything.
+
+> **THIS DOCUMENT IS CANONICAL.** Abdoulie treats it as the single source of truth between sessions. Any agent that codes for FORGE should:
+> 1. **Read this entire doc before making any change.** Especially sections §4 (conventions), §8 (the bar), §11 (failure modes).
+> 2. **Append anything important to this doc as it ships.** New convention discovered? New failure mode learned? New decision the next session must know? Add it here. Don't lose it in chat logs.
+> 3. **Match the bar.** This is not Coursera, not Udemy, not a bootcamp. This platform is engineered to make those look like toys. Every word, every video, every code sample, every test — that quality. No mediocrity. No skipped concepts. No fabricated facts.
 
 Companion docs:
 - `scripts/v2/HANDOFF.md` — older v2-rewrite handoff. Still valid for that batch. Read after this one.
@@ -203,5 +208,258 @@ When resuming any of A-H:
 5. Pick a numbered next step. Do not duplicate work — check existing scripts and components before writing new ones.
 6. After any curriculum edit, re-run both audits before declaring done.
 7. Commit + push. No `Co-Authored-By: Claude` lines (memory rule).
+
+That's the boilerplate. The next four sections are the **bar** — read them before touching curriculum.
+
+---
+
+## 8 · The bar — what "enriched" actually means
+
+This is the non-negotiable standard for every week shipped on every track. If a week does not pass this rubric, it is not done. **Coursera, Udemy, freeCodeCamp, every bootcamp — they are the floor, not the target. The Forge is what those wished they could be.**
+
+### 8.1 Per-week structure
+Every enriched week is exactly:
+
+| Field | Requirement |
+|---|---|
+| `number` | sequential int |
+| `title` | concrete + specific. "Polyglot v0.3: Build an eval set" — not "Week 3: Evaluation". |
+| `phase` | the high-level grouping (`Foundations`, `Building with LLMs`, `Causal ML`, etc.) |
+| `commitment_hours` | honest range, e.g. `"12-18"`. Don't lie about effort. |
+| `context` | 4-6 paragraphs. The mentor's framing — why this week, what changes, what's at stake. **Preserve existing context fields** when patching — they're intentional design. |
+| `concept_check` | **exactly 3 entries**. Each is `{ q, choices: [4 strings], correct: 0-3, explain: 2-4 sentences }`. The `explain` must teach the WHY, not just the answer. |
+| `days` | **exactly 7 entries**. NO exceptions. NO "Day 0" inserts. NO extension to 8 days. If a track has W1 D0 today (some legacy weeks) that's grandfathered, but new builds are 7 days. |
+
+### 8.2 Per-day structure
+Every day:
+
+| Field | Requirement |
+|---|---|
+| `number` | 1-7 |
+| `title` | sharp. "Build the dual-call function" — not "More API stuff". |
+| `summary` | one-line setup. What does this day accomplish? Optional but encouraged. |
+| `items` | array of 3-6 items. The teach→reinforce→ship rhythm. |
+
+### 8.3 Item kinds + the teach pattern
+Every day uses some mix of these kinds. The standard rhythm per day is: **lesson → (optional video) → (optional reading) → swipe → exercise**. The factory in `scripts/ai-eng-w1-w5.js` is the canonical pattern:
+
+```js
+const L  = (title, body) => ({ kind: 'lesson', title, body });
+const V  = (title, url, dm, creator, why) => ({ kind: 'video', title, url, duration_min: dm, creator, why });
+const R  = (title, url, why) => ({ kind: 'reading', title, url, why });
+const S  = (cards) => ({ kind: 'swipe', title: 'Quick check — swipe to answer', cards });
+const E  = (title, body) => ({ kind: 'exercise', title, body });
+const Re = (title, body) => ({ kind: 'reflection', title, body });
+const D  = (number, title, summary, items) => ({ number, title, summary, items });
+```
+
+Item-level requirements:
+
+| Kind | What's required |
+|---|---|
+| `lesson` | Markdown body. Sub-headings via `## What it is` / `## Why it matters` / `## See it in code`. Code blocks are real, runnable, with expected output. Teach FROM ZERO — assume nothing. |
+| `video` | Real, verifiable URL. Real creator name. Real duration. `why` field explains when in the day to watch + what it adds. **Hard cap: 15 min. Strongly preferred: ≤10 min. Sweet spot: 5 min.** Fireship "X in 100 Seconds" is the gold standard. |
+| `reading` | Canonical docs URL. Not blogspam. `why` field explains where in the day to read + what to skim vs skip. |
+| `swipe` | Array of **3 cards**. Each card: `{ prompt: string, answer: boolean, whenRight: string, whenWrong: string }`. Both feedback strings teach — they don't just say "yes" or "no". |
+| `exercise` | Body uses tag-prefix: `[CODE]` for write-code tasks, `[WRITE]` for documents/markdown, `[PRODUCE]` for ship-it asks. Includes `PASS:` checklist when applicable. |
+| `reflection` | Open prompt, 2-5 sentences asked. For end-of-week retros or self-audits. |
+
+### 8.4 Project arc
+Every track has a continuous **project arc** that ships incrementally:
+- DS: TaxiPulse → Reddit Sentiment → Energy Forecast → Capstone (v0.1 → v1.0 → v1.0-extended)
+- AI-eng: Polyglot v0.1 → v0.2 → v0.3 → v0.4, then dual-console v1.0
+- DevOps: Edge Portfolio v0.1 → v0.2 → v0.3 → v0.4
+- Each version shipped: a real public URL or repo with a tag.
+- Every project ends with a written **retro** (what worked / what didn't / what next).
+
+### 8.5 Video rules — non-negotiable
+1. **Real videos only.** If you are not sure the URL works, **don't include the video.** Replace with a richer text lesson + a canonical docs reading.
+2. **No fabrications.** Don't invent creators. Don't invent durations. Don't invent titles.
+3. **Hard cap: 15 minutes.** Preferred ≤10. Best ≤5.
+4. **No crash courses.** No "freeCodeCamp 4-hour tutorial". Short, sharp, focused — the antithesis of bootcamp video walls.
+5. **Confident video URL library** (use these freely):
+   - Fireship — "X in 100 Seconds" series (Git, SQL, Docker, Pandas, Python, etc.). Always ≤2 min. URL pattern checked.
+   - 3Blue1Brown — Essence of Linear Algebra. ~15 min per ep. Visual gold.
+   - Python Programmer (Giles McMullen-Klein) — "Learn NumPy in 5 minutes". ~5 min.
+6. **If no confident URL exists for a tool** (scikit-learn, matplotlib, OpenAI SDK currently fall here), DON'T add a video. Write the lesson rich enough that no video is needed, link the official docs.
+
+### 8.6 The teach-from-zero rule
+Before any concept appears in code, the student must have been taught it. This is enforced by `scripts/audit-prerequisites.js`. If you reference `np.dot` in a code block, NumPy must have been taught earlier (same week or prior week — same week is acceptable if the teach lesson comes BEFORE the using lesson in the items array). Currently audit-clean at 0 / 0; **keep it that way.**
+
+### 8.7 Honest weakness rule
+Every project, every retro, every blog post in the curriculum content includes a "what didn't work / what I'd do differently" section. We teach honest engineering, not marketing.
+
+### 8.8 What we are NOT
+- We are not a tutorial site. Tutorials teach syntax; we teach engineering.
+- We are not a video platform. Video is a tool, not the spine. The spine is the lesson + the project.
+- We are not a bootcamp. Bootcamps are graded on completion; we are graded on whether the student can ship the project, defend it, and write about it credibly.
+- We are not Coursera-with-better-design. Coursera is broad-and-shallow. We are narrow-and-deep — 30-43 weeks per track, deep enough to make a hire.
+
+---
+
+## 9 · Track enrichment status — granular
+
+The audit (`scripts/audit-prerequisites.js`) is clean at 0 / 0. That tells you tools are in place; it does **not** tell you whether the week's *content* is at §8 bar yet.
+
+Status per track (as of 2026-06-05):
+
+### data-science (43 weeks) — ENRICHED, ABOVE THE BAR
+- W1-W43 all rebuilt to teach→swipe→project standard in this session and prior.
+- 4 shipped projects across the arc: TaxiPulse · Reddit Sentiment · Energy Forecast · Capstone (v1.0 + v1.0-extended).
+- 4 specialty deep-dives: RL (W40), Recsys (W41), Distributed ML (W42), Privacy/DP (W43).
+- Senior-DS layer: Causal Inference (W35), ML Fairness (W36), Capstone Extended (W37-W39).
+- **Status: production-quality. Reference for what "enriched" looks like.**
+
+### ai-engineering (24 weeks) — PARTIAL
+- W1-W5 enriched this session (`scripts/ai-eng-w1-w5.js`):
+  - W1 Polyglot v0.1 (terminal translator + env discipline + cost tracking)
+  - W2 Polyglot v0.2 (Streamlit + multi-language + deploy)
+  - W3 Polyglot v0.3 (20-case eval set + LLM-as-judge)
+  - W4 Polyglot v0.4 (prompt-injection defence + THREAT_MODEL.md)
+  - W5 Side-by-side OpenAI + Anthropic console
+- **W6-W24 STILL STUB-SHAPED.** Context fields exist; days exist; but item bodies are short / placeholder. Same enrichment effort as DevOps W1-W2 took.
+- Topics for W6+: Structured Outputs (W6), Streaming + Cost (W7), Embeddings, RAG, Agents, MCP, Voice, Vision, Fine-tuning, Evals at scale, Production ops.
+
+### devops-cloud (24 weeks) — PARTIAL, ABOVE-BAR W1-W2 ONLY
+- W1 ("What a server actually is") — enriched, 8 days, 9 lessons.
+- W2 ("Edge Portfolio v0.2: Custom domain + HTTPS") — enriched, 7 days, 7 lessons.
+- **W3-W24 stub-shaped.** W3-W7 explicitly paused mid-session (task #8) to let the platform fixes ship first.
+- Topics that need real enrichment: W3 GitHub Actions CI/CD, W4 Monitoring + logs, W5 Docker fundamentals, W6 Docker Compose + inner loop, W7 Image hardening + Trivy + SBOM, W8+ Terraform / IaC, Kubernetes basics, EKS/GKE, secrets, observability, SRE patterns.
+
+### data-analysis (28 weeks) — STUB + PREREQS
+- Base outline content exists.
+- This session added W1 D1 prereqs (NumPy, matplotlib, Git, SQL).
+- **W1-W28 lessons still need to be rebuilt to §8 bar.**
+- Project arc to design: an Excel-/SQL-first analytics journey ending in a shipped dashboard + memo.
+
+### ml-engineering (24 weeks) — STUB + PREREQS
+- This session added W1 D1 prereqs (pandas, scikit-learn, matplotlib, PyTorch, Git).
+- **W1-W24 lessons need §8 enrichment.**
+- Project arc to design: from sklearn baseline → distributed training → MLOps platform with monitoring + retraining.
+
+### full-stack-web (24 weeks) — STUB + PREREQS
+- This session added W1 D1 prereqs (Git, SQL).
+- **W1-W24 lessons need §8 enrichment.**
+- Project arc to design: probably a SaaS scaffolding (Next.js + Postgres + auth) shipped weekly to v1.0.
+
+### mobile-engineering (24 weeks) — STUB + PREREQS
+- This session added W1 D1 prereqs (Git, SQL).
+- **W1-W24 lessons need §8 enrichment.**
+- Project arc to design: cross-platform (React Native / Expo) app shipped to TestFlight + Play Console.
+
+### cybersecurity (24 weeks) — STUB + PREREQS
+- This session added W1 D1 prereq (Git).
+- **W1-W24 lessons need §8 enrichment.**
+- Project arc to design: from network scanning → web app pentest → blue-team detection → published security report.
+
+### bi-analytics (17 weeks) — STUB + PREREQS
+- This session added W1 D1 prereq (Git).
+- **W1-W17 lessons need §8 enrichment.**
+- Project arc to design: Power BI / Tableau / Looker dashboards from a real public dataset shipped weekly.
+
+### ai-automation (20 weeks) — STUB + PREREQS
+- This session added W1 D1 prereqs (NumPy, Docker, Git, SQL).
+- **W1-W20 lessons need §8 enrichment.**
+- Project arc to design: end-to-end automation pipeline (n8n / Zapier / custom) ending in a shipped agent.
+
+### Track enrichment summary
+| Track | Bar-quality | Stub + prereqs | Roughly to do |
+|---|---|---|---|
+| data-science | W1-W43 (all 43) | — | 0 weeks |
+| ai-engineering | W1-W5 | W6-W24 | **19 weeks** |
+| devops-cloud | W1-W2 | W3-W24 | **22 weeks** |
+| data-analysis | — | W1-W28 | **28 weeks** |
+| ml-engineering | — | W1-W24 | **24 weeks** |
+| full-stack-web | — | W1-W24 | **24 weeks** |
+| mobile-engineering | — | W1-W24 | **24 weeks** |
+| cybersecurity | — | W1-W24 | **24 weeks** |
+| bi-analytics | — | W1-W17 | **17 weeks** |
+| ai-automation | — | W1-W20 | **20 weeks** |
+| **TOTAL REMAINING** | | | **~202 weeks** |
+
+At a steady 5-week-per-script-batch cadence: 40+ batches. Plan accordingly. This is the work.
+
+---
+
+## 10 · The voice — match this, not that
+
+The lesson body voice is **a mentor talking to a friend over coffee.** Read `scripts/v2/ds-w01.ts`, `scripts/ds-w26-w29.js`, `scripts/ai-eng-w1-w5.js` (the W1 Polyglot week is a clean reference) before writing anything new.
+
+**Do this:**
+- Direct address. "You will" / "Don't do X" / "Here's why."
+- Concrete numbers. "MAE 612 vs 868" — not "improved significantly".
+- Named tradeoffs. "Prophet costs interpretability for X; we accept that."
+- Honest weakness. "The model still under-predicts on heatwaves" — not "future work needed".
+- Real code with expected output as comments.
+- One idea per sub-section. `## What it is` / `## Why it matters` / `## See it in code` / `## When you'll see this next`.
+- Short paragraphs. 2-4 sentences max.
+
+**Don't do this:**
+- "In this lesson we will learn how to…" (passive academic voice)
+- "Leveraging cutting-edge AI" (marketing buzzwords)
+- "It's important to note that…" (filler)
+- Code without expected output
+- "Further research is needed" (vague non-conclusions)
+- Long Coursera-style paragraphs with one idea per page
+- "Crash course on X" (the antithesis of our standard)
+- Emojis. None. Ever. (Forbidden in code per the system prompt.)
+
+**Specific rules baked into the bar:**
+- Every code block compiles or runs. Show expected output as a comment.
+- Every numeric claim has a source. "$0.15 / 1M input + $0.60 / 1M output" not "cheap".
+- Every retro names what didn't work, not just wins.
+- Every video item's `why` field tells the student when to watch + what to listen for.
+
+---
+
+## 11 · Failure modes — things every session MUST know
+
+Compiled from real mistakes this and prior sessions. Don't repeat any of these.
+
+### 11.1 Curriculum failure modes
+1. **Don't fabricate URLs.** Especially YouTube URLs. If you are not confident a URL works, leave the video out. The user repeatedly emphasised this: "you will not lie about video length."
+2. **Don't invent creator names or durations.** Same reason.
+3. **Don't assume the student knows a tool.** Teach from zero. The NumPy gap in DS W2 was a real student-confusion event that drove this rule.
+4. **Don't add new days.** Items can grow inside an existing day; the count of days per week never changes. "ONE THING, NO CREATION OF ADDITIONAL DAYS" — direct quote.
+5. **Don't skip the audit.** Run `node scripts/audit-prerequisites.js` after every curriculum patch. Should print `0 CRITICAL · 0 HIGH`.
+6. **Don't drop concept_check entries.** Every enriched week has exactly 3.
+7. **Don't use crash-course videos.** 4-hour freeCodeCamp specials are the opposite of our bar. ≤15 min hard cap.
+8. **Don't lose existing context fields.** When patching a week, preserve `week.context` (it encodes intent). Same for `phase`, `commitment_hours`.
+
+### 11.2 Codebase failure modes
+1. **Check for existing components before building.** Don't duplicate. `ForgeMarkdown`, `VideoEmbed`, `ResourceViewer`, `WeekPageTabs`, `forge-panel-link` — all exist; use them.
+2. **Don't pre-commit secrets.** `.env` files, API keys, AWS credentials — never staged. Check `.gitignore` before adding a credential-bearing file.
+3. **Don't write to `data/roadmaps/*.json` by hand.** Use a script. Scripts are committed and rerunnable; hand-edits are not auditable.
+4. **Don't break idempotency.** Every patch script must skip on re-run. The check is usually "does the marker title/lesson already exist?"
+5. **Don't add `Co-Authored-By: Claude` lines** to any commit. Memory rule, repeated.
+6. **Don't push without `npx tsc --noEmit`** clean. This caught real bugs in this session.
+7. **Don't use inline styles for things CSS classes already handle.** `.forge-panel-link`, `.forge-code-block`, `.forge-code-line`, `.forge-code-gutter` exist for this. Use them.
+8. **Don't break the upsert invariant.** `Checkin` is one row per `(userId, taskId)`. Submission endpoints upsert; reopen resets in place. Adding a code path that inserts new Checkins re-introduces the duplication bug we already fixed.
+
+### 11.3 Process failure modes
+1. **Don't trust agent summaries blindly.** When you delegate to an Agent tool, the summary describes intent — not necessarily reality. Verify the actual files.
+2. **Don't ask questions the context already answers.** The roadmap `week.context` field encodes intent. Read it before asking the user how things connect (memory rule: "Read context fields first").
+3. **Don't commit without pushing.** Abdoulie's rule: commit AND push by default. No asking first.
+4. **Don't claim "done" without receipts.** The audit output, the tsc output, the file diff — show them.
+5. **Don't paste literal Loom / screenshot requests at Abdoulie.** "You will not send me screenshots. You will not send me Loom videos. I cannot provide those and I do not want them. You will write a clear summary of what you changed." Direct quote.
+
+### 11.4 Voice failure modes
+1. **Don't bury the lead.** First sentence of every lesson says what's in it.
+2. **Don't write academic prose.** "In this lesson we will explore the foundations of…" — no.
+3. **Don't write marketing.** "Leveraging the power of…" — no.
+4. **Don't lie about tool quality.** If a model is mediocre at a task, say so. Honest engineering > polish.
+5. **Don't pad weeks to hit a target length.** A 5-day enriched week is better than a 7-day padded one. (That said, current bar IS 7 days; the point is don't pad each day with filler items.)
+
+---
+
+## 12 · Living-doc rule
+
+> **Anything important shipped in any session goes here.** New convention, new failure mode, new decision the next session must inherit, new tool added to the audit, new track section completed.
+>
+> Edit this doc in the same commit. Don't lose the knowledge in chat logs.
+>
+> If the doc grows past ~600 lines, split — but never duplicate. Move older sections to `HANDOFF-archive-<date>.md` and link from the top of the canonical one.
+
+---
 
 That's the doc. Hand it to the next session and they can continue without re-asking what's done.
