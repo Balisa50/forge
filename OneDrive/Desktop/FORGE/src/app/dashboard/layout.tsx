@@ -104,7 +104,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
           hasMentor={hasMentor}
         />
         <main className="dashboard-main">
-          <div className="dashboard-content">
+          {/* Inline maxWidth backup — the .dashboard-content CSS class also
+              caps at 1200 px on >=1025px, but inline style guarantees the
+              cap regardless of whether the CSS bundle landed correctly on
+              a given Vercel build. Belt and braces. */}
+          <div className="dashboard-content" style={{ width: "100%", maxWidth: 1200, marginLeft: "auto", marginRight: "auto" }}>
             <ClientRememberName name={dbUser.name ?? null} />
             {children}
           </div>

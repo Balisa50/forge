@@ -132,9 +132,12 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
-      {/* Slim banner */}
+      {/* Slim banner.
+          Inline styles for the 1200 px container (not Tailwind arbitrary
+          values) so the cap is GUARANTEED on every Vercel build — no
+          dependency on JIT class generation. */}
       <section className={`border-b border-[color:var(--border)] bg-gradient-to-r ${meta?.gradient ?? "from-cyan-500 to-blue-600"}`} style={{ color: "white" }}>
-        <div className="mx-auto max-w-[1200px] px-6 py-5">
+        <div style={{ width: "100%", maxWidth: 1200, marginLeft: "auto", marginRight: "auto", padding: "1.25rem 1.5rem", boxSizing: "border-box" }}>
           <div className="flex items-center justify-between gap-3 text-xs opacity-90">
             <Link href={backHref} className="inline-flex items-center gap-1.5 hover:opacity-100" style={{ fontFamily: "var(--font-mono)" }}>
               <ArrowLeft size={12} /> {backLabel}
@@ -150,7 +153,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1200px] px-6 py-8">
+      <section style={{ width: "100%", maxWidth: 1200, marginLeft: "auto", marginRight: "auto", padding: "2rem 1.5rem", boxSizing: "border-box" }}>
         {/* Week nav (Previous / Next) is rendered INSIDE the tabs component so
             it can be scoped to the Content tab only — it has no business on the
             Submission or Mentor Review tabs. */}
