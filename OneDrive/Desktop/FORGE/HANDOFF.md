@@ -302,7 +302,7 @@ Every track has a continuous **project arc** that ships incrementally:
 ### 8.5 Video rules — non-negotiable
 1. **Real videos only.** If you are not sure the URL works, **don't include the video.** Replace with a richer text lesson + a canonical docs reading. This session removed 33 unverified video URLs across DS and AI-eng — see §11.5 for the lesson.
 2. **No fabrications.** Don't invent creators. Don't invent durations. Don't invent titles.
-3. **Hard cap: 15 minutes.** Preferred ≤10. Best ≤5.
+3. **Hard cap: 15 minutes.** Preferred ≤10. Best ≤5. **Sanctioned exception:** Andrej Karpathy's "Intro to Large Language Models" (60 min, `zjkBMFhNj_g`). It is THE canonical field overview and the first ~20 minutes already cover the essentials. The `why` field on that item explicitly tells the student to pause / chapter-watch. **Don't expand this exception** — if you find yourself wanting to add another 60-min video, do not. Find a shorter one or thicken the lesson.
 4. **No crash courses.** No "freeCodeCamp 4-hour tutorial". Short, sharp, focused — the antithesis of bootcamp video walls.
 5. **No YouTube search-URL videos.** A `youtube.com/results?search_query=...` URL is not a video — it's a search page. The VideoEmbed component falls back to "Open" link card for these, which functions but is a poor student experience. Use a real video or skip the video entirely.
 6. **Confident video URL library** (the `KNOWN_GOOD` set in `scripts/audit-videos.js` — use these freely):

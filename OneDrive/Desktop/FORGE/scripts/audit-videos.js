@@ -31,6 +31,7 @@ const KNOWN_GOOD = new Set([
   'dcqPhpY7tWk', // Fireship — Pandas in 100 Seconds
   'fNk_zzaMoSs', // 3Blue1Brown — Essence of Linear Algebra Ep 1: Vectors
   'xECXZ3tyONo', // Python Programmer — Learn NumPy in 5 minutes
+  'zjkBMFhNj_g', // Andrej Karpathy — Intro to Large Language Models (60 min — sanctioned deep-dive exception, see HANDOFF §8.5)
 ]);
 
 function extractYouTubeId(url) {

@@ -414,7 +414,42 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* Check-in CTA */}
+      {/* Current Focus — appears ABOVE Check-in Required so a learner sees
+          WHAT they're working on before the alarm to do it. Card is
+          compact: title + estimated hours + Resume button straight to the
+          week's Content tab. Full lesson lives on the week page. */}
+      {activeRoadmap && currentTask && (() => {
+        const slug = resolveSlug(activeRoadmap.title);
+        const wNum = parseWeekNumber(currentTask.title);
+        const resumeHref = slug && wNum ? `/learn/${slug}/${wNum}` : "/dashboard/roadmap";
+        return (
+          <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+            <div className="flex items-center gap-2 mb-4">
+              <Zap size={16} color="var(--accent)" strokeWidth={2} />
+              <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>Current Focus</h2>
+            </div>
+            <div style={{ borderLeft: `3px solid ${currentTask.trackColor}`, paddingLeft: "1rem", marginBottom: "1rem" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: currentTask.trackColor, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.375rem" }}>
+                {currentTask.trackTitle} → {currentTask.phaseTitle}
+              </div>
+              <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1.0625rem", marginBottom: currentTask.estimatedHours ? "0.5rem" : 0 }}>
+                {currentTask.title}
+              </div>
+              {currentTask.estimatedHours && (
+                <div className="flex items-center gap-1" style={{ color: "var(--text-dim)", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
+                  <Clock size={12} /> ~{currentTask.estimatedHours}h estimated
+                </div>
+              )}
+            </div>
+            <Link href={resumeHref} className="forge-btn forge-btn-primary" style={{ marginTop: "0.25rem", padding: "0.75rem 2rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+              Resume this week <ArrowRight size={14} />
+            </Link>
+          </div>
+        );
+      })()}
+
+      {/* Check-in CTA — secondary; the focus card above already tells the
+          learner WHAT they're doing today. */}
       {!checkedInToday && activeRoadmap && (
         <div
           className="forge-panel"
@@ -518,41 +553,8 @@ export default async function DashboardPage() {
             );
           })()}
 
-          {/* Current Focus — compact card. NO long body dump. The full lesson
-              lives on the week page; this card is the gateway, not the lesson. */}
-          {currentTask && (() => {
-            // Map the curated roadmap title back to its slug so the Resume
-            // button takes the learner DIRECTLY to /learn/<slug>/<weekNum>
-            // (which opens on the Content tab) instead of the dashboard's
-            // legacy generic /dashboard/checkin route.
-            const slug = activeRoadmap ? resolveSlug(activeRoadmap.title) : null;
-            const wNum = parseWeekNumber(currentTask.title);
-            const resumeHref = slug && wNum ? `/learn/${slug}/${wNum}` : "/dashboard/roadmap";
-            return (
-              <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
-                <div className="flex items-center gap-2 mb-4">
-                  <Zap size={16} color="var(--accent)" strokeWidth={2} />
-                  <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>Current Focus</h2>
-                </div>
-                <div style={{ borderLeft: `3px solid ${currentTask.trackColor}`, paddingLeft: "1rem", marginBottom: "1rem" }}>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: currentTask.trackColor, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.375rem" }}>
-                    {currentTask.trackTitle} → {currentTask.phaseTitle}
-                  </div>
-                  <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1.0625rem", marginBottom: currentTask.estimatedHours ? "0.5rem" : 0 }}>
-                    {currentTask.title}
-                  </div>
-                  {currentTask.estimatedHours && (
-                    <div className="flex items-center gap-1" style={{ color: "var(--text-dim)", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
-                      <Clock size={12} /> ~{currentTask.estimatedHours}h estimated
-                    </div>
-                  )}
-                </div>
-                <Link href={resumeHref} className="forge-btn forge-btn-primary" style={{ marginTop: "0.25rem", padding: "0.75rem 2rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                  Resume this week <ArrowRight size={14} />
-                </Link>
-              </div>
-            );
-          })()}
+          {/* Current Focus card moved ABOVE the Check-in CTA so learners
+              see what they're doing before they see the alarm to do it. */}
 
           {/* Track-progress + Recent-Sessions cards were removed —
               both duplicated content that already lives elsewhere:
