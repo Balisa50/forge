@@ -15,7 +15,7 @@ Track-by-track. "Bar-quality" = passes every check in `HANDOFF.md §4`. "Stub + 
 | data-science | 43 | **Bar-quality**, W1-W43 | Reference for what "enriched" looks like. |
 | data-analysis | 28 | **Bar-quality**, W1-W28 | Superstore v0.1 → v1.0 arc through W17, then capstone. |
 | ai-engineering | 24 | Partial — W1-W5 bar-quality | Polyglot v0.1 → v0.4 + dual-console v1.0. W6-W24 stub. |
-| devops-cloud | 24 | Partial — W1-W2 bar-quality | Edge Portfolio v0.1 → v0.2. W3-W24 stub. |
+| devops-cloud | 24 | Partial — W1-W7 bar-quality | Edge Portfolio v0.1 → v0.4 (W1-W4) + Docker arc (W5 fundamentals, W6 Compose, W7 hardening). W8-W24 stub. |
 | ml-engineering | 24 | Stub + prereqs | Prereqs at W1 D1: pandas, sklearn, matplotlib, PyTorch, Git. |
 | full-stack-web | 24 | Stub + prereqs | Prereqs at W1 D1: Git, SQL. |
 | mobile-engineering | 24 | Stub + prereqs | Prereqs at W1 D1: Git, SQL. |
@@ -27,7 +27,7 @@ Track-by-track. "Bar-quality" = passes every check in `HANDOFF.md §4`. "Stub + 
 
 **Weeks remaining to enrich to bar:**
 - ai-engineering W6-W24 — 19 weeks
-- devops-cloud W3-W24 — 22 weeks
+- devops-cloud W8-W24 — 17 weeks
 - ml-engineering — 24 weeks
 - full-stack-web — 24 weeks
 - mobile-engineering — 24 weeks

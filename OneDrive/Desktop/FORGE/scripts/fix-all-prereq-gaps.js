@@ -386,6 +386,7 @@ const GAPS = [
   ['mobile-engineering', 'SQL',           7],
   ['cybersecurity',      'Git',           1],
   ['bi-analytics',       'Git',           1],
+  ['devops-cloud',       'SQL',           4],
   ['ai-automation',      'NumPy',         14],
   ['ai-automation',      'Docker',        16],
   ['ai-automation',      'Git',           16],

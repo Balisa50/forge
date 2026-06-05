@@ -6,6 +6,20 @@ Rules live in `HANDOFF.md`. Current state lives in `STATE.md`.
 
 ---
 
+## 2026-06-05 — Cloud/DevOps W3-W7 enriched to bar
+
+5 weeks rebuilt to teach→swipe→project standard via `scripts/cloud-w3-w7.js`. Factory pattern matches `scripts/ai-eng-w1-w5.js`. Edge Portfolio project arc extended (v0.3 CI/CD → v0.4 monitoring) then pivot into Docker (W5 fundamentals → W6 Compose → W7 hardening + Trivy + SBOM).
+
+- W3 — GitHub Actions CI/CD for the static site (IAM least-priv, secrets, htmlhint gate, S3 sync + CloudFront invalidation).
+- W4 — Monitoring + alarms (BetterUptime probe, CloudWatch billing alarm, 5xx alarm, status page, CloudFront access logs + Athena).
+- W5 — Docker from first principles (kernel-features mental model, first Dockerfile, multi-stage, volumes, Docker Hub push). Uses KNOWN_GOOD `Gjnup-PuquQ` Fireship Docker in 100 Seconds.
+- W6 — Compose + inner loop (compose.yml, bind-mount source for hot reload, .env discipline, healthchecks, when-to-graduate-to-K8s).
+- W7 — Image hardening (distroless, non-root, digest-pinned bases, Trivy CI gate, SBOM via syft, optional cosign).
+
+W4 D6 Athena example triggered a new prereq finding (SQL used in devops-cloud W4 with no prior teach). Added `['devops-cloud', 'SQL', 4]` to `scripts/fix-all-prereq-gaps.js` and re-ran — SQL teach lesson + Fireship SQL 100s video + SQLBolt reading prepended to W1 D1. Audit clean: 0 / 0.
+
+STATE.md track table updated: devops-cloud W1-W7 bar-quality; W8-W24 stub. Remaining cross-track work: ~157 weeks (down from 174).
+
 ## 2026-06-05 — CodeBlock flex rows + bulletproof 1200 px cap — `bf46967` / `ab0053e`
 
 Two real bugs that had survived multiple "fix attempts" — both root-caused, fixed, and added to HANDOFF §7 (failure modes).
