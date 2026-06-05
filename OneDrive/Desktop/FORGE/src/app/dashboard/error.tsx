@@ -25,7 +25,7 @@ export default function DashboardError({
       }}
     >
       <div style={{ maxWidth: "420px", textAlign: "center" }}>
-        <div style={{ color: "var(--red)", marginBottom: "1.5rem", display: "flex", justifyContent: "center" }}>
+        <div style={{ color: "var(--red)", marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
           <AlertTriangle size={48} strokeWidth={1.5} />
         </div>
 

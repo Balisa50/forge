@@ -84,7 +84,7 @@ export default function MentorsPage() {
       </div>
 
       {showPair && (
-        <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+        <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem" }}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="label-mono" style={{ display: "block", marginBottom: "0.375rem" }}>Mentor</label>

@@ -348,7 +348,7 @@ export default function WeekPageTabs({
           <div
             className="forge-panel"
             style={{
-              padding: "1.5rem",
+              padding: "1.25rem",
               border: reopenedForRevision
                 ? "1px solid rgba(239,68,68,0.45)"
                 : "1px solid rgba(212,175,55,0.4)",
@@ -1035,7 +1035,7 @@ function SoloCompletePanel({ taskId, alreadyComplete }: { taskId: string; alread
       <div
         className="forge-panel"
         style={{
-          padding: "1.5rem",
+          padding: "1.25rem",
           border: "1px solid rgba(34,197,94,0.4)",
           background: "rgba(34,197,94,0.05)",
         }}
@@ -1057,7 +1057,7 @@ function SoloCompletePanel({ taskId, alreadyComplete }: { taskId: string; alread
     <div
       className="forge-panel"
       style={{
-        padding: "1.5rem",
+        padding: "1.25rem",
         border: "1px solid rgba(212,175,55,0.4)",
         overflow: "hidden",
         maxWidth: "100%",

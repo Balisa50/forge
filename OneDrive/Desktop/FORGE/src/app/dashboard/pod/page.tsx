@@ -131,13 +131,13 @@ export default function PodPage() {
       </div>
 
       {error && (
-        <div style={{ background: "rgba(255,45,45,0.08)", border: "1px solid var(--red)", borderRadius: "8px", padding: "0.875rem 1.25rem", marginBottom: "1.5rem", color: "var(--red)", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div style={{ background: "rgba(255,45,45,0.08)", border: "1px solid var(--red)", borderRadius: "8px", padding: "0.875rem 1.25rem", marginBottom: "1rem", color: "var(--red)", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <AlertTriangle size={15} /> {error}
         </div>
       )}
 
       {success && (
-        <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid var(--green)", borderRadius: "8px", padding: "0.875rem 1.25rem", marginBottom: "1.5rem", color: "var(--green)", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid var(--green)", borderRadius: "8px", padding: "0.875rem 1.25rem", marginBottom: "1rem", color: "var(--green)", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <CheckCircle2 size={15} /> {success}
         </div>
       )}
@@ -151,7 +151,7 @@ export default function PodPage() {
             exit={{ opacity: 0 }}
           >
             <div className="forge-panel" style={{ padding: "3rem", textAlign: "center", maxWidth: "520px", margin: "0 auto" }}>
-              <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "center" }}>
+              <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
                 <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "rgba(245,158,11,0.08)", border: "2px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Users size={36} color="var(--accent)" strokeWidth={1.5} />
                 </div>
@@ -197,7 +197,7 @@ export default function PodPage() {
             exit={{ opacity: 0 }}
           >
             {/* Pod header */}
-            <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+            <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem" }}>
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
                 <div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--accent)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.25rem" }}>

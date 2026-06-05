@@ -103,7 +103,7 @@ export default function MentorReviewsPage() {
         <ArrowLeft size={12} /> back to mentor home
       </Link>
       <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.5rem" }}>Pending reviews</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.5rem" }}>
+      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1rem" }}>
         Mentees who&apos;ve answered your questions are waiting on your grade.
       </p>
 
@@ -153,7 +153,7 @@ export default function MentorReviewsPage() {
       {/* Inline review panel */}
       {active && (
         <div className="forge-panel" style={{
-          padding: "1.5rem",
+          padding: "1.25rem",
           marginTop: "1.5rem",
           // Keep ALL children inside the card on every viewport. Without this,
           // long button labels like "Send Back (Needs Rework)" can poke outside
@@ -316,7 +316,7 @@ export default function MentorReviewsPage() {
           {/* ── 1-5 rating selector ──────────────────────────────────────
               Saved to Task.mentorRating so the student sees it on the
               Mentor Review section + Journal. */}
-          <div style={{ marginBottom: "1.5rem" }}>
+          <div style={{ marginBottom: "1rem" }}>
             <label
               style={{
                 display: "block",

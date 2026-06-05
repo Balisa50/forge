@@ -32,14 +32,14 @@ export default function DashboardLoading() {
           background: "var(--bg-panel)",
           border: "1px solid var(--border)",
           borderRadius: "10px",
-          marginBottom: "1.5rem",
+          marginBottom: "1rem",
           animation: "shimmer 1.5s ease-in-out infinite",
           animationDelay: "0.2s",
         }}
       />
 
       {/* Stats row skeleton */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1rem" }}>
         {[0, 1, 2].map((i) => (
           <div
             key={i}

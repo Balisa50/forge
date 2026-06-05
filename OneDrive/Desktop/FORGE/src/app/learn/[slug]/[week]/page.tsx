@@ -49,11 +49,11 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         (task.closedAt && task.status !== "verified");
       if (blocked) {
         return (
-          <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)", display: "grid", placeItems: "center", padding: "1.5rem" }}>
+          <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)", display: "grid", placeItems: "center", padding: "1.25rem" }}>
             <div className="forge-panel" style={{ padding: "2.5rem 2rem", maxWidth: 460, textAlign: "center" }}>
               <Lock size={36} color="var(--text-dim)" style={{ margin: "0 auto 1rem" }} />
               <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>This week is locked</h1>
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1rem" }}>
                 {(link.mentor.mentorDisplayName ?? link.mentor.name) ?? "Your mentor"} hasn&apos;t released Week {wNum} of {roadmap.title} to you yet. You&apos;ll see it on your dashboard the moment they do.
               </p>
               <Link href="/dashboard" className="forge-btn forge-btn-primary" style={{ display: "inline-block", padding: "0.625rem 1.25rem" }}>

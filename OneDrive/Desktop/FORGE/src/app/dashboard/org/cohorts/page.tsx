@@ -61,7 +61,7 @@ export default function CohortsPage() {
 
       {/* Create form */}
       {showCreate && (
-        <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+        <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem" }}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="label-mono" style={{ display: "block", marginBottom: "0.375rem" }}>Cohort Name</label>
@@ -105,7 +105,7 @@ export default function CohortsPage() {
             const daysLeft = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
             return (
-              <div key={c.id} className="forge-panel" style={{ padding: "1.5rem" }}>
+              <div key={c.id} className="forge-panel" style={{ padding: "1.25rem" }}>
                 <div className="flex items-center justify-between mb-3">
                   <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem" }}>{c.name}</h3>
                   <div style={{

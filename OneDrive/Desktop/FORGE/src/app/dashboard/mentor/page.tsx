@@ -182,7 +182,7 @@ export default async function MentorDashboardPage() {
             key={m.user.id}
             href={`/dashboard/mentor/${m.user.id}`}
             className="forge-panel forge-panel-link"
-            style={{ padding: "1.5rem", display: "block", textDecoration: "none", color: "inherit" }}
+            style={{ padding: "1.25rem", display: "block", textDecoration: "none", color: "inherit" }}
           >
             {/* Mentee header */}
             <div className="flex items-center justify-between mb-4" style={{ flexWrap: "wrap", gap: "1rem" }}>

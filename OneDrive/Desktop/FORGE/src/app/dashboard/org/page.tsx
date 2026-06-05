@@ -77,7 +77,7 @@ export default async function OrgOverviewPage() {
     <div>
       {/* At-risk alert */}
       {atRiskStudents > 0 && isAdmin && (
-        <div className="forge-panel" style={{ padding: "1rem 1.5rem", marginBottom: "1.5rem", borderColor: "var(--red)", background: "rgba(255,45,45,0.05)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div className="forge-panel" style={{ padding: "1rem 1.5rem", marginBottom: "1rem", borderColor: "var(--red)", background: "rgba(255,45,45,0.05)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <AlertTriangle size={18} color="var(--red)" />
           <span style={{ fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--red)", fontSize: "0.9375rem" }}>
             {atRiskStudents} student{atRiskStudents !== 1 ? "s" : ""} at risk
@@ -111,7 +111,7 @@ export default async function OrgOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Invite Code */}
         {isAdmin && (
-          <div className="forge-panel" style={{ padding: "1.5rem" }}>
+          <div className="forge-panel" style={{ padding: "1.25rem" }}>
             <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em", marginBottom: "1rem" }}>Invite Code</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", marginBottom: "1rem" }}>
               Share this code with students or staff to join your organization.
@@ -124,7 +124,7 @@ export default async function OrgOverviewPage() {
         )}
 
         {/* Active Cohorts */}
-        <div className="forge-panel" style={{ padding: "1.5rem" }}>
+        <div className="forge-panel" style={{ padding: "1.25rem" }}>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em", marginBottom: "1rem" }}>Active Cohorts</h2>
           {activeCohorts.length === 0 ? (
             <p style={{ color: "var(--text-dim)", fontSize: "0.875rem" }}>No active cohorts. Create one to start managing students.</p>
@@ -149,7 +149,7 @@ export default async function OrgOverviewPage() {
         </div>
 
         {/* Recent Activity Feed */}
-        <div className="forge-panel lg:col-span-2" style={{ padding: "1.5rem" }}>
+        <div className="forge-panel lg:col-span-2" style={{ padding: "1.25rem" }}>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em", marginBottom: "1rem" }}>Recent Student Activity</h2>
           {recentCheckins.length === 0 ? (
             <p style={{ color: "var(--text-dim)", fontSize: "0.875rem" }}>No student activity yet.</p>

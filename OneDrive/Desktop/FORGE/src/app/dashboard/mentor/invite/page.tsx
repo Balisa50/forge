@@ -21,7 +21,7 @@ export default function MentorInvitePage() {
         <ArrowLeft size={14} /> Back to Overview
       </Link>
 
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div style={{ marginBottom: "1rem" }}>
         <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2rem", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
           Invite a mentee
         </h1>

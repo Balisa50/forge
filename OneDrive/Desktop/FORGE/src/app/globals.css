@@ -89,6 +89,47 @@
     border-radius: 10px;
   }
 
+  /* ─── Card padding + margin standard ────────────────────────
+     Two opt-in modifiers so cards stop relying on inline styles
+     for spacing. Mobile keeps tight 1rem padding; PC bumps up
+     slightly but never explodes. No min-height anywhere — cards
+     are always sized by their content. Inline `style={{ padding: ... }}`
+     still wins over these defaults; the modifiers are for cards
+     that DON'T set their own padding inline. */
+  .forge-card-tight {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .forge-card-hero {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 1025px) {
+    .forge-card-tight { padding: 1.25rem; margin-bottom: 1rem; }
+    .forge-card-hero  { padding: 1.5rem;  margin-bottom: 1rem; }
+  }
+
+  /* Generic 1200px-max centered container that any page can opt
+     into. Mirrors what .dashboard-content does inside the
+     dashboard layout, but usable by non-dashboard routes (the
+     /learn/<slug>/<week> page uses this so its cards never escape
+     the same width as the rest of the platform). */
+  .forge-content-section {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+  @media (min-width: 1025px) {
+    .forge-content-section {
+      max-width: 1200px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
   /* A clickable panel — used when the whole card is wrapped in a <Link>.
      Gives the user a visible hover affordance + a pointer cursor so the
      row never reads as decorative. The forge-panel base supplies the

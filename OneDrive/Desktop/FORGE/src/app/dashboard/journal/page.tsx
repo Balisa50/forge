@@ -89,7 +89,7 @@ export default async function JournalPage() {
             const toneColor = display.tone === "green" ? "var(--green)" : display.tone === "red" ? "var(--red)" : "var(--yellow)";
             const toneBg = display.tone === "green" ? "rgba(0,255,136,0.1)" : display.tone === "red" ? "rgba(255,45,45,0.1)" : "rgba(255,214,10,0.1)";
             return (
-              <div key={c.id} className="forge-panel" style={{ padding: "1.5rem" }}>
+              <div key={c.id} className="forge-panel" style={{ padding: "1.25rem" }}>
                 <div className="flex items-start justify-between gap-4 mb-3" style={{ flexWrap: "wrap" }}>
                   <div>
                     <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.125rem", letterSpacing: "0.05em" }}>{c.task.title}</div>

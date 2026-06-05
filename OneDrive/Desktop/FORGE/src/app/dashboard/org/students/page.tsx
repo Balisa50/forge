@@ -96,7 +96,7 @@ export default function StudentsPage() {
 
       {/* Invite form */}
       {showInvite && (
-        <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1.5rem" }}>
+        <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem" }}>
           <div className="flex items-end gap-3">
             <div style={{ flex: 1 }}>
               <label style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "0.375rem" }}>Student Email</label>

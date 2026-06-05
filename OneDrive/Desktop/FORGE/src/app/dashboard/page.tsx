@@ -261,7 +261,7 @@ export default async function DashboardPage() {
           const hoursLeft = msLeft !== null ? Math.floor((msLeft / 3_600_000) % 24) : null;
           const urgent = daysLeft !== null && daysLeft <= 1;
           return (
-            <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: urgent ? "var(--red)" : "var(--accent)", background: urgent ? "rgba(239,68,68,0.05)" : "rgba(245,158,11,0.05)" }}>
+            <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem", borderColor: urgent ? "var(--red)" : "var(--accent)", background: urgent ? "rgba(239,68,68,0.05)" : "rgba(245,158,11,0.05)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
                 <Zap size={18} color={urgent ? "var(--red)" : "var(--accent)"} />
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.15em", color: urgent ? "var(--red)" : "var(--accent)" }}>
@@ -321,7 +321,7 @@ export default async function DashboardPage() {
 
         {/* Closed-week card */}
         {!releasedWeek && lastClosed && (
-          <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: "var(--red)", background: "rgba(239,68,68,0.05)" }}>
+          <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem", borderColor: "var(--red)", background: "rgba(239,68,68,0.05)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
               <Lock size={18} color="var(--red)" />
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--red)" }}>
@@ -345,7 +345,7 @@ export default async function DashboardPage() {
           const nextTask = allTasks.find((t) => t.status !== "verified");
           const nextWeekLabel = nextTask?.title.match(/^Week\s+\d+/i)?.[0] ?? null;
           return (
-            <div className="forge-panel" style={{ padding: "3rem 1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
+            <div className="forge-panel" style={{ padding: "2rem 1.25rem", textAlign: "center", marginBottom: "1rem" }}>
               <Hourglass size={40} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
               <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>
                 {caughtUp ? "You're all caught up" : "Waiting for your first week"}
@@ -392,7 +392,7 @@ export default async function DashboardPage() {
       {isReturning && !checkedInToday && (
         <div
           className="forge-panel"
-          style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: "var(--accent)", background: "rgba(245,158,11,0.04)" }}
+          style={{ padding: "1.25rem", marginBottom: "1rem", borderColor: "var(--accent)", background: "rgba(245,158,11,0.04)" }}
         >
           <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
             <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -423,7 +423,7 @@ export default async function DashboardPage() {
         const wNum = parseWeekNumber(currentTask.title);
         const resumeHref = slug && wNum ? `/learn/${slug}/${wNum}` : "/dashboard/roadmap";
         return (
-          <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+          <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem" }}>
             <div className="flex items-center gap-2 mb-4">
               <Zap size={16} color="var(--accent)" strokeWidth={2} />
               <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em" }}>Current Focus</h2>
@@ -453,7 +453,7 @@ export default async function DashboardPage() {
       {!checkedInToday && activeRoadmap && (
         <div
           className="forge-panel"
-          style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: "var(--red)", background: "rgba(255,45,45,0.05)" }}
+          style={{ padding: "1.25rem", marginBottom: "1rem", borderColor: "var(--red)", background: "rgba(255,45,45,0.05)" }}
         >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
             <div>
@@ -468,7 +468,7 @@ export default async function DashboardPage() {
       )}
 
       {checkedInToday && (
-        <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem", borderColor: "var(--green)", background: "rgba(34,197,94,0.05)", display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem", borderColor: "var(--green)", background: "rgba(34,197,94,0.05)", display: "flex", alignItems: "center", gap: "1rem" }}>
           <CheckCircle2 size={28} color="var(--green)" strokeWidth={1.5} />
           <div>
             <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", fontWeight: 700, color: "var(--green)" }}>Today&apos;s Session Complete</div>
@@ -479,7 +479,7 @@ export default async function DashboardPage() {
 
       {/* Student: Org context */}
       {isStudent && orgMembership && (
-        <div className="forge-panel" style={{ padding: "1rem 1.5rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div className="forge-panel" style={{ padding: "0.875rem 1.25rem", marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
           <div className="flex items-center gap-3">
             <div style={{
               width: "36px", height: "36px", borderRadius: "8px",
@@ -502,7 +502,7 @@ export default async function DashboardPage() {
 
 
       {!activeRoadmap && (
-        <div className="forge-panel" style={{ padding: "3rem", marginBottom: "1.5rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2.5rem 1.5rem", marginBottom: "1rem", textAlign: "center" }}>
           <div style={{ color: "var(--accent)", marginBottom: "1rem", display: "flex", justifyContent: "center" }}><MapIcon size={48} strokeWidth={1.5} /></div>
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.5rem" }}>No Active Roadmap</h2>
           <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "2rem", maxWidth: "400px", margin: "0 auto 2rem" }}>
@@ -520,7 +520,7 @@ export default async function DashboardPage() {
             const remainingTasks = totalTasks - verifiedTasks;
             const pace = getRecommendedPace(remainingTasks, daysLeft);
             return (
-              <div className="forge-panel" style={{ padding: "1.25rem 1.5rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" }}>
+              <div className="forge-panel" style={{ padding: "1rem 1.25rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" }}>
                 {/* Progress */}
                 <div style={{ flex: 1, minWidth: "140px" }}>
                   <div className="flex items-center justify-between" style={{ marginBottom: "0.25rem" }}>

@@ -153,7 +153,7 @@ export default function ApplicationsPage() {
       <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.5rem" }}>
         Applications
       </h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.5rem", lineHeight: 1.55, maxWidth: 640 }}>
+      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1rem", lineHeight: 1.55, maxWidth: 640 }}>
         People who applied to train with you. Tap a card to read their full application.
       </p>
 

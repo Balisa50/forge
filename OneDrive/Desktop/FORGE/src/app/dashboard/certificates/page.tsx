@@ -77,7 +77,7 @@ export default async function CertificatesPage() {
         <div style={{ marginTop: "1rem" }}>
           {/* Blurred preview — the cert they're working toward, with their own
               name + roadmap baked in. Stays heavily blurred until 100% verified. */}
-          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", marginBottom: "1.5rem", border: "1px solid var(--border)" }}>
+          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", marginBottom: "1rem", border: "1px solid var(--border)" }}>
             {/* The "future cert" art */}
             <div
               style={{
@@ -101,7 +101,7 @@ export default async function CertificatesPage() {
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.35em", color: "#d4af37", marginBottom: "0.75rem" }}>
                   ★ ★ ★  THE FORGE  ★ ★ ★
                 </div>
-                <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: "0.875rem", color: "#c9b178", marginBottom: "1.5rem" }}>
+                <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: "0.875rem", color: "#c9b178", marginBottom: "1rem" }}>
                   Certificate of Completion
                 </div>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", color: "rgba(212,175,55,0.7)", textTransform: "uppercase", marginBottom: "0.5rem" }}>
@@ -113,7 +113,7 @@ export default async function CertificatesPage() {
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", color: "rgba(212,175,55,0.7)", textTransform: "uppercase", marginBottom: "0.5rem" }}>
                   has successfully completed
                 </div>
-                <div style={{ fontFamily: "Georgia, serif", fontSize: "1.25rem", color: "#d4af37", marginBottom: "1.5rem" }}>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: "1.25rem", color: "#d4af37", marginBottom: "1rem" }}>
                   {inProgressTitle ?? "Your Roadmap"}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-around", marginTop: "2rem", paddingTop: "1.25rem", borderTop: "1px solid rgba(212,175,55,0.2)" }}>
@@ -149,7 +149,7 @@ export default async function CertificatesPage() {
                 </p>
                 {/* Progress bar */}
                 {inProgressTitle && (
-                  <div style={{ width: "min(280px, 70%)", height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden", marginBottom: "1.5rem" }}>
+                  <div style={{ width: "min(280px, 70%)", height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden", marginBottom: "1rem" }}>
                     <div style={{ width: `${progressPct}%`, height: "100%", background: "linear-gradient(90deg, #d4af37, #f0c75c)", borderRadius: 3, transition: "width 0.5s" }} />
                   </div>
                 )}
@@ -160,7 +160,7 @@ export default async function CertificatesPage() {
             )}
           </div>
 
-          <div className="forge-panel" style={{ padding: "1.5rem", textAlign: "center" }}>
+          <div className="forge-panel" style={{ padding: "1.25rem", textAlign: "center" }}>
             <div style={{ color: "var(--accent)", marginBottom: "0.75rem", display: "flex", justifyContent: "center" }}><Award size={32} strokeWidth={1.5} /></div>
             <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.5rem" }}>What you&apos;re working toward</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", maxWidth: "440px", margin: "0 auto", lineHeight: 1.55 }}>
@@ -177,7 +177,7 @@ export default async function CertificatesPage() {
             });
 
             return (
-              <div key={cert.id} className="forge-panel" style={{ padding: "1.5rem" }}>
+              <div key={cert.id} className="forge-panel" style={{ padding: "1.25rem" }}>
                 <div className="flex items-start justify-between gap-4" style={{ flexWrap: "wrap", marginBottom: "1.25rem" }}>
                   <div>
                     <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--green)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.375rem" }}>

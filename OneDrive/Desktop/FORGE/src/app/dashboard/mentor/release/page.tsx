@@ -102,7 +102,7 @@ export default async function BulkReleasePage() {
       <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.75rem", marginBottom: "0.5rem" }}>
         Release a week to multiple mentees
       </h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1.5rem", lineHeight: 1.55, maxWidth: 720 }}>
+      <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1rem", lineHeight: 1.55, maxWidth: 720 }}>
         Select the mentees you want to release a week to. By default each mentee gets their NEXT unreleased
         week. One shared deadline, one shared note - no need to open each mentee separately. You can still
         open a single mentee&apos;s page if you want to send a personal note or release a specific week to just them.

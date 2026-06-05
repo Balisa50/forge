@@ -74,10 +74,27 @@ Track-by-track. "Bar-quality" = passes every check in `HANDOFF.md §4`. "Stub + 
 | `src/app/api/me/mark-week-complete/route.ts` | Solo-learner self-verify. Refuses if any active MentorLink. |
 
 ### CSS surface (`src/app/globals.css`)
-- `.forge-panel-link` — hover affordance for whole-card Links.
+
+**Page-level containers (1200 px max, centered):**
+- `.dashboard-content` — applied by `src/app/dashboard/layout.tsx` so every `/dashboard/*` page gets the cap automatically.
+- `.forge-content-section` — generic equivalent for non-dashboard routes (e.g. the `/learn/<slug>/<week>` page uses an equivalent Tailwind class chain `mx-auto max-w-[1200px] px-6`).
+
+**Card padding + margin standard:**
+- Internal padding: **1.25 rem on desktop, 1 rem on mobile**. Never 2 rem+.
+- Vertical gap between cards: **1 rem** uniformly.
+- Two opt-in modifiers for cards that don't set padding inline:
+  - `.forge-card-tight` — 1 rem mobile / 1.25 rem desktop.
+  - `.forge-card-hero` — 1.25 rem mobile / 1.5 rem desktop. Use for the Current Focus / Released-by-mentor card style.
+- **No `min-height` on cards.** Height = content. Cards are not stretched to fill a row.
+
+**Other utility classes:**
+- `.forge-panel-link` — hover affordance for whole-card `<Link>`s (mentor mentee cards, org students table rows).
 - `.forge-code-block` / `.forge-code-line` / `.forge-code-gutter` — mobile wrap + tightened gutter for code blocks rendered inside `ForgeMarkdown`.
-- `.dashboard-content` — max-width 1200px centered on desktop.
-- Mobile responsive block at `@media (max-width: 768px)`.
+
+**Media query separation (no cross-contamination):**
+- Phone overrides: `@media (max-width: 768px)`.
+- Desktop polish (sidebar + 1200 px cap + tighter button widths + the `.forge-card-*` desktop bumps): `@media (min-width: 1025px)`.
+- Tablet range (769–1024 px): inherits desktop layout but without the 280 px sidebar offset. Avoid adding phone-only overrides here.
 
 ---
 

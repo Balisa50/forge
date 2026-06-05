@@ -30,7 +30,7 @@ export default async function CalendarPage() {
       <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Calendar</h1>
       <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Your accountability history at a glance.</p>
 
-      <div className="forge-panel" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
+      <div className="forge-panel" style={{ padding: "1.25rem", marginBottom: "1rem" }}>
         <div className="flex gap-4 flex-wrap">
           {[
             { color: "var(--green)", label: "Passed" },
