@@ -192,6 +192,8 @@ Compiled from real mistakes. Don't repeat any of these.
 - Inserting new Checkin rows. **Always upsert by `(userId, taskId)`.** Submission endpoints upsert; reopen resets in place. Breaking this invariant re-introduces the duplication bug.
 - Inline styles for things CSS classes already handle.
 - Pushing without `npx tsc --noEmit` clean.
+- **`<table width="100%">` for any "gutter + content" layout.** Browser auto-layout sizes columns by content length, so identical components render at different x-positions depending on the data inside. Use `display: flex` with a fixed-width first child instead. (Hit us on `CodeBlock` — single-line blocks centred while multi-line blocks left-aligned; fixed in `bf46967`.)
+- **Critical layout via Tailwind arbitrary values (`max-w-[1200px]`) without a CSS-class backup.** JIT class generation can fail silently on a given Vercel build. For layout caps that MUST hold (the 1200 px container), use inline `style` or a defined CSS class. (Hit us twice — fixed in `ab0053e`.)
 
 ### Process
 - Asking the user something the `week.context` field already answers.

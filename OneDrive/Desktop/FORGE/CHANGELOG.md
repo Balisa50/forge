@@ -6,6 +6,16 @@ Rules live in `HANDOFF.md`. Current state lives in `STATE.md`.
 
 ---
 
+## 2026-06-05 — CodeBlock flex rows + bulletproof 1200 px cap — `bf46967` / `ab0053e`
+
+Two real bugs that had survived multiple "fix attempts" — both root-caused, fixed, and added to HANDOFF §7 (failure modes).
+
+**Bug 1 — bizarre per-block code indentation.** `CodeBlock` used `<table width="100%">` with no `table-layout: fixed`. Browser auto-layout sized the line-number column and code column based on content. Multi-line blocks: code column wide, content left-aligned (correct). Single-line blocks (`1360`, `print(df["sales"].sum())`): browser collapsed the row toward centre, so identical components rendered at different x-positions depending on data inside. Replaced the table with `display: flex` per line: gutter at `width: 2.5rem flexShrink: 0`, code column at `flex: 1 minWidth: 0`. Every line of every block now agrees on x-position.
+
+**Bug 2 — 1200 px container cap wasn't reaching live.** `/learn/<slug>/<week>` used Tailwind arbitrary value `max-w-[1200px]`; dashboard used the `.dashboard-content` CSS class. Both can fail silently on a given Vercel build (JIT class miss; stale CSS bundle). Replaced with inline `style={{ maxWidth: 1200, marginLeft: "auto", marginRight: "auto", ... }}` on the React tree itself — guaranteed every build.
+
+HANDOFF §7 (codebase failure modes) gained two rules: don't use `<table width=100%>` for gutter+content layouts; don't rely on Tailwind arbitrary values for critical layout caps without a CSS-class or inline backup.
+
 ## 2026-06-05 — three-doc split (HANDOFF / STATE / CHANGELOG)
 
 The single `HANDOFF.md` had grown past 600 lines, defeating the token-saving point. Split into three files:
