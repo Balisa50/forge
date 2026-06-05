@@ -118,7 +118,7 @@ export default function MentorsPage() {
       )}
 
       {links.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
           <UserCheck size={36} color="var(--text-dim)" style={{ margin: "0 auto 1rem" }} />
           <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem" }}>No mentor pairs yet. Pair a mentor with a student to enable guided oversight.</p>
         </div>

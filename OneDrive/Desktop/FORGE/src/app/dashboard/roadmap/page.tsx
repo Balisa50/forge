@@ -59,7 +59,7 @@ export default async function RoadmapPage() {
     return (
       <div>
         <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Roadmap</h1>
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center", marginTop: "2rem" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center", marginTop: "2rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
           <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.75rem", marginBottom: "1rem" }}>No Active Roadmap</h2>
           <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Create a roadmap to structure your learning journey.</p>

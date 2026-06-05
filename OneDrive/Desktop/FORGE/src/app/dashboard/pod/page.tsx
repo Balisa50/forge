@@ -150,7 +150,7 @@ export default function PodPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
           >
-            <div className="forge-panel" style={{ padding: "3rem", textAlign: "center", maxWidth: "520px", margin: "0 auto" }}>
+            <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center", maxWidth: "520px", margin: "0 auto" }}>
               <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
                 <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "rgba(245,158,11,0.08)", border: "2px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Users size={36} color="var(--accent)" strokeWidth={1.5} />

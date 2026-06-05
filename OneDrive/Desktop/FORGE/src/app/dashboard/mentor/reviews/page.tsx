@@ -110,7 +110,7 @@ export default function MentorReviewsPage() {
       {loading ? (
         <div style={{ color: "var(--text-dim)" }}><Loader2 size={14} className="inline animate-spin" /></div>
       ) : rows.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "2.5rem", textAlign: "center", color: "var(--text-dim)" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.25rem", textAlign: "center", color: "var(--text-dim)" }}>
           <CheckCircle2 size={28} style={{ margin: "0 auto 0.75rem", color: "var(--green)" }} />
           No reviews waiting. You&apos;re all caught up.
         </div>

@@ -455,26 +455,34 @@ function CellBlock({ kind, label, bodyLines }: { kind: "code" | "markdown"; labe
         </span>
       </div>
 
-      {/* Body */}
-      <div style={{ padding: "0.75rem 0.875rem" }}>
-        {label && (
-          <p style={{
-            fontSize: "0.9375rem",
-            fontWeight: 600,
-            color: "var(--text-primary)",
-            lineHeight: 1.4,
-            marginBottom: bodyContent ? "0.5rem" : 0,
-          }}>
-            <InlineText text={label} />
-          </p>
-        )}
-        {!label && !bodyContent && (
-          <p style={{ fontSize: "0.875rem", color: "var(--text-dim)", fontStyle: "italic" }}>
-            {instruction}
-          </p>
-        )}
-        {bodyContent && (
-          isCode ? (
+      {/* Body — split: label/instruction sit in a padded inner div, but
+          the CodeBlock itself renders FLUSH with the cell border so its
+          left edge matches every other code block on the page. Without
+          this, code in a CODE CELL appeared 0.875 rem to the right of
+          top-level code — the indent inconsistency Abdoulie reported. */}
+      {(label || (!label && !bodyContent)) && (
+        <div style={{ padding: "0.75rem 0.875rem 0" }}>
+          {label && (
+            <p style={{
+              fontSize: "0.9375rem",
+              fontWeight: 600,
+              color: "var(--text-primary)",
+              lineHeight: 1.4,
+              marginBottom: bodyContent ? "0.5rem" : 0,
+            }}>
+              <InlineText text={label} />
+            </p>
+          )}
+          {!label && !bodyContent && (
+            <p style={{ fontSize: "0.875rem", color: "var(--text-dim)", fontStyle: "italic" }}>
+              {instruction}
+            </p>
+          )}
+        </div>
+      )}
+      {bodyContent && (
+        <div style={{ padding: isCode ? "0.5rem 0 0" : "0.5rem 0.875rem 0" }}>
+          {isCode ? (
             <CodeBlock content={bodyContent} label="python" />
           ) : (
             // Markdown cell: show a rendered PREVIEW of what the student should
@@ -485,9 +493,9 @@ function CellBlock({ kind, label, bodyLines }: { kind: "code" | "markdown"; labe
               </span>
               <BlockList blocks={parse(bodyContent)} nested />
             </div>
-          )
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

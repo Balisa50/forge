@@ -90,7 +90,7 @@ export default function CohortsPage() {
 
       {/* Cohort list */}
       {cohorts.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
           <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem" }}>No cohorts yet. Create your first cohort to organize students into groups with deadlines.</p>
         </div>
       ) : (

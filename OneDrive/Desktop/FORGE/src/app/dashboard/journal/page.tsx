@@ -54,7 +54,7 @@ export default async function JournalPage() {
       <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Every session, permanently recorded.</p>
 
       {checkins.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
           <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>📖</div>
           <p style={{ color: "var(--text-secondary)" }}>No sessions yet. Complete your first check-in to start your journal.</p>
         </div>

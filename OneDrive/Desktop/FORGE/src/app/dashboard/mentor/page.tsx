@@ -49,7 +49,7 @@ export default async function MentorDashboardPage() {
           </Link>
         </div>
 
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
           <Users size={48} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 1rem" }} />
           <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>No mentees yet</h2>
           <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem", maxWidth: "440px", margin: "0 auto", lineHeight: 1.6 }}>

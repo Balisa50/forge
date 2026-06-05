@@ -225,7 +225,7 @@ export default function MentorNotesPage() {
       </div>
 
       {grouped.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
           <MessageSquare size={32} color="var(--text-dim)" strokeWidth={1.5} style={{ margin: "0 auto 0.75rem" }} />
           <p style={{ color: "var(--text-dim)" }}>Nothing here yet. After you check in, your mentor&apos;s notes and resource recommendations show up here.</p>
         </div>

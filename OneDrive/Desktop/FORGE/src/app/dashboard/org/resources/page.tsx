@@ -96,7 +96,7 @@ export default function ResourcesPage() {
       )}
 
       {resources.length === 0 ? (
-        <div className="forge-panel" style={{ padding: "3rem", textAlign: "center" }}>
+        <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
           <p style={{ color: "var(--text-dim)", fontSize: "0.9375rem" }}>No resources yet. Add documentation, video links, or reading materials for your students.</p>
         </div>
       ) : (
