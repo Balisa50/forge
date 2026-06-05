@@ -273,62 +273,60 @@ function CodeBlock({ content, label }: { content: string; label?: string }) {
         </button>
       </div>
 
-      {/* Lines */}
+      {/* Lines — flex rows, NOT a table.
+          Why: with width:100% and browser table auto-layout, single-line
+          short code blocks (one row, short content) get centered in the
+          available space instead of left-aligned. Multi-line blocks (more
+          rows, varied content widths) get left-aligned correctly. Result
+          was bizarre per-block indentation depending on content length.
+          A flex layout with a fixed-width gutter guarantees every line of
+          every block starts code at the same horizontal position. */}
       <div
         className="forge-code-scroll"
         style={{
           overflowX: "auto",
           padding: "0.875rem 0",
           WebkitOverflowScrolling: "touch",
-        }}
-      >
-        <table style={{
-          borderCollapse: "collapse",
-          width: "100%",
           fontFamily: "var(--font-mono)",
           fontSize: "0.8125rem",
           lineHeight: 1.65,
-        }}>
-          <tbody>
-            {lines.map((line, idx) => (
-              <tr key={idx} style={{ verticalAlign: "top" }}>
-                <td
-                  className="forge-code-gutter"
-                  style={{
-                    userSelect: "none",
-                    // Tightened from 1rem/1rem so the code column aligns
-                    // closer to paragraph text on desktop. Mobile shrinks
-                    // further via globals.css.
-                    padding: "0 0.5rem 0 0.625rem",
-                    color: "rgba(255,255,255,0.18)",
-                    textAlign: "right",
-                    fontSize: "0.6875rem",
-                    minWidth: "1.75rem",
-                    lineHeight: 1.65,
-                    borderRight: "1px solid rgba(255,255,255,0.06)",
-                    verticalAlign: "top",
-                  }}
-                >
-                  {idx + 1}
-                </td>
-                <td
-                  className="forge-code-line"
-                  style={{
-                    // Tightened from 1.25rem; matches paragraph left padding
-                    // for a clean alignment with body text on desktop.
-                    padding: "0 0.875rem",
-                    whiteSpace: "pre",
-                    lineHeight: 1.65,
-                  }}
-                >
-                  {colorize(line).map((chunk, ci) => (
-                    <span key={ci} style={{ color: chunk.color ?? "#e2e8f0" }}>{chunk.text}</span>
-                  ))}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        }}
+      >
+        {lines.map((line, idx) => (
+          <div key={idx} style={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
+            <div
+              className="forge-code-gutter"
+              style={{
+                flexShrink: 0,
+                width: "2.5rem",                       // FIXED width — every block agrees
+                padding: "0 0.5rem 0 0.625rem",
+                boxSizing: "border-box",
+                color: "rgba(255,255,255,0.18)",
+                textAlign: "right",
+                fontSize: "0.6875rem",
+                lineHeight: 1.65,
+                borderRight: "1px solid rgba(255,255,255,0.06)",
+                userSelect: "none",
+              }}
+            >
+              {idx + 1}
+            </div>
+            <div
+              className="forge-code-line"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                padding: "0 0.875rem",
+                whiteSpace: "pre",
+                lineHeight: 1.65,
+              }}
+            >
+              {colorize(line).map((chunk, ci) => (
+                <span key={ci} style={{ color: chunk.color ?? "#e2e8f0" }}>{chunk.text}</span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
