@@ -52,6 +52,25 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
+            },
+            {
+              "kind": "video",
+              "title": "Git Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=hwP7WQkmECE",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. 100 seconds. Visual primer for what Git is doing under the hood. The five commands above suddenly click."
+            },
+            {
+              "kind": "reading",
+              "title": "Git Handbook (GitHub)",
+              "url": "https://docs.github.com/en/get-started/using-git/about-git",
+              "why": "Read third. GitHub's short Git primer. Skim the basics; bookmark for whenever you forget a command."
+            },
+            {
+              "kind": "lesson",
               "title": "AI engineering vs software engineering",
               "body": "## The shift\nIn traditional software you write IF statements. The behaviour of your code is determined by the lines you typed. Every output is the deterministic result of an input you can trace.\n\nIn **AI engineering** the core behaviour is delegated to a language model. You write a prompt — instructions in English — and the model decides what to output. Your job is no longer to write the logic, but to:\n- design the prompt so the model behaves correctly\n- handle the gracelessly-failing edge cases (model returns gibberish, refuses, is too slow, costs too much)\n- evaluate whether the output is actually any good\n- iterate the prompt + measure the result\n\n## The week's project — Polyglot v0.1\nA command-line translator: type English, get Spanish. ~50 lines of Python. It is deliberately tiny so you focus on the primitives — API call, cost tracking, error handling, README.\n\nBy Sunday: you can run `python translator.py 'Hello, world'` and see `¡Hola, mundo!` — and the code is on your public GitHub, with a working README, and you know what it cost to run.\n\n## The roadmap arc\nPolyglot grows for four weeks: v0.1 terminal → v0.2 Streamlit web app → v0.3 evaluated → v0.4 hardened against prompt injection. One project, four shipped versions. That arc IS the portfolio."
             },

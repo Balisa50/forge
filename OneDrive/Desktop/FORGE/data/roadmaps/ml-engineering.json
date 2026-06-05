@@ -44,6 +44,85 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
+            },
+            {
+              "kind": "video",
+              "title": "Git Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=hwP7WQkmECE",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. 100 seconds. Visual primer for what Git is doing under the hood. The five commands above suddenly click."
+            },
+            {
+              "kind": "reading",
+              "title": "Git Handbook (GitHub)",
+              "url": "https://docs.github.com/en/get-started/using-git/about-git",
+              "why": "Read third. GitHub's short Git primer. Skim the basics; bookmark for whenever you forget a command."
+            },
+            {
+              "kind": "lesson",
+              "title": "PyTorch — tensors, autograd, the 90-second mental model",
+              "body": "## What PyTorch is\nPyTorch is the deep-learning library most modern AI work uses. Whether you ever build a neural net from scratch or just fine-tune an off-the-shelf one, you read PyTorch code.\n\n```bash\npip install torch\n```\n```python\nimport torch\n```\n\n## Two ideas that are the whole library\n### 1. Tensor — a multi-dimensional array (like NumPy, but on GPU)\n```python\nx = torch.tensor([[1., 2.], [3., 4.]])\ny = x @ x.T              # @ is matrix multiply, same as NumPy\n```\n\n### 2. Autograd — automatic gradient tracking\n```python\nw = torch.tensor([2.0], requires_grad=True)  # we'll learn this\nloss = (w * 3 - 6) ** 2\nloss.backward()\nprint(w.grad)            # PyTorch computed dloss/dw automatically\n```\n\nTensor + autograd → you can write a training loop in 15 lines. That's the whole point of PyTorch.\n\n## Move work to GPU\n```python\ndevice = 'cuda' if torch.cuda.is_available() else 'cpu'\nx = x.to(device); model = model.to(device)\n```\n\n## When you'll see PyTorch next\nEvery neural-net / fine-tuning week on this track. Tensors + autograd + .to(device) is the prerequisite — the rest you learn week by week."
+            },
+            {
+              "kind": "video",
+              "title": "PyTorch in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=ORMx45xqWkA",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. 100-second mental model — tensors, autograd, train loop. Hits the same beats as the lesson."
+            },
+            {
+              "kind": "reading",
+              "title": "PyTorch — Quickstart tutorial (official)",
+              "url": "https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html",
+              "why": "Read third. The canonical 15-minute walkthrough — load data, define model, train, save. The bedrock."
+            },
+            {
+              "kind": "lesson",
+              "title": "matplotlib — every Python chart you have ever seen",
+              "body": "## What matplotlib is\nmatplotlib is the foundational Python plotting library. Almost every chart you see in a Jupyter notebook comes from it (or from seaborn / pandas, which wrap it).\n\n```bash\npip install matplotlib\n```\n```python\nimport matplotlib.pyplot as plt    # the universal alias\n```\n\n## The four chart calls that cover most work\n```python\nplt.plot(x, y)                     # 1. line chart\nplt.scatter(x, y)                  # 2. scatter\nplt.hist(values, bins=30)          # 3. histogram\nplt.bar(categories, counts)        # 4. bar chart\n```\n\n## The four calls AROUND every chart\n```python\nplt.figure(figsize=(8, 4))         # set canvas size\nplt.title('Trips per hour')\nplt.xlabel('hour'); plt.ylabel('trips')\nplt.savefig('out.png', dpi=150)    # save before plt.show() clears it\nplt.show()\n```\n\nThat's ~80% of matplotlib for this track. Aliases: `seaborn` calls underneath; `df.plot()` calls underneath. Same library, different convenience wrappers.\n\n## When you'll see matplotlib next\nEvery notebook with a chart. Read the four chart calls and the four \"around\" calls and you can read any plotting code on this track."
+            },
+            {
+              "kind": "reading",
+              "title": "matplotlib — Pyplot tutorial (official)",
+              "url": "https://matplotlib.org/stable/tutorials/pyplot.html",
+              "why": "Read second. The canonical pyplot primer. The four chart calls map straight onto its first half."
+            },
+            {
+              "kind": "lesson",
+              "title": "scikit-learn — fit, predict, score",
+              "body": "## What scikit-learn is\nscikit-learn is Python's classical ML library. Linear regression, logistic regression, decision trees, k-means, train/test split, every standard metric — all behind one consistent API.\n\n## The API is three methods on every estimator\n```python\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\n# X = features (rows × cols), y = labels (rows)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)\n\nmodel = LogisticRegression()\nmodel.fit(X_tr, y_tr)                 # 1. FIT — learn from training data\npreds = model.predict(X_te)           # 2. PREDICT — score new examples\nprint(accuracy_score(y_te, preds))    # 3. SCORE — how good was it?\n```\n\nThat three-step shape — `fit`, `predict`, `score` (or `metric`) — is the same for Linear/Logistic regression, KNN, SVM, decision trees, random forests, gradient boosting, KMeans. Learn the shape once; pick any estimator that fits the task.\n\n## Install\n```bash\npip install scikit-learn\n```\n\n## When you'll see sklearn next\nEvery classical-ML week on this track. The `fit / predict / score` pattern is the bedrock; everything else is choosing the right estimator + the right metric."
+            },
+            {
+              "kind": "reading",
+              "title": "scikit-learn — Getting Started (official)",
+              "url": "https://scikit-learn.org/stable/getting_started.html",
+              "why": "Read second. The official 5-minute tour. Same fit/predict/score loop, with the canonical example datasets."
+            },
+            {
+              "kind": "lesson",
+              "title": "pandas — the DataFrame library every analyst uses",
+              "body": "## What pandas is\npandas is the de-facto Python library for tabular data. Anywhere you'd open a spreadsheet, you open a pandas DataFrame instead. The Series + DataFrame primitives, plus a few hundred methods, cover ~all data-prep work in Python.\n\n```bash\npip install pandas\n```\n```python\nimport pandas as pd\n```\n\n## The two primitives\n- **Series** = a single column. 1-D, labelled.\n- **DataFrame** = a table. Each column is a Series; the whole thing is 2-D.\n\n## The seven moves that cover 80% of daily work\n```python\ndf = pd.read_csv('trips.csv')     # 1. LOAD\ndf.head(); df.shape; df.dtypes    # 2. INSPECT\ndf['fare'].mean()                 # 3. AGGREGATE one column\ndf[df['miles'] > 10]              # 4. FILTER rows\ndf.groupby('day').sum()           # 5. GROUP + aggregate\ndf.merge(other, on='id')          # 6. JOIN two DataFrames\ndf.to_csv('out.csv', index=False) # 7. WRITE\n```\n\n## When you'll see pandas next\nMost code in this track that handles data lives in a Jupyter notebook with a `df = pd.read_...` at the top. The seven moves above are the surface you need to read it."
+            },
+            {
+              "kind": "video",
+              "title": "Pandas in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=dcqPhpY7tWk",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. Frame pandas in 100 seconds — DataFrames, Series, the read/filter/agg pattern."
+            },
+            {
+              "kind": "reading",
+              "title": "pandas — 10 minutes to pandas (official)",
+              "url": "https://pandas.pydata.org/docs/user_guide/10min.html",
+              "why": "Read third. The official 10-min primer. Skim the first half (objects, view/select); the rest you learn as you meet it."
+            },
+            {
+              "kind": "lesson",
               "title": "What this environment is — and why before anything else",
               "body": "## What it is\nML engineering is two environments, not one:\n1. **Local (Anaconda / conda)** — for cleaning data, prototyping a model, writing tests. Your laptop CPU is fine here.\n2. **Google Colab** — for training anything that needs a **GPU**. Free Colab gives you a T4 GPU for hours of compute per session.\n\nBy the end of today you'll have both working. Most weeks you'll prototype locally, then train on Colab when the model gets serious.\n\n## What you'll do today\nInstall Anaconda, create a Python 3.11 conda env, install scikit-learn locally. Open a Colab notebook, enable a T4 GPU, run `import torch; torch.cuda.is_available()` and confirm `True`."
             },

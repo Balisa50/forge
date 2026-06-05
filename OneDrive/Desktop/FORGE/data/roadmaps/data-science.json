@@ -119,6 +119,66 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "OpenAI SDK — your first API call in 10 lines",
+              "body": "## What the OpenAI SDK is\nA Python (or Node) client that wraps OpenAI's HTTP API. You write `client.chat.completions.create(...)` and get a response from a model.\n\n## Install + key\n```bash\npip install openai python-dotenv\n```\nGet a key at https://platform.openai.com → API keys → Create. Paste into a `.env` file in your project:\n```\nOPENAI_API_KEY=sk-...\n```\n**Critical**: add `.env` to `.gitignore` BEFORE you ever stage it. Leaked keys are scraped from public repos within minutes.\n\n## The minimal call\n```python\nimport os\nfrom dotenv import load_dotenv\nfrom openai import OpenAI\n\nload_dotenv()\nclient = OpenAI()                # reads OPENAI_API_KEY from env\n\nresp = client.chat.completions.create(\n    model='gpt-4o-mini',         # cheap; great for dev\n    messages=[\n        {'role': 'system', 'content': 'You are a concise assistant.'},\n        {'role': 'user',   'content': 'Hello in three languages?'},\n    ],\n)\n\nprint(resp.choices[0].message.content)\nprint('USAGE:', resp.usage)        # input/output/total tokens\n```\n\n## Cost discipline from day 1\nEvery response carries a `usage` block (prompt_tokens, completion_tokens). Multiply by the model's per-token rate = literal dollar cost. Log it from the first call.\n\n## When you'll see the OpenAI SDK next\nAny week on this track that calls an LLM. The .env-key pattern + the chat.completions.create call are the bedrock."
+            },
+            {
+              "kind": "reading",
+              "title": "OpenAI — Quickstart (official)",
+              "url": "https://platform.openai.com/docs/quickstart",
+              "why": "Read second. The official 5-min quickstart. Same shape as the lesson; bookmark for parameter reference."
+            },
+            {
+              "kind": "lesson",
+              "title": "SQL — the language your data lives in",
+              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+            },
+            {
+              "kind": "video",
+              "title": "SQL Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. The shape of SQL in 100 seconds — tables, rows, joins. Visual reinforcement before the docs."
+            },
+            {
+              "kind": "reading",
+              "title": "SQLBolt — Interactive SQL lessons",
+              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
+              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
+            },
+            {
+              "kind": "lesson",
+              "title": "PyTorch — tensors, autograd, the 90-second mental model",
+              "body": "## What PyTorch is\nPyTorch is the deep-learning library most modern AI work uses. Whether you ever build a neural net from scratch or just fine-tune an off-the-shelf one, you read PyTorch code.\n\n```bash\npip install torch\n```\n```python\nimport torch\n```\n\n## Two ideas that are the whole library\n### 1. Tensor — a multi-dimensional array (like NumPy, but on GPU)\n```python\nx = torch.tensor([[1., 2.], [3., 4.]])\ny = x @ x.T              # @ is matrix multiply, same as NumPy\n```\n\n### 2. Autograd — automatic gradient tracking\n```python\nw = torch.tensor([2.0], requires_grad=True)  # we'll learn this\nloss = (w * 3 - 6) ** 2\nloss.backward()\nprint(w.grad)            # PyTorch computed dloss/dw automatically\n```\n\nTensor + autograd → you can write a training loop in 15 lines. That's the whole point of PyTorch.\n\n## Move work to GPU\n```python\ndevice = 'cuda' if torch.cuda.is_available() else 'cpu'\nx = x.to(device); model = model.to(device)\n```\n\n## When you'll see PyTorch next\nEvery neural-net / fine-tuning week on this track. Tensors + autograd + .to(device) is the prerequisite — the rest you learn week by week."
+            },
+            {
+              "kind": "video",
+              "title": "PyTorch in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=ORMx45xqWkA",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. 100-second mental model — tensors, autograd, train loop. Hits the same beats as the lesson."
+            },
+            {
+              "kind": "reading",
+              "title": "PyTorch — Quickstart tutorial (official)",
+              "url": "https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html",
+              "why": "Read third. The canonical 15-minute walkthrough — load data, define model, train, save. The bedrock."
+            },
+            {
+              "kind": "lesson",
+              "title": "scikit-learn — fit, predict, score",
+              "body": "## What scikit-learn is\nscikit-learn is Python's classical ML library. Linear regression, logistic regression, decision trees, k-means, train/test split, every standard metric — all behind one consistent API.\n\n## The API is three methods on every estimator\n```python\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\n# X = features (rows × cols), y = labels (rows)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)\n\nmodel = LogisticRegression()\nmodel.fit(X_tr, y_tr)                 # 1. FIT — learn from training data\npreds = model.predict(X_te)           # 2. PREDICT — score new examples\nprint(accuracy_score(y_te, preds))    # 3. SCORE — how good was it?\n```\n\nThat three-step shape — `fit`, `predict`, `score` (or `metric`) — is the same for Linear/Logistic regression, KNN, SVM, decision trees, random forests, gradient boosting, KMeans. Learn the shape once; pick any estimator that fits the task.\n\n## Install\n```bash\npip install scikit-learn\n```\n\n## When you'll see sklearn next\nEvery classical-ML week on this track. The `fit / predict / score` pattern is the bedrock; everything else is choosing the right estimator + the right metric."
+            },
+            {
+              "kind": "reading",
+              "title": "scikit-learn — Getting Started (official)",
+              "url": "https://scikit-learn.org/stable/getting_started.html",
+              "why": "Read second. The official 5-minute tour. Same fit/predict/score loop, with the canonical example datasets."
+            },
+            {
+              "kind": "lesson",
               "title": "What this environment is — and why before anything else",
               "body": "## What it is\nAlmost every line of Python you'll write in this track runs inside a **Jupyter Notebook** — a browser-based scratchpad that runs Python code one cell at a time, with output appearing directly below each cell. That cell-by-cell rhythm is exactly how data scientists work: load a bit, look at it, do one thing, look again.\n\n**Anaconda** is the easiest way to get it: it bundles Python + Jupyter + pandas + ~150 other libraries in one install. No `pip` headaches, no PATH problems on Day 1.\n\n## What you'll do today\n1. Install Anaconda from anaconda.com/download (~10 min).\n2. Open Anaconda Prompt (Windows) or Terminal (Mac/Linux) and type `jupyter notebook`.\n3. In the browser tab that opens, click **New → Python 3**.\n4. In the first cell type `print(\"Hello Forge\")` and press **Shift + Enter**. Confirm `Hello Forge` appears.\n5. Save the notebook as `day0.ipynb`.\n\nYou don't need to remember every keyboard shortcut. You just need to be able to run a cell tomorrow when Day 1 says 'open a notebook and write this code.'"
             },

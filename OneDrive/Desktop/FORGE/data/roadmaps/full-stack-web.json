@@ -44,6 +44,44 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "SQL — the language your data lives in",
+              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+            },
+            {
+              "kind": "video",
+              "title": "SQL Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. The shape of SQL in 100 seconds — tables, rows, joins. Visual reinforcement before the docs."
+            },
+            {
+              "kind": "reading",
+              "title": "SQLBolt — Interactive SQL lessons",
+              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
+              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
+            },
+            {
+              "kind": "lesson",
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
+            },
+            {
+              "kind": "video",
+              "title": "Git Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=hwP7WQkmECE",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. 100 seconds. Visual primer for what Git is doing under the hood. The five commands above suddenly click."
+            },
+            {
+              "kind": "reading",
+              "title": "Git Handbook (GitHub)",
+              "url": "https://docs.github.com/en/get-started/using-git/about-git",
+              "why": "Read third. GitHub's short Git primer. Skim the basics; bookmark for whenever you forget a command."
+            },
+            {
+              "kind": "lesson",
               "title": "What this environment is — and why before anything else",
               "body": "## What it is\nFull-stack web development means writing JavaScript that runs in **two places**: in a browser (the frontend) and on a server (the backend). **Node.js** is what runs your JavaScript on the server. **VS Code** is the editor where you'll spend most of your time.\n\nBy the end of today:\n- Node.js installed; `node --version` works in your terminal.\n- VS Code installed with one or two essential extensions.\n- You've created a folder, written a one-line `hello.js`, and run it with `node hello.js`.\n\n## Why before anything else\nWeek 1 expects you to `npm install` packages, run a dev server, and edit files in a real editor. None of that works without Node + VS Code in place today."
             },

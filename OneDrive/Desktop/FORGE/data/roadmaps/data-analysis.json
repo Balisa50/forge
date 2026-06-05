@@ -114,6 +114,74 @@
           "summary": "Watch and think. No spreadsheet today.",
           "items": [
             {
+              "kind": "lesson",
+              "title": "SQL — the language your data lives in",
+              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+            },
+            {
+              "kind": "video",
+              "title": "SQL Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. The shape of SQL in 100 seconds — tables, rows, joins. Visual reinforcement before the docs."
+            },
+            {
+              "kind": "reading",
+              "title": "SQLBolt — Interactive SQL lessons",
+              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
+              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
+            },
+            {
+              "kind": "lesson",
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
+            },
+            {
+              "kind": "video",
+              "title": "Git Explained in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=hwP7WQkmECE",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "Watch second. 100 seconds. Visual primer for what Git is doing under the hood. The five commands above suddenly click."
+            },
+            {
+              "kind": "reading",
+              "title": "Git Handbook (GitHub)",
+              "url": "https://docs.github.com/en/get-started/using-git/about-git",
+              "why": "Read third. GitHub's short Git primer. Skim the basics; bookmark for whenever you forget a command."
+            },
+            {
+              "kind": "lesson",
+              "title": "matplotlib — every Python chart you have ever seen",
+              "body": "## What matplotlib is\nmatplotlib is the foundational Python plotting library. Almost every chart you see in a Jupyter notebook comes from it (or from seaborn / pandas, which wrap it).\n\n```bash\npip install matplotlib\n```\n```python\nimport matplotlib.pyplot as plt    # the universal alias\n```\n\n## The four chart calls that cover most work\n```python\nplt.plot(x, y)                     # 1. line chart\nplt.scatter(x, y)                  # 2. scatter\nplt.hist(values, bins=30)          # 3. histogram\nplt.bar(categories, counts)        # 4. bar chart\n```\n\n## The four calls AROUND every chart\n```python\nplt.figure(figsize=(8, 4))         # set canvas size\nplt.title('Trips per hour')\nplt.xlabel('hour'); plt.ylabel('trips')\nplt.savefig('out.png', dpi=150)    # save before plt.show() clears it\nplt.show()\n```\n\nThat's ~80% of matplotlib for this track. Aliases: `seaborn` calls underneath; `df.plot()` calls underneath. Same library, different convenience wrappers.\n\n## When you'll see matplotlib next\nEvery notebook with a chart. Read the four chart calls and the four \"around\" calls and you can read any plotting code on this track."
+            },
+            {
+              "kind": "reading",
+              "title": "matplotlib — Pyplot tutorial (official)",
+              "url": "https://matplotlib.org/stable/tutorials/pyplot.html",
+              "why": "Read second. The canonical pyplot primer. The four chart calls map straight onto its first half."
+            },
+            {
+              "kind": "lesson",
+              "title": "NumPy — the array library underneath every Python data tool",
+              "body": "## What NumPy is\nNumPy is the Python library for fast typed arrays. It is the bedrock under pandas, scikit-learn, PyTorch, TensorFlow. If you do data work in Python, you use NumPy — often through other libraries that wrap it.\n\n## Install + import\n```bash\npip install numpy\n```\n```python\nimport numpy as np   # the universal alias\n```\n\n## NumPy array vs Python list\nA list holds anything. An array holds ONE type only and lives in contiguous memory — that's why NumPy is 10-100× faster than equivalent list code.\n\n```python\npy = [1, 2, 3]            ;  np_arr = np.array([1, 2, 3])\npy * 2    # [1,2,3,1,2,3]    np_arr * 2   # array([2, 4, 6])  <- ELEMENT-WISE\n```\n\nThat element-wise behaviour is the whole game — arithmetic on arrays vectorises with no `for` loop.\n\n## The dot product (a.k.a. `@`) — the operation half this track uses\n```python\na = np.array([2.3, 17.0, 4.0])\nb = np.array([3.0, 0.1, -0.2])\na @ b           # 7.8\nnp.dot(a, b)    # 7.8  -- same thing; `@` is the modern syntax\n```\n\n## The surface this track actually needs from you\n- `np.array([...])` — create.\n- `a @ b` or `np.dot(a, b)` — dot product.\n- `np.linalg.norm(v)` — vector length.\n- Element-wise arithmetic — no loops needed.\n\nThat is the whole prerequisite. The rest you learn as you meet it."
+            },
+            {
+              "kind": "video",
+              "title": "Learn NumPy in 5 minutes",
+              "url": "https://www.youtube.com/watch?v=xECXZ3tyONo",
+              "duration_min": 5,
+              "creator": "Python Programmer",
+              "why": "Watch second. Five-minute visual pass over the same arrays + element-wise ops + dot products you just read about."
+            },
+            {
+              "kind": "reading",
+              "title": "NumPy quickstart (official docs)",
+              "url": "https://numpy.org/doc/stable/user/quickstart.html",
+              "why": "Read third. The canonical NumPy primer. Skim array creation + basic operations; skip indexing for now."
+            },
+            {
               "kind": "video",
               "title": "Day in the life of a Data Analyst (12 min)",
               "url": "https://www.youtube.com/results?search_query=day+in+the+life+data+analyst+real+2024",
