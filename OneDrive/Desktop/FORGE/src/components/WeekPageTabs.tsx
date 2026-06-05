@@ -599,6 +599,18 @@ export default function WeekPageTabs({
                     const kindLabel = item.kind === "video" ? "Watch" : item.kind === "reading" ? "Read" : item.kind === "lesson" ? "Learn" : item.kind === "exercise" ? "Build" : item.kind === "widget" ? "Explore" : item.kind === "swipe" ? "Quick check" : "Reflect";
                     const clickable = !!item.url;
 
+                    // Rich content (lesson body, video embed, swipe deck, widget,
+                    // open button) renders FULL-WIDTH below the header instead of
+                    // being squeezed into the column right of the check + icon.
+                    // The old single-flex-row layout cost ~66 px of left space
+                    // (check 20 + icon 26 + two 10 px gaps), which on a 375 px
+                    // phone left code blocks unreadably narrow.
+                    const hasRichBody =
+                      !!item.body ||
+                      (item.kind === "widget" && !!item.widget) ||
+                      (item.kind === "swipe" && !!item.cards && item.cards.length > 0) ||
+                      (clickable && item.kind === "video") ||
+                      (clickable && item.kind !== "video");
                     return (
                       <li key={i}
                         style={{
@@ -609,6 +621,8 @@ export default function WeekPageTabs({
                           transition: "background 0.3s, border-color 0.3s",
                         }}
                       >
+                        {/* Header row — check toggle + kind/icon badge + kind label/title.
+                            Stays compact; never grows. Title wraps within its column. */}
                         <div style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
                           <button
                             onClick={() => toggle(key)}
@@ -664,16 +678,22 @@ export default function WeekPageTabs({
                                 {item.why}
                               </p>
                             )}
+                          </div>
+                        </div>
+
+                        {/* Body row — renders edge-to-edge of the card so lesson
+                            text + code blocks + videos use the FULL width. No
+                            inheritance of the 66 px check+icon gutter. */}
+                        {hasRichBody && (
+                          <div style={{ marginTop: "0.625rem", width: "100%", minWidth: 0 }}>
                             {item.body && (
-                              <div style={{ marginTop: "0.5rem" }}>
-                                <ForgeMarkdown>{item.body}</ForgeMarkdown>
-                              </div>
+                              <ForgeMarkdown>{item.body}</ForgeMarkdown>
                             )}
                             {/* Inline interactive widget for widget-kind items.
                                 Ticking the item happens via the normal checkbox —
                                 playing with it is the engagement, no Open button. */}
                             {item.kind === "widget" && item.widget && (
-                              <div style={{ marginTop: "0.625rem" }}>
+                              <div style={{ marginTop: "0.5rem" }}>
                                 <ConceptWidget
                                   id={item.widget.id}
                                   params={item.widget.params}
@@ -684,17 +704,15 @@ export default function WeekPageTabs({
                             {/* Swipe retention cards — the gamified concept check
                                 that sits after the lesson, before the coding task. */}
                             {item.kind === "swipe" && item.cards && item.cards.length > 0 && (
-                              <div style={{ marginTop: "0.75rem" }}>
+                              <div style={{ marginTop: "0.5rem" }}>
                                 <SwipeCards cards={item.cards} />
                               </div>
                             )}
                             {/* Inline VideoEmbed for video items with YouTube/Loom URLs.
-                                Other resources (readings, exercises) keep the Open button.
-                                Video URLs that aren't embeddable (e.g. /search?...) fall
-                                through to the VideoEmbed's own external-link fallback. */}
+                                Now full-width — the player has the whole card to fill. */}
                             {clickable && item.kind === "video" && (
                               <div
-                                style={{ marginTop: "0.625rem" }}
+                                style={{ marginTop: "0.5rem" }}
                                 onClick={() => {
                                   if (!done[key]) persist({ ...done, [key]: true }, { [key]: true });
                                 }}
@@ -707,8 +725,6 @@ export default function WeekPageTabs({
                                 type="button"
                                 onClick={() => {
                                   openItem(item.url!, item.title);
-                                  // Opening a resource auto-ticks the item — engagement
-                                  // proof. Mentee can still untick if it was a mis-click.
                                   if (!done[key]) {
                                     persist({ ...done, [key]: true }, { [key]: true });
                                   }
@@ -728,7 +744,7 @@ export default function WeekPageTabs({
                               </button>
                             )}
                           </div>
-                        </div>
+                        )}
                       </li>
                     );
                   })}

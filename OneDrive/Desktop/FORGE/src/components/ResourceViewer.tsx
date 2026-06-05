@@ -27,7 +27,10 @@ function youtubeEmbed(url: string): string | null {
       let videoId = "";
       if (u.hostname.includes("youtu.be")) videoId = u.pathname.slice(1);
       if (u.searchParams.get("v")) videoId = u.searchParams.get("v")!;
-      if (videoId) return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+      // fs=1 + controls=1 surface the fullscreen button inside the YouTube
+      // player UI; `allowFullScreen` + `allow=fullscreen` on the iframe below
+      // grant the iframe permission to actually go fullscreen.
+      if (videoId) return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&controls=1&fs=1&playsinline=1`;
 
       // YouTube search results — embed the first hit via search-results widget URL
       const q = u.searchParams.get("search_query");
@@ -152,7 +155,9 @@ export default function ResourceViewer({ url, label, onClose }: ViewerProps) {
               src={finalUrl}
               onLoad={handleLoad}
               title={label}
-              allow={isYouTube ? "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" : ""}
+              allow={isYouTube
+                ? "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                : "fullscreen"}
               allowFullScreen
               referrerPolicy="no-referrer"
               sandbox={pdf ? "allow-scripts allow-same-origin" : "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"}

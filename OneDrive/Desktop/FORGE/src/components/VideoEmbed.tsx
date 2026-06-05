@@ -48,9 +48,13 @@ function buildEmbedUrl(url: string): { embed: string | null; provider: "youtube"
   const ytId = extractYouTubeId(url);
   if (ytId) {
     return {
-      // playsinline=1 — critical for iOS Safari: without it, tapping the video
-      // forces fullscreen instead of playing inline, which looks broken.
-      embed: `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&controls=1&playsinline=1`,
+      // fs=1            → show the fullscreen button in the YouTube player UI
+      // playsinline=1   → critical for iOS Safari: lets the video play INLINE
+      //                   on first tap; fullscreen is reached via the fs button
+      // rel=0           → no "related videos" sidebar at the end
+      // modestbranding=1→ minimal YouTube branding
+      // controls=1      → standard playback controls (incl. the fullscreen button)
+      embed: `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&controls=1&playsinline=1&fs=1`,
       provider: "youtube",
       thumb: `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`,
     };
@@ -139,7 +143,11 @@ export default function VideoEmbed({ url, title, bare, lazy = true }: Props) {
             // mobile users had to tap a second time). #4
             src={embed + (embed.includes("?") ? "&" : "?") + "autoplay=1&playsinline=1"}
             title={title ?? "Video"}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            // `fullscreen` in `allow` is what some browsers (notably Chrome on
+            // Android) require in addition to the `allowFullScreen` attribute
+            // before the fullscreen button inside the YouTube player works.
+            // Without it, tapping the fullscreen icon silently fails.
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
             style={{
