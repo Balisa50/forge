@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap Inspector — The Forge</title>
+<style>
+  :root{ --g:#16a34a; --y:#ca8a04; --r:#dc2626; --bg:#0b0b0c; --panel:#141417; --line:#2a2a30; --txt:#e7e7ea; --dim:#9a9aa3; --acc:#d4af37; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--txt); font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  a{ color:#60a5fa; }
+  #wrap{ display:grid; grid-template-columns:230px 1fr; min-height:100vh; }
+  #side{ border-right:1px solid var(--line); padding:10px; position:sticky; top:0; align-self:start; height:100vh; overflow:auto; }
+  #side h1{ font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--acc); margin:4px 0 12px; }
+  .trackbtn{ display:flex; justify-content:space-between; gap:8px; width:100%; text-align:left; background:none; border:1px solid transparent; color:var(--txt); padding:6px 8px; cursor:pointer; font:inherit; border-radius:4px; }
+  .trackbtn:hover{ border-color:var(--line); background:var(--panel); }
+  .trackbtn.active{ border-color:var(--acc); }
+  #main{ padding:16px 22px; overflow:auto; }
+  .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .g{ background:var(--g);} .y{ background:var(--y);} .r{ background:var(--r);}
+  table.dash{ border-collapse:collapse; margin:6px 0 18px; width:100%; max-width:760px; }
+  table.dash td{ border:1px solid var(--line); padding:6px 10px; }
+  table.dash td.s{ width:120px; text-align:center; font-weight:700; }
+  .pass{ color:var(--g);} .fail{ color:var(--r); cursor:pointer; text-decoration:underline; }
+  .week{ border:1px solid var(--line); border-radius:6px; margin:8px 0; background:var(--panel); }
+  .week>summary{ cursor:pointer; padding:8px 12px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .week>summary::-webkit-details-marker{ display:none; }
+  .wt{ font-weight:700; } .badges{ margin-left:auto; display:flex; gap:6px; }
+  .pill{ font-size:11px; padding:1px 7px; border-radius:10px; border:1px solid var(--line); color:var(--dim); }
+  .pill.bad{ color:#fff; background:var(--r); border-color:var(--r); }
+  .day{ border-top:1px solid var(--line); padding:8px 14px; }
+  .day h4{ margin:0 0 4px; font-size:12.5px; }
+  .counts span{ color:var(--dim); margin-right:10px; font-size:11.5px; }
+  .prev{ color:var(--dim); font-style:italic; margin:4px 0; }
+  .vid{ display:flex; gap:10px; align-items:flex-start; margin:6px 0; padding:6px; border:1px solid var(--line); border-radius:4px; }
+  .vid img{ width:120px; height:68px; object-fit:cover; border-radius:3px; background:#000; }
+  .vmeta{ font-size:11.5px; }
+  .tag{ font-size:10px; padding:1px 5px; border-radius:3px; margin-left:6px; }
+  .tag.ok{ background:#14331f; color:#5ad17f; } .tag.no{ background:#3a1414; color:#ff8585; }
+  .cc{ color:var(--dim); margin-top:4px; font-size:11.5px; }
+  button.exp{ background:var(--acc); color:#000; border:0; padding:8px 14px; font:inherit; font-weight:700; border-radius:4px; cursor:pointer; }
+  .head{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+  h2{ margin:0; font-size:18px; }
+  .muted{ color:var(--dim); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <nav id="side"><h1>Tracks</h1><div id="tracklist"></div>
+    <div style="margin-top:16px"><button class="exp" id="export">⤓ Export report</button></div>
+    <p class="muted" style="font-size:11px;margin-top:10px">Rebuild data:<br><code>python build_inspector.py</code></p>
+  </nav>
+  <main id="main"></main>
+</div>
+<script src="roadmap-data.js"></script>
+<script>
+const R = window.ROADMAPS || [];
+const CHECKS = [
+  ['all8days','All weeks have 8 days'],
+  ['all3cc','All weeks have 3 concept checks'],
+  ['ccShape','Concept checks: 4 choices + explanation + "?"'],
+  ['videosOnTopic','All videos on-topic (track domain)'],
+  ['videosUnder30','All videos under 30 min'],
+  ['exLabels','All exercises labelled [CODE]/[WRITE]/[PRODUCE]'],
+  ['noDead','No dead video URLs'],
+];
+let current = R[0] ? R[0].slug : null;
+
+function trackOK(t){ return Object.values(t.checks).every(Boolean); }
+
+function renderSidebar(){
+  const el = document.getElementById('tracklist');
+  el.innerHTML = '';
+  R.forEach(t=>{
+    const b = document.createElement('button');
+    b.className = 'trackbtn'+(t.slug===current?' active':'');
+    const dot = trackOK(t)?'g':'r';
+    b.innerHTML = `<span>${t.slug}</span><span class="dot ${dot}"></span>`;
+    b.onclick = ()=>{ current=t.slug; render(); };
+    el.appendChild(b);
+  });
+}
+
+function vidThumb(v){
+  if(!v) return '';
+  const alive = v.alive===false ? '<span class="tag no">DEAD</span>' : (v.alive===true?'<span class="tag ok">live</span>':'');
+  const ot = v.onTopic ? '<span class="tag ok">on-topic</span>' : '<span class="tag no">OFF-TOPIC</span>';
+  const dur = (v.duration_min!=null?v.duration_min+' min':'?');
+  const long = (v.duration_min>30)?'<span class="tag no">&gt;30</span>':'';
+  const thumb = v.vidid? `https://img.youtube.com/vi/${v.vidid}/mqdefault.jpg`:'';
+  return `<div class="vid">
+    <a href="${v.url}" target="_blank" rel="noopener">${thumb?`<img src="${thumb}" alt="thumb">`:''}</a>
+    <div class="vmeta"><b>▶ ${v.title}</b> ${ot}${alive}${long}<br>
+      <span class="muted">${v.creator} · ${dur}</span><br>
+      <a href="${v.url}" target="_blank" rel="noopener">${v.url}</a><br>
+      <span class="muted">${v.why||''}</span></div></div>`;
+}
+
+function dayHTML(d){
+  const c = d.counts;
+  return `<div class="day" id="d-${d.number}">
+    <h4>Day ${d.number} — ${d.title}</h4>
+    <div class="counts"><span>lessons: ${c.lesson}</span><span>videos: ${c.video}</span><span>swipes: ${c.swipe}</span><span>exercises: ${c.exercise}</span></div>
+    ${d.lessonPreview?`<div class="prev">"${d.lessonPreview}…"</div>`:''}
+    ${vidThumb(d.video)}
+  </div>`;
+}
+
+function weekHTML(t,w){
+  const badgeDefs = [['days8','8 days'],['cc3','3 CC'],['ccShape','CC shape'],['onTopic','on-topic'],['noDead','live vids'],['exLabels','labels']];
+  const badges = badgeDefs.map(([k,lbl])=>`<span class="pill ${w.badges[k]?'':'bad'}">${w.badges[k]?'✓':'✗'} ${lbl}</span>`).join('');
+  const days = w.days.map(dayHTML).join('');
+  return `<details class="week" id="w-${w.number}">
+    <summary><span class="wt">W${w.number} · ${w.title}</span>
+      <span class="muted">${w.nDays}d · ${w.nCC}cc · ${w.nVideos} vid</span>
+      <span class="badges">${badges}</span></summary>
+    ${w.firstCC?`<div class="day"><span class="cc">Q1: ${w.firstCC}…</span></div>`:''}
+    ${days}</details>`;
+}
+
+function render(){
+  renderSidebar();
+  const t = R.find(x=>x.slug===current); if(!t){document.getElementById('main').innerHTML='No data. Run build_inspector.py';return;}
+  const rows = CHECKS.map(([k,lbl])=>{
+    const ok = t.checks[k];
+    const cell = ok?`<span class="pass">✅ PASS</span>`
+      :`<span class="fail" data-check="${k}">❌ FAIL — jump</span>`;
+    return `<tr><td>${lbl}</td><td class="s">${cell}</td></tr>`;
+  }).join('');
+  document.getElementById('main').innerHTML = `
+    <div class="head"><h2>${t.slug}</h2><span class="muted">${t.title} — ${t.nWeeks} weeks · ${t.failures.length} flagged items</span>
+      <span class="dot ${trackOK(t)?'g':'r'}" style="width:14px;height:14px"></span></div>
+    <table class="dash"><tbody>${rows}</tbody></table>
+    <div id="weeks">${t.weeks.map(w=>weekHTML(t,w)).join('')}</div>`;
+  // jump-to-failure
+  document.querySelectorAll('.fail').forEach(f=>{
+    f.onclick = ()=>{
+      const check = f.dataset.check;
+      const fail = t.failures.find(x=>({
+        all8days:'days',all3cc:'cc-count',ccShape:'cc-shape',videosOnTopic:'video-offtopic',
+        videosUnder30:'video-long',exLabels:'exercise-label',noDead:'video-dead'}[check]===x.kind));
+      if(!fail){ alert('No specific location recorded.'); return; }
+      const wk = document.getElementById('w-'+fail.week);
+      if(wk){ wk.open=true; wk.scrollIntoView({behavior:'smooth',block:'start'});
+        wk.style.outline='2px solid var(--r)'; setTimeout(()=>wk.style.outline='',2000);
+        if(fail.day){ const dd=wk.querySelector('#d-'+fail.day); if(dd){dd.style.background='#3a1414'; setTimeout(()=>dd.style.background='',2500);} } }
+    };
+  });
+}
+
+document.getElementById('export').onclick = ()=>{
+  const report = { generated:new Date().toISOString(),
+    summary:R.map(t=>({slug:t.slug, weeks:t.nWeeks, ok:trackOK(t), failedChecks:Object.entries(t.checks).filter(([,v])=>!v).map(([k])=>k), failureCount:t.failures.length})),
+    failures:R.flatMap(t=>t.failures.map(f=>({track:t.slug,...f}))) };
+  const blob = new Blob([JSON.stringify(report,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='roadmap-inspector-report.json'; a.click();
+};
+
+if(!R.length){ document.getElementById('main').innerHTML='<h2>No data loaded</h2><p>Run <code>python build_inspector.py</code> to generate roadmap-data.js, then reload.</p>'; }
+else render();
+</script>
+</body>
+</html>

@@ -897,6 +897,63 @@ def synth_lesson(day_title: str, week_context: str) -> dict:
     return {"kind": "lesson", "title": day_title, "body": body}
 
 
+# ============================================================
+# Zero-cost path: a student must finish every track with $0 and no card. We TEACH
+# industry-standard paid tools but inject a free, no-card alternative into the
+# setup day of any week that references one. Additive — never rewrites a lesson.
+# ============================================================
+PAID_FREE_GROUPS = [
+    (re.compile(r'openai|anthropic|claude|\bgpt[-\s]?[0-9]?\b|\bllm\b', re.I),
+     "**LLM calls** — use **Ollama** (runs Llama 3 / Mistral locally, free, no API key): point the base URL at `http://localhost:11434`. The chat shape is identical; you just swap the endpoint. Hugging Face's free Inference API also needs no credit card."),
+    (re.compile(r'\baws\b|amazon web services|\bs3\b|\bec2\b|cloudfront|sts get-caller', re.I),
+     "**AWS** — use **LocalStack** (mocks AWS APIs on your laptop) plus **MinIO** (local S3). The CLI commands are the same; set `--endpoint-url=http://localhost:4566`. No AWS account or card required."),
+    (re.compile(r'\bgcp\b|google cloud|gcloud|bigquery|\bbq\b', re.I),
+     "**Google Cloud / BigQuery** — use **DuckDB** (local, the same SQL, blazing fast) or local **Postgres**. No GCP account needed."),
+    (re.compile(r'redshift|snowflake', re.I),
+     "**Cloud warehouse** — use **DuckDB** or local **Postgres**: identical SQL, zero cost."),
+    (re.compile(r'\bazure\b', re.I),
+     "**Azure** — substitute **LocalStack** / local tooling; the concepts transfer directly."),
+    (re.compile(r'vercel', re.I),
+     "**Hosting** — **Vercel Hobby** is free with no card; Netlify's free tier and GitHub Pages also work."),
+    (re.compile(r'netlify', re.I),
+     "**Hosting** — Netlify's free tier or GitHub Pages — no card."),
+    (re.compile(r'\beas\b|expo application services', re.I),
+     "**Mobile builds** — build locally with `expo run:android` / Xcode (free); EAS cloud builds are optional, not required."),
+    (re.compile(r'sentry', re.I),
+     "**Error tracking** — self-host **GlitchTip** (free) or use Sentry's free developer tier (no card)."),
+    (re.compile(r'datadog', re.I),
+     "**Monitoring** — use **Prometheus + Grafana** locally (free)."),
+    (re.compile(r'stripe', re.I),
+     "**Payments** — use **Stripe test mode**: test API keys are free and need no business or card."),
+    (re.compile(r'pinecone', re.I),
+     "**Vector DB** — use **Chroma** or **Qdrant** locally (free)."),
+    (re.compile(r'twilio|sendgrid|resend|postmark', re.I),
+     "**Email / SMS** — capture mail locally with **Mailpit** / **MailHog** for learning (free)."),
+]
+
+
+def free_path_lines(blob: str):
+    lines = []
+    for rx, line in PAID_FREE_GROUPS:
+        if rx.search(blob or '') and line not in lines:
+            lines.append(line)
+    return lines
+
+
+def inject_free_path(d0: dict, week_blob: str):
+    """If a week references any paid service, add a 'Zero-cost path' lesson to Day 0."""
+    lines = free_path_lines(week_blob)
+    if not lines:
+        return
+    body = ("## Zero-cost path (no credit card required)\n\n"
+            "This week mentions industry-standard tools that can cost money. You can "
+            "complete every step for **free**, with no card and no trial that auto-renews:\n\n"
+            + "\n".join(f"- {l}" for l in lines)
+            + "\n\nLearn the concept with the free tool; the paid service is only how some "
+              "teams run it in production. The skills and the code are the same.")
+    d0.setdefault('items', []).append({"kind": "lesson", "title": "Zero-cost path (free alternatives)", "body": body})
+
+
 def synth_second_lesson(day_title: str, week_context: str) -> dict:
     """A 'deeper dive' lesson used INSTEAD of a video when no on-topic video exists.
     Clear teaching beats a tangential video — this block gives a worked-example
@@ -1286,6 +1343,12 @@ def enrich_week(raw_week, week_num, track_slug, cache):
         d0 = synth_day_zero(prereq, used_video_urls, cache, track_slug)
 
     _finalize_day_zero(d0, prereq)
+    # Zero-cost path: scan the whole week for paid tools and add a free-alternative
+    # note to Day 0 so the student always has a no-card route.
+    _week_blob = (context or '') + ' ' + str(raw_week.get('project', '')) + ' ' + ' '.join(
+        (it.get('title', '') or '') + ' ' + (it.get('body', '') or '')
+        for rd in raw_days for it in rd.get('items', []))
+    inject_free_path(d0, _week_blob)
     enriched['days'].append(d0)
 
     # Days 1..7
