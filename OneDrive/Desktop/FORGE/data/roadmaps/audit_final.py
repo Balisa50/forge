@@ -187,8 +187,8 @@ def audit_track(slug, path, dead):
                 if url in dead:
                     fail(2, f"W{wn} D{dn}: dead video {url}")
                 dur = v.get('duration_min')
-                if not isinstance(dur, (int, float)) or dur >= 15:
-                    fail(2, f"W{wn} D{dn}: duration_min={dur}")
+                if not isinstance(dur, (int, float)) or dur >= 10:
+                    fail(2, f"W{wn} D{dn}: duration_min={dur} (must be <10)")
                 why = v.get('why', '')
                 if not isinstance(why, str) or len(why) < 20:
                     fail(1, f"W{wn} D{dn}: video why <20 chars")
@@ -218,37 +218,22 @@ def audit_track(slug, path, dead):
                                 fail(1, f"W{wn} D{dn} {it.get('kind')}: orphaned code block")
                                 break
 
-        # --- Part 2: video uniqueness per week ---
-        # On-topic correctness is absolute (checked above): a video is only ever
-        # drawn from the track's allowed domain. A narrow domain (e.g. BI, Data
-        # Analysis) legitimately has a small on-topic video pool, so a week may
-        # reuse a core video rather than show an off-topic one. The rule therefore
-        # maximises uniqueness UP TO the track's on-topic pool size, and still
-        # requires >=5 distinct (or the whole pool, whichever is smaller).
-        track_pool = set()
-        for w2 in weeks:
-            for day2 in w2.get('days', []):
-                for it2 in day2.get('items', []):
-                    if it2.get('kind') == 'video':
-                        m2 = YT_WATCH_RE.match(it2.get('url', '') or '')
-                        if m2:
-                            track_pool.add(m2.group(1))
-        pool = len(track_pool)
-        wk_ids = []
+        # --- Part 2: NO FORCED VIDEOS ---
+        # Videos are optional and only attached on a direct concept match. There is
+        # NO minimum-videos-per-week rule: forcing a count is exactly what produced
+        # tangential videos. We only validate that any video PRESENT is on-topic,
+        # short, alive, and complete (checked above). A day with no on-topic video
+        # must instead carry a second lesson block (verified below).
         for day in days:
-            for it in day.get('items', []):
-                if it.get('kind') == 'video':
-                    m = YT_WATCH_RE.match(it.get('url', '') or '')
-                    if m:
-                        wk_ids.append(m.group(1))
-        uniq = len(set(wk_ids))
-        # Avoidable repeat: fewer distinct than the domain could supply for the slots.
-        target = min(len(wk_ids), pool)
-        if uniq < target:
-            dupes = [x for x in set(wk_ids) if wk_ids.count(x) > 1]
-            fail(2, f"W{wn}: only {uniq} unique of possible {target} (avoidable repeat {dupes})")
-        if uniq < min(5, pool):
-            fail(2, f"W{wn}: only {uniq} unique videos (need >={min(5, pool)})")
+            dn = day.get('number')
+            if dn == 0:
+                continue
+            kinds = [it.get('kind') for it in day.get('items', [])]
+            has_video = 'video' in kinds
+            lesson_ct = kinds.count('lesson')
+            # Every non-Day-0 day needs real teaching: a video OR >=2 lesson blocks.
+            if not has_video and lesson_ct < 2:
+                fail(2, f"W{wn} D{dn}: no on-topic video and <2 lesson blocks")
 
     # --- Part 1: artifacts + duplicate lessons (track-wide) ---
     blob = json.dumps(weeks).lower()

@@ -95,8 +95,40 @@ the whole pool if smaller). All 11 tracks pass `audit_final.py` (6/6 parts).
 
 ---
 
+---
+
+## C. No forced videos (follow-up)
+
+The track-domain allow-list still left a gap: when no concept-specific video
+matched, the picker fell back to the *least-wrong allowed* video — so a pandas
+**aggregation/groupby** day in Data Analysis got a 10-minute **Git** tutorial. A
+tangential video is still the wrong video.
+
+### New rule — a video is attached ONLY if it directly matches the day's concept
+`pick_video_for_day()` now returns a video **only** on a real concept-keyword match
+to a library video that is (a) in the track's domain, (b) **under 10 minutes**, and
+(c) verified alive. Otherwise it returns `None`, and `pad_day()` adds a **second
+"deeper dive" lesson block** (worked-example scaffold) instead of forcing a video.
+The `enforce_video_diversity` pass (which existed to hit a video count) was removed —
+counting videos is exactly what caused tangential picks.
+
+### Result
+- **226 videos remain**, every one concept-matched, on-topic, and < 10 min.
+- **1,817 days are now taught without a video** (a second lesson block instead).
+- Data Analysis W2 D4 "Aggregation and groupby": **no video** (Git removed); three
+  lesson blocks + a quick-check swipe + an exercise. The Jupyter *setup* day keeps
+  its on-topic "Jupyter in 100 Seconds" video.
+- `audit_final.py` Part 2 no longer requires a per-week video count; it validates
+  that any video present is on-topic/short/alive and that every non-setup day has a
+  video **or** ≥2 lesson blocks.
+
+New deliverable: `data/roadmaps/audit_videos.py` — confirms every video is on-topic,
+concept-matched, and < 10 minutes (RESULT: PASS, 0 issues).
+
+---
+
 ## Verification
 
 - `npx tsc --noEmit` — clean.
-- Cross-topic video audit — **0 off-topic** across all 11 tracks.
+- `python data/roadmaps/audit_videos.py` — **0 issues**; every video on-topic & concept-matched, < 10 min.
 - `python data/roadmaps/audit_final.py` — all 6 parts PASS for all 11 tracks.

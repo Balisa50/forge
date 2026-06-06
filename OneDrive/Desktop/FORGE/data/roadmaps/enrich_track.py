@@ -270,36 +270,32 @@ def _allowed_keys(track_slug: str) -> list:
     return [k for k in keys if k in KNOWN_GOOD]
 
 
-def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: str):
-    """Find a verified, ON-TOPIC video for the day. Never leaves the track's domain.
-    Returns a video dict or None."""
-    c = (day_topic or '').lower()
-    allowed = _allowed_keys(track_slug)
-    allowed_set = set(allowed)
+# A video may only be attached if it is under 10 minutes (rule #2).
+MAX_VIDEO_MIN = 10
 
-    # Pass 1: keyword match, but ONLY if the matched key is in this track's domain.
-    for keyword, key in KEYWORD_VIDEO_MAP:
-        if keyword in c and key in allowed_set:
-            for tup in KNOWN_GOOD[key]:
-                if tup[0] not in used_urls and tup[1] < 15:
+
+def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: str):
+    """Return a video ONLY if it DIRECTLY matches the day's concept.
+
+    No forced videos: a video is attached only when a concept keyword in the day's
+    title maps to a library video that (a) is in this track's allowed domain,
+    (b) is under 10 minutes, and (c) is verified alive. If nothing matches, return
+    None — the caller then teaches with a second lesson block instead of grabbing a
+    tangential 'educational' video (Git/Linux/Docker/etc.)."""
+    c = (day_topic or '').lower()
+    allowed_set = set(_allowed_keys(track_slug))
+
+    # Direct concept match only — prefer an unused video, else reuse an on-topic one.
+    for require_unused in (True, False):
+        for keyword, key in KEYWORD_VIDEO_MAP:
+            if keyword in c and key in allowed_set:
+                for tup in KNOWN_GOOD[key]:
+                    if tup[1] >= MAX_VIDEO_MIN:
+                        continue
+                    if require_unused and tup[0] in used_urls:
+                        continue
                     return _video_dict(tup)
-    # Pass 2: any unused video from the track's allowed keys (in relevance order) — diversity.
-    for key in allowed:
-        for tup in KNOWN_GOOD[key]:
-            if tup[0] not in used_urls and tup[1] < 15:
-                return _video_dict(tup)
-    # Pass 3: keyword match reused (still on-topic).
-    for keyword, key in KEYWORD_VIDEO_MAP:
-        if keyword in c and key in allowed_set:
-            for tup in KNOWN_GOOD[key]:
-                if tup[1] < 15:
-                    return _video_dict(tup)
-    # Pass 4: first allowed key, reused — still on-topic for the track.
-    for key in allowed:
-        for tup in KNOWN_GOOD[key]:
-            if tup[1] < 15:
-                return _video_dict(tup)
-    return None
+    return None  # no on-topic, short, verified match -> caller adds a lesson instead
 
 
 # ============================================================
@@ -669,6 +665,29 @@ def synth_lesson(day_title: str, week_context: str) -> dict:
     return {"kind": "lesson", "title": day_title, "body": body}
 
 
+def synth_second_lesson(day_title: str, week_context: str) -> dict:
+    """A 'deeper dive' lesson used INSTEAD of a video when no on-topic video exists.
+    Clear teaching beats a tangential video — this block gives a worked-example
+    scaffold anchored to the day's concept."""
+    topic = re.sub(r'^Day\s*\d+\s*[-–—]\s*', '', day_title).strip() or day_title
+    body = (
+        f"## Deeper dive: {topic}\n\n"
+        "There isn't a single short video that nails this exact concept, so work it the "
+        "way professionals actually learn it — by running small variations yourself and "
+        "reading the output.\n\n"
+        "## Two more worked examples\n"
+        f"1. Take the smallest case of **{topic}** and predict the result *before* you run it. "
+        "Then run it and compare — the gap between your prediction and reality is the learning.\n"
+        "2. Change one variable (a column, a parameter, a condition) and predict again. "
+        "Repeat until your predictions are reliably right.\n\n"
+        "## What to watch for\n"
+        "- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n"
+        "- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n"
+        "- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+    )
+    return {"kind": "lesson", "title": f"Deeper dive: {topic}", "body": body}
+
+
 def synth_swipe() -> dict:
     return {
         "kind": "swipe", "title": "Quick check - swipe to answer",
@@ -879,17 +898,16 @@ def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_u
     if 'lesson' not in kinds_present:
         items.insert(0, synth_lesson(day_title, week_context))
 
-    if 'video' not in kinds_present:
-        video = pick_video_for_day(day_title, used_video_urls, cache, track_slug)
-        if video:
-            first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
-            insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
-            items.insert(insert_at, {"kind": "video", **video})
-            used_video_urls.add(video['url'])
+    # Video ONLY on a direct concept match (no forced/tangential videos). When there
+    # is no on-topic video for the day, add a 'deeper dive' second lesson instead.
+    video = pick_video_for_day(day_title, used_video_urls, cache, track_slug)
+    first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
+    insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
+    if video and video['url'] not in used_video_urls:
+        items.insert(insert_at, {"kind": "video", **video})
+        used_video_urls.add(video['url'])
     else:
-        for it in items:
-            if it.get('kind') == 'video' and it.get('url'):
-                used_video_urls.add(it['url'])
+        items.insert(insert_at, synth_second_lesson(day_title, week_context))
 
     if 'swipe' not in kinds_present:
         ex_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'exercise'), len(items))
@@ -1180,7 +1198,6 @@ def process_track(slug, cache, input_filename=None, output_filename=None, out_sl
     enriched_weeks = []
     for idx, raw_week in enumerate(raw_weeks, start=1):
         w = enrich_week(raw_week, idx, slug, cache)
-        enforce_video_diversity(w, cache, slug, target=5)
         enriched_weeks.append(w)
 
     dedup_lessons(enriched_weeks)
