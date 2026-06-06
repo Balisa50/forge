@@ -1869,10 +1869,10 @@
       "title": "React — The Component Mental Model",
       "phase": "Frontend",
       "commitment_hours": "25-30",
-      "context": "React is the component mental model. Every UI you will build in your career will be decomposed into components — self-contained units that manage their own state and render a piece of the interface. React invented this mental model (or popularised it — it is a contested history) and most modern UI frameworks use a variation of it. Learning React means learning how to think about interfaces as trees of components, which is a transferable skill regardless of which framework you use next.\n\nA component is a function that takes data (props) as input and returns a description of what to display (JSX). React calls your function, takes the JSX you returned, and updates the DOM to match. When the props or state change, React calls your function again and updates only the parts of the DOM that changed. This is fundamentally different from the imperative DOM manipulation you learned in weeks 1-2 (document.querySelector().textContent = ...) — you describe what the UI should look like given the current data, and React handles the how.\n\nuseState is the hook that gives function components the ability to remember values between renders. When you call useState(initialValue), you get back the current value and a setter function. Calling the setter function triggers a re-render with the new value. This is the fundamental React loop: user action triggers a state change, state change triggers a re-render, re-render produces updated UI.\n\nThe rules of hooks are not arbitrary. Hooks must be called at the top level of the component function, not inside conditions or loops. This constraint exists because React relies on the order of hook calls to associate state with the right component instance across renders. Violating the rules produces subtle bugs where state gets mixed up between renders.\n\nThe todo app beyond todos is more than an exercise — it is a template for state-driven UI. The same pattern applies to a shopping cart, a form builder, a kanban board, or a dashboard. Data flows down (through props), events bubble up (through callback props). Once you internalise this one-directional data flow, every React application you build makes sense.",
+      "context": "React is the component mental model. Every UI you will build in your career will be decomposed into components — self-contained units that manage their own state and render a piece of the interface. React invented this mental model (or popularised it — it is a contested history) and most modern UI frameworks use a variation of it. Learning React means learning how to think about interfaces as trees of components, which is a transferable skill regardless of which framework you use next.\n\nA component is a function that takes data (props) as input and returns a description of what to display (JSX). React calls your function, takes the JSX you returned, and updates the DOM to match. When the props or state change, React calls your function again and updates only the parts of the DOM that changed. This is fundamentally different from the imperative DOM manipulation you learned in weeks 1-2 (document.querySelector().textContent = ...) — you describe what the UI should look like given the current data, and React handles the how.\n\nuseState is the hook that gives function components the ability to remember values between renders. When you call useState(initialValue), you get back the current value and a setter function. Calling the setter function triggers a re-render with the new value. This is the fundamental React loop: user action triggers a state change, state change triggers a re-render, re-render produces updated UI.\n\nThe rules of hooks are not arbitrary. Hooks must be called at the top level of the component function, not inside conditions or loops. This constraint exists because React relies on the order of hook calls to associate state with the right component instance across renders. Violating the rules produces subtle bugs where state gets mixed up between renders.\n\nThe expense tracker beyond expenses is more than an exercise — it is a template for state-driven UI. The same pattern applies to a shopping cart, a form builder, a kanban board, or a dashboard. Data flows down (through props), events bubble up (through callback props). Once you internalise this one-directional data flow, every React application you build makes sense.",
       "concept_check": [
         {
-          "q": "Your todo list has a deleteTodo function that removes a todo by id. You pass this function as a prop to each TodoItem component: <TodoItem onDelete={deleteTodo}>. In the TodoItem component, you call p?",
+          "q": "Your expense list has a deleteExpense function that removes a expense by id. You pass this function as a prop to each ExpenseItem component: <ExpenseItem onDelete={deleteExpense}>. In the ExpenseItem?",
           "choices": [
             "First option",
             "Second option",
@@ -1894,7 +1894,7 @@
           "explain": "See the lesson for explanation. The right answer follows directly from the core idea taught today."
         },
         {
-          "q": "You have 100 todo items in your list. Each item has a delete button. Every time any delete button is clicked, all 100 items re-render. How do you prevent unnecessary re-renders? Wrap TodoItem in React?",
+          "q": "You have 100 expense items in your list. Each item has a delete button. Every time any delete button is clicked, all 100 items re-render. How do you prevent unnecessary re-renders? Wrap ExpenseItem in?",
           "choices": [
             "First option",
             "Second option",
@@ -1981,7 +1981,7 @@
             {
               "kind": "reflection",
               "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Build a Todo App Beyond Todos.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "body": "Read this week's intro above, then look at the project: \"Split — a group expense tracker.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
             },
             {
               "kind": "swipe",
@@ -2139,7 +2139,7 @@
             {
               "kind": "reflection",
               "title": "Think it through",
-              "body": "Add useMemo to your filtered todo list. Compare React DevTools profiler before and after. Is the perf actually better or are you just adding indirection?"
+              "body": "Add useMemo to your filtered expense list. Compare React DevTools profiler before and after. Is the perf actually better or are you just adding indirection?"
             }
           ]
         },
@@ -2368,12 +2368,12 @@
             {
               "kind": "exercise",
               "title": "Finish and ship the week's project",
-              "body": "[CODE] Build a Todo App Beyond Todos. A todo app, yes — but with categories, due dates, drag-to-reorder, dark mode, keyboard shortcuts (j/k navigation, x to toggle), localStorage persistence. No backend yet. Make it good enough you'd actually use it for a week.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "body": "[CODE] Build Split — a group expense tracker. Friends share costs; Split splits each expense across the group and computes the minimal settle-up payments (who owes whom). Categories, per-expense split rules, drag-to-reorder, dark mode, keyboard shortcuts (j/k navigation, x to settle), localStorage persistence. No backend yet. Make it good enough you'd actually use it on your next trip.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 5 deliverable so you can look back on it.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             },
             {
               "kind": "reflection",
               "title": "Prove you understood it",
-              "body": "Your todo list has a deleteTodo function that removes a todo by id. You pass this function as a prop to each TodoItem component: <TodoItem onDelete={deleteTodo}>. In the TodoItem component, you call props.onDelete(todo.id) when the delete button is clicked. Why pass the function as a prop rather than just defining it inside the TodoItem component? TodoItem does not own the todos array — the parent component does. Only the owner of the state should modify it. TodoItem is a presentational component: it displays data and signals intent (the user wants to delete this item), but the actual deletion happens in the parent, which has access to the todos array and its setter function. This is the one-directional data flow principle: data flows down (todos passed to TodoItem as props), events bubble up (onDelete callback called by TodoItem, handled by parent)."
+              "body": "Your expense list has a deleteExpense function that removes an expense by id. You pass this function as a prop to each ExpenseItem component: <ExpenseItem onDelete={deleteExpense}>. In the ExpenseItem component, you call props.onDelete(expense.id) when the delete button is clicked. Why pass the function as a prop rather than defining it inside ExpenseItem? ExpenseItem does not own the expenses array — the parent component does. Only the owner of the state should modify it. ExpenseItem is a presentational component: it displays data and signals intent (the user wants to delete this expense), but the actual deletion happens in the parent, which has access to the expenses array and its setter function. This is the one-directional data flow principle: data flows down (expenses passed to ExpenseItem as props), events bubble up (onDelete callback called by ExpenseItem, handled by parent)."
             },
             {
               "kind": "exercise",
@@ -2389,10 +2389,10 @@
       "title": "Next.js App Router — Where Most Frontend Jobs Are Going",
       "phase": "Frontend",
       "commitment_hours": "25-30",
-      "context": "Next.js App Router is where the industry is going. It builds on React but adds file-based routing, server components, server actions, and built-in optimisations for production. Most new React applications — and most job postings for React roles — are App Router. Understanding why it exists requires understanding the problem it solves: React alone is a client-side library. Next.js adds the server layer that makes React applications SEO-friendly, fast on first load, and capable of accessing databases and secrets without exposing them to the browser.\n\nServer components are the conceptual shift. In React, all components run in the browser. In Next.js App Router, components are server components by default — they run on the server at request time (or build time), have access to the filesystem and environment variables, and send HTML to the browser. The browser receives rendered HTML rather than JavaScript that must first execute before the user sees anything. Client components (marked with 'use client') run in the browser and can use useState, useEffect, and event handlers. The division is not arbitrary — it is the architecture that enables fast initial loads with interactive islands.\n\nThe blog you build this week uses MDX — a superset of Markdown that allows you to embed React components in your content. A blog post can include a live code demo, an interactive chart, or a signup form embedded in the prose. This is impossible with plain Markdown and expensive to implement without a framework like Next.js that handles the compilation.\n\nFile-based routing in App Router is folder-based: src/app/page.tsx is the homepage, src/app/blog/page.tsx is /blog, src/app/blog/[slug]/page.tsx handles /blog/any-post-slug. The folder names match the URL segments. Dynamic routes use square brackets. Route groups (folders in parentheses) affect the folder structure without affecting the URL.\n\nDeploying to Vercel is the natural endpoint for Next.js — Vercel created Next.js. The integration is tight: push to GitHub, Vercel builds and deploys automatically. Edge functions, preview deployments for PRs, and analytics are available out of the box.",
+      "context": "Next.js App Router is where the industry is going. It builds on React but adds file-based routing, server components, server actions, and built-in optimisations for production. Most new React applications — and most job postings for React roles — are App Router. Understanding why it exists requires understanding the problem it solves: React alone is a client-side library. Next.js adds the server layer that makes React applications SEO-friendly, fast on first load, and capable of accessing databases and secrets without exposing them to the browser.\n\nServer components are the conceptual shift. In React, all components run in the browser. In Next.js App Router, components are server components by default — they run on the server at request time (or build time), have access to the filesystem and environment variables, and send HTML to the browser. The browser receives rendered HTML rather than JavaScript that must first execute before the user sees anything. Client components (marked with 'use client') run in the browser and can use useState, useEffect, and event handlers. The division is not arbitrary — it is the architecture that enables fast initial loads with interactive islands.\n\nThe directory you build this week uses MDX — a superset of Markdown that allows you to embed React components in your content. A directory entry can include a live code demo, an interactive chart, or a signup form embedded in the prose. This is impossible with plain Markdown and expensive to implement without a framework like Next.js that handles the compilation.\n\nFile-based routing in App Router is folder-based: src/app/page.tsx is the homepage, src/app/directory/page.tsx is /directory, src/app/directory/[slug]/page.tsx handles /directory/any-post-slug. The folder names match the URL segments. Dynamic routes use square brackets. Route groups (folders in parentheses) affect the folder structure without affecting the URL.\n\nDeploying to Vercel is the natural endpoint for Next.js — Vercel created Next.js. The integration is tight: push to GitHub, Vercel builds and deploys automatically. Edge functions, preview deployments for PRs, and analytics are available out of the box.",
       "concept_check": [
         {
-          "q": "You have a page component that fetches blog posts from an API. You write it as an async server component: async function BlogPage() { const posts = await fetchPosts(); return <PostList posts={posts} /?",
+          "q": "You have a page component that fetches directory entries from an API. You write it as an async server component: async function DirectoryPage() { const entries = await fetchEntries(); return <EntryLis?",
           "choices": [
             "First option",
             "Second option",
@@ -2403,7 +2403,7 @@
           "explain": "See the lesson for explanation. The right answer follows directly from the core idea taught today."
         },
         {
-          "q": "You want to add a \"like\" button to each blog post that updates a database record. Can this logic go in a server component? No — server components cannot handle user interactions (event handlers requir?",
+          "q": "You want to add a \"like\" button to each directory entry that updates a database record. Can this logic go in a server component? No — server components cannot handle user interactions (event handlers?",
           "choices": [
             "First option",
             "Second option",
@@ -2414,7 +2414,7 @@
           "explain": "See the lesson for explanation. The right answer follows directly from the core idea taught today."
         },
         {
-          "q": "Your App Router blog uses dynamic route src/app/blog/[slug]/page.tsx. You add generateStaticParams() that returns all post slugs. What does this do at build time? Next.js pre-renders a static HTML pag?",
+          "q": "Your App Router directory uses dynamic route src/app/directory/[slug]/page.tsx. You add generateStaticParams() that returns all post slugs. What does this do at build time? Next.js pre-renders a stati?",
           "choices": [
             "First option",
             "Second option",
@@ -2501,7 +2501,7 @@
             {
               "kind": "reflection",
               "title": "Plan before you build",
-              "body": "Read this week's intro above, then look at the project: \"Build a Blog with CMS.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
+              "body": "Read this week's intro above, then look at the project: \"Atlas — a programmatic-SEO resource directory.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is — start there if you stall."
             },
             {
               "kind": "swipe",
@@ -2644,13 +2644,13 @@
             },
             {
               "kind": "exercise",
-              "title": "Build: Build a blog with /[slug] pages that fetch from a markdown file or a CMS",
-              "body": "[CODE] Build a blog with /[slug] pages that fetch from a markdown file or a CMS; pre-render with generateStaticParams\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Build: a directory with /[slug] entry pages generated from a data/MDX source",
+              "body": "[CODE] Build a directory with /[slug] entry pages that read from MDX files or a structured data source; pre-render every entry with generateStaticParams.\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             },
             {
               "kind": "reflection",
               "title": "Think it through",
-              "body": "Disable JavaScript in your browser; load your blog. Does it still work? It should — Server Components render server-side."
+              "body": "Disable JavaScript in your browser; load a directory entry page. Does it still work? It should — Server Components render server-side."
             }
           ]
         },
@@ -2867,12 +2867,12 @@
             {
               "kind": "exercise",
               "title": "Finish and ship the week's project",
-              "body": "[PRODUCE] Build a Blog with CMS. Next.js App Router + MDX for content + Tailwind for styling + Vercel for hosting. Posts live in a content/ folder as .mdx files; pre-rendered at build time with generateStaticParams. Add a tag system, search, RSS feed, OG image generation, dark mode. Lighthouse 100s. Deploy to a custom domain. This is the same architecture as Lee Robinson's, Josh Comeau's, and most developer blogs.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 6 deliverable so you can look back on it.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "body": "[PRODUCE] Build Atlas — a programmatic-SEO resource directory. Next.js App Router + MDX/structured data + Tailwind + Vercel. Each entry lives as data/MDX and is pre-rendered at build time with generateStaticParams. Add tag/category filters, full-text search, a generated sitemap.xml, per-page generateMetadata, OG image generation, dark mode. Lighthouse 100s. Deploy to a custom domain. This is the architecture real directories and programmatic-SEO sites that earn organic traffic are built on.\n\nShip checklist:\n  - It runs from a clean clone / fresh open — no \"works on my machine\" steps missing.\n  - Commit it to your repo with a short README saying what it does and how to run it.\n  - Tag or note this as your Week 6 deliverable so you can look back on it.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             },
             {
               "kind": "reflection",
               "title": "Prove you understood it",
-              "body": "You have a page component that fetches blog posts from an API. You write it as an async server component: async function BlogPage() { const posts = await fetchPosts(); return <PostList posts={posts} />; }. What happens if the API call takes 3 seconds? In server components, the page waits for the async operations to complete before sending HTML to the browser. The user sees nothing for 3 seconds, then gets the fully rendered page. To improve this: add a loading.tsx file in the blog folder — Next.js shows this skeleton UI while the server component is loading. Or use Suspense boundaries within the page to stream parts of the page as they become ready."
+              "body": "You have a page component that fetches directory entries from a data source. You write it as an async server component: async function DirectoryPage() { const entries = await fetchEntries(); return <EntryList entries={entries} />; }. What happens if the fetch takes 3 seconds? In server components, the page waits for the async operations to complete before sending HTML to the browser. The user sees nothing for 3 seconds, then gets the fully rendered page. To improve this: add a loading.tsx file in the directory folder — Next.js shows this skeleton UI while the server component is loading. Or use Suspense boundaries within the page to stream parts of the page as they become ready."
             },
             {
               "kind": "exercise",
@@ -3083,8 +3083,8 @@
             },
             {
               "kind": "exercise",
-              "title": "Build: Install Tailwind + shadcn/ui on your blog from week 6",
-              "body": "[CODE] Install Tailwind + shadcn/ui on your blog from week 6\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Build: Install Tailwind + shadcn/ui on your Atlas directory from week 6",
+              "body": "[CODE] Install Tailwind + shadcn/ui on your Atlas directory from week 6\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             },
             {
               "kind": "reflection",
@@ -3206,8 +3206,8 @@
             },
             {
               "kind": "exercise",
-              "title": "Build: Use shadcn/ui to add a command palette (cmdk) to your blog: cmd+k opens search",
-              "body": "[CODE] Use shadcn/ui to add a command palette (cmdk) to your blog: cmd+k opens search\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Build: Use shadcn/ui to add a command palette (cmdk) to your Atlas directory: cmd+k opens search",
+              "body": "[CODE] Use shadcn/ui to add a command palette (cmdk) to your Atlas directory: cmd+k opens search\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             },
             {
               "kind": "reflection",
@@ -7721,7 +7721,7 @@
             {
               "kind": "reflection",
               "title": "Think it through",
-              "body": "Build a collaborative todo with Yjs and have two browsers edit at once with network partition. What happens when they reconnect? Do the changes merge or conflict?"
+              "body": "Build a collaborative Kanban board with Yjs and have two browsers move cards at once with a network partition. What happens when they reconnect? Do the changes merge or conflict?"
             }
           ]
         },
@@ -7769,8 +7769,8 @@
             },
             {
               "kind": "exercise",
-              "title": "Build: Implement a collaborative todo list using Yjs with persistence to Postgres",
-              "body": "[CODE] Implement a collaborative todo list using Yjs with persistence to Postgres\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Build: a collaborative Kanban board using Yjs with persistence to Postgres",
+              "body": "[CODE] Implement a collaborative Kanban board using Yjs with persistence to Postgres\n\nDefinition of done:\n  - You can DEMO it working, not just describe it.\n  - It's your build — not a tutorial's code pasted in.\n  - You could explain to someone why each piece is there.\n\nStuck? Read this week's \"common mistakes\" and \"debug help\" tabs before you search — they were written for exactly this step.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             },
             {
               "kind": "exercise",

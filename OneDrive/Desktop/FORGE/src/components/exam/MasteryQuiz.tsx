@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Timer, Check, X, RotateCcw, Trophy, ArrowRight, Lock } from "lucide-react";
 import { renderRichText } from "@/lib/math";
 import { recordAttempt, useExamProgress, getConcept } from "@/lib/examProgress";
-import { hasGenerator, generateQuestions } from "@/lib/examQuestionGen";
+import { hasGenerator, generateForStudent, recordTierResult } from "@/lib/examQuestionGen";
 import type { MasteryQuestion as MQ } from "@/lib/examPaths";
 
 interface Props {
@@ -44,8 +44,8 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
   // Regenerated on every `start()` so retakes never repeat.
   const generated = hasGenerator(conceptId);
   const makeSet = useCallback(
-    () => (generated ? generateQuestions(conceptId, questions.length || 7) : questions),
-    [generated, conceptId, questions],
+    () => (generated ? generateForStudent(slug, conceptId, questions.length || 7) : questions),
+    [generated, slug, conceptId, questions],
   );
   const [liveQuestions, setLiveQuestions] = useState<MQ[]>(() => makeSet());
 
@@ -69,9 +69,11 @@ export default function MasteryQuiz({ slug, conceptId, passing, secondsPerQuesti
       const correct = finalPicks.reduce((n, p, i) => n + (p === liveQuestions[i].correct ? 1 : 0), 0);
       const score = total ? correct / total : 0;
       recordAttempt(slug, conceptId, score, score >= passing);
+      // Adaptive difficulty: pass climbs the tier ladder, fail steps it down.
+      if (generated) recordTierResult(slug, conceptId, score >= passing);
       setPhase("done");
     },
-    [clearTick, conceptId, passing, liveQuestions, slug, total],
+    [clearTick, conceptId, passing, liveQuestions, slug, total, generated],
   );
 
   const advance = useCallback(
