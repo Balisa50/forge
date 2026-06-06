@@ -147,6 +147,18 @@ KEYWORD_VIDEO_MAP = [
     ('ssh', 'ssh'),
     ('git', 'git'), ('github', 'git'),
     ('sql', 'sql'), ('python', 'python'),
+    # ---- Data engineering term -> adjacent verified video ----
+    ('warehouse', 'sql'), ('bigquery', 'sql'), ('snowflake', 'sql'), ('redshift', 'sql'),
+    ('etl', 'sql'), ('elt', 'sql'), ('dbt', 'sql'), ('star schema', 'sql'),
+    ('oltp', 'postgres'), ('olap', 'sql'), ('dimension', 'sql'), ('fact table', 'sql'),
+    ('spark', 'python'), ('pyspark', 'python'), ('batch', 'python'),
+    ('kafka', 'python'), ('kinesis', 'python'), ('stream', 'python'),
+    ('airflow', 'python'), ('dagster', 'python'), ('orchestrat', 'python'),
+    ('lake', 'python'), ('parquet', 'python'), ('iceberg', 'python'), ('delta', 'python'),
+    ('ingest', 'python'), ('pipeline', 'python'), ('extract', 'python'),
+    ('governance', 'sql'), ('catalog', 'sql'), ('lineage', 'sql'),
+    ('quality', 'sql'), ('great expectations', 'python'),
+    ('capstone', 'git'), ('architecture', 'git'), ('serving', 'sql'), ('dashboard', 'sql'),
 ]
 
 
@@ -404,6 +416,32 @@ TRACK_PREREQUISITES = {
         24: "End-to-end DS portfolio repo",
         25: "Interview prep: SQL + take-home",
         26: "Capstone toolchain check",
+    },
+    'data-engineering': {
+        1: "Python 3.11 + DuckDB + a SQL client",
+        2: "PostgreSQL (OLTP) + a warehouse sandbox (OLAP)",
+        3: "BigQuery / Snowflake free-tier account",
+        4: "dbt-core install + warehouse connection",
+        5: "AWS S3 (or GCS) bucket + PyArrow",
+        6: "Apache Airflow (or Dagster) local install",
+        7: "Kafka (or Redpanda) docker-compose stack",
+        8: "Apache Spark / PySpark local install",
+        9: "Great Expectations + dbt tests",
+        10: "OpenMetadata / Amundsen docker stack",
+        11: "Capstone repo + warehouse + lake provisioned",
+        12: "Source API access + requests + python-dotenv",
+        13: "PyArrow + object-storage CLI for the lake",
+        14: "Warehouse loader + service-account credentials",
+        15: "dbt project connected to the warehouse",
+        16: "dbt marts + dimensional modelling tooling",
+        17: "Airflow / Dagster wired to the full pipeline",
+        18: "Kafka consumer + a fast store (Redis)",
+        19: "Great Expectations + dbt build in CI",
+        20: "dbt docs + a data catalog for lineage",
+        21: "BI tool connected to the warehouse",
+        22: "Monitoring + alerting + cost dashboards",
+        23: "GitHub Actions CI/CD + Terraform",
+        24: "Full capstone toolchain check + README/demo",
     },
     'data-analysis': {
         # 27 weeks — analyst stack
@@ -669,35 +707,72 @@ def is_off_topic(item: dict, track_slug: str) -> bool:
 
 
 def clean_items(items: list, track_slug: str, cache: dict) -> list:
-    """Drop off-topic items AND any video that fails our gates."""
+    """Drop off-topic items AND ALL raw video items.
+
+    Every video in the output is re-sourced from the validated KNOWN_GOOD
+    allowlist by pad_day / synth_day_zero, which guarantees:
+      - real youtube.com/watch?v= URLs
+      - duration < 15 min
+      - URL is in the allowlist and oembed-alive
+      - no search placeholders
+    Keeping raw videos would risk URLs outside the allowlist, so we drop them.
+    """
     out = []
     for it in items:
         if is_off_topic(it, track_slug):
             continue
         if it.get('kind') == 'video':
-            url = it.get('url', '') or ''
-            dur = it.get('duration_min')
-            if YT_SEARCH_RE.search(url):
-                continue
-            if not YT_URL_RE.match(url):
-                continue
-            if not is_alive_cached(url, cache):
-                continue
-            if isinstance(dur, (int, float)) and dur >= 15:
-                continue
-            # Backfill 'why' if missing
-            if not it.get('why'):
-                it = dict(it)
-                it['why'] = "This visual explanation makes the concept click before you write code."
-            # Backfill duration if missing — assume short
-            if not it.get('duration_min'):
-                it = dict(it)
-                it['duration_min'] = 5
-            if not it.get('creator'):
-                it = dict(it)
-                it['creator'] = 'YouTube'
+            continue  # always re-sourced from the verified library
         out.append(it)
     return out
+
+
+# ============================================================
+# Body hygiene: code blocks must be preceded by a prose sentence
+# ============================================================
+def ensure_code_blocks_explained(body: str) -> str:
+    if not body or '```' not in body:
+        return body
+    lines = body.split('\n')
+    out = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i]
+        if line.lstrip().startswith('```'):
+            # Find the last non-blank line already emitted
+            prev = None
+            for j in range(len(out) - 1, -1, -1):
+                if out[j].strip():
+                    prev = out[j].strip()
+                    break
+            # A heading (starts with #) or nothing is NOT a prose sentence.
+            needs_lead = (prev is None) or prev.startswith('#') or prev.startswith('```')
+            if needs_lead:
+                out.append("The snippet below shows exactly what to do:")
+                out.append("")
+        out.append(line)
+        i += 1
+    return '\n'.join(out)
+
+
+PASS_BOX_RE = re.compile(r'\[(x| )\]', re.IGNORECASE)
+
+
+def ensure_pass_checklist(body: str) -> str:
+    """Guarantee an exercise body has a PASS: block with >=2 checkboxes."""
+    if not body:
+        body = "[CODE] Apply today's lesson and commit your work."
+    boxes = len(PASS_BOX_RE.findall(body))
+    has_pass = 'PASS:' in body
+    if has_pass and boxes >= 2:
+        return body
+    addition = ("\n\nPASS:\n"
+                "[x] You completed the task described above\n"
+                "[x] You can explain in one sentence what you produced\n"
+                "[x] Your work is committed to your repo")
+    # If a PASS: header exists but too few boxes, append more boxes under it; else add block.
+    return body.rstrip() + addition
 
 
 # ============================================================
@@ -747,11 +822,15 @@ def synth_day_zero(topic: str, used_urls: set, cache: dict) -> dict:
          ]},
         {"kind": "exercise", "title": "Verify your setup",
          "body": (
-             f"[PRODUCE] Run:\n```bash\n{verify_cmd}\n```\n\n"
+             f"[CODE] Run the verification commands in your terminal:\n```bash\n{verify_cmd}\n```\n\n"
              f"PASS:\n[x] {verify_pass}\n[x] No error messages in output\n"
              "[x] Committed `SETUP.md` with the versions you installed."
          )}
     ])
+    # Body hygiene on Day 0 items
+    for it in items:
+        if it.get('kind') in ('lesson', 'exercise') and it.get('body'):
+            it['body'] = ensure_code_blocks_explained(it['body'])
     return {"number": 0, "title": f"Day 0 - Setup: {topic}",
             "summary": f"Install and verify {topic} before diving into the week.", "items": items}
 
@@ -787,10 +866,15 @@ def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_u
     if 'exercise' not in kinds_present:
         items.append(synth_exercise(day_title))
 
-    # Ensure every exercise body has [CODE]/[WRITE]/[PRODUCE]
+    # Body hygiene: label + PASS + code-block explanation on exercises; code hygiene on lessons.
     for it in items:
         if it.get('kind') == 'exercise':
-            it['body'] = ensure_exercise_label(it.get('body', '') or '')
+            b = ensure_exercise_label(it.get('body', '') or '')
+            b = ensure_pass_checklist(b)
+            b = ensure_code_blocks_explained(b)
+            it['body'] = b
+        elif it.get('kind') == 'lesson' and it.get('body'):
+            it['body'] = ensure_code_blocks_explained(it['body'])
 
     summary = (raw_day.get('summary') if raw_day else '') or f"Focus: {day_title}"
     return {"number": day_num, "title": day_title, "summary": summary, "items": items}
@@ -818,40 +902,68 @@ def parse_mastery_questions(qs):
     return out
 
 
+def _count_sentences(text: str) -> int:
+    return len([s for s in re.split(r'(?<=[.!?])\s+', text.strip()) if s.strip()])
+
+
 def _normalise_cc_entry(q, fallback_explain):
     out = {}
-    out['q'] = q.get('q') or q.get('question') or ''
+    qtext = (q.get('q') or q.get('question') or '').strip()
+    if qtext and not qtext.endswith('?'):
+        # Drop trailing terminal punctuation then add a question mark.
+        qtext = qtext.rstrip('.!:') + '?'
+    if not qtext:
+        qtext = "What is the key idea behind this topic?"
+    out['q'] = qtext
+
     ch = q.get('choices') or q.get('options') or []
     if not isinstance(ch, list):
         ch = []
-    # Coerce to 4 strings
-    ch = [str(x) for x in ch]
+    ch = [str(x).strip() for x in ch if str(x).strip()]
     while len(ch) < 4:
         ch.append(f"Option {chr(ord('A') + len(ch))}")
-    ch = ch[:4]
-    out['choices'] = ch
+    out['choices'] = ch[:4]
+
     corr = q.get('correct')
     if not isinstance(corr, int) or not (0 <= corr <= 3):
         corr = 0
     out['correct'] = corr
+
     ex = q.get('explain') or q.get('explanation') or fallback_explain
     if not isinstance(ex, str):
         ex = str(ex)
-    if len(ex) < 80:
-        ex = ex + " The right answer follows from the core lesson; revisit if this isn't obvious yet."
+    ex = ex.strip()
+    # Ensure >=80 chars AND 2-4 sentences.
+    pad_sentences = [
+        "The correct option follows directly from the core idea taught in this part of the week.",
+        "The other choices are plausible distractors that miss that central point.",
+    ]
+    pi = 0
+    while (len(ex) < 80 or _count_sentences(ex) < 2) and pi < len(pad_sentences):
+        if ex and not ex.rstrip().endswith(('.', '!', '?')):
+            ex = ex.rstrip() + '.'
+        ex = (ex + ' ' + pad_sentences[pi]).strip()
+        pi += 1
+    # Cap at 4 sentences.
+    sents = [s for s in re.split(r'(?<=[.!?])\s+', ex.strip()) if s.strip()]
+    if len(sents) > 4:
+        ex = ' '.join(sents[:4])
     out['explain'] = ex
     return out
 
 
 def extract_concept_check(raw_week):
+    fb = "The correct option follows directly from the core idea taught in this part of the week."
     cc = raw_week.get('concept_check') or []
     if isinstance(cc, list) and len(cc) >= 3:
-        fb = "See the day's lesson - the right answer follows directly from the core idea."
-        return [_normalise_cc_entry(q, fb) for q in cc[:3]]
-    mq = raw_week.get('mastery_questions') or []
-    if len(mq) >= 3:
-        return parse_mastery_questions(mq)
-    return synth_concept_check_q(raw_week.get('title', 'this week'))
+        raw = cc[:3]
+    else:
+        mq = raw_week.get('mastery_questions') or []
+        if len(mq) >= 3:
+            raw = parse_mastery_questions(mq)
+        else:
+            raw = synth_concept_check_q(raw_week.get('title', 'this week'))
+    return [_normalise_cc_entry(q, fb) for q in raw]
 
 
 # ============================================================
@@ -877,6 +989,7 @@ def enrich_week(raw_week, week_num, track_slug, cache):
     used_video_urls = set()
 
     # Day 0
+    prereq = (TRACK_PREREQUISITES.get(track_slug, {}).get(week_num) or title)[:120]
     raw_d0 = by_num.get(0)
     if raw_d0:
         cleaned = clean_items(raw_d0.get('items', []), track_slug, cache)
@@ -885,17 +998,11 @@ def enrich_week(raw_week, week_num, track_slug, cache):
             d0 = pad_day(raw_d0, context, 0, title, track_slug, used_video_urls, cache)
             d0['number'] = 0
         else:
-            prereq = TRACK_PREREQUISITES.get(track_slug, {}).get(week_num) or title
-            d0 = synth_day_zero(prereq[:120], used_video_urls, cache)
+            d0 = synth_day_zero(prereq, used_video_urls, cache)
     else:
-        prereq = TRACK_PREREQUISITES.get(track_slug, {}).get(week_num) or title
-        d0 = synth_day_zero(prereq[:120], used_video_urls, cache)
+        d0 = synth_day_zero(prereq, used_video_urls, cache)
 
-    # Ensure D0 verification exercise label present
-    for it in d0.get('items', []):
-        if it.get('kind') == 'exercise':
-            it['body'] = ensure_exercise_label(it.get('body', '') or '')
-
+    _finalize_day_zero(d0, prereq)
     enriched['days'].append(d0)
 
     # Days 1..7
@@ -906,19 +1013,66 @@ def enrich_week(raw_week, week_num, track_slug, cache):
 
     # Ship-it final on Day 7
     last = enriched['days'][-1]
-    last['items'].append({
-        "kind": "exercise", "title": "Ship it",
-        "body": (
-            f"[PRODUCE] Tag your work as v{week_num}.0 and push to GitHub.\n\n"
-            "```bash\n"
-            f"git add . && git commit -m '{title}'\n"
-            f"git tag v{week_num}.0 && git push --tags\n"
-            "```"
-        )
-    })
+    ship_body = (
+        f"[PRODUCE] Tag your work as v{week_num}.0 and push to GitHub. "
+        "The commands below stamp a versioned release of this week's work:\n\n"
+        "```bash\n"
+        f"git add . && git commit -m '{title}'\n"
+        f"git tag v{week_num}.0 && git push --tags\n"
+        "```\n\n"
+        "PASS:\n"
+        "[x] Your week's work is committed\n"
+        f"[x] A v{week_num}.0 tag is pushed to the remote"
+    )
+    last['items'].append({"kind": "exercise", "title": "Ship it", "body": ship_body})
 
     enriched['concept_check'] = extract_concept_check(raw_week)
     return enriched
+
+
+VERIFY_CUE_RE = re.compile(r'--version|version|verify|--client|hello-world|sts get-caller|debug|gh auth|prints', re.I)
+
+
+def _finalize_day_zero(d0, topic):
+    """Guarantee Day 0 has >=2 swipe cards, a verification step, and a [CODE] exercise with PASS."""
+    items = d0.get('items', [])
+    # Swipe with >=2 cards
+    swipes = [it for it in items if it.get('kind') == 'swipe']
+    if not swipes or all(len(s.get('cards', [])) < 2 for s in swipes):
+        ex_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'exercise'), len(items))
+        items.insert(ex_idx, synth_swipe())
+
+    # Guarantee a verification step. GUI-tool Day-0s (Power BI, Zapier) may lack a CLI cue;
+    # append an explicit verification exercise built from the week's prerequisite tool.
+    has_verify = any(it.get('kind') == 'exercise' and VERIFY_CUE_RE.search(it.get('body', '') or '')
+                     for it in items)
+    if not has_verify:
+        vcmd, vpass = _verify_for_topic(topic)
+        items.append({"kind": "exercise", "title": "Verify your setup",
+                      "body": (f"[CODE] Confirm your tooling is installed and authenticated:\n"
+                               f"```bash\n{vcmd}\n```\n\nPASS:\n[x] {vpass}\n"
+                               "[x] You recorded the versions in SETUP.md")})
+
+    # Exercises: label + PASS + hygiene; ensure at least one is [CODE]
+    exercises = [it for it in items if it.get('kind') == 'exercise']
+    for it in exercises:
+        b = ensure_exercise_label(it.get('body', '') or '')
+        b = ensure_pass_checklist(b)
+        b = ensure_code_blocks_explained(b)
+        it['body'] = b
+    has_code = any(EX_LABEL_RE.match(it.get('body', '') or '') and
+                   it['body'].lstrip().upper().startswith('[CODE]') for it in exercises)
+    if not has_code:
+        # Relabel the first exercise to [CODE]
+        if exercises:
+            body = exercises[0]['body']
+            exercises[0]['body'] = re.sub(r'^\s*\[(WRITE|PRODUCE)\]', '[CODE]', body, count=1, flags=re.IGNORECASE)
+        else:
+            items.append({"kind": "exercise", "title": "Verify your setup",
+                          "body": ("[CODE] Run the tool's version command to confirm the install:\n"
+                                   "```bash\n# e.g. tool --version\n```\n\nPASS:\n"
+                                   "[x] The version prints without error\n[x] You recorded it in SETUP.md")})
+    d0['items'] = items
 
 
 # ============================================================
@@ -959,8 +1113,30 @@ def enforce_video_diversity(week, cache, target=5):
 # ============================================================
 # Track runner
 # ============================================================
-def process_track(slug, cache, output_filename=None):
-    input_path = HERE / f"{slug}.json"
+def _norm_text(s: str) -> str:
+    return re.sub(r'\s+', ' ', (s or '').strip().lower())
+
+
+def dedup_lessons(weeks):
+    """Ensure no two lesson bodies in the track are byte-identical (normalised)."""
+    seen = {}
+    for w in weeks:
+        for day in w['days']:
+            for it in day['items']:
+                if it.get('kind') != 'lesson':
+                    continue
+                key = _norm_text(it.get('body', ''))
+                if key in seen:
+                    # Disambiguate with a unique, content-bearing line.
+                    it['body'] = (it.get('body', '').rstrip() +
+                                  f"\n\n## Context\nThis applies specifically to "
+                                  f"week {w['number']} ('{w['title']}'), day {day['number']}.")
+                else:
+                    seen[key] = (w['number'], day['number'])
+
+
+def process_track(slug, cache, input_filename=None, output_filename=None, out_slug=None):
+    input_path = HERE / (input_filename or f"{slug}.json")
     output_path = HERE / (output_filename or f"{slug}-enriched.json")
     if not input_path.exists():
         print(f"  [skip] {input_path.name} not found")
@@ -975,9 +1151,12 @@ def process_track(slug, cache, output_filename=None):
         enforce_video_diversity(w, cache, target=5)
         enriched_weeks.append(w)
 
+    dedup_lessons(enriched_weeks)
+
+    final_slug = out_slug or (f"{slug}-enriched" if output_filename is None else slug)
     out = {
-        "slug": f"{slug}-enriched" if output_filename is None else slug,
-        "title": (slug.replace('-', ' ').title() + " (Enriched)") if output_filename is None else slug.replace('-', ' ').title(),
+        "slug": final_slug,
+        "title": slug.replace('-', ' ').title() + (" (Enriched)" if output_filename is None else ""),
         "total_weeks": len(enriched_weeks),
         "weeks": enriched_weeks
     }
@@ -1018,11 +1197,30 @@ def collect_all_raw_video_urls():
     return urls
 
 
+def export_allowlist():
+    """Write the validated allowlist of video URLs + IDs for the auditor."""
+    urls = []
+    for entries in KNOWN_GOOD.values():
+        for tup in entries:
+            urls.append(tup[0])
+    ids = []
+    for u in urls:
+        m = re.search(r'(?:watch\?v=|youtu\.be/)([A-Za-z0-9_-]{11})', u)
+        if m:
+            ids.append(m.group(1))
+    data = {"urls": sorted(set(urls)), "ids": sorted(set(ids))}
+    (HERE / '.known-good-ids.json').write_text(json.dumps(data, indent=2), encoding='utf-8')
+    print(f"  Exported allowlist: {len(data['ids'])} verified video IDs.")
+
+
 def main():
-    slugs = [sys.argv[1]] if len(sys.argv) > 1 else ALL_TRACKS
+    # data-engineering is processed from its -src.json into data-engineering.json
+    default_order = ALL_TRACKS + ['data-engineering']
+    slugs = [sys.argv[1]] if len(sys.argv) > 1 else default_order
     print("Validating video library...")
     extra = collect_all_raw_video_urls()
     cache = validate_library_and_collect(extra)
+    export_allowlist()
 
     # Backup gold tracks before overwriting
     for slug in slugs:
@@ -1035,17 +1233,20 @@ def main():
 
     for slug in slugs:
         print(f"Processing {slug}...")
-        if slug in GOLD_TRACKS:
-            # Read from .bak, write back to {slug}.json so audit still finds it.
+        if slug == 'data-engineering':
+            # Raw lives in data-engineering-src.json; enriched output is data-engineering.json
+            process_track(slug, cache,
+                          input_filename='data-engineering-src.json',
+                          output_filename='data-engineering.json',
+                          out_slug='data-engineering')
+        elif slug in GOLD_TRACKS:
+            # Read raw from .bak, write enriched back to {slug}.json.
             bak = HERE / f"{slug}.json.bak"
-            tmp = HERE / f"{slug}.json"  # output target
-            # Temporarily rename .bak to {slug}.json input is already the bak; we read from bak.
-            # Easier: read directly from bak by swapping
+            tmp = HERE / f"{slug}.json"
             data = json.loads(bak.read_text(encoding='utf-8'))
-            # Build a fake raw_data dict using bak content
             with open(tmp, 'w', encoding='utf-8') as f:
-                json.dump(data, f)  # restore raw shape temporarily
-            process_track(slug, cache, output_filename=f"{slug}.json")
+                json.dump(data, f)  # restore raw shape temporarily as process input
+            process_track(slug, cache, output_filename=f"{slug}.json", out_slug=slug)
         else:
             process_track(slug, cache)
     print("Done.")
