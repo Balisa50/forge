@@ -182,8 +182,44 @@ New deliverable: `data/roadmaps/audit_videos.py` enforces all of the above (0 is
 
 ---
 
+---
+
+## E. YouTube Data API integration (v3.0)
+
+`data/roadmaps/video_api.py` builds a **self-auditing** `video_library.json` using
+the YouTube Data API v3. For every candidate it fetches the **real duration**
+(ISO-8601 → minutes, not an estimate), the **channel title** (verified against a
+trusted-creator allow-list: Fireship, 3Blue1Brown, StatQuest, …), and caption
+availability. A video is accepted only if its channel is trusted **and** duration
+≤ 30 min. `enrich_track.apply_api_library()` then prefers that file — overriding
+durations with real values and dropping anything the API rejects.
+
+It is **non-fatal without a key**: with no `YOUTUBE_API_KEY` set it prints setup
+steps and exits, and the enricher falls back to its oembed + title-identity gate.
+This is the scalable path to a vetted 150-video library; drop in a free API key and
+run `python video_api.py`.
+
+### Bespoke second-lesson shortlist (for hand-authoring — task #2)
+These flagship concept days currently rely on the generic deep-dive scaffold and
+would most reward bespoke, hand-written second lessons:
+
+| Track | Day | Concept | Why bespoke |
+|-------|-----|---------|-------------|
+| data-analysis | W2 D4 | Aggregation & `groupby` | split-apply-combine worked example + build-the-groupby swipe |
+| data-analysis | W1 D4 | Pivot table (margin leaders) | step-by-step Excel pivot with simulated output |
+| data-science | W2 D3 | Probability (conditional chains) | conditional-probability chain reasoning |
+| data-science | W2 D4 | Normal distribution & the CLT | CLT intuition + sampling simulation |
+| data-science | W5 D5 | Gradient boosting (XGBoost) | residual-fitting intuition |
+| ml-engineering | W2 D6 | Cross-validation | k-fold + leakage trap walkthrough |
+| devops-cloud | W5 D3 | First Dockerfile | layer caching + build-order worked example |
+
+(k8s pods, React state, and transformer days already carry on-topic videos.)
+
+---
+
 ## Verification
 
 - `npx tsc --noEmit` — clean.
 - `python data/roadmaps/audit_videos.py` — **0 issues**; every video on-topic, concept-matched, identity-verified, within day-type budget (≤30 min).
 - `python data/roadmaps/audit_final.py` — all 6 parts PASS for all 11 tracks.
+- `npx tsx scripts/audit-actuary.ts` — PASS (12 concepts, 120 attempts, zero repeats).

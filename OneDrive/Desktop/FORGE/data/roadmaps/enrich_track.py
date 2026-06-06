@@ -285,9 +285,49 @@ def is_alive_cached(url, cache):
     return alive
 
 
+def apply_api_library():
+    """If video_library.json exists (produced by video_api.py), use the YouTube Data
+    API's REAL durations/channels: override duration_min, drop any entry the API
+    rejected (untrusted channel or >30 min). Returns the number of entries adjusted."""
+    p = HERE / "video_library.json"
+    if not p.exists():
+        return 0
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    by_url = {r["url"]: r for r in data.get("videos", []) if r.get("url")}
+    adjusted = 0
+    for key in list(KNOWN_GOOD):
+        kept = []
+        for tup in KNOWN_GOOD[key]:
+            rec = by_url.get(tup[0])
+            if rec is None:
+                kept.append(tup)               # not vetted by API yet — keep as-is
+                continue
+            if not rec.get("ok"):
+                adjusted += 1                  # API rejected (untrusted/over-cap) -> drop
+                continue
+            # Override duration with the API's real value.
+            real = rec.get("duration_min")
+            if isinstance(real, int) and real != tup[1]:
+                tup = (tup[0], real) + tuple(tup[2:])
+                adjusted += 1
+            kept.append(tup)
+        if kept:
+            KNOWN_GOOD[key] = kept
+        else:
+            del KNOWN_GOOD[key]
+    if adjusted:
+        print(f"  Applied YouTube Data API library: {adjusted} entries adjusted/dropped.")
+    return adjusted
+
+
 def validate_library_and_collect(extra_urls):
     """Validate KNOWN_GOOD + raw URLs via oembed, fetching TITLES. Prune entries that
-    are dead OR whose fetched title does not match the expected title (wrong ID)."""
+    are dead OR whose fetched title does not match the expected title (wrong ID).
+    If an API-vetted video_library.json exists, its real durations/channels win."""
+    apply_api_library()
     cache = _load_cache()
     # Expected title per url, from the library (for identity verification).
     expected = {}
