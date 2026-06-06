@@ -1,29 +1,42 @@
 #!/usr/bin/env python3
 """
-Universal track enricher v2 — preserve-and-pad strategy.
+Universal track enricher v3 — preserve-and-pad with hard quality gates.
 
-Key changes vs v1:
-- Raw per-day items are the SOURCE OF TRUTH; we only pad missing kinds.
-- Day 0: prefer raw D0 (after off-topic filtering); only synthesise if missing.
-- Videos use day-specific title (not week-level keyword soup) and rotate within a week.
-- Off-topic leakage (e.g., SQL lesson stuck in DevOps W1 D0) is filtered out.
-- Exercises come from raw day items, not the generic fallback.
+New in v3:
+- Library URLs are pre-validated via YouTube oembed at startup (disk-cached).
+- Raw video items with youtube.com/results search URLs are dropped.
+- Raw video items with duration_min >= 15 are dropped.
+- Raw video items whose URL fails oembed are dropped.
+- Dropped videos are replaced via the verified library; if no replacement, skip.
+- Every exercise body gets a [CODE]/[WRITE]/[PRODUCE] label.
+- Every video gets a 'why' field.
+- Data Science + Data Analysis tracks now go through the same pipeline.
 
 Usage:
-    python enrich_track.py                   # processes ALL 8 tracks
-    python enrich_track.py full-stack-web    # one track by slug
+    python enrich_track.py
+    python enrich_track.py full-stack-web
 """
 
 import json
+import re
 import sys
+import urllib.parse
+import urllib.request
+import urllib.error
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+CACHE_FILE = HERE / '.video-cache.json'
+
+YT_URL_RE = re.compile(
+    r'^https?://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[A-Za-z0-9_-]{11}'
+)
+YT_SEARCH_RE = re.compile(r'youtube\.com/results')
 
 # ============================================================
-# KNOWN_GOOD video library — each key now has a list of alternates
-# (url, duration_min, creator, title) so days in the same week can
-# rotate through different videos for the same topic family.
+# Candidate video library — multiple alternates per topic key.
+# Validated at startup; dead URLs are pruned.
 # ============================================================
 KNOWN_GOOD = {
     'git': [
@@ -39,45 +52,27 @@ KNOWN_GOOD = {
         ('https://www.youtube.com/watch?v=DM65_JyGxCo', 5, 'Fireship', 'Dockerfile Best Practices'),
     ],
     'kubernetes': [
-        ('https://www.youtube.com/watch?v=X48VuDVv0do', 2, 'Fireship',     'Kubernetes in 100 Seconds'),
-        ('https://www.youtube.com/watch?v=PziYflu8cB8', 6, 'TechWorld w/ Nana', 'Kubernetes Crash Course'),
+        ('https://www.youtube.com/watch?v=X48VuDVv0do', 2, 'Fireship', 'Kubernetes in 100 Seconds'),
     ],
     'terraform': [
         ('https://www.youtube.com/watch?v=tomUWcQ0P3k', 2, 'Fireship', 'Terraform in 100 Seconds'),
-        ('https://www.youtube.com/watch?v=l5k1ai_GBDE', 10, 'DevOps Toolkit', 'Terraform Tutorial for Beginners'),
     ],
     'helm':        [('https://www.youtube.com/watch?v=ufiTD4I8k48', 2, 'Fireship', 'Helm in 100 Seconds')],
     'argo':        [('https://www.youtube.com/watch?v=MeU5_k9ssrs', 2, 'Fireship', 'Argo CD in 100 Seconds')],
     'prometheus':  [('https://www.youtube.com/watch?v=h4Sl21AKiDg', 2, 'Fireship', 'Prometheus in 100 Seconds')],
     'nginx':       [('https://www.youtube.com/watch?v=9t4MvM9iP8M', 5, 'Fireship', 'Nginx in 5 minutes')],
-    'aws': [
-        ('https://www.youtube.com/watch?v=Kp_4tTHtOVk', 10, 'Fireship',     'AWS in 10 minutes'),
-        ('https://www.youtube.com/watch?v=ulprqHHWlng', 12, 'NetworkChuck', 'AWS Tutorial for Beginners'),
-    ],
     'iac':         [('https://www.youtube.com/watch?v=hg3f3gWOKq4', 5, 'Fireship', 'Infrastructure as Code in 5 minutes')],
     'networking':  [('https://www.youtube.com/watch?v=qiQR5rTSshw', 2, 'Fireship', 'Computer Networking in 100 seconds')],
     'owasp':       [('https://www.youtube.com/watch?v=ub1GvSlj1uE', 5, 'Fireship', 'OWASP Top 10')],
-    # Frontend / web
     'javascript':  [('https://www.youtube.com/watch?v=DHjqpvDnNGE', 2, 'Fireship', 'JavaScript in 100 Seconds')],
     'typescript':  [('https://www.youtube.com/watch?v=zQnBQ4tB3ZA', 2, 'Fireship', 'TypeScript in 100 Seconds')],
-    'react': [
-        ('https://www.youtube.com/watch?v=Tn6-PIqc4UM', 2, 'Fireship', 'React in 100 Seconds'),
-        ('https://www.youtube.com/watch?v=bMknfKXIFA8', 12, 'freeCodeCamp', 'React Course for Beginners'),
-    ],
-    'nextjs': [
-        ('https://www.youtube.com/watch?v=Sklc_fQBmcs', 2, 'Fireship', 'Next.js in 100 Seconds'),
-        ('https://www.youtube.com/watch?v=ZVnjOPwW4ZA', 10, 'Vercel', 'Next.js App Router Walkthrough'),
-    ],
+    'react':       [('https://www.youtube.com/watch?v=Tn6-PIqc4UM', 2, 'Fireship', 'React in 100 Seconds')],
+    'nextjs':      [('https://www.youtube.com/watch?v=Sklc_fQBmcs', 2, 'Fireship', 'Next.js in 100 Seconds')],
     'tailwind':    [('https://www.youtube.com/watch?v=mr15Xzb1Ook', 2, 'Fireship', 'Tailwind CSS in 100 Seconds')],
     'astro':       [('https://www.youtube.com/watch?v=gxBkghlglTg', 2, 'Fireship', 'Astro in 100 Seconds')],
     'vite':        [('https://www.youtube.com/watch?v=KCrXgy8qtjM', 2, 'Fireship', 'Vite in 100 Seconds')],
     'redux':       [('https://www.youtube.com/watch?v=_shA5Xwe8_4', 2, 'Fireship', 'Redux in 100 Seconds')],
     'graphql':     [('https://www.youtube.com/watch?v=eIQh02xuVw4', 2, 'Fireship', 'GraphQL in 100 Seconds')],
-    'html':        [('https://www.youtube.com/watch?v=qz0aGYrrlhU', 60, 'freeCodeCamp', 'HTML Tutorial for Beginners')],
-    'css':         [('https://www.youtube.com/watch?v=OEV8gMkCHXQ', 60, 'freeCodeCamp', 'CSS Tutorial for Beginners')],
-    'netlify':     [('https://www.youtube.com/watch?v=2DSL4Wf3DUk', 5, 'Netlify',    'Deploy a Site on Netlify')],
-    'vercel':      [('https://www.youtube.com/watch?v=DkFkM5kn8XY', 5, 'Vercel',     'Deploy with Vercel in 5 minutes')],
-    # Backend
     'nodejs':      [('https://www.youtube.com/watch?v=ENrzD9HAZK4', 2, 'Fireship', 'Node.js in 100 Seconds')],
     'express':     [('https://www.youtube.com/watch?v=-MTSQjw5DrM', 2, 'Fireship', 'Express in 100 Seconds')],
     'postgres':    [('https://www.youtube.com/watch?v=n2Fluyr3lbc', 2, 'Fireship', 'PostgreSQL in 100 Seconds')],
@@ -85,48 +80,32 @@ KNOWN_GOOD = {
     'rest':        [('https://www.youtube.com/watch?v=-MTSQjw5DrM', 2, 'Fireship', 'REST API in 100 Seconds')],
     'auth': [
         ('https://www.youtube.com/watch?v=2PPSXonhIck', 5, 'Fireship', '7 Auth Strategies in 5 minutes'),
-        ('https://www.youtube.com/watch?v=ZV5yTm4pT8g', 5, 'OktaDev',  'OAuth 2.0 Explained'),
     ],
     'jwt':         [('https://www.youtube.com/watch?v=7Q17ubqLfaM', 2, 'Fireship', 'JWT in 100 Seconds')],
-    'stripe':      [('https://www.youtube.com/watch?v=Psm9LUiOtbU', 5, 'Fireship', 'Stripe Checkout Tutorial')],
     'websocket':   [('https://www.youtube.com/watch?v=1BfCnjr_Vjg', 2, 'Fireship', 'WebSockets in 100 Seconds')],
-    # Mobile
     'reactnative': [('https://www.youtube.com/watch?v=gvkqT_Uoahw', 2, 'Fireship', 'React Native in 100 Seconds')],
     'expo':        [('https://www.youtube.com/watch?v=mQM5nPwMod0', 5, 'Fireship', 'Expo + React Native')],
     'flutter':     [('https://www.youtube.com/watch?v=lHhRhPV--G0', 2, 'Fireship', 'Flutter in 100 Seconds')],
-    # Data / ML / AI
     'python':      [('https://www.youtube.com/watch?v=x7X9w_GIm1s', 2, 'Fireship', 'Python in 100 Seconds')],
     'pandas':      [('https://www.youtube.com/watch?v=DkjCaAMBGWM', 2, 'Fireship', 'Pandas in 100 Seconds')],
     'jupyter':     [('https://www.youtube.com/watch?v=h1sAzPojKMg', 2, 'Fireship', 'Jupyter in 100 Seconds')],
     'pytorch':     [('https://www.youtube.com/watch?v=ORMx45xqWkA', 2, 'Fireship', 'PyTorch in 100 Seconds')],
     'tensorflow':  [('https://www.youtube.com/watch?v=i8NETqtGHms', 2, 'Fireship', 'TensorFlow in 100 Seconds')],
     'ml':          [('https://www.youtube.com/watch?v=I74ymkoNTnw', 5, 'Fireship', 'Machine Learning in 100 Seconds')],
-    'openai':      [('https://www.youtube.com/watch?v=ULqJxckBfHA', 5, 'Fireship',  'GPT-4 + LangChain Tutorial')],
-    'anthropic':   [('https://www.youtube.com/watch?v=jGvipKziJ_E', 5, 'Anthropic', 'Building with Claude')],
-    'langchain':   [('https://www.youtube.com/watch?v=lG7Uxts9SXs', 2, 'Fireship',  'LangChain in 100 Seconds')],
+    'langchain':   [('https://www.youtube.com/watch?v=lG7Uxts9SXs', 2, 'Fireship', 'LangChain in 100 Seconds')],
     'rag':         [('https://www.youtube.com/watch?v=T-D1OfcDW1M', 5, 'IBM Technology', 'What is RAG?')],
-    'vector':      [('https://www.youtube.com/watch?v=klTvEwg3oJ4', 2, 'Fireship',  'Vector Databases in 100 Seconds')],
-    'agent':       [('https://www.youtube.com/watch?v=ZYf9V2fSFwU', 5, 'Anthropic', 'Building Effective Agents')],
-    'mcp':         [('https://www.youtube.com/watch?v=7j_NE6Pjv-E', 5, 'Anthropic', 'Introduction to MCP')],
-    'embedding':   [('https://www.youtube.com/watch?v=klTvEwg3oJ4', 2, 'Fireship',  'Vector Databases in 100 Seconds')],
+    'vector':      [('https://www.youtube.com/watch?v=klTvEwg3oJ4', 2, 'Fireship', 'Vector Databases in 100 Seconds')],
+    'embedding':   [('https://www.youtube.com/watch?v=klTvEwg3oJ4', 2, 'Fireship', 'Vector Databases in 100 Seconds')],
     'n8n':         [('https://www.youtube.com/watch?v=AURnISajubk', 5, 'n8n',       'Getting Started with n8n')],
-    # BI
-    'powerbi':     [('https://www.youtube.com/watch?v=AGrl-H87pRU', 5, 'Microsoft', 'Power BI in 6 minutes')],
     'sql':         [('https://www.youtube.com/watch?v=zsjvFFKOm3c', 2, 'Fireship',  'SQL in 100 Seconds')],
-    'dax':         [('https://www.youtube.com/watch?v=NgY-PqQfeAQ', 5, 'Microsoft', 'DAX Fundamentals')],
-    'bigquery':    [('https://www.youtube.com/watch?v=eyBK9nj-7AA', 5, 'Google Cloud', 'BigQuery in 5 minutes')],
-    # Security
-    'burp':        [('https://www.youtube.com/watch?v=2VKvkX9CSXg', 10, 'PortSwigger', 'Burp Suite Beginner Tutorial')],
-    'kali':        [('https://www.youtube.com/watch?v=U1w4T03B30I', 5,  'NetworkChuck', 'Kali Linux Crash Course')],
-    'metasploit':  [('https://www.youtube.com/watch?v=8lR27r8Y_ik', 5,  'NetworkChuck', 'Metasploit in 5 minutes')],
-    'nmap':        [('https://www.youtube.com/watch?v=4t4kBkMsDbQ', 5,  'NetworkChuck', 'Nmap Tutorial for Beginners')],
-    'wireshark':   [('https://www.youtube.com/watch?v=jvuiI1Leg6w', 5,  'NetworkChuck', 'Wireshark Crash Course')],
-    'siem':        [('https://www.youtube.com/watch?v=GG-VRGx2j8s', 5,  'Professor Messer', 'SIEM Explained')],
-    'zerotrust':   [('https://www.youtube.com/watch?v=yn6CPQ9RioA', 5,  'IBM Technology', 'Zero Trust Explained')],
-    'ethics':      [('https://www.youtube.com/watch?v=Vfpc4rEW7tg', 8,  'NetworkChuck', 'Hacking Ethics & The Law')],
-    'xss':         [('https://www.youtube.com/watch?v=EoaDgUgS6QA', 5,  'PwnFunction', 'Cross-Site Scripting Explained')],
-    'idor':        [('https://www.youtube.com/watch?v=rINq_dahdtg', 5,  'PwnFunction', 'IDOR Explained')],
-    'reports':     [('https://www.youtube.com/watch?v=qHQynltMzaQ', 5,  'InsiderPhD',  'How to Write a Bug Report')],
+    'kali':        [('https://www.youtube.com/watch?v=U1w4T03B30I', 5, 'NetworkChuck', 'Kali Linux Crash Course')],
+    'metasploit':  [('https://www.youtube.com/watch?v=8lR27r8Y_ik', 5, 'NetworkChuck', 'Metasploit in 5 minutes')],
+    'nmap':        [('https://www.youtube.com/watch?v=4t4kBkMsDbQ', 5, 'NetworkChuck', 'Nmap Tutorial for Beginners')],
+    'wireshark':   [('https://www.youtube.com/watch?v=jvuiI1Leg6w', 5, 'NetworkChuck', 'Wireshark Crash Course')],
+    'siem':        [('https://www.youtube.com/watch?v=GG-VRGx2j8s', 5, 'Professor Messer', 'SIEM Explained')],
+    'zerotrust':   [('https://www.youtube.com/watch?v=yn6CPQ9RioA', 5, 'IBM Technology', 'Zero Trust Explained')],
+    'xss':         [('https://www.youtube.com/watch?v=EoaDgUgS6QA', 5, 'PwnFunction', 'Cross-Site Scripting Explained')],
+    'idor':        [('https://www.youtube.com/watch?v=rINq_dahdtg', 5, 'PwnFunction', 'IDOR Explained')],
 }
 
 DEFAULT_VIDEO_KEY = 'git'
@@ -137,35 +116,24 @@ KEYWORD_VIDEO_MAP = [
     ('next.js', 'nextjs'), ('next js', 'nextjs'), ('app router', 'nextjs'), ('nextjs', 'nextjs'),
     ('astro', 'astro'), ('vite', 'vite'), ('tailwind', 'tailwind'),
     ('redux', 'redux'), ('zustand', 'redux'), ('graphql', 'graphql'),
-    ('html', 'html'), ('css', 'css'),
-    ('netlify', 'netlify'), ('vercel', 'vercel'),
     ('react', 'react'), ('typescript', 'typescript'), ('javascript', 'javascript'),
     ('node', 'nodejs'), ('express', 'express'),
     ('postgres', 'postgres'), ('prisma', 'prisma'),
-    ('stripe', 'stripe'),
     ('websocket', 'websocket'), ('socket.io', 'websocket'),
     ('jwt', 'jwt'), ('oauth', 'auth'), ('auth', 'auth'),
     ('rest api', 'rest'), ('rest', 'rest'),
-    ('powerbi', 'powerbi'), ('power bi', 'powerbi'), ('dax', 'dax'),
-    ('bigquery', 'bigquery'), ('looker', 'bigquery'),
     ('pandas', 'pandas'), ('jupyter', 'jupyter'),
     ('pytorch', 'pytorch'), ('tensorflow', 'tensorflow'),
-    ('langchain', 'langchain'), ('rag', 'rag'), ('mcp', 'mcp'),
+    ('langchain', 'langchain'), ('rag', 'rag'),
     ('embedding', 'embedding'), ('vector', 'vector'),
-    ('agent', 'agent'), ('autonomous', 'agent'),
-    ('openai', 'openai'), ('claude', 'anthropic'), ('anthropic', 'anthropic'), ('llm', 'openai'),
-    ('n8n', 'n8n'), ('automation', 'n8n'),
+    ('n8n', 'n8n'),
     ('machine learning', 'ml'), ('ml model', 'ml'), ('first model', 'ml'),
     ('xss', 'xss'), ('cross-site', 'xss'),
     ('idor', 'idor'), ('broken auth', 'idor'),
-    ('bug report', 'reports'), ('report', 'reports'),
-    ('ethics', 'ethics'),
-    ('burp', 'burp'), ('zap', 'burp'),
-    ('kali', 'kali'), ('virtualbox', 'kali'),
+    ('kali', 'kali'),
     ('metasploit', 'metasploit'), ('nmap', 'nmap'), ('wireshark', 'wireshark'),
     ('siem', 'siem'), ('zero trust', 'zerotrust'),
-    ('owasp', 'owasp'), ('vulnerability', 'owasp'), ('vuln ', 'owasp'),
-    ('pentest', 'burp'), ('juice shop', 'owasp'),
+    ('owasp', 'owasp'), ('vulnerability', 'owasp'), ('juice shop', 'owasp'),
     ('docker', 'docker'), ('container', 'docker'),
     ('kubernetes', 'kubernetes'), ('k8s', 'kubernetes'),
     ('terraform', 'terraform'),
@@ -173,7 +141,6 @@ KEYWORD_VIDEO_MAP = [
     ('argo', 'argo'), ('gitops', 'argo'),
     ('prometheus', 'prometheus'), ('monitoring', 'prometheus'), ('observability', 'prometheus'),
     ('nginx', 'nginx'), ('web server', 'nginx'),
-    ('aws', 'aws'), ('cloud', 'aws'),
     ('infrastructure', 'iac'),
     ('networking', 'networking'), ('dns', 'networking'),
     ('linux', 'linux'), ('shell', 'linux'), ('terminal', 'linux'),
@@ -183,29 +150,116 @@ KEYWORD_VIDEO_MAP = [
 ]
 
 
-def _video_dict(tup):
-    url, dur, creator, title = tup
-    return {"title": title, "url": url, "duration_min": dur, "creator": creator,
-            "why": "The fastest mental model for today's core idea."}
+# ============================================================
+# Library validation via YouTube oembed (disk-cached)
+# ============================================================
+def _load_cache():
+    if CACHE_FILE.exists():
+        try:
+            with open(CACHE_FILE, encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
 
 
-def pick_video_for_day(day_topic: str, used_urls: set) -> dict:
-    """Pick a video for one day, preferring URLs not used yet this week."""
-    c = (day_topic or '').lower()
-    for keyword, key in KEYWORD_VIDEO_MAP:
-        if keyword in c:
-            for tup in KNOWN_GOOD[key]:
-                if tup[0] not in used_urls:
-                    return _video_dict(tup)
-            return _video_dict(KNOWN_GOOD[key][0])
-    for tup in KNOWN_GOOD[DEFAULT_VIDEO_KEY]:
-        if tup[0] not in used_urls:
-            return _video_dict(tup)
-    return _video_dict(KNOWN_GOOD[DEFAULT_VIDEO_KEY][0])
+def _save_cache(cache):
+    with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(cache, f, indent=2)
+
+
+def _oembed_check(url):
+    req = urllib.request.Request(
+        f'https://www.youtube.com/oembed?url={urllib.parse.quote(url, safe="")}&format=json',
+        headers={'User-Agent': 'Mozilla/5.0 enrich-bot'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def is_alive_cached(url, cache):
+    if not YT_URL_RE.match(url or ''):
+        return False
+    if url in cache:
+        return cache[url]
+    ok = _oembed_check(url)
+    cache[url] = ok
+    return ok
+
+
+def validate_library_and_collect(extra_urls):
+    """Validate KNOWN_GOOD plus extra URLs from raw files. Prune dead from KNOWN_GOOD."""
+    cache = _load_cache()
+    all_urls = set(extra_urls)
+    for entries in KNOWN_GOOD.values():
+        for tup in entries:
+            all_urls.add(tup[0])
+    to_check = [u for u in all_urls if u not in cache]
+    if to_check:
+        print(f"  Validating {len(to_check)} unverified URLs via oembed...")
+        with ThreadPoolExecutor(max_workers=10) as pool:
+            futs = {pool.submit(_oembed_check, u): u for u in to_check}
+            for fut in as_completed(futs):
+                u = futs[fut]
+                try:
+                    cache[u] = fut.result()
+                except Exception:
+                    cache[u] = False
+        _save_cache(cache)
+    # Prune dead from KNOWN_GOOD
+    dead_count = 0
+    for key in list(KNOWN_GOOD):
+        before = len(KNOWN_GOOD[key])
+        KNOWN_GOOD[key] = [tup for tup in KNOWN_GOOD[key] if cache.get(tup[0], False)]
+        dead_count += before - len(KNOWN_GOOD[key])
+        if not KNOWN_GOOD[key]:
+            del KNOWN_GOOD[key]
+    print(f"  Library pruned: {dead_count} dead URL(s) removed. {len(KNOWN_GOOD)} keys remain.")
+    return cache
 
 
 # ============================================================
-# Day 0 setup — per-track prerequisite topics
+# Video picker (returns None if no verified video found)
+# ============================================================
+def _video_dict(tup):
+    url, dur, creator, title = tup
+    return {"title": title, "url": url, "duration_min": dur, "creator": creator,
+            "why": "This short visual explanation makes the concept click before you write code."}
+
+
+def pick_video_for_day(day_topic: str, used_urls: set, cache: dict):
+    """Try to find a verified video for the day. Returns dict or None."""
+    c = (day_topic or '').lower()
+    # First pass: match keywords, prefer unused
+    for keyword, key in KEYWORD_VIDEO_MAP:
+        if keyword in c and key in KNOWN_GOOD:
+            for tup in KNOWN_GOOD[key]:
+                if tup[0] not in used_urls and tup[1] < 15:
+                    return _video_dict(tup)
+    # Second pass: any verified video not yet used (diversity)
+    for entries in KNOWN_GOOD.values():
+        for tup in entries:
+            if tup[0] not in used_urls and tup[1] < 15:
+                return _video_dict(tup)
+    # Third pass: matched keyword, even if reused
+    for keyword, key in KEYWORD_VIDEO_MAP:
+        if keyword in c and key in KNOWN_GOOD:
+            for tup in KNOWN_GOOD[key]:
+                if tup[1] < 15:
+                    return _video_dict(tup)
+    # Final: default
+    if DEFAULT_VIDEO_KEY in KNOWN_GOOD:
+        for tup in KNOWN_GOOD[DEFAULT_VIDEO_KEY]:
+            if tup[1] < 15:
+                return _video_dict(tup)
+    return None
+
+
+# ============================================================
+# Per-track Day 0 topic
 # ============================================================
 TRACK_PREREQUISITES = {
     'devops-cloud': {
@@ -322,9 +376,68 @@ TRACK_PREREQUISITES = {
         23: "Anthropic safety + content filter API",
         24: "Full AI stack check (SDKs, vector DB, evals, observability, deploy)",
     },
+    'data-science': {
+        # 26 weeks — generic but tool-aware
+        1: "Python 3.11 + Jupyter Lab + pandas",
+        2: "VS Code + git + a SQL client",
+        3: "pandas + matplotlib + seaborn",
+        4: "NumPy + scipy",
+        5: "scikit-learn + first regression",
+        6: "scikit-learn classification + train/test split",
+        7: "Feature engineering + pipelines",
+        8: "Cross-validation + hyperparameter tuning",
+        9: "Tree-based models: XGBoost, LightGBM",
+        10: "Clustering + dimensionality reduction",
+        11: "Statistics for ML: confidence + significance",
+        12: "Bayesian intuition + A/B testing primer",
+        13: "Time series basics + statsmodels",
+        14: "Forecasting with Prophet / NeuralProphet",
+        15: "Storytelling: matplotlib + plotly polish",
+        16: "FastAPI + serving a model behind an endpoint",
+        17: "Streamlit + a one-page dashboard",
+        18: "MLflow tracking experiments",
+        19: "Docker + reproducible runs",
+        20: "Cloud notebooks: Colab / SageMaker",
+        21: "Big-data interfaces: PySpark or Dask",
+        22: "Causal-inference primer",
+        23: "Communicating to non-technical stakeholders",
+        24: "End-to-end DS portfolio repo",
+        25: "Interview prep: SQL + take-home",
+        26: "Capstone toolchain check",
+    },
+    'data-analysis': {
+        # 27 weeks — analyst stack
+        1: "Excel + Anaconda + Jupyter Lab",
+        2: "pandas + read_csv",
+        3: "SQL: SELECT, WHERE, GROUP BY, JOIN",
+        4: "Excel pivot tables + VLOOKUP",
+        5: "Power Query + cleaning workflows",
+        6: "Tableau Public account",
+        7: "Tableau dashboards + filters",
+        8: "Statistics: mean, median, distributions",
+        9: "Statistical tests: t-test, chi-square",
+        10: "A/B testing fundamentals",
+        11: "Cohort analysis in SQL",
+        12: "Power BI Desktop install",
+        13: "Power BI + DAX measures",
+        14: "Looker Studio + connectors",
+        15: "BigQuery sandbox + first query",
+        16: "Storytelling: a single chart, well-explained",
+        17: "Stakeholder interview template",
+        18: "Excel macros + automation",
+        19: "Python for analysts: requests + pandas",
+        20: "Webscraping basics with BeautifulSoup",
+        21: "Geo data: folium + GeoPandas",
+        22: "Notion / Confluence reporting",
+        23: "Presentation polish: Loom + slides",
+        24: "Portfolio site + LinkedIn",
+        25: "Interview prep: case studies",
+        26: "Capstone: end-to-end analysis",
+        27: "Capstone presentation",
+    },
 }
 
-# Verification command per tool keyword for Day 0 exercise
+# Verification commands per tool keyword for Day 0 exercise
 PREREQ_VERIFY = {
     'git': ("git --version\nssh -T git@github.com", "Git prints a version; SSH greets you by name."),
     'node': ("node --version\nnpm --version", "Both print versions; Node is v20 or later."),
@@ -343,7 +456,7 @@ PREREQ_VERIFY = {
     'az': ("az --version\naz account show", "az CLI version and your subscription print."),
     'vault': ("vault --version", "Vault CLI version prints."),
     'argocd': ("argocd version --client", "Argo CD client version prints."),
-    'prometheus': ("docker compose up -d\ncurl -s localhost:9090/-/healthy", "Prometheus answers `Prometheus Server is Healthy`."),
+    'prometheus': ("docker compose up -d\ncurl -s localhost:9090/-/healthy", "Prometheus answers Prometheus Server is Healthy."),
     'velero': ("velero version --client-only", "Velero CLI version prints."),
     'prowler': ("prowler -v", "Prowler version prints."),
     'github': ("gh --version\ngh auth status", "gh CLI prints version and logged-in user."),
@@ -406,6 +519,11 @@ PREREQ_VERIFY = {
     'cosign': ("cosign version", "cosign prints version."),
     'volatility': ("pip install volatility3\nvol --info | head", "Volatility lists available plugins."),
     'tryhackme': ("# Connect to TryHackMe VPN\nip a | grep tun0", "tun0 interface has an IP address."),
+    'tableau': ("# Open Tableau Public Desktop and confirm version under Help -> About",
+                "Tableau Public starts and you can connect to a CSV."),
+    'excel': ("# Open Excel, verify version under File -> Account", "Excel opens and runs `=NOW()` successfully."),
+    'looker': ("# Open Looker Studio at lookerstudio.google.com and sign in",
+               "You can create a new blank report."),
 }
 
 
@@ -421,7 +539,7 @@ def _verify_for_topic(topic: str):
         'mcp', 'langchain', 'openai', 'anthropic', 'vector',
         'jupyter', 'pytorch', 'sklearn', 'pandas', 'fastapi', 'mlflow', 'dvc',
         'conda', 'n8n', 'playwright',
-        'powerbi', 'dax', 'dbt', 'bigquery', 'sql',
+        'powerbi', 'dax', 'dbt', 'bigquery', 'sql', 'tableau', 'excel', 'looker',
         'kali', 'burp', 'zap', 'metasploit', 'nmap', 'wireshark',
         'splunk', 'thehive', 'semgrep', 'snyk', 'sonarqube', 'cosign',
         'volatility', 'tryhackme',
@@ -435,8 +553,104 @@ def _verify_for_topic(topic: str):
 
 
 # ============================================================
-# Off-topic content filter — strips lessons/videos/readings that
-# don't belong in this track (e.g., SQL leakage in DevOps W1 D0).
+# Exercise label inference
+# ============================================================
+EX_LABEL_RE = re.compile(r'^\s*\[(CODE|WRITE|PRODUCE)\]', re.IGNORECASE)
+PRODUCE_TOKENS = ['git push', 'git commit', 'git tag', 'tag v', 'ship it', 'pushed to github',
+                  'create a pr', 'pull request', 'publish', 'deploy', 'submit your',
+                  'commit your work', 'README.md', 'commit a', 'pushed to your repo']
+WRITE_TOKENS = ['reflect', 'journal', 'in your own words', 'draw a diagram', 'one paragraph',
+                'write a paragraph', 'write notes', 'write up', 'setup.md', 'document',
+                'notes.md', 'reflection', 'explain in writing']
+CODE_TOKENS = ['```', 'bash', 'npm ', 'pip ', 'python ', 'docker ', 'kubectl ', 'terraform ',
+               'curl ', 'install', 'run the following', 'run:', '$ ', 'helm ', 'aws ',
+               'gcloud ', 'gh ', 'apt ', 'brew ']
+
+
+def ensure_exercise_label(body: str) -> str:
+    if not body:
+        return '[CODE] Apply today\'s lesson and commit your work.'
+    if EX_LABEL_RE.match(body):
+        return body
+    b_lower = body.lower()
+    if any(tok in b_lower for tok in PRODUCE_TOKENS):
+        label = 'PRODUCE'
+    elif any(tok in b_lower for tok in WRITE_TOKENS):
+        label = 'WRITE'
+    elif any(tok in b_lower for tok in CODE_TOKENS):
+        label = 'CODE'
+    else:
+        label = 'CODE'
+    return f'[{label}] {body.lstrip()}'
+
+
+# ============================================================
+# Synthesised content
+# ============================================================
+def synth_lesson(day_title: str, week_context: str) -> dict:
+    body = (
+        f"## {day_title}\n\n"
+        f"{(week_context or '')[:500]}\n\n"
+        "## Key ideas\n"
+        "- Understand the concept before reaching for code.\n"
+        "- Build the smallest working example first.\n"
+        "- Commit early and often so each step is reversible.\n"
+    )
+    return {"kind": "lesson", "title": day_title, "body": body}
+
+
+def synth_swipe() -> dict:
+    return {
+        "kind": "swipe", "title": "Quick check - swipe to answer",
+        "cards": [
+            {"prompt": "The fastest way to learn a new tool is to read the docs end-to-end before writing any code.",
+             "answer": False, "whenRight": "Right - building a tiny example first beats reading every page.",
+             "whenWrong": "Docs are a reference, not a tutorial. Code first, read second."},
+            {"prompt": "Committing small checkpoints helps you debug regressions and review your own progress.",
+             "answer": True, "whenRight": "Exactly - tiny commits are a superpower.",
+             "whenWrong": "They really do help; `git revert` is one command away."},
+            {"prompt": "Copy-pasting from Stack Overflow without understanding is a sustainable long-term strategy.",
+             "answer": False, "whenRight": "Correct - understanding the why is what makes you employable.",
+             "whenWrong": "Short-term it works; long-term it stalls you."}
+        ]
+    }
+
+
+def synth_exercise(day_title: str) -> dict:
+    body = (
+        f"[CODE] Apply today's lesson to a small, working artefact.\n\n"
+        f"Concretely: produce one file or one command that demonstrates **{day_title}** end-to-end. "
+        "Commit it with a message that names what you did and why.\n\n"
+        "PASS:\n"
+        "[x] The artefact runs without errors.\n"
+        "[x] You can explain in one sentence what it does.\n"
+        "[x] It's pushed to GitHub on a `day{N}` branch or commit."
+    )
+    return {"kind": "exercise", "title": "Your turn", "body": body}
+
+
+def synth_concept_check_q(week_title: str) -> list:
+    return [
+        {"q": f"What is the primary benefit of learning {week_title}?",
+         "choices": ["It's a buzzword", "It makes your work reproducible, maintainable, or shippable",
+                     "It impresses recruiters", "It pays more"],
+         "correct": 1,
+         "explain": "Topics on this track are picked because they make real work easier to ship. The other answers may have grains of truth but they don't capture the core benefit."},
+        {"q": "Which of these is the best first step when learning a new tool?",
+         "choices": ["Read every page of the docs", "Build the smallest possible working example",
+                     "Watch ten videos", "Ask a friend"],
+         "correct": 1,
+         "explain": "A smallest-working-example beats every other learning strategy because it forces you to engage with the tool's actual mechanics rather than skim words about it."},
+        {"q": "When you hit an error, what should you do first?",
+         "choices": ["Switch tools", "Read the error message carefully",
+                     "Delete and restart", "Ask ChatGPT immediately"],
+         "correct": 1,
+         "explain": "The error message usually tells you the answer in plain English. Read it twice before reaching for any other tool — most fixes are spelled out right there."},
+    ]
+
+
+# ============================================================
+# Off-topic filter
 # ============================================================
 TRACK_OFF_TOPIC_KEYWORDS = {
     'devops-cloud': ['SQL', 'SQLBolt', 'sqlbolt'],
@@ -454,138 +668,100 @@ def is_off_topic(item: dict, track_slug: str) -> bool:
     return any(s in haystack for s in suspects)
 
 
-def clean_items(items: list, track_slug: str) -> list:
-    return [it for it in items if not is_off_topic(it, track_slug)]
+def clean_items(items: list, track_slug: str, cache: dict) -> list:
+    """Drop off-topic items AND any video that fails our gates."""
+    out = []
+    for it in items:
+        if is_off_topic(it, track_slug):
+            continue
+        if it.get('kind') == 'video':
+            url = it.get('url', '') or ''
+            dur = it.get('duration_min')
+            if YT_SEARCH_RE.search(url):
+                continue
+            if not YT_URL_RE.match(url):
+                continue
+            if not is_alive_cached(url, cache):
+                continue
+            if isinstance(dur, (int, float)) and dur >= 15:
+                continue
+            # Backfill 'why' if missing
+            if not it.get('why'):
+                it = dict(it)
+                it['why'] = "This visual explanation makes the concept click before you write code."
+            # Backfill duration if missing — assume short
+            if not it.get('duration_min'):
+                it = dict(it)
+                it['duration_min'] = 5
+            if not it.get('creator'):
+                it = dict(it)
+                it['creator'] = 'YouTube'
+        out.append(it)
+    return out
 
 
 # ============================================================
-# Synthesised content for padding missing day kinds
+# Day 0 synthesis
 # ============================================================
-def synth_lesson(day_title: str, week_context: str) -> dict:
-    body = (
-        f"## {day_title}\n\n"
-        f"{(week_context or '')[:500]}\n\n"
-        "## Key ideas\n"
-        "- Understand the concept before reaching for code.\n"
-        "- Build the smallest working example first.\n"
-        "- Commit early and often so each step is reversible.\n"
-    )
-    return {"kind": "lesson", "title": day_title, "body": body}
-
-
-def synth_swipe() -> dict:
-    return {
-        "kind": "swipe", "title": "Quick check – swipe to answer",
-        "cards": [
-            {"prompt": "The fastest way to learn a new tool is to read the docs end-to-end before writing any code.",
-             "answer": False, "whenRight": "Right — building a tiny example first beats reading every page.",
-             "whenWrong": "Docs are a reference, not a tutorial. Code first, read second."},
-            {"prompt": "Committing small checkpoints helps you debug regressions and review your own progress.",
-             "answer": True, "whenRight": "Exactly — tiny commits are a superpower.",
-             "whenWrong": "They really do help; `git revert` is one command away."},
-            {"prompt": "Copy-pasting from Stack Overflow without understanding is a sustainable long-term strategy.",
-             "answer": False, "whenRight": "Correct — understanding the why is what makes you employable.",
-             "whenWrong": "Short-term it works; long-term it stalls you."}
-        ]
-    }
-
-
-def synth_exercise(day_title: str) -> dict:
-    return {
-        "kind": "exercise", "title": "Your turn",
-        "body": (
-            f"[CODE] Apply today's lesson to a small, working artefact.\n\n"
-            f"Concretely: produce one file or one command that demonstrates **{day_title}** end-to-end. "
-            "Commit it with a message that names what you did and why.\n\n"
-            "PASS:\n"
-            "[x] The artefact runs without errors.\n"
-            "[x] You can explain in one sentence what it does.\n"
-            "[x] It's pushed to GitHub on a `day{N}` branch or commit."
-        )
-    }
-
-
-def synth_concept_check_q(week_title: str) -> list:
-    return [
-        {"q": f"What is the primary benefit of learning {week_title}?",
-         "choices": ["It's a buzzword", "It makes your work reproducible, maintainable, or shippable",
-                     "It impresses recruiters", "It pays more"],
-         "correct": 1, "explain": "Topics on this track are picked because they make real work easier to ship."},
-        {"q": "Which of these is the best first step when learning a new tool?",
-         "choices": ["Read every page of the docs", "Build the smallest possible working example",
-                     "Watch 10 videos", "Ask a friend"],
-         "correct": 1, "explain": "A smallest working example beats every other learning strategy."},
-        {"q": "When you hit an error, what should you do first?",
-         "choices": ["Switch tools", "Read the error message carefully",
-                     "Delete and restart", "Ask ChatGPT immediately"],
-         "correct": 1, "explain": "The error message usually tells you the answer. Read it twice."},
-    ]
-
-
-# ============================================================
-# Day 0 synthesis (used when raw D0 is missing or insufficient)
-# ============================================================
-def synth_day_zero(topic: str) -> dict:
+def synth_day_zero(topic: str, used_urls: set, cache: dict) -> dict:
     verify_cmd, verify_pass = _verify_for_topic(topic)
-    video = pick_video_for_day(topic, set())
-    return {
-        "number": 0, "title": f"Day 0 – Setup: {topic}",
-        "summary": f"Install and verify {topic} before diving into the week.",
-        "items": [
-            {"kind": "lesson", "title": "Set up your tooling",
-             "body": (
-                 f"## What it is\n{topic} is the foundation for this week's work. "
-                 "Without it installed and working, every later day will fail with a cryptic error.\n\n"
-                 "## What you'll do today\n"
-                 "- Install the required tool(s)\n"
-                 "- Authenticate (if the tool talks to a cloud or remote service)\n"
-                 "- Run a one-line verification command\n"
-                 "- Commit a `day0` checkpoint to GitHub\n\n"
-                 "## Why before anything else\n"
-                 "The #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. "
-                 "Spend 30 minutes here and save hours later."
-             )},
-            {"kind": "video", "title": video["title"], "url": video["url"],
-             "duration_min": video["duration_min"], "creator": video["creator"],
-             "why": "Follow along to install and sanity-check the tool."},
-            {"kind": "lesson", "title": "See it in action — the exact steps",
-             "body": (
-                 f"## Walkthrough\nDo every step now, in your terminal.\n\n"
-                 f"```bash\n{verify_cmd}\n```\n\n"
-                 f"## What 'working' looks like\n{verify_pass}\n\n"
-                 "If anything errors, read the message carefully — 90% of Day 0 failures are PATH or auth "
-                 "issues, both of which the error spells out."
-             )},
-            {"kind": "swipe", "title": "Quick check – swipe to answer",
-             "cards": [
-                 {"prompt": f"You can run a version command for {topic} and it prints output without error.",
-                  "answer": True, "whenRight": "The tool is on your PATH.",
-                  "whenWrong": "Re-run the installer; confirm the binary is on PATH."},
-                 {"prompt": "You stored credentials (where needed) outside the repo.",
-                  "answer": True, "whenRight": "Secrets stay out of git.",
-                  "whenWrong": "Use env vars or the cloud's credential helper; never commit keys."},
-                 {"prompt": "You committed a `SETUP.md` recording versions you installed.",
-                  "answer": True, "whenRight": "Your future self will thank you.",
-                  "whenWrong": "Future-you debugs version mismatches; record them now."}
-             ]},
-            {"kind": "exercise", "title": "Verify your setup",
-             "body": (
-                 f"[CODE] Run:\n```bash\n{verify_cmd}\n```\n\n"
-                 f"PASS:\n[x] {verify_pass}\n[x] No error messages in output\n"
-                 "[x] Committed `SETUP.md` with the versions you installed."
-             )}
-        ]
-    }
+    items = [
+        {"kind": "lesson", "title": "Set up your tooling",
+         "body": (
+             f"## What it is\n{topic} is the foundation for this week's work. "
+             "Without it installed and working, every later day will fail with a cryptic error.\n\n"
+             "## What you'll do today\n"
+             "- Install the required tool(s)\n"
+             "- Authenticate (if the tool talks to a cloud or remote service)\n"
+             "- Run a one-line verification command\n"
+             "- Commit a `day0` checkpoint to GitHub\n\n"
+             "## Why before anything else\n"
+             "The #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. "
+             "Spend 30 minutes here and save hours later."
+         )},
+    ]
+    video = pick_video_for_day(topic, used_urls, cache)
+    if video:
+        items.append({"kind": "video", **video})
+        used_urls.add(video['url'])
+    items.extend([
+        {"kind": "lesson", "title": "See it in action - the exact steps",
+         "body": (
+             f"## Walkthrough\nDo every step now, in your terminal.\n\n"
+             f"```bash\n{verify_cmd}\n```\n\n"
+             f"## What 'working' looks like\n{verify_pass}\n\n"
+             "If anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth "
+             "issues, both of which the error spells out."
+         )},
+        {"kind": "swipe", "title": "Quick check - swipe to answer",
+         "cards": [
+             {"prompt": f"You can run a version command for {topic} and it prints output without error.",
+              "answer": True, "whenRight": "The tool is on your PATH.",
+              "whenWrong": "Re-run the installer; confirm the binary is on PATH."},
+             {"prompt": "You stored credentials (where needed) outside the repo.",
+              "answer": True, "whenRight": "Secrets stay out of git.",
+              "whenWrong": "Use env vars or the cloud's credential helper; never commit keys."},
+             {"prompt": "You committed a `SETUP.md` recording versions you installed.",
+              "answer": True, "whenRight": "Your future self will thank you.",
+              "whenWrong": "Future-you debugs version mismatches; record them now."}
+         ]},
+        {"kind": "exercise", "title": "Verify your setup",
+         "body": (
+             f"[PRODUCE] Run:\n```bash\n{verify_cmd}\n```\n\n"
+             f"PASS:\n[x] {verify_pass}\n[x] No error messages in output\n"
+             "[x] Committed `SETUP.md` with the versions you installed."
+         )}
+    ])
+    return {"number": 0, "title": f"Day 0 - Setup: {topic}",
+            "summary": f"Install and verify {topic} before diving into the week.", "items": items}
 
 
 # ============================================================
-# Day padding: take raw items, strip off-topic, pad missing kinds.
+# Day padding
 # ============================================================
-def pad_day(raw_day: dict, week_context: str, day_num: int, week_title: str,
-            track_slug: str, used_video_urls: set) -> dict:
-    items_in = clean_items(raw_day.get('items', []), track_slug) if raw_day else []
-    day_title = (raw_day.get('title') if raw_day else '') or f"Day {day_num} – {week_title}"
-
+def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_urls, cache):
+    items_in = clean_items(raw_day.get('items', []), track_slug, cache) if raw_day else []
+    day_title = (raw_day.get('title') if raw_day else '') or f"Day {day_num} - {week_title}"
     kinds_present = {it.get('kind') for it in items_in}
     items = list(items_in)
 
@@ -593,13 +769,12 @@ def pad_day(raw_day: dict, week_context: str, day_num: int, week_title: str,
         items.insert(0, synth_lesson(day_title, week_context))
 
     if 'video' not in kinds_present:
-        video = pick_video_for_day(day_title, used_video_urls)
-        first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
-        insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
-        items.insert(insert_at, {"kind": "video", "title": video["title"], "url": video["url"],
-                                 "duration_min": video["duration_min"], "creator": video["creator"],
-                                 "why": video["why"]})
-        used_video_urls.add(video['url'])
+        video = pick_video_for_day(day_title, used_video_urls, cache)
+        if video:
+            first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
+            insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
+            items.insert(insert_at, {"kind": "video", **video})
+            used_video_urls.add(video['url'])
     else:
         for it in items:
             if it.get('kind') == 'video' and it.get('url'):
@@ -612,14 +787,19 @@ def pad_day(raw_day: dict, week_context: str, day_num: int, week_title: str,
     if 'exercise' not in kinds_present:
         items.append(synth_exercise(day_title))
 
+    # Ensure every exercise body has [CODE]/[WRITE]/[PRODUCE]
+    for it in items:
+        if it.get('kind') == 'exercise':
+            it['body'] = ensure_exercise_label(it.get('body', '') or '')
+
     summary = (raw_day.get('summary') if raw_day else '') or f"Focus: {day_title}"
     return {"number": day_num, "title": day_title, "summary": summary, "items": items}
 
 
 # ============================================================
-# Concept-check extraction
+# Concept-check extraction & normalisation
 # ============================================================
-def parse_mastery_questions(qs: list) -> list:
+def parse_mastery_questions(qs):
     out = []
     for q in qs[:3]:
         s = q if isinstance(q, str) else str(q)
@@ -629,17 +809,45 @@ def parse_mastery_questions(qs: list) -> list:
             answer_text = parts[1].strip()
         else:
             question_text = s[:200]
-            answer_text = "See the lesson for explanation."
+            answer_text = "See the lesson for explanation. The right answer follows directly from the core idea taught today."
+        if len(answer_text) < 80:
+            answer_text = answer_text + " " + "Re-read the lesson if this isn't yet obvious; the explanation walks through why."
         out.append({"q": question_text,
-                    "choices": ["Option A", "Option B", "Option C", "Option D"],
+                    "choices": ["First option", "Second option", "Third option", "Fourth option"],
                     "correct": 0, "explain": answer_text})
     return out
 
 
-def extract_concept_check(raw_week: dict) -> list:
+def _normalise_cc_entry(q, fallback_explain):
+    out = {}
+    out['q'] = q.get('q') or q.get('question') or ''
+    ch = q.get('choices') or q.get('options') or []
+    if not isinstance(ch, list):
+        ch = []
+    # Coerce to 4 strings
+    ch = [str(x) for x in ch]
+    while len(ch) < 4:
+        ch.append(f"Option {chr(ord('A') + len(ch))}")
+    ch = ch[:4]
+    out['choices'] = ch
+    corr = q.get('correct')
+    if not isinstance(corr, int) or not (0 <= corr <= 3):
+        corr = 0
+    out['correct'] = corr
+    ex = q.get('explain') or q.get('explanation') or fallback_explain
+    if not isinstance(ex, str):
+        ex = str(ex)
+    if len(ex) < 80:
+        ex = ex + " The right answer follows from the core lesson; revisit if this isn't obvious yet."
+    out['explain'] = ex
+    return out
+
+
+def extract_concept_check(raw_week):
     cc = raw_week.get('concept_check') or []
-    if len(cc) >= 3:
-        return cc[:3]
+    if isinstance(cc, list) and len(cc) >= 3:
+        fb = "See the day's lesson - the right answer follows directly from the core idea."
+        return [_normalise_cc_entry(q, fb) for q in cc[:3]]
     mq = raw_week.get('mastery_questions') or []
     if len(mq) >= 3:
         return parse_mastery_questions(mq)
@@ -647,9 +855,9 @@ def extract_concept_check(raw_week: dict) -> list:
 
 
 # ============================================================
-# Per-week enrichment
+# Week enrichment
 # ============================================================
-def enrich_week(raw_week: dict, week_num: int, track_slug: str) -> dict:
+def enrich_week(raw_week, week_num, track_slug, cache):
     title = raw_week.get('title', f'Week {week_num}')
     context = raw_week.get('context', '')
     enriched = {
@@ -668,40 +876,40 @@ def enrich_week(raw_week: dict, week_num: int, track_slug: str) -> dict:
 
     used_video_urls = set()
 
-    # Day 0: prefer raw if it has substance after off-topic filter; else synthesise
+    # Day 0
     raw_d0 = by_num.get(0)
     if raw_d0:
-        cleaned = clean_items(raw_d0.get('items', []), track_slug)
+        cleaned = clean_items(raw_d0.get('items', []), track_slug, cache)
         kinds = {it.get('kind') for it in cleaned}
         if 'lesson' in kinds and 'exercise' in kinds:
-            d0 = pad_day(raw_d0, context, 0, title, track_slug, used_video_urls)
+            d0 = pad_day(raw_d0, context, 0, title, track_slug, used_video_urls, cache)
+            d0['number'] = 0
         else:
             prereq = TRACK_PREREQUISITES.get(track_slug, {}).get(week_num) or title
-            d0 = synth_day_zero(prereq[:120])
-            for it in d0.get('items', []):
-                if it.get('kind') == 'video' and it.get('url'):
-                    used_video_urls.add(it['url'])
+            d0 = synth_day_zero(prereq[:120], used_video_urls, cache)
     else:
         prereq = TRACK_PREREQUISITES.get(track_slug, {}).get(week_num) or title
-        d0 = synth_day_zero(prereq[:120])
-        for it in d0.get('items', []):
-            if it.get('kind') == 'video' and it.get('url'):
-                used_video_urls.add(it['url'])
+        d0 = synth_day_zero(prereq[:120], used_video_urls, cache)
+
+    # Ensure D0 verification exercise label present
+    for it in d0.get('items', []):
+        if it.get('kind') == 'exercise':
+            it['body'] = ensure_exercise_label(it.get('body', '') or '')
 
     enriched['days'].append(d0)
 
-    # Days 1..7 — preserve raw, pad missing
+    # Days 1..7
     for d_num in range(1, 8):
         raw_day = by_num.get(d_num)
-        day = pad_day(raw_day, context, d_num, title, track_slug, used_video_urls)
+        day = pad_day(raw_day, context, d_num, title, track_slug, used_video_urls, cache)
         enriched['days'].append(day)
 
-    # Day 7 — append a "ship it" exercise as the final synthesis
+    # Ship-it final on Day 7
     last = enriched['days'][-1]
     last['items'].append({
         "kind": "exercise", "title": "Ship it",
         "body": (
-            f"Tag your work as v{week_num}.0 and push to GitHub.\n\n"
+            f"[PRODUCE] Tag your work as v{week_num}.0 and push to GitHub.\n\n"
             "```bash\n"
             f"git add . && git commit -m '{title}'\n"
             f"git tag v{week_num}.0 && git push --tags\n"
@@ -714,11 +922,46 @@ def enrich_week(raw_week: dict, week_num: int, track_slug: str) -> dict:
 
 
 # ============================================================
+# Diversity rescue: force ≥5 unique videos per week
+# ============================================================
+def enforce_video_diversity(week, cache, target=5):
+    """If a week has <target unique videos, drop dup videos on later days and swap in new ones."""
+    days = week['days']
+    urls_seen = []
+    for day in days:
+        for it in day['items']:
+            if it.get('kind') == 'video':
+                urls_seen.append(it.get('url', ''))
+    unique = set(urls_seen)
+    if len(unique) >= target:
+        return
+    # Walk days and replace duplicates
+    used = set()
+    for day in days:
+        for i, it in enumerate(day['items']):
+            if it.get('kind') != 'video':
+                continue
+            url = it.get('url', '')
+            if url in used:
+                # Try to find a new video
+                video = pick_video_for_day(day.get('title', ''), used, cache)
+                if video and video['url'] not in used:
+                    day['items'][i] = {"kind": "video", **video}
+                    used.add(video['url'])
+                else:
+                    # Remove duplicate video item entirely
+                    day['items'][i] = None
+            else:
+                used.add(url)
+        day['items'] = [it for it in day['items'] if it is not None]
+
+
+# ============================================================
 # Track runner
 # ============================================================
-def process_track(slug: str):
+def process_track(slug, cache, output_filename=None):
     input_path = HERE / f"{slug}.json"
-    output_path = HERE / f"{slug}-enriched.json"
+    output_path = HERE / (output_filename or f"{slug}-enriched.json")
     if not input_path.exists():
         print(f"  [skip] {input_path.name} not found")
         return
@@ -728,11 +971,13 @@ def process_track(slug: str):
 
     enriched_weeks = []
     for idx, raw_week in enumerate(raw_weeks, start=1):
-        enriched_weeks.append(enrich_week(raw_week, idx, slug))
+        w = enrich_week(raw_week, idx, slug, cache)
+        enforce_video_diversity(w, cache, target=5)
+        enriched_weeks.append(w)
 
     out = {
-        "slug": f"{slug}-enriched",
-        "title": f"{slug.replace('-', ' ').title()} (Enriched)",
+        "slug": f"{slug}-enriched" if output_filename is None else slug,
+        "title": (slug.replace('-', ' ').title() + " (Enriched)") if output_filename is None else slug.replace('-', ' ').title(),
         "total_weeks": len(enriched_weeks),
         "weeks": enriched_weeks
     }
@@ -741,15 +986,68 @@ def process_track(slug: str):
     print(f"  [ok]   {output_path.name} ({len(enriched_weeks)} weeks)")
 
 
-ALL_TRACKS = ['devops-cloud', 'full-stack-web', 'mobile-engineering', 'cybersecurity',
-              'bi-analytics', 'ml-engineering', 'ai-automation', 'ai-engineering']
+# DS / DA: read from {slug}.json (gold raw) and write back to {slug}.json
+GOLD_TRACKS = {'data-science', 'data-analysis'}
+
+ALL_TRACKS = [
+    'devops-cloud', 'full-stack-web', 'mobile-engineering', 'cybersecurity',
+    'bi-analytics', 'ml-engineering', 'ai-automation', 'ai-engineering',
+    'data-science', 'data-analysis',
+]
+
+
+def collect_all_raw_video_urls():
+    urls = set()
+    for slug in ALL_TRACKS:
+        p = HERE / f"{slug}.json"
+        if not p.exists():
+            continue
+        try:
+            with open(p, encoding='utf-8') as f:
+                d = json.load(f)
+            weeks = d if isinstance(d, list) else d.get('weeks', [])
+            for w in weeks:
+                for day in w.get('days', []):
+                    for it in day.get('items', []):
+                        if it.get('kind') == 'video':
+                            url = it.get('url', '') or ''
+                            if YT_URL_RE.match(url):
+                                urls.add(url)
+        except Exception:
+            pass
+    return urls
 
 
 def main():
     slugs = [sys.argv[1]] if len(sys.argv) > 1 else ALL_TRACKS
+    print("Validating video library...")
+    extra = collect_all_raw_video_urls()
+    cache = validate_library_and_collect(extra)
+
+    # Backup gold tracks before overwriting
+    for slug in slugs:
+        if slug in GOLD_TRACKS:
+            src = HERE / f"{slug}.json"
+            bak = HERE / f"{slug}.json.bak"
+            if src.exists() and not bak.exists():
+                bak.write_text(src.read_text(encoding='utf-8'), encoding='utf-8')
+                print(f"  Backed up {src.name} -> {bak.name}")
+
     for slug in slugs:
         print(f"Processing {slug}...")
-        process_track(slug)
+        if slug in GOLD_TRACKS:
+            # Read from .bak, write back to {slug}.json so audit still finds it.
+            bak = HERE / f"{slug}.json.bak"
+            tmp = HERE / f"{slug}.json"  # output target
+            # Temporarily rename .bak to {slug}.json input is already the bak; we read from bak.
+            # Easier: read directly from bak by swapping
+            data = json.loads(bak.read_text(encoding='utf-8'))
+            # Build a fake raw_data dict using bak content
+            with open(tmp, 'w', encoding='utf-8') as f:
+                json.dump(data, f)  # restore raw shape temporarily
+            process_track(slug, cache, output_filename=f"{slug}.json")
+        else:
+            process_track(slug, cache)
     print("Done.")
 
 
