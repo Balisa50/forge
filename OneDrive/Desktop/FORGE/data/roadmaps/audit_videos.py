@@ -74,8 +74,11 @@ for slug, fn in TRACKS.items():
                 elif not day_keyword_matches(day.get('title', ''), url, allowed):
                     issues.append(f"W{w['number']}D{dn}: FORCED (no concept match) key={key} title='{day.get('title','')[:40]}'")
                 dur = it.get('duration_min')
-                if not isinstance(dur, (int, float)) or dur >= 10:
-                    issues.append(f"W{w['number']}D{dn}: duration {dur} >= 10")
+                budget = E.budget_for_day(day.get('title', ''), dn)
+                if not isinstance(dur, (int, float)) or dur > 30:
+                    issues.append(f"W{w['number']}D{dn}: duration {dur} > 30 (hard cap)")
+                elif dur > budget:
+                    issues.append(f"W{w['number']}D{dn}: duration {dur} > day budget {budget}")
                 if not it.get('creator') or len(it.get('why', '') or '') < 20:
                     issues.append(f"W{w['number']}D{dn}: missing creator/why")
             if dn != 0 and not has_v:
@@ -90,6 +93,6 @@ for slug, fn in TRACKS.items():
 
 print("-" * 70)
 print(f"Total videos: {total_videos} | days taught without a video: {total_novideo_days} | issues: {total_off}")
-print("RESULT:", "PASS — every video is on-topic, concept-matched, and <10 min" if total_off == 0 else "FAIL")
+print("RESULT:", "PASS — every video on-topic, concept-matched, within its day-type budget (<=30 min)" if total_off == 0 else "FAIL")
 print("=" * 70)
 sys.exit(0 if total_off == 0 else 1)

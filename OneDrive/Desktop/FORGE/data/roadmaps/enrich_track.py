@@ -108,10 +108,63 @@ KNOWN_GOOD = {
     'idor':        [('https://www.youtube.com/watch?v=rINq_dahdtg', 5, 'PwnFunction', 'IDOR Explained')],
 }
 
+# ============================================================
+# Deep-dive library — iconic, high-quality math/ML/stats videos (3Blue1Brown,
+# StatQuest). These are masterpieces worth 10-27 minutes; the tiered duration
+# budget decides where they fit. Entries are 5-tuples with a difficulty tag.
+# Titles are distinctive so the oembed title-gate can verify identity.
+# ============================================================
+DEEP_DIVE = {
+    'neural-network':      [('https://www.youtube.com/watch?v=aircAruvnKk', 19, '3Blue1Brown', 'But what is a neural network', 'intermediate')],
+    'backprop':            [('https://www.youtube.com/watch?v=Ilg3gGewQ5U', 14, '3Blue1Brown', 'Backpropagation intuitively Deep Learning', 'advanced'),
+                            ('https://www.youtube.com/watch?v=tIeHLnjs5U8', 10, '3Blue1Brown', 'Backpropagation calculus Deep Learning', 'advanced')],
+    'gradient-descent':    [('https://www.youtube.com/watch?v=IHZwWFHWa-w', 21, '3Blue1Brown', 'Gradient descent how neural networks learn', 'advanced')],
+    'linear-algebra':      [('https://www.youtube.com/watch?v=fNk_zzaMoSs', 10, '3Blue1Brown', 'Vectors Essence of linear algebra', 'beginner'),
+                            ('https://www.youtube.com/watch?v=kYB8IZa5AuE', 11, '3Blue1Brown', 'Linear transformations and matrices', 'intermediate')],
+    'eigen':               [('https://www.youtube.com/watch?v=PFDu9oVAE-g', 17, '3Blue1Brown', 'Eigenvectors and eigenvalues', 'advanced')],
+    'calculus':            [('https://www.youtube.com/watch?v=WUvTyaaNkzM', 17, '3Blue1Brown', 'The essence of calculus', 'beginner')],
+    'bayes':               [('https://www.youtube.com/watch?v=HZGCoVF3YvM', 15, '3Blue1Brown', 'Bayes theorem the geometry of changing beliefs', 'intermediate')],
+    'convolution':         [('https://www.youtube.com/watch?v=KuXjwB4LzSA', 23, '3Blue1Brown', 'But what is a convolution', 'advanced')],
+    'transformer':         [('https://www.youtube.com/watch?v=wjZofJX0v4M', 27, '3Blue1Brown', 'Transformers the tech behind LLMs Deep Learning', 'advanced'),
+                            ('https://www.youtube.com/watch?v=eMlx5fFNoYc', 26, '3Blue1Brown', 'Attention in transformers visually explained', 'advanced')],
+    'logistic-regression': [('https://www.youtube.com/watch?v=yIYKR4sgzI8', 9,  'StatQuest', 'StatQuest Logistic Regression', 'beginner')],
+    'random-forest':       [('https://www.youtube.com/watch?v=J4Wdy0Wc_xQ', 10, 'StatQuest', 'StatQuest Random Forests', 'intermediate')],
+    'decision-tree':       [('https://www.youtube.com/watch?v=_L39rN6gz7Y', 17, 'StatQuest', 'StatQuest Decision Trees', 'intermediate')],
+    'bias-variance':       [('https://www.youtube.com/watch?v=EuBBz3bI-aA', 7,  'StatQuest', 'Machine Learning Fundamentals Bias and Variance', 'beginner')],
+    'cross-validation':    [('https://www.youtube.com/watch?v=fSytzGwwBVw', 6,  'StatQuest', 'Machine Learning Fundamentals Cross Validation', 'beginner')],
+    'confusion-matrix':    [('https://www.youtube.com/watch?v=Kdsp6soqA7o', 7,  'StatQuest', 'Machine Learning Fundamentals The Confusion Matrix', 'beginner')],
+    'roc-auc':             [('https://www.youtube.com/watch?v=4jRBRDbJemM', 16, 'StatQuest', 'ROC and AUC Clearly Explained', 'intermediate')],
+    'pca':                 [('https://www.youtube.com/watch?v=HMOI_lkzW08', 6,  'StatQuest', 'StatQuest PCA main ideas', 'intermediate')],
+    'kmeans':              [('https://www.youtube.com/watch?v=4b5d3muPQmA', 9,  'StatQuest', 'StatQuest K-means clustering', 'beginner')],
+    'mle':                 [('https://www.youtube.com/watch?v=XepXtl9YKwc', 6,  'StatQuest', 'Maximum Likelihood clearly explained', 'intermediate')],
+}
+KNOWN_GOOD.update(DEEP_DIVE)
+
 DEFAULT_VIDEO_KEY = 'git'
 
 # Keyword -> KNOWN_GOOD key. Order matters: most specific first.
 KEYWORD_VIDEO_MAP = [
+    # ── deep-dive math/ML/stats concepts (specific multi-word keys first) ──
+    ('backpropagation', 'backprop'), ('backprop', 'backprop'),
+    ('gradient descent', 'gradient-descent'),
+    ('neural network', 'neural-network'), ('neural net', 'neural-network'),
+    ('linear algebra', 'linear-algebra'), ('matrices', 'linear-algebra'), ('vectors and matrices', 'linear-algebra'),
+    ('eigenvalue', 'eigen'), ('eigenvector', 'eigen'), ('eigen', 'eigen'),
+    ('calculus', 'calculus'), ('derivative', 'calculus'),
+    ("bayes' theorem", 'bayes'), ('bayes theorem', 'bayes'), ('bayesian', 'bayes'), ('bayes', 'bayes'),
+    ('convolutional', 'convolution'), ('convolution', 'convolution'), ('cnn', 'convolution'),
+    ('attention mechanism', 'transformer'), ('attention', 'transformer'), ('transformer', 'transformer'), ('gpt', 'transformer'),
+    ('logistic regression', 'logistic-regression'),
+    ('random forest', 'random-forest'),
+    ('decision tree', 'decision-tree'),
+    ('bias-variance', 'bias-variance'), ('bias and variance', 'bias-variance'), ('overfitting', 'bias-variance'),
+    ('cross-validation', 'cross-validation'), ('cross validation', 'cross-validation'),
+    ('confusion matrix', 'confusion-matrix'),
+    ('roc', 'roc-auc'), ('auc', 'roc-auc'),
+    ('pca', 'pca'), ('principal component', 'pca'), ('dimensionality reduction', 'pca'),
+    ('k-means', 'kmeans'), ('kmeans', 'kmeans'), ('k means', 'kmeans'),
+    ('maximum likelihood', 'mle'), ('mle', 'mle'),
+    # ── original keys ──
     ('react native', 'reactnative'), ('expo', 'expo'), ('flutter', 'flutter'),
     ('next.js', 'nextjs'), ('next js', 'nextjs'), ('app router', 'nextjs'), ('nextjs', 'nextjs'),
     ('astro', 'astro'), ('vite', 'vite'), ('tailwind', 'tailwind'),
@@ -180,56 +233,101 @@ def _save_cache(cache):
         json.dump(cache, f, indent=2)
 
 
-def _oembed_check(url):
+_STOPWORDS = {'the', 'a', 'an', 'in', 'of', 'to', 'and', 'for', 'with', 'your', 'you',
+              'is', 'it', 'on', 'how', 'what', 'why', 'this', 'that', 'explained',
+              'tutorial', 'beginners', 'beginner', 'part', 'full', 'course', 'guide',
+              'introduction', 'intro', 'minutes', 'minute', 'seconds', 'second', 'using'}
+
+
+def _title_tokens(title: str) -> set:
+    toks = re.findall(r'[a-z0-9]+', (title or '').lower())
+    return {t for t in toks if len(t) >= 3 and t not in _STOPWORDS}
+
+
+def titles_match(expected: str, actual: str) -> bool:
+    """True if the fetched title plausibly IS the expected video.
+    Guards against wrong-but-alive IDs: oembed proves existence, this proves identity."""
+    e, a = _title_tokens(expected), _title_tokens(actual)
+    if not e or not a:
+        return False
+    shared = e & a
+    if len(shared) >= 2:
+        return True
+    return len(shared) / min(len(e), len(a)) >= 0.5
+
+
+def _oembed_fetch(url):
+    """Return (alive, title). title is '' on failure."""
     req = urllib.request.Request(
         f'https://www.youtube.com/oembed?url={urllib.parse.quote(url, safe="")}&format=json',
         headers={'User-Agent': 'Mozilla/5.0 enrich-bot'}
     )
     try:
         with urllib.request.urlopen(req, timeout=8) as r:
-            return r.status == 200
+            if r.status != 200:
+                return (False, '')
+            data = json.loads(r.read().decode('utf-8'))
+            return (True, data.get('title', '') or '')
     except Exception:
-        return False
+        return (False, '')
 
 
 def is_alive_cached(url, cache):
     if not YT_URL_RE.match(url or ''):
         return False
-    if url in cache:
-        return cache[url]
-    ok = _oembed_check(url)
-    cache[url] = ok
-    return ok
+    rec = cache.get(url)
+    if isinstance(rec, dict):
+        return bool(rec.get('alive'))
+    if isinstance(rec, bool):
+        return rec
+    alive, title = _oembed_fetch(url)
+    cache[url] = {'alive': alive, 'title': title}
+    return alive
 
 
 def validate_library_and_collect(extra_urls):
-    """Validate KNOWN_GOOD plus extra URLs from raw files. Prune dead from KNOWN_GOOD."""
+    """Validate KNOWN_GOOD + raw URLs via oembed, fetching TITLES. Prune entries that
+    are dead OR whose fetched title does not match the expected title (wrong ID)."""
     cache = _load_cache()
-    all_urls = set(extra_urls)
+    # Expected title per url, from the library (for identity verification).
+    expected = {}
     for entries in KNOWN_GOOD.values():
         for tup in entries:
-            all_urls.add(tup[0])
-    to_check = [u for u in all_urls if u not in cache]
+            expected[tup[0]] = tup[3]
+    all_urls = set(extra_urls) | set(expected)
+    to_check = [u for u in all_urls if not isinstance(cache.get(u), dict)]
     if to_check:
-        print(f"  Validating {len(to_check)} unverified URLs via oembed...")
+        print(f"  Verifying {len(to_check)} URLs via oembed (existence + title)...")
         with ThreadPoolExecutor(max_workers=10) as pool:
-            futs = {pool.submit(_oembed_check, u): u for u in to_check}
+            futs = {pool.submit(_oembed_fetch, u): u for u in to_check}
             for fut in as_completed(futs):
                 u = futs[fut]
                 try:
-                    cache[u] = fut.result()
+                    alive, title = fut.result()
                 except Exception:
-                    cache[u] = False
+                    alive, title = False, ''
+                cache[u] = {'alive': alive, 'title': title}
         _save_cache(cache)
-    # Prune dead from KNOWN_GOOD
-    dead_count = 0
+    # Prune dead OR identity-mismatched library entries.
+    dead_count = mismatch_count = 0
     for key in list(KNOWN_GOOD):
-        before = len(KNOWN_GOOD[key])
-        KNOWN_GOOD[key] = [tup for tup in KNOWN_GOOD[key] if cache.get(tup[0], False)]
-        dead_count += before - len(KNOWN_GOOD[key])
-        if not KNOWN_GOOD[key]:
+        kept = []
+        for tup in KNOWN_GOOD[key]:
+            rec = cache.get(tup[0], {})
+            if not (isinstance(rec, dict) and rec.get('alive')):
+                dead_count += 1
+                continue
+            if not titles_match(tup[3], rec.get('title', '')):
+                mismatch_count += 1
+                print(f"    [prune] {key}: expected '{tup[3][:40]}' got '{rec.get('title','')[:40]}'")
+                continue
+            kept.append(tup)
+        if kept:
+            KNOWN_GOOD[key] = kept
+        else:
             del KNOWN_GOOD[key]
-    print(f"  Library pruned: {dead_count} dead URL(s) removed. {len(KNOWN_GOOD)} keys remain.")
+    print(f"  Library verified: {dead_count} dead, {mismatch_count} title-mismatch pruned. "
+          f"{len(KNOWN_GOOD)} keys, {sum(len(v) for v in KNOWN_GOOD.values())} videos remain.")
     return cache
 
 
@@ -237,9 +335,21 @@ def validate_library_and_collect(extra_urls):
 # Video picker (returns None if no verified video found)
 # ============================================================
 def _video_dict(tup):
-    url, dur, creator, title = tup
+    url, dur, creator = tup[0], tup[1], tup[2]
+    title = tup[3]
+    difficulty = tup[4] if len(tup) > 4 else 'beginner'
+    # "why this video + what to focus on"
+    if dur <= 5:
+        why = (f"Chosen for clarity: this {dur}-minute {creator} explainer ('{title}') nails the "
+               "core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point.")
+    elif dur <= 15:
+        why = (f"This {dur}-minute {creator} video ('{title}') builds the intuition before the code. "
+               "Focus on the mental model it draws; you'll apply exactly that in the exercise.")
+    else:
+        why = (f"This {dur}-minute {creator} deep dive ('{title}') is worth the length — it makes the "
+               "concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth.")
     return {"title": title, "url": url, "duration_min": dur, "creator": creator,
-            "why": "This short visual explanation makes the concept click before you write code."}
+            "difficulty": difficulty, "why": why}
 
 
 # ============================================================
@@ -247,19 +357,27 @@ def _video_dict(tup):
 # allowed KNOWN_GOOD keys — a Data Analysis day can never get a Linux video.
 # Keys are ordered by relevance; the first present key is the track default.
 # ============================================================
+# Deep-dive concept keys, grouped for reuse across the quantitative tracks.
+_STATS_KEYS = ['bayes', 'mle', 'logistic-regression', 'random-forest', 'decision-tree',
+               'bias-variance', 'cross-validation', 'confusion-matrix', 'roc-auc', 'pca', 'kmeans']
+_DL_KEYS = ['neural-network', 'backprop', 'gradient-descent', 'convolution', 'transformer',
+            'linear-algebra', 'eigen', 'calculus']
+
 TRACK_VIDEO_KEYS = {
-    'data-analysis':       ['pandas', 'python', 'jupyter', 'sql', 'powerbi', 'dax', 'bigquery', 'git'],
-    'data-science':        ['python', 'pandas', 'jupyter', 'ml', 'sql', 'pytorch', 'tensorflow', 'vector', 'git'],
+    'data-analysis':       ['pandas', 'python', 'jupyter', 'sql', 'powerbi', 'dax', 'bigquery', 'git',
+                            'bayes', 'pca', 'kmeans', 'logistic-regression', 'cross-validation', 'confusion-matrix', 'roc-auc', 'linear-algebra'],
+    'data-science':        ['python', 'pandas', 'jupyter', 'ml', 'sql', 'pytorch', 'tensorflow', 'vector', 'git'] + _STATS_KEYS + _DL_KEYS,
     'data-engineering':    ['python', 'sql', 'postgres', 'docker', 'kubernetes', 'terraform', 'prometheus', 'bigquery', 'git'],
     'devops-cloud':        ['docker', 'kubernetes', 'terraform', 'helm', 'argo', 'prometheus', 'nginx', 'linux', 'ssh', 'networking', 'iac', 'aws', 'git'],
     'full-stack-web':      ['javascript', 'typescript', 'react', 'nextjs', 'tailwind', 'astro', 'vite', 'redux', 'graphql',
                             'html', 'css', 'netlify', 'vercel', 'nodejs', 'express', 'postgres', 'prisma', 'rest', 'auth', 'jwt', 'stripe', 'websocket', 'git'],
     'mobile-engineering':  ['reactnative', 'expo', 'react', 'typescript', 'javascript', 'git'],
     'cybersecurity':       ['owasp', 'burp', 'kali', 'metasploit', 'nmap', 'wireshark', 'siem', 'zerotrust', 'xss', 'idor', 'reports', 'linux', 'networking', 'ssh', 'git'],
-    'ml-engineering':      ['python', 'pandas', 'jupyter', 'ml', 'pytorch', 'tensorflow', 'sql', 'vector', 'docker', 'git'],
+    'ml-engineering':      ['python', 'pandas', 'jupyter', 'ml', 'pytorch', 'tensorflow', 'sql', 'vector', 'docker', 'git'] + _STATS_KEYS + _DL_KEYS,
     'ai-automation':       ['python', 'n8n', 'langchain', 'rag', 'vector', 'anthropic', 'openai', 'git'],
-    'ai-engineering':      ['python', 'langchain', 'rag', 'vector', 'embedding', 'anthropic', 'openai', 'typescript', 'nextjs', 'git'],
-    'bi-analytics':        ['powerbi', 'dax', 'sql', 'bigquery', 'python', 'jupyter', 'git'],
+    'ai-engineering':      ['python', 'langchain', 'rag', 'vector', 'embedding', 'anthropic', 'openai', 'typescript', 'nextjs', 'git',
+                            'transformer', 'neural-network', 'backprop', 'convolution', 'bayes'],
+    'bi-analytics':        ['powerbi', 'dax', 'sql', 'bigquery', 'python', 'jupyter', 'git', 'bayes', 'logistic-regression', 'roc-auc'],
 }
 # Fallback domain if a track isn't listed: general programming, never domain-mismatched.
 DEFAULT_TRACK_KEYS = ['python', 'sql', 'git']
@@ -270,32 +388,62 @@ def _allowed_keys(track_slug: str) -> list:
     return [k for k in keys if k in KNOWN_GOOD]
 
 
-# A video may only be attached if it is under 10 minutes (rule #2).
-MAX_VIDEO_MIN = 10
+# Hard cap: no video may ever exceed 30 minutes. Per-day-type budgets below it.
+HARD_CAP_MIN = 30
+BUDGET_DAY0 = 30      # setup: full install + first-run walkthrough
+BUDGET_CAPSTONE = 25  # end-of-week project synthesis
+BUDGET_DEEP = 20      # hard concepts: backprop, transformers, eigen, MLE...
+BUDGET_CORE = 15      # most days: one focused idea
+
+_CAPSTONE_RE = re.compile(r'\b(capstone|synthesis|ship|project|deploy|portfolio|put it together)\b', re.I)
+_DEEP_RE = re.compile(r'\b(backprop|gradient descent|neural network|transformer|attention|eigen|'
+                      r'convolution|derivation|maximum likelihood|\bmle\b|calculus|linear algebra|'
+                      r'theorem|proof|architecture|optimis|optimiz)\b', re.I)
 
 
-def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: str):
-    """Return a video ONLY if it DIRECTLY matches the day's concept.
+def budget_for_day(day_title: str, day_num) -> int:
+    """Minute budget for this day's video, by day type. Hard-capped at 30."""
+    if day_num == 0:
+        return BUDGET_DAY0
+    t = day_title or ''
+    if _CAPSTONE_RE.search(t):
+        return BUDGET_CAPSTONE
+    if _DEEP_RE.search(t):
+        return BUDGET_DEEP
+    return BUDGET_CORE
 
-    No forced videos: a video is attached only when a concept keyword in the day's
-    title maps to a library video that (a) is in this track's allowed domain,
-    (b) is under 10 minutes, and (c) is verified alive. If nothing matches, return
-    None — the caller then teaches with a second lesson block instead of grabbing a
-    tangential 'educational' video (Git/Linux/Docker/etc.)."""
+
+def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: str, max_min: int):
+    """Return the BEST on-topic video for the day within `max_min` (and the 30-min
+    hard cap), or None. No forced videos: a video is attached only when a concept
+    keyword in the day's title maps to a verified, in-domain library video. Among
+    matches, prefer an unused one; pick concise videos for simple days and allow a
+    richer (longer) deep dive for high-budget days."""
     c = (day_topic or '').lower()
     allowed_set = set(_allowed_keys(track_slug))
+    budget = min(max_min, HARD_CAP_MIN)
 
-    # Direct concept match only — prefer an unused video, else reuse an on-topic one.
-    for require_unused in (True, False):
-        for keyword, key in KEYWORD_VIDEO_MAP:
-            if keyword in c and key in allowed_set:
-                for tup in KNOWN_GOOD[key]:
-                    if tup[1] >= MAX_VIDEO_MIN:
-                        continue
-                    if require_unused and tup[0] in used_urls:
-                        continue
-                    return _video_dict(tup)
-    return None  # no on-topic, short, verified match -> caller adds a lesson instead
+    # Gather every on-topic candidate within budget (dedup by url).
+    seen = set()
+    candidates = []  # (tup,)
+    for keyword, key in KEYWORD_VIDEO_MAP:
+        if keyword in c and key in allowed_set:
+            for tup in KNOWN_GOOD[key]:
+                if tup[0] in seen or tup[1] > budget:
+                    continue
+                seen.add(tup[0])
+                candidates.append(tup)
+    if not candidates:
+        return None
+
+    prefer_longer = budget >= BUDGET_DEEP  # deep/capstone/day0 days reward depth
+    def score(tup):
+        unused = 0 if tup[0] in used_urls else 1            # unused first
+        dur = tup[1]
+        fit = dur if prefer_longer else -dur                 # longer for deep, shorter for simple
+        return (unused, fit)
+    candidates.sort(key=score, reverse=True)
+    return _video_dict(candidates[0])
 
 
 # ============================================================
@@ -846,7 +994,7 @@ def synth_day_zero(topic: str, used_urls: set, cache: dict, track_slug: str) -> 
              "Spend 30 minutes here and save hours later."
          )},
     ]
-    video = pick_video_for_day(topic, used_urls, cache, track_slug)
+    video = pick_video_for_day(topic, used_urls, cache, track_slug, BUDGET_DAY0)
     if video:
         items.append({"kind": "video", **video})
         used_urls.add(video['url'])
@@ -900,7 +1048,8 @@ def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_u
 
     # Video ONLY on a direct concept match (no forced/tangential videos). When there
     # is no on-topic video for the day, add a 'deeper dive' second lesson instead.
-    video = pick_video_for_day(day_title, used_video_urls, cache, track_slug)
+    video = pick_video_for_day(day_title, used_video_urls, cache, track_slug,
+                               budget_for_day(day_title, day_num))
     first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
     insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
     if video and video['url'] not in used_video_urls:

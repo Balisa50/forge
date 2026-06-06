@@ -57,11 +57,12 @@
             },
             {
               "kind": "video",
-              "title": "Linux in 5 minutes",
-              "url": "https://www.youtube.com/watch?v=ROjZy1WbCIA",
-              "duration_min": 5,
-              "creator": "ThePrimeagen",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "difficulty": "beginner",
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -163,9 +164,13 @@
               "body": "## What it is\nThe **shell** is a text interface to your operating system. You type a command, it runs, it prints output. Every server you will ever manage in this track has no graphical interface — the shell is the only way in.\n\nThe handful of commands that do 90% of the work:\n\n```bash\npwd                 # print working directory — where am I?\nls                  # list files here\ncd edge-portfolio   # change directory\nmkdir infra         # make a directory\ncat index.html      # print a file's contents\n```\n\n## Why it matters\nA web page is just a text file (`index.html`) that a server hands to a browser. Before you can deploy one, you need to (a) navigate a filesystem from the keyboard and (b) create that file. Both happen in the shell. Today you set up a working terminal and hand-write the portfolio page you will host all week.\n\n## The mental model for HTML\n`index.html` is the default file a web server serves when someone visits `/`. It is plain text with tags. The browser reads the tags and paints the page. That is the entire contract — no magic."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Set up a working shell + write your portfolio HTML",
-              "body": "## Deeper dive: Set up a working shell + write your portfolio HTML\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Set up a working shell + write your portfolio HTML** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Linux in 5 minutes",
+              "url": "https://www.youtube.com/watch?v=ROjZy1WbCIA",
+              "duration_min": 5,
+              "creator": "ThePrimeagen",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 5-minute ThePrimeagen explainer ('Linux in 5 minutes') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -270,7 +275,8 @@
               "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Terraform in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -376,7 +382,8 @@
               "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
               "duration_min": 8,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "reading",
@@ -534,7 +541,8 @@
               "url": "https://www.youtube.com/watch?v=qiQR5rTSshw",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Computer Networking in 100 seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -740,7 +748,8 @@
               "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Terraform in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -976,11 +985,12 @@
             },
             {
               "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "difficulty": "beginner",
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -1121,9 +1131,13 @@
               "body": "## The mechanism\nGitHub Repo → **Settings → Secrets and variables → Actions → New repository secret**.\n\nAdd three:\n```text\nAWS_ACCESS_KEY_ID         (from step 2)\nAWS_SECRET_ACCESS_KEY     (from step 2)\nCLOUDFRONT_DISTRIBUTION_ID (the distribution ID, e.g. E1A2B3C4D5E6F7)\n```\n\nAt workflow runtime they're available as:\n```yaml\nenv:\n  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}\n```\n\n## What GitHub does for you\n- Encrypted at rest (libsodium sealed boxes).\n- Only available inside workflow runs of THIS repo (not even forks of public repos can read them).\n- Automatically masked in workflow logs — if a step accidentally prints `$AWS_SECRET_ACCESS_KEY`, GitHub replaces it with `***`.\n- Rotation is a single UI action.\n\n## What you must still do\n- Don't echo secrets explicitly via `set -x` or `env | grep AWS`. Masking helps but isn't perfect.\n- Don't pass secrets to `if` conditions in YAML — the entire expression can leak in logs.\n- Rotate the AWS key (and update both GitHub Secrets) every 90 days.\n\n## Environment secrets (for later)\nGitHub also supports per-environment secrets (`production` vs `staging`) and protection rules (require manual approval for prod deploys). For Edge Portfolio v0.3 you only have prod — repo-level secrets are enough."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Add secrets to GitHub",
-              "body": "## Deeper dive: Add secrets to GitHub\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Add secrets to GitHub** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -1503,7 +1517,8 @@
               "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -1827,11 +1842,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
+              "title": "Docker Tutorial for Beginners",
+              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
+              "duration_min": 6,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -1881,11 +1897,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
+              "title": "Docker in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
+              "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -1935,12 +1952,9 @@
               "body": "## Install Docker Desktop\n- **macOS**: download from docker.com/products/docker-desktop. Drag to Applications. Launch.\n- **Windows**: ensure WSL2 enabled, install from same URL.\n- **Linux**: native `docker` package or Docker Desktop for Linux (newer).\n\nAfter install, in a fresh terminal:\n```bash\ndocker --version\n# Docker version 27.x ...\n\ndocker run hello-world\n```\nYou should see the welcome message. If you do, Docker is working end-to-end (image pulled from Docker Hub, container ran, output captured).\n\n## The five commands you'll use most\nThe snippet below shows exactly what to do:\n\n```bash\ndocker pull IMAGE                 # download an image\ndocker run -p HOST:CONT IMAGE     # run a container, map ports\ndocker ps                         # list running containers\ndocker logs CONTAINER             # see its output\ndocker stop CONTAINER             # graceful stop (SIGTERM)\n```\n\n## Run a real image — nginx\nThe snippet below shows exactly what to do:\n\n```bash\ndocker run -d --name web -p 8080:80 nginx:alpine\n# -d         detached (background)\n# --name     give it a friendly name\n# -p 8080:80 map host port 8080 to container port 80\nThe snippet below shows exactly what to do:\n\n```\n\nOpen http://localhost:8080 — you'll see the nginx welcome page. Inside a Docker container. Running. Just like that.\n\n```bash\ndocker ps               # confirms it's running\ndocker logs web         # nginx access logs\ndocker stop web         # graceful stop\ndocker rm web           # remove the container record\n```\n\n## Inspect the container's worldview\nThe snippet below shows exactly what to do:\n\n```bash\n# spin one up again, this time exec into it\ndocker run -d --name web -p 8080:80 nginx:alpine\ndocker exec -it web sh\n# inside the container now\nps aux              # only the nginx process — pid namespace at work\nls /                # alpine root — different from your host\nhostname            # synthetic name like '7f3a2c...'\nexit\n```\n\nDifferent process list. Different filesystem. Different hostname. All on your machine. The namespaces in action."
             },
             {
-              "kind": "video",
-              "title": "Dockerfile Best Practices",
-              "url": "https://www.youtube.com/watch?v=DM65_JyGxCo",
-              "duration_min": 5,
-              "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "kind": "lesson",
+              "title": "Deeper dive: Install + first container",
+              "body": "## Deeper dive: Install + first container\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Install + first container** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",
@@ -2270,11 +2284,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
+              "title": "Docker Tutorial for Beginners",
+              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
+              "duration_min": 6,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -3130,11 +3145,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
+              "title": "Docker Tutorial for Beginners",
+              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
+              "duration_min": 6,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -3235,11 +3251,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
+              "title": "Docker in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
+              "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -3402,12 +3419,9 @@
               "body": "## Rootless containers\n\nDocker is a tool, not a standard. The Open Container Initiative (OCI) defines the standards: the image format and the runtime specification. Docker implements these standards, but so do alternatives: containerd (the container runtime used by Kubernetes), podman (daemon-less, rootless Docker alternative), and runc (the low-level OCI runtime used by Docker and containerd). Understanding the container runtime landscape matters because in production, you are often not using Docker directly — you are\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Dockerfile Best Practices",
-              "url": "https://www.youtube.com/watch?v=DM65_JyGxCo",
-              "duration_min": 5,
-              "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "kind": "lesson",
+              "title": "Deeper dive: Rootless containers",
+              "body": "## Deeper dive: Rootless containers\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Rootless containers** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",
@@ -3721,7 +3735,8 @@
               "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -5508,7 +5523,8 @@
               "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Terraform in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -6077,7 +6093,8 @@
               "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -7111,7 +7128,8 @@
               "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -7370,11 +7388,12 @@
             },
             {
               "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "difficulty": "beginner",
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -7531,9 +7550,13 @@
               "body": "## GitLab CI\n\nContinuous Integration and Continuous Delivery in the DevOps/Cloud context is different from the application developer's CI/CD. As an infrastructure engineer, you are building the CI/CD systems that other teams use, managing deployments across multiple services and environments, and ensuring the pipeline itself is reliable, secure, and fast.\n\nA mature CI/CD pipeline is not just \"run tests and deploy.\" It is: source code → lint and type check → unit tests → integration tests → build Docker image \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: GitLab CI",
-              "body": "## Deeper dive: GitLab CI\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **GitLab CI** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "widget",
@@ -7653,7 +7676,8 @@
               "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
               "duration_min": 2,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -7859,14 +7883,6 @@
               "body": "## What it is\nArgo CD CLI install + bootstrap repo is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Argo CD in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=MeU5_k9ssrs",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\nThe snippet below shows exactly what to do:\n\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 18 ('GitOps — Argo CD and Declarative Deploys'), day 0."
@@ -7969,7 +7985,8 @@
               "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
               "duration_min": 8,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -8335,11 +8352,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
+              "title": "Docker Tutorial for Beginners",
+              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
+              "duration_min": 6,
               "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "difficulty": "beginner",
+              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -10646,11 +10664,12 @@
             },
             {
               "kind": "video",
-              "title": "Terraform in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "This short visual explanation makes the concept click before you write code."
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "difficulty": "beginner",
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",

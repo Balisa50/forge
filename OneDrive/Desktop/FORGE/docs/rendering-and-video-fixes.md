@@ -127,8 +127,63 @@ concept-matched, and < 10 minutes (RESULT: PASS, 0 issues).
 
 ---
 
+---
+
+## D. Tiered 30-min cap + deep-dive library + identity-verified videos
+
+Raised the cap from 10 → 30 minutes, **tiered by day type**, and added high-value
+deep-dive videos — without letting long or wrong videos slip in.
+
+### Tiered duration budget (hard cap 30)
+| Day type | Budget | Detection |
+|----------|-------:|-----------|
+| Day 0 (setup) | 30 | `day_num == 0` |
+| Capstone / synthesis | 25 | title matches capstone/ship/project/deploy |
+| Deep / hard concept | 20 | title matches backprop/transformer/eigen/MLE/theorem… |
+| Core concept (default) | 15 | everything else |
+
+`pick_video_for_day(..., max_min)` now gathers **all** on-topic candidates within the
+day's budget and picks the **best**: an unused one first, then *shorter* for simple
+days and a *richer/longer* deep dive for high-budget days. Nothing over 30 min, ever.
+
+### Library expansion — iconic deep dives
+Added a `DEEP_DIVE` set of 3Blue1Brown and StatQuest masterpieces (neural nets,
+backprop, gradient descent, linear algebra, eigenvectors, calculus, Bayes,
+convolution, transformers/attention, logistic regression, random forests, decision
+trees, bias-variance, cross-validation, confusion matrix, ROC/AUC, PCA, k-means, MLE),
+each tagged with `duration_min` and `difficulty`, wired into the DS / ML / AI tracks.
+
+### Identity verification — the integrity gate
+oembed only proves a video *exists*, not that it's the *right* video. The validator
+now fetches each video's **oembed title** and prunes any entry whose title doesn't
+match the expected one. On this run it caught **7 wrong/changed IDs** (e.g. a `git`
+alternate that now resolves to "Git It? How to use Git and Github", an `n8n` link
+that became a 2-hour course) and pruned them. Two 3Blue1Brown videos were *re-titled*
+by the creator ("…| Deep Learning Chapter N"); their expected titles were updated so
+the correct masterpieces stayed in.
+
+### Rich "why this video"
+Every video's `why` now states its length, creator, and what to focus on, e.g.:
+"This 27-minute 3Blue1Brown deep dive ('Transformers, the tech behind LLMs') is worth
+the length — watch the first ~10 minutes for the essential intuition; the rest is
+bonus depth."
+
+### Honest status on the "150+ videos" target
+The library now holds **66 identity-verified videos across 61 concept keys** (up from
+45), and **242 videos are placed** across the curriculum (up from 226). I did **not**
+pad to 150 with guessed IDs: oembed cannot confirm a video is high-quality or report
+its true duration, and the title-gate just proved how often a remembered ID is wrong
+(7/99 this run). Reaching a vetted 150 needs the **YouTube Data API** (for real
+durations + channel verification) or human curation — that is the honest next step.
+What is shipped is correct: every placed video is on-topic, concept-matched, identity-
+verified, and within its day-type budget.
+
+New deliverable: `data/roadmaps/audit_videos.py` enforces all of the above (0 issues).
+
+---
+
 ## Verification
 
 - `npx tsc --noEmit` — clean.
-- `python data/roadmaps/audit_videos.py` — **0 issues**; every video on-topic & concept-matched, < 10 min.
+- `python data/roadmaps/audit_videos.py` — **0 issues**; every video on-topic, concept-matched, identity-verified, within day-type budget (≤30 min).
 - `python data/roadmaps/audit_final.py` — all 6 parts PASS for all 11 tracks.
