@@ -285,6 +285,49 @@ def is_alive_cached(url, cache):
     return alive
 
 
+def load_curated_library():
+    """Merge human-curated videos (curated_library.json from import_videos.py) into
+    KNOWN_GOOD, KEYWORD_VIDEO_MAP, and the per-track allow-list, so each is placed on
+    its concept day. Curated videos are first-class — exactly like the built-in ones."""
+    p = HERE / "curated_library.json"
+    if not p.exists():
+        return 0
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    n = 0
+    keys = set()
+    for e in data.get("videos", []):
+        key, url = e.get("concept_key"), e.get("url")
+        if not key or not url:
+            continue
+        keys.add(key)
+        try:
+            dur = int(e.get("duration_min", 10))
+        except (TypeError, ValueError):
+            dur = 10
+        if dur > HARD_CAP_MIN:
+            continue  # never exceed the 30-min hard cap
+        tup = (url, dur, e.get("creator", "YouTube"),
+               e.get("title", "") or e.get("concept", ""), e.get("difficulty", "curated"))
+        bucket = KNOWN_GOOD.setdefault(key, [])
+        if not any(t[0] == url for t in bucket):
+            bucket.append(tup)
+            n += 1
+        kw = (e.get("concept", "") or "").lower().strip()
+        if kw and (kw, key) not in KEYWORD_VIDEO_MAP:
+            KEYWORD_VIDEO_MAP.insert(0, (kw, key))   # specific concept phrase, highest priority
+        track = e.get("track")
+        if track:
+            TRACK_VIDEO_KEYS.setdefault(track, list(DEFAULT_TRACK_KEYS))
+            if key not in TRACK_VIDEO_KEYS[track]:
+                TRACK_VIDEO_KEYS[track].append(key)
+    if n:
+        print(f"  Loaded curated library: {n} videos across {len(keys)} concepts.")
+    return n
+
+
 def apply_api_library():
     """If video_library.json exists (produced by video_api.py), use the YouTube Data
     API's REAL durations/channels: override duration_min, drop any entry the API
@@ -327,6 +370,7 @@ def validate_library_and_collect(extra_urls):
     """Validate KNOWN_GOOD + raw URLs via oembed, fetching TITLES. Prune entries that
     are dead OR whose fetched title does not match the expected title (wrong ID).
     If an API-vetted video_library.json exists, its real durations/channels win."""
+    load_curated_library()
     apply_api_library()
     cache = _load_cache()
     # Expected title per url, from the library (for identity verification).
