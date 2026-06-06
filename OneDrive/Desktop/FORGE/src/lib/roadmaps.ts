@@ -202,6 +202,34 @@ export function loadRoadmap(slug: string): Roadmap | null {
   return JSON.parse(text) as Roadmap;
 }
 
+/** Canonical track order for the developer preview. */
+export const PREVIEW_SLUGS = [
+  "data-science", "data-analysis", "ai-engineering", "ml-engineering",
+  "devops-cloud", "full-stack-web", "mobile-engineering", "cybersecurity",
+  "bi-analytics", "ai-automation", "data-engineering",
+];
+
+/**
+ * Preview loader (dev mode only): prefers the ENRICHED file ({slug}-enriched.json)
+ * so the developer previews the fully-built experience. Also reports whether the
+ * LIVE student route (loadRoadmap -> {slug}.json) is actually serving that enriched
+ * content, surfacing any "built but not deployed" gap.
+ */
+export function loadPreviewRoadmap(slug: string):
+  { roadmap: Roadmap; source: string; liveServesEnriched: boolean } | null {
+  const enriched = path.join(DATA_DIR, `${slug}-enriched.json`);
+  const plain = path.join(DATA_DIR, `${slug}.json`);
+  let file: string, source: string;
+  if (fs.existsSync(enriched)) { file = enriched; source = `${slug}-enriched.json`; }
+  else if (fs.existsSync(plain)) { file = plain; source = `${slug}.json`; }
+  else return null;
+  const roadmap = JSON.parse(fs.readFileSync(file, "utf-8")) as Roadmap;
+  roadmap.slug = slug; // normalize (enriched files carry a "-enriched" slug internally)
+  // If no -enriched file exists, {slug}.json IS the enriched content (gold tracks).
+  const liveServesEnriched = !fs.existsSync(enriched);
+  return { roadmap, source, liveServesEnriched };
+}
+
 export function loadAllRoadmaps(): Roadmap[] {
   if (!fs.existsSync(DATA_DIR)) return [];
   const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith(".json"));
