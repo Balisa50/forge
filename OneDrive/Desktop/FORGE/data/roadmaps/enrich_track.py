@@ -242,29 +242,61 @@ def _video_dict(tup):
             "why": "This short visual explanation makes the concept click before you write code."}
 
 
-def pick_video_for_day(day_topic: str, used_urls: set, cache: dict):
-    """Try to find a verified video for the day. Returns dict or None."""
+# ============================================================
+# Track-specific video domains. A video is ONLY ever drawn from its track's
+# allowed KNOWN_GOOD keys — a Data Analysis day can never get a Linux video.
+# Keys are ordered by relevance; the first present key is the track default.
+# ============================================================
+TRACK_VIDEO_KEYS = {
+    'data-analysis':       ['pandas', 'python', 'jupyter', 'sql', 'powerbi', 'dax', 'bigquery', 'git'],
+    'data-science':        ['python', 'pandas', 'jupyter', 'ml', 'sql', 'pytorch', 'tensorflow', 'vector', 'git'],
+    'data-engineering':    ['python', 'sql', 'postgres', 'docker', 'kubernetes', 'terraform', 'prometheus', 'bigquery', 'git'],
+    'devops-cloud':        ['docker', 'kubernetes', 'terraform', 'helm', 'argo', 'prometheus', 'nginx', 'linux', 'ssh', 'networking', 'iac', 'aws', 'git'],
+    'full-stack-web':      ['javascript', 'typescript', 'react', 'nextjs', 'tailwind', 'astro', 'vite', 'redux', 'graphql',
+                            'html', 'css', 'netlify', 'vercel', 'nodejs', 'express', 'postgres', 'prisma', 'rest', 'auth', 'jwt', 'stripe', 'websocket', 'git'],
+    'mobile-engineering':  ['reactnative', 'expo', 'react', 'typescript', 'javascript', 'git'],
+    'cybersecurity':       ['owasp', 'burp', 'kali', 'metasploit', 'nmap', 'wireshark', 'siem', 'zerotrust', 'xss', 'idor', 'reports', 'linux', 'networking', 'ssh', 'git'],
+    'ml-engineering':      ['python', 'pandas', 'jupyter', 'ml', 'pytorch', 'tensorflow', 'sql', 'vector', 'docker', 'git'],
+    'ai-automation':       ['python', 'n8n', 'langchain', 'rag', 'vector', 'anthropic', 'openai', 'git'],
+    'ai-engineering':      ['python', 'langchain', 'rag', 'vector', 'embedding', 'anthropic', 'openai', 'typescript', 'nextjs', 'git'],
+    'bi-analytics':        ['powerbi', 'dax', 'sql', 'bigquery', 'python', 'jupyter', 'git'],
+}
+# Fallback domain if a track isn't listed: general programming, never domain-mismatched.
+DEFAULT_TRACK_KEYS = ['python', 'sql', 'git']
+
+
+def _allowed_keys(track_slug: str) -> list:
+    keys = TRACK_VIDEO_KEYS.get(track_slug, DEFAULT_TRACK_KEYS)
+    return [k for k in keys if k in KNOWN_GOOD]
+
+
+def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: str):
+    """Find a verified, ON-TOPIC video for the day. Never leaves the track's domain.
+    Returns a video dict or None."""
     c = (day_topic or '').lower()
-    # First pass: match keywords, prefer unused
+    allowed = _allowed_keys(track_slug)
+    allowed_set = set(allowed)
+
+    # Pass 1: keyword match, but ONLY if the matched key is in this track's domain.
     for keyword, key in KEYWORD_VIDEO_MAP:
-        if keyword in c and key in KNOWN_GOOD:
+        if keyword in c and key in allowed_set:
             for tup in KNOWN_GOOD[key]:
                 if tup[0] not in used_urls and tup[1] < 15:
                     return _video_dict(tup)
-    # Second pass: any verified video not yet used (diversity)
-    for entries in KNOWN_GOOD.values():
-        for tup in entries:
+    # Pass 2: any unused video from the track's allowed keys (in relevance order) — diversity.
+    for key in allowed:
+        for tup in KNOWN_GOOD[key]:
             if tup[0] not in used_urls and tup[1] < 15:
                 return _video_dict(tup)
-    # Third pass: matched keyword, even if reused
+    # Pass 3: keyword match reused (still on-topic).
     for keyword, key in KEYWORD_VIDEO_MAP:
-        if keyword in c and key in KNOWN_GOOD:
+        if keyword in c and key in allowed_set:
             for tup in KNOWN_GOOD[key]:
                 if tup[1] < 15:
                     return _video_dict(tup)
-    # Final: default
-    if DEFAULT_VIDEO_KEY in KNOWN_GOOD:
-        for tup in KNOWN_GOOD[DEFAULT_VIDEO_KEY]:
+    # Pass 4: first allowed key, reused — still on-topic for the track.
+    for key in allowed:
+        for tup in KNOWN_GOOD[key]:
             if tup[1] < 15:
                 return _video_dict(tup)
     return None
@@ -778,7 +810,7 @@ def ensure_pass_checklist(body: str) -> str:
 # ============================================================
 # Day 0 synthesis
 # ============================================================
-def synth_day_zero(topic: str, used_urls: set, cache: dict) -> dict:
+def synth_day_zero(topic: str, used_urls: set, cache: dict, track_slug: str) -> dict:
     verify_cmd, verify_pass = _verify_for_topic(topic)
     items = [
         {"kind": "lesson", "title": "Set up your tooling",
@@ -795,7 +827,7 @@ def synth_day_zero(topic: str, used_urls: set, cache: dict) -> dict:
              "Spend 30 minutes here and save hours later."
          )},
     ]
-    video = pick_video_for_day(topic, used_urls, cache)
+    video = pick_video_for_day(topic, used_urls, cache, track_slug)
     if video:
         items.append({"kind": "video", **video})
         used_urls.add(video['url'])
@@ -848,7 +880,7 @@ def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_u
         items.insert(0, synth_lesson(day_title, week_context))
 
     if 'video' not in kinds_present:
-        video = pick_video_for_day(day_title, used_video_urls, cache)
+        video = pick_video_for_day(day_title, used_video_urls, cache, track_slug)
         if video:
             first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
             insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
@@ -998,9 +1030,9 @@ def enrich_week(raw_week, week_num, track_slug, cache):
             d0 = pad_day(raw_d0, context, 0, title, track_slug, used_video_urls, cache)
             d0['number'] = 0
         else:
-            d0 = synth_day_zero(prereq, used_video_urls, cache)
+            d0 = synth_day_zero(prereq, used_video_urls, cache, track_slug)
     else:
-        d0 = synth_day_zero(prereq, used_video_urls, cache)
+        d0 = synth_day_zero(prereq, used_video_urls, cache, track_slug)
 
     _finalize_day_zero(d0, prereq)
     enriched['days'].append(d0)
@@ -1078,7 +1110,7 @@ def _finalize_day_zero(d0, topic):
 # ============================================================
 # Diversity rescue: force ≥5 unique videos per week
 # ============================================================
-def enforce_video_diversity(week, cache, target=5):
+def enforce_video_diversity(week, cache, track_slug, target=5):
     """If a week has <target unique videos, drop dup videos on later days and swap in new ones."""
     days = week['days']
     urls_seen = []
@@ -1098,7 +1130,7 @@ def enforce_video_diversity(week, cache, target=5):
             url = it.get('url', '')
             if url in used:
                 # Try to find a new video
-                video = pick_video_for_day(day.get('title', ''), used, cache)
+                video = pick_video_for_day(day.get('title', ''), used, cache, track_slug)
                 if video and video['url'] not in used:
                     day['items'][i] = {"kind": "video", **video}
                     used.add(video['url'])
@@ -1148,7 +1180,7 @@ def process_track(slug, cache, input_filename=None, output_filename=None, out_sl
     enriched_weeks = []
     for idx, raw_week in enumerate(raw_weeks, start=1):
         w = enrich_week(raw_week, idx, slug, cache)
-        enforce_video_diversity(w, cache, target=5)
+        enforce_video_diversity(w, cache, slug, target=5)
         enriched_weeks.append(w)
 
     dedup_lessons(enriched_weeks)

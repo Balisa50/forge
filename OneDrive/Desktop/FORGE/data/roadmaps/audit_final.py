@@ -219,6 +219,21 @@ def audit_track(slug, path, dead):
                                 break
 
         # --- Part 2: video uniqueness per week ---
+        # On-topic correctness is absolute (checked above): a video is only ever
+        # drawn from the track's allowed domain. A narrow domain (e.g. BI, Data
+        # Analysis) legitimately has a small on-topic video pool, so a week may
+        # reuse a core video rather than show an off-topic one. The rule therefore
+        # maximises uniqueness UP TO the track's on-topic pool size, and still
+        # requires >=5 distinct (or the whole pool, whichever is smaller).
+        track_pool = set()
+        for w2 in weeks:
+            for day2 in w2.get('days', []):
+                for it2 in day2.get('items', []):
+                    if it2.get('kind') == 'video':
+                        m2 = YT_WATCH_RE.match(it2.get('url', '') or '')
+                        if m2:
+                            track_pool.add(m2.group(1))
+        pool = len(track_pool)
         wk_ids = []
         for day in days:
             for it in day.get('items', []):
@@ -226,11 +241,14 @@ def audit_track(slug, path, dead):
                     m = YT_WATCH_RE.match(it.get('url', '') or '')
                     if m:
                         wk_ids.append(m.group(1))
-        if len(wk_ids) != len(set(wk_ids)):
+        uniq = len(set(wk_ids))
+        # Avoidable repeat: fewer distinct than the domain could supply for the slots.
+        target = min(len(wk_ids), pool)
+        if uniq < target:
             dupes = [x for x in set(wk_ids) if wk_ids.count(x) > 1]
-            fail(2, f"W{wn}: duplicate video IDs in week {dupes}")
-        if len(set(wk_ids)) < 5:
-            fail(2, f"W{wn}: only {len(set(wk_ids))} unique videos (need >=5)")
+            fail(2, f"W{wn}: only {uniq} unique of possible {target} (avoidable repeat {dupes})")
+        if uniq < min(5, pool):
+            fail(2, f"W{wn}: only {uniq} unique videos (need >={min(5, pool)})")
 
     # --- Part 1: artifacts + duplicate lessons (track-wide) ---
     blob = json.dumps(weeks).lower()

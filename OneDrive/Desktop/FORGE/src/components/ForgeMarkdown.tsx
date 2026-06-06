@@ -40,11 +40,12 @@ type CellBlock = { t: "cell"; kind: "code" | "markdown"; label: string; bodyLine
 type StepBlock = { t: "step"; number: string; title: string; bodyLines: string[] };
 type DividerBlock = { t: "divider"; label?: string };
 type PassBlock = { t: "pass"; items: string[] };
+type TableBlock = { t: "table"; headers: string[]; rows: string[][] };
 
 type Block =
   | HeadingBlock | ParagraphBlock | UlBlock | OlBlock
   | ChecklistBlock | CodeBlock | MdTemplateBlock | CellBlock | StepBlock
-  | DividerBlock | PassBlock;
+  | DividerBlock | PassBlock | TableBlock;
 
 /** Is an indented block actually a markdown TEMPLATE (a structure the student
  *  should write — headings + prose) rather than real code? Heading present and
@@ -638,6 +639,26 @@ function parse(raw: string): Block[] {
       continue;
     }
 
+    // Markdown table: a header row of cells, then a |---|---| separator row.
+    if (
+      trimmed.includes("|") &&
+      i + 1 < lines.length &&
+      /^\s*\|?[\s:|-]*-{3,}[\s:|-]*\|?\s*$/.test(lines[i + 1]) &&
+      lines[i + 1].includes("-")
+    ) {
+      const splitRow = (l: string) =>
+        l.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
+      const headers = splitRow(line);
+      i += 2; // consume header + separator
+      const rows: string[][] = [];
+      while (i < lines.length && lines[i].includes("|") && lines[i].trim()) {
+        rows.push(splitRow(lines[i]));
+        i++;
+      }
+      blocks.push({ t: "table", headers, rows });
+      continue;
+    }
+
     // Unordered list
     if (/^[-*•]\s/.test(trimmed)) {
       const items: string[] = [];
@@ -845,7 +866,9 @@ function BlockRenderer({
                 marginTop: "0.5rem",
                 opacity: 0.7,
               }} />
-              <InlineText text={item} />
+              <span style={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}>
+                <InlineText text={item} />
+              </span>
             </li>
           ))}
         </ul>
@@ -888,7 +911,7 @@ function BlockRenderer({
               }}>
                 {i + 1}
               </span>
-              <span style={{ paddingTop: "0.1875rem" }}>
+              <span style={{ paddingTop: "0.1875rem", flex: 1, minWidth: 0, overflowWrap: "anywhere" }}>
                 <InlineText text={item} />
               </span>
             </li>
@@ -923,7 +946,9 @@ function BlockRenderer({
                 border: "1.5px solid rgba(212,175,55,0.4)",
                 marginTop: "0.1875rem",
               }} />
-              <InlineText text={item} />
+              <span style={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}>
+                <InlineText text={item} />
+              </span>
             </li>
           ))}
         </ul>
@@ -1020,10 +1045,57 @@ function BlockRenderer({
                 }}>
                   <BookOpen size={9} style={{ color: "#22c55e" }} />
                 </span>
-                <InlineText text={item} />
+                <span style={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}>
+                  <InlineText text={item} />
+                </span>
               </li>
             ))}
           </ul>
+        </div>
+      );
+
+    case "table":
+      return (
+        <div style={{ overflowX: "auto", margin: "0.75rem 0" }}>
+          <table style={{
+            borderCollapse: "collapse",
+            width: "100%",
+            fontSize: "0.875rem",
+            color: "var(--text-secondary)",
+          }}>
+            <thead>
+              <tr>
+                {block.headers.map((h, hi) => (
+                  <th key={hi} style={{
+                    textAlign: "left",
+                    padding: "0.5rem 0.75rem",
+                    borderBottom: "2px solid rgba(212,175,55,0.35)",
+                    color: "var(--text-primary)",
+                    fontWeight: 700,
+                    whiteSpace: "nowrap",
+                  }}>
+                    <InlineText text={h} />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.rows.map((row, ri) => (
+                <tr key={ri}>
+                  {row.map((cell, ci) => (
+                    <td key={ci} style={{
+                      padding: "0.5rem 0.75rem",
+                      borderBottom: "1px solid var(--border)",
+                      verticalAlign: "top",
+                      overflowWrap: "anywhere",
+                    }}>
+                      <InlineText text={cell} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       );
 
@@ -1048,7 +1120,7 @@ export default function ForgeMarkdown({ children, compact: _compact }: ForgeMark
   if (!blocks.length) return null;
 
   return (
-    <div style={{ lineHeight: 1.7 }}>
+    <div style={{ lineHeight: 1.7, overflowWrap: "anywhere", wordBreak: "normal" }}>
       <BlockList blocks={blocks} />
     </div>
   );
