@@ -116,9 +116,13 @@
               "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\nThe snippet below shows exactly what to do:\n\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What does a data analyst do?",
-              "body": "## Deeper dive: What does a data analyst do?\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What does a data analyst do?** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What Does a Data Analyst Actually Do?",
+              "url": "https://www.youtube.com/watch?v=ywZXpfdqg1o",
+              "duration_min": 5,
+              "creator": "Alex The Analyst",
+              "difficulty": "curated",
+              "why": "This 5-minute Alex The Analyst video teaches What does a data analyst do? directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -672,9 +676,13 @@
               "body": "## What it is, and how it differs from a Series\nA **DataFrame** is a two-dimensional table: rows and **named columns**, where **each column is a Series** and all of them share one index (the row labels). If a Series is a single Excel column, a DataFrame is the whole sheet.\n\nThat relationship is worth saying out loud because it's the mental model for the entire library:\n\n- **Series** = one column. One-dimensional. You pull a single variable out of it. Example: just the `price` values.\n- **DataFrame** = many columns glued on a shared index. Two-dimensional. It holds a *record* per row — a product with its price *and* its quantity *and* its category together.\n\nWhen you do `df[\"price\"]` you pull one column *out* of the table, and what you get back is — a Series. So you're never really leaving Series-world; a DataFrame is just the organised collection of them. You use a Series when you care about one variable, and a DataFrame when you need several variables per row to stay together (which is almost always, because real questions involve more than one column).\n\n## Why it matters\nThe DataFrame is the object you'll spend 95% of the track inside. Loading a CSV gives you a DataFrame. Cleaning, filtering, grouping, joining, plotting — all operate on DataFrames. Everything from here is \"do something to this table.\"\n\n## The habit that separates analysts from guessers: inspect first\nBefore you trust a single number, you **look** at the data — its size, its column types, and whether values are missing. Four commands do it: `.head()` (eyeball rows), `.info()` (types + non-null counts), `.describe()` (numeric summary), and `.shape` (rows × columns). Skipping this step is exactly how people ship confidently wrong analysis.\n\nWatch the short inspection video next, then the code below shows each command *with its actual output* so you know what to expect on screen."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: The DataFrame — many Series, one table",
-              "body": "## Deeper dive: The DataFrame — many Series, one table\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The DataFrame — many Series, one table** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python Pandas Tutorial (Part 2): DataFrame and Series Basics - Selecting Rows and Columns",
+              "url": "https://www.youtube.com/watch?v=zmdjNSmRXF4",
+              "duration_min": 34,
+              "creator": "Corey Schafer",
+              "difficulty": "curated",
+              "why": "This 34-minute Corey Schafer deep dive on The DataFrame — many Series, one table is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "lesson",
@@ -2023,9 +2031,13 @@
               "body": "## What it is\n`WHERE` keeps only the rows that match a condition — the exact pandas boolean mask, written in words. Pair it with `ORDER BY` to sort and `LIMIT` to cap.\n\n## Why it matters\nAnalysis is filtering to the rows that answer the question: the loss-making orders, one region, the biggest losses. In pandas you wrote `df[df[\"profit\"] < 0]`; in SQL it's `WHERE profit < 0`. Same idea, and recognising that mapping means you're not learning analysis again — just new syntax for logic you own.\n\n## The gotcha to internalise now\nCombine conditions with the **words** `AND` / `OR` (not pandas' `&` / `|`), and you don't need the extra parentheses pandas forced on you. `WHERE region = 'East' AND sales > 500`. Text values go in single quotes; numbers don't. Get that and WHERE is effortless."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: WHERE — filter rows",
-              "body": "## Deeper dive: WHERE — filter rows\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **WHERE — filter rows** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python Pandas Tutorial (Part 4): Filtering - Using Conditionals to Filter Rows and Columns",
+              "url": "https://www.youtube.com/watch?v=Lw2rlcxScZY",
+              "duration_min": 24,
+              "creator": "Corey Schafer",
+              "difficulty": "curated",
+              "why": "This 24-minute Corey Schafer video on WHERE — filter rows — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",
@@ -2892,9 +2904,13 @@
               "body": "## What it is\nAI writes SQL fast — but only well if you hand it the **table schema** (columns + types) and a **precise question**. A vague prompt yields a confident, plausible, *wrong* query (joining columns that don't exist, mislabelling aggregates).\n\n## Why it matters\nYou already wrote these exact queries by hand in Week 5, which makes this the perfect, safe place to learn prompting: you can *verify* the AI against an answer you trust. The lesson generalises — on real jobs you'll prompt against schemas you know, paste the result, and check it. Schema-aware prompting is the difference between AI as a force-multiplier and AI as a generator of subtle bugs.\n\n## The pattern\nAlways give it: the table name, the columns (with types if it matters), and the exact output you want. Then **run** the SQL it returns and compare to a known result before you trust it."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Schema-aware prompts for SQL",
-              "body": "## Deeper dive: Schema-aware prompts for SQL\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Schema-aware prompts for SQL** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "New AI integration for your SQL databases | RAG, Vector Search, Admin Automation",
+              "url": "https://www.youtube.com/watch?v=-8DJ6FXuIa8",
+              "duration_min": 14,
+              "creator": "Microsoft Mechanics",
+              "difficulty": "curated",
+              "why": "This 14-minute Microsoft Mechanics video teaches Schema-aware prompts for SQL directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -4476,9 +4492,13 @@
               "body": "## What it is\nBin `YearsAtCompany` into tenure bands and compute attrition rate per band — the cut-then-groupby move again, now revealing the *shape* of risk over time.\n\n## Why it matters\nThis single table tests your hypothesis and usually delivers the project's most strategic insight: the **early-tenure spike**. If years 0-2 show double the base rate, the company is losing people it just spent money hiring and training — the most expensive kind of attrition. Quantifying exactly how steep that early spike is tells HR how much to invest in onboarding and the first-year experience.\n\n## The pattern\nUse *finer* bands early (0-1, 1-2, 2-5) where the action is and wider ones later (5-10, 10+). Then `groupby(band)[\"left\"].mean()` and read the curve."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Attrition by tenure band",
-              "body": "## Deeper dive: Attrition by tenure band\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Attrition by tenure band** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Master HR Analytics in Power BI: Employee Tenure Analysis & Userelationship | Active Employees",
+              "url": "https://www.youtube.com/watch?v=fvgcx8QLqZU",
+              "duration_min": 29,
+              "creator": "Learn Microsoft Fabric, Power BI, SQL Amit Chandak",
+              "difficulty": "curated",
+              "why": "This 29-minute Learn Microsoft Fabric, Power BI, SQL Amit Chandak deep dive on Attrition by tenure band is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "lesson",
@@ -5186,6 +5206,15 @@
               "body": "## What it is\nPower BI + DAX measures is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
+              "kind": "video",
+              "title": "The Magic Combo: DAX UDFs + Calculation Groups!The Most Efficient Way to Manage Measures in Power BI",
+              "url": "https://www.youtube.com/watch?v=us3J35j91LY",
+              "duration_min": 7,
+              "creator": "Guy in a Cube",
+              "difficulty": "curated",
+              "why": "This 7-minute Guy in a Cube video teaches DAX measures directly — watch it end to end."
+            },
+            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\nnpm install -g eas-cli\neas --version\neas login\n```\n\n## What 'working' looks like\nEAS CLI prints version and you log in.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -5663,9 +5692,13 @@
               "body": "## What it is\nBefore scraping, check the site's **robots.txt** (e.g. `example.com/robots.txt`) and Terms of Service. Respect what's disallowed, identify yourself, and don't hammer the server.\n\n## Why it matters\nScraping carelessly can be rude (overloading a small site), against ToS, or in some cases legally risky. A professional scrapes *politely*: obeys robots.txt, rate-limits requests (a pause between them), scrapes only public data, and never republishes copyrighted content. This isn't just ethics — a scraper that gets your IP banned is also useless. Doing it right keeps the data flowing and keeps you out of trouble."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Scrape ethically (robots.txt)",
-              "body": "## Deeper dive: Scrape ethically (robots.txt)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Scrape ethically (robots.txt)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Secrets in robots.txt (PicoCTF 2022 #36 'roboto-sans')",
+              "url": "https://www.youtube.com/watch?v=TohdZdwNsbQ",
+              "duration_min": 10,
+              "creator": "John Hammond",
+              "difficulty": "curated",
+              "why": "This 10-minute John Hammond video teaches Scrape ethically (robots.txt) directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -8048,9 +8081,13 @@
               "body": "## What it is\n**Tableau** and **Power BI** are the two dominant business-intelligence tools. You'll rebuild a dashboard you already know (the Superstore KPIs) in Tableau, so the focus is the *tool*, not the analysis.\n\n## Why it matters\nAlmost every BI job posting names one or both, and which a company uses is often just history, not merit. Knowing both doubles the jobs you qualify for, and they share concepts (dimensions, measures, drag-and-drop viz) so the second is far faster than the first. Rebuilding a *known* dashboard means you can focus 100% on learning Tableau's interface."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why learn both Power BI and Tableau",
-              "body": "## Deeper dive: Why learn both Power BI and Tableau\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why learn both Power BI and Tableau** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Don’t jump into Power BI first",
+              "url": "https://www.youtube.com/watch?v=PqCp1f0RIaU",
+              "duration_min": 1,
+              "creator": "Alex The Analyst",
+              "difficulty": "curated",
+              "why": "This 1-minute Alex The Analyst video teaches Why learn both Power BI and Tableau directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -11233,9 +11270,13 @@
               "body": "## What it is\nPower BI's **Model view** lets you define **relationships** between tables (e.g. orders to a date table) by dragging key to key — a visual version of SQL joins that powers everything downstream.\n\n## Why it matters\nPower BI's real strength is the data model: once tables are related, a measure automatically works across all of them (sales by region by month, no manual joins). Getting relationships and their direction right is *the* foundation — a wrong relationship gives wrong totals everywhere. This is data modelling (your capstone schema skill) inside a BI tool."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Data modeling and relationships",
-              "body": "## Deeper dive: Data modeling and relationships\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Data modeling and relationships** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to Create and Manage Relationships in Power BI | Microsoft Power BI for Beginners",
+              "url": "https://www.youtube.com/watch?v=sW5LoDA1ssM",
+              "duration_min": 9,
+              "creator": "Alex The Analyst",
+              "difficulty": "curated",
+              "why": "This 9-minute Alex The Analyst video teaches Data modeling and relationships directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -11273,9 +11314,13 @@
               "body": "## What it is\n**DAX** (Data Analysis Expressions) is Power BI's formula language for **measures** — reusable calculations like Total Sales, Profit Margin, or Average Order Value that recompute correctly under any filter.\n\n## Why it matters\nDAX is the skill that separates Power BI button-pushers from real analysts. A measure like `Profit Margin = DIVIDE(SUM(Profit), SUM(Sales))` automatically respects whatever the user filters (region, month) — that filter-awareness is DAX's superpower and the thing interviews probe. It's the Power BI equivalent of a calculated field, but more powerful."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: DAX measures",
-              "body": "## Deeper dive: DAX measures\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **DAX measures** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "The Magic Combo: DAX UDFs + Calculation Groups!The Most Efficient Way to Manage Measures in Power BI",
+              "url": "https://www.youtube.com/watch?v=us3J35j91LY",
+              "duration_min": 7,
+              "creator": "Guy in a Cube",
+              "difficulty": "curated",
+              "why": "This 7-minute Guy in a Cube video teaches DAX measures directly — watch it end to end."
             },
             {
               "kind": "lesson",

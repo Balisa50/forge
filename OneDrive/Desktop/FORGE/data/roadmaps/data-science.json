@@ -1746,9 +1746,13 @@
               "body": "## What it is\nFour clauses, always in this order, answer most analytical questions:\n\n```sql\nSELECT   pickup_hour, COUNT(*) AS trips   -- which columns + aggregates\nFROM     taxi                             -- which table\nWHERE    fare_amount > 0                   -- filter rows BEFORE grouping\nGROUP BY pickup_hour                       -- collapse into one row per hour\nORDER BY trips DESC                         -- sort the result\nLIMIT    5;                                 -- keep the top 5\n```\n\n## The execution order that trips people up\nYou *write* SELECT first, but the engine *runs* it almost last. The logical order is: **FROM → WHERE → GROUP BY → SELECT → ORDER BY → LIMIT**. That's why you can't use a `SELECT` alias inside `WHERE` (the alias doesn't exist yet) but you can in `ORDER BY` (it does by then).\n\n## Aggregates\n`COUNT(*)`, `SUM(col)`, `AVG(col)`, `MIN(col)`, `MAX(col)` collapse a group into one number. Every non-aggregated column in SELECT must appear in GROUP BY — the engine needs to know how to fold the rest.\n\n## Where this fits\nToday you rewrite your Week 1 TaxiPulse findings (busiest hour, fare by day) as SQL, and confirm each result matches the pandas version. Matching answers = you've learned the translation."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: SELECT, WHERE, GROUP BY",
-              "body": "## Deeper dive: SELECT, WHERE, GROUP BY\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **SELECT, WHERE, GROUP BY** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Group By + Order By in MySQL | Beginner MySQL Series",
+              "url": "https://www.youtube.com/watch?v=zgYqUP_PhQo",
+              "duration_min": 11,
+              "creator": "Alex The Analyst",
+              "difficulty": "curated",
+              "why": "This 11-minute Alex The Analyst video teaches SELECT, WHERE, GROUP BY directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -2119,9 +2123,13 @@
               "body": "## What it is\n**Supervised learning** trains a model on examples where you know the answer (the 'label'), so it can predict the answer for new examples. Two flavours:\n\n- **Regression** — predict a continuous *number*. 'What will this trip's fare be?' → $14.32\n- **Classification** — predict a discrete *category*. 'Will this rider tip?' → yes/no\n\nThis week is regression: predict `fare_amount` from `trip_distance`, `trip_minutes`, and `pickup_hour`.\n\n## The workflow that never changes\nEvery supervised model follows the same five steps:\n```text\n1. SPLIT   data into train (80%) and test (20%)\n2. FIT     the model on the training set only\n3. PREDICT on the test set\n4. EVALUATE predictions vs the true answers (MAE, R2)\n5. INSPECT where it fails (residuals)\n```\n\n## Why the split is sacred\nIf you evaluate on the same data you trained on, the model can simply memorise it and look perfect — while failing on real new trips. That's **overfitting**. The held-out test set is the only honest estimate of real-world performance. Never let test data touch training.\n\n## Where this fits\nThis week TaxiPulse stops describing and starts predicting. By Sunday: a trained fare model with MAE under $5 and an honest residual analysis showing exactly where it's wrong."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Regression vs classification — and the ML workflow",
-              "body": "## Deeper dive: Regression vs classification — and the ML workflow\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Regression vs classification — and the ML workflow** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Why Linear regression for Machine Learning?",
+              "url": "https://www.youtube.com/watch?v=qxo8p8PtFeA",
+              "duration_min": 4,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 4-minute IBM Technology video teaches Regression vs classification — and the ML workflow directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -2588,9 +2596,13 @@
               "body": "## What it is\n**Statistical inference** is how you decide whether a pattern in your data is real or just an artifact of which rows you happened to sample. Every test has the same logic:\n\n1. State a **null hypothesis** (H0): 'there is no real difference / no effect'\n2. Compute how surprising your data would be *if H0 were true*\n3. That surprise, as a probability, is the **p-value**\n\n## What a p-value actually is\np = P(seeing data this extreme | H0 is true). A small p-value means your data would be very unlikely under 'no difference' — so you doubt the null. The convention p < 0.05 means 'less than 5% chance this is a fluke; call it significant.'\n\n**What p is NOT**: it is not the probability the difference is real, and it is not the size of the effect. A tiny, meaningless difference can have a tiny p-value if your sample is huge. Significance ≠ importance.\n\n## Why it matters\nThis is the difference between a junior who breathlessly announces every wiggle in a chart and a senior who quietly says 'let me check if that's significant first.' Every finding in TaxiPulse — Manhattan vs Brooklyn tips, month-over-month trends, model A vs model B — needs this gate before you put it in a README.\n\n## Where this fits\nThis week you learn to test your TaxiPulse findings honestly: confidence intervals, t-tests, chi-square, multiple-comparison correction, and the bootstrap. By Sunday, one finding in your README carries a real p-value."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why p-values matter — signal vs noise",
-              "body": "## Deeper dive: Why p-values matter — signal vs noise\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why p-values matter — signal vs noise** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "p-values: What they are and how to interpret them",
+              "url": "https://www.youtube.com/watch?v=vemZtEM63GY",
+              "duration_min": 12,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 12-minute StatQuest with Josh Starmer video teaches Why p-values matter — signal vs noise directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -3060,12 +3072,12 @@
             },
             {
               "kind": "video",
-              "title": "Jupyter in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h1sAzPojKMg",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Jupyter in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -3594,9 +3606,13 @@
               "body": "## What it is\nScraping is two steps: **fetch** the page (requests), then **parse** the HTML (BeautifulSoup).\n\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\nheaders = {'User-Agent': 'forge-learning scraper'}\nr = requests.get('https://news.ycombinator.com', headers=headers)\nsoup = BeautifulSoup(r.text, 'html.parser')\n\nfor row in soup.select('tr.athing'):\n    title = row.select_one('.titleline a')\n    print(title.text)\n```\n\n## The key methods\n- **`.select('css selector')`** — find ALL matching elements (returns a list)\n- **`.select_one('css selector')`** — find the FIRST match\n- **`.text`** — the visible text inside an element\n- **`.get('href')`** — an attribute's value (a link's URL)\n\n## Why CSS selectors\nYou already know CSS selectors from HTML/CSS: `tr.athing` = `<tr>` with class `athing`; `.titleline a` = an `<a>` inside an element with class `titleline`. Reusing that knowledge is what makes BeautifulSoup quick to learn. The skill is reading a page's structure (via browser DevTools) to find the right selectors.\n\n## Set a User-Agent\nIdentify your scraper with a clear User-Agent header. It's honest, and some servers reject requests that don't send one.\n\n## Where this fits\nToday you fetch the HN front page and print every story title — your first successful scrape."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: BeautifulSoup basics",
-              "body": "## Deeper dive: BeautifulSoup basics\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **BeautifulSoup basics** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "BeautifulSoup + Requests | Web Scraping in Python",
+              "url": "https://www.youtube.com/watch?v=bargNl2WeN4",
+              "duration_min": 7,
+              "creator": "Alex The Analyst",
+              "difficulty": "curated",
+              "why": "This 7-minute Alex The Analyst video teaches BeautifulSoup basics directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -4282,9 +4298,13 @@
               "body": "## What it is\n**Streamlit Community Cloud** hosts your app free, straight from a GitHub repo. The flow:\n1. Push `explorer.py`, `fare_model.pkl`, `requirements.txt`, and the data to a repo\n2. share.streamlit.io → New app → pick the repo and `explorer.py`\n3. Deploy → you get a public `https://...streamlit.app` URL\n\n## requirements.txt strikes again\nJust like the Flask deploy, the cloud needs your dependency list to rebuild the environment:\n```text\nstreamlit\npandas\nscikit-learn\nxgboost\njoblib\npyarrow\n```\nForgetting a package here is the #1 cause of a failed Streamlit deploy — the app builds, then crashes on an import. The fix is always: add the missing package to requirements.txt and redeploy.\n\n## Data size consideration\nThe free tier has limited resources. If `clean_q4.parquet` is large, commit a smaller sampled version for the cloud app (the trend chart looks the same on a sample). Knowing to slim the data for deployment is a practical deploy skill.\n\n## Why it matters\nThis is the payoff: a link you can put on your resume, text to anyone, where they interact with your model and data live — no install, no notebook. 'Try my taxi fare explorer at [url]' is a portfolio sentence that lands.\n\n## Where this fits\nToday you deploy the explorer and confirm it works at its public URL."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Deploy to Streamlit Cloud",
-              "body": "## Deeper dive: Deploy to Streamlit Cloud\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy to Streamlit Cloud** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -4985,9 +5005,13 @@
               "body": "## What it is\n**Cursor** (an AI-native editor) and **GitHub Copilot** (an extension) put an AI assistant directly in your editor. Instead of copy-pasting to a chat window, you describe what you want *in context* and it writes code that fits your file:\n\n```text\nCmd/Ctrl + K  ->  'add a function that computes the median tip\n                   percentage per pickup borough and plots a bar chart'\n```\nIt generates the code inline, using your existing variables and imports.\n\n## The in-context advantage\nBecause the assistant sees your open files, it knows your DataFrame is called `df`, that you've imported pandas as `pd`, and what columns exist. Its suggestions fit your code instead of being generic snippets you have to adapt. That context is what makes editor-integrated AI faster than chat.\n\n## Review before accepting — every time\nThe generated code appears as a diff you accept or reject. **Read it before accepting.** Does it use the right column? Handle the empty case? Match your style? The accept/reject gate is exactly where your judgment lives — never reflexively accept.\n\n## Why it matters\nFor boilerplate (a groupby + plot, a docstring, a test), AI in the editor removes the typing so you spend your attention on the analysis. The speedup is real — but only if you keep reviewing.\n\n## Where this fits\nToday you install Cursor, open your TaxiPulse repo, and generate one function with Cmd/Ctrl+K — reviewing before you accept."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Cursor / Copilot setup",
-              "body": "## Deeper dive: Cursor / Copilot setup\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Cursor / Copilot setup** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Cursor Tutorial for Beginners (AI Code Editor)",
+              "url": "https://www.youtube.com/watch?v=ocMOZpuAMw4",
+              "duration_min": 16,
+              "creator": "Tech With Tim",
+              "difficulty": "curated",
+              "why": "This 16-minute Tech With Tim video on Cursor / Copilot setup — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -5385,9 +5409,13 @@
               "body": "## What it is\nEleven weeks on numeric data. Now: **text** — the messy, unstructured kind that makes up ~80% of the world's information. Support tickets, reviews, social posts, contracts. **Sentiment analysis** is the entry point: classifying a piece of text by its emotional tone (positive / negative / neutral).\n\nYou're starting **Project 2: Reddit Sentiment.** By the end you'll scrape Reddit posts, label their sentiment, build your own classifier, and ship it — a complete NLP project alongside TaxiPulse.\n\n## Why text is fundamentally harder than numbers\nModels do **math**. A fare of $16.42 is already a number a model can multiply. But 'this paper is fire' is a string — meaningless to a model until it's converted into numbers. **That conversion (text -> numbers) is the central problem of NLP**, and you'll meet several ways to do it across this project (pretrained embeddings this week, bag-of-words next week, fine-tuned transformers later).\n\n## Why sentiment is the right starting point\nSentiment is concrete (you can eyeball whether a label is right), genuinely useful (brands track it constantly), and it exposes every core NLP challenge — ambiguity, sarcasm, domain-specific language — in a simple binary frame. It's NLP with training wheels that still teaches the real lessons.\n\n## Where this fits\nThis week (v0.1) you set up the project, get Reddit API access, scrape 1000 posts, and label them with a pretrained model — a fast, working baseline you'll critique and beat next week."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What is sentiment analysis?",
-              "body": "## Deeper dive: What is sentiment analysis?\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What is sentiment analysis?** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Sentiment Analysis? The Future of Customer Insights #sentimentanalysis #nlp #machinelearning",
+              "url": "https://www.youtube.com/watch?v=LxfTYUEiIoM",
+              "duration_min": 1,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 1-minute IBM Technology video teaches What is sentiment analysis? directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -5437,9 +5465,13 @@
               "body": "## What it is\nA new project gets its own isolated environment so its dependencies don't collide with other projects:\n\n```bash\nmkdir reddit-sentiment && cd reddit-sentiment\nconda create -n sentiment python=3.11 pandas requests jupyter -y\nconda activate sentiment\npip install praw transformers torch python-dotenv\n```\n\n## Why isolated environments matter\nProject 2 needs `transformers` and `torch` (big, version-sensitive ML libraries). TaxiPulse needed `xgboost` and a specific pandas. Installing everything globally eventually causes a version conflict that breaks one project to satisfy another — 'dependency hell'. A separate conda env (or venv) per project keeps each one's dependencies sealed off. This is standard professional practice, not optional hygiene.\n\n## The libraries for this project\n- **praw** — the Python Reddit API Wrapper (scraping posts)\n- **transformers** — Hugging Face, for pretrained models\n- **torch** — PyTorch, the deep-learning backend transformers runs on\n- **python-dotenv** — loads secrets from a .env file\n\n## Start the repo right\nInitialise git and create the GitHub repo on day one, with a `.gitignore` ready for `.env` and `data/`. Setting up the hygiene before you write code means you never accidentally commit a secret or a huge data file.\n\n## Where this fits\nToday you create the isolated environment, install the NLP libraries, and initialise the `reddit-sentiment` repo."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Set up the project",
-              "body": "## Deeper dive: Set up the project\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Set up the project** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to set up a project and task calendar in MS Project Pro?  #msproject #oberemokii",
+              "url": "https://www.youtube.com/watch?v=qRnKRnk_hSo",
+              "duration_min": 1,
+              "creator": "Study of project management and Microsoft EPM",
+              "difficulty": "curated",
+              "why": "This 1-minute Study of project management and Microsoft EPM video teaches Set up the project directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -6355,9 +6387,13 @@
               "body": "## What it is\nBefore running anything, you write the experiment down — the same pre-registration discipline from Week 6, applied to a comparison:\n\n```text\nHYPOTHESIS: The strict/sarcasm-aware prompt (B) improves classification\n            accuracy over the plain prompt (A) on r/ML posts.\nMETRIC:     Accuracy against the 100-post hand-labelled gold set.\nDECISION:   Ship B only if it beats A AND the difference is significant (p < 0.05).\n```\n\n## Why write the decision rule first\nIf you decide *afterward* what counts as a win, you'll rationalise whatever you see. Committing to 'ship B only if significant at p<0.05' *before* the data removes the temptation to move the goalposts. This is the guardrail against fooling yourself — the single most important habit in experimentation.\n\n## The gold set is your judge\nYou already built a 100-post hand-labelled gold set in Week 13. That's the ground truth both prompts are scored against. Reusing it means the experiment is grounded in labels you trust, not in the model's own opinions.\n\n## Where this fits\nToday you write `ab/EXPERIMENT.md` stating the hypothesis, metric, and decision rule. Tomorrow you compute how many posts you actually need."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Define the experiment + hypothesis",
-              "body": "## Deeper dive: Define the experiment + hypothesis\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Define the experiment + hypothesis** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Hypothesis Testing and The Null Hypothesis, Clearly Explained!!!",
+              "url": "https://www.youtube.com/watch?v=0oc49DyA3hU",
+              "duration_min": 15,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 15-minute StatQuest with Josh Starmer video teaches Define the experiment + hypothesis directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -6401,9 +6437,13 @@
               "body": "## What it is\n**Statistical power** is the probability your test detects a real effect when one exists. Convention: 80% power. **Power analysis** works backward from the effect you care about to the sample size you need:\n\n```python\nfrom statsmodels.stats.power import zt_ind_solve_power\n# Detect a moderate effect (0.2) at 80% power, 5% significance\nn = zt_ind_solve_power(effect_size=0.2, alpha=0.05, power=0.8)\nprint(f'Need ~{int(n)} samples per arm')\n```\n\n## The three knobs\n- **effect_size** — how big a difference you want to be able to detect. Smaller effects need more data.\n- **alpha** — false-positive rate (0.05 = the significance threshold)\n- **power** — true-positive rate (0.8 = detect a real effect 80% of the time)\n\n## Why size up front, not after\nAn **under-powered** test (too few samples) can miss a real effect and you'd wrongly conclude 'no difference.' An **over-powered** test wastes resources (real product tests cost traffic and money). And sizing afterward invites the worst sin: running until you happen to get significance (**p-hacking**). You commit to n before you start.\n\n## Where this fits\nFor a large prompt effect on 100 gold posts, 100 per arm is plenty. For a real product test detecting a 1% conversion lift, you'd need tens of thousands. Today you compute and justify your n."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Sample size + statistical power",
-              "body": "## Deeper dive: Sample size + statistical power\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Sample size + statistical power** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Statistical Power, Clearly Explained!!!",
+              "url": "https://www.youtube.com/watch?v=Rsc5znwR5FA",
+              "duration_min": 9,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 9-minute StatQuest with Josh Starmer video teaches Sample size + statistical power directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -6744,9 +6784,13 @@
               "body": "## What it is\nClassical models (your TF-IDF + LogReg) hit a ceiling — maybe 75% — because **bag-of-words throws away order and context**. 'This is not good' and 'good' share the word 'good'; the model can't tell them apart. To break past that, you need a model that reads language *as language*.\n\n**Transformers** do exactly that. And **fine-tuning** is how you adapt one to your task:\n\n```text\nPretrained DistilBERT  (learned general English from billions of words)\n         + your 200 labelled gold posts\n         = a model specialised for r/ML sentiment\n```\n\n## Why fine-tuning beats training from scratch\nTraining a language model from zero needs billions of words and enormous compute. Fine-tuning starts from a model that **already understands language** and just nudges its weights on your small labelled set. You inherit all that language knowledge for free and specialise it cheaply. This is **transfer learning** — the single most important idea in modern applied ML.\n\n## DistilBERT specifically\nDistilBERT is a smaller, faster distillation of BERT — ~40% smaller, ~60% faster, keeping ~97% of the performance. It's the standard choice when you want transformer quality without the full compute cost. Perfect for fine-tuning on a free GPU.\n\n## Where this fits\nThis week you fine-tune DistilBERT on your gold set in Colab and see if it beats the classical baseline from Week 13. By Sunday: a specialised model saved in your repo."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What fine-tuning is",
-              "body": "## Deeper dive: What fine-tuning is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What fine-tuning is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "RAG vs. Fine Tuning",
+              "url": "https://www.youtube.com/watch?v=00Q0G84kq3M",
+              "duration_min": 9,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 9-minute IBM Technology video teaches What fine-tuning is directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -6802,9 +6846,13 @@
               "body": "## What it is\nFine-tuning updates millions of weights through huge matrix multiplications every step. That's exactly what **GPUs** are built for — they do thousands of multiplications in parallel. On a CPU, fine-tuning DistilBERT might take hours; on a GPU, minutes.\n\n**Google Colab** gives you a free GPU (a T4) in a hosted notebook:\n```text\n1. Runtime -> Change runtime type -> T4 GPU\n2. Upload data/gold.csv via the files panel\n3. First cell:\n   !pip install transformers datasets accelerate -q\n```\n\n## Why this is the standard workflow\nAlmost nobody fine-tunes on their laptop. The pattern is: **develop locally, train on a GPU in the cloud (Colab/cloud VM), bring the trained model back.** Colab is the free on-ramp to GPU training — the same mental model you'd use with a paid cloud GPU later, just free for learning.\n\n## Verify the GPU is active\nThe snippet below shows exactly what to do:\n\n```python\nimport torch\nprint(torch.cuda.is_available())   # True = GPU ready\nprint(torch.cuda.get_device_name(0))  # Tesla T4\n```\nIf this prints False, you forgot to switch the runtime to GPU — fix it before training or you'll wait hours.\n\n## Where this fits\nToday you open Colab, enable the T4 GPU, upload your gold set, and install the libraries. Tomorrow you prepare the data."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Move to Colab + GPU",
-              "body": "## Deeper dive: Move to Colab + GPU\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Move to Colab + GPU** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Tutorial 19- Training Artificial Neural Network using Google Colab GPU",
+              "url": "https://www.youtube.com/watch?v=41JItgtYGDo",
+              "duration_min": 20,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 20-minute Krish Naik video on Move to Colab + GPU — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -6850,9 +6898,13 @@
               "body": "## What it is\nA transformer doesn't read text — it reads **token IDs**. Preparing data means three steps: map labels to integers, split train/test, and tokenize:\n\n```python\nimport pandas as pd\nfrom datasets import Dataset\nfrom transformers import AutoTokenizer\n\ndf = pd.read_csv('gold.csv')\ndf['label'] = df['true_label'].map({'NEGATIVE':0, 'NEUTRAL':1, 'POSITIVE':2})\nds = Dataset.from_pandas(df[['title','label']]).train_test_split(test_size=0.2)\n\ntok = AutoTokenizer.from_pretrained('distilbert-base-uncased')\ndef tokenize(b): return tok(b['title'], truncation=True, padding='max_length')\nds = ds.map(tokenize, batched=True)\n```\n\n## What tokenization does\nThe **tokenizer** splits text into subword units and maps each to an integer ID the model knows. 'reproducibility' might become ['repro', '##duc', '##ibility'] → [1234, 5678, 9012]. `truncation=True` caps long posts; `padding` makes every sequence the same length so they batch together. **Crucially, you must use the SAME tokenizer the model was pretrained with** — a mismatch produces garbage IDs.\n\n## Labels must be integers\nThe model outputs class indices (0/1/2), not strings. You map NEGATIVE/NEUTRAL/POSITIVE → 0/1/2 now and map back after prediction. Keep that mapping consistent — swapping it silently scrambles every result.\n\n## Where this fits\nToday you load the gold set, map labels to integers, split 80/20, and tokenize with DistilBERT's tokenizer."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Prepare the data",
-              "body": "## Deeper dive: Prepare the data\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Prepare the data** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "The Complete Data Analyst Roadmap",
+              "url": "https://www.youtube.com/watch?v=YRJbhFLLPyE",
+              "duration_min": 5,
+              "creator": "Programming with Mosh",
+              "difficulty": "curated",
+              "why": "This 5-minute Programming with Mosh video teaches Prepare the data directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -7656,9 +7708,13 @@
               "body": "## What it is\n**Synthetic data** is artificially generated data used to supplement or stand in for real data. Two common reasons you need it:\n\n**1. Class imbalance.** Most real datasets are lopsided. Fraud is ~0.3% of transactions. The rare class — the one you usually care about — is starved of examples, so the model learns to ignore it.\n\n**2. Scarcity / privacy.** Sometimes you can't get enough real data (rare disease cases) or can't use it (private user records). Realistic fakes let you develop and test without it.\n\n## The accuracy trap with imbalance\nThe snippet below shows exactly what to do:\n\n```text\nFraud dataset: 0.3% fraud, 99.7% normal\nModel that ALWAYS predicts 'normal':\n  Accuracy = 99.7%   <- looks amazing\n  Fraud caught = 0   <- completely useless\n```\nThis is why **accuracy is the wrong metric for imbalanced data.** A model can score 99.7% by never predicting the class you built it to catch. You need precision/recall on the minority class — and often, techniques that help the model actually learn it.\n\n## Where this fits\nThis week you learn three synthetic-data tools: **Faker** (realistic fake records), **SMOTE** (synthetic minority examples for imbalance), and **LLM paraphrasing** (augmenting your small Reddit text set) — and critically, **when synthetic data quietly hurts.**"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why synthetic data",
-              "body": "## Deeper dive: Why synthetic data\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why synthetic data** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Synthetic Data",
+              "url": "https://www.youtube.com/watch?v=eV65DGmphIU",
+              "duration_min": 1,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 1-minute IBM Technology video teaches Why synthetic data directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -8160,9 +8216,13 @@
               "body": "## What it is\nExtract your prediction logic into `predict.py` — a function that takes a list of texts and returns labels, loading the model once at import:\n\n```python\nimport torch\nfrom transformers import AutoTokenizer, AutoModelForSequenceClassification\n\nMODEL = 'models/distilbert'\ntok = AutoTokenizer.from_pretrained(MODEL)\nmodel = AutoModelForSequenceClassification.from_pretrained(MODEL)\nLABELS = ['NEGATIVE', 'NEUTRAL', 'POSITIVE']\n\ndef predict(texts):\n    inputs = tok(texts, return_tensors='pt', truncation=True, padding=True)\n    with torch.no_grad():\n        logits = model(**inputs).logits\n    return [LABELS[i] for i in logits.argmax(dim=1).tolist()]\n```\n\n## Two things that matter here\n1. **Load the model at module level (once)** — not inside `predict()`. Importing the module loads the model a single time; every `predict()` call reuses it. Loading per-call would re-read 250MB from disk every time.\n2. **`torch.no_grad()`** — tells PyTorch you're only doing inference, not training, so it skips tracking gradients. This makes prediction faster and uses less memory. Forgetting it works but wastes resources.\n\n## Why a clean function pays off\n`predict(texts) -> labels` is a tiny, testable interface. The notebook can import it, the dashboard can import it, and next week the API can wrap it. One well-shaped function serves every consumer — the reuse you planned yesterday, realised.\n\n## Where this fits\nToday you build and test `predict.py`. Tomorrow the dashboard imports it."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Build the inference function",
-              "body": "## Deeper dive: Build the inference function\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Build the inference function** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "AI Inference: The Secret to AI's Superpowers",
+              "url": "https://www.youtube.com/watch?v=XtT5i0ZeHHE",
+              "duration_min": 11,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 11-minute IBM Technology video teaches Build the inference function directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -8361,9 +8421,13 @@
               "body": "## What it is\nDeploy to Streamlit Community Cloud (same as TaxiPulse v0.5), with the wrinkles a model-backed app brings:\n\n1. Push `app.py`, `scrape.py`, `predict.py`, `models/` (via Git LFS), and `requirements.txt`\n2. Add your **Reddit API secrets** to Streamlit Cloud's secrets manager (never commit them)\n3. Deploy → public `.streamlit.app` URL\n\n## The model-size constraint\nStreamlit Cloud's free tier has ~1GB RAM. Your DistilBERT model (~250MB loaded, more in memory during inference) may be tight. Two mitigations:\n- If it fits: great, the fine-tuned model serves live.\n- If it OOMs (out-of-memory): **fall back to the lighter scikit baseline** for the deployed version. A slightly-less-accurate model that's actually live beats a better model that crashes the app.\n\nThat trade-off — shipping the model that *fits the constraints* over the theoretically-best one — is a real production decision you'll make constantly.\n\n## Secrets management\nYour scraper needs Reddit credentials. They go in Streamlit Cloud's **secrets manager** (a secure key-value store), read via `st.secrets`, never in the committed code. Same discipline as `.env` locally — the platform just provides the secure store for you.\n\n## Where this fits\nToday you deploy the dashboard, configure secrets, and handle the model-size constraint. The result: a live, linkable sentiment tool."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Deploy the dashboard",
-              "body": "## Deeper dive: Deploy the dashboard\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy the dashboard** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -8560,9 +8624,13 @@
               "body": "## What it is\nLast week your Streamlit app loaded the 250MB model **inside the same process** that rendered the UI. That's fine for one app with one user. It breaks the moment you want a *second* consumer — a mobile app, a scheduled job, another team's tool. Each would have to import your model too, or copy it.\n\nThe fix is **separation of concerns**: the model gets its own **API service**, and any frontend calls it over HTTP:\n\n```text\nBEFORE:  [Streamlit + model in one process]\n\nAFTER:   [Model API service]  <--HTTP--  [Streamlit dashboard]\n                              <--HTTP--  [mobile app]\n                              <--HTTP--  [scheduled job]\n```\n\n## Why this is the production pattern\nOne model, loaded once, behind one endpoint — every client shares it. You can scale the model service independently, update the model without touching the frontends, and let any language/platform consume it (HTTP is universal). This **client/server split** is how real ML systems are built; the model is a service, not a library each app embeds.\n\n## The week's plan\nFastAPI endpoint (Day 2) → test it (Day 3) → Dockerize it (Day 4) → deploy to Hugging Face Spaces (Day 5) → point the Streamlit dashboard at the API instead of loading the model itself (Day 6). The dashboard becomes lightweight; the model lives in one place.\n\n## Where this fits\nToday you plan the split and articulate why a standalone model service beats embedding the model in every app."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why split the stack",
-              "body": "## Deeper dive: Why split the stack\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why split the stack** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to OVER Engineer a Website // What is a Tech Stack?",
+              "url": "https://www.youtube.com/watch?v=Sxxw3qtb3_g",
+              "duration_min": 12,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 12-minute Fireship video teaches Why split the stack directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -8611,9 +8679,13 @@
               "body": "## What it is\n**FastAPI** turns your `predict()` into an HTTP endpoint with automatic request validation:\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\nfrom predict import predict\n\napp = FastAPI()\n\nclass Req(BaseModel):\n    texts: list[str]\n\n@app.post('/predict')\ndef p(req: Req):\n    labels = predict(req.texts)\n    return {'predictions': [{'text': t, 'label': l}\n                            for t, l in zip(req.texts, labels)]}\n```\n\n## What Pydantic gives you for free\nThe `Req(BaseModel)` class declares the expected request shape: a `texts` field that's a list of strings. FastAPI **automatically validates** incoming requests against it — send the wrong shape (a number, a missing field) and the client gets a clear 422 error with details, *before* your code runs. You never write manual `if 'texts' not in body` checks. Typed validation is built in.\n\n## Auto-generated interactive docs\nFastAPI generates live API docs at `/docs` from your type hints — a clickable page where anyone can try the endpoint. That's documentation you get for free, always in sync with the code. It's a big reason FastAPI is the default for ML services.\n\n## Why this fits ML serving\nML endpoints take structured input (texts, features) and return structured output (predictions). FastAPI's typed request/response model maps perfectly onto that, and the validation catches malformed inputs that would otherwise crash inference.\n\n## Where this fits\nToday you write `api.py` wrapping predict() in a POST /predict endpoint and run it with uvicorn."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: FastAPI endpoint",
-              "body": "## Deeper dive: FastAPI endpoint\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **FastAPI endpoint** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python FastAPI Tutorial (Part 1): Getting Started - Web App + REST API",
+              "url": "https://www.youtube.com/watch?v=7AMjmCTumuo",
+              "duration_min": 24,
+              "creator": "Corey Schafer",
+              "difficulty": "curated",
+              "why": "This 24-minute Corey Schafer video on FastAPI endpoint — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",
@@ -8761,9 +8833,13 @@
               "body": "## What it is\n**Hugging Face Spaces** hosts ML apps free, including Docker-based services. The flow:\n1. Create a new Space with the **Docker SDK**\n2. Push your `Dockerfile` + `api.py`, `predict.py`, `models/` (Git LFS)\n3. Spaces builds the image and runs it → public URL like `reddit-sentiment-api.hf.space`\n\n## Why HF Spaces for an ML API\nSpaces is built for ML — it handles model files well (it's where models live), offers more generous memory than some free tiers, and the Docker SDK means it runs the exact image you tested locally. Because you containerized in Day 4, deployment is 'push the same Dockerfile' — the image that worked on your laptop works here, no surprises. That's the Docker reproducibility paying off directly.\n\n## The deploy checklist\n- Model files tracked via Git LFS (from Week 15)\n- requirements.txt complete (the #1 deploy-failure cause, as in TaxiPulse)\n- The Dockerfile EXPOSEs the port Spaces expects (check their docs — often 7860)\n\n## Why a deployed API is a portfolio milestone\nA **live, callable model API** is a different and stronger artifact than a notebook or even a dashboard. It says: 'my model runs as a real service that any application can use.' That's the shape of how ML is actually deployed in industry, and showing you've done it end-to-end — model → API → container → live URL — is genuinely senior-level evidence.\n\n## Where this fits\nToday you deploy the Docker API to Spaces and test the live endpoint. Tomorrow you point the dashboard at it."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Deploy to Hugging Face Spaces",
-              "body": "## Deeper dive: Deploy to Hugging Face Spaces\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy to Hugging Face Spaces** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -10874,9 +10950,13 @@
               "body": "## Minimal forecasting LSTM\nThe snippet below shows exactly what to do:\n\n```python\nimport torch.nn as nn\n\nclass LSTMForecaster(nn.Module):\n    def __init__(self, input_size=1, hidden_size=32, num_layers=1):\n        super().__init__()\n        self.lstm = nn.LSTM(input_size, hidden_size,\n                            num_layers=num_layers, batch_first=True)\n        self.head = nn.Linear(hidden_size, 1)\n\n    def forward(self, x):\n        # x: (batch, seq_len, input_size)\n        out, _ = self.lstm(x)              # (batch, seq_len, hidden_size)\n        last  = out[:, -1, :]              # take final time step only\n        return self.head(last)             # (batch, 1)\n\nmodel = LSTMForecaster(hidden_size=32)\nprint(sum(p.numel() for p in model.parameters()))\n# ~4385 parameters — small, won't overfit easily\nThe snippet below shows exactly what to do:\n\n```\n\n## Why take only the last time step\n`out` has shape `(batch, seq_len, hidden_size)` — one hidden representation per time step in the sequence. For one-step-ahead forecasting, the most relevant representation is the LAST one (it has seen the entire sequence). Take `out[:, -1, :]` and project to 1 output.\n\n## Why batch_first=True\nPyTorch's default LSTM expects `(seq_len, batch, features)` which is counter-intuitive. `batch_first=True` makes it `(batch, seq_len, features)` — the same as your data tensors. Set this and stop fighting axis order.\n\n## hidden_size and num_layers\n- `hidden_size=32` — small. Enough capacity for a single-variable forecast with ~4000 examples. Bigger isn't always better.\n- `num_layers=1` — start here. Stacking more layers helps on big datasets, not small ones.\n\n## The parameter count check\nPrint the parameter count. ~4k is right; if you see 400k, you've over-sized for this data and will overfit fast."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Build the LSTM",
-              "body": "## Deeper dive: Build the LSTM\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Build the LSTM** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Long Short-Term Memory (LSTM), Clearly Explained",
+              "url": "https://www.youtube.com/watch?v=YCzL96nL7j0",
+              "duration_min": 21,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 21-minute StatQuest with Josh Starmer video on Build the LSTM — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",
@@ -11233,9 +11313,13 @@
               "body": "## What it is\nYou've built four models (persistence, ARIMA, Prophet, LSTM) and chose Prophet for production. That's Day 1 work. **MLOps is everything that happens after that** — the discipline of running the model in production reliably:\n\n- **Experiment tracking** — every run's parameters, metrics, and outputs are recorded forever, not lost when you re-run the notebook.\n- **Model registry** — production models live in one place, with a name + version + lifecycle stage (Staging / Production / Archived).\n- **Drift detection** — alarms when the distribution of inputs in production drifts away from training data.\n- **Retraining** — when drift fires, you retrain on fresh data and promote a new model version.\n- **Observability** — dashboards that show forecast accuracy, prediction latency, request volume.\n\n## Why this matters for Energy Forecast\nThe Prophet model was trained on 2004-2017 data. Demand patterns in 2024 look different: more solar means daytime demand drops; more EVs means evening demand rises. A model frozen in 2017 silently mis-forecasts 2024. Drift detection is what tells you it's time to retrain.\n\n## What you'll do this week\n1. Install MLflow locally and start its tracking server.\n2. Log every Prophet experiment (params, MAE, the saved model).\n3. Compare runs in the MLflow UI.\n4. Compute drift between training-period and held-out-period demand.\n5. Wire a simple alert that fires when drift crosses a threshold.\n6. Ship as `mlops-w1`.\n\n## The shift in mindset\nUp to now: 'I built a model that scores X on the test set.' From here: 'I built a model that's monitored, versioned, and replaceable when it stops working.' That second framing is what working data scientists actually do."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why MLOps",
-              "body": "## Deeper dive: Why MLOps\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why MLOps** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is MLOps?",
+              "url": "https://www.youtube.com/watch?v=OejCJL2EC3k",
+              "duration_min": 7,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 7-minute IBM Technology video teaches Why MLOps directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -11284,9 +11368,13 @@
               "body": "## Install + start\nThe snippet below shows exactly what to do:\n\n```bash\npip install mlflow\nmlflow ui --port 5000\n```\n\nThat opens MLflow's web UI at `http://localhost:5000`. Initially empty — no runs yet.\n\n## What gets stored where\nBy default MLflow writes everything to `./mlruns/` in the current directory:\n- `mlruns/0/<run-id>/params/...` — every parameter\n- `mlruns/0/<run-id>/metrics/...` — every metric logged over time\n- `mlruns/0/<run-id>/artifacts/...` — saved files (models, charts)\n- `mlruns/0/<run-id>/meta.yaml` — run metadata\n\nFor a real team you'd point at a remote tracking server (S3 / Postgres) — but local file storage is perfect for a learner project.\n\n## .gitignore the mlruns folder\nThe snippet below shows exactly what to do:\n\n```\n# .gitignore\nmlruns/\n```\nIt can grow to gigabytes with model artefacts. Keep it local; the production registry would be remote anyway.\n\n## The Python client\nThe snippet below shows exactly what to do:\n\n```python\nimport mlflow\nmlflow.set_tracking_uri('http://localhost:5000')\nmlflow.set_experiment('EnergyForecast')\n```\nFrom here every `with mlflow.start_run(): ...` block creates a new run, ready to log params and metrics."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Install + start MLflow",
-              "body": "## Deeper dive: Install + start MLflow\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Install + start MLflow** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Introduction To MLflow-An Open Source Platform for the Machine Learning Lifecycle",
+              "url": "https://www.youtube.com/watch?v=VokAGy8C6K4",
+              "duration_min": 13,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 13-minute Krish Naik video teaches Install + start MLflow directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -11744,9 +11832,13 @@
               "body": "## What you'll do\n1. Sign up at https://aws.amazon.com/free with a real email + credit card. Pick **Basic Support — Free**.\n2. Turn on **MFA** on the root user. Authenticator app (Google Authenticator / Authy).\n3. Set a **billing alarm at $5** via CloudWatch.\n4. Create an **IAM user** called `forge-dev` with AdministratorAccess. Never use root again.\n5. Install **AWS CLI**, run `aws configure`, paste the IAM user's access key.\n6. Verify with `aws sts get-caller-identity` → you see the IAM user ARN, not root.\n\n## Why each step\n- **MFA on root** — the only account that can do truly catastrophic things. Locking it behind a phone is the difference between a stolen password being a scare and a disaster.\n- **Billing alarm** — see Day 1.\n- **IAM user (not root)** — the same idea as 'don't use the admin Windows account for everyday browsing.' If your credentials leak, the IAM user gets locked down; the root account is untouched.\n- **`aws sts get-caller-identity`** — your sanity check that the CLI is correctly authenticated as the IAM user.\n\n## Free Tier is generous but not infinite\nMost learning tasks fit comfortably inside Free Tier: S3 (5 GB storage + 20k GET / 2k PUT per month), Lambda (1M requests/month), small EC2 t2.micro hours. Things that escape Free Tier: anything 'larger' (m5, NAT Gateway, RDS), anything you forgot to stop.\n\nThe billing alarm + 'delete what you stop using' habit (Day 1) keeps you safely inside."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: AWS Free Tier — safely",
-              "body": "## Deeper dive: AWS Free Tier — safely\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **AWS Free Tier — safely** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Introducing the new AWS Free Tier Program | Amazon Web Services",
+              "url": "https://www.youtube.com/watch?v=X1_tEKQ4_R0",
+              "duration_min": 1,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 1-minute Amazon Web Services video teaches AWS Free Tier — safely directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -12242,12 +12334,12 @@
             },
             {
               "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -12644,9 +12736,13 @@
               "body": "## What it is\nA one-page document that defines your capstone before you write a line of code. Commits you to a specific shape; protects future-you from scope creep.\n\n## The template\nThe snippet below shows exactly what to do:\n\n```markdown\n# Capstone — <Project Name>\n\n## The question\n<One sentence. Specific enough that a yes/no answer at the end is possible.>\n\n## Why it matters (1 paragraph)\n<Who cares about the answer? What would they do differently if they knew?>\n\n## The dataset\n- Source: <URL>\n- Size: <rows / GB>\n- Coverage: <date range / geography>\n- License: <verified — capstone results are publishable>\n\n## Success looks like\n- Headline finding: <a quantified claim of the form 'X is true with magnitude Y'>\n- Demo: <a live thing a reader can interact with>\n- Blog: <a 1500-word post explaining the answer>\n\n## Out of scope\n- <List of things you WILL NOT do. Cuts that protect the timeline.>\n- e.g.: 'no model deployment to AWS; Streamlit Cloud only'\n- e.g.: 'no comparison of 5 architectures; baseline + 1 main model'\n- e.g.: 'no real-time pipeline; offline batch is enough'\n\n## Plan (3 weeks)\n- W28: prototype, scope adjustment\n- W29: build, baseline, evaluate\n- W30: polish, demo, blog, retro, v1.0 tag\n\n## Risks + mitigations\n- <Risk 1>: <what you'll do if it fires>\n- e.g.: 'Data is too sparse for neural net': fall back to gradient boosting + a regularised linear baseline\n- e.g.: 'Scraping the data takes 5 days': switch to a smaller pre-packaged Kaggle version\n```\n\n## Why this commits you\nOnce it's committed, scope creep becomes obvious. 'Oh, what if I also added X' meets the 'Out of scope' section and gets cut. The spec is the contract with yourself.\n\n## Sign the spec\nCommit it as `capstone/SPEC.md` to git on Day 2 of W28. Don't let yourself open the model code until the spec exists. This is the same discipline that makes engineers write design docs before kicking off projects."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Write the spec",
-              "body": "## Deeper dive: Write the spec\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Write the spec** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Spec-Driven Development: AI Assisted Coding Explained",
+              "url": "https://www.youtube.com/watch?v=mViFYTwWvcM",
+              "duration_min": 9,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 9-minute IBM Technology video teaches Write the spec directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -13524,9 +13620,13 @@
               "body": "## The path\nSame as W27:\n1. Push `capstone/app/` + `requirements.txt` to your GitHub repo.\n2. share.streamlit.io → New app → point at `capstone/app/streamlit_app.py`.\n3. Add secrets (AWS keys if loading model from S3, API keys if needed) in Streamlit's secrets UI.\n4. Deploy.\n\n## Test in incognito\nOpen the public URL in an incognito window. No cookies, no cached creds. Confirm:\n- It loads in <10 seconds (cold start is OK)\n- Default values produce a prediction\n- Each input updates the prediction\n- Links to blog + repo work\n\n## Save the URL\nPaste it into the README + into `capstone/LINKS.md`. This is the link that goes into the blog post tomorrow and on your portfolio site next week."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Deploy",
-              "body": "## Deeper dive: Deploy\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -14340,9 +14440,13 @@
               "body": "## What it is\nFine-tuning a 7B-parameter model means updating 7 billion weights. That's expensive: gigabytes of optimizer state, multiple GPUs, hours per epoch.\n\n**LoRA** (Low-Rank Adaptation, 2021) makes a key observation: the *update* needed to specialize a pretrained model is much smaller-dimensional than the model itself. Instead of computing the full update ΔW (a huge matrix), LoRA represents it as a product of two small matrices: ΔW = A·B, where A is (d × r) and B is (r × d) with r being a tiny rank (typically 8-16).\n\n```text\nOriginal weight W:    d × d   (millions of params)\nLoRA decomposition:   A (d×r) · B (r×d)  with r=8\n                                          \ne.g. d=4096, r=8:\n  W is 4096×4096 = 16.7M params\n  A·B is 4096×8 + 8×4096 = 65k params  (0.4% of W)\n```\n\nTraining updates only A and B. The base model W stays frozen. At inference, the effective weight is W + A·B.\n\n## Why this works\nEmpirically: the *adaptations* needed to make a general model good at a specific task have low intrinsic rank. Most of the model's capacity is already-correct general knowledge; only a thin slice needs to change for specialization.\n\n## What this unlocks for you\n- Fine-tune 7B models on a single Colab T4 (16GB GPU)\n- Store the adapter as a ~50MB file (vs the 14GB base model)\n- Swap adapters at inference time — base model + adapter A for legal docs, base + adapter B for medical, etc.\n\n## This week\nPick a small task. Fine-tune a 3B-7B model with LoRA on Colab. Evaluate. Ship the adapter to Hugging Face. Total compute: ~$0."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Understand LoRA",
-              "body": "## Deeper dive: Understand LoRA\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Understand LoRA** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Fine tuning Gemma with LoRA in Google Colab",
+              "url": "https://www.youtube.com/watch?v=87aG24KWvM8",
+              "duration_min": 4,
+              "creator": "Google Cloud Tech",
+              "difficulty": "curated",
+              "why": "This 4-minute Google Cloud Tech video teaches Understand LoRA directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -14777,9 +14881,13 @@
               "body": "## What it is\nYou want an LLM to answer questions over YOUR documents — contracts, support tickets, internal wiki, etc. The LLM doesn't know your stuff (it was trained on public web).\n\n**RAG = Retrieval-Augmented Generation**. The architecture:\n\n```text\nOFFLINE (once, per document update):\n  1. Split each document into chunks (~500 tokens each)\n  2. Embed each chunk: text → vector (1536 floats)\n  3. Store: { chunk_text, vector, source_metadata } in a vector DB\n\nAT QUERY TIME (per user question):\n  4. Embed the question: question → vector\n  5. Vector search: find the top-5 chunks closest to question vector\n  6. Build a prompt:\n       'Context:\\n<top-5 chunks>\\n\\nQuestion: <user question>\\nAnswer:'\n  7. Send to LLM. LLM answers using the chunks.\n  8. Show the answer + cite which chunks it came from.\n```\n\n## Why this won in 2023-2024\nEvery enterprise needed 'a chatbot over our docs.' Fine-tuning was expensive and stale. RAG was cheap, kept the LLM stateless, and updated whenever the documents updated. Same playbook at every company.\n\n## Where it fails\n- **Bad chunking**: too-big chunks dilute; too-small chunks lose context\n- **Pure vector search**: misses exact-string queries (names, IDs)\n- **No citations**: model 'hallucinates' or quotes things not in the chunks\n- **Stale embeddings**: documents updated but vector DB didn't refresh\n\n## What you'll build this week\nA working RAG system over a corpus you pick (10-100 documents). Hybrid search. Citations. Evaluation. Deployed."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Understand RAG",
-              "body": "## Deeper dive: Understand RAG\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Understand RAG** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Setting up Retrieval Augmented Generation (RAG) in 3 Steps",
+              "url": "https://www.youtube.com/watch?v=LpKGm1jJXv4",
+              "duration_min": 3,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 3-minute IBM Technology video teaches Understand RAG directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -15053,9 +15161,13 @@
               "body": "## Streamlit demo\nSame pattern as W27 / W30. The minimum:\n```python\nimport streamlit as st\n\n@st.cache_resource\ndef load_components():\n    # Load embedding model, FAISS index, BM25, chunks\n    ...\n\nst.title('RAG over <your corpus>')\nquery = st.text_input('Ask a question:')\nif query:\n    answer, hits = rag_answer(query)\n    st.write(answer)\n    with st.expander('Sources used'):\n        for i, h in enumerate(hits, 1):\n            st.markdown(f'**[{i}] {h[\"source\"]}**')\n            st.text(h['text'])\n```\n\nDeploy to Streamlit Cloud as before. Public URL.\n\n## The blog post\nThe snippet below shows exactly what to do:\n\n```text\n1. Hook — what you built + the score\n2. Why RAG (1 paragraph)\n3. Corpus + chunking choices\n4. Hybrid search — why it helped (or didn't)\n5. Eval results — pass rate + failure patterns\n6. Live demo URL\n7. What I'd improve\n```\n\n## Tag and ship\nThe snippet below shows exactly what to do:\n\n```bash\ngit add rag/\ngit commit -m \"RAG system: <pass rate> on hand-eval over <corpus>\"\ngit tag rag-shipped\ngit push && git push --tags\n```\n\n## Why this matters for hiring\nEvery team that built an LLM application in 2023-2024 built RAG first. Showing a working RAG + hybrid search + honest eval puts you ahead of most candidates who only show 'I called the OpenAI API' projects."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Deploy + ship",
-              "body": "## Deeper dive: Deploy + ship\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy + ship** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -16167,9 +16279,13 @@
               "body": "## Install + import\nThe snippet below shows exactly what to do:\n\n```bash\npip install fairlearn scikit-learn\n```\n\n## The audit workflow\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LogisticRegression\nfrom fairlearn.metrics import MetricFrame, selection_rate, true_positive_rate, false_positive_rate\nfrom sklearn.metrics import accuracy_score\n\n# Train a model on Adult Income\nX = pd.get_dummies(df.drop(columns=['income','income_50k']), drop_first=True)\ny = df['income_50k']\nsex = df['sex']   # protected attribute, KEEP for analysis\n\nX_tr, X_te, y_tr, y_te, s_tr, s_te = train_test_split(\n    X, y, sex, test_size=0.3, random_state=42, stratify=y)\n\nmodel = LogisticRegression(max_iter=2000).fit(X_tr, y_tr)\ny_hat = model.predict(X_te)\n\n# Now the audit\nframe = MetricFrame(\n    metrics={\n        'accuracy': accuracy_score,\n        'selection_rate': selection_rate,\n        'TPR': true_positive_rate,\n        'FPR': false_positive_rate,\n    },\n    y_true=y_te,\n    y_pred=y_hat,\n    sensitive_features=s_te,\n)\n\nprint(frame.overall)         # overall metrics\nprint(frame.by_group)        # metrics for each group\nprint(frame.difference())    # max - min disparity per metric\nprint(frame.ratio())         # min / max ratio per metric\n```\n\n## What you'll typically see on Adult Income (sex)\nThe snippet below shows exactly what to do:\n\n```text\nby_group:\n            accuracy  selection_rate  TPR   FPR\nFemale       0.92      0.07            0.61  0.04\nMale         0.84      0.31            0.67  0.13\n\ndifference():\n  selection_rate   0.24    <- women selected at 7%, men at 31%\n  TPR              0.06    <- of qualified, women hit 61%, men 67%\n  FPR              0.09    <- women's false positives 4%, men's 13%\n```\n\nRead that table out loud. Among people who DO earn >$50k, the model identifies men at 67% but women only at 61%. Among people who DON'T, it falsely flags men at 13% and women at 4%. The model is more 'eager' on men than women — partly because it's reflecting historical training-data patterns.\n\n## The 'four-fifths rule'\nUS EEOC's rough thumb-rule for selection-rate disparity: the selection rate of the lower-rate group should be ≥ 4/5 (80%) of the higher. On Adult Income with sex: 0.07 / 0.31 = 0.23 → fails the four-fifths rule by a long way. That's actionable.\n\n## Save the audit\nThe snippet below shows exactly what to do:\n\n```python\nframe.by_group.to_csv('bias/audit_by_group.csv')\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Run a Fairlearn audit",
-              "body": "## Deeper dive: Run a Fairlearn audit\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Run a Fairlearn audit** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to Test Models for Fairness with Fairlearn Deep-Dive",
+              "url": "https://www.youtube.com/watch?v=Ts6tB2p97ek",
+              "duration_min": 13,
+              "creator": "Microsoft Developer",
+              "difficulty": "curated",
+              "why": "This 13-minute Microsoft Developer video teaches Run a Fairlearn audit directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -17000,9 +17116,13 @@
               "body": "## What it is\nFive `pytest` tests, each covering ONE critical path. After today, breaking any of these tests means a real regression — you'll catch it before deploying.\n\n## The five to write\nThe snippet below shows exactly what to do:\n\n```text\n1. test_clean_drops_null_targets()\n   The cleaning step removes rows with null target.\n   Without this, training silently includes NaN targets.\n\n2. test_split_is_deterministic()\n   Two calls to the splitter with the same SEED give identical splits.\n   Without this, reproducibility is a lie.\n\n3. test_model_loads_and_predicts()\n   Load main.pkl. Pass a sample input. Get a prediction of the expected shape.\n   Without this, deploys can break silently when the model loads but inference fails.\n\n4. test_metric_calc_handles_empty()\n   The metric calculation doesn't crash on edge cases (empty subgroups,\n   single-class predictions). It returns NaN or 0, not an exception.\n   Without this, the eval pipeline crashes on real-world weirdness.\n\n5. test_inference_round_trip()\n   Take a known-good input from the test set, push it through the\n   loaded model, assert the prediction is within 0.001 of what it was\n   on the day of training.\n   Without this, model drift in pickle format goes unnoticed.\n```\n\n## The pytest pattern\nThe snippet below shows exactly what to do:\n\n```python\n# tests/test_critical_paths.py\nimport pytest, pickle, numpy as np, pandas as pd\nfrom src.clean import clean\nfrom src.train import build_split\nfrom src.evaluate import compute_metrics\nfrom src.config import SEED\n\n@pytest.fixture\ndef model():\n    with open('models/main.pkl', 'rb') as f:\n        return pickle.load(f)\n\n@pytest.fixture\ndef sample():\n    return pd.read_parquet('reports/predictions.parquet').head(10)\n\ndef test_clean_drops_null_targets():\n    raw = pd.DataFrame({'feature_a': [1, 2, 3], 'target': [1, None, 0]})\n    cleaned = clean(raw)\n    assert cleaned['target'].notna().all()\n    assert len(cleaned) == 2\n\ndef test_split_is_deterministic():\n    X = pd.DataFrame({'a': range(100)})\n    y = pd.Series([0, 1] * 50)\n    s1 = build_split(X, y, seed=SEED)\n    s2 = build_split(X, y, seed=SEED)\n    assert (s1[0].index == s2[0].index).all()\n    assert (s1[1].index == s2[1].index).all()\n\ndef test_model_loads_and_predicts(model, sample):\n    preds = model.predict(sample.drop(columns=['index','y_true','y_pred','y_proba'], errors='ignore'))\n    assert preds.shape == (10,)\n    assert np.isin(preds, [0, 1]).all()\n\ndef test_metric_calc_handles_empty():\n    out = compute_metrics(y_true=np.array([]), y_pred=np.array([]))\n    assert all(np.isnan(v) or v == 0 for v in out.values())\n\ndef test_inference_round_trip(model, sample):\n    feats = sample.drop(columns=['index','y_true','y_pred','y_proba'], errors='ignore')\n    fresh = model.predict_proba(feats)[:, 1]\n    stored = sample['y_proba'].values\n    np.testing.assert_allclose(fresh, stored, atol=1e-6)\n```\n\n## Run them\nThe snippet below shows exactly what to do:\n\n```bash\npip install pytest\npytest tests/ -v\n```\n\nAll five should pass before you go to bed.\n\n## Add to CI later (W38 D3 onward — not required today)\nGitHub Actions can run pytest on every push. Worth setting up; not the focus today."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Write 5 tests",
-              "body": "## Deeper dive: Write 5 tests\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Write 5 tests** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Stop Writing So Many Tests",
+              "url": "https://www.youtube.com/watch?v=4-_0aTlkqK0",
+              "duration_min": 11,
+              "creator": "Web Dev Simplified",
+              "difficulty": "curated",
+              "why": "This 11-minute Web Dev Simplified video teaches Write 5 tests directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -17046,9 +17166,13 @@
               "body": "## What it is\nA `Dockerfile` that packages your model + inference code into a portable container. Anyone with Docker installed can run your model with one command, no Python setup, no dependency hell.\n\n## The minimal Dockerfile\nThe snippet below shows exactly what to do:\n\n```dockerfile\n# Dockerfile\nFROM python:3.11-slim\n\nWORKDIR /app\n\n# Install system deps first (cached layer)\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n    build-essential \\\n && rm -rf /var/lib/apt/lists/*\n\n# Install Python deps next (cached if requirements unchanged)\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Copy code + model last (changes most often)\nCOPY src/ ./src/\nCOPY models/main.pkl ./models/main.pkl\nCOPY app/ ./app/\n\nEXPOSE 8000\n\nCMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n```\n\n## Layer ordering = build speed\nDocker caches each layer; if a layer's inputs don't change, it doesn't rebuild. Put slowly-changing things (apt installs) first, fast-changing things (your code) last. Rebuilds become near-instant during iteration.\n\n## The .dockerignore\nThe snippet below shows exactly what to do:\n\n```text\n# .dockerignore\n.git\n__pycache__\n*.pyc\n.pytest_cache\nnotebooks/\ndata/raw.parquet\nreports/\n.venv/\n.env\n.DS_Store\n```\n\nWithout this, `COPY .` pulls in your git history, notebooks, raw data, virtualenv. Image bloats from 200MB to 2GB. Always have a `.dockerignore`.\n\n## Build + run\nThe snippet below shows exactly what to do:\n\n```bash\ndocker build -t capstone:v0.3 .\ndocker run -p 8000:8000 capstone:v0.3\n\n# In another terminal\ncurl http://localhost:8000/predict -X POST -H 'Content-Type: application/json' \\\n     -d '{\"features\": {...}}'\n# {\"prediction\": 1, \"probability\": 0.83}\nThe snippet below shows exactly what to do:\n\n```\n\n## The 'multi-stage' upgrade (optional)\nIf your image is > 500MB, split into a build stage + runtime stage. Build heavy deps in the first; copy only what's needed into a slim runtime image.\n```dockerfile\nFROM python:3.11 AS builder\nCOPY requirements.txt .\nRUN pip install --user --no-cache-dir -r requirements.txt\n\nFROM python:3.11-slim AS runtime\nCOPY --from=builder /root/.local /root/.local\nENV PATH=/root/.local/bin:$PATH\nCOPY src/ ./src/\nCOPY models/main.pkl ./models/main.pkl\nCOPY app/ ./app/\nCMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n```\n\nNot required for v0.3 unless your image is huge.\n\n## What this gives the reviewer\nThe snippet below shows exactly what to do:\n\n```bash\ndocker pull yourname/capstone:v0.3\ndocker run -p 8000:8000 yourname/capstone:v0.3\n# instant, no Python setup, no dependency hell\nThe snippet below shows exactly what to do:\n\n```\n\nA working Docker image is the difference between 'try to run this on your machine' (recruiter gives up) and 'one docker command, working in 30 seconds' (recruiter is impressed)."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Dockerize",
-              "body": "## Deeper dive: Dockerize\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Dockerize** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I deploy serverless containers for free",
+              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
+              "duration_min": 7,
+              "creator": "Beyond Fireship",
+              "difficulty": "curated",
+              "why": "This 7-minute Beyond Fireship video teaches Deploy directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -17094,7 +17218,7 @@
             {
               "kind": "lesson",
               "title": "Deeper dive: Deploy",
-              "body": "## Deeper dive: Deploy\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 38 ('Capstone v0.3 - Polish + deploy'), day 4."
+              "body": "## Deeper dive: Deploy\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deploy** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -17430,9 +17554,13 @@
               "body": "## What it is\nOne screen recording. ~3 minutes. The script from yesterday, read with conviction. Posted unlisted on YouTube. Linked from the README + the dev.to post + your LinkedIn.\n\n## Tools\n- **Loom** (free tier, 5-min cap — perfect for you). Auto-uploads, gives a URL instantly.\n- **OBS Studio** (free, unlimited). Slightly more setup; full control.\n- **macOS QuickTime / Windows Game Bar** (built-in). Local file; upload manually.\n\n## The two-take rule\n- Take 1: stumble through, identify the worst 2-3 moments.\n- Take 2: read the script with the fixes. Done.\n\nMore than two takes means the script needs editing, not the delivery. Cut.\n\n## Setup tips\n- **Close every irrelevant tab.** Notifications, chat windows, mail. They will pop up at the worst moment.\n- **One screen.** If you have two monitors, share only one.\n- **Browser at zoom 110-125%.** Easier to read in playback; looks intentional.\n- **Sound check.** 30 seconds of recording, played back. Is it clear? If not, fix mic before take 1.\n\n## What NOT to do\n- Don't say 'um, let me just find the right tab' — that's a sign the demo isn't prepared.\n- Don't apologise for anything ('sorry, this is rough'). Confidence sells, not modesty.\n- Don't do a 'thanks for watching, please subscribe' YouTube-style outro. Professional close: 'Code's at <link>. Happy to dive deeper.'\n\n## Upload + link\nThe snippet below shows exactly what to do:\n\n```text\nYouTube: Unlisted (not Public; not Private)\n  → Anyone with the link can watch; doesn't compete with public videos in search\n\nTitle:   '<Project name> — 3-minute walkthrough'\nDescription:\n  - One sentence about the project\n  - Link to GitHub repo\n  - Link to live demo\n  - Link to blog post\n```\n\n## Embed everywhere\nThe snippet below shows exactly what to do:\n\n```markdown\n<!-- README.md -->\n## Demo (3 min)\n[![Demo video](docs/hero.png)](https://youtube.com/watch?v=...)\n```\n\nThe hero image becomes a clickable video link. YouTube's auto-thumbnail is usually mediocre; a custom thumbnail (your hero.png) makes the link feel intentional."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Record the demo",
-              "body": "## Deeper dive: Record the demo\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Record the demo** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to record a meeting in Microsoft Teams, demo tutorial",
+              "url": "https://www.youtube.com/watch?v=_hjfQ41LF0w",
+              "duration_min": 6,
+              "creator": "Microsoft 365",
+              "difficulty": "curated",
+              "why": "This 6-minute Microsoft 365 video teaches Record the demo directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -17852,9 +17980,13 @@
               "body": "## What it is\nCartPole: a pole balanced on a cart. The agent applies left/right force; reward is +1 for each step the pole stays up. Episode ends when the pole tips past 12° or the cart leaves the screen.\n\nYou'll implement Q-learning: the canonical value-based RL algorithm.\n\n## Q-learning, the equation\nThe snippet below shows exactly what to do:\n\n```text\nQ(s, a) ← Q(s, a) + α · [ r + γ · max Q(s', a') − Q(s, a) ]\n                            └── target ──┘   └─ current ─┘\n\nα = learning rate (how fast to update)\nγ = discount factor (how much to value future reward, typically 0.99)\nr = immediate reward\ns' = next state\n```\n\nThat update rule is the whole algorithm. Everything else is plumbing.\n\n## The pattern with stable-baselines3 (the fast way)\nThe snippet below shows exactly what to do:\n\n```python\n# pip install gymnasium stable-baselines3\nimport gymnasium as gym\nfrom stable_baselines3 import DQN\n\nenv = gym.make('CartPole-v1')\nmodel = DQN('MlpPolicy', env, verbose=0, learning_rate=1e-3, buffer_size=10_000)\nmodel.learn(total_timesteps=50_000)\n\n# Evaluate\nobs, _ = env.reset()\ntotal_reward = 0\nfor _ in range(500):\n    action, _ = model.predict(obs, deterministic=True)\n    obs, r, done, trunc, _ = env.step(action)\n    total_reward += r\n    if done or trunc: break\nprint(f'eval reward: {total_reward}')\n# eval reward: 500.0  (the max — pole balanced for full episode)\nThe snippet below shows exactly what to do:\n\n```\n\n## The pattern from scratch (the educational way)\nThe snippet below shows exactly what to do:\n\n```python\nimport numpy as np\nimport gymnasium as gym\n\nenv = gym.make('CartPole-v1')\n\n# Discretise the continuous state\ndef discretise(obs):\n    bins = [\n        np.linspace(-2.4, 2.4, 6),     # cart position\n        np.linspace(-3.0, 3.0, 6),     # cart velocity\n        np.linspace(-0.21, 0.21, 12),  # pole angle\n        np.linspace(-3.0, 3.0, 12),    # pole angular velocity\n    ]\n    return tuple(int(np.digitize(o, b)) for o, b in zip(obs, bins))\n\nQ = np.zeros((7, 7, 13, 13, 2))  # state-bins × n_actions\nalpha, gamma, eps = 0.1, 0.99, 1.0\n\nfor episode in range(2000):\n    obs, _ = env.reset()\n    s = discretise(obs)\n    done = False\n    while not done:\n        # ε-greedy action\n        if np.random.rand() < eps:\n            a = env.action_space.sample()\n        else:\n            a = int(np.argmax(Q[s]))\n        obs, r, done, trunc, _ = env.step(a)\n        s_ = discretise(obs)\n        # Q-learning update\n        Q[s][a] += alpha * (r + gamma * Q[s_].max() - Q[s][a])\n        s = s_\n        if trunc: break\n    eps = max(0.05, eps * 0.995)  # anneal exploration\n```\n\n## What you'll see\nThe snippet below shows exactly what to do:\n\n```text\nepisode  100: avg reward over last 100 = 22\nepisode  500: avg reward over last 100 = 68\nepisode 1000: avg reward over last 100 = 152\nepisode 1500: avg reward over last 100 = 380\nepisode 2000: avg reward over last 100 = 472   <- close to the max of 500\n```\n\nThat's learning in action — the agent goes from 'falls instantly' to 'balances for the full episode' through pure trial + error + Q updates.\n\n## Render it\nThe snippet below shows exactly what to do:\n\n```python\nenv = gym.make('CartPole-v1', render_mode='human')\n# ... run inference with the trained model\nThe snippet below shows exactly what to do:\n\n```\n\nWatch the cart actually balance. That's the moment RL clicks."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: CartPole Q-learning",
-              "body": "## Deeper dive: CartPole Q-learning\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **CartPole Q-learning** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Q-Learning Explained - Reinforcement Learning Tutorial",
+              "url": "https://www.youtube.com/watch?v=kEGAMppyWkQ",
+              "duration_min": 7,
+              "creator": "AssemblyAI",
+              "difficulty": "curated",
+              "why": "This 7-minute AssemblyAI video teaches CartPole Q-learning directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -18223,9 +18355,13 @@
               "body": "## What it is\nRecommender systems = 'given a user, surface items they'll like'. The biggest interview topic at consumer tech (Amazon, Netflix, Spotify, TikTok, YouTube). Three generations of algorithms:\n\n```text\nGEN 1 — Collaborative Filtering (2000s)\n  Idea: users similar to you liked X → recommend X.\n  Tool: user-user similarity, item-item similarity\n  Strength: simple, interpretable, no item features needed\n  Weakness: doesn't scale; cold-start; sparse data\n\nGEN 2 — Matrix Factorization (2006-2015)\n  Idea: learn small embeddings per user and per item; rec = dot product.\n  Tool: SVD, ALS, FunkSVD\n  Strength: scales to millions of users; fast inference; better accuracy\n  Weakness: still cold-start; linear model of interaction\n\nGEN 3 — Deep / Two-Tower Models (2016+)\n  Idea: neural networks produce user + item embeddings from RICH features.\n  Tool: two-tower networks, transformers, graph nets\n  Strength: handles cold-start via features; non-linear interactions\n  Weakness: more compute; less interpretable; more data needed\n```\n\nThis week you implement one from each generation. Same dataset. Compare honestly.\n\n## The dataset: MovieLens\nMovieLens is the textbook recsys benchmark. 25M ratings, 162k users, 62k movies, freely available.\n\n```python\n# pip install pandas requests\nimport pandas as pd, zipfile, io, requests\n\nurl = 'https://files.grouplens.org/datasets/movielens/ml-25m.zip'\nr = requests.get(url)\nwith zipfile.ZipFile(io.BytesIO(r.content)) as zf:\n    ratings = pd.read_csv(zf.open('ml-25m/ratings.csv'))\n    movies  = pd.read_csv(zf.open('ml-25m/movies.csv'))\n\nprint(ratings.shape, movies.shape)\n# (25,000,095, 4) (62,423, 3)\nThe snippet below shows exactly what to do:\n\n```\n\nFor learner work, use the smaller `ml-latest-small` (100k ratings) — fits in seconds, same patterns.\n\n## What's in the ratings file\nThe snippet below shows exactly what to do:\n\n```text\nuserId  movieId  rating  timestamp\n1       296      5.0     1147880044\n1       306      3.5     1147868817\n...\n```\n\nThat's all you need for the entire week. Three columns: who, what, score.\n\n## The split\nThe snippet below shows exactly what to do:\n\n```python\n# Time-based split (closest to production reality)\nratings = ratings.sort_values('timestamp')\ncutoff = int(len(ratings) * 0.8)\ntrain = ratings.iloc[:cutoff]\ntest  = ratings.iloc[cutoff:]\n```\n\nRandom splits LEAK in recsys — they let the model see future ratings during training. Time-based splits respect causality.\n\n## This week\n- Day 2: User-based CF (the simple one)\n- Day 3: Matrix factorization (SVD/ALS)\n- Day 4: Two-tower deep model in PyTorch\n- Day 5: Cold-start mitigation\n- Day 6: Multi-metric eval (precision@K, recall@K, NDCG)\n- Day 7: Streamlit demo + ship"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Intuition + dataset",
-              "body": "## Deeper dive: Intuition + dataset\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Intuition + dataset** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Tutorial 26- Linear Regression Indepth Maths Intuition- Data Science",
+              "url": "https://www.youtube.com/watch?v=1-OGRohmH2s",
+              "duration_min": 25,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 25-minute Krish Naik video on Intuition + dataset — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",

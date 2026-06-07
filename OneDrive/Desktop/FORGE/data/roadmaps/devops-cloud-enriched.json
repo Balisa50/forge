@@ -1536,9 +1536,13 @@
               "body": "## BetterUptime (recommended)\nFree tier: 10 monitors, 3-minute checks, email + Slack alerts.\n\n```text\n1. Sign up at betterstack.com/better-uptime.\n2. Monitors → Create monitor.\n3. URL to monitor: https://yourdomain.com\n4. Check frequency: 3 minutes (free) or 30 seconds (paid).\n5. HTTP status code: 200 (default).\n6. Alert when: HTTP code != 200 OR response time > 5 seconds.\n7. Notification channels: email + Slack webhook (if you have one).\n8. Save.\n```\n\n## UptimeRobot (alternative)\nFree tier: 50 monitors, 5-minute checks, email alerts only.\n\n## Test the alarm — important\nYou MUST verify the alarm fires before trusting it. Temporarily block your URL:\n1. Edit your local hosts file: add `127.0.0.1 yourdomain.com` (so YOUR machine can't resolve it; the probe still can).\n   — Actually this only tests YOUR machine; the probe is external.\n2. Better test: in CloudFront, temporarily disable your distribution. Wait 2 minutes; the probe fails; you should get the alert email.\n3. Re-enable the distribution. Probe recovers. You should get an 'Up' email.\n\n## What 'good' looks like\nThe snippet below shows exactly what to do:\n\n```text\n  ✓ You get the down alert email within 5 minutes of disabling.\n  ✓ You get the up email within 5 minutes of re-enabling.\n  ✓ Status page shows the incident in history.\n```\n\nIf the alert doesn't fire, the monitor isn't useful. Test before relying on it.\n\n## Public status page (optional)\nBetterUptime generates a free public status page (status.betterstack.com/yourname). Link it from your portfolio's footer — recruiters love this signal."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Uptime monitoring",
-              "body": "## Deeper dive: Uptime monitoring\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Uptime monitoring** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Create Public Uptime Checks with Cloud Monitoring",
+              "url": "https://www.youtube.com/watch?v=rpE5mLfgqmE",
+              "duration_min": 7,
+              "creator": "Google Cloud Tech",
+              "difficulty": "curated",
+              "why": "This 7-minute Google Cloud Tech video teaches Uptime monitoring directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -1582,9 +1586,13 @@
               "body": "## Why first\nThe single highest-leverage alarm you'll ever set up. 10 minutes; protects against the most expensive class of mistake: cost runaway.\n\n## Manual setup (one-time)\nAWS console (region us-east-1 — billing metrics only exist there):\n```text\n1. Billing → Billing preferences → Receive Free Tier Usage Alerts + Billing Alerts → save.\n   (Without this, no metrics flow to CloudWatch.)\n2. CloudWatch (us-east-1) → Alarms → Create alarm.\n3. Select metric → Billing → Total Estimated Charge → Currency: USD.\n4. Threshold: Greater than $50.\n5. Period: 6 hours (billing metrics update slowly).\n6. Notification: New SNS topic → enter your email → confirm via the email link.\n7. Name: BillingAlarm-50USD. Create.\n```\n\n## Terraform version (preferred — codify it)\nThe snippet below shows exactly what to do:\n\n```hcl\n# billing-alarm.tf — apply once, sleep better forever\nresource \"aws_sns_topic\" \"billing_alerts\" {\n  name = \"billing-alerts\"\n}\n\nresource \"aws_sns_topic_subscription\" \"billing_email\" {\n  topic_arn = aws_sns_topic.billing_alerts.arn\n  protocol  = \"email\"\n  endpoint  = \"you@example.com\"\n}\n\nresource \"aws_cloudwatch_metric_alarm\" \"billing_50usd\" {\n  provider            = aws.useast1   # billing metrics ONLY in us-east-1\n  alarm_name          = \"billing-50-usd\"\n  comparison_operator = \"GreaterThanThreshold\"\n  evaluation_periods  = 1\n  metric_name         = \"EstimatedCharges\"\n  namespace           = \"AWS/Billing\"\n  period              = 21600        # 6 hours\n  statistic           = \"Maximum\"\n  threshold           = 50\n  dimensions          = { Currency = \"USD\" }\n  alarm_actions       = [aws_sns_topic.billing_alerts.arn]\n}\n```\n\nAfter confirming the SNS subscription (email link), the alarm is active. It fires when CloudWatch's 6-hour estimate exceeds $50.\n\n## Test it\nYou can manually transition the alarm state to test the notification path:\n```bash\naws cloudwatch set-alarm-state \\\n  --alarm-name billing-50-usd \\\n  --state-value ALARM \\\n  --state-reason 'testing notification path' \\\n  --region us-east-1\n```\nYou should get the email within seconds. Now you trust the alarm."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Billing alarm",
-              "body": "## Deeper dive: Billing alarm\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Billing alarm** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "AWS Budgets Tutorial - Setup Alerts for AWS Billing | Amazon Web Services",
+              "url": "https://www.youtube.com/watch?v=O0sofGVT7uw",
+              "duration_min": 5,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 5-minute Amazon Web Services video teaches Billing alarm directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -2413,9 +2421,13 @@
               "body": "## File\nThe snippet below shows exactly what to do:\n\n```yaml\n# docker-compose.yml\nservices:\n  pg:\n    image: postgres:16-alpine\n    restart: unless-stopped\n    environment:\n      POSTGRES_USER: app\n      POSTGRES_PASSWORD: app\n      POSTGRES_DB: app\n    volumes:\n      - pg-data:/var/lib/postgresql/data\n    ports:\n      - '5432:5432'\n    healthcheck:\n      test: ['CMD-SHELL', 'pg_isready -U app -d app']\n      interval: 5s\n      timeout: 3s\n      retries: 5\n\n  api:\n    build:\n      context: .\n      dockerfile: Dockerfile.dev      # see day 3 for this file\n    restart: unless-stopped\n    environment:\n      DATABASE_URL: postgres://app:app@pg:5432/app\n      NODE_ENV: development\n    ports:\n      - '3000:3000'\n    depends_on:\n      pg:\n        condition: service_healthy\n\nvolumes:\n  pg-data:\n```\n\n## Bring it up\nThe snippet below shows exactly what to do:\n\n```bash\ndocker compose up -d              # detached\ndocker compose ps                 # what's running\ndocker compose logs -f api        # follow api logs\ndocker compose down               # stop + remove containers (volume survives)\n```\n\n## Test connectivity\nThe snippet below shows exactly what to do:\n\n```bash\n# from your host\npsql postgres://app:app@localhost:5432/app -c 'SELECT 1;'\n\n# OR from inside the api container\ndocker compose exec api sh\n# inside container\nnode -e \"const {Client}=require('pg'); const c=new Client({connectionString:process.env.DATABASE_URL}); c.connect().then(()=>c.query('SELECT 1')).then(r=>{console.log(r.rows); process.exit();})\"\n```\n\n## Why the healthcheck matters here\nWithout `depends_on: { condition: service_healthy }`, the api starts the moment the pg CONTAINER is up — typically before pg is actually accepting connections. The api crashes on first DB query. The healthcheck eliminates this race."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Write your first compose.yml",
-              "body": "## Deeper dive: Write your first compose.yml\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Write your first compose.yml** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Docker Compose will BLOW your MIND!! (a tutorial)",
+              "url": "https://www.youtube.com/watch?v=DM65_JyGxCo",
+              "duration_min": 17,
+              "creator": "NetworkChuck",
+              "difficulty": "curated",
+              "why": "This 17-minute NetworkChuck video on Write your first compose.yml — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -2888,9 +2900,13 @@
               "body": "## Manually create a user (Alpine)\nThe snippet below shows exactly what to do:\n\n```dockerfile\nFROM node:20-alpine\n\n# Create a user and group with predictable UID/GID\nRUN addgroup -g 1001 -S app && adduser -u 1001 -S app -G app\n\nWORKDIR /app\nCOPY --chown=app:app package*.json ./\nRUN npm ci --only=production\nCOPY --chown=app:app . .\n\nUSER app                          # switch to non-root\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]\n```\n\n## Why the explicit UID/GID\nIf you mount a host volume into the container, file ownership uses NUMERIC IDs. Predictable UID/GID lets you align host + container ownership cleanly.\n\n## In distroless (easier)\nDistroless images provide a `nonroot` user out of the box:\n```dockerfile\nFROM gcr.io/distroless/nodejs20-debian12\nUSER nonroot                      # just use it\n```\n\n## Common failures and how to fix\nThe snippet below shows exactly what to do:\n\n```text\n  ❌ EACCES: permission denied, mkdir '/app/.cache'\n     → your app tries to write somewhere it doesn't own.\n     Fix: COPY --chown=app:app on the relevant dir, or pre-mkdir as root.\n\n  ❌ Bind to port 80 fails (only root can bind to <1024)\n     → run on a high port (3000+) inside the container.\n     Map -p 80:3000 at the host.\n\n  ❌ apt / apk fails during build with non-root user\n     → switch back to root for installs:\n       USER root\n       RUN apk add --no-cache curl\n       USER app\n```\n\n## Verify\nThe snippet below shows exactly what to do:\n\n```bash\ndocker run --rm myapp id\n# uid=1001(app) gid=1001(app) groups=1001(app)\nThe snippet below shows exactly what to do:\n\n```\n\nNot 0. That's the win."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Non-root user",
-              "body": "## Deeper dive: Non-root user\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Non-root user** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Kali Linux Quick Tips - #1 - Adding a non-root user",
+              "url": "https://www.youtube.com/watch?v=WkPvxIiNOJM",
+              "duration_min": 5,
+              "creator": "HackerSploit",
+              "difficulty": "curated",
+              "why": "This 5-minute HackerSploit video teaches Non-root user directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -3767,9 +3783,13 @@
               "body": "## The K8s mental model\n\nKubernetes is the operating system for containers at scale. The core problem it solves: you have 10 containers (your app, the database, the cache, the background workers, the metrics collector) running across 5 servers. How do you decide which container runs on which server? How do you restart crashed containers? How do you update containers without downtime? How do you expose services on the network? Kubernetes answers all of these questions with a declarative API.\n\nThe key mental model: you te\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: The K8s mental model",
-              "body": "## Deeper dive: The K8s mental model\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The K8s mental model** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Kubernetes Security Best Practices you need to know | THE Guide for securing your K8s cluster!",
+              "url": "https://www.youtube.com/watch?v=oBf5lrmquYI",
+              "duration_min": 30,
+              "creator": "TechWorld with Nana",
+              "difficulty": "curated",
+              "why": "This 30-minute TechWorld with Nana deep dive on The K8s mental model is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "reading",
@@ -4721,9 +4741,13 @@
               "body": "## Helm fundamentals\n\nRaw Kubernetes YAML is verbose, repetitive, and hard to manage across environments. A Deployment manifest for your staging environment is almost identical to production — but with different image tags, replica counts, resource limits, and environment variables. Helm is the package manager for Kubernetes that solves this problem.\n\nA Helm chart is a collection of templates and default values. Templates are Kubernetes YAML files with Go template syntax for parameterisation: {{ .Values.replicaCount \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Helm fundamentals",
-              "body": "## Deeper dive: Helm fundamentals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Helm fundamentals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Helm?",
+              "url": "https://www.youtube.com/watch?v=fy8SHvNZGeE",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Helm fundamentals directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -4778,9 +4802,13 @@
               "body": "## Values files for per-environment config (dev, staging, prod)\n\nRaw Kubernetes YAML is verbose, repetitive, and hard to manage across environments. A Deployment manifest for your staging environment is almost identical to production — but with different image tags, replica counts, resource limits, and environment variables. Helm is the package manager for Kubernetes that solves this problem.\n\nA Helm chart is a collection of templates and default values. Templates are Kubernetes YAML files with Go template syntax for parameterisation: {{ .Values.replicaCount \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Values files for per-environment config (dev, staging, prod)",
-              "body": "## Deeper dive: Values files for per-environment config (dev, staging, prod)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Values files for per-environment config (dev, staging, prod)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Dev, test, and production environments with Google Serverless #shorts",
+              "url": "https://www.youtube.com/watch?v=T5xJTPOMfe8",
+              "duration_min": 1,
+              "creator": "Google Cloud Tech",
+              "difficulty": "curated",
+              "why": "This 1-minute Google Cloud Tech video teaches Values files for per-environment config (dev, staging, prod) directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -5196,9 +5224,13 @@
               "body": "## What a service mesh is\n\nKubernetes networking handles communication between pods and between the cluster and the outside world. But as applications grow more complex — microservices communicating with each other, diverse clients with different requirements, security policies between services — the basic Service and Ingress are not enough. Service meshes and modern networking tools fill this gap.\n\nThe service mesh problem: you have 50 microservices talking to each other. You want: mutual TLS (mTLS) between services (so \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What a service mesh is",
-              "body": "## Deeper dive: What a service mesh is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What a service mesh is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Istio Service Mesh Explained",
+              "url": "https://www.youtube.com/watch?v=6zDrLvpfCK4",
+              "duration_min": 6,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 6-minute IBM Technology video teaches What a service mesh is directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -5247,9 +5279,13 @@
               "body": "## Traffic splitting and canary deploys at the mesh level\n\nKubernetes networking handles communication between pods and between the cluster and the outside world. But as applications grow more complex — microservices communicating with each other, diverse clients with different requirements, security policies between services — the basic Service and Ingress are not enough. Service meshes and modern networking tools fill this gap.\n\nThe service mesh problem: you have 50 microservices talking to each other. You want: mutual TLS (mTLS) between services (so \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Traffic splitting and canary deploys at the mesh level",
-              "body": "## Deeper dive: Traffic splitting and canary deploys at the mesh level\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Traffic splitting and canary deploys at the mesh level** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Istio & Service Mesh - simply explained in 15 mins",
+              "url": "https://www.youtube.com/watch?v=16fgzklcF7Y",
+              "duration_min": 17,
+              "creator": "TechWorld with Nana",
+              "difficulty": "curated",
+              "why": "This 17-minute TechWorld with Nana video on Traffic splitting and canary deploys at the mesh level — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "reading",
@@ -5731,9 +5767,13 @@
               "body": "## Modules\n\nInfrastructure as Code (IaC) means your infrastructure is defined in version-controlled files, just like your application code. Before IaC: you click through a cloud console to create a VPC, subnets, security groups, EC2 instances, RDS databases, load balancers. The configuration exists only in the cloud provider's database. There is no record of why you made each decision. Recreating it in another region takes hours and is error-prone. After IaC with Terraform: your entire infrastructure is in \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Modules",
-              "body": "## Deeper dive: Modules\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Modules** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "JavaScript Modules in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=qgRUr-YUk1Q",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 2-minute Fireship video teaches Modules directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -6204,9 +6244,13 @@
               "body": "## AWS-specific integrations\n\nManaged Kubernetes services (EKS on AWS, GKE on Google Cloud, AKS on Azure) eliminate the burden of managing the Kubernetes control plane. In a self-managed cluster, you are responsible for: etcd backups, API server certificate rotation, control plane version upgrades, master node high availability, and more. With a managed service, the cloud provider handles all of that. You pay for the worker nodes; the control plane is managed.\n\nEKS (Amazon Elastic Kubernetes Service): AWS manages the control\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: AWS-specific integrations",
-              "body": "## Deeper dive: AWS-specific integrations\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **AWS-specific integrations** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Understanding AWS Application Integration - Key Services Explained!",
+              "url": "https://www.youtube.com/watch?v=N0sqFqoCwBE",
+              "duration_min": 15,
+              "creator": "KodeKloud",
+              "difficulty": "curated",
+              "why": "This 15-minute KodeKloud video teaches AWS-specific integrations directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -6667,9 +6711,13 @@
               "body": "## Cloud-agnostic abstractions (Crossplane, Pulumi) and their cost\n\nEvery cloud provider has different APIs, different pricing models, different service names, and different strengths. AWS has the broadest service catalogue. GCP has the best Kubernetes and data engineering services. Azure is dominant in enterprise environments with Microsoft licenses. Choosing a cloud provider (or using multiple) is a significant architectural decision.\n\nVendor lock-in is the state where you depend on a specific vendor's proprietary services to the point where switching is prohi\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Cloud-agnostic abstractions (Crossplane, Pulumi) and their cost",
-              "body": "## Deeper dive: Cloud-agnostic abstractions (Crossplane, Pulumi) and their cost\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Cloud-agnostic abstractions (Crossplane, Pulumi) and their cost** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Pulumi - IaC in your favorite programming language!",
+              "url": "https://www.youtube.com/watch?v=vIjeiDcsR3Q",
+              "duration_min": 20,
+              "creator": "TechWorld with Nana",
+              "difficulty": "curated",
+              "why": "This 20-minute TechWorld with Nana video on Cloud-agnostic abstractions (Crossplane, Pulumi) and their cost — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -7131,9 +7179,13 @@
               "body": "## AWS Secrets Manager + Parameter Store\n\nSecrets management is one of the most consequential security decisions in infrastructure. A secret is any value that provides access: API keys, database passwords, TLS private keys, OAuth client secrets, SSH private keys. How you store, distribute, rotate, and audit secrets determines whether a breach exposes just one system or your entire infrastructure.\n\nThe worst approach: hardcoded secrets in source code. They end up in git history forever, visible to everyone with repository access, and cop\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: AWS Secrets Manager + Parameter Store",
-              "body": "## Deeper dive: AWS Secrets Manager + Parameter Store\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **AWS Secrets Manager + Parameter Store** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Secret Store CSI Driver Tutorial | Kubernetes Secrets | AWS Secrets Manager | KodeKloud",
+              "url": "https://www.youtube.com/watch?v=MTnQW9MxnRI",
+              "duration_min": 32,
+              "creator": "KodeKloud",
+              "difficulty": "curated",
+              "why": "This 32-minute KodeKloud deep dive on AWS Secrets Manager + Parameter Store is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "reading",
@@ -9004,9 +9056,13 @@
               "body": "## SLIs, SLOs, SLAs\n\nSite Reliability Engineering is the discipline of applying software engineering to infrastructure and operations problems. It originated at Google when they hired software engineers to run production systems and gave them the mandate to automate themselves out of operational toil. The result: Google runs millions of servers with a small SRE team. The SRE book (available free at sre.google) codifies these practices.\n\nSLOs (Service Level Objectives): a target reliability level agreed upon between \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: SLIs, SLOs, SLAs",
-              "body": "## Deeper dive: SLIs, SLOs, SLAs\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **SLIs, SLOs, SLAs** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "The Art of SLOs (Service Level Objectives)",
+              "url": "https://www.youtube.com/watch?v=E3ReKuJ8ewA",
+              "duration_min": 5,
+              "creator": "Google Cloud Tech",
+              "difficulty": "curated",
+              "why": "This 5-minute Google Cloud Tech video teaches SLIs, SLOs, SLAs directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -9461,9 +9517,13 @@
               "body": "## AWS Cost Explorer + budgets\n\nCloud bills grow in proportion to how little you pay attention to them. The discipline of managing cloud costs is called FinOps (Financial Operations). Most teams over-provision infrastructure by 30-50% \"just in case\" and then forget about it. A FinOps practice makes cost visible, allocates it to teams, and creates incentives to optimise.\n\nThe biggest cost levers in AWS (and broadly applicable): right-sizing instances (running a c5.4xlarge when a c5.xlarge handles the load), Reserved Instances o\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: AWS Cost Explorer + budgets",
-              "body": "## Deeper dive: AWS Cost Explorer + budgets\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **AWS Cost Explorer + budgets** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "AWS Cost Optimisation Series: AWS Budgets | Amazon Web Services",
+              "url": "https://www.youtube.com/watch?v=5vYEVQzoMeM",
+              "duration_min": 3,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 3-minute Amazon Web Services video teaches AWS Cost Explorer + budgets directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -9518,9 +9578,13 @@
               "body": "## Right-sizing\n\nCloud bills grow in proportion to how little you pay attention to them. The discipline of managing cloud costs is called FinOps (Financial Operations). Most teams over-provision infrastructure by 30-50% \"just in case\" and then forget about it. A FinOps practice makes cost visible, allocates it to teams, and creates incentives to optimise.\n\nThe biggest cost levers in AWS (and broadly applicable): right-sizing instances (running a c5.4xlarge when a c5.xlarge handles the load), Reserved Instances o\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Right-sizing",
-              "body": "## Deeper dive: Right-sizing\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Right-sizing** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Right Size Your Services",
+              "url": "https://www.youtube.com/watch?v=wcp1inFS78A",
+              "duration_min": 2,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 2-minute Amazon Web Services video teaches Right-sizing directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -9569,9 +9633,13 @@
               "body": "## Savings plans + reserved instances\n\nCloud bills grow in proportion to how little you pay attention to them. The discipline of managing cloud costs is called FinOps (Financial Operations). Most teams over-provision infrastructure by 30-50% \"just in case\" and then forget about it. A FinOps practice makes cost visible, allocates it to teams, and creates incentives to optimise.\n\nThe biggest cost levers in AWS (and broadly applicable): right-sizing instances (running a c5.4xlarge when a c5.xlarge handles the load), Reserved Instances o\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Savings plans + reserved instances",
-              "body": "## Deeper dive: Savings plans + reserved instances\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Savings plans + reserved instances** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How do I use AWS promotional credits to purchase a Reserved Instance or Savings Plan?",
+              "url": "https://www.youtube.com/watch?v=9EeOhShoeVk",
+              "duration_min": 2,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 2-minute Amazon Web Services video teaches Savings plans + reserved instances directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -9936,9 +10004,13 @@
               "body": "## RTO (Recovery Time Objective) vs RPO (Recovery Point Objective)\n\nDisaster recovery is about business continuity when things go catastrophically wrong: a region goes down, data gets corrupted, a database is accidentally dropped, ransomware encrypts your storage. Most teams have backup policies they have never tested. The only backup that matters is one you have verified can be restored in the required time window.\n\nTwo key metrics define your DR requirements. RPO (Recovery Point Objective): the maximum age of data you can afford to lose. If your RPO is 1 hour,\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: RTO (Recovery Time Objective) vs RPO (Recovery Point Objective)",
-              "body": "## Deeper dive: RTO (Recovery Time Objective) vs RPO (Recovery Point Objective)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **RTO (Recovery Time Objective) vs RPO (Recovery Point Objective)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "RPO and RTO Explained",
+              "url": "https://www.youtube.com/watch?v=rD3nBaS3OG4",
+              "duration_min": 1,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 1-minute Amazon Web Services video teaches RTO (Recovery Time Objective) vs RPO (Recovery Point Objective) directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -10038,9 +10110,13 @@
               "body": "## Application-level backup tools\n\nDisaster recovery is about business continuity when things go catastrophically wrong: a region goes down, data gets corrupted, a database is accidentally dropped, ransomware encrypts your storage. Most teams have backup policies they have never tested. The only backup that matters is one you have verified can be restored in the required time window.\n\nTwo key metrics define your DR requirements. RPO (Recovery Point Objective): the maximum age of data you can afford to lose. If your RPO is 1 hour,\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Application-level backup tools",
-              "body": "## Deeper dive: Application-level backup tools\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Application-level backup tools** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Disaster Recovery vs. Backup: What's the difference?",
+              "url": "https://www.youtube.com/watch?v=07EHsPuKXc0",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Application-level backup tools directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -10394,9 +10470,13 @@
               "body": "## IAM least privilege\n\nCloud security posture is the aggregate security state of all your cloud resources. A misconfigured S3 bucket (public read on a bucket containing user data) has caused some of the largest data breaches in history. IAM misconfigurations (overly permissive roles, long-lived access keys, no MFA) are the leading cause of cloud account compromise. Network misconfigurations (security groups allowing 0.0.0.0/0 on sensitive ports) expose services that should be internal.\n\nIAM best practices. The princip\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: IAM least privilege",
-              "body": "## Deeper dive: IAM least privilege\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **IAM least privilege** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Identity & Access Management (IAM)",
+              "url": "https://www.youtube.com/watch?v=aNj36g7fSsU",
+              "duration_min": 4,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 4-minute IBM Technology video teaches IAM least privilege directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -10451,9 +10531,13 @@
               "body": "## Network segmentation\n\nCloud security posture is the aggregate security state of all your cloud resources. A misconfigured S3 bucket (public read on a bucket containing user data) has caused some of the largest data breaches in history. IAM misconfigurations (overly permissive roles, long-lived access keys, no MFA) are the leading cause of cloud account compromise. Network misconfigurations (security groups allowing 0.0.0.0/0 on sensitive ports) expose services that should be internal.\n\nIAM best practices. The princip\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Network segmentation",
-              "body": "## Deeper dive: Network segmentation\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Network segmentation** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "let’s subnet your home network // You SUCK at subnetting // EP 6",
+              "url": "https://www.youtube.com/watch?v=mJ_5qeqGOaI",
+              "duration_min": 10,
+              "creator": "NetworkChuck",
+              "difficulty": "curated",
+              "why": "This 10-minute NetworkChuck video teaches Network segmentation directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -10508,9 +10592,13 @@
               "body": "## GuardDuty + Security Hub\n\nCloud security posture is the aggregate security state of all your cloud resources. A misconfigured S3 bucket (public read on a bucket containing user data) has caused some of the largest data breaches in history. IAM misconfigurations (overly permissive roles, long-lived access keys, no MFA) are the leading cause of cloud account compromise. Network misconfigurations (security groups allowing 0.0.0.0/0 on sensitive ports) expose services that should be internal.\n\nIAM best practices. The princip\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: GuardDuty + Security Hub",
-              "body": "## Deeper dive: GuardDuty + Security Hub\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **GuardDuty + Security Hub** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How do I setup EventBridge rules for GuardDuty, to send custom SNS notifications if events trigger?",
+              "url": "https://www.youtube.com/watch?v=HSon9kZ0mCw",
+              "duration_min": 4,
+              "creator": "Amazon Web Services",
+              "difficulty": "curated",
+              "why": "This 4-minute Amazon Web Services video teaches GuardDuty + Security Hub directly — watch it end to end."
             },
             {
               "kind": "swipe",
