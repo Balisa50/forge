@@ -1665,7 +1665,9 @@ def export_allowlist():
 def main():
     # data-engineering is processed from its -src.json into data-engineering.json
     default_order = ALL_TRACKS + ['data-engineering']
-    slugs = [sys.argv[1]] if len(sys.argv) > 1 else default_order
+    arg = sys.argv[1] if len(sys.argv) > 1 else None
+    # `--all` (or no arg) processes every track; a slug processes just that track.
+    slugs = default_order if (arg is None or arg in ('--all', 'all')) else [arg]
     print("Validating video library...")
     extra = collect_all_raw_video_urls()
     cache = validate_library_and_collect(extra)
