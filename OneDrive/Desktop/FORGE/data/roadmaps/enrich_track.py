@@ -1171,7 +1171,8 @@ _GENERIC_DATA_RE = re.compile(r'read_csv|read_parquet|\bthe csv\b|your dataset|t
 
 def _dataset_callout_body(did: str) -> str:
     d = DATASET_DEFS[did]
-    lines = [f"## 📁 Dataset: `{d['file']}`", "",
+    lines = [f"## 📁 Dataset for this week's project: `{d['file']}`",
+             "Before you start the assignment below, make sure you have the right file:", "",
              f"- **What it is:** {d['label']}.",
              f"- **Reuse:** {d['reuse']}",
              f"- **Where to get it:** {d['source']} — {d['url']}"]
@@ -1206,12 +1207,16 @@ def inject_dataset_callout(week_days, week_num, track_slug, week_blob):
                 ids.append(did)
     if not ids:
         return
-    day1 = next((d for d in week_days if d.get('number') == 1), None)
-    if not day1:
+    # Put the callout on the LAST day — the mini-assignment / project day — where the
+    # student actually loads the data. It reminds them which file to use right before
+    # they do the week's project, not on Day 1 (which isn't about the dataset).
+    project_day = max((d for d in week_days if d.get('number', 0) >= 1),
+                      key=lambda d: d.get('number', 0), default=None)
+    if not project_day:
         return
     callouts = [{"kind": "lesson", "title": f"Dataset: {DATASET_DEFS[did]['file']}",
                  "body": _dataset_callout_body(did)} for did in ids[:2]]
-    day1.setdefault('items', [])[0:0] = callouts  # insert in priority order, on top
+    project_day.setdefault('items', [])[0:0] = callouts  # on top of the project day
 
 
 def synth_second_lesson(day_title: str, week_context: str) -> dict:
