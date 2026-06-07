@@ -90,11 +90,33 @@ def collect_candidates(extra_files):
     return ids
 
 
+class APIError(RuntimeError):
+    def __init__(self, message, reason=""):
+        super().__init__(message)
+        self.reason = reason
+
+
 def api_get(endpoint, params):
     params = {**params, "key": API_KEY}
     url = f"https://www.googleapis.com/youtube/v3/{endpoint}?{urllib.parse.urlencode(params)}"
-    with urllib.request.urlopen(url, timeout=15) as r:
-        return json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(url, timeout=15) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")
+        msg, reason = f"HTTP {e.code}", ""
+        try:
+            err = json.loads(body).get("error", {})
+            msg = err.get("message", msg)
+            errs = err.get("errors") or []
+            reason = (errs[0].get("reason") if errs else "") or ""
+            if not reason:
+                for d in err.get("details", []):
+                    if d.get("reason"):
+                        reason = d["reason"]; break
+        except Exception:
+            pass
+        raise APIError(msg, reason)
 
 
 def fetch_videos(id_to_url):
@@ -151,7 +173,21 @@ def discover(max_concepts):
         return 1
     rows = [r for r in _csv.DictReader(open(pend, encoding="utf-8")) if not (r.get("video_id") or "").strip()]
     rows = rows[:max_concepts]
-    print(f"Discovering videos for {len(rows)} pending concepts (cap {max_concepts})...")
+
+    # Pre-flight: one cheap call to confirm the key works before looping (saves quota).
+    try:
+        api_get("search", {"part": "snippet", "q": "test", "type": "video", "maxResults": 1})
+    except APIError as e:
+        if "API_KEY_INVALID" in e.reason or "not valid" in str(e).lower():
+            print("ABORT: the YOUTUBE_API_KEY is not valid. Google says: \"" + str(e) + "\"")
+            print("Create a real key (Google Cloud Console -> enable 'YouTube Data API v3' ->")
+            print("Credentials -> API key), then: export YOUTUBE_API_KEY=...  and re-run.")
+        elif "quota" in str(e).lower() or e.reason in ("quotaExceeded", "dailyLimitExceeded"):
+            print("ABORT: YouTube API quota exceeded for today. Try again tomorrow or raise quota.")
+        else:
+            print(f"ABORT: YouTube API pre-flight failed: {e} (reason={e.reason})")
+        return 1
+    print(f"Key OK. Discovering videos for {len(rows)} pending concepts (cap {max_concepts})...")
 
     libp = HERE / "curated_library.json"
     existing = {}
