@@ -37,10 +37,12 @@ YT = re.compile(r'(?:watch\?v=|youtu\.be/)([A-Za-z0-9_-]{11})')
 
 # url -> library key (for on-topic check)
 E.load_curated_library()  # merge curated videos so their URLs are recognised as on-topic
-URL2KEY = {}
+URL2KEY = {}        # first key (for display)
+URL2KEYS = {}       # all keys a url belongs to (a video can serve several concepts)
 for key, entries in E.KNOWN_GOOD.items():
     for tup in entries:
         URL2KEY.setdefault(tup[0], key)
+        URL2KEYS.setdefault(tup[0], set()).add(key)
 
 
 def load_cache():
@@ -108,7 +110,7 @@ def main():
                             'title': it.get('title', ''), 'creator': it.get('creator', ''),
                             'duration_min': it.get('duration_min'), 'why': it.get('why', ''),
                             'url': url, 'vidid': (YT.search(url).group(1) if YT.search(url) else ''),
-                            'alive': alive_of(url), 'onTopic': (key in allowed) if key else False,
+                            'alive': alive_of(url), 'onTopic': bool(URL2KEYS.get(url, set()) & allowed),
                             'key': key or '?', 'curated': it.get('difficulty') == 'curated',
                         }
                         wk_video_ct += 1

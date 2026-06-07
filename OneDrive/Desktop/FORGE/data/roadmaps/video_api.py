@@ -147,6 +147,98 @@ def fetch_captions(video_id):
 # ───────────────────────── discovery mode ─────────────────────────
 import csv as _csv
 import re as _re
+import time as _time
+
+# ───────────── no-API discovery: scrape YouTube search results ─────────────
+# This is the canonical auto-discovery used by scripts/auto_fill_videos.py. It needs
+# NO API key and NO credit card — it parses the ytInitialData JSON embedded in the
+# search-results HTML, then keeps the best TRUSTED-channel, on-topic video.
+
+# Preferred creators (used to rank when several trusted options exist).
+PRIORITY_CHANNELS = ["fireship", "statquest", "3blue1brown", "networkchuck",
+                     "web dev simplified", "corey schafer", "dave ebbelaar", "pwnfunction"]
+_AUTO_MAX_MIN = 45  # auto-pick ceiling (manual curation may go longer)
+_STOPW = {"the", "a", "an", "of", "to", "and", "for", "with", "your", "you", "is", "in",
+          "on", "how", "what", "why", "this", "intro", "introduction", "tutorial",
+          "explained", "part", "vs", "using", "build"}
+_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept-Language": "en-US,en;q=0.9"}
+
+
+def _ad_toks(s):
+    return {t for t in _re.findall(r"[a-z0-9]+", (s or "").lower()) if len(t) >= 3 and t not in _STOPW}
+
+
+def _ad_trusted(ch):
+    c = (ch or "").lower().strip()
+    trusted = set(TRUSTED_CHANNELS) | set(PRIORITY_CHANNELS)
+    return c in trusted or any(t in c for t in trusted if len(t) >= 4)
+
+
+def _ad_priority(ch):
+    c = (ch or "").lower()
+    for i, p in enumerate(PRIORITY_CHANNELS):
+        if p in c:
+            return i
+    return len(PRIORITY_CHANNELS)
+
+
+def _ad_minutes(s):
+    parts = (s or "").split(":")
+    try:
+        n = [int(x) for x in parts]
+    except ValueError:
+        return None
+    if len(n) == 3:
+        return max(1, n[0] * 60 + n[1] + (1 if n[2] else 0))
+    if len(n) == 2:
+        return max(1, n[0] + (1 if n[1] else 0))
+    return None
+
+
+def auto_discover_video(concept, count=1):
+    """Return up to `count` best on-topic videos for `concept` from TRUSTED channels,
+    via YouTube search scraping (no API key). Each item is a dict:
+    {video_id, url, duration_min, creator, title}. Ranked: priority channel, then shorter.
+    Empty list if nothing trusted + on-topic is found (caller routes to manual review)."""
+    url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(f"{concept} tutorial")
+    try:
+        html = urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=20).read().decode("utf-8", "replace")
+    except Exception:
+        return []
+    m = _re.search(r'ytInitialData\s*=\s*(\{.*?\})\s*;\s*</script>', html, _re.S) or _re.search(r'var ytInitialData = (\{.*?\});', html, _re.S)
+    if not m:
+        return []
+    try:
+        data = json.loads(m.group(1))
+    except Exception:
+        return []
+    out, seen = [], set()
+
+    def walk(o):
+        if isinstance(o, dict):
+            if "videoRenderer" in o:
+                v = o["videoRenderer"]
+                vid = v.get("videoId")
+                title = "".join(r.get("text", "") for r in v.get("title", {}).get("runs", []))
+                ot = v.get("ownerText", {}).get("runs") or v.get("longBylineText", {}).get("runs")
+                ch = ot[0].get("text", "") if ot else ""
+                mins = _ad_minutes(v.get("lengthText", {}).get("simpleText", ""))
+                if vid and vid not in seen:
+                    seen.add(vid)
+                    out.append((vid, ch, mins, title))
+            for x in o.values():
+                walk(x)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+    walk(data)
+    ctoks = _ad_toks(concept)
+    elig = [(vid, ch, mins, title) for vid, ch, mins, title in out
+            if mins and mins <= _AUTO_MAX_MIN and _ad_trusted(ch) and (not ctoks or (ctoks & _ad_toks(title)))]
+    elig.sort(key=lambda t: (_ad_priority(t[1]), t[2]))
+    return [{"video_id": vid, "url": f"https://www.youtube.com/watch?v={vid}",
+             "duration_min": mins, "creator": ch, "title": title}
+            for vid, ch, mins, title in elig[:count]]
 
 _STOP = {"the", "a", "an", "of", "to", "and", "for", "with", "in", "on", "your",
          "tutorial", "explained", "how", "what", "intro", "introduction", "part"}
