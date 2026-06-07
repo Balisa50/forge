@@ -487,12 +487,12 @@
             },
             {
               "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
               "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -643,12 +643,12 @@
             },
             {
               "kind": "video",
-              "title": "Vector Databases in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=klTvEwg3oJ4",
-              "duration_min": 2,
+              "title": "Machine Learning in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
+              "duration_min": 5,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Vector Databases in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -735,12 +735,12 @@
             },
             {
               "kind": "video",
-              "title": "Vectors Essence of linear algebra",
-              "url": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
-              "duration_min": 10,
+              "title": "But what is a neural network",
+              "url": "https://www.youtube.com/watch?v=aircAruvnKk",
+              "duration_min": 19,
               "creator": "3Blue1Brown",
-              "difficulty": "beginner",
-              "why": "This 10-minute 3Blue1Brown video ('Vectors Essence of linear algebra') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "difficulty": "intermediate",
+              "why": "This 19-minute 3Blue1Brown deep dive ('But what is a neural network') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "lesson",
@@ -947,9 +947,13 @@
               "body": "## What linear regression minimises\nThe snippet below shows exactly what to do:\n\n```text\npredicted_fare = w1 * distance + w2 * hour + b\n\nBest weights minimise: sum of (actual - predicted) squared\n```\n\nThe closed-form solution — the Normal Equation:\n```text\nW = inv(X_T @ X) @ X_T @ y\n```\nX is N x F feature matrix, y is N-length target, W is F-length weights.\n\n## Why derive it before using sklearn\nWeek 5 you call LinearRegression().fit() and it just works. Without understanding the Normal Equation you will not know:\n- Why it fails when features are perfectly correlated (X_T @ X becomes singular)\n- Why gradient descent exists for large datasets (matrix inversion scales O(n cubed))\n- What Ridge/Lasso regularisation actually modifies\n\nFormula first. Library second. Always."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Linear regression from scratch",
-              "body": "## Deeper dive: Linear regression from scratch\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Linear regression from scratch** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "StatQuest Logistic Regression",
+              "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
+              "duration_min": 9,
+              "creator": "StatQuest",
+              "difficulty": "beginner",
+              "why": "This 9-minute StatQuest video ('StatQuest Logistic Regression') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -2030,6 +2034,15 @@
               "body": "## What it is\nscikit-learn + first regression is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
+              "kind": "video",
+              "title": "StatQuest Logistic Regression",
+              "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
+              "duration_min": 9,
+              "creator": "StatQuest",
+              "difficulty": "beginner",
+              "why": "This 9-minute StatQuest video ('StatQuest Logistic Regression') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+            },
+            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\nThe snippet below shows exactly what to do:\n\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 5 ('TaxiPulse v0.3: Predict the fare'), day 0."
@@ -2288,9 +2301,13 @@
               "body": "## What it is\n**XGBoost** is a gradient-boosted tree model — the workhorse of tabular ML and most Kaggle winners. Instead of fitting one straight line, it builds many small decision trees, each correcting the previous one's errors. This lets it capture **non-linear** patterns and **interactions** a linear model can't — like 'hour matters, but only for airport trips.'\n\n```python\nfrom xgboost import XGBRegressor\nmodel2 = XGBRegressor(n_estimators=100, max_depth=5)\nmodel2.fit(X_train, y_train)\n```\n\n## The trade-off you'll navigate forever\nXGBoost will almost always beat linear regression on accuracy. But you lose easy interpretability: there's no single '$2.78 per mile' coefficient — the prediction emerges from 100 interacting trees. So:\n\n- **Linear regression**: lower accuracy, total transparency. Great when you must *explain*.\n- **XGBoost**: higher accuracy, opaque. Great when you must *predict well* and can tolerate a black box.\n\nThis **accuracy vs explainability** tension is real and permanent. A bank rejecting a loan must explain why (favours linear/interpretable). A system bidding on ad impressions just needs to be right (favours XGBoost). Choosing deliberately is the skill.\n\n## Where this fits\nToday you train XGBoost, compare its MAE to the linear model, and decide which one v0.3 ships with — and why."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Try gradient boosting (XGBoost)",
-              "body": "## Deeper dive: Try gradient boosting (XGBoost)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Try gradient boosting (XGBoost)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "StatQuest Decision Trees",
+              "url": "https://www.youtube.com/watch?v=_L39rN6gz7Y",
+              "duration_min": 17,
+              "creator": "StatQuest",
+              "difficulty": "intermediate",
+              "why": "This 17-minute StatQuest deep dive ('StatQuest Decision Trees') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "lesson",
@@ -2948,12 +2965,12 @@
             },
             {
               "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
+              "title": "Machine Learning in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
+              "duration_min": 5,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -3007,9 +3024,13 @@
               "body": "## What it is\nYour Week 5 fare model works — but only for you, in your notebook. **Deployment** means putting it somewhere others can use it without your laptop, your environment, or any knowledge of Python. The vehicle is a **REST API**.\n\nAn **API (Application Programming Interface)** is a contract: send a request to a URL, get a structured response back. A **REST API** uses HTTP, the same protocol as websites:\n\n```text\nPOST https://taxipulse.onrender.com/predict\nBody: {\"distance\": 5, \"duration_min\": 15, \"hour\": 14}\n  ->  {\"predicted_fare\": 18.42}\n```\n\n## Why it matters\nThis is the line between a data scientist who *builds* models and one who *ships* them. A model behind a public URL can power a mobile app, a website, another team's service. A model in a notebook can power a screenshot. The skill of turning the second into the first is what makes you a force-multiplier on a team.\n\n## The plan for the week\nSave the model (Day 2) → wrap it in a Flask API (Day 3) → add a health check (Day 4) → make it production-runnable with gunicorn (Day 5) → deploy to a public URL on Render (Day 6) → tag v0.4 (Day 7).\n\n## Where this fits\nBy Sunday, anyone in the world can POST trip details to your URL and get a fare prediction back in milliseconds."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why deploy — from notebook to product",
-              "body": "## Deeper dive: Why deploy — from notebook to product\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why deploy — from notebook to product** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Jupyter in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=h1sAzPojKMg",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Jupyter in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -3888,6 +3909,15 @@
               "body": "## What it is\nTree-based models: XGBoost, LightGBM is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
+              "kind": "video",
+              "title": "StatQuest Decision Trees",
+              "url": "https://www.youtube.com/watch?v=_L39rN6gz7Y",
+              "duration_min": 17,
+              "creator": "StatQuest",
+              "difficulty": "intermediate",
+              "why": "This 17-minute StatQuest deep dive ('StatQuest Decision Trees') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
+            },
+            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\nThe snippet below shows exactly what to do:\n\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 9 ('TaxiPulse v0.5: Streamlit explorer'), day 0."
@@ -3940,9 +3970,13 @@
               "body": "## What it is\nA notebook is for you; a **dashboard is for everyone else**. Your TaxiPulse work has lived in Jupyter for eight weeks — invisible to anyone who can't open a notebook. **Streamlit** changes that: it turns a Python script into an interactive web app a non-technical person can use in a browser.\n\n## Plan before you code\nA good app starts with a sketch of what the user *does*, not what code you'll write. For the TaxiPulse explorer:\n- **Inputs** (what the user controls): borough, pickup hour, trip distance, duration\n- **Outputs** (what the app shows): a predicted fare (from your Week 5 model) + a relevant chart (the Q4 trend)\n- **The one job**: 'let anyone estimate a NYC taxi fare and see the data behind it'\n\n## Why planning matters\nApps sprawl. Without a clear single job, you bolt on widgets until it's a confusing wall of controls. Deciding the inputs, outputs, and the *one thing* the app is for — before writing code — keeps it focused and usable. The best dashboards do one thing clearly, not ten things vaguely.\n\n## Why Streamlit\nIt's genuinely magical the first time: you write a Python script with `st.slider(...)` and `st.write(...)`, run one command, and a real web app opens in your browser. No HTML, CSS, or JavaScript required.\n\n## Where this fits\nToday you sketch the explorer's inputs, outputs, and one-sentence purpose. The rest of the week builds it."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Plan the explorer",
-              "body": "## Deeper dive: Plan the explorer\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Plan the explorer** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -3991,13 +4025,9 @@
               "body": "## What it is\nStreamlit turns a script into an app. Install, write, run:\n\n```python\n# explorer.py\nimport streamlit as st\nst.title('TaxiPulse NYC Explorer')\nst.write('Q4 2023 yellow taxi data + fare prediction')\n```\nThe snippet below shows exactly what to do:\n\n```bash\npip install streamlit\nstreamlit run explorer.py   # opens localhost:8501\n```\n\n## The core mental model: rerun on interaction\nThis is the one thing to internalise about Streamlit: **every time a user interacts with any widget, your entire script re-runs from top to bottom.** A slider doesn't fire a callback — it just returns its current value, and the whole script executes again with that new value.\n\n```text\nuser moves slider -> whole script reruns -> new value flows through -> UI updates\n```\n\n## Why this design is brilliant (and a trap)\n**Brilliant**: your code reads like a normal top-to-bottom script. No event handlers, no callback spaghetti. `hour = st.slider(...)` just gives you the current hour; use it like any variable.\n\n**The trap**: anything expensive (loading a model, reading a big file) also re-runs every interaction unless you cache it. That's tomorrow's lesson — for now, just internalise that interaction = full rerun.\n\n## Where this fits\nToday you install Streamlit, write a three-line app, and see it live at localhost:8501."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Set up Streamlit",
+              "body": "## Deeper dive: Set up Streamlit\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Set up Streamlit** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -4360,12 +4390,12 @@
             },
             {
               "kind": "video",
-              "title": "StatQuest PCA main ideas",
-              "url": "https://www.youtube.com/watch?v=HMOI_lkzW08",
-              "duration_min": 6,
+              "title": "StatQuest K-means clustering",
+              "url": "https://www.youtube.com/watch?v=4b5d3muPQmA",
+              "duration_min": 9,
               "creator": "StatQuest",
-              "difficulty": "intermediate",
-              "why": "This 6-minute StatQuest video ('StatQuest PCA main ideas') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "difficulty": "beginner",
+              "why": "This 9-minute StatQuest video ('StatQuest K-means clustering') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -5719,6 +5749,15 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nTime series basics + statsmodels is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
+            },
+            {
+              "kind": "video",
+              "title": "Machine Learning in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
+              "duration_min": 5,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -7315,9 +7354,13 @@
               "body": "## What it is\nSHAP can explain your fine-tuned transformer too — the output is even richer because it works at the word level on real language:\n\n```python\nfrom transformers import pipeline\nimport shap\n\nclf = pipeline('text-classification', model='models/distilbert',\n               return_all_scores=True)\nexplainer = shap.Explainer(clf)\nshap_values = explainer(df['title'].head(10).tolist())\nshap.plots.text(shap_values[0])   # interactive word-level highlight\n```\n\n## The payoff: word-level highlighting\n`shap.plots.text` highlights the actual sentence, colouring each word by its contribution. You see, in the real post, which words the transformer leaned on. Because the transformer understands context, you can observe it correctly weighting 'not' before 'good', or catching sarcasm a bag-of-words model missed — interpretability confirming the capability you fine-tuned for.\n\n## Why this is optional\nOn a CPU, SHAP re-runs the transformer many times per example — it's **slow** (minutes per post). That's fine for explaining a handful of posts, painful for hundreds. If your compute is limited, skip it; the classical-model SHAP already taught you the technique. If you have a GPU or patience, the transformer explanations are worth seeing once.\n\n## Where this fits\nToday (optional) you run SHAP on ~10 transformer predictions and view the word-level highlights. Skip without guilt if it's too slow — the concepts are already yours from Days 3-4."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Explain the transformer (optional)",
-              "body": "## Deeper dive: Explain the transformer (optional)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Explain the transformer (optional)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Transformers the tech behind LLMs Deep Learning",
+              "url": "https://www.youtube.com/watch?v=wjZofJX0v4M",
+              "duration_min": 27,
+              "creator": "3Blue1Brown",
+              "difficulty": "advanced",
+              "why": "This 27-minute 3Blue1Brown deep dive ('Transformers the tech behind LLMs Deep Learning') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "swipe",
@@ -8849,6 +8892,15 @@
               "body": "## What it is\nCloud notebooks: Colab / SageMaker is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
+              "kind": "video",
+              "title": "Jupyter in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=h1sAzPojKMg",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Jupyter in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+            },
+            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\nThe snippet below shows exactly what to do:\n\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 20 ('Reddit Sentiment v1.0: Ship + retro'), day 0."
@@ -9327,9 +9379,13 @@
               "body": "## What it is\nProject 3 is **Energy Forecast** — predicting hourly electricity demand from AEP (American Electric Power) data. It's a **time series** problem, and time series breaks almost every intuition you built on tabular and text data.\n\n## The one idea that changes everything: rows aren't independent\nIn TaxiPulse and Reddit Sentiment, each row stood alone — one trip, one post. You could shuffle them, random-split them, treat each as an independent example. **Time series rows are not independent.** Each hour's electricity demand depends on the previous hours. The order *is* the signal.\n\nTwo hard consequences:\n1. **You cannot shuffle** — shuffling destroys the temporal pattern you're trying to learn.\n2. **You cannot random-split** — a random split puts future points in training, leaking the future. You must split **chronologically**: train on the past, test on the future.\n\n## What you forecast, and against what bar\nThe task: predict future demand from past demand. The honest bar is the **persistence baseline** — 'next value = last value.' It's shockingly hard to beat. Any real model (ARIMA in W22, Prophet in W23, LSTM in W24) must beat persistence to justify itself.\n\n## Why a third project, deliberately different\nTaxiPulse was tabular, Reddit was text, Energy is temporal. Three domains means you learn that the *process* (load → explore → baseline → model → evaluate → ship) transfers, while the *techniques* must adapt to the data's nature. That adaptability is the real skill.\n\n## Where this fits\nThis week (v0.1): get the AEP data, plot it, decompose it into trend/seasonality, find the daily/weekly patterns, and set up a chronological split with a persistence baseline."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why time series is different",
-              "body": "## Deeper dive: Why time series is different\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why time series is different** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Machine Learning in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
+              "duration_min": 5,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -10652,9 +10708,13 @@
               "body": "## What it is\nAn **LSTM** is a recurrent neural network designed to learn from sequences. Where ARIMA writes explicit equations for `y_t = f(y_{t-1}, ..., y_{t-p})`, the LSTM **learns** that function from the data.\n\nThe key mechanism is the **cell state** — a memory line that flows through the sequence, modified by three **gates**:\n\n- **Forget gate** — decides which parts of the cell state to drop\n- **Input gate** — decides which new information to write\n- **Output gate** — decides what to emit at this time step\n\nEach gate is a small neural network with a sigmoid (0 = drop / closed, 1 = keep / open). Training learns the gates' weights so the network keeps useful memory across long sequences.\n\n## Why LSTM (not a plain RNN)\nVanilla RNNs suffer **vanishing gradients** — useful signal from far in the past fades to noise during backprop. LSTMs preserve it via the cell state, which is why they handle long sequences (hundreds of steps) where RNNs fail.\n\n## When LSTMs beat ARIMA / Prophet\n- Non-linear dynamics (saturation, threshold effects)\n- Multiple input features (e.g. demand + temperature + day-of-week)\n- Very long history matters (RNN/LSTM remembers further back than ARIMA's small p)\n\n## When they don't\n- Small series (<1000 points) — overfits easily\n- Clean seasonal/holiday data — Prophet wins on interpretability + speed\n- You need uncertainty intervals — much harder with neural nets than ARIMA/Prophet\n\n## Where this fits\nThis week: build an LSTM in PyTorch on the AEP daily series. Compare to ARIMA and Prophet. By Sunday you have a three-model head-to-head."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What an LSTM is",
-              "body": "## Deeper dive: What an LSTM is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What an LSTM is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "PyTorch in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=ORMx45xqWkA",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('PyTorch in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -11569,9 +11629,13 @@
               "body": "## What it is\nYou've spent 25 weeks shipping projects that run on your laptop. That's perfect for learning. It's perfect for portfolios. It is **not** perfect for the actual job. In your first DS role you will hit one of three walls:\n\n1. **The data is too big.** A real customer or transactional dataset is 50-500 GB. You can't `pd.read_parquet` that on a 16 GB laptop. The data lives in **S3 (or GCS / Azure Blob)**; you query it from there with SQL (BigQuery, Athena, Snowflake) or stream it through Spark/Dask.\n2. **The model has to run on a schedule.** Not 'I ran it once.' 'It runs every Sunday at 3am whether or not I'm awake.' That means cron on a cloud machine, or a managed service (Lambda, Cloud Run, Step Functions).\n3. **Other people need to reach it.** Your model has to be loadable by other teams, your dashboard has to live somewhere your boss can click. None of that works from your laptop with the lid closed.\n\nAll three roads lead to **cloud object storage**. This week you set up the basics on AWS and Google Cloud — safely, with billing alarms — and run a meaningful task on both. By Sunday you have a working AWS account, a working BigQuery project, your Prophet model living in S3, and one full TaxiPulse query running on BigQuery's public NYC taxi dataset.\n\n## Why before the capstone\nThe W28-W30 capstone may well use a public dataset that's too big to download locally. The cloud setup you do this week unlocks that option."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why the cloud",
-              "body": "## Deeper dive: Why the cloud\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why the cloud** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -11768,13 +11832,9 @@
               "body": "## What it is\n**BigQuery** is Google's serverless data warehouse. You write SQL; Google runs it on however many machines it takes to finish in seconds — even on terabytes. You pay per byte scanned, not per machine-hour.\n\n## Why the free tier is so good\n- **1 TB of query bytes scanned per month** — for context, querying every NYC taxi trip from 2009 scans ~5 GB. You'd need to run ~200 such queries before hitting the cap.\n- **10 GB of storage**\n- **No credit card required to start**\n- **Free access to Google's public datasets** (NYC taxi, GitHub commits, Wikipedia, OpenStreetMap, Patents)\n\n## Setup, the path of least resistance\n1. Sign in at https://console.cloud.google.com with a free Google account.\n2. Create a project (any name — `forge-bq` is fine).\n3. Enable the BigQuery API (the console prompts you the first time you open BigQuery).\n4. That's it. No billing setup required for the free tier.\n\n## The BigQuery console\nAt `https://console.cloud.google.com/bigquery` you get a SQL editor in the browser. Write a query, hit Run, results in seconds with the bytes-scanned cost shown right above. **Look at the bytes-scanned number before clicking Run** — if it says 10 GB on a query you didn't think was that big, abort and add a `WHERE` clause first.\n\n## Python client\nThe snippet below shows exactly what to do:\n\n```bash\npip install google-cloud-bigquery\ngcloud auth application-default login   # browser opens, you sign in\n```\nAfter that, Python code can run queries without API keys in code — same idea as AWS's IAM. Credentials live in your local config; production code uses service accounts."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Set up BigQuery (free, no credit card)",
+              "body": "## Deeper dive: Set up BigQuery (free, no credit card)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Set up BigQuery (free, no credit card)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -12909,9 +12969,13 @@
               "body": "## What it is\nIn W28 you used 1000 rows for the prototype. Today you ingest the **whole dataset** — every row, every column you'll need, into a single canonical location your downstream notebooks all read from.\n\n## The pattern\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd\n\n# Read from the source (Kaggle download, S3, BigQuery, etc.)\nraw = pd.read_csv('data/raw/<your_file>.csv')\nprint(raw.shape)        # (rows, cols)\nprint(raw.dtypes)       # quick sanity\nprint(raw.head())\n\n# Save as parquet — faster + smaller than CSV for subsequent reads\nraw.to_parquet('data/raw.parquet', index=False)\n```\n\n## Why parquet, not CSV\n- 5-10x smaller on disk\n- 10x faster to read\n- Preserves column types (no more 'CSV ate my dates')\n- Skippable by column on read (`columns=['x', 'y']`)\n\nFrom here, every notebook in the project reads from `data/raw.parquet`. One canonical source. No copies floating around.\n\n## If the data is too big to load\n- **BigQuery / Snowflake** — query a sample once, store as parquet locally.\n- **Streaming through Dask** — works but adds complexity. Avoid for the capstone unless you must.\n- **Sample down** — explicitly document the sample method in SPEC.md if you have to.\n\n## Document what's in the file\nAdd `capstone/DATA_DICT.md` — a one-line description per column. Future-you (and any reviewer) will thank you. Five minutes today saves an hour next week."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Full data collection",
-              "body": "## Deeper dive: Full data collection\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Full data collection** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -13345,9 +13409,13 @@
               "body": "## What it is\nA single-page Streamlit app around your frozen v0.2 model. Same shape as the Energy Forecast dashboard from W27, scaled to your capstone's specifics:\n\n- Loads the main model from disk (or S3 if you put it there in W26)\n- Takes user input that maps to your model's features (sliders, dropdowns, text)\n- Shows the prediction + uncertainty if applicable\n- Shows the components / explanation if the model supports it (SHAP, feature importance, attention)\n\n## The pattern\nThe snippet below shows exactly what to do:\n\n```python\nimport streamlit as st\nimport joblib\n\n@st.cache_resource\ndef get_model():\n    return joblib.load('models/main.pkl')\n\nst.title('<Your capstone>')\nst.write('<one-sentence what it does>')\n\n# Input widgets that map to your features\nfeature_a = st.slider('Feature A', ...)\nfeature_b = st.selectbox('Feature B', [...])\n\nmodel = get_model()\nif st.button('Predict'):\n    pred = model.predict([[feature_a, feature_b, ...]])\n    st.metric('Predicted', f'{pred[0]:.2f}')\n```\n\n## Why one page, not many\nFor a portfolio demo with no real users, one page that does one thing well > five pages that each do something half. Reviewers see the working thing in 5 seconds; they don't navigate."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Build the demo",
-              "body": "## Deeper dive: Build the demo\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Build the demo** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -13962,12 +14030,12 @@
             },
             {
               "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
               "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -14150,6 +14218,15 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nLLM Era - Fine-tuning with LoRA + PEFT is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
+            },
+            {
+              "kind": "video",
+              "title": "Transformers the tech behind LLMs Deep Learning",
+              "url": "https://www.youtube.com/watch?v=wjZofJX0v4M",
+              "duration_min": 27,
+              "creator": "3Blue1Brown",
+              "difficulty": "advanced",
+              "why": "This 27-minute 3Blue1Brown deep dive ('Transformers the tech behind LLMs Deep Learning') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "lesson",
@@ -15117,9 +15194,13 @@
               "body": "## Pick a dataset\nGood learner options on HuggingFace `datasets`:\n- **CIFAR-10** — 60k 32×32 color images, 10 classes (planes, cats, etc.). Classic.\n- **Oxford Flowers** — 8k images, 102 classes. Bigger images, harder task.\n- **EuroSAT** — satellite imagery, 27k images, 10 land-use classes. Domain-specific feel.\n- **A subset of ImageNet** (50-100 classes) — close to production-realistic\n\nPick one with ~5k-50k training images. Too small → not enough signal. Too big → training is slow on Colab.\n\n## Standard preprocessing for transfer learning\nThe snippet below shows exactly what to do:\n\n```python\nfrom torchvision import transforms\n\n# Training transforms (augmentation = synthetic data variety)\ntrain_transform = transforms.Compose([\n    transforms.RandomResizedCrop(224),         # crop random region, resize to 224\n    transforms.RandomHorizontalFlip(),          # 50% flip\n    transforms.ColorJitter(0.4, 0.4, 0.4),     # slight brightness/contrast/saturation\n    transforms.ToTensor(),\n    transforms.Normalize(\n        mean=[0.485, 0.456, 0.406],            # ImageNet stats\n        std=[0.229, 0.224, 0.225],\n    ),\n])\n\n# Eval transforms (deterministic, no augmentation)\neval_transform = transforms.Compose([\n    transforms.Resize(256),\n    transforms.CenterCrop(224),\n    transforms.ToTensor(),\n    transforms.Normalize(\n        mean=[0.485, 0.456, 0.406],\n        std=[0.229, 0.224, 0.225],\n    ),\n])\n```\n\n## Why ImageNet normalization stats\nResNet50 was pretrained on ImageNet with these exact normalization stats. If you use different stats, the pretrained weights produce gibberish. ALWAYS match the normalization the model expects.\n\n## Why augmentation for training but not eval\n- **Training**: augmentation = free synthetic variety, prevents overfitting\n- **Eval**: needs to be deterministic so results are comparable across runs\n\n## Sanity check\nDisplay 10 augmented training samples and 10 eval samples. Confirm:\n- Labels are correct\n- Images look reasonable after transforms\n- Class balance roughly matches what you expect"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Pick dataset + preprocess",
-              "body": "## Deeper dive: Pick dataset + preprocess\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Pick dataset + preprocess** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "ROC and AUC Clearly Explained",
+              "url": "https://www.youtube.com/watch?v=4jRBRDbJemM",
+              "duration_min": 16,
+              "creator": "StatQuest",
+              "difficulty": "intermediate",
+              "why": "This 16-minute StatQuest deep dive ('ROC and AUC Clearly Explained') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "swipe",
@@ -15357,9 +15438,13 @@
               "body": "## What it is\nGradio is purpose-built for ML demos. `gr.Interface(fn=predict, inputs='image', outputs='label')` gives you a working drag-and-drop demo UI + a public URL in under 10 lines. Native to Hugging Face Spaces.\n\n## The demo (10 lines)\nThe snippet below shows exactly what to do:\n\n```python\nimport gradio as gr\nimport torch\nfrom PIL import Image\n\nmodel = load_model()   # whichever won — ResNet50 or ViT\nmodel.eval()\n\ndef predict(img: Image.Image) -> dict:\n    x = eval_transform(img).unsqueeze(0)\n    with torch.no_grad():\n        probs = torch.softmax(model(x), dim=1)[0]\n    top3 = probs.topk(3)\n    return {\n        class_names[top3.indices[i].item()]: float(top3.values[i])\n        for i in range(3)\n    }\n\ndemo = gr.Interface(\n    fn=predict,\n    inputs=gr.Image(type='pil', label='Upload image'),\n    outputs=gr.Label(num_top_classes=3, label='Prediction'),\n    title='<Your model>',\n    description='Fine-tuned ResNet50/ViT on <dataset>.',\n    examples=[['cv/samples/dog.jpg'], ['cv/samples/cat.jpg']],\n)\n\ndemo.launch()   # add share=True for a temp public URL locally\n```\n\n## Deploy on HF Spaces (permanent URL)\n1. New HF Space → Gradio SDK.\n2. Push `app.py` + model weights + `requirements.txt` to the Space repo.\n3. Space builds and deploys automatically.\n4. URL: `huggingface.co/spaces/yourname/your-cv-demo`.\n\n## Why HF Spaces over Streamlit Cloud for CV\nStreamlit Cloud is better for dashboards. HF Spaces is where the ML community looks — it embeds in HF Hub model pages, shows model cards natively, and is the standard venue for visual ML demos."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Gradio demo + ship",
-              "body": "## Deeper dive: Gradio demo + ship\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Gradio demo + ship** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "But what is a convolution",
+              "url": "https://www.youtube.com/watch?v=KuXjwB4LzSA",
+              "duration_min": 23,
+              "creator": "3Blue1Brown",
+              "difficulty": "advanced",
+              "why": "This 23-minute 3Blue1Brown deep dive ('But what is a convolution') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "lesson",
@@ -16357,12 +16442,12 @@
             },
             {
               "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -16795,9 +16880,13 @@
               "body": "## What it is\nNot a top-to-bottom rewrite — a targeted attack on the ONE module that's hardest to read. Every project has this module: the one you scroll past with a grimace. Today you fix it.\n\n## Identifying the worst module\nThree signals:\n- You've had to re-read it more than twice to remember what it does\n- You've made a 'small change' there that broke something far away\n- It has the most TODO / FIXME / 'this is ugly' comments\n\nPick that one.\n\n## The refactor playbook\nThe snippet below shows exactly what to do:\n\n```text\n1. RENAME variables and functions to say what they do.\n   `process_data` → `clean_and_winsorize_outliers`\n   `tmp` → `cleaned_df`\n\n2. EXTRACT functions: any block longer than ~20 lines becomes a function.\n   Inline comments that explain WHAT → function names. Comments that\n   explain WHY stay.\n\n3. REMOVE dead code: cells you ran once for debugging, commented-out\n   alternatives 'in case', unused imports. Delete them. Git remembers.\n\n4. TYPE-HINT public functions: `def predict(X: pd.DataFrame) -> np.ndarray`\n   Forces you to think about what goes in/out.\n\n5. DOCSTRING public functions: ONE line explaining the WHY. Not 'returns\n   the prediction' — 'compute calibrated probabilities, capping above\n   the 99th percentile to limit influence of training-set outliers'.\n```\n\n## Before / after example\nThe snippet below shows exactly what to do:\n\n```python\n# BEFORE\ndef process(d, t=0.5, x=None):\n    # do the thing\n    out = d.copy()\n    out = out[out['v'] > 0]\n    out['v'] = out['v'].clip(upper=out['v'].quantile(0.99))\n    if x:\n        out = out[out['cat'].isin(x)]\n    out['p'] = model.predict_proba(out[FEATS])[:, 1]\n    return out[out['p'] >= t]\n```\n\nThe snippet below shows exactly what to do:\n\n```python\n# AFTER\ndef score_and_filter_customers(\n    customers: pd.DataFrame,\n    score_threshold: float = 0.5,\n    categories: list[str] | None = None,\n) -> pd.DataFrame:\n    \"\"\"Score customers, return those above threshold; optionally filter by category.\n\n    Winsorises `value` at the 99th percentile to limit outlier influence on the\n    learned ranking — the production score uses the same capping.\n    \"\"\"\n    eligible = customers[customers['value'] > 0].copy()\n    eligible['value'] = eligible['value'].clip(upper=eligible['value'].quantile(0.99))\n    if categories is not None:\n        eligible = eligible[eligible['category'].isin(categories)]\n    eligible['propensity'] = model.predict_proba(eligible[FEATURES])[:, 1]\n    return eligible[eligible['propensity'] >= score_threshold]\n```\n\nSame logic; readable by someone who's never seen the project.\n\n## What you DON'T do today\n- A second module (focus matters; pick the worst, fix it well)\n- Architecture rewrites (too risky without tests, which arrive tomorrow)\n- Performance optimisation (premature; not a v0.3 concern)\n\n## Commit at the end of the day\nThe snippet below shows exactly what to do:\n\n```bash\ngit add src/<module>.py\ngit commit -m \"Refactor <module>: rename + extract + type-hint\"\n```\n\nSmall, targeted commits. If something breaks after the refactor, the diff is small and easy to revert."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Refactor the worst module",
-              "body": "## Deeper dive: Refactor the worst module\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Refactor the worst module** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -17221,9 +17310,13 @@
               "body": "## What it is\nA 3-minute screen recording of you walking through the project. Tomorrow you record it. Today you SCRIPT it — word by word.\n\n## Why script (vs improvise)\n- Improvised demos meander. 3 minutes becomes 7 minutes.\n- Scripted demos hit the same beats every take.\n- You stop saying 'um', 'so', 'basically'.\n- You give yourself a chance to cut what's boring BEFORE recording.\n\n## The structure\nThe snippet below shows exactly what to do:\n\n```text\n[0:00 - 0:20]  Hook + problem\n   'This is <project>. It predicts <thing> for <who> from <data>.\n    The baseline gets <X>; my model gets <Y> — that's the headline.\n    Here's how, in three minutes.'\n\n[0:20 - 0:50]  Show the live demo\n   Open the deployed URL. Show one interaction.\n   Speak to the result. 'You can see the model predicts <Z>; the\n    interpretability panel shows it's relying on <feature> because <reason>.'\n\n[0:50 - 1:30]  The data + the baseline\n   Switch to the README or notebook.\n   'The dataset is <X> rows of <thing>. The simplest defensible\n    baseline is <Y>, which gets <metric>. That's the bar to beat.'\n\n[1:30 - 2:15]  The model + the result\n   'I tried <approach 1> and <approach 2>; <approach 1> won because <X>.\n    The improvement over baseline is <Z>% — and here's why that's\n    meaningful in context: <one sentence>.'\n\n[2:15 - 2:45]  Honest weakness\n   'The model still fails on <specific subgroup or input>. That's\n    documented in BIAS.md / DECISIONS.md / LIMITATIONS.md.'\n\n[2:45 - 3:00]  Close + call to action\n   'Code is at <repo>. Live API at <url>. Happy to dive deeper.\n    Thanks for watching.'\n```\n\n## Writing tips\n- **Short sentences.** Long sentences trip you up out loud.\n- **One number per sentence.** Two numbers per sentence loses the listener.\n- **Say the JUDGMENT, not just the metric.** 'AUC 0.871, which beats the linear baseline by 6 points — that gap is large enough to be meaningful for the use case.'\n- **No buzzwords.** 'leveraged cutting-edge state-of-the-art' adds zero. Cut.\n\n## Print the script + tape it to your monitor\nTomorrow you'll read it during recording. Print = no scrolling, no tab-switching, no missed beats."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Script the demo",
-              "body": "## Deeper dive: Script the demo\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Script the demo** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -18152,9 +18245,13 @@
               "body": "## What it is\nDecompose the user-item rating matrix R (m users × n items) into two LOW-RANK matrices:\n```text\nR ≈ U · V^T\n\nU: m × k   (user embeddings; each user is a k-dim vector)\nV: n × k   (item embeddings)\nk: latent dimensions, typically 50-200\n```\n\nPredicted rating for (u, i) is the dot product of their embeddings:\n```text\npred(u, i) = U[u] · V[i]\n```\n\n## Why this beats CF\n- **Memory**: (m + n) × k floats vs m × n cells. Netflix: 100M × 50 + 100k × 50 = 5GB vs 10TB. Huge win.\n- **Latency**: one dot product (50 multiplies) vs nearest-neighbor search across millions.\n- **Implicit similarity**: items rated similarly end up with similar embeddings. You don't compute similarity explicitly.\n\n## Two ways to train\n\n### SVD (offline, for dense matrices)\nThe snippet below shows exactly what to do:\n\n```python\nfrom scipy.sparse.linalg import svds\n# k = number of latent factors\nk = 50\nU, sigma, Vt = svds(R_centred_sparse, k=k)\n# pred = U @ diag(sigma) @ Vt + user_means\nThe snippet below shows exactly what to do:\n\n```\n\n### ALS (Alternating Least Squares) — what production uses\nThe snippet below shows exactly what to do:\n\n```python\n# pip install implicit\nimport implicit\nfrom scipy.sparse import csr_matrix\n\nals = implicit.als.AlternatingLeastSquares(\n    factors=50,\n    regularization=0.01,\n    iterations=15,\n)\n\n# implicit expects (item, user) sparse matrix of confidence/rating\nR_implicit = csr_matrix(\n    (train['rating'].values, (item_indices, user_indices)),\n    shape=(n_items, n_users),\n)\nals.fit(R_implicit)\n\n# Recommend top-N for a user\nrecs = als.recommend(user_id=42, user_items=R_implicit.T[42], N=10)\n```\n\n## Evaluate\nThe snippet below shows exactly what to do:\n\n```python\n# Build prediction = U[user] @ V[item] for each (u, i) in test\npreds = (als.user_factors[u_idx_test] * als.item_factors[i_idx_test]).sum(axis=1)\n# Note: implicit's ALS is trained for implicit feedback (no rating value);\n# for explicit ratings, scale the result or use a different lib (scikit-surprise).\nThe snippet below shows exactly what to do:\n\n```\n\n## Alternative: scikit-surprise (for explicit ratings)\nThe snippet below shows exactly what to do:\n\n```python\n# pip install scikit-surprise\nfrom surprise import SVD, Dataset, Reader, accuracy\nfrom surprise.model_selection import train_test_split\n\nreader = Reader(rating_scale=(0.5, 5.0))\ndata = Dataset.load_from_df(train[['userId','movieId','rating']], reader)\nsurprise_train, surprise_test = train_test_split(data, test_size=0.2, random_state=42)\n\nsvd = SVD(n_factors=50, n_epochs=20, lr_all=0.005, reg_all=0.02)\nsvd.fit(surprise_train)\npreds = svd.test(surprise_test)\nprint(f'SVD RMSE: {accuracy.rmse(preds):.3f}')\n# SVD RMSE: 0.86   (vs User-CF ~0.945, baseline ~1.05)\nThe snippet below shows exactly what to do:\n\n```\n\n## The Netflix-Prize history\nIn 2006-2009 Netflix offered $1M for a 10% RMSE improvement over their CineMatch system. The winning approach was MF + ensembles. Matrix factorization went from research to standard infrastructure in three years."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Matrix factorization",
-              "body": "## Deeper dive: Matrix factorization\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Matrix factorization** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Linear transformations and matrices",
+              "url": "https://www.youtube.com/watch?v=kYB8IZa5AuE",
+              "duration_min": 11,
+              "creator": "3Blue1Brown",
+              "difficulty": "intermediate",
+              "why": "This 11-minute 3Blue1Brown video ('Linear transformations and matrices') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -18582,9 +18679,13 @@
               "body": "## What you'll do\nRun the SAME query (busiest hour from NYC taxi data) in:\n1. **Pandas** (single-thread, in-memory)\n2. **Dask** (multi-core, lazy)\n3. **PySpark** (Spark on local mode, all cores)\n\nTime each one. Inspect peak memory.\n\n## The query (consistent across engines)\nThe snippet below shows exactly what to do:\n\n```text\nFor each hour of day, count trips and average fare.\nFilter: fare_amount between 2.5 and 200.\nOrder by trips descending.\n```\n\n## Pandas\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd, glob, time\nstart = time.time()\ndf = pd.concat([pd.read_parquet(f) for f in glob.glob('data/yellow_2019_*.parquet')])\ndf = df[(df['fare_amount'] >= 2.5) & (df['fare_amount'] <= 200)]\ndf['hour'] = df['tpep_pickup_datetime'].dt.hour\nresult = df.groupby('hour').agg(trips=('hour','count'),\n                                 avg_fare=('fare_amount','mean'))\nresult = result.sort_values('trips', ascending=False)\nprint(f'pandas: {time.time()-start:.1f}s')\n```\n\nOn 30M rows, expect either OOM on 16GB machines or ~40-90 seconds and high memory.\n\n## Dask\nThe snippet below shows exactly what to do:\n\n```python\nimport dask.dataframe as dd\nstart = time.time()\ndf = dd.read_parquet('data/yellow_2019_*.parquet')\ndf = df[(df['fare_amount'] >= 2.5) & (df['fare_amount'] <= 200)]\ndf['hour'] = df['tpep_pickup_datetime'].dt.hour\nresult = (\n    df.groupby('hour')\n      .agg({'hour': 'count', 'fare_amount': 'mean'})\n      .rename(columns={'hour': 'trips', 'fare_amount': 'avg_fare'})\n      .compute()\n      .sort_values('trips', ascending=False)\n)\nprint(f'dask: {time.time()-start:.1f}s')\n```\n\nExpect ~15-30 seconds, lower memory footprint than pandas.\n\n## PySpark\nThe snippet below shows exactly what to do:\n\n```python\nfrom pyspark.sql import SparkSession\nfrom pyspark.sql.functions import hour, col, count, mean\n\nspark = SparkSession.builder.master('local[*]').getOrCreate()\nstart = time.time()\ndf = spark.read.parquet('data/yellow_2019_*.parquet')\nresult = (\n    df.filter((col('fare_amount') >= 2.5) & (col('fare_amount') <= 200))\n      .withColumn('hour', hour('tpep_pickup_datetime'))\n      .groupBy('hour')\n      .agg(count('*').alias('trips'), mean('fare_amount').alias('avg_fare'))\n      .orderBy('trips', ascending=False)\n)\nresult.show()\nprint(f'spark: {time.time()-start:.1f}s')\n```\n\nExpect ~20-40 seconds on local mode; Spark has higher startup cost than Dask but better at multi-stage queries.\n\n## Capture peak memory\nThe snippet below shows exactly what to do:\n\n```python\n# Run each query in a subprocess + measure with /usr/bin/time -v on Linux\n# or psutil.Process().memory_info().rss on a polling loop.\nThe snippet below shows exactly what to do:\n\n```\n\n## The honest comparison\nThe snippet below shows exactly what to do:\n\n```markdown\n| Engine  | Time (s) | Peak mem (GB) | Code length | Notes                |\n|---------|----------|---------------|-------------|----------------------|\n| pandas  | 80       | 14            | 8 lines     | OOM risk above 30M   |\n| Dask    | 25       | 5             | 9 lines     | Lazy; pandas-like    |\n| Spark   | 35       | 6             | 11 lines    | Startup cost; SQL    |\n```\n\nNote: numbers will vary widely by machine. The relative shape — pandas slower + memory-heavy, Dask + Spark roughly tied locally — is the lesson.\n\n## What this teaches\nAt single-machine scale, the engines are MORE SIMILAR than they look in marketing. The real differences emerge at cluster scale, which is tomorrow's lesson (training a model with Spark MLlib)."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Replicate the query",
-              "body": "## Deeper dive: Replicate the query\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Replicate the query** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -18628,9 +18729,13 @@
               "body": "## What it is\nMLlib is Spark's built-in ML library. The killer feature is distributed training: same algorithm, runs on one machine OR a 100-node cluster, scales linearly with data.\n\nFor learner work, you'll train a regression on the NYC taxi data — predict trip fare from distance, time of day, day of week. Train on 30M rows. Watch it run distributedly.\n\n## The pattern (DataFrame API + MLlib Pipeline)\nThe snippet below shows exactly what to do:\n\n```python\nfrom pyspark.sql.functions import hour, dayofweek, col\nfrom pyspark.ml.feature import VectorAssembler\nfrom pyspark.ml.regression import LinearRegression, GBTRegressor\nfrom pyspark.ml import Pipeline\nfrom pyspark.ml.evaluation import RegressionEvaluator\n\ndf = spark.read.parquet('data/yellow_2019_*.parquet')\ndf = df.filter((col('fare_amount').between(2.5, 200)) &\n               (col('trip_distance').between(0.1, 100)))\n\n# Feature engineering at Spark scale\ndf = (\n    df.withColumn('hour', hour('tpep_pickup_datetime'))\n      .withColumn('dow',  dayofweek('tpep_pickup_datetime'))\n)\n\n# Train / test split (random 80/20 — Spark's randomSplit)\ntrain, test = df.randomSplit([0.8, 0.2], seed=42)\nprint(f'train: {train.count():,}, test: {test.count():,}')\n\n# Build the pipeline\nassembler = VectorAssembler(\n    inputCols=['trip_distance', 'hour', 'dow', 'passenger_count'],\n    outputCol='features',\n)\nlr = LinearRegression(featuresCol='features', labelCol='fare_amount')\npipeline = Pipeline(stages=[assembler, lr])\n\nmodel = pipeline.fit(train)\n\n# Evaluate on test\npreds = model.transform(test)\neval_rmse = RegressionEvaluator(labelCol='fare_amount', metricName='rmse')\neval_r2   = RegressionEvaluator(labelCol='fare_amount', metricName='r2')\nprint(f'RMSE: {eval_rmse.evaluate(preds):.2f}')\nprint(f'R²:   {eval_r2.evaluate(preds):.3f}')\n```\n\nOn 30M rows, the LinearRegression fit takes ~30-60 seconds on local mode. Compare that to scikit-learn on the same data (likely OOM or several minutes if you sub-sample).\n\n## Try GBT for better accuracy\nThe snippet below shows exactly what to do:\n\n```python\ngbt = GBTRegressor(\n    featuresCol='features', labelCol='fare_amount',\n    maxIter=20, maxDepth=6, seed=42,\n)\npipeline_gbt = Pipeline(stages=[assembler, gbt])\nmodel_gbt = pipeline_gbt.fit(train)\npreds_gbt = model_gbt.transform(test)\nprint(f'GBT RMSE: {eval_rmse.evaluate(preds_gbt):.2f}')\n# Typically ~30% lower than LR.\nThe snippet below shows exactly what to do:\n\n```\n\nGBT training on 30M rows in local mode: ~3-5 minutes. Equivalent in sklearn: hours or impossible.\n\n## Cross-validation, the Spark way\nThe snippet below shows exactly what to do:\n\n```python\nfrom pyspark.ml.tuning import CrossValidator, ParamGridBuilder\n\nparam_grid = (\n    ParamGridBuilder()\n    .addGrid(gbt.maxDepth, [4, 6, 8])\n    .addGrid(gbt.maxIter, [10, 20])\n    .build()\n)\n\ncv = CrossValidator(\n    estimator=pipeline_gbt,\n    estimatorParamMaps=param_grid,\n    evaluator=eval_rmse,\n    numFolds=3,\n    parallelism=2,\n)\n# Heavy — would take ~30+ min on this data. Run with smaller sample first.\nThe snippet below shows exactly what to do:\n\n```\n\n## What this gives you\n- Models trained on data that wouldn't fit on one machine\n- Standard Pipeline API — same shape as sklearn pipelines you know\n- Production-ready: same code runs on Databricks / EMR / Synapse clusters\n\n## Save the model\nThe snippet below shows exactly what to do:\n\n```python\nmodel_gbt.write().overwrite().save('models/gbt_fare_v1')\n# Saves to a directory with model metadata + Spark-readable artifacts\nThe snippet below shows exactly what to do:\n\n```\n\nTo load on inference:\n```python\nfrom pyspark.ml import PipelineModel\nloaded = PipelineModel.load('models/gbt_fare_v1')\npredictions = loaded.transform(new_data)\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Spark MLlib regression",
-              "body": "## Deeper dive: Spark MLlib regression\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Spark MLlib regression** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "StatQuest Logistic Regression",
+              "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
+              "duration_min": 9,
+              "creator": "StatQuest",
+              "difficulty": "beginner",
+              "why": "This 9-minute StatQuest video ('StatQuest Logistic Regression') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -19004,9 +19109,13 @@
               "body": "## What it is\nFor any query whose sensitivity is bounded (each individual can change the answer by at most Δ), add Laplace noise with scale Δ/ε. The result is ε-differentially-private.\n\n```text\nDP_query(D) = TrueQuery(D) + Laplace(scale = Δ/ε)\n```\n\nCounts have sensitivity 1 (each person changes the count by at most 1). Sums of values bounded to [0, B] have sensitivity B. Etc.\n\n## A worked example\nThe snippet below shows exactly what to do:\n\n```python\nimport numpy as np\n\ndef laplace_mechanism(true_value, sensitivity, epsilon):\n    scale = sensitivity / epsilon\n    noise = np.random.laplace(loc=0, scale=scale)\n    return true_value + noise\n\ntrue_count = 532\n# Single query at ε=1.0:\nnoisy = laplace_mechanism(true_count, sensitivity=1, epsilon=1.0)\nprint(f'noisy count: {noisy:.1f}')\n# noisy count: 531.7  (or anywhere in the noise band)\n\n# Show the noise distribution:\nsamples = [laplace_mechanism(true_count, 1, 1.0) for _ in range(10000)]\nprint(f'noisy mean: {np.mean(samples):.2f}, std: {np.std(samples):.2f}')\n# noisy mean: 531.99, std: 1.41   <- centered on truth; ~1.4 std for ε=1\nThe snippet below shows exactly what to do:\n\n```\n\n## Apply to a real query\nTake your capstone (or any project) dataset. Pick a count or aggregate that would be sensitive in a real release:\n```python\n# Example: count of users in a sensitive subgroup\n# (e.g., users who clicked a stigmatized category)\ntrue_count = (df['category'] == 'sensitive_x').sum()\n\nfor eps in [0.1, 1.0, 10.0]:\n    noisy = laplace_mechanism(true_count, sensitivity=1, epsilon=eps)\n    print(f'ε={eps:5.1f}: true={true_count} noisy={noisy:.1f}')\n# ε=0.1 : true=841 noisy=853.2    <- heavy noise; private\n# ε=1.0 : true=841 noisy=841.6    <- meaningful; private enough for analytics\n# ε=10.0: true=841 noisy=840.9    <- light noise; weak privacy\nThe snippet below shows exactly what to do:\n\n```\n\n## The utility tradeoff\nThe snippet below shows exactly what to do:\n\n```text\nε=0.1:  noise std ≈ 10   → if the true count is 50, the noise dominates\nε=1.0:  noise std ≈  1   → if the true count is 50, noise is small but visible\nε=10:   noise std ≈ 0.1  → noise basically invisible; privacy basically gone\n```\n\nFor SMALL counts the same ε feels less private; for LARGE counts the same ε feels more private. The mathematical guarantee is the same; the utility-vs-privacy intuition shifts with the question scale.\n\n## Build a 'DP analytics' helper\nThe snippet below shows exactly what to do:\n\n```python\ndef dp_count(df, condition, epsilon):\n    true_count = condition(df).sum()\n    return laplace_mechanism(true_count, sensitivity=1, epsilon=epsilon)\n\ndef dp_sum(df, column, bound, epsilon):\n    # Clip to [0, bound] so sensitivity = bound\n    true_sum = df[column].clip(0, bound).sum()\n    return laplace_mechanism(true_sum, sensitivity=bound, epsilon=epsilon)\n```\n\nThat tiny library is enough for most simple DP analytics. Real-world DP libraries (Google's diffprivlib, OpenDP) add more mechanisms but the Laplace pattern is the core.\n\n## The diffprivlib library (the production-grade version)\nThe snippet below shows exactly what to do:\n\n```python\n# pip install diffprivlib\nfrom diffprivlib.mechanisms import Laplace\n\nm = Laplace(epsilon=1.0, sensitivity=1)\nnoisy = m.randomise(532)\n```\n\nSame math, more mechanisms, better testing. Use for anything beyond a tutorial."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: DP count query",
-              "body": "## Deeper dive: DP count query\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **DP count query** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",

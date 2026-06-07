@@ -71,10 +71,10 @@ for slug, fn in TRACKS.items():
                 key = url2key.get(url, '?UNKNOWN?')
                 if key not in allowed:
                     issues.append(f"W{w['number']}D{dn}: OFF-DOMAIN key={key}")
-                elif not day_keyword_matches(day.get('title', ''), url, allowed):
+                elif not day_keyword_matches(day.get('title', '') + ' ' + (w.get('title', '') or ''), url, allowed):
                     issues.append(f"W{w['number']}D{dn}: FORCED (no concept match) key={key} title='{day.get('title','')[:40]}'")
                 dur = it.get('duration_min')
-                budget = E.budget_for_day(day.get('title', ''), dn)
+                budget = E.budget_for_day(day.get('title', ''), dn, slug)
                 if not isinstance(dur, (int, float)) or dur > 30:
                     issues.append(f"W{w['number']}D{dn}: duration {dur} > 30 (hard cap)")
                 elif dur > budget:

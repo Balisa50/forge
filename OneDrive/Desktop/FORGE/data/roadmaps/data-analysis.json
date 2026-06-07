@@ -553,12 +553,12 @@
             },
             {
               "kind": "video",
-              "title": "Jupyter in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h1sAzPojKMg",
+              "title": "Pandas in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=DkjCaAMBGWM",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Jupyter in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Pandas in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -609,9 +609,13 @@
               "body": "## What a Series actually is\nA pandas **Series** is a one-dimensional, *labelled* array — a single column of data where every value carries a label called the **index**. A plain Python list is a row of values at positions 0, 1, 2…; a Series is that same row, but each slot also has a *name*, and the whole thing comes with analytical superpowers bolted on.\n\nPicture one column in Excel. The values run down the column, and each sits in a labelled row — `Mon`, `Tue`, `Wed`. That row label is the index, and the crucial thing is that **it travels with the data everywhere**. When you sort, filter, or do arithmetic, pandas keeps every value glued to its own label. This \"alignment by label\" is the single idea that separates pandas from a bare list or NumPy array, and it's why merging and joining data later will *just work*.\n\n## Why it matters so much\nTwo reasons, and they're the foundation of the whole track:\n\n1. **A DataFrame is just many Series.** Every column of a table *is* a Series, all sharing one index. Once the Series clicks, a DataFrame stops being mysterious — it's literally a dictionary of Series lined up side by side. Master this and you've master the atom that everything else is built from.\n\n2. **Series operations are vectorised.** When you write `sales * 1.1`, pandas applies the multiplication to *every* value at once, in fast compiled code, with no Python `for` loop. That's the difference between an analyst who transforms a million rows in one line and an Excel user dragging a formula down by hand.\n\n## Where you'll meet it every day\nConstantly. A column of prices is a Series. The result of `df[\"region\"]` is a Series. The output of a groupby — \"average profit per region\" — comes back to you as a Series indexed by region. Counting categories returns a Series. Learning to read and bend a Series *is* learning the language pandas speaks back to you. Get this one right and the next six days are downhill.\n\nWatch the short video next to see one built live — then the code below will already feel familiar."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: The Series — one labelled column",
-              "body": "## Deeper dive: The Series — one labelled column\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The Series — one labelled column** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -1892,6 +1896,15 @@
               "body": "## What it is\nPower Query + cleaning workflows is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+            },
+            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\nThe snippet below shows exactly what to do:\n\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -2145,13 +2158,9 @@
               "body": "## What it is\nThe CLV you computed in pandas last week is a single SQL query: group by the customer, sum their profit, sort, and cap with LIMIT.\n\n## Why it matters\nThis is the payoff of learning one idea in two tools. When you see that `df.groupby(\"Customer Name\")[\"Profit\"].sum()` and `GROUP BY customer_name ... SUM(profit)` produce the *identical* leaderboard, the concept detaches from the syntax — and that transfer is exactly what makes a hire valuable. You can drop into any stack and express the analysis.\n\n## The pattern\n`GROUP BY customer + SUM(profit) + ORDER BY DESC + LIMIT 10` is a reusable shape: \"top N things by some total\". You'll use it for top products, top regions, top anything."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Top customers (CLV in SQL)",
+              "body": "## Deeper dive: Top customers (CLV in SQL)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Top customers (CLV in SQL)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -4782,9 +4791,13 @@
               "body": "## What it is\nYou're packaging two weeks of attrition analysis into deliverables — like Superstore W8-9, but the audience is **HR leadership**, and that changes everything you emphasise.\n\n## Why it matters\nA sales director wants dollars; HR wants **actions on people**, framed around **retention, privacy, and fairness**. They don't care about your p-value; they care \"which team do we help, and is this analysis fair to individuals?\" Lead with the at-risk group and the intervention, not the methodology. Get the framing wrong and a technically perfect analysis gets ignored — or worse, raises legal/ethical flags (you must never single out *named* employees as flight risks).\n\n## The rule for this audience\nTalk about *groups and drivers* (overtime, early-tenure Sales Reps), never individuals. Recommend *policy* (cap overtime, fix onboarding), and acknowledge fairness (is the model just flagging a protected group?)."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What HR actually needs",
-              "body": "## Deeper dive: What HR actually needs\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What HR actually needs** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -4829,13 +4842,9 @@
               "body": "## What it is\nA **dashboard** is a single screen that answers the recurring questions at a glance — here, 4 KPI numbers (overall attrition, highest-risk department, overtime effect, first-year rate) plus 3 charts (by department, by tenure, by role).\n\n## Why it matters\nHR will check this monthly; they need the state of attrition in five seconds, not a notebook to run. A dashboard turns your one-off analysis into a *living instrument*. The discipline is restraint: a dashboard with 20 charts is as useless as none — pick the few numbers that drive decisions and make them unmissable.\n\n## The layout\nTop row: 4 big KPI numbers. Below: 3 charts (the department bar, the tenure survival curve, the role hotspot). One screen, no scrolling. Build it in Excel/Sheets or a notebook — the principle is the same."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Build the dashboard",
+              "body": "## Deeper dive: Build the dashboard\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Build the dashboard** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -6459,9 +6468,13 @@
               "body": "## What it is\nBuild the matrix: for each order compute **months since the cohort start**, then `pivot_table` count of active customers by cohort (rows) × months-since (columns), converted to a % of each cohort's month-0 size.\n\n## Why it matters\nThis single table is the deliverable of the week — it shows the retention *curve* for every cohort at once. Reading across a row shows decay; reading down a column shows whether newer cohorts retain better than older ones. It's the most information-dense retention artefact you can produce, and pivoting is exactly the Week-2 skill scaled up."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: The cohort retention matrix",
-              "body": "## Deeper dive: The cohort retention matrix\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The cohort retention matrix** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Linear transformations and matrices",
+              "url": "https://www.youtube.com/watch?v=kYB8IZa5AuE",
+              "duration_min": 11,
+              "creator": "3Blue1Brown",
+              "difficulty": "intermediate",
+              "why": "This 11-minute 3Blue1Brown video ('Linear transformations and matrices') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -7173,9 +7186,13 @@
               "body": "## What it is\nTurn three weeks of Olist analysis into deliverables for a **marketing team** — who consume data differently from a CEO or HR. They want levers they can pull: acquisition cost, retention windows, what makes customers return.\n\n## Why it matters\nMarketing acts on *campaigns and timing*, so your funnel/cohort findings must translate into \"do X, expect Y\": \"median repeaters return in ~58 days -> send a re-engagement offer at week 6\". Frame findings as campaign levers, not statistics, or marketing won't know what to do with them."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What marketing needs",
-              "body": "## Deeper dive: What marketing needs\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What marketing needs** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -7213,13 +7230,9 @@
               "body": "## What it is\nA marketing dashboard: KPI row (orders, delivered rate, repeat rate, avg review) plus the funnel chart and a cohort retention heatmap.\n\n## Why it matters\nMarketing checks performance constantly; one glanceable screen of the metrics they steer by makes the analysis a living tool, not a one-off. Restraint again: the few metrics that drive campaign decisions, nothing decorative."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Dashboard layout",
+              "body": "## Deeper dive: Dashboard layout\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Dashboard layout** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -8107,9 +8120,13 @@
               "body": "## What it is\nBuild a matrix (Category × Region) of profit with **conditional colour** — red for losses, green for profit — Tableau's version of a heatmap.\n\n## Why it matters\nColour-encoding turns a wall of numbers into an instant pattern: a red cell jumps out as a problem. Conditional formatting is one of the highest-impact, easiest wins in any BI tool, and it's how you make a dashboard *readable at a glance*."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Matrix with conditional colour",
-              "body": "## Deeper dive: Matrix with conditional colour\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Matrix with conditional colour** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Linear transformations and matrices",
+              "url": "https://www.youtube.com/watch?v=kYB8IZa5AuE",
+              "duration_min": 11,
+              "creator": "3Blue1Brown",
+              "difficulty": "intermediate",
+              "why": "This 11-minute 3Blue1Brown video ('Linear transformations and matrices') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -8781,9 +8798,13 @@
               "body": "## What it is\nA one-page **spec**: the question, the audience, the data sources, the key metrics, and what 'done' looks like — written before you build anything.\n\n## Why it matters\nScoping is where capstones live or die. Without a spec you'll wander, over-build, and never finish. The spec is a contract with yourself that defines the finish line and keeps you from scope-creep. Professionally, the analyst who writes a crisp spec before diving in is the one who delivers on time — it's a senior habit."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Write the SPEC",
-              "body": "## Deeper dive: Write the SPEC\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Write the SPEC** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -8821,9 +8842,13 @@
               "body": "## What it is\nAssemble your data: combine real public datasets, or generate a realistic **synthetic** dataset (with pandas/`numpy`) when real data isn't available — covering the sources your spec named.\n\n## Why it matters\nSourcing/creating data is a real skill (you practised it scraping). A good synthetic dataset must be *realistic* — sensible distributions, plausible relationships (sales actually dip in bad weather) — so the analysis has something true to find. Junk data makes for junk insight; building believable data is itself analytical thinking."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Build the dataset",
-              "body": "## Deeper dive: Build the dataset\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Build the dataset** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -9111,9 +9136,13 @@
               "body": "## What it is\nPage 1 is the **overview** — the executive summary of your capstone: KPI band on top, then the 2-3 charts that answer the headline question, designed before you build anything.\n\n## Why it matters\nDesigning the layout first (on paper or in your head) prevents the common mistake of building charts and cramming them in afterwards. Page 1 must answer the spec's question at a glance; everything else is detail pages. A deliberate layout is what makes a dashboard feel designed, not assembled."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Page 1 layout",
-              "body": "## Deeper dive: Page 1 layout\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Page 1 layout** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "difficulty": "beginner",
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -9151,9 +9180,13 @@
               "body": "## What it is\nThe row of big-number KPI tiles at the top of page 1 — your headline metrics, formatted large and clear.\n\n## Why it matters\nThe KPI band is the first thing anyone reads; it must communicate the state of the business in seconds. Clean formatting (rounded numbers, clear labels, maybe a trend arrow) is what makes it glanceable. This is the same KPI skill from the dashboard weeks, now leading your capstone."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Build the KPI band",
-              "body": "## Deeper dive: Build the KPI band\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Build the KPI band** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -9481,9 +9514,13 @@
               "body": "## What it is\nPage 3 focuses on **customers/segments** — who they are, their value, their behaviour — reusing your CLV/cohort skills on the capstone data.\n\n## Why it matters\nA complete dashboard answers more than 'what happened' (pages 1-2); it answers 'who' (customers) and 'how well are we running' (operations, page 4). The customer page is where retention/value insights live, and it shows you can carry a customer lens into any project."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Page 3 — Customer view",
-              "body": "## Deeper dive: Page 3 — Customer view\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Page 3 — Customer view** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
+              "difficulty": "beginner",
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -9521,9 +9558,13 @@
               "body": "## What it is\nA compact cohort retention matrix on page 3 — the Olist-week skill, shrunk to a dashboard tile.\n\n## Why it matters\nCohort retention is a senior signal, and embedding it in the capstone proves you can deploy advanced analysis inside a polished product, not just in a notebook. Even a small retention heatmap tells a stakeholder whether the business keeps its customers."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Cohort retention mini",
-              "body": "## Deeper dive: Cohort retention mini\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Cohort retention mini** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -10235,9 +10276,13 @@
               "body": "## What it is\nA one-page memo addressed to a CEO: the capstone's headline, the evidence, and the recommendation with its business impact — the polished written companion to your story.\n\n## Why it matters\nThe CEO memo is the artefact that survives the meeting and circulates to people who weren't there. For the highest audience it must be exceptionally tight: the recommendation and its dollar impact in the first two lines, evidence curated to the essential, and a clear ask. This is the memo discipline from every project, at its most demanding."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Write the CEO memo",
-              "body": "## Deeper dive: Write the CEO memo\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Write the CEO memo** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",

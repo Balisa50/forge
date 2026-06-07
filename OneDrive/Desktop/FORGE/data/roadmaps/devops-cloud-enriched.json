@@ -1054,9 +1054,13 @@
               "body": "## Before\nA developer writes code. Tests it locally (maybe). SSHs into the server. `git pull && npm install && npm run build && systemctl restart app`. Hopes nothing broke. If it broke, SSHs back in, debugs at 2am.\n\n## After\nA developer writes code. Pushes to GitHub. A workflow runs: install deps → run tests → build → deploy. If tests fail, deploy doesn't happen — the developer sees the red ❌ in PR. If they pass, the server gets the new code automatically.\n\nThe human is REMOVED from the deploy path. That's the whole point.\n\n## CI vs CD — the two halves\nThe snippet below shows exactly what to do:\n\n```text\nCI (Continuous Integration)\n  Every push: pull, install, lint, test, build.\n  Verdict: green or red. Visible on the PR.\n  Goal: catch breakage BEFORE merge.\n\nCD (Continuous Deployment / Delivery)\n  Every merge to main: deploy the green build to production.\n  Goal: main is always shippable; deploy is a non-event.\n```\n\n## What GitHub Actions gives you\n- A YAML file in `.github/workflows/` defines the workflow.\n- Workflows trigger on events: `push`, `pull_request`, `workflow_dispatch`, `schedule`.\n- Each run gets a fresh Ubuntu/macOS/Windows VM (the runner).\n- Free minutes: 2,000/month for private repos, unlimited for public.\n\n## What you build this week\n`.github/workflows/deploy.yml` that runs on every push to `main`:\n1. Checks out the repo\n2. Validates the HTML (a basic test)\n3. Configures AWS credentials from GitHub Secrets\n4. Syncs `index.html` to S3\n5. Invalidates CloudFront so the new file goes live\n\nYou'll push a change to `index.html` and watch it land on your live URL ~90 seconds later. No SSH, no typing, no fear."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What is CI/CD?",
-              "body": "## Deeper dive: What is CI/CD?\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What is CI/CD?** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -1146,13 +1150,9 @@
               "body": "## The mechanism\nGitHub Repo → **Settings → Secrets and variables → Actions → New repository secret**.\n\nAdd three:\n```text\nAWS_ACCESS_KEY_ID         (from step 2)\nAWS_SECRET_ACCESS_KEY     (from step 2)\nCLOUDFRONT_DISTRIBUTION_ID (the distribution ID, e.g. E1A2B3C4D5E6F7)\n```\n\nAt workflow runtime they're available as:\n```yaml\nenv:\n  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}\n```\n\n## What GitHub does for you\n- Encrypted at rest (libsodium sealed boxes).\n- Only available inside workflow runs of THIS repo (not even forks of public repos can read them).\n- Automatically masked in workflow logs — if a step accidentally prints `$AWS_SECRET_ACCESS_KEY`, GitHub replaces it with `***`.\n- Rotation is a single UI action.\n\n## What you must still do\n- Don't echo secrets explicitly via `set -x` or `env | grep AWS`. Masking helps but isn't perfect.\n- Don't pass secrets to `if` conditions in YAML — the entire expression can leak in logs.\n- Rotate the AWS key (and update both GitHub Secrets) every 90 days.\n\n## Environment secrets (for later)\nGitHub also supports per-environment secrets (`production` vs `staging`) and protection rules (require manual approval for prod deploys). For Edge Portfolio v0.3 you only have prod — repo-level secrets are enough."
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "kind": "lesson",
+              "title": "Deeper dive: Add secrets to GitHub",
+              "body": "## Deeper dive: Add secrets to GitHub\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Add secrets to GitHub** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -1480,9 +1480,13 @@
               "body": "## Black-box (synthetic / uptime)\nAn external service hits your URL every minute from multiple regions. Did you respond 200 OK in under 5 seconds? If not, page someone.\n\n```text\nProbe (Tokyo)  ──[GET https://yoursite.com]──> 200 OK in 280ms ✓\nProbe (London) ──[GET https://yoursite.com]──> timeout ✗ ALERT\n```\n\nThis is what users experience. If black-box says down, you're down.\n\n## White-box (telemetry)\nYour application emits metrics (CloudWatch / Prometheus / OTel) and logs about itself: request count, latency histogram, error rate per route, memory usage, queue depth.\n\nThis tells you WHY you're down. The black-box probe says \"500s from London\"; white-box logs say \"the /api/users handler is timing out because the DB has 47% CPU\".\n\n## The four golden signals (Google SRE)\nPer service, watch:\n```text\n1. LATENCY    — how long does a request take?\n2. TRAFFIC    — how many requests per second?\n3. ERRORS     — what fraction fail?\n4. SATURATION — how full is the system (CPU, memory, disk)?\n```\n\nAnomaly in any of those = the system is in trouble. If you only have time to watch four numbers, watch these.\n\n## What you build this week\nFor Edge Portfolio (a static site, no app code), the monitoring stack is small:\n1. Uptime ping every minute from BetterUptime / UptimeRobot.\n2. CloudWatch billing alarm at $50 (cheap insurance).\n3. CloudFront 5xx-error-rate alarm.\n4. A tiny static status page reading from CloudWatch.\n\nTotal ops effort: ~3 hours. Outcome: you know within 60 seconds when the site goes down."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why monitor",
-              "body": "## Deeper dive: Why monitor\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why monitor** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Prometheus in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -1532,13 +1536,9 @@
               "body": "## BetterUptime (recommended)\nFree tier: 10 monitors, 3-minute checks, email + Slack alerts.\n\n```text\n1. Sign up at betterstack.com/better-uptime.\n2. Monitors → Create monitor.\n3. URL to monitor: https://yourdomain.com\n4. Check frequency: 3 minutes (free) or 30 seconds (paid).\n5. HTTP status code: 200 (default).\n6. Alert when: HTTP code != 200 OR response time > 5 seconds.\n7. Notification channels: email + Slack webhook (if you have one).\n8. Save.\n```\n\n## UptimeRobot (alternative)\nFree tier: 50 monitors, 5-minute checks, email alerts only.\n\n## Test the alarm — important\nYou MUST verify the alarm fires before trusting it. Temporarily block your URL:\n1. Edit your local hosts file: add `127.0.0.1 yourdomain.com` (so YOUR machine can't resolve it; the probe still can).\n   — Actually this only tests YOUR machine; the probe is external.\n2. Better test: in CloudFront, temporarily disable your distribution. Wait 2 minutes; the probe fails; you should get the alert email.\n3. Re-enable the distribution. Probe recovers. You should get an 'Up' email.\n\n## What 'good' looks like\nThe snippet below shows exactly what to do:\n\n```text\n  ✓ You get the down alert email within 5 minutes of disabling.\n  ✓ You get the up email within 5 minutes of re-enabling.\n  ✓ Status page shows the incident in history.\n```\n\nIf the alert doesn't fire, the monitor isn't useful. Test before relying on it.\n\n## Public status page (optional)\nBetterUptime generates a free public status page (status.betterstack.com/yourname). Link it from your portfolio's footer — recruiters love this signal."
             },
             {
-              "kind": "video",
-              "title": "Prometheus in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Uptime monitoring",
+              "body": "## Deeper dive: Uptime monitoring\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Uptime monitoring** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -2363,9 +2363,13 @@
               "body": "## The problem\nYour local dev needs: web app + Postgres + Redis + maybe MailHog for email testing. With raw Docker, that's:\n```bash\ndocker network create app-net\ndocker volume create pg-data\ndocker run -d --name pg --network app-net -v pg-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres:16\ndocker run -d --name redis --network app-net redis:7-alpine\ndocker run -d --name mail --network app-net -p 8025:8025 mailhog/mailhog\ndocker run -d --name api --network app-net -p 3000:3000 -e DATABASE_URL=postgres://postgres:secret@pg:5432/postgres -e REDIS_URL=redis://redis:6379 myapp:dev\n```\nFive commands. Half a dozen flags each. Memorise the connection URLs. Re-type after every reboot.\n\n## The Compose version\nThe snippet below shows exactly what to do:\n\n```yaml\n# docker-compose.yml\nservices:\n  pg:\n    image: postgres:16\n    environment: { POSTGRES_PASSWORD: secret }\n    volumes: [pg-data:/var/lib/postgresql/data]\n  redis:\n    image: redis:7-alpine\n  mail:\n    image: mailhog/mailhog\n    ports: ['8025:8025']\n  api:\n    build: .\n    ports: ['3000:3000']\n    environment:\n      DATABASE_URL: postgres://postgres:secret@pg:5432/postgres\n      REDIS_URL: redis://redis:6379\n    depends_on: [pg, redis]\n\nvolumes:\n  pg-data:\n```\n\nThe snippet below shows exactly what to do:\n\n```bash\ndocker compose up -d           # everything, one command\ndocker compose logs -f api     # follow the api logs\ndocker compose down            # stop + remove everything\n```\n\nThat's it. The YAML is the source of truth for what your dev environment IS.\n\n## What you ship this week\n`docker-compose.yml` for a real two-service setup (Node API + Postgres):\n- API live-reloads on source change (bind mount).\n- Postgres persists data via named volume.\n- Healthcheck on Postgres; API waits for it.\n- Env vars in a `.env` file (NOT committed).\n- `docker compose up` brings the whole world up in <10 seconds."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — why Compose",
-              "body": "## Deeper dive: Orient — why Compose\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — why Compose** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Docker in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -3224,9 +3228,13 @@
               "body": "## Orient — what you're building this week\n\nDocker is a tool, not a standard. The Open Container Initiative (OCI) defines the standards: the image format and the runtime specification. Docker implements these standards, but so do alternatives: containerd (the container runtime used by Kubernetes), podman (daemon-less, rootless Docker alternative), and runc (the low-level OCI runtime used by Docker and containerd). Understanding the container runtime landscape matters because in production, you are often not using Docker directly — you are\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Docker in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -3275,13 +3283,9 @@
               "body": "## Docker vs containerd vs runc\n\nDocker is a tool, not a standard. The Open Container Initiative (OCI) defines the standards: the image format and the runtime specification. Docker implements these standards, but so do alternatives: containerd (the container runtime used by Kubernetes), podman (daemon-less, rootless Docker alternative), and runc (the low-level OCI runtime used by Docker and containerd). Understanding the container runtime landscape matters because in production, you are often not using Docker directly — you are\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Docker vs containerd vs runc",
+              "body": "## Deeper dive: Docker vs containerd vs runc\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Docker vs containerd vs runc** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",
@@ -3336,9 +3340,13 @@
               "body": "## Podman\n\nDocker is a tool, not a standard. The Open Container Initiative (OCI) defines the standards: the image format and the runtime specification. Docker implements these standards, but so do alternatives: containerd (the container runtime used by Kubernetes), podman (daemon-less, rootless Docker alternative), and runc (the low-level OCI runtime used by Docker and containerd). Understanding the container runtime landscape matters because in production, you are often not using Docker directly — you are\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Podman",
-              "body": "## Deeper dive: Podman\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Podman** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Kubernetes in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -3704,9 +3712,13 @@
               "body": "## Orient — what you're building this week\n\nKubernetes is the operating system for containers at scale. The core problem it solves: you have 10 containers (your app, the database, the cache, the background workers, the metrics collector) running across 5 servers. How do you decide which container runs on which server? How do you restart crashed containers? How do you update containers without downtime? How do you expose services on the network? Kubernetes answers all of these questions with a declarative API.\n\nThe key mental model: you te\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 9 ('Kubernetes — The Mental Model'), day 1."
+              "kind": "video",
+              "title": "Kubernetes in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -3755,13 +3767,9 @@
               "body": "## The K8s mental model\n\nKubernetes is the operating system for containers at scale. The core problem it solves: you have 10 containers (your app, the database, the cache, the background workers, the metrics collector) running across 5 servers. How do you decide which container runs on which server? How do you restart crashed containers? How do you update containers without downtime? How do you expose services on the network? Kubernetes answers all of these questions with a declarative API.\n\nThe key mental model: you te\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: The K8s mental model",
+              "body": "## Deeper dive: The K8s mental model\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The K8s mental model** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",
@@ -4193,9 +4201,13 @@
               "body": "## Orient — what you're building this week\n\nRunning Kubernetes in development (W9) teaches the concepts. Running it in production teaches the hard lessons. Production Kubernetes requires four things that are unnecessary in local testing: probes (how the cluster knows your pod is healthy), resource management (how the scheduler places pods and prevents noisy neighbours), autoscaling (how the cluster handles traffic spikes without over-provisioning), and storage (how stateful applications persist data across pod restarts).\n\nProbes: Kubernet\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 10 ('Kubernetes in Production — Probes, Resources, HPA, Storage'), day 1."
+              "kind": "video",
+              "title": "Kubernetes in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -4654,9 +4666,13 @@
               "body": "## Orient — what you're building this week\n\nRaw Kubernetes YAML is verbose, repetitive, and hard to manage across environments. A Deployment manifest for your staging environment is almost identical to production — but with different image tags, replica counts, resource limits, and environment variables. Helm is the package manager for Kubernetes that solves this problem.\n\nA Helm chart is a collection of templates and default values. Templates are Kubernetes YAML files with Go template syntax for parameterisation: {{ .Values.replicaCount \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 11 ('Helm and the K8s Package Ecosystem'), day 1."
+              "kind": "video",
+              "title": "Kubernetes in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -5125,9 +5141,13 @@
               "body": "## Orient — what you're building this week\n\nKubernetes networking handles communication between pods and between the cluster and the outside world. But as applications grow more complex — microservices communicating with each other, diverse clients with different requirements, security policies between services — the basic Service and Ingress are not enough. Service meshes and modern networking tools fill this gap.\n\nThe service mesh problem: you have 50 microservices talking to each other. You want: mutual TLS (mTLS) between services (so \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 12 ('Service Mesh and Modern Networking — Istio, Linkerd, eBPF'), day 1."
+              "kind": "video",
+              "title": "Computer Networking in 100 seconds",
+              "url": "https://www.youtube.com/watch?v=qiQR5rTSshw",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Computer Networking in 100 seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -5605,7 +5625,7 @@
             {
               "kind": "lesson",
               "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 13 ('Terraform — Infrastructure as Code Done Right'), day 1."
+              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reflection",
@@ -6072,9 +6092,13 @@
               "body": "## Orient — what you're building this week\n\nManaged Kubernetes services (EKS on AWS, GKE on Google Cloud, AKS on Azure) eliminate the burden of managing the Kubernetes control plane. In a self-managed cluster, you are responsible for: etcd backups, API server certificate rotation, control plane version upgrades, master node high availability, and more. With a managed service, the cloud provider handles all of that. You pay for the worker nodes; the control plane is managed.\n\nEKS (Amazon Elastic Kubernetes Service): AWS manages the control\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 14 ('Managed Kubernetes — EKS, GKE, AKS'), day 1."
+              "kind": "video",
+              "title": "Kubernetes in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -6123,13 +6147,9 @@
               "body": "## Managed K8s comparison\n\nManaged Kubernetes services (EKS on AWS, GKE on Google Cloud, AKS on Azure) eliminate the burden of managing the Kubernetes control plane. In a self-managed cluster, you are responsible for: etcd backups, API server certificate rotation, control plane version upgrades, master node high availability, and more. With a managed service, the cloud provider handles all of that. You pay for the worker nodes; the control plane is managed.\n\nEKS (Amazon Elastic Kubernetes Service): AWS manages the control\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Managed K8s comparison",
+              "body": "## Deeper dive: Managed K8s comparison\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Managed K8s comparison** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",
@@ -7979,9 +7999,13 @@
               "body": "## Orient — what you're building this week\n\nGitOps is the operational model where the desired state of your infrastructure and applications is stored in git, and automation continuously reconciles actual state to match the desired state. The git repository becomes the single source of truth: if it is in git, it is deployed; if it is not in git, it should not exist. The phrase \"GitOps\" was coined by Weaveworks in 2017; the pattern is now widely adopted.\n\nThe two principles of GitOps: declarative (the desired state is expressed declarativel\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 18 ('GitOps — Argo CD and Declarative Deploys'), day 1."
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "reflection",
@@ -8031,12 +8055,12 @@
             },
             {
               "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
+              "title": "Your First Git + GitHub Push",
+              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
+              "duration_min": 10,
+              "creator": "Web Dev Simplified",
               "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -8461,9 +8485,13 @@
               "body": "## Orient — what you're building this week\n\nObservability is the ability to understand the internal state of your system from its external outputs. The three pillars: metrics (numeric measurements over time), logs (timestamped event records), and traces (end-to-end request journeys across services). In a containerised, microservices environment, these three together tell the complete story of what your system is doing and why.\n\nPrometheus is the standard metrics system for Kubernetes. It pulls metrics from targets (your applications and K\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 19 ('Observability — Prometheus, Grafana, OpenTelemetry'), day 1."
+              "kind": "video",
+              "title": "Prometheus in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -10788,9 +10816,13 @@
               "body": "## Orient — what you're building this week\n\nThis is the capstone week. The DevOps/Cloud track ends where most engineers are trying to get to: owning and operating real infrastructure that serves real users. Edge Portfolio has evolved from a manually managed server (W1) to a production-grade Kubernetes deployment with GitOps, observability, security scanning, and disaster recovery. This week you bring all the pieces together and document the architecture.\n\nThe capstone deliverable is not just a running system — it is a documented, reproduc\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 24 ('Capstone — Build and Operate Real Infrastructure'), day 1."
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "reflection",

@@ -137,6 +137,9 @@ DEEP_DIVE = {
     'pca':                 [('https://www.youtube.com/watch?v=HMOI_lkzW08', 6,  'StatQuest', 'StatQuest PCA main ideas', 'intermediate')],
     'kmeans':              [('https://www.youtube.com/watch?v=4b5d3muPQmA', 9,  'StatQuest', 'StatQuest K-means clustering', 'beginner')],
     'mle':                 [('https://www.youtube.com/watch?v=XepXtl9YKwc', 6,  'StatQuest', 'Maximum Likelihood clearly explained', 'intermediate')],
+    'word2vec':            [('https://www.youtube.com/watch?v=viZrOnJclY0', 16, 'StatQuest', 'Word Embedding and Word2Vec Clearly Explained', 'intermediate')],
+    'rnn':                 [('https://www.youtube.com/watch?v=AsNTP8Kwu80', 16, 'StatQuest', 'Recurrent Neural Networks RNNs Clearly Explained', 'advanced')],
+    'lstm':                [('https://www.youtube.com/watch?v=YCzL96nL7j0', 21, 'StatQuest', 'Long Short-Term Memory LSTM Clearly Explained', 'advanced')],
 }
 KNOWN_GOOD.update(DEEP_DIVE)
 
@@ -144,6 +147,75 @@ DEFAULT_VIDEO_KEY = 'git'
 
 # Keyword -> KNOWN_GOOD key. Order matters: most specific first.
 KEYWORD_VIDEO_MAP = [
+    # ── broad concept vocabulary -> verified library (boosts coverage massively) ──
+    # LLM / AI engineering
+    ('retrieval-augmented', 'rag'), ('retrieval augmented', 'rag'), ('rag', 'rag'), ('retrieval', 'rag'),
+    ('vector database', 'vector'), ('vector db', 'vector'), ('vector store', 'vector'),
+    ('embedding', 'embedding'), ('embeddings', 'embedding'), ('semantic search', 'embedding'),
+    ('large language model', 'transformer'), ('llm', 'transformer'), ('language model', 'transformer'),
+    ('langchain', 'langchain'), ('llamaindex', 'langchain'),
+    ('word2vec', 'word2vec'), ('word embedding', 'word2vec'),
+    ('recurrent neural', 'rnn'), ('rnn', 'rnn'), ('sequence model', 'rnn'),
+    ('lstm', 'lstm'), ('long short-term', 'lstm'), ('long short term', 'lstm'),
+    # ML / stats
+    ('logistic regression', 'logistic-regression'), ('regression', 'logistic-regression'),
+    ('random forest', 'random-forest'), ('random forests', 'random-forest'),
+    ('decision tree', 'decision-tree'), ('decision trees', 'decision-tree'),
+    ('gradient boosting', 'decision-tree'), ('gradient boost', 'decision-tree'), ('xgboost', 'decision-tree'),
+    ('boosting', 'decision-tree'), ('ensemble', 'random-forest'),
+    ('clustering', 'kmeans'), ('cluster', 'kmeans'), ('k-means', 'kmeans'), ('kmeans', 'kmeans'), ('unsupervised', 'kmeans'),
+    ('dimensionality reduction', 'pca'), ('principal component', 'pca'), ('pca', 'pca'),
+    ('cross-validation', 'cross-validation'), ('cross validation', 'cross-validation'),
+    ('overfitting', 'bias-variance'), ('bias and variance', 'bias-variance'), ('bias-variance', 'bias-variance'),
+    ('confusion matrix', 'confusion-matrix'),
+    ('roc', 'roc-auc'), ('auc', 'roc-auc'), ('precision and recall', 'roc-auc'), ('classification metric', 'roc-auc'),
+    ('maximum likelihood', 'mle'), ('mle', 'mle'),
+    ('naive bayes', 'bayes'), ('bayesian', 'bayes'), ('bayes', 'bayes'),
+    ('neural network', 'neural-network'), ('neural net', 'neural-network'), ('deep learning', 'neural-network'),
+    ('perceptron', 'neural-network'), ('mlp', 'neural-network'),
+    ('backpropagation', 'backprop'), ('backprop', 'backprop'),
+    ('gradient descent', 'gradient-descent'),
+    ('convolutional', 'convolution'), ('convolution', 'convolution'), ('cnn', 'convolution'),
+    ('computer vision', 'convolution'), ('image classification', 'convolution'),
+    ('eigenvalue', 'eigen'), ('eigenvector', 'eigen'), ('svd', 'eigen'),
+    ('linear algebra', 'linear-algebra'), ('vectors and matrices', 'linear-algebra'), ('matrix', 'linear-algebra'),
+    ('calculus', 'calculus'), ('derivative', 'calculus'),
+    ('pytorch', 'pytorch'), ('tensorflow', 'tensorflow'), ('keras', 'tensorflow'),
+    ('time series', 'ml'), ('feature engineering', 'ml'), ('machine learning', 'ml'), ('first model', 'ml'),
+    # web / frontend
+    ('react hook', 'react'), ('hooks', 'react'), ('usestate', 'react'), ('useeffect', 'react'),
+    ('component', 'react'), ('jsx', 'react'), ('react', 'react'),
+    ('app router', 'nextjs'), ('server component', 'nextjs'), ('server action', 'nextjs'), ('next.js', 'nextjs'), ('nextjs', 'nextjs'),
+    ('tailwind', 'tailwind'), ('design system', 'tailwind'),
+    ('state management', 'redux'), ('redux', 'redux'), ('zustand', 'redux'),
+    ('rest api', 'rest'), ('api design', 'rest'), ('endpoint', 'rest'), ('rest', 'rest'),
+    ('prisma', 'prisma'), ('orm', 'prisma'), ('migration', 'prisma'),
+    ('postgres', 'postgres'), ('postgresql', 'postgres'), ('relational database', 'postgres'),
+    ('authentication', 'jwt'), ('authorization', 'jwt'), ('session', 'jwt'), ('jwt', 'jwt'), ('oauth', 'jwt'), ('login', 'jwt'),
+    ('websocket', 'websocket'), ('real-time', 'websocket'), ('realtime', 'websocket'), ('socket', 'websocket'),
+    ('graphql', 'graphql'),
+    ('node.js', 'nodejs'), ('node', 'nodejs'), ('express', 'express'),
+    ('astro', 'astro'), ('vite', 'vite'), ('typescript', 'typescript'), ('javascript', 'javascript'),
+    # mobile
+    ('react native', 'reactnative'), ('expo', 'reactnative'), ('navigation', 'reactnative'),
+    ('flutter', 'flutter'),
+    # security
+    ('cross-site scripting', 'xss'), ('xss', 'xss'),
+    ('nmap', 'nmap'), ('port scan', 'nmap'), ('reconnaissance', 'nmap'), ('recon', 'nmap'),
+    ('metasploit', 'metasploit'), ('exploitation', 'metasploit'), ('exploit', 'metasploit'),
+    ('wireshark', 'wireshark'), ('packet', 'wireshark'),
+    ('kali', 'kali'), ('zero trust', 'zerotrust'), ('zero-trust', 'zerotrust'),
+    # data / infra
+    ('sql', 'sql'), ('query', 'sql'), ('joins', 'sql'),
+    ('pandas', 'pandas'), ('dataframe', 'pandas'), ('groupby', 'pandas'), ('aggregation', 'pandas'),
+    ('jupyter', 'jupyter'), ('notebook', 'jupyter'), ('python', 'python'),
+    ('docker', 'docker'), ('container', 'docker'), ('dockerfile', 'docker'),
+    ('kubernetes', 'kubernetes'), ('k8s', 'kubernetes'), ('pod', 'kubernetes'),
+    ('terraform', 'terraform'), ('infrastructure as code', 'terraform'),
+    ('prometheus', 'prometheus'), ('monitoring', 'prometheus'), ('observability', 'prometheus'),
+    ('networking', 'networking'), ('dns', 'networking'),
+    ('linux', 'linux'), ('shell', 'linux'), ('bash', 'linux'),
+    ('git', 'git'), ('github', 'git'), ('version control', 'git'),
     # ── deep-dive math/ML/stats concepts (specific multi-word keys first) ──
     ('backpropagation', 'backprop'), ('backprop', 'backprop'),
     ('gradient descent', 'gradient-descent'),
@@ -485,16 +557,22 @@ _DEEP_RE = re.compile(r'\b(backprop|gradient descent|neural network|transformer|
                       r'theorem|proof|architecture|optimis|optimiz)\b', re.I)
 
 
-def budget_for_day(day_title: str, day_num) -> int:
-    """Minute budget for this day's video, by day type. Hard-capped at 30."""
+# AI/ML/data tracks lean on longer masterpiece explainers (3B1B, StatQuest); give
+# them a higher budget so a 17-27 min video can land on a normal concept day.
+HIGH_VIDEO_TRACKS = {'ai-engineering', 'ml-engineering', 'data-science', 'data-analysis', 'ai-automation'}
+
+
+def budget_for_day(day_title: str, day_num, track_slug: str = '') -> int:
+    """Minute budget for this day's video, by day type + track. Hard-capped at 30."""
     if day_num == 0:
         return BUDGET_DAY0
     t = day_title or ''
+    hi = track_slug in HIGH_VIDEO_TRACKS
     if _CAPSTONE_RE.search(t):
         return BUDGET_CAPSTONE
     if _DEEP_RE.search(t):
-        return BUDGET_DEEP
-    return BUDGET_CORE
+        return 27 if hi else BUDGET_DEEP
+    return 20 if hi else BUDGET_CORE
 
 
 def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: str, max_min: int):
@@ -1187,10 +1265,13 @@ def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_u
     if 'lesson' not in kinds_present:
         items.insert(0, synth_lesson(day_title, week_context))
 
-    # Video ONLY on a direct concept match (no forced/tangential videos). When there
-    # is no on-topic video for the day, add a 'deeper dive' second lesson instead.
-    video = pick_video_for_day(day_title, used_video_urls, cache, track_slug,
-                               budget_for_day(day_title, day_num))
+    # Video ONLY on a direct concept match (no forced/tangential videos). Match on the
+    # day title AND the week title, so a day inside (say) the "Transformers" or "RAG"
+    # week still gets that concept's video even if the day title is generic. When no
+    # on-topic video fits, add a 'deeper dive' second lesson instead.
+    match_topic = f"{day_title} {week_title}"
+    video = pick_video_for_day(match_topic, used_video_urls, cache, track_slug,
+                               budget_for_day(day_title, day_num, track_slug))
     first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
     insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
     if video and video['url'] not in used_video_urls:

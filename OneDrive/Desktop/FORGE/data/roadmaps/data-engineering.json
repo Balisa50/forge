@@ -551,9 +551,13 @@
               "body": "## OLTP: systems built for writes\n\nOLTP (online transaction processing) databases like Postgres and MySQL are tuned for many small, fast, concurrent writes that keep an application running.\n\n## Why it matters\nRunning heavy analytics here will slow or crash the app your business depends on.\n\n## In practice\nInspect a normalized OLTP shape. Typical rows are tiny and frequent:\n\n```sql\nINSERT INTO orders(user_id, total, created_at) VALUES (42, 19.99, now());\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: OLTP: systems built for writes",
-              "body": "## Deeper dive: OLTP: systems built for writes\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **OLTP: systems built for writes** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -598,12 +602,12 @@
             },
             {
               "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -785,13 +789,9 @@
               "body": "## The snowflake schema\n\nA snowflake schema normalizes dimensions into sub-dimensions (e.g., dim_product -> dim_category), trading some query speed for less redundancy.\n\n## Why it matters\nKnowing when to snowflake versus stay star keeps your model from becoming either bloated or slow.\n\n## In practice\nSee the extra hop snowflaking adds:\n\n```text\nstar:      fact -> dim_product(category_name)\nsnowflake: fact -> dim_product -> dim_category(category_name)\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: The snowflake schema",
+              "body": "## Deeper dive: The snowflake schema\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The snowflake schema** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -990,9 +990,13 @@
               "body": "## What a cloud data warehouse is\n\nA cloud warehouse separates storage from compute, stores data columnar and compressed, and scales query power on demand.\n\n## Why it matters\nSeparation of storage and compute is why you can query a terabyte without owning a server farm.\n\n## In practice\nNote the architecture shift:\n\n```text\nold: one box holds data + compute (scaling = bigger box)\nnew: storage (cheap) <-> compute (elastic clusters)\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What a cloud data warehouse is",
-              "body": "## Deeper dive: What a cloud data warehouse is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What a cloud data warehouse is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -1082,13 +1086,9 @@
               "body": "## Snowflake: virtual warehouses\n\nSnowflake separates storage from named virtual warehouses (compute clusters) that you size and auto-suspend independently.\n\n## Why it matters\nAuto-suspend means an idle warehouse stops billing within seconds, a key cost lever.\n\n## In practice\nSize compute to the job, not the data:\n\n```sql\nCREATE WAREHOUSE etl_wh WITH WAREHOUSE_SIZE='SMALL' AUTO_SUSPEND=60;\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Snowflake: virtual warehouses",
+              "body": "## Deeper dive: Snowflake: virtual warehouses\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Snowflake: virtual warehouses** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -1843,12 +1843,12 @@
             },
             {
               "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -1892,9 +1892,13 @@
               "body": "## Why Parquet beats CSV\n\nParquet is a columnar, compressed, typed file format; CSV is row-based, untyped, and bloated.\n\n## Why it matters\nSwitching a pipeline from CSV to Parquet routinely cuts storage and scan cost by 5-10x.\n\n## In practice\nConvert and compare sizes:\n\n```python\nimport pandas as pd\ndf = pd.read_csv('orders.csv')\ndf.to_parquet('orders.parquet')  # smaller + typed\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why Parquet beats CSV",
-              "body": "## Deeper dive: Why Parquet beats CSV\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why Parquet beats CSV** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -2030,13 +2034,9 @@
               "body": "## Delta Lake: ACID on the lake\n\nDelta Lake adds a transaction log over Parquet files, giving ACID transactions, schema enforcement, and time travel.\n\n## Why it matters\nThe transaction log is what turns a pile of files into something you can trust like a table.\n\n## In practice\nWrite and time-travel a Delta table:\n\n```python\ndf.write.format('delta').save('/lake/orders')\nspark.read.format('delta').option('versionAsOf', 0).load('/lake/orders')\n```"
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "kind": "lesson",
+              "title": "Deeper dive: Delta Lake: ACID on the lake",
+              "body": "## Deeper dive: Delta Lake: ACID on the lake\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Delta Lake: ACID on the lake** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -3377,9 +3377,13 @@
               "body": "## Broadcast joins and tuning\n\nBroadcasting a small table to every executor avoids shuffling the large table, a key tuning trick.\n\n## Why it matters\nA broadcast join can turn a 20-minute shuffle join into seconds when one side is small.\n\n## In practice\nForce a broadcast of the small side:\n\n```python\nfrom pyspark.sql.functions import broadcast\norders.join(broadcast(small_dim), 'product_id')\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Broadcast joins and tuning",
-              "body": "## Deeper dive: Broadcast joins and tuning\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Broadcast joins and tuning** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -4446,9 +4450,13 @@
               "body": "## Pick a source and define the question\n\nA capstone starts with one business question and a public source that can answer it.\n\n## Why it matters\nScoping to one question keeps a 14-week build from sprawling into nothing shipped.\n\n## In practice\nWrite the one-liner that anchors everything:\n\n```text\nQuestion: how do daily bike trips vary by weather?\nSource:   public bike-share + weather APIs\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Pick a source and define the question",
-              "body": "## Deeper dive: Pick a source and define the question\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Pick a source and define the question** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -4492,13 +4500,9 @@
               "body": "## Draw the target architecture\n\nThe architecture names every layer from ingestion to dashboard and the tool at each.\n\n## Why it matters\nA diagram now prevents three rebuilds later.\n\n## In practice\nLay out the layers you will build:\n\n```text\nAPI -> ingest -> lake (Parquet) -> warehouse -> dbt -> dashboard\n```"
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "kind": "lesson",
+              "title": "Deeper dive: Draw the target architecture",
+              "body": "## Deeper dive: Draw the target architecture\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Draw the target architecture** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
@@ -9574,9 +9578,13 @@
               "body": "## Version everything\n\nEnsure pipeline code, dbt project, and infra definitions all live in git.\n\n## Why it matters\nAnything not in version control is a single hard-drive failure from gone.\n\n## In practice\nConfirm the repo holds it all:\n\n```text\ningest/ transform/ dags/ infra/ -> all in git\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Version everything",
-              "body": "## Deeper dive: Version everything\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Version everything** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Terraform in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Terraform in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -10000,9 +10008,13 @@
               "body": "## Write the README\n\nA strong README explains the problem, architecture, how to run it, and the result.\n\n## Why it matters\nThe README is what a hiring manager reads first and often only.\n\n## In practice\nCover the essentials:\n\n```text\nproblem, architecture diagram, run steps, results, lessons\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Write the README",
-              "body": "## Deeper dive: Write the README\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Write the README** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -10046,13 +10058,9 @@
               "body": "## Document the architecture\n\nFinalise the architecture diagram and a short design-decisions note.\n\n## Why it matters\nExplaining your trade-offs shows the judgement employers actually hire for.\n\n## In practice\nRecord key decisions:\n\n```text\nwhy batch+stream, why this warehouse, why these tests\n```"
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "kind": "lesson",
+              "title": "Deeper dive: Document the architecture",
+              "body": "## Deeper dive: Document the architecture\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Document the architecture** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "swipe",
