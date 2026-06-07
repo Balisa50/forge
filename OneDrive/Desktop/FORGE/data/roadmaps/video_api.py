@@ -200,7 +200,19 @@ def auto_discover_video(concept, count=1):
     via YouTube search scraping (no API key). Each item is a dict:
     {video_id, url, duration_min, creator, title}. Ranked: priority channel, then shorter.
     Empty list if nothing trusted + on-topic is found (caller routes to manual review)."""
-    url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(f"{concept} tutorial")
+    raw = _scrape_search(f"{concept} tutorial")
+    ctoks = _ad_toks(concept)
+    elig = [(vid, ch, mins, title) for vid, ch, mins, title in raw
+            if mins and mins <= _AUTO_MAX_MIN and _ad_trusted(ch) and (not ctoks or (ctoks & _ad_toks(title)))]
+    elig.sort(key=lambda t: (_ad_priority(t[1]), t[2]))
+    return [{"video_id": vid, "url": f"https://www.youtube.com/watch?v={vid}",
+             "duration_min": mins, "creator": ch, "title": title}
+            for vid, ch, mins, title in elig[:count]]
+
+
+def _scrape_search(query):
+    """Scrape one YouTube search-results page -> [(videoId, channel, minutes, title)]."""
+    url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(query)
     try:
         html = urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=20).read().decode("utf-8", "replace")
     except Exception:
@@ -232,13 +244,39 @@ def auto_discover_video(concept, count=1):
             for x in o:
                 walk(x)
     walk(data)
+    return out
+
+
+def auto_discover_video_broad(concept, week_context="", count=1, max_min=30):
+    """Broadened discovery for hyper-specific micro-concepts. Searches the concept AND
+    the concept+week-theme, and accepts a TRUSTED-channel video whose title shares a
+    word with the concept OR the week theme. Still gated (trusted channel + topical
+    overlap) — no random or off-topic videos. Returns [] if nothing qualifies."""
     ctoks = _ad_toks(concept)
-    elig = [(vid, ch, mins, title) for vid, ch, mins, title in out
-            if mins and mins <= _AUTO_MAX_MIN and _ad_trusted(ch) and (not ctoks or (ctoks & _ad_toks(title)))]
-    elig.sort(key=lambda t: (_ad_priority(t[1]), t[2]))
+    wtoks = _ad_toks(week_context) - ctoks
+    queries = [f"{concept} tutorial"]
+    if week_context:
+        ctx = " ".join(list(_ad_toks(week_context))[:4])
+        queries.append(f"{concept} {ctx}")
+    cand, seen = [], set()
+    for q in queries:
+        for vid, ch, mins, title in _scrape_search(q):
+            if vid in seen:
+                continue
+            seen.add(vid)
+            if not (mins and mins <= max_min and _ad_trusted(ch)):
+                continue
+            ttoks = _ad_toks(title)
+            on_concept = bool(ctoks & ttoks)
+            on_theme = bool(wtoks & ttoks)
+            if not (on_concept or on_theme):
+                continue
+            # rank: concept-match beats theme-only; priority channel; shorter
+            cand.append((0 if on_concept else 1, _ad_priority(ch), mins, vid, ch, title))
+    cand.sort()
     return [{"video_id": vid, "url": f"https://www.youtube.com/watch?v={vid}",
              "duration_min": mins, "creator": ch, "title": title}
-            for vid, ch, mins, title in elig[:count]]
+            for _, _, mins, vid, ch, title in cand[:count]]
 
 _STOP = {"the", "a", "an", "of", "to", "and", "for", "with", "in", "on", "your",
          "tutorial", "explained", "how", "what", "intro", "introduction", "part"}
