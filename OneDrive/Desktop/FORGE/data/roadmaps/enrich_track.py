@@ -140,6 +140,18 @@ DEEP_DIVE = {
     'word2vec':            [('https://www.youtube.com/watch?v=viZrOnJclY0', 16, 'StatQuest', 'Word Embedding and Word2Vec Clearly Explained', 'intermediate')],
     'rnn':                 [('https://www.youtube.com/watch?v=AsNTP8Kwu80', 16, 'StatQuest', 'Recurrent Neural Networks RNNs Clearly Explained', 'advanced')],
     'lstm':                [('https://www.youtube.com/watch?v=YCzL96nL7j0', 21, 'StatQuest', 'Long Short-Term Memory LSTM Clearly Explained', 'advanced')],
+    # ── candidate batch (gate-verified: kept only if the oembed title matches) ──
+    'gradient-boost':      [('https://www.youtube.com/watch?v=3CC4N4z3GJc', 16, 'StatQuest', 'Gradient Boost Part 1 Regression Main Ideas', 'advanced')],
+    'adaboost':            [('https://www.youtube.com/watch?v=LsK-xG1cLYA', 20, 'StatQuest', 'AdaBoost Clearly Explained', 'advanced')],
+    'naive-bayes':         [('https://www.youtube.com/watch?v=O2L2Uv9pdDA', 15, 'StatQuest', 'Naive Bayes Clearly Explained', 'intermediate')],
+    'svm':                 [('https://www.youtube.com/watch?v=efR1C6CvhmE', 20, 'StatQuest', 'Support Vector Machines Part 1 Main Ideas', 'advanced')],
+    'knn':                 [('https://www.youtube.com/watch?v=HVXime0nQeI', 5,  'StatQuest', 'K-nearest neighbors Clearly Explained', 'beginner')],
+    'regularization':      [('https://www.youtube.com/watch?v=Q81RR3yKn30', 20, 'StatQuest', 'Regularization Part 1 Ridge Regression', 'advanced')],
+    'csrf':                [('https://www.youtube.com/watch?v=eWEgUcHPle0', 6,  'PwnFunction', 'Cross-site Request Forgery CSRF Explained', 'intermediate')],
+    'sqli':                [('https://www.youtube.com/watch?v=ciNHn38EyRc', 9,  'PwnFunction', 'SQL Injection Explained', 'intermediate')],
+    'redis':               [('https://www.youtube.com/watch?v=G1rOthIU-uo', 2,  'Fireship', 'Redis in 100 Seconds', 'beginner')],
+    'firebase':            [('https://www.youtube.com/watch?v=vAoB4VbhRzM', 2,  'Fireship', 'Firebase in 100 Seconds', 'beginner')],
+    'agent':               [('https://www.youtube.com/watch?v=F8NKVhkZZWE', 7,  'IBM Technology', 'What are AI Agents', 'intermediate')],
 }
 KNOWN_GOOD.update(DEEP_DIVE)
 
@@ -157,6 +169,17 @@ KEYWORD_VIDEO_MAP = [
     ('word2vec', 'word2vec'), ('word embedding', 'word2vec'),
     ('recurrent neural', 'rnn'), ('rnn', 'rnn'), ('sequence model', 'rnn'),
     ('lstm', 'lstm'), ('long short-term', 'lstm'), ('long short term', 'lstm'),
+    ('gradient boost', 'gradient-boost'), ('xgboost', 'gradient-boost'),
+    ('adaboost', 'adaboost'),
+    ('naive bayes', 'naive-bayes'),
+    ('support vector', 'svm'), ('svm', 'svm'),
+    ('k-nearest', 'knn'), ('nearest neighbor', 'knn'), ('knn', 'knn'),
+    ('regularization', 'regularization'), ('ridge', 'regularization'), ('lasso', 'regularization'),
+    ('csrf', 'csrf'), ('cross-site request', 'csrf'),
+    ('sql injection', 'sqli'), ('sqli', 'sqli'),
+    ('redis', 'redis'), ('caching', 'redis'),
+    ('firebase', 'firebase'),
+    ('ai agent', 'agent'), ('agentic', 'agent'), ('agent loop', 'agent'), ('agents', 'agent'),
     # ML / stats
     ('logistic regression', 'logistic-regression'), ('regression', 'logistic-regression'),
     ('random forest', 'random-forest'), ('random forests', 'random-forest'),
