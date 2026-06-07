@@ -116,9 +116,13 @@
               "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What AI engineering is",
-              "body": "## Deeper dive: What AI engineering is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What AI engineering is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I'd Learn AI Engineering in 2026 (Complete Roadmap)",
+              "url": "https://www.youtube.com/watch?v=O2UmHpNlwUw",
+              "duration_min": 20,
+              "creator": "Dave Ebbelaar",
+              "difficulty": "curated",
+              "why": "This 20-minute Dave Ebbelaar video on What AI engineering is — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "reading",
@@ -184,9 +188,13 @@
               "body": "## Why virtualenv\nA Python virtualenv is an isolated install. You can have one project on `openai==1.30` and another on `openai==1.50` without them fighting. Without virtualenv, every `pip install` modifies the system Python, and the rest of your computer's Python projects break.\n\n## Setup\nThe snippet below shows exactly what to do:\n\n```bash\ncd polyglot                       # in the project folder from yesterday\npython -m venv .venv              # create the virtualenv\n\n# Activate it\nsource .venv/bin/activate         # macOS/Linux\n.venv\\Scripts\\activate            # Windows PowerShell\n\n# Confirm you're inside the virtualenv\nwhich python                      # should point inside .venv\npip install openai python-dotenv  # the only two packages we need\n```\n\nAfter `pip install`, run `pip freeze > requirements.txt`. Anyone cloning the repo can run `pip install -r requirements.txt` and get the exact same versions.\n\n## .gitignore: the most important file in the project\nCreate `.gitignore` in the project root:\n```\n.venv/\n.env\n__pycache__/\n*.pyc\n.DS_Store\n```\n`.env` will hold your API key tomorrow. The `.gitignore` line is what prevents the key from ever reaching GitHub. Set this BEFORE you create the `.env` file."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Python + .env discipline",
-              "body": "## Deeper dive: Python + .env discipline\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Python + .env discipline** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python Quick Tip: Hiding Passwords and Secret Keys in Environment Variables (Windows)",
+              "url": "https://www.youtube.com/watch?v=IolxqkL7cD8",
+              "duration_min": 5,
+              "creator": "Corey Schafer",
+              "difficulty": "curated",
+              "why": "This 5-minute Corey Schafer video teaches Python + .env discipline directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -1896,9 +1904,13 @@
               "body": "## What this week builds\nA side-by-side console: type one message, see GPT-4o-mini's response on the left and Claude Haiku's response on the right, with cost + latency for each. By Sunday it deploys.\n\n## The minimal call — OpenAI\nThe snippet below shows exactly what to do:\n\n```python\nfrom openai import OpenAI\nclient = OpenAI()\n\nresp = client.chat.completions.create(\n    model='gpt-4o-mini',\n    messages=[\n        {'role': 'system', 'content': 'You are a translator.'},\n        {'role': 'user',   'content': 'Hello, world.'},\n    ],\n    temperature=0.2,\n)\nprint(resp.choices[0].message.content)\nprint(resp.usage)\n```\n\n## The minimal call — Anthropic\nThe snippet below shows exactly what to do:\n\n```python\nfrom anthropic import Anthropic\nclient = Anthropic()\n\nresp = client.messages.create(\n    model='claude-haiku-4-5',\n    system='You are a translator.',         # <-- top-level, NOT in messages\n    messages=[{'role': 'user', 'content': 'Hello, world.'}],\n    max_tokens=200,                          # <-- REQUIRED for Anthropic\n    temperature=0.2,\n)\nprint(resp.content[0].text)\nprint(resp.usage)\n```\n\n## The four differences worth memorising\nThe snippet below shows exactly what to do:\n\n```text\n1. SYSTEM PROMPT\n   OpenAI:   inside messages, role='system'\n   Anthropic: top-level `system=` parameter\n\n2. MAX TOKENS\n   OpenAI:   optional (defaults to model max)\n   Anthropic: REQUIRED on every call\n\n3. RESPONSE SHAPE\n   OpenAI:   resp.choices[0].message.content\n   Anthropic: resp.content[0].text\n\n4. USAGE FIELDS\n   OpenAI:   prompt_tokens / completion_tokens / total_tokens\n   Anthropic: input_tokens / output_tokens (no 'total')\n```\n\nThat's it. Anything beyond these four differences is provider-specific tuning. Knowing both shapes — and being able to convert between them — is what 'two SDKs' actually means in practice."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: The two APIs side by side",
-              "body": "## Deeper dive: The two APIs side by side\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **The two APIs side by side** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "RESTful APIs in 100 Seconds // Build an API from Scratch with Node.js Express",
+              "url": "https://www.youtube.com/watch?v=-MTSQjw5DrM",
+              "duration_min": 12,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 12-minute Fireship video teaches The two APIs side by side directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -4443,9 +4455,13 @@
               "body": "## Hybrid search\n\nStoring embeddings in SQLite works for thousands of vectors. It breaks for millions. The vector database landscape exists because similarity search at scale requires specialised indexing — algorithms that avoid comparing every query vector against every stored vector. This week you build a hybrid search API: FastAPI endpoint, Qdrant or pgvector for storage, BM25 keyword search combined with vector search, and a cross-encoder reranker on the merged results.\n\nThe landscape of vector databases is g\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Hybrid search",
-              "body": "## Deeper dive: Hybrid search\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Hybrid search** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to Implement Hybrid Search with PostgreSQL (Full Tutorial)",
+              "url": "https://www.youtube.com/watch?v=TbtBhbLh0cc",
+              "duration_min": 28,
+              "creator": "Dave Ebbelaar",
+              "difficulty": "curated",
+              "why": "This 28-minute Dave Ebbelaar deep dive on Hybrid search is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "swipe",
@@ -6793,9 +6809,13 @@
               "body": "## What MCP is\n\nEvery agent you build has tools. Right now those tools are Python functions in the same codebase as the agent. Model Context Protocol (MCP) is the emerging standard for decoupling tool implementations from agent clients. Instead of writing tool code inside your agent, you run a separate MCP server process that exposes tools, and your agent client connects to it. This week you build your own MCP server with 8-10 tools over your personal data.\n\nThe protocol itself is JSON-RPC over either stdio (su\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What MCP is",
-              "body": "## Deeper dive: What MCP is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What MCP is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "you need to learn MCP RIGHT NOW!! (Model Context Protocol)",
+              "url": "https://www.youtube.com/watch?v=GuTcle5edjk",
+              "duration_min": 39,
+              "creator": "NetworkChuck",
+              "difficulty": "curated",
+              "why": "This 39-minute NetworkChuck deep dive on What MCP is is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "swipe",
@@ -8689,9 +8709,13 @@
               "body": "## Exact-match caching\n\nAI API costs scale with usage. A feature that costs $0.02 per request is sustainable at 100 requests/day and painful at 100,000. The engineers who ship AI features that are both good and affordable are the ones who understand exactly where the money goes and have applied the right tools to reduce it. This week you take one of your four major projects and cut its cost by 50% without measurable quality loss.\n\nExact-match caching is the simplest and most effective optimisation. If the same prompt i\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Exact-match caching",
-              "body": "## Deeper dive: Exact-match caching\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Exact-match caching** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Prompt Caching? Optimize LLM Latency with AI Transformers",
+              "url": "https://www.youtube.com/watch?v=u57EnkQaUTY",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Exact-match caching directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -10219,9 +10243,13 @@
               "body": "## Realtime APIs\n\nLanguage models started as text-in, text-out systems. They are now text-in-anything-out and anything-in-text-out systems. Vision models read images. Audio models transcribe and generate speech. Video models are arriving. The unifying trend is that the modality boundary is dissolving — tasks that required specialised computer vision or speech processing pipelines can now often be handled by a capable multimodal model.\n\nThis week you build a meeting assistant. Audio in, structured notes and action\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Realtime APIs",
-              "body": "## Deeper dive: Realtime APIs\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Realtime APIs** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "RESTful APIs in 100 Seconds // Build an API from Scratch with Node.js Express",
+              "url": "https://www.youtube.com/watch?v=-MTSQjw5DrM",
+              "duration_min": 12,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 12-minute Fireship video teaches Realtime APIs directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -10535,9 +10563,13 @@
               "body": "## Orient — what you're building this week\n\nAI features have a unique failure surface compared to regular software. The inputs are unbounded natural language. The outputs are probabilistic. The system can be manipulated through the very mechanism it uses to function. This week you take a production project and make it measurably faster and meaningfully safer.\n\nLatency engineering starts with measurement. Time-to-first-token (TTFT) is the user-perceived latency — how long until something appears on screen. Total completion time matters for\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Orient — what you're building this week",
-              "body": "## Deeper dive: Orient — what you're building this week\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Orient — what you're building this week** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 23 ('Safety, Latency Engineering, and the Hard Edges'), day 1."
+              "kind": "video",
+              "title": "What is Prompt Caching? Optimize LLM Latency with AI Transformers",
+              "url": "https://www.youtube.com/watch?v=u57EnkQaUTY",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Latency engineering directly — watch it end to end."
             },
             {
               "kind": "reflection",
@@ -10643,9 +10675,13 @@
               "body": "## Content moderation\n\nAI features have a unique failure surface compared to regular software. The inputs are unbounded natural language. The outputs are probabilistic. The system can be manipulated through the very mechanism it uses to function. This week you take a production project and make it measurably faster and meaningfully safer.\n\nLatency engineering starts with measurement. Time-to-first-token (TTFT) is the user-perceived latency — how long until something appears on screen. Total completion time matters for\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Content moderation",
-              "body": "## Deeper dive: Content moderation\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Content moderation** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Image and Text Moderation with Content Moderator",
+              "url": "https://www.youtube.com/watch?v=qK5m7C29y2k",
+              "duration_min": 14,
+              "creator": "Microsoft Developer",
+              "difficulty": "curated",
+              "why": "This 14-minute Microsoft Developer video teaches Content moderation directly — watch it end to end."
             },
             {
               "kind": "reading",

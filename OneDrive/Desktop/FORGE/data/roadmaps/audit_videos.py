@@ -18,10 +18,12 @@ import enrich_track as E
 extra = E.collect_all_raw_video_urls()
 E.validate_library_and_collect(extra)
 
-url2key = {}
+url2key = {}            # first key (for display)
+url2keys = {}           # ALL keys a url belongs to (a video can serve several concepts)
 for key, entries in E.KNOWN_GOOD.items():
     for tup in entries:
         url2key.setdefault(tup[0], key)
+        url2keys.setdefault(tup[0], set()).add(key)
 
 TRACKS = {
     'ai-automation': 'ai-automation-enriched.json', 'ai-engineering': 'ai-engineering-enriched.json',
@@ -69,7 +71,9 @@ for slug, fn in TRACKS.items():
                 vids += 1
                 url = it.get('url', '')
                 key = url2key.get(url, '?UNKNOWN?')
-                if key not in allowed:
+                # On-domain if the video belongs to ANY key in this track's domain
+                # (a video can serve several concepts; first-key attribution isn't enough).
+                if not (url2keys.get(url, set()) & allowed):
                     issues.append(f"W{w['number']}D{dn}: OFF-DOMAIN key={key}")
                 elif not day_keyword_matches(day.get('title', '') + ' ' + (w.get('title', '') or ''), url, allowed):
                     issues.append(f"W{w['number']}D{dn}: FORCED (no concept match) key={key} title='{day.get('title','')[:40]}'")

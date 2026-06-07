@@ -27,6 +27,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 LIB = HERE / "curated_library.json"
+# Windows consoles are cp1252; video titles contain emoji. Never let a print crash import.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 MAX_MIN = 90          # sanity ceiling only (no real cap — long excellent videos are allowed)
 VID_RE = re.compile(r'^[A-Za-z0-9_-]{11}$')
 _ID_IN_URL = re.compile(r'(?:youtu\.be/|[?&]v=|/embed/|/shorts/)([A-Za-z0-9_-]{11})')
