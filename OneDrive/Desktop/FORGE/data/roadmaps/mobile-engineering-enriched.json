@@ -52,8 +52,8 @@
           "items": [
             {
               "kind": "lesson",
-              "title": "SQL — the language your data lives in",
-              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\nThe snippet below shows exactly what to do:\n\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
               "kind": "video",
@@ -63,17 +63,6 @@
               "creator": "Fireship",
               "difficulty": "beginner",
               "why": "Chosen for clarity: this 2-minute Fireship explainer ('React Native in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
-            },
-            {
-              "kind": "reading",
-              "title": "SQLBolt — Interactive SQL lessons",
-              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
-              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
-            },
-            {
-              "kind": "lesson",
-              "title": "Git — version control from day 1",
-              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
               "kind": "reading",
@@ -4213,12 +4202,12 @@
             },
             {
               "kind": "video",
-              "title": "React in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Tn6-PIqc4UM",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('React in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "title": "Geofencing with Azure Maps",
+              "url": "https://www.youtube.com/watch?v=nsrgYhaYNVY",
+              "duration_min": 13,
+              "creator": "Microsoft Developer",
+              "difficulty": "curated",
+              "why": "This 13-minute Microsoft Developer video teaches Maps directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -6249,9 +6238,13 @@
               "body": "## Auth flows on mobile\n\nAuthentication on mobile has unique challenges compared to the web. There is no browser cookie jar. Sessions must be stored securely. The user expects to stay logged in for weeks or months without being asked to re-authenticate. And mobile adds capabilities the web does not have: biometric authentication (Face ID, Touch ID, fingerprint) as a convenient and secure unlock mechanism.\n\nToken storage: after a successful login, you receive an access token (short-lived, e.g., 15 minutes) and a refresh \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Auth flows on mobile",
-              "body": "## Deeper dive: Auth flows on mobile\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Auth flows on mobile** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Session vs Token Authentication in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=UBUNrFtufWo",
+              "duration_min": 3,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 3-minute Fireship video teaches Auth flows on mobile directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -6306,9 +6299,13 @@
               "body": "## Refresh tokens\n\nAuthentication on mobile has unique challenges compared to the web. There is no browser cookie jar. Sessions must be stored securely. The user expects to stay logged in for weeks or months without being asked to re-authenticate. And mobile adds capabilities the web does not have: biometric authentication (Face ID, Touch ID, fingerprint) as a convenient and secure unlock mechanism.\n\nToken storage: after a successful login, you receive an access token (short-lived, e.g., 15 minutes) and a refresh \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Refresh tokens",
-              "body": "## Deeper dive: Refresh tokens\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Refresh tokens** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "The difference between, ID, access, refresh, and session tokens? | One Dev Question: Hirsch Singhal",
+              "url": "https://www.youtube.com/watch?v=41vmzPdbfXM",
+              "duration_min": 3,
+              "creator": "Microsoft Azure",
+              "difficulty": "curated",
+              "why": "This 3-minute Microsoft Azure video teaches Refresh tokens directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -7228,9 +7225,13 @@
               "body": "## Analytics platforms\n\nMobile analytics and crash reporting are not optional for a production app. Without them, you find out about crashes from App Store reviews, and you find out about user behaviour patterns when you guess. With them, you have evidence.\n\nCrash reporting: Sentry is the standard. It captures unhandled JavaScript errors, native crashes (in development builds), the stack trace, the device model and OS version, the user's session, and groups duplicate crashes. One crash affecting 500 users appears as on\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Analytics platforms",
-              "body": "## Deeper dive: Analytics platforms\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Analytics platforms** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Observability vs. APM vs. Monitoring",
+              "url": "https://www.youtube.com/watch?v=CAQ_a2-9UOI",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Analytics platforms directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -7279,13 +7280,9 @@
               "body": "## Performance monitoring\n\nMobile analytics and crash reporting are not optional for a production app. Without them, you find out about crashes from App Store reviews, and you find out about user behaviour patterns when you guess. With them, you have evidence.\n\nCrash reporting: Sentry is the standard. It captures unhandled JavaScript errors, native crashes (in development builds), the stack trace, the device model and OS version, the user's session, and groups duplicate crashes. One crash affecting 500 users appears as on\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Observability vs. APM vs. Monitoring",
-              "url": "https://www.youtube.com/watch?v=CAQ_a2-9UOI",
-              "duration_min": 10,
-              "creator": "IBM Technology",
-              "difficulty": "curated",
-              "why": "This 10-minute IBM Technology video teaches Performance monitoring directly — watch it end to end."
+              "kind": "lesson",
+              "title": "Deeper dive: Performance monitoring",
+              "body": "## Deeper dive: Performance monitoring\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Performance monitoring** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",

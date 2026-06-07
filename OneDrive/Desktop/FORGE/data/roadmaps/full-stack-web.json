@@ -39,93 +39,56 @@
       "days": [
         {
           "number": 0,
-          "title": "Your Coding Environment — Node.js + VS Code",
-          "summary": "Install Node.js, set up VS Code, run your first script. The foundation for every full-stack week.",
+          "title": "Your Coding Environment – Node.js + VS Code",
+          "summary": "Install Node.js, set up VS Code, run your first JavaScript file.",
           "items": [
             {
               "kind": "lesson",
-              "title": "SQL — the language your data lives in",
-              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+              "title": "What Node.js is and why you need it",
+              "body": "## What Node.js is\nNode.js lets you run JavaScript outside a browser – on your laptop, on a server, anywhere. Every tool in this track (npm, Next.js, Prisma, etc.) runs on Node.js. Without it, nothing works.\n\n## What you'll do today\n1. Install Node.js from nodejs.org (LTS version)\n2. Install VS Code from code.visualstudio.com\n3. Verify installations: `node --version`, `npm --version`\n4. Write `hello.js` with `console.log(\"Hello Forge\")`\n5. Run it: `node hello.js`\n\n## Why before anything else\nEvery React component, every API endpoint, every build script you write this track runs through Node.js. Get this right once and you're set for 24 weeks."
             },
             {
               "kind": "video",
-              "title": "SQL Explained in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch second. The shape of SQL in 100 seconds — tables, rows, joins. Visual reinforcement before the docs."
-            },
-            {
-              "kind": "reading",
-              "title": "SQLBolt — Interactive SQL lessons",
-              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
-              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
-            },
-            {
-              "kind": "lesson",
-              "title": "Git — version control from day 1",
-              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
-            },
-            {
-              "kind": "video",
-              "title": "Git Explained in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=hwP7WQkmECE",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "why": "Watch second. 100 seconds. Visual primer for what Git is doing under the hood. The five commands above suddenly click."
-            },
-            {
-              "kind": "reading",
-              "title": "Git Handbook (GitHub)",
-              "url": "https://docs.github.com/en/get-started/using-git/about-git",
-              "why": "Read third. GitHub's short Git primer. Skim the basics; bookmark for whenever you forget a command."
-            },
-            {
-              "kind": "lesson",
-              "title": "What this environment is — and why before anything else",
-              "body": "## What it is\nFull-stack web development means writing JavaScript that runs in **two places**: in a browser (the frontend) and on a server (the backend). **Node.js** is what runs your JavaScript on the server. **VS Code** is the editor where you'll spend most of your time.\n\nBy the end of today:\n- Node.js installed; `node --version` works in your terminal.\n- VS Code installed with one or two essential extensions.\n- You've created a folder, written a one-line `hello.js`, and run it with `node hello.js`.\n\n## Why before anything else\nWeek 1 expects you to `npm install` packages, run a dev server, and edit files in a real editor. None of that works without Node + VS Code in place today."
-            },
-            {
-              "kind": "video",
-              "title": "Install Node.js + VS Code — 10 min setup",
+              "title": "Node.js in 100 Seconds",
               "url": "https://www.youtube.com/watch?v=ENrzD9HAZK4",
-              "duration_min": 12,
-              "creator": "various",
-              "why": "Watch first. You see exactly what to download, where to click, and how to confirm everything works. Then repeat in your own terminal."
+              "duration_min": 2,
+              "creator": "Fireship",
+              "why": "The fastest explanation of what Node.js is and why it matters."
             },
             {
-              "kind": "lesson",
-              "title": "See it in action — the exact steps, with what you should see",
-              "body": "## Walkthrough\nDo every step.\n\n1. Install **Node.js LTS** from nodejs.org. Default options are fine.\n2. Open a terminal (Windows: PowerShell. Mac/Linux: Terminal). Confirm with `node --version` and `npm --version`.\n3. Install **VS Code** from code.visualstudio.com.\n4. Create a folder: `mkdir hello-forge && cd hello-forge`.\n5. Open it in VS Code: `code .` (or File → Open Folder if `code .` isn't on your PATH).\n6. New file `hello.js` with one line: `console.log('Hello Forge');`. Save.\n7. In the terminal: `node hello.js` → confirm `Hello Forge` prints.\n\n## Verify\nPASS:\n[x] `node --version` works\n[x] VS Code opens your hello-forge folder\n[x] `node hello.js` prints Hello Forge"
+              "kind": "reading",
+              "title": "Node.js official download",
+              "url": "https://nodejs.org/",
+              "why": "Download the LTS version. The website detects your OS automatically."
             },
             {
               "kind": "swipe",
-              "title": "Quick check — swipe to answer",
+              "title": "Quick check – swipe to answer",
               "cards": [
                 {
-                  "prompt": "Node.js lets you run JavaScript on a server (or your laptop), not just in the browser.",
+                  "prompt": "Node.js allows JavaScript to run outside a web browser.",
                   "answer": true,
-                  "whenRight": "Right — that's the point. Node is the runtime for backend JS, build tools, scripts.",
-                  "whenWrong": "Node runs JS outside the browser. Frontends in the browser, backends in Node."
+                  "whenRight": "Correct – on your server, laptop, or anywhere.",
+                  "whenWrong": "Node.js is a runtime for JavaScript anywhere, not just browsers."
                 },
                 {
-                  "prompt": "You should install the LATEST (non-LTS) Node release for the most features.",
-                  "answer": false,
-                  "whenRight": "Right — pick LTS for stability. Latest is for experimentation; LTS for production-style projects.",
-                  "whenWrong": "Pick the LTS (long-term support) build. Less breakage. Latest is for cutting-edge experiments only."
+                  "prompt": "You need Node.js installed to use npm (Node Package Manager).",
+                  "answer": true,
+                  "whenRight": "Yes – npm comes bundled with Node.js.",
+                  "whenWrong": "npm is installed automatically with Node.js."
                 },
                 {
-                  "prompt": "`node hello.js` in the terminal runs the file with Node.",
+                  "prompt": "`node --version` prints the installed Node.js version.",
                   "answer": true,
-                  "whenRight": "Right — Node executes the file. Output appears in the same terminal.",
-                  "whenWrong": "Yes — that's the basic run command. `node <file.js>` executes it and prints any console.log output."
+                  "whenRight": "Right – always verify after install.",
+                  "whenWrong": "`node --version` is the verification command."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — set it up",
-              "body": "[CODE] Do every step.\n\n1. Install **Node.js LTS** from nodejs.org. Default options are fine.\n2. Open a terminal (Windows: PowerShell. Mac/Linux: Terminal). Confirm with `node --version` and `npm --version`.\n3. Install **VS Code** from code.visualstudio.com.\n4. Create a folder: `mkdir hello-forge && cd hello-forge`.\n5. Open it in VS Code: `code .` (or File → Open Folder if `code .` isn't on your PATH).\n6. New file `hello.js` with one line: `console.log('Hello Forge');`. Save.\n7. In the terminal: `node hello.js` → confirm `Hello Forge` prints.\n\nPASS:\n[x] `node --version` works\n[x] VS Code opens your hello-forge folder\n[x] `node hello.js` prints Hello Forge"
+              "title": "Verify your environment",
+              "body": "[CODE] Run these commands in your terminal:\n```bash\nnode --version\nnpm --version\necho 'console.log(\"Hello Forge\")' > hello.js\nnode hello.js\n```\nPASS:\n[x] `node --version` prints v20.x or higher\n[x] `npm --version` prints 10.x or higher\n[x] `node hello.js` prints \"Hello Forge\""
             }
           ]
         },

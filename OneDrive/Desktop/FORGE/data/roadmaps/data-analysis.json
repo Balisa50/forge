@@ -112,8 +112,8 @@
           "items": [
             {
               "kind": "lesson",
-              "title": "SQL — the language your data lives in",
-              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\nThe snippet below shows exactly what to do:\n\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
               "kind": "video",
@@ -123,17 +123,6 @@
               "creator": "Alex The Analyst",
               "difficulty": "curated",
               "why": "This 5-minute Alex The Analyst video teaches What does a data analyst do? directly — watch it end to end."
-            },
-            {
-              "kind": "reading",
-              "title": "SQLBolt — Interactive SQL lessons",
-              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
-              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
-            },
-            {
-              "kind": "lesson",
-              "title": "Git — version control from day 1",
-              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
               "kind": "reading",
@@ -2857,9 +2846,13 @@
               "body": "## What it is\nEvery analyst you'll compete with has Claude, ChatGPT, and Copilot. The edge isn't *using* AI — it's using it **well**: let it draft, then **you verify against the data**, and you remain accountable for every number you ship.\n\n## Why it matters\nAI is fluent, and fluency reads as confidence — but fluency is not accuracy. It will write a plausible SQL query against columns that don't exist, or invent a statistic, in the same self-assured tone it uses when it's right. Ship that unchecked and you'll be humiliated defending a wrong number in a meeting. Used with verification, the same tool makes you 2-3x faster with *no* loss of trust. The whole skill this week is building the verify-reflex so AI's speed never becomes AI's risk.\n\n## The contract\nAI supplies *drafts and syntax*; you supply *the data, the judgement, and the final sign-off*. It never gets to be the source of a number — only a faster way to produce something you then check."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: AI accelerates, you stay accountable",
-              "body": "## Deeper dive: AI accelerates, you stay accountable\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **AI accelerates, you stay accountable** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "AI in a Minute: Prompt Engineering",
+              "url": "https://www.youtube.com/watch?v=vGdyePbGNaE",
+              "duration_min": 2,
+              "creator": "Microsoft Cloud",
+              "difficulty": "curated",
+              "why": "This 2-minute Microsoft Cloud video teaches AI accelerates, you stay accountable directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -4445,9 +4438,13 @@
               "body": "## What it is\nLast week you found *who* leaves (which departments, roles, pay levels). This week adds the **time dimension**: *when* in an employee's tenure is the risk highest? Tenure is `YearsAtCompany`, and the question is whether attrition risk is flat over time or spikes at certain points.\n\n## Why it matters\nThe intervention changes completely depending on the answer. If risk spikes in the **first 1-2 years**, the problem is onboarding and early experience — fix the first 90 days. If it spikes around **years 3-5**, it's career stagnation — fix promotion and growth paths. A flat curve would mean tenure isn't the lever at all. You can't design a retention program until you know *when* people are at risk, and most companies have never actually looked.\n\n## The discipline (again)\nForm the hypothesis first, before plotting: most attrition research finds an **early-tenure spike** — new hires who realise it's not a fit and leave within two years. Write that prediction down, then test it."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What tenure analysis is",
-              "body": "## Deeper dive: What tenure analysis is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What tenure analysis is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Master HR Analytics in Power BI: Employee Tenure Analysis & Userelationship | Active Employees",
+              "url": "https://www.youtube.com/watch?v=fvgcx8QLqZU",
+              "duration_min": 29,
+              "creator": "Learn Microsoft Fabric, Power BI, SQL Amit Chandak",
+              "difficulty": "curated",
+              "why": "This 29-minute Learn Microsoft Fabric, Power BI, SQL Amit Chandak deep dive on What tenure analysis is is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "lesson",
@@ -4492,13 +4489,9 @@
               "body": "## What it is\nBin `YearsAtCompany` into tenure bands and compute attrition rate per band — the cut-then-groupby move again, now revealing the *shape* of risk over time.\n\n## Why it matters\nThis single table tests your hypothesis and usually delivers the project's most strategic insight: the **early-tenure spike**. If years 0-2 show double the base rate, the company is losing people it just spent money hiring and training — the most expensive kind of attrition. Quantifying exactly how steep that early spike is tells HR how much to invest in onboarding and the first-year experience.\n\n## The pattern\nUse *finer* bands early (0-1, 1-2, 2-5) where the action is and wider ones later (5-10, 10+). Then `groupby(band)[\"left\"].mean()` and read the curve."
             },
             {
-              "kind": "video",
-              "title": "Master HR Analytics in Power BI: Employee Tenure Analysis & Userelationship | Active Employees",
-              "url": "https://www.youtube.com/watch?v=fvgcx8QLqZU",
-              "duration_min": 29,
-              "creator": "Learn Microsoft Fabric, Power BI, SQL Amit Chandak",
-              "difficulty": "curated",
-              "why": "This 29-minute Learn Microsoft Fabric, Power BI, SQL Amit Chandak deep dive on Attrition by tenure band is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
+              "kind": "lesson",
+              "title": "Deeper dive: Attrition by tenure band",
+              "body": "## Deeper dive: Attrition by tenure band\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Attrition by tenure band** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -5645,9 +5638,13 @@
               "body": "## What it is\nBoth projects used clean, packaged datasets. Most real analyst work doesn't get that gift — the data you need (competitor prices, listings, public stats) lives on **web pages**, not in a tidy CSV. **Web scraping** is programmatically extracting that data into a table you can analyse.\n\n## Why it matters\nScraping unlocks questions no packaged dataset can answer: \"how did our competitor's prices move this month?\" There's no CSV for that — but there's a web page, updated daily, that you can turn into one. The analyst who can build their own dataset isn't limited to questions someone already answered. It's the difference between consuming data and *sourcing* it.\n\n## The shape of it\nThree steps: fetch the page (HTML), parse it to pull the values you want, and write them to a DataFrame/CSV. This week: ethics first, then BeautifulSoup, then schedule it, then analyse the result."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why analysts scrape",
-              "body": "## Deeper dive: Why analysts scrape\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why analysts scrape** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How I Built a Web Scraping AI Agent - Use AI To Scrape ANYTHING",
+              "url": "https://www.youtube.com/watch?v=G5djZjdxVvo",
+              "duration_min": 21,
+              "creator": "Tech With Tim",
+              "difficulty": "curated",
+              "why": "This 21-minute Tech With Tim video on Why analysts scrape — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",
@@ -8535,9 +8532,13 @@
               "body": "## What it is\n**BigQuery** is Google's cloud data warehouse — where the data lives and SQL runs at scale. Its free tier (10GB storage, 1TB queries/month) is plenty to learn on. dbt will connect to it.\n\n## Why it matters\nThis is your first real **cloud warehouse**, the environment professional analytics actually runs in (not a local SQLite file). Learning that data lives in a warehouse and tools connect to it — rather than CSVs on your laptop — is a key mental shift toward how data teams work."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Set up BigQuery (free)",
-              "body": "## Deeper dive: Set up BigQuery (free)\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Set up BigQuery (free)** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How to get started with BigQuery",
+              "url": "https://www.youtube.com/watch?v=BH_7_zVk5oM",
+              "duration_min": 18,
+              "creator": "Google Cloud Tech",
+              "difficulty": "curated",
+              "why": "This 18-minute Google Cloud Tech video on Set up BigQuery (free) — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",

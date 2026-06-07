@@ -1307,8 +1307,24 @@ TRACK_OFF_TOPIC_KEYWORDS = {
     'devops-cloud': ['SQL', 'SQLBolt', 'sqlbolt'],
 }
 
+# Stale Day-0 template that leaked SQL lessons into non-data tracks' setup day.
+# These EXACT titles are never a legitimate lesson — strip them from ANY track,
+# any week. Real SQL teaching (full-stack W10 Postgres, data tracks, etc.) has
+# different titles and is untouched.
+_STALE_ITEM_TITLES = {
+    'sql the language your data lives in',
+    'sql explained in 100 seconds',
+    'sqlbolt interactive sql lessons',
+}
+
+
+def _norm_title(t: str) -> str:
+    return re.sub(r'\s+', ' ', re.sub(r'[^a-z0-9 ]', ' ', (t or '').lower())).strip()
+
 
 def is_off_topic(item: dict, track_slug: str) -> bool:
+    if _norm_title(item.get('title', '')) in _STALE_ITEM_TITLES:
+        return True  # leaked stale SQL-template item — never legitimate
     suspects = TRACK_OFF_TOPIC_KEYWORDS.get(track_slug, [])
     if not suspects:
         return False

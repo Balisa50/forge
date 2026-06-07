@@ -1104,9 +1104,13 @@
               "body": "## The principle of least privilege\nThe IAM user your workflow uses should be able to do ONLY what the workflow needs and nothing else. If a credential leaks, the blast radius is exactly the workflow's permissions.\n\n## What the workflow needs\n1. PUT objects into your S3 bucket (sync `index.html`).\n2. Invalidate CloudFront for the matching distribution.\n\nThat's it. No EC2, no IAM, no Route53, no SSM — none of which the workflow touches.\n\n## Create the user (AWS console)\n1. **IAM → Users → Create user**.\n2. Name: `edge-portfolio-ci`.\n3. **DO NOT** enable AWS Management Console access. Programmatic access only.\n4. Skip groups → Next → Create user.\n5. After creation: open the user → **Security credentials → Create access key** → **Application running outside AWS**.\n6. Download the CSV with `Access key ID` + `Secret access key`. **You will see the secret ONCE.**\n\n## Attach the minimal policy\nUser → **Permissions → Add permissions → Attach policies directly → Create policy** → JSON tab. Paste (replace YOUR-BUCKET + YOUR-DIST):\n\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"S3SyncSiteOnly\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"s3:PutObject\", \"s3:DeleteObject\", \"s3:ListBucket\"],\n      \"Resource\": [\n        \"arn:aws:s3:::YOUR-BUCKET\",\n        \"arn:aws:s3:::YOUR-BUCKET/*\"\n      ]\n    },\n    {\n      \"Sid\": \"InvalidateCloudFront\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"cloudfront:CreateInvalidation\"],\n      \"Resource\": \"arn:aws:cloudfront::*:distribution/YOUR-DIST\"\n    }\n  ]\n}\n```\n\nSave as `EdgePortfolioCiPolicy`. Attach to the user. Done.\n\n## The rule for every CI credential going forward\n- Dedicated IAM user per pipeline (never reuse your dev creds).\n- Programmatic access only (no console login).\n- Inline policy that names the exact resources, never `*`.\n- Rotate the access key every 90 days.\n\nThis is the practice that prevents the disasters."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: AWS IAM user for CI",
-              "body": "## Deeper dive: AWS IAM user for CI\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **AWS IAM user for CI** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Attaching an IAM Policy to a User in AWS | AWS Tutorial | AWS Series #19",
+              "url": "https://www.youtube.com/watch?v=OdNnS-0MX-c",
+              "duration_min": 1,
+              "creator": "KodeKloud",
+              "difficulty": "curated",
+              "why": "This 1-minute KodeKloud video teaches AWS IAM user for CI directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -1870,12 +1874,12 @@
             },
             {
               "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
+              "title": "Learn Docker in 7 Easy Steps - Full Beginner's Tutorial",
+              "url": "https://www.youtube.com/watch?v=gAkwW2tuIqE",
+              "duration_min": 12,
               "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "difficulty": "curated",
+              "why": "This 12-minute Fireship video teaches Install + first container directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -1980,9 +1984,13 @@
               "body": "## Install Docker Desktop\n- **macOS**: download from docker.com/products/docker-desktop. Drag to Applications. Launch.\n- **Windows**: ensure WSL2 enabled, install from same URL.\n- **Linux**: native `docker` package or Docker Desktop for Linux (newer).\n\nAfter install, in a fresh terminal:\n```bash\ndocker --version\n# Docker version 27.x ...\n\ndocker run hello-world\n```\nYou should see the welcome message. If you do, Docker is working end-to-end (image pulled from Docker Hub, container ran, output captured).\n\n## The five commands you'll use most\nThe snippet below shows exactly what to do:\n\n```bash\ndocker pull IMAGE                 # download an image\ndocker run -p HOST:CONT IMAGE     # run a container, map ports\ndocker ps                         # list running containers\ndocker logs CONTAINER             # see its output\ndocker stop CONTAINER             # graceful stop (SIGTERM)\n```\n\n## Run a real image — nginx\nThe snippet below shows exactly what to do:\n\n```bash\ndocker run -d --name web -p 8080:80 nginx:alpine\n# -d         detached (background)\n# --name     give it a friendly name\n# -p 8080:80 map host port 8080 to container port 80\nThe snippet below shows exactly what to do:\n\n```\n\nOpen http://localhost:8080 — you'll see the nginx welcome page. Inside a Docker container. Running. Just like that.\n\n```bash\ndocker ps               # confirms it's running\ndocker logs web         # nginx access logs\ndocker stop web         # graceful stop\ndocker rm web           # remove the container record\n```\n\n## Inspect the container's worldview\nThe snippet below shows exactly what to do:\n\n```bash\n# spin one up again, this time exec into it\ndocker run -d --name web -p 8080:80 nginx:alpine\ndocker exec -it web sh\n# inside the container now\nps aux              # only the nginx process — pid namespace at work\nls /                # alpine root — different from your host\nhostname            # synthetic name like '7f3a2c...'\nexit\n```\n\nDifferent process list. Different filesystem. Different hostname. All on your machine. The namespaces in action."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Install + first container",
-              "body": "## Deeper dive: Install + first container\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Install + first container** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Docker Tutorial for Beginners",
+              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
+              "duration_min": 6,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "reading",
@@ -2848,9 +2856,13 @@
               "body": "## Two minimalism schools\n\n### Alpine\nThe snippet below shows exactly what to do:\n\n```dockerfile\nFROM node:20-alpine\n# ~50 MB. Has busybox shell + apk package manager.\n# Debug-friendly: `docker exec -it container sh` works.\nThe snippet below shows exactly what to do:\n\n```\nTrade: still has a shell + package manager → larger CVE surface than distroless.\n\n### Distroless (Google)\nThe snippet below shows exactly what to do:\n\n```dockerfile\nFROM gcr.io/distroless/nodejs20-debian12\n# ~80 MB. NO shell. NO package manager. NO ssh.\n# Only the language runtime + your app.\nThe snippet below shows exactly what to do:\n\n```\nTrade: can't `exec sh` for debugging in prod. Use `gcr.io/distroless/nodejs20-debian12:debug` (has busybox) for troubleshooting only.\n\n## The multi-stage build with distroless\nThe snippet below shows exactly what to do:\n\n```dockerfile\n# Stage 1: build with full toolchain\nFROM node:20-alpine AS build\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build && npm prune --production\n\n# Stage 2: distroless runtime\nFROM gcr.io/distroless/nodejs20-debian12 AS runtime\nWORKDIR /app\nCOPY --from=build /app/node_modules ./node_modules\nCOPY --from=build /app/dist ./dist\nCOPY --from=build /app/package.json ./package.json\nUSER nonroot                # distroless provides this user out-of-the-box\nEXPOSE 3000\nCMD [\"dist/server.js\"]      # entrypoint is /usr/bin/node\n```\n\n## What you can no longer do (correctly)\nThe snippet below shows exactly what to do:\n\n```bash\ndocker exec -it container sh      # fails — no shell in distroless\ndocker exec -it container ls /    # fails — no ls\n```\n\nUse the `:debug` variant for local debugging; the non-debug variant for prod.\n\n## For a static site (Edge Portfolio)\nDistroless equivalent: `gcr.io/distroless/static-debian12` (~2 MB!). Or you can run nginx as non-root in a small Alpine.\n\n## Build + size compare\nThe snippet below shows exactly what to do:\n\n```bash\ndocker build -t myapp:alpine -f Dockerfile.alpine .\ndocker build -t myapp:distroless -f Dockerfile.distroless .\ndocker image ls myapp\n# REPOSITORY  TAG         SIZE\n# myapp       alpine      120 MB\n# myapp       distroless   95 MB\nThe snippet below shows exactly what to do:\n\n```\n\nReal numbers; real differences."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Distroless or minimal Alpine",
-              "body": "## Deeper dive: Distroless or minimal Alpine\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Distroless or minimal Alpine** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Container Security Explained",
+              "url": "https://www.youtube.com/watch?v=b_euX_M82uI",
+              "duration_min": 7,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 7-minute IBM Technology video teaches Distroless or minimal Alpine directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -3844,9 +3856,13 @@
               "body": "## Deployments + ReplicaSets\n\nKubernetes is the operating system for containers at scale. The core problem it solves: you have 10 containers (your app, the database, the cache, the background workers, the metrics collector) running across 5 servers. How do you decide which container runs on which server? How do you restart crashed containers? How do you update containers without downtime? How do you expose services on the network? Kubernetes answers all of these questions with a declarative API.\n\nThe key mental model: you te\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Deployments + ReplicaSets",
-              "body": "## Deeper dive: Deployments + ReplicaSets\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Deployments + ReplicaSets** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Kubernetes StatefulSet simply explained | Deployment vs StatefulSet",
+              "url": "https://www.youtube.com/watch?v=pPQKAR1pA9U",
+              "duration_min": 16,
+              "creator": "TechWorld with Nana",
+              "difficulty": "curated",
+              "why": "This 16-minute TechWorld with Nana video on Deployments + ReplicaSets — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "widget",
@@ -6187,9 +6203,13 @@
               "body": "## Managed K8s comparison\n\nManaged Kubernetes services (EKS on AWS, GKE on Google Cloud, AKS on Azure) eliminate the burden of managing the Kubernetes control plane. In a self-managed cluster, you are responsible for: etcd backups, API server certificate rotation, control plane version upgrades, master node high availability, and more. With a managed service, the cloud provider handles all of that. You pay for the worker nodes; the control plane is managed.\n\nEKS (Amazon Elastic Kubernetes Service): AWS manages the control\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Managed K8s comparison",
-              "body": "## Deeper dive: Managed K8s comparison\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Managed K8s comparison** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How Kubernetes works",
+              "url": "https://www.youtube.com/watch?v=daVUONZqn88",
+              "duration_min": 6,
+              "creator": "Microsoft Azure",
+              "difficulty": "curated",
+              "why": "This 6-minute Microsoft Azure video teaches Managed K8s comparison directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -7122,9 +7142,13 @@
               "body": "## What counts as a secret\n\nSecrets management is one of the most consequential security decisions in infrastructure. A secret is any value that provides access: API keys, database passwords, TLS private keys, OAuth client secrets, SSH private keys. How you store, distribute, rotate, and audit secrets determines whether a breach exposes just one system or your entire infrastructure.\n\nThe worst approach: hardcoded secrets in source code. They end up in git history forever, visible to everyone with repository access, and cop\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What counts as a secret",
-              "body": "## Deeper dive: What counts as a secret\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What counts as a secret** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Secrets Management: Secure Credentials & Avoid Data Leaks",
+              "url": "https://www.youtube.com/watch?v=BqekRTA6VCs",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches What counts as a secret directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -8161,9 +8185,13 @@
               "body": "## Flux\n\nGitOps is the operational model where the desired state of your infrastructure and applications is stored in git, and automation continuously reconciles actual state to match the desired state. The git repository becomes the single source of truth: if it is in git, it is deployed; if it is not in git, it should not exist. The phrase \"GitOps\" was coined by Weaveworks in 2017; the pattern is now widely adopted.\n\nThe two principles of GitOps: declarative (the desired state is expressed declarativel\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Flux",
-              "body": "## Deeper dive: Flux\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Flux** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Demystifying GitOps: A Beginner-Friendly Explanation | KodeKloud",
+              "url": "https://www.youtube.com/watch?v=GlG6Xr2HH1g",
+              "duration_min": 9,
+              "creator": "KodeKloud",
+              "difficulty": "curated",
+              "why": "This 9-minute KodeKloud video teaches Flux directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -8592,9 +8620,13 @@
               "body": "## Metrics vs logs vs traces\n\nObservability is the ability to understand the internal state of your system from its external outputs. The three pillars: metrics (numeric measurements over time), logs (timestamped event records), and traces (end-to-end request journeys across services). In a containerised, microservices environment, these three together tell the complete story of what your system is doing and why.\n\nPrometheus is the standard metrics system for Kubernetes. It pulls metrics from targets (your applications and K\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Metrics vs logs vs traces",
-              "body": "## Deeper dive: Metrics vs logs vs traces\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Metrics vs logs vs traces** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Grafana is the goat... Let's deploy the LGTM stack",
+              "url": "https://www.youtube.com/watch?v=1X3dV3D5EJg",
+              "duration_min": 6,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 6-minute Fireship video teaches Metrics vs logs vs traces directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -9111,9 +9143,13 @@
               "body": "## Burn-rate alerts\n\nSite Reliability Engineering is the discipline of applying software engineering to infrastructure and operations problems. It originated at Google when they hired software engineers to run production systems and gave them the mandate to automate themselves out of operational toil. The result: Google runs millions of servers with a small SRE team. The SRE book (available free at sre.google) codifies these practices.\n\nSLOs (Service Level Objectives): a target reliability level agreed upon between \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Burn-rate alerts",
-              "body": "## Deeper dive: Burn-rate alerts\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Burn-rate alerts** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "SRE Golden Signals Explained",
+              "url": "https://www.youtube.com/watch?v=-U9E1PhrM3o",
+              "duration_min": 6,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 6-minute IBM Technology video teaches Burn-rate alerts directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -10059,9 +10095,13 @@
               "body": "## Database backups\n\nDisaster recovery is about business continuity when things go catastrophically wrong: a region goes down, data gets corrupted, a database is accidentally dropped, ransomware encrypts your storage. Most teams have backup policies they have never tested. The only backup that matters is one you have verified can be restored in the required time window.\n\nTwo key metrics define your DR requirements. RPO (Recovery Point Objective): the maximum age of data you can afford to lose. If your RPO is 1 hour,\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Database backups",
-              "body": "## Deeper dive: Database backups\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Database backups** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Disaster Recovery vs. Backup: What's the difference?",
+              "url": "https://www.youtube.com/watch?v=07EHsPuKXc0",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Database backups directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -10110,13 +10150,9 @@
               "body": "## Application-level backup tools\n\nDisaster recovery is about business continuity when things go catastrophically wrong: a region goes down, data gets corrupted, a database is accidentally dropped, ransomware encrypts your storage. Most teams have backup policies they have never tested. The only backup that matters is one you have verified can be restored in the required time window.\n\nTwo key metrics define your DR requirements. RPO (Recovery Point Objective): the maximum age of data you can afford to lose. If your RPO is 1 hour,\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Disaster Recovery vs. Backup: What's the difference?",
-              "url": "https://www.youtube.com/watch?v=07EHsPuKXc0",
-              "duration_min": 10,
-              "creator": "IBM Technology",
-              "difficulty": "curated",
-              "why": "This 10-minute IBM Technology video teaches Application-level backup tools directly — watch it end to end."
+              "kind": "lesson",
+              "title": "Deeper dive: Application-level backup tools",
+              "body": "## Deeper dive: Application-level backup tools\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Application-level backup tools** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "reading",

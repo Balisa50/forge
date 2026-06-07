@@ -72,17 +72,6 @@
             },
             {
               "kind": "lesson",
-              "title": "SQL — the language your data lives in",
-              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\nThe snippet below shows exactly what to do:\n\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
-            },
-            {
-              "kind": "reading",
-              "title": "SQLBolt — Interactive SQL lessons",
-              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
-              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
-            },
-            {
-              "kind": "lesson",
               "title": "PyTorch — tensors, autograd, the 90-second mental model",
               "body": "## What PyTorch is\nPyTorch is the deep-learning library most modern AI work uses. Whether you ever build a neural net from scratch or just fine-tune an off-the-shelf one, you read PyTorch code.\n\n```bash\npip install torch\n```\nThe snippet below shows exactly what to do:\n\n```python\nimport torch\n```\n\n## Two ideas that are the whole library\n### 1. Tensor — a multi-dimensional array (like NumPy, but on GPU)\nThe snippet below shows exactly what to do:\n\n```python\nx = torch.tensor([[1., 2.], [3., 4.]])\ny = x @ x.T              # @ is matrix multiply, same as NumPy\n```\n\n### 2. Autograd — automatic gradient tracking\nThe snippet below shows exactly what to do:\n\n```python\nw = torch.tensor([2.0], requires_grad=True)  # we'll learn this\nloss = (w * 3 - 6) ** 2\nloss.backward()\nprint(w.grad)            # PyTorch computed dloss/dw automatically\n```\n\nTensor + autograd → you can write a training loop in 15 lines. That's the whole point of PyTorch.\n\n## Move work to GPU\nThe snippet below shows exactly what to do:\n\n```python\ndevice = 'cuda' if torch.cuda.is_available() else 'cpu'\nx = x.to(device); model = model.to(device)\n```\n\n## When you'll see PyTorch next\nEvery neural-net / fine-tuning week on this track. Tensors + autograd + .to(device) is the prerequisite — the rest you learn week by week."
             },
@@ -1163,9 +1152,13 @@
               "body": "## What it is\npd.concat() stacks multiple DataFrames vertically — same columns, more rows.\n\n```python\nimport pandas as pd\n\noct = pd.read_parquet('data/yellow_tripdata_2023-10.parquet')\nnov = pd.read_parquet('data/yellow_tripdata_2023-11.parquet')\ndec = pd.read_parquet('data/yellow_tripdata_2023-12.parquet')\n\ndf3 = pd.concat([oct, nov, dec], ignore_index=True)\nprint(df3.shape)   # roughly (10M, 19)\n```\n\nignore_index=True resets row numbers to 0, 1, 2 ... instead of three overlapping 0-N sequences.\n\n## pd.concat vs pd.merge\n- **concat**: same columns, more rows (vertical stack)\n- **merge**: join on a shared key, add new columns (horizontal join)\n\nCombining three months is a concat. Joining trips to a zone-names lookup is a merge.\n\n## Why this matters\nWeek 1 was one month. Q4 (three months) is the minimum baseline for seasonal questions."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Concatenate multiple months of data",
-              "body": "## Deeper dive: Concatenate multiple months of data\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Concatenate multiple months of data** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Combine Data from Multiple Excel Cells Using CONCATENATE, TEXTJOIN, and Ampersand",
+              "url": "https://www.youtube.com/watch?v=yDzy28mdt5Q",
+              "duration_min": 2,
+              "creator": "Microsoft Office Lessons: Excel Word PowerPoint",
+              "difficulty": "curated",
+              "why": "This 2-minute Microsoft Office Lessons: Excel Word PowerPoint video teaches Concatenate multiple months of data directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -2653,9 +2646,13 @@
               "body": "## What it is\nA point estimate ('mean fare = $16.42') hides its own uncertainty. A **confidence interval (CI)** reports a range: 'the true mean fare is between $16.18 and $16.66 (95% CI).' It turns a single number into an honest statement about precision.\n\n```python\nfrom scipy import stats\nmean = fares.mean()\nsem  = stats.sem(fares)                 # standard error of the mean\nci   = stats.t.interval(0.95, len(fares)-1, loc=mean, scale=sem)\n```\n\n## What '95% confidence' means\nIf you repeated your sampling many times and built a CI each time, ~95% of those intervals would contain the true mean. The width comes from the **standard error**, which shrinks as sample size grows (SE = sd/√n).\n\n## Why it matters — the √n law\nMore data = a tighter interval, but with diminishing returns: to halve the CI width you need **4x** the data (because of the square root). This is why a sample of 100 gives a wide, mushy estimate and 1000 gives a crisp one — and why going from 10,000 to 40,000 barely helps. Knowing this stops you from over-collecting.\n\n## Where this fits\nToday you compute a CI for mean fare at n=1000 and n=100, and watch the interval widen as data shrinks."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Confidence intervals",
-              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Confidence Intervals, Clearly Explained!!!",
+              "url": "https://www.youtube.com/watch?v=TqOeMYtOc1w",
+              "duration_min": 7,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 7-minute StatQuest with Josh Starmer video teaches Confidence intervals directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -4946,9 +4943,13 @@
               "body": "## What it is\nEvery week so far had a small 'AI assist' note. This week AI is the whole topic: how to use it, deliberately and with structure, as a multiplier on the data science you already do.\n\n## The honest premise\nAI is not going to replace data scientists. AI is going to replace data scientists **who don't know how to use AI well.** The person who uses AI to draft boilerplate, translate pandas to SQL, explain an error, and summarise findings — while keeping their own judgment in charge — simply outproduces someone who types everything by hand.\n\n## Multiplier, not autopilot\nThe key word is *multiplier*. AI amplifies what you already understand; it doesn't replace understanding. You still decide what to build, judge whether the output is right, and own every line you ship. AI handles the typing and the recall; you handle the thinking and the verification. That division is the whole skill.\n\n## Why you're ready for this now, not in Week 1\nYou needed ten weeks of doing the work by hand first. Now you know enough to **direct** the AI and to **catch it when it's wrong** — both of which require real competence. Handing AI to a total beginner produces confident nonsense they can't evaluate. You're past that.\n\n## Where this fits\nThis week: AI tools (Cursor/Copilot), prompt patterns, AI for SQL, AI code review, and AI for explaining findings — applied to your real TaxiPulse work, not toy examples."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why this matters NOW",
-              "body": "## Deeper dive: Why this matters NOW\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why this matters NOW** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "AI in a Minute: Prompt Engineering",
+              "url": "https://www.youtube.com/watch?v=vGdyePbGNaE",
+              "duration_min": 2,
+              "creator": "Microsoft Cloud",
+              "difficulty": "curated",
+              "why": "This 2-minute Microsoft Cloud video teaches Why this matters NOW directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -7764,9 +7765,13 @@
               "body": "## What it is\n**Faker** generates realistic fake structured data — names, emails, addresses, dates, companies. Useful for building demos, seeding test databases, or standing in for private data:\n\n```python\nfrom faker import Faker\nimport pandas as pd\n\nfake = Faker()\nusers = [{'name': fake.name(), 'email': fake.email(),\n          'city': fake.city(), 'age': fake.random_int(18, 80)}\n         for _ in range(100)]\ndf = pd.DataFrame(users)\ndf.to_csv('data/fake_users.csv', index=False)\n```\n\n## What Faker is good for — and not\n**Good for:** structurally realistic records (a valid-looking email, a plausible name + city) for demos, tests, and tutorials where you can't or shouldn't use real PII.\n\n**NOT good for:** training a model that needs to learn *real relationships*. Faker's fields are independent — there's no genuine correlation between a person's city and age, because Faker draws each independently. A model trained on Faker data learns nothing about how variables actually relate in the world. **Faker fakes the structure, not the statistics.**\n\n## The key distinction for the week\nFaker is for *plausible-looking* data (privacy, demos). SMOTE (tomorrow) is for *statistically-meaningful* synthetic data that helps a model learn a real, rare class. Knowing which problem each solves — and not confusing them — is the lesson.\n\n## Where this fits\nToday you generate 100 fake user records with Faker and note explicitly what they're suitable for (demos, tests) and what they're not (training a relational model)."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Faker for realistic fake records",
-              "body": "## Deeper dive: Faker for realistic fake records\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Faker for realistic fake records** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Synthetic Data? No, It's Not \"Fake\" Data",
+              "url": "https://www.youtube.com/watch?v=HIusawrGBN4",
+              "duration_min": 7,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 7-minute IBM Technology video teaches Faker for realistic fake records directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -9960,9 +9965,13 @@
               "body": "## What it is\n**ARIMA** (AutoRegressive Integrated Moving Average) is the classical statistical model for forecasting a single time series. Three ideas stacked:\n\n- **AR(p) — AutoRegressive.** Today's value is a weighted sum of the *p* most recent past values plus noise. `y_t = c + a1*y_{t-1} + a2*y_{t-2} + ... + e_t`.\n- **I(d) — Integrated.** Difference the series *d* times before modelling, so the trend and seasonality disappear and we're left with a stationary signal.\n- **MA(q) — Moving Average.** Today's value is also a weighted sum of the *q* most recent *errors* the model made, not just the values.\n\nYou write the model as `ARIMA(p, d, q)`. A SARIMA extension adds the seasonal `(P, D, Q, m)` quadruple for a known repeating cycle (m=24 for hourly daily seasonality, m=7 for daily weekly).\n\n## Why before anything else this week\nLast week you built a chronological split + a persistence baseline (`tomorrow = today`). Persistence is the bar. This week your first real model — ARIMA — must beat it. If it can't, you don't ship it.\n\n## What you'll do today\nRead what ARIMA actually models (today). Test stationarity (Day 2). Fit auto-ARIMA on the daily-resampled AEP series (Day 3). Forecast + MAE (Day 4). Confidence intervals (Day 5). Compare to baseline + write the finding (Day 6). Ship v0.2 (Day 7)."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: What ARIMA actually is",
-              "body": "## Deeper dive: What ARIMA actually is\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **What ARIMA actually is** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Forecasting Future Sales Using ARIMA and SARIMAX",
+              "url": "https://www.youtube.com/watch?v=2XGSIlgUBDI",
+              "duration_min": 25,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 25-minute Krish Naik video on What ARIMA actually is — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",
@@ -10164,9 +10173,13 @@
               "body": "## What they are\nA **prediction interval** is a band around the forecast that contains the true value with some probability — typically 95%. Wider intervals later in the horizon, because uncertainty grows.\n\n```python\nforecast, conf = model.predict(n_periods=len(test), return_conf_int=True, alpha=0.05)\nlower, upper = conf[:, 0], conf[:, 1]\n```\n\n## Why intervals matter more than the point forecast\nA point forecast of '17,400 MW for next Tuesday' is technically wrong. The truth is **a distribution**. Reporting the interval communicates:\n- How sure the model is\n- How that uncertainty grows over the horizon (always widening)\n- Where the *plausible worst case* sits — critical for capacity planning where 'we MIGHT need 19,500 MW' is the actionable number\n\nA grid operator can't act on '17,400 MW.' They can act on '17,400 with 95% chance between 16,100 and 18,700.' Intervals turn a number into a decision.\n\n## What 95% actually means\nIf the model's assumptions hold (stationary residuals, no major regime change), the true value will fall inside the 95% interval ~95% of the time across many forecasts. It does NOT mean 'I am 95% sure for THIS specific forecast.'"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Confidence intervals",
-              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 22 ('Energy Forecast v0.2: ARIMA model'), day 5."
+              "kind": "video",
+              "title": "Confidence Intervals, Clearly Explained!!!",
+              "url": "https://www.youtube.com/watch?v=TqOeMYtOc1w",
+              "duration_min": 7,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 7-minute StatQuest with Josh Starmer video teaches Confidence intervals directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -14490,9 +14503,13 @@
               "body": "## What you want\n- **Small task**: a single, well-defined behaviour the base model is bad at\n- **Public dataset**: a HuggingFace dataset that already exists in the right format\n- **Evaluable**: accuracy / BLEU / F1 / human-judgable\n- **Achievable in <2 hours of training**: a couple thousand examples, not millions\n\n## Good task shapes for a learner project\n- **Classification on a niche domain**: medical-statement sentiment, legal clause type, etc.\n- **Style transfer**: 'rewrite this in <style>'\n- **Domain QA**: answer questions in a specific narrow domain\n- **JSON output**: 'extract these fields from this text as JSON'\n\n## Good base models to LoRA on Colab T4\n- **TinyLlama-1.1B** — fast, decent quality, easy fit\n- **Phi-2 / Phi-3-mini** — Microsoft's small but capable models\n- **Llama-3.2-1B or 3.2-3B** — recent, strong baselines\n\nAvoid 7B+ on Colab T4 unless you've already done this once — quantization + memory tuning eat the day.\n\n## Good public datasets to try\n- HuggingFace `datasets` library has thousands\n- Filter for ~10k examples (training pool) + ~1k held-out (eval)\n- 'instruction tuning' datasets are easiest to start with (input → expected output)\n\n## What you'll do today\n1. Pick ONE task you can describe in one sentence.\n2. Pick ONE dataset that fits.\n3. Sample 10 examples by hand to confirm the format makes sense.\n4. Write a 1-page brief in `peft/SPEC.md`: task, dataset, base model, success metric, baseline.\n5. Run the base model on the eval set WITHOUT training — get the baseline metric.\n\nIf the baseline is already at 95%, the task is too easy — pick a harder one."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Pick a task + dataset",
-              "body": "## Deeper dive: Pick a task + dataset\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Pick a task + dataset** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Steps By Step Tutorial To Fine Tune LLAMA 2 With Custom Dataset Using LoRA And QLoRA Techniques",
+              "url": "https://www.youtube.com/watch?v=Vg3dS-NLUT4",
+              "duration_min": 27,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 27-minute Krish Naik deep dive on Pick a task + dataset is long but excellent — watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "swipe",
@@ -14931,9 +14948,13 @@
               "body": "## Pick a corpus\nPick 10-100 documents you can publicly redistribute (or that the license allows). Good options:\n- **Public papers** (arXiv on a niche topic)\n- **Open documentation** (Python docs, AWS docs, Stripe docs)\n- **Public legal corpus** (court rulings, EU regs)\n- **Open Wikipedia subsets** (one category)\n\n## The chunking pattern\nThe snippet below shows exactly what to do:\n\n```python\nfrom langchain.text_splitter import RecursiveCharacterTextSplitter\n\nsplitter = RecursiveCharacterTextSplitter(\n    chunk_size=500,      # ~500 chars (~125 tokens)\n    chunk_overlap=50,    # so chunks don't cut mid-sentence\n    separators=['\\n\\n', '\\n', '. ', ' '],  # try paragraphs first, then sentences\n)\n\nchunks = []\nfor doc_path in doc_paths:\n    text = load_text(doc_path)\n    for chunk_text in splitter.split_text(text):\n        chunks.append({\n            'text': chunk_text,\n            'source': doc_path,\n            'preview': chunk_text[:100],\n        })\n\nprint(f'{len(chunks)} chunks from {len(doc_paths)} docs')\n```\n\n## Chunk size matters\n- **Too small (100 chars)**: loses context — a single sentence about X doesn't have enough surrounding info\n- **Too large (5000 chars)**: dilutes the embedding (one vector summarising 5 paragraphs is fuzzy) + wastes tokens\n- **Sweet spot**: 300-1000 chars depending on document type\n\n## Why overlap\nChunks at hard boundaries miss context. A 50-char overlap means a sentence at the end of chunk N also lives at the start of chunk N+1. Cheap insurance against mid-sentence cuts.\n\n## Store the chunks\nThe snippet below shows exactly what to do:\n\n```python\nimport json\nwith open('rag/chunks.json', 'w') as f:\n    json.dump(chunks, f)\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Pick corpus + chunk",
-              "body": "## Deeper dive: Pick corpus + chunk\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Pick corpus + chunk** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Retrieval-Augmented Generation (RAG)?",
+              "url": "https://www.youtube.com/watch?v=T-D1OfcDW1M",
+              "duration_min": 7,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 7-minute IBM Technology video teaches Pick corpus + chunk directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -17934,9 +17955,13 @@
               "body": "## What it is\nSupervised learning: you give the model labelled examples; it learns to predict labels.\nReinforcement learning: you give the model an environment + a set of actions + a reward signal; it learns a policy by TRYING things and observing the consequences.\n\n## The contract\nThe snippet below shows exactly what to do:\n\n```text\nAt each step t:\n  - Agent observes state s_t (what the world looks like right now)\n  - Agent picks action a_t (from the available actions)\n  - Environment returns next state s_{t+1} and reward r_t\n  - Agent updates its policy π(a | s) based on the reward\n\nThe goal: maximise cumulative discounted reward over time.\n```\n\n## The two flavours you'll meet this week\nThe snippet below shows exactly what to do:\n\n```text\nDEEP RL (W40 Day 2 — CartPole)\n  - Multi-step, sequential decisions\n  - Rewards often DELAYED (you balance the pole for a while, then it falls)\n  - Needs Q-learning or policy gradients\n  - Examples: game-playing, robotics, navigation\n\nCONTEXTUAL BANDITS (W40 Day 4 — the practical version)\n  - Single-step decisions\n  - Reward IMMEDIATE (click or no click; bought or not)\n  - Simpler math — basically online classification + exploration\n  - Examples: which ad to show, which item to recommend, which email subject to send\n```\n\n## What this matters for you\nJunior DS learners often confuse 'I want to learn RL' with 'I'm going to deploy DQN at work'. The realistic version is:\n- You'll see deep RL in interview questions about how things like AlphaGo work\n- You'll DEPLOY contextual bandits in product work (ad selection, recommendation, A/B test scoring)\n- Knowing both — and the boundary between them — is the practical skill\n\n## This week\n- Day 2: Q-learning on CartPole — the 'hello world' of deep RL\n- Day 3: ε-greedy vs UCB — the exploration question, made concrete\n- Day 4: Contextual bandits — the algorithm that actually ships in product\n- Day 5: When RL is right (and when it's a misuse)\n- Day 6: Document a real product use case\n- Day 7: Ship + tag"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: RL intuition",
-              "body": "## Deeper dive: RL intuition\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **RL intuition** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Reinforcement Learning with Human Feedback (RLHF), Clearly Explained!!!",
+              "url": "https://www.youtube.com/watch?v=qPN_XZcJf_s",
+              "duration_min": 19,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "curated",
+              "why": "This 19-minute StatQuest with Josh Starmer video on RL intuition — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -19228,9 +19253,13 @@
               "body": "## What it is\nThe naive approach to privacy: remove names, addresses, social security numbers. Call the result 'anonymous'. Release.\n\nFor three decades, this has been demonstrably broken — but it's still the default in most organizations.\n\n## Case 1 — Sweeney (2000)\nLatanya Sweeney showed that ZIP code + date of birth + sex uniquely identifies about 87% of US adults. She purchased the 'anonymized' Massachusetts state employee medical records and identified the governor's records by cross-referencing voter rolls.\n\n```text\nAnonymized record:  ZIP 02138, born 1945-07-31, male\nVoter roll:         William Weld, 02138, born 1945-07-31, male, governor\n```\n\n## Case 2 — Netflix Prize (2008)\nNetflix released an 'anonymized' dataset: 100M ratings, 500k users (user IDs replaced with numbers). Narayanan + Shmatikov cross-referenced ratings with public IMDB profiles. Identified specific users by their ratings of obscure films.\n\nResult: lawsuit, dataset withdrawn, no second Netflix Prize. The technique now has a name: linkage attack.\n\n## Case 3 — NYC Taxi Medallions (2014)\nNYC released 'anonymized' taxi trip data. Researchers reversed the hash on medallion numbers (the hash space was small enough to brute-force) and identified individual drivers' entire 2013 trip history — including drivers' homes inferred from end-of-shift trips.\n\n## Case 4 — AOL Search Logs (2006)\nAOL released 'anonymized' search queries from 650k users (user IDs replaced with numbers). The New York Times identified specific user 4417749 (Thelma Arnold) from her searches for nearby businesses + family members' names.\n\n## The pattern\nAcross decades + industries: anonymization is the appearance of privacy, not actual privacy. Auxiliary data is everywhere; combination attacks are cheap; reidentification is the rule.\n\n## What this means for your data\nThe snippet below shows exactly what to do:\n\n```text\nEvery dataset you have worked with this year contained real information\nabout real entities — taxi trips, Reddit posts, electricity meters,\ncustomer records. Treat them all as 'potentially re-identifiable'.\n\nEspecially: if you train a model on private data, the MODEL ITSELF can\nleak information — membership inference attacks (Shokri 2017) can tell\nwhether a specific person's data was in the training set.\n```\n\n## This week\nThe structured fix for these failures is **differential privacy**: a mathematical framework that GUARANTEES limits on what any output can reveal about any individual. By Friday you'll have implemented:\n- A DP count query (Day 3)\n- A DP-SGD trained model (Day 4)\n- Awareness of federated learning (Day 5)\n- A PRIVACY.md document for one project (Day 6)\n- Tagged + shipped (Day 7)"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why privacy",
-              "body": "## Deeper dive: Why privacy\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why privacy** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Security vs. Privacy",
+              "url": "https://www.youtube.com/watch?v=x3rg8bttldg",
+              "duration_min": 10,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 10-minute IBM Technology video teaches Why privacy directly — watch it end to end."
             },
             {
               "kind": "swipe",

@@ -52,24 +52,13 @@
           "items": [
             {
               "kind": "lesson",
-              "title": "SQL — the language your data lives in",
-              "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\nThe snippet below shows exactly what to do:\n\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
+              "title": "Git — version control from day 1",
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
               "kind": "lesson",
               "title": "Deeper dive: Your Coding Environment — Browser, Zapier / Make Account, API Keys",
               "body": "## Deeper dive: Your Coding Environment — Browser, Zapier / Make Account, API Keys\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Your Coding Environment — Browser, Zapier / Make Account, API Keys** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
-            },
-            {
-              "kind": "reading",
-              "title": "SQLBolt — Interactive SQL lessons",
-              "url": "https://sqlbolt.com/lesson/select_queries_introduction",
-              "why": "Read third. The fastest interactive SQL primer on the internet. Lessons 1-5 in 20 minutes; you are operational after."
-            },
-            {
-              "kind": "lesson",
-              "title": "Git — version control from day 1",
-              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\nThe snippet below shows exactly what to do:\n\n```bash\n# macOS:    brew install git\n# Windows:  download from git-scm.com (or `winget install Git.Git`)\n# Linux:    sudo apt install git\n\ngit --version\ngit config --global user.name  'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\nThe snippet below shows exactly what to do:\n\n```bash\ngit init                 # turn a folder into a git repo\ngit add file.py          # stage a change for the next commit\ngit commit -m 'message'  # snapshot the staged changes\ngit status               # what's changed since the last commit?\ngit log --oneline        # the history of snapshots\n```\n\n## Push to GitHub\nThe snippet below shows exactly what to do:\n\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite — read it once, refer back to it whenever you're not sure."
             },
             {
               "kind": "reading",
@@ -273,9 +262,13 @@
               "body": "## How AI fits into automation\n\nAI automation is the practice of combining AI models (language models, vision models, classification models) with workflow orchestration to replace or augment repetitive, judgment-heavy tasks that previously required a human. It is not RPA (Robotic Process Automation) — clicking through UIs with a script — though it can include that. It is not just calling an API and displaying the result. AI automation is building systems that can perceive input, reason about it, act on it, and handle the varia\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: How AI fits into automation",
-              "body": "## Deeper dive: How AI fits into automation\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **How AI fits into automation** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How AI Agents and Decision Agents Combine Rules & ML in Automation",
+              "url": "https://www.youtube.com/watch?v=-mldKsBR0UM",
+              "duration_min": 18,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 18-minute IBM Technology video on How AI fits into automation — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "reflection",
@@ -1951,9 +1944,13 @@
               "body": "## System vs user prompts\n\nPrompt engineering for automation is different from prompt engineering for chat. In a chat context, you iterate in real time and adjust. In automation, the prompt runs thousands of times without you watching. A prompt that works 95% of the time has a 5% failure rate — at 1,000 runs per day, that is 50 failures per day.\n\nReliability is the primary metric for automation prompts. A prompt that extracts data correctly 95% of the time at scale is worse than a prompt that achieves 99.9% — because at s\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: System vs user prompts",
-              "body": "## Deeper dive: System vs user prompts\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **System vs user prompts** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Context Engineering vs. Prompt Engineering: Smarter AI with RAG & Agents",
+              "url": "https://www.youtube.com/watch?v=vD0E3EUb8-8",
+              "duration_min": 8,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 8-minute IBM Technology video teaches System vs user prompts directly — watch it end to end."
             },
             {
               "kind": "reading",
@@ -5065,9 +5062,13 @@
               "body": "## Implement the tools\n\nAn autonomous agent operates without human intervention from start to finish on multi-step tasks. This week you build one that is genuinely useful: a research agent that takes a topic, searches the web, reads the most relevant pages, synthesises the information, and writes a structured research report.\n\nThe architecture: a ReAct loop with 3 tools (web search, page reader, write-report), a system prompt that defines the research process and output format, and a stopping condition when the model d\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Implement the tools",
-              "body": "## Deeper dive: Implement the tools\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Implement the tools** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Intro to Agent Builder",
+              "url": "https://www.youtube.com/watch?v=44eFf-tRiSg",
+              "duration_min": 6,
+              "creator": "OpenAI",
+              "difficulty": "curated",
+              "why": "This 6-minute OpenAI video teaches Implement the tools directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -7285,9 +7286,13 @@
               "body": "## Error alerts — notify yourself when things break\n\nProduction AI automation without monitoring is gambling. LLMs return unexpected outputs. External APIs go down. Files arrive in unexpected formats. Rate limits are hit. Every automation in production will fail in ways you did not anticipate — the question is whether you find out via your monitoring or via an angry client.\n\nGood monitoring for AI automation: structured logging with loguru (every API call logged with inputs, outputs, latency, and token cost), error alerting via Telegram or email (\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Error alerts — notify yourself when things break",
-              "body": "## Deeper dive: Error alerts — notify yourself when things break\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Error alerts — notify yourself when things break** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Error reporting",
+              "url": "https://www.youtube.com/watch?v=GANi9eRxhHs",
+              "duration_min": 4,
+              "creator": "Google Cloud Tech",
+              "difficulty": "curated",
+              "why": "This 4-minute Google Cloud Tech video teaches Error alerts — notify yourself when things break directly — watch it end to end."
             },
             {
               "kind": "swipe",
