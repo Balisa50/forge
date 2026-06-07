@@ -75,7 +75,12 @@ for slug, fn in TRACKS.items():
                     issues.append(f"W{w['number']}D{dn}: FORCED (no concept match) key={key} title='{day.get('title','')[:40]}'")
                 dur = it.get('duration_min')
                 budget = E.budget_for_day(day.get('title', ''), dn, slug)
-                if not isinstance(dur, (int, float)) or dur > 30:
+                is_curated = it.get('difficulty') == 'curated'
+                if not isinstance(dur, (int, float)):
+                    issues.append(f"W{w['number']}D{dn}: missing duration")
+                elif is_curated:
+                    pass  # hand-vetted: no duration cap (length noted in 'why')
+                elif dur > 30:
                     issues.append(f"W{w['number']}D{dn}: duration {dur} > 30 (hard cap)")
                 elif dur > budget:
                     issues.append(f"W{w['number']}D{dn}: duration {dur} > day budget {budget}")

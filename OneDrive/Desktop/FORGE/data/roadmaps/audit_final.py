@@ -187,8 +187,10 @@ def audit_track(slug, path, dead):
                 if url in dead:
                     fail(2, f"W{wn} D{dn}: dead video {url}")
                 dur = v.get('duration_min')
-                if not isinstance(dur, (int, float)) or dur > 30:
-                    fail(2, f"W{wn} D{dn}: duration_min={dur} (hard cap 30)")
+                if not isinstance(dur, (int, float)):
+                    fail(2, f"W{wn} D{dn}: missing duration_min")
+                elif dur > 30 and v.get('difficulty') != 'curated':
+                    fail(2, f"W{wn} D{dn}: duration_min={dur} (hard cap 30; curated videos exempt)")
                 why = v.get('why', '')
                 if not isinstance(why, str) or len(why) < 20:
                     fail(1, f"W{wn} D{dn}: video why <20 chars")

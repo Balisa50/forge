@@ -36,6 +36,7 @@ EX_LABEL = re.compile(r'^\s*\[(CODE|WRITE|PRODUCE)\]')
 YT = re.compile(r'(?:watch\?v=|youtu\.be/)([A-Za-z0-9_-]{11})')
 
 # url -> library key (for on-topic check)
+E.load_curated_library()  # merge curated videos so their URLs are recognised as on-topic
 URL2KEY = {}
 for key, entries in E.KNOWN_GOOD.items():
     for tup in entries:
@@ -108,7 +109,7 @@ def main():
                             'duration_min': it.get('duration_min'), 'why': it.get('why', ''),
                             'url': url, 'vidid': (YT.search(url).group(1) if YT.search(url) else ''),
                             'alive': alive_of(url), 'onTopic': (key in allowed) if key else False,
-                            'key': key or '?',
+                            'key': key or '?', 'curated': it.get('difficulty') == 'curated',
                         }
                         wk_video_ct += 1
                     # exercise label failure
@@ -120,7 +121,8 @@ def main():
                     if vid['onTopic'] is False:
                         failures.append({'week': wn, 'day': dn, 'kind': 'video-offtopic',
                                          'msg': f"off-topic video (key={vid['key']}) {vid['title']}"})
-                    if isinstance(vid['duration_min'], (int, float)) and vid['duration_min'] > 30:
+                    if (isinstance(vid['duration_min'], (int, float)) and vid['duration_min'] > 30
+                            and not vid['curated']):
                         failures.append({'week': wn, 'day': dn, 'kind': 'video-long',
                                          'msg': f"video {vid['duration_min']}min > 30"})
                     if vid['alive'] is False:

@@ -442,10 +442,12 @@ def load_curated_library():
             dur = int(e.get("duration_min", 10))
         except (TypeError, ValueError):
             dur = 10
-        if dur > HARD_CAP_MIN:
-            continue  # never exceed the 30-min hard cap
+        # Curated videos are hand-vetted: NO duration cap (an excellent 50-min deep
+        # dive is allowed; its length is noted in the 'why'). The 'curated' tag below
+        # exempts it from the budget filter in pick_video_for_day.
         tup = (url, dur, e.get("creator", "YouTube"),
-               e.get("title", "") or e.get("concept", ""), e.get("difficulty", "curated"))
+               e.get("title", "") or e.get("concept", ""), e.get("difficulty", "curated"),
+               e.get("why", ""))
         bucket = KNOWN_GOOD.setdefault(key, [])
         if not any(t[0] == url for t in bucket):
             bucket.append(tup)
@@ -557,6 +559,10 @@ def _video_dict(tup):
     url, dur, creator = tup[0], tup[1], tup[2]
     title = tup[3]
     difficulty = tup[4] if len(tup) > 4 else 'beginner'
+    # Curated entries carry their own length-aware 'why' (6th element) — keep it.
+    if len(tup) > 5 and tup[5]:
+        return {"title": title, "url": url, "duration_min": dur, "creator": creator,
+                "difficulty": difficulty, "why": tup[5]}
     # "why this video + what to focus on"
     if dur <= 5:
         why = (f"Chosen for clarity: this {dur}-minute {creator} explainer ('{title}') nails the "
@@ -653,13 +659,15 @@ def pick_video_for_day(day_topic: str, used_urls: set, cache: dict, track_slug: 
     allowed_set = set(_allowed_keys(track_slug))
     budget = min(max_min, HARD_CAP_MIN)
 
-    # Gather every on-topic candidate within budget (dedup by url).
+    # Gather every on-topic candidate (dedup by url). Curated (hand-vetted) videos are
+    # exempt from the duration budget — quality over length; library videos still obey it.
     seen = set()
     candidates = []  # (tup,)
     for keyword, key in KEYWORD_VIDEO_MAP:
         if keyword in c and key in allowed_set:
             for tup in KNOWN_GOOD[key]:
-                if tup[0] in seen or tup[1] > budget:
+                is_curated = len(tup) > 4 and tup[4] == 'curated'
+                if tup[0] in seen or (tup[1] > budget and not is_curated):
                     continue
                 seen.add(tup[0])
                 candidates.append(tup)
