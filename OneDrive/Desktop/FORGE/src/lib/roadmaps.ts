@@ -195,11 +195,56 @@ const META: Record<string, { tagline: string; outcome: string; gradient: string 
 
 export const ROADMAP_META = META;
 
+/** Strip the auto-generated " (Enriched)" suffix from a title. */
+function cleanTitle(t: string): string {
+  return (t || "").replace(/\s*\(enriched\)\s*$/i, "").trim();
+}
+
+/**
+ * Load the roadmap students should see. Prefers the ENRICHED build
+ * ({slug}-enriched.json — Day 0, on-topic videos, concept checks, zero-cost paths)
+ * and falls back to {slug}.json. Gold tracks (data-science/analysis/engineering)
+ * already store enriched content in {slug}.json, so they are unaffected.
+ *
+ * Normalizes the enriched file's internal slug/title back to the canonical ones and
+ * keeps the human-written title from the raw file when available.
+ */
 export function loadRoadmap(slug: string): Roadmap | null {
-  const file = path.join(DATA_DIR, `${slug}.json`);
-  if (!fs.existsSync(file)) return null;
-  const text = fs.readFileSync(file, "utf-8");
-  return JSON.parse(text) as Roadmap;
+  const enriched = path.join(DATA_DIR, `${slug}-enriched.json`);
+  const plain = path.join(DATA_DIR, `${slug}.json`);
+  const file = fs.existsSync(enriched) ? enriched : (fs.existsSync(plain) ? plain : null);
+  if (!file) return null;
+
+  let roadmap: Roadmap;
+  try {
+    roadmap = JSON.parse(fs.readFileSync(file, "utf-8")) as Roadmap;
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(roadmap.weeks)) return null; // not a roadmap file
+
+  roadmap.slug = slug; // enriched files carry a "-enriched" slug internally
+  roadmap.title = cleanTitle(roadmap.title);
+
+  // When serving the enriched build, MERGE in the raw week's task-detail fields
+  // (topics, tasks, project, outputs, resources, mastery_questions, ...). The
+  // enriched week wins (its days/concept_check/context are the student experience);
+  // the raw fields only fill gaps so task generation keeps its richness — no regression.
+  if (file === enriched && fs.existsSync(plain)) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(plain, "utf-8")) as Roadmap;
+      if (raw.title) roadmap.title = cleanTitle(raw.title);
+      const rawByNum = new Map<number, RoadmapWeek>();
+      (raw.weeks ?? []).forEach((w) => rawByNum.set(w.number, w));
+      roadmap.weeks = roadmap.weeks.map((ew) => {
+        const rw = rawByNum.get(ew.number);
+        return rw ? ({ ...rw, ...ew } as RoadmapWeek) : ew;
+      });
+    } catch {
+      /* keep enriched-only on any raw parse error */
+    }
+  }
+  return roadmap;
 }
 
 /** Canonical track order for the developer preview. */
@@ -225,6 +270,7 @@ export function loadPreviewRoadmap(slug: string):
   else return null;
   const roadmap = JSON.parse(fs.readFileSync(file, "utf-8")) as Roadmap;
   roadmap.slug = slug; // normalize (enriched files carry a "-enriched" slug internally)
+  roadmap.title = cleanTitle(roadmap.title);
   // If no -enriched file exists, {slug}.json IS the enriched content (gold tracks).
   const liveServesEnriched = !fs.existsSync(enriched);
   return { roadmap, source, liveServesEnriched };
@@ -232,12 +278,12 @@ export function loadPreviewRoadmap(slug: string):
 
 export function loadAllRoadmaps(): Roadmap[] {
   if (!fs.existsSync(DATA_DIR)) return [];
-  const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith(".json"));
-  return files
-    .map((f) => {
-      const text = fs.readFileSync(path.join(DATA_DIR, f), "utf-8");
-      return JSON.parse(text) as Roadmap;
-    })
+  // Load ONE roadmap per canonical track (enriched preferred), via loadRoadmap.
+  // This avoids double-listing raw/enriched twins and never parses sidecar JSON
+  // (.video-cache.json, paid_services_report.json, etc.) as roadmaps.
+  return PREVIEW_SLUGS
+    .map((slug) => loadRoadmap(slug))
+    .filter((r): r is Roadmap => r !== null)
     .sort((a, b) => a.title.localeCompare(b.title));
 }
 
