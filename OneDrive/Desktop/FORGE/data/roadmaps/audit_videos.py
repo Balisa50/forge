@@ -13,6 +13,10 @@ Run: python audit_videos.py
 import json
 import re
 import sys
+try:  # never crash on a non-console pipe (em-dash / emoji in output)
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 import enrich_track as E
 
 extra = E.collect_all_raw_video_urls()

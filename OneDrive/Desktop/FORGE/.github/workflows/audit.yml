@@ -1,0 +1,27 @@
+name: Roadmap integrity audit
+
+# Blocks any push / PR to main that introduces off-topic content, stale
+# templates, cross-track contamination, mis-placed SQL, or off-topic videos.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Roadmap integrity audit
+        run: python scripts/audit_roadmap_integrity.py --no-video
+
+      - name: Video on-topic audit
+        working-directory: data/roadmaps
+        run: python audit_videos.py
