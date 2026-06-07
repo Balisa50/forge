@@ -1055,6 +1055,120 @@ def inject_free_path(d0: dict, week_blob: str):
     d0.setdefault('items', []).append({"kind": "lesson", "title": "Zero-cost path (free alternatives)", "body": body})
 
 
+# ============================================================
+# Dataset clarity: every week that uses a dataset gets a "📁 Dataset" callout —
+# exact file name, whether it's reused, where to download it, where to save it.
+# A student should never wonder "which file?" or "where is it?".
+# ============================================================
+DATASET_DEFS = {
+    'superstore': {
+        'file': 'superstore.csv', 'label': 'Sample Superstore (a fictional office-supply retailer, 4 years of orders)',
+        'reuse': 'This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.',
+        'source': 'Re-download from the Week 1 resources, or this direct CSV link',
+        'url': 'https://www.tableau.com/sites/default/files/training/regional_sales.csv',
+        'alt': '', 'loc': '`data/superstore.csv`, in the same folder as your notebook',
+    },
+    'nyc-taxi': {
+        'file': 'yellow_tripdata_2023-10.parquet', 'label': 'NYC Yellow Taxi trip records, October 2023 (~3.5M rows)',
+        'reuse': 'This is a NEW download for the TaxiPulse project (you did not use it before).',
+        'source': 'Official NYC TLC Trip Record Data — direct CDN link',
+        'url': 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet',
+        'alt': 'https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page',
+        'loc': '`data/yellow_tripdata_2023-10.parquet`, next to your notebook',
+    },
+    'taxi-zone': {
+        'file': 'taxi_zone_lookup.csv', 'label': 'NYC taxi zone lookup (maps zone IDs to borough/neighbourhood)',
+        'reuse': 'A small companion file for the NYC taxi data.',
+        'source': 'Official NYC TLC — direct CDN link',
+        'url': 'https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv',
+        'alt': '', 'loc': '`data/taxi_zone_lookup.csv`',
+    },
+    'flights': {
+        'file': 'flights.csv', 'label': 'US domestic flight delays & cancellations (sample of a few million rows)',
+        'reuse': 'This is the FlightWise project dataset — download it once at the start of the track.',
+        'source': 'Kaggle (free account required): "Flight Delay and Cancellation Dataset"',
+        'url': 'https://www.kaggle.com/datasets/patrickzel/flight-delay-and-cancellation-dataset-2019-2023',
+        'alt': '', 'loc': '`data/flights.csv` (rename the downloaded file to flights.csv)',
+    },
+    'attrition': {
+        'file': 'Employee-Attrition.csv', 'label': 'IBM HR Analytics Employee Attrition (1,470 employees)',
+        'reuse': 'A NEW dataset for this week.',
+        'source': 'Kaggle (free account): "IBM HR Analytics Employee Attrition & Performance"',
+        'url': 'https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset',
+        'alt': '', 'loc': '`data/Employee-Attrition.csv`',
+    },
+    'olist': {
+        'file': 'olist_*_dataset.csv', 'label': 'Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…)',
+        'reuse': 'A NEW multi-file dataset for this week.',
+        'source': 'Kaggle (free account): "Brazilian E-Commerce Public Dataset by Olist"',
+        'url': 'https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce',
+        'alt': '', 'loc': 'a `data/olist/` folder (keep all the CSVs together)',
+    },
+}
+# filename/topic pattern -> dataset id (detected per week)
+DATASET_REGISTRY = [
+    (re.compile(r'superstore|regional_sales', re.I), 'superstore'),
+    (re.compile(r'yellow_tripdata|nyc.?taxi|tripdata', re.I), 'nyc-taxi'),
+    (re.compile(r'taxi_zone_lookup', re.I), 'taxi-zone'),
+    (re.compile(r'flights_sample|flights\.csv|flight delay|flightwise', re.I), 'flights'),
+    (re.compile(r'employee-attrition|attrition', re.I), 'attrition'),
+    (re.compile(r'olist|brazilian e-commerce', re.I), 'olist'),
+]
+# For weeks that reference a CSV only generically ("load the CSV"), fall back to the
+# track's default dataset over the given week numbers.
+TRACK_DEFAULT_DATASET = {
+    'data-analysis': (set(range(1, 10)), 'superstore'),
+    'data-science': (set(range(1, 6)), 'nyc-taxi'),
+    'ml-engineering': (set(range(1, 5)), 'flights'),
+}
+_GENERIC_DATA_RE = re.compile(r'read_csv|read_parquet|\bthe csv\b|your dataset|the dataset|\.csv\b|\.parquet\b', re.I)
+
+
+def _dataset_callout_body(did: str) -> str:
+    d = DATASET_DEFS[did]
+    lines = [f"## 📁 Dataset: `{d['file']}`", "",
+             f"- **What it is:** {d['label']}.",
+             f"- **Reuse:** {d['reuse']}",
+             f"- **Where to get it:** {d['source']} — {d['url']}"]
+    if d.get('alt'):
+        lines.append(f"  - Mirror / official page: {d['alt']}")
+    lines.append(f"- **Where to save it:** {d['loc']}.")
+    lines.append("")
+    lines.append("Whenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.")
+    return "\n".join(lines)
+
+
+def inject_dataset_callout(week_days, week_num, track_slug, week_blob):
+    """Insert a '📁 Dataset' callout at the top of Day 1 for this week's dataset(s).
+    The track's PRIMARY dataset wins (so an incidental mention of another dataset
+    can't hijack the callout); a companion file (e.g. the taxi zone lookup) is added
+    only when actually referenced."""
+    ids = []
+    wk, default_id = TRACK_DEFAULT_DATASET.get(track_slug, (set(), None))
+    if default_id and week_num in wk:
+        # The week belongs to the track's flagship project — that dataset is primary.
+        ids.append(default_id)
+        if default_id == 'nyc-taxi' and re.search(r'taxi_zone_lookup', week_blob, re.I):
+            ids.append('taxi-zone')
+    else:
+        # Outside the flagship range: identify the week's dataset by what it references,
+        # but ignore an incidental mention of the track's default (e.g. a Superstore
+        # comparison in an attrition week) so the week's REAL dataset is the callout.
+        for rx, did in DATASET_REGISTRY:
+            if did == default_id:
+                continue
+            if rx.search(week_blob) and did not in ids:
+                ids.append(did)
+    if not ids:
+        return
+    day1 = next((d for d in week_days if d.get('number') == 1), None)
+    if not day1:
+        return
+    callouts = [{"kind": "lesson", "title": f"Dataset: {DATASET_DEFS[did]['file']}",
+                 "body": _dataset_callout_body(did)} for did in ids[:2]]
+    day1.setdefault('items', [])[0:0] = callouts  # insert in priority order, on top
+
+
 def synth_second_lesson(day_title: str, week_context: str) -> dict:
     """A 'deeper dive' lesson used INSTEAD of a video when no on-topic video exists.
     Clear teaching beats a tangential video — this block gives a worked-example
@@ -1475,6 +1589,9 @@ def enrich_week(raw_week, week_num, track_slug, cache):
         f"[x] A v{week_num}.0 tag is pushed to the remote"
     )
     last['items'].append({"kind": "exercise", "title": "Ship it", "body": ship_body})
+
+    # Dataset clarity: name the file, say if it's reused, where to get it, where to save it.
+    inject_dataset_callout(enriched['days'], week_num, track_slug, _week_blob)
 
     enriched['concept_check'] = extract_concept_check(raw_week)
     return enriched

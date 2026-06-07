@@ -112,6 +112,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
+            {
+              "kind": "lesson",
               "title": "SQL — the language your data lives in",
               "body": "## What SQL is\nSQL (Structured Query Language) is how you talk to relational databases — Postgres, MySQL, SQLite, BigQuery, Snowflake. Every analyst, data engineer, backend dev, ML engineer reads + writes SQL daily.\n\nThere is ONE syntax (with minor dialect quirks). Learn it once; use it on every database for the rest of your career.\n\n## The five queries that cover 80% of real work\nThe snippet below shows exactly what to do:\n\n```sql\n-- 1. SELECT: pull rows from a table\nSELECT name, email FROM users;\n\n-- 2. WHERE: filter rows\nSELECT * FROM users WHERE country = 'GM' AND age >= 18;\n\n-- 3. ORDER BY + LIMIT: sort + cap\nSELECT name, signup_at FROM users ORDER BY signup_at DESC LIMIT 10;\n\n-- 4. GROUP BY: aggregate (counts, sums, averages per group)\nSELECT country, COUNT(*) AS n FROM users GROUP BY country;\n\n-- 5. JOIN: combine rows from two tables\nSELECT u.name, o.total\nFROM   users u\nJOIN   orders o ON o.user_id = u.id\nWHERE  o.total > 100;\n```\n\n## Mental model\nEvery query is `SELECT <columns> FROM <table> [WHERE <filter>] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]`. Memorise that skeleton; everything else is variation.\n\n## Try it without setup\nPractice these queries right now at https://sqlbolt.com/lesson/select_queries_introduction — interactive, no install, 15 minutes to read through the first 5 lessons.\n\n## When you'll see SQL next\nThis track uses SQL whenever it touches a database. The five queries above are your bedrock."
             },
@@ -605,6 +610,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 2 ('Python pandas for analysts'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "The Series — one labelled column",
               "body": "## What a Series actually is\nA pandas **Series** is a one-dimensional, *labelled* array — a single column of data where every value carries a label called the **index**. A plain Python list is a row of values at positions 0, 1, 2…; a Series is that same row, but each slot also has a *name*, and the whole thing comes with analytical superpowers bolted on.\n\nPicture one column in Excel. The values run down the column, and each sits in a labelled row — `Mon`, `Tue`, `Wed`. That row label is the index, and the crucial thing is that **it travels with the data everywhere**. When you sort, filter, or do arithmetic, pandas keeps every value glued to its own label. This \"alignment by label\" is the single idea that separates pandas from a bare list or NumPy array, and it's why merging and joining data later will *just work*.\n\n## Why it matters so much\nTwo reasons, and they're the foundation of the whole track:\n\n1. **A DataFrame is just many Series.** Every column of a table *is* a Series, all sharing one index. Once the Series clicks, a DataFrame stops being mysterious — it's literally a dictionary of Series lined up side by side. Master this and you've master the atom that everything else is built from.\n\n2. **Series operations are vectorised.** When you write `sales * 1.1`, pandas applies the multiplication to *every* value at once, in fast compiled code, with no Python `for` loop. That's the difference between an analyst who transforms a million rows in one line and an Excel user dragging a formula down by hand.\n\n## Where you'll meet it every day\nConstantly. A column of prices is a Series. The result of `df[\"region\"]` is a Series. The output of a groupby — \"average profit per region\" — comes back to you as a Series indexed by region. Counting categories returns a Series. Learning to read and bend a Series *is* learning the language pandas speaks back to you. Get this one right and the next six days are downhill.\n\nWatch the short video next to see one built live — then the code below will already feel familiar."
             },
@@ -1079,6 +1089,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 3 ('Superstore v0.2: Discount-vs-Profit deep dive'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "Form a testable hypothesis",
               "body": "## What it is\nA real analyst doesn't wander through data hoping something jumps out. They commit, in advance, to a **falsifiable hypothesis** — a specific claim, with a number, that the data could prove *wrong*. Only then do they test it.\n\nA hypothesis has three properties: it is **specific** (names the variables), it is **measurable** (has a threshold you can check), and it is **falsifiable** (a clear result would disprove it).\n\n## Why it matters — the bias trap\nIf you explore first and form your theory to match whatever you noticed, you will *always* \"confirm\" it — that's confirmation bias, and it produces confident, wrong analysis. This week's question is sharp: **Superstore lets salespeople discount up to 80%; is the discount policy itself causing the losses you found in Week 1?** A 70% discount on a product with a 40% gross margin sells at a 30% loss before any other cost — so the hunch is plausible. But a plausible hunch is not a finding. By stating the claim with a threshold *now*, you keep yourself honest when the data comes in.\n\n## Where this fits in the project\nThis is `v0.2` of your Superstore analysis. Week 1 found *that* some sub-categories lose money. This week you test *why* — specifically whether discount depth is the driver — and turn it into a concrete, defensible recommendation a business could act on (a discount cap)."
             },
@@ -1519,6 +1534,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 4 ('Superstore v0.3: Customer lifetime value'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "What customer lifetime value is",
               "body": "## What it is\n**Customer Lifetime Value (CLV)** is the total value — revenue or, better, profit — a single customer brings across *all* their orders, not just one purchase. The simplest, perfectly usable version is one line of analysis: sum each customer's profit over their whole history.\n\n## Why it matters\nAcquiring a customer costs money (ads, discounts, sales time). If you don't know *who* is valuable, you spend equally on everyone — overspending on one-time bargain hunters and under-investing in the people quietly carrying your business. In most retailers the **top ~20% of customers drive ~80% of profit** (the Pareto principle), and you cannot act on that until you measure it per person.\n\n## Where it leads this week\nThis is `v0.3` of your Superstore project. You'll compute CLV per customer, split out the VIPs with `qcut`, see what they buy, check whether they come back (retention), and turn it into a customer recommendation — a loyalty/retention play aimed where the profit actually is. The whole week is the business question \"who are our best customers, and what do we do about them?\" answered with code."
             },
@@ -1952,6 +1972,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 5 ('Superstore v0.4: SQL version'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "SELECT — read columns from a table",
               "body": "## What it is\n**SQL** is how you ask a database for data. The core statement names the columns you want and the table to take them from: `SELECT columns FROM table`. `*` means every column; `LIMIT` returns just a few rows for a quick peek.\n\n## Why it matters\nYou've done Superstore in Excel and pandas; SQL is the third tool, and the one every serious data organisation runs on — BigQuery, Snowflake, Redshift, and Databricks all speak SQL. The reason is scale: pandas works while the data fits in your laptop's memory; SQL runs the same logic against billions of rows that live on a server you'll never download. Same questions, vastly bigger data.\n\n## The mental bridge from pandas\n`SELECT col FROM t` is `df[[\"col\"]]`. `WHERE` is your boolean mask. `GROUP BY` is `groupby`. You already *know* the analysis from Weeks 2-4 — this week you're learning a second way to *say* it. That's why you'll re-answer the exact same Superstore questions: so the SQL is recognition, not new analysis.\n\n## Setup (free, in-browser)\nGo to **sqliteonline.com**, click *Import*, upload your Superstore CSV, and name the table `superstore`. No install, no account."
             },
@@ -2369,6 +2394,11 @@
           "title": "Samples and selection bias",
           "summary": "A pattern in a biased sample is not a finding. Concept, then how it bites your Superstore data.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 6 ('Statistical thinking for analysts'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "Samples and selection bias",
@@ -2811,6 +2841,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 7 ('AI-Augmented analyst + Prompt Engineering'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "AI accelerates, you stay accountable",
               "body": "## What it is\nEvery analyst you'll compete with has Claude, ChatGPT, and Copilot. The edge isn't *using* AI — it's using it **well**: let it draft, then **you verify against the data**, and you remain accountable for every number you ship.\n\n## Why it matters\nAI is fluent, and fluency reads as confidence — but fluency is not accuracy. It will write a plausible SQL query against columns that don't exist, or invent a statistic, in the same self-assured tone it uses when it's right. Ship that unchecked and you'll be humiliated defending a wrong number in a meeting. Used with verification, the same tool makes you 2-3x faster with *no* loss of trust. The whole skill this week is building the verify-reflex so AI's speed never becomes AI's risk.\n\n## The contract\nAI supplies *drafts and syntax*; you supply *the data, the judgement, and the final sign-off*. It never gets to be the source of a number — only a faster way to produce something you then check."
             },
@@ -3193,6 +3228,11 @@
           "title": "The deck is an argument, not a dump",
           "summary": "Compress five weeks into five slides a CEO acts on in ten minutes. Concept, video, worked structure.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 8 ('Superstore v0.5: Executive deck'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "The deck is an argument, not a dump",
@@ -3579,6 +3619,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: superstore.csv",
+              "body": "## 📁 Dataset: `superstore.csv`\n\n- **What it is:** Sample Superstore (a fictional office-supply retailer, 4 years of orders).\n- **Reuse:** This is the SAME Sample Superstore dataset from the Excel week (Week 1) — do not look for a new file. If you have the Excel copy, just export/Save-As `superstore.csv`.\n- **Where to get it:** Re-download from the Week 1 resources, or this direct CSV link — https://www.tableau.com/sites/default/files/training/regional_sales.csv\n- **Where to save it:** `data/superstore.csv`, in the same folder as your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 9 ('Superstore v1.0: Ship + retro'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "Find the rough edges",
               "body": "## What it is\nBefore the final ship, audit every artefact — notebook, memo, deck, dashboard, `queries.sql`, repo README — and write down every **rough edge**: half-finished bits, inconsistencies, broken links, unclear labels, numbers that disagree across documents.\n\n## Why it matters\n\"Shipping\" means *finishing*, not *abandoning*, and \"it's basically done\" is where most portfolio projects quietly die at 80%. A written rough-edge list converts that vague feeling into a concrete, completable punch list — and the act of hunting for edges always finds the embarrassing one (the figure that's $62k in the memo and $61k on the deck) that would have cost you credibility. You can't fix what you haven't named.\n\n## How to audit\nOpen each artefact as if you were a stranger reviewing it for a job. Note everything that's wrong, unclear, or inconsistent — don't fix yet, just list. A good audit usually finds 5-10 items you'd otherwise have shipped."
             },
@@ -3952,6 +3997,11 @@
           "title": "Why people analytics",
           "summary": "A new domain: HR. Concept of attrition, then compute the base rate on real data.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
             {
               "kind": "lesson",
               "title": "Why people analytics",
@@ -4375,6 +4425,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 11 ('HR Attrition v0.2: Tenure + cohorts'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "What tenure analysis is",
               "body": "## What it is\nLast week you found *who* leaves (which departments, roles, pay levels). This week adds the **time dimension**: *when* in an employee's tenure is the risk highest? Tenure is `YearsAtCompany`, and the question is whether attrition risk is flat over time or spikes at certain points.\n\n## Why it matters\nThe intervention changes completely depending on the answer. If risk spikes in the **first 1-2 years**, the problem is onboarding and early experience — fix the first 90 days. If it spikes around **years 3-5**, it's career stagnation — fix promotion and growth paths. A flat curve would mean tenure isn't the lever at all. You can't design a retention program until you know *when* people are at risk, and most companies have never actually looked.\n\n## The discipline (again)\nForm the hypothesis first, before plotting: most attrition research finds an **early-tenure spike** — new hires who realise it's not a fit and leave within two years. Write that prediction down, then test it."
             },
@@ -4787,6 +4842,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 12 ('HR Attrition v0.3: Memo + dashboard'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "What HR actually needs",
               "body": "## What it is\nYou're packaging two weeks of attrition analysis into deliverables — like Superstore W8-9, but the audience is **HR leadership**, and that changes everything you emphasise.\n\n## Why it matters\nA sales director wants dollars; HR wants **actions on people**, framed around **retention, privacy, and fairness**. They don't care about your p-value; they care \"which team do we help, and is this analysis fair to individuals?\" Lead with the at-risk group and the intervention, not the methodology. Get the framing wrong and a technically perfect analysis gets ignored — or worse, raises legal/ethical flags (you must never single out *named* employees as flight risks).\n\n## The rule for this audience\nTalk about *groups and drivers* (overtime, early-tenure Sales Reps), never individuals. Recommend *policy* (cap overtime, fix onboarding), and acknowledge fairness (is the model just flagging a protected group?)."
             },
@@ -5166,6 +5226,11 @@
           "title": "List the rough edges",
           "summary": "Audit everything before the final ship. Concept + worked audit.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 13 ('HR Attrition v1.0: Ship + retro'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "List the rough edges",
@@ -5958,6 +6023,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
+            {
+              "kind": "lesson",
               "title": "What is a funnel?",
               "body": "## What it is\nProject 3 uses **Olist** — a public Brazilian e-commerce dataset: ~100,000 orders (2016-2018) across multiple tables (orders, items, customers, reviews, payments). A **funnel** tracks how customers progress through stages (ordered -> shipped -> delivered -> reviewed), and where they drop off.\n\n## Why it matters\nEvery drop-off is lost money, and the funnel shows *exactly where*. \"We lose customers somewhere\" is useless; \"8% of orders never reach delivered\" points at a fixable operations problem. Funnel thinking is the core of marketing and e-commerce analytics — and Olist's multi-table structure forces you to practise the `merge` skill on realistic, messy, relational data.\n\n## What's new here\nUnlike Superstore (one table), Olist is **relational** — answers require *joining* tables. That's this project's growth edge: real data is normalised across tables, and you'll live in `merge`."
             },
@@ -6368,6 +6438,11 @@
           "title": "What's a cohort?",
           "summary": "Group customers by when they joined. Concept, video, why it matters.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 16 ('Olist Funnel v0.2: Cohorts + repeat purchase'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "What's a cohort?",
@@ -6786,6 +6861,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 17 ('Olist A/B test - planning a marketing experiment'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "What an A/B test really is",
               "body": "## What it is\nAn **A/B test** is a controlled experiment: split users randomly into group A (control) and group B (variant), change *one* thing for B, and measure whether a metric (conversion, repeat rate) moves. Randomisation is what lets you claim the *change* caused the difference — not a confounder.\n\n## Why it matters\nMost analysts only *consume* A/B results — they read the dashboard and report the p-value. The valued, senior analyst can also **design** the test: define the metric, the hypothesis, and how big a sample you need. That design skill is what turns \"we think a faster checkout helps\" into a credible experiment, and it's rarer (and better paid) than reading results.\n\n## The four pieces of a good test\nA clear **hypothesis**, one **metric** (the thing you'll judge), **randomisation** (fair split), and a pre-computed **sample size** (so you don't stop early and fool yourself). This week you'll design one for Olist."
             },
@@ -7182,6 +7262,16 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 18 ('Olist Funnel v0.3: Memo + dashboard'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 18 ('Olist Funnel v0.3: Memo + dashboard'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "What marketing needs",
               "body": "## What it is\nTurn three weeks of Olist analysis into deliverables for a **marketing team** — who consume data differently from a CEO or HR. They want levers they can pull: acquisition cost, retention windows, what makes customers return.\n\n## Why it matters\nMarketing acts on *campaigns and timing*, so your funnel/cohort findings must translate into \"do X, expect Y\": \"median repeaters return in ~58 days -> send a re-engagement offer at week 6\". Frame findings as campaign levers, not statistics, or marketing won't know what to do with them."
             },
@@ -7563,6 +7653,11 @@
           "title": "List the rough edges",
           "summary": "Audit before final ship. Concept + worked audit.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 19 ('Olist Funnel v1.0: Ship + retro'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "List the rough edges",
@@ -8743,6 +8838,16 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 22 ('Capstone v0.1: Multi-source dashboard scope'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 22 ('Capstone v0.1: Multi-source dashboard scope'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "What a capstone is",
               "body": "## What it is\nThe capstone is the fourth and final DA project — and the first one **you** define. Unlike Superstore, HR, and Olist (handed to you), here you choose the question, combine **multiple data sources**, and build a polished multi-page dashboard end to end.\n\n## Why it matters\nA capstone is what a hiring manager actually looks for: proof you can take an *ambiguous* business problem, scope it, source and model the data, analyse it, and present a decision — without anyone holding your hand. The three guided projects taught the skills; the capstone proves you can apply them *unprompted*, which is the entire difference between someone who can follow a tutorial and someone who can do the job.\n\n## What makes it harder (and better)\nMultiple sources (you must join/relate them), self-defined scope (you decide what's worth answering), and a real deliverable (a 4-page dashboard a stakeholder could use). Ambiguity is the point — embrace it."
             },
@@ -9510,6 +9615,16 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 24 ('Capstone v0.3: Pages 3 + 4'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 24 ('Capstone v0.3: Pages 3 + 4'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "Page 3 — Customer view",
               "body": "## What it is\nPage 3 focuses on **customers/segments** — who they are, their value, their behaviour — reusing your CLV/cohort skills on the capstone data.\n\n## Why it matters\nA complete dashboard answers more than 'what happened' (pages 1-2); it answers 'who' (customers) and 'how well are we running' (operations, page 4). The customer page is where retention/value insights live, and it shows you can carry a customer lens into any project."
             },
@@ -10272,6 +10387,16 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 26 ('Capstone v1.0: Ship + roadmap retro'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 26 ('Capstone v1.0: Ship + roadmap retro'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "Write the CEO memo",
               "body": "## What it is\nA one-page memo addressed to a CEO: the capstone's headline, the evidence, and the recommendation with its business impact — the polished written companion to your story.\n\n## Why it matters\nThe CEO memo is the artefact that survives the meeting and circulates to people who weren't there. For the highest audience it must be exceptionally tight: the recommendation and its dollar impact in the first two lines, evidence curated to the essential, and a clear ask. This is the memo discipline from every project, at its most demanding."
             },
@@ -10662,6 +10787,16 @@
           "title": "Audit what you have",
           "summary": "Inventory your four projects as evidence. Concept + the audit.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: Employee-Attrition.csv",
+              "body": "## 📁 Dataset: `Employee-Attrition.csv`\n\n- **What it is:** IBM HR Analytics Employee Attrition (1,470 employees).\n- **Reuse:** A NEW dataset for this week.\n- **Where to get it:** Kaggle (free account): \"IBM HR Analytics Employee Attrition & Performance\" — https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset\n- **Where to save it:** `data/Employee-Attrition.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 27 ('Portfolio + interview prep'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 27 ('Portfolio + interview prep'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "Audit what you have",

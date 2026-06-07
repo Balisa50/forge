@@ -156,6 +156,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: yellow_tripdata_2023-10.parquet",
+              "body": "## 📁 Dataset: `yellow_tripdata_2023-10.parquet`\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows).\n- **Reuse:** This is a NEW download for the TaxiPulse project (you did not use it before).\n- **Where to get it:** Official NYC TLC Trip Record Data — direct CDN link — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  - Mirror / official page: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
+            {
+              "kind": "lesson",
               "title": "What data science actually is",
               "body": "## What it is\nData science is the practice of **turning raw data into decisions** — using code to ask questions, statistics to test whether the answers are real, and communication to make findings actionable.\n\nThe loop never changes regardless of company or domain:\n1. **Question** — a business problem precise enough that data can test it\n2. **Pipeline** — code that loads, cleans, and analyses the data\n3. **Decision** — a recommendation backed by evidence\n\nEverything in this track — pandas, SQL, sklearn, FastAPI, Streamlit — is a tool in service of that loop.\n\n## Description vs prediction\n**Description** = 'what happened?' — the analyst's territory. **Prediction** = 'what will happen next?' — the data scientist's move, requiring a trained model. Week 1 is pure description. Week 5 is your first prediction model.\n\n## Where this fits in TaxiPulse\nThis week you load 3.5 million NYC taxi trips and answer three questions you commit to RIGHT NOW — before touching the data. That commitment forces a hypothesis first. It is the single most important habit in the field."
             },
@@ -636,6 +641,11 @@
           "title": "Vectors — the atom of machine learning",
           "summary": "NumPy first, then vectors and dot product. Without NumPy the code below is unreadable; with it, every line is a one-liner.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: yellow_tripdata_2023-10.parquet",
+              "body": "## 📁 Dataset: `yellow_tripdata_2023-10.parquet`\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows).\n- **Reuse:** This is a NEW download for the TaxiPulse project (you did not use it before).\n- **Where to get it:** Official NYC TLC Trip Record Data — direct CDN link — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  - Mirror / official page: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 2 ('Math you actually need (lin alg + prob + stats)'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "NumPy — the foundation under every line of code today",
@@ -1149,6 +1159,16 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: yellow_tripdata_2023-10.parquet",
+              "body": "## 📁 Dataset: `yellow_tripdata_2023-10.parquet`\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows).\n- **Reuse:** This is a NEW download for the TaxiPulse project (you did not use it before).\n- **Where to get it:** Official NYC TLC Trip Record Data — direct CDN link — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  - Mirror / official page: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 3 ('TaxiPulse v0.2: Borough breakdown + multi-month'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: taxi_zone_lookup.csv",
+              "body": "## 📁 Dataset: `taxi_zone_lookup.csv`\n\n- **What it is:** NYC taxi zone lookup (maps zone IDs to borough/neighbourhood).\n- **Reuse:** A small companion file for the NYC taxi data.\n- **Where to get it:** Official NYC TLC — direct CDN link — https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv\n- **Where to save it:** `data/taxi_zone_lookup.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
+            {
+              "kind": "lesson",
               "title": "pd.concat — combining files without a loop",
               "body": "## What it is\npd.concat() stacks multiple DataFrames vertically — same columns, more rows.\n\n```python\nimport pandas as pd\n\noct = pd.read_parquet('data/yellow_tripdata_2023-10.parquet')\nnov = pd.read_parquet('data/yellow_tripdata_2023-11.parquet')\ndec = pd.read_parquet('data/yellow_tripdata_2023-12.parquet')\n\ndf3 = pd.concat([oct, nov, dec], ignore_index=True)\nprint(df3.shape)   # roughly (10M, 19)\n```\n\nignore_index=True resets row numbers to 0, 1, 2 ... instead of three overlapping 0-N sequences.\n\n## pd.concat vs pd.merge\n- **concat**: same columns, more rows (vertical stack)\n- **merge**: join on a shared key, add new columns (horizontal join)\n\nCombining three months is a concat. Joining trips to a zone-names lookup is a merge.\n\n## Why this matters\nWeek 1 was one month. Q4 (three months) is the minimum baseline for seasonal questions."
             },
@@ -1610,6 +1630,16 @@
           "title": "SQL is not Excel — the relational mental model",
           "summary": "Tables, rows, columns, and declaring WHAT you want, not HOW.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: yellow_tripdata_2023-10.parquet",
+              "body": "## 📁 Dataset: `yellow_tripdata_2023-10.parquet`\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows).\n- **Reuse:** This is a NEW download for the TaxiPulse project (you did not use it before).\n- **Where to get it:** Official NYC TLC Trip Record Data — direct CDN link — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  - Mirror / official page: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 4 ('SQL for Data Scientists'), day 1."
+            },
+            {
+              "kind": "lesson",
+              "title": "Dataset: taxi_zone_lookup.csv",
+              "body": "## 📁 Dataset: `taxi_zone_lookup.csv`\n\n- **What it is:** NYC taxi zone lookup (maps zone IDs to borough/neighbourhood).\n- **Reuse:** A small companion file for the NYC taxi data.\n- **Where to get it:** Official NYC TLC — direct CDN link — https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv\n- **Where to save it:** `data/taxi_zone_lookup.csv`.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 4 ('SQL for Data Scientists'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "What SQL is and how it differs from pandas",
@@ -2083,6 +2113,11 @@
           "title": "Regression vs classification — and the ML workflow",
           "summary": "The describe-to-predict leap, and the workflow every model follows.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: yellow_tripdata_2023-10.parquet",
+              "body": "## 📁 Dataset: `yellow_tripdata_2023-10.parquet`\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows).\n- **Reuse:** This is a NEW download for the TaxiPulse project (you did not use it before).\n- **Where to get it:** Official NYC TLC Trip Record Data — direct CDN link — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  - Mirror / official page: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 5 ('TaxiPulse v0.3: Predict the fare'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "Supervised learning: regression, classification, and the train/test split",
@@ -3494,6 +3529,11 @@
           "title": "Ethics + robots.txt",
           "summary": "The rules before the code — scrape responsibly or not at all.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
             {
               "kind": "reading",
               "title": "Hacker News (your scrape target)",
@@ -5341,6 +5381,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 12 ('Project 2 — Reddit Sentiment v0.1'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "Sentiment analysis and the NLP challenge",
               "body": "## What it is\nEleven weeks on numeric data. Now: **text** — the messy, unstructured kind that makes up ~80% of the world's information. Support tickets, reviews, social posts, contracts. **Sentiment analysis** is the entry point: classifying a piece of text by its emotional tone (positive / negative / neutral).\n\nYou're starting **Project 2: Reddit Sentiment.** By the end you'll scrape Reddit posts, label their sentiment, build your own classifier, and ship it — a complete NLP project alongside TaxiPulse.\n\n## Why text is fundamentally harder than numbers\nModels do **math**. A fare of $16.42 is already a number a model can multiply. But 'this paper is fire' is a string — meaningless to a model until it's converted into numbers. **That conversion (text -> numbers) is the central problem of NLP**, and you'll meet several ways to do it across this project (pretrained embeddings this week, bag-of-words next week, fine-tuned transformers later).\n\n## Why sentiment is the right starting point\nSentiment is concrete (you can eyeball whether a label is right), genuinely useful (brands track it constantly), and it exposes every core NLP challenge — ambiguity, sarcasm, domain-specific language — in a simple binary frame. It's NLP with training wheels that still teaches the real lessons.\n\n## Where this fits\nThis week (v0.1) you set up the project, get Reddit API access, scrape 1000 posts, and label them with a pretrained model — a fast, working baseline you'll critique and beat next week."
             },
@@ -7155,6 +7200,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 16 ('Model interpretability with SHAP'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "The black-box problem",
               "body": "## What it is\nYour fine-tuned DistilBERT predicts 'NEGATIVE' for a post. **Why?** You don't know — the decision lives in millions of opaque weights. **Interpretability** is the discipline of opening that box: explaining *why* a model made a specific prediction.\n\n## Why the stakes determine the need\n- **Low-stakes** (recommend a movie, suggest a playlist): a wrong call costs nothing. A black box is fine.\n- **High-stakes** (deny a loan, flag a post for moderation, screen a CV): a wrong call causes real harm and may be **legally challengeable**. You *must* be able to explain and defend the decision.\n\nSentiment moderation sits on the high-stakes side: if your model flags posts, the people affected (and your boss, and possibly a regulator) will ask 'why was MY post flagged?' 'The neural net said so' is not an acceptable answer.\n\n## What interpretability buys you\n1. **Trust** — stakeholders accept a model they can understand\n2. **Debugging** — you find where the model reasons wrongly\n3. **Bias detection** — you catch the model keying off something it shouldn't (a subreddit name, profanity, a demographic proxy)\n\n## Where this fits\nThis week you use **SHAP** to explain your sentiment model's predictions — first a simple classical model, then (optionally) the transformer — and you'll find at least one real bias your model has."
             },
@@ -7602,6 +7652,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: flights.csv",
+              "body": "## 📁 Dataset: `flights.csv`\n\n- **What it is:** US domestic flight delays & cancellations (sample of a few million rows).\n- **Reuse:** This is the FlightWise project dataset — download it once at the start of the track.\n- **Where to get it:** Kaggle (free account required): \"Flight Delay and Cancellation Dataset\" — https://www.kaggle.com/datasets/patrickzel/flight-delay-and-cancellation-dataset-2019-2023\n- **Where to save it:** `data/flights.csv` (rename the downloaded file to flights.csv).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file."
+            },
+            {
+              "kind": "lesson",
               "title": "Imbalance, scarcity, and the case for synthetic data",
               "body": "## What it is\n**Synthetic data** is artificially generated data used to supplement or stand in for real data. Two common reasons you need it:\n\n**1. Class imbalance.** Most real datasets are lopsided. Fraud is ~0.3% of transactions. The rare class — the one you usually care about — is starved of examples, so the model learns to ignore it.\n\n**2. Scarcity / privacy.** Sometimes you can't get enough real data (rare disease cases) or can't use it (private user records). Realistic fakes let you develop and test without it.\n\n## The accuracy trap with imbalance\nThe snippet below shows exactly what to do:\n\n```text\nFraud dataset: 0.3% fraud, 99.7% normal\nModel that ALWAYS predicts 'normal':\n  Accuracy = 99.7%   <- looks amazing\n  Fraud caught = 0   <- completely useless\n```\nThis is why **accuracy is the wrong metric for imbalanced data.** A model can score 99.7% by never predicting the class you built it to catch. You need precision/recall on the minority class — and often, techniques that help the model actually learn it.\n\n## Where this fits\nThis week you learn three synthetic-data tools: **Faker** (realistic fake records), **SMOTE** (synthetic minority examples for imbalance), and **LLM paraphrasing** (augmenting your small Reddit text set) — and critically, **when synthetic data quietly hurts.**"
             },
@@ -8043,6 +8098,11 @@
           "title": "Plan the live dashboard",
           "summary": "From offline notebooks to a one-button live tool.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 18 ('Reddit Sentiment v0.4: Live dashboard'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "Taking the model live",
@@ -15144,6 +15204,11 @@
           "items": [
             {
               "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 34 ('Computer Vision - CNN, transfer learning, Vision Transformers'), day 1."
+            },
+            {
+              "kind": "lesson",
               "title": "CV in one read",
               "body": "## What it is\nComputer vision = teaching models to extract meaning from images. The dominant architecture for the last decade is **CNNs (Convolutional Neural Networks)**. Recently **Vision Transformers (ViTs)** have caught up and surpassed CNNs at large scale.\n\n## CNN intuition\nThe snippet below shows exactly what to do:\n\n```text\ninput image (224×224×3)\n  → conv layer 1: detects EDGES, COLOR BLOBS (low-level)\n  → pool / conv 2: detects TEXTURES, simple SHAPES\n  → conv 3-N: detects PARTS (wheels, eyes, windows)\n  → final layers: detects OBJECTS (cars, faces, buildings)\n  → output: predicted class\n```\nEach conv layer takes the previous feature maps and learns spatial filters. The filters in early layers find simple things; later layers compose them into complex things. That's it.\n\n## Transfer learning\nTraining a CNN from scratch needs millions of labeled images. **Pretrained CNNs** (ResNet50, EfficientNet) have already learned the early-layer feature extractors from ImageNet (14M images, 1000 classes).\n\nWhen you fine-tune for YOUR task:\n- Keep the pretrained feature extractor (don't retrain the early layers — they're already good)\n- Replace the final classification head with one matching your task\n- Train only the new head (or fine-tune the last few layers gently)\n\nResult: 10-30x less data needed to match training-from-scratch quality.\n\n## Vision Transformers\nNewer architecture (2021). Instead of convolutions:\n- Split image into a grid of patches (e.g., 16×16 each)\n- Embed each patch as a vector\n- Run self-attention (like an LLM) over the sequence of patch embeddings\n- Classification head on the [CLS] token\n\nTrade-off: less inductive bias than CNNs (no built-in locality) but more expressive when you have lots of data. For learner projects, fine-tune a pretrained ViT — same pattern as CNN.\n\n## This week\nPick an image classification task. Fine-tune ResNet50. Try ViT. Compare. Deploy with Gradio. Same shape as the LoRA / RAG weeks."
             },
@@ -16435,6 +16500,11 @@
           "title": "Reproducible pipeline",
           "summary": "Makefile or DVC. One command, end-to-end.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 37 ('Capstone v0.2 - Build (extended)'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "From notebooks to pipeline",
@@ -18147,6 +18217,11 @@
           "title": "Intuition + dataset",
           "summary": "Three generations of recsys + MovieLens.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Dataset: olist_*_dataset.csv",
+              "body": "## 📁 Dataset: `olist_*_dataset.csv`\n\n- **What it is:** Brazilian E-Commerce (Olist) — a set of related CSVs (orders, customers, reviews…).\n- **Reuse:** A NEW multi-file dataset for this week.\n- **Where to get it:** Kaggle (free account): \"Brazilian E-Commerce Public Dataset by Olist\" — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce\n- **Where to save it:** a `data/olist/` folder (keep all the CSVs together).\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 41 ('Recommender Systems - the algorithms behind every feed'), day 1."
+            },
             {
               "kind": "lesson",
               "title": "Three generations, one problem",
