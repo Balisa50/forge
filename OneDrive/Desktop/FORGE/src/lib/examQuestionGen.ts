@@ -223,6 +223,24 @@ const GENERATORS: Record<string, Template[]> = {
         `Complement is fastest: $P(\\text{no women})=\\dfrac{\\binom{${m}}{${k}}}{\\binom{${m + w}}{${k}}}=${fmt(pNoWomen, 4)}$, so $P(\\ge 1)=1-${fmt(pNoWomen, 4)}=${fmt(atLeastOne, 4)}$. Adding single-woman probabilities double-counts committees with two or three women — the trap.`,
         prob, TIER_DIFF.superhard);
     }),
+    T("superhard", () => {
+      // 3-set with LINKED constraints — must back out the regions before counting.
+      const t = 100 * rint(2, 6);                 // all three (triple overlap)
+      const ac = 3 * t;                           // 25% of A∩C also buy B → A∩C totals 4t, AC-only = 3t
+      const ab = 100 * rint(1, ac / 100 - 1);     // A∩B only
+      const bc = 100 * rint(1, ac / 100 - 1);     // B∩C only
+      const a = 100 * rint(20, 42);               // only A
+      const b = 100 * rint(5, 25);                // only B
+      const c = 100 * rint(5, 25);                // only C
+      const buyA = a + ab + ac + t, buyB = b + ab + bc + t, buyC = c + ac + bc + t;
+      const d1 = ac - ab, d2 = ac - bc;
+      const exactlyOne = a + b + c, exactlyTwo = ab + ac + bc, total = exactlyOne + exactlyTwo + t;
+      return build(
+        `An insurer sells three products $A$, $B$, $C$; every customer buys at least one. ${buyA} buy $A$, ${buyB} buy $B$, ${buyC} buy $C$. The number buying both $A$ and $C$ is ${d1} more than the number buying both $A$ and $B$, and ${d2} more than the number buying both $B$ and $C$. Of those who buy both $A$ and $C$, $25\\%$ also buy $B$. Exactly ${a} buy only $A$. How many buy EXACTLY ONE product?`,
+        exactlyOne, [total, exactlyTwo, exactlyOne + t, buyA],
+        `Let the all-three region be $t$. "$25\\%$ of $A\\cap C$ also buy $B$" means $t=0.25\\,(A\\cap C)$, so $A\\cap C$ totals $4t$ and its only-region is $3t$. The two "more than" clauses pin the other pairwise-only regions; subtract every pairwise-only region and the triple from each product total to recover only-$A$, only-$B$, only-$C$. Exactly one $=${a}+${b}+${c}=${exactlyOne}$. The total $${total}$ ("at least one") and exactly-two $${exactlyTwo}$ are the traps.`,
+        integer, TIER_DIFF.superhard);
+    }),
   ],
 
   "conditional-probability": [
@@ -298,6 +316,21 @@ const GENERATORS: Record<string, Template[]> = {
         round(post, 4), [round(s3 * d3, 4), d3, round(denom, 4), round((s3 * d3) / (s1 * d1 + s2 * d2), 4)],
         `Extended Bayes over three causes: $\\dfrac{s_3 d_3}{s_1 d_1+s_2 d_2+s_3 d_3}=\\dfrac{(${fmt(s3, 2)})(${fmt(d3, 2)})}{${fmt(denom, 5)}}=${fmt(post, 4)}$. The trap is dividing by only the other machines, or stopping at the joint $s_3 d_3$ without normalising over the total defect probability.`,
         prob, TIER_DIFF.superhard);
+    }),
+    T("hard", () => {
+      // Law of total probability over overlapping segments (only-life / only-health / both).
+      const L = pick([0.40, 0.45, 0.50, 0.55]);
+      const H = pick([0.40, 0.45, 0.50]);
+      const B = rstep(0.15, Math.min(L, H) - 0.05, 0.05);
+      const onlyL = round(L - B, 4), onlyH = round(H - B, 4);
+      const rL = pick([0.30, 0.35, 0.40]), rH = pick([0.50, 0.55, 0.60]), rB = pick([0.70, 0.75, 0.80]);
+      const renew = round(rL * onlyL + rH * onlyH + rB * B, 4);
+      const noCarveOut = round(rL * L + rH * H - rB * B, 4); // applied rates to full %s
+      return build(
+        `Among an insurer's policyholders, $${pct(L)}$ hold a life policy, $${pct(H)}$ a health policy, and $${pct(B)}$ hold both. Next year, $${pct(rL)}$ of life-ONLY holders, $${pct(rH)}$ of health-ONLY holders, and $${pct(rB)}$ of those with BOTH will renew. For a random policyholder, find the probability they renew a life or health policy next year.`,
+        renew, [noCarveOut, round(L + H - B, 4), round(rB * B, 4), round(renew / (L + H - B), 4)],
+        `Carve the holders into disjoint segments first: life-only $=${fmt(L, 2)}-${fmt(B, 2)}=${fmt(onlyL, 4)}$, health-only $=${fmt(onlyH, 4)}$, both $=${fmt(B, 2)}$. Law of total probability: $${fmt(rL, 2)}(${fmt(onlyL, 4)})+${fmt(rH, 2)}(${fmt(onlyH, 4)})+${fmt(rB, 2)}(${fmt(B, 2)})=${fmt(renew, 4)}$. Applying the renewal rates to the FULL life/health percentages double-counts the "both" group — the trap.`,
+        prob, TIER_DIFF.hard);
     }),
   ],
 
@@ -492,6 +525,34 @@ const GENERATORS: Record<string, Template[]> = {
         round(val, 2), [round((A + B) * (1 + i) ** valAt, 2), round(A * (1 + i) ** valAt + B * (1 + i) ** valAt, 2), round(A * (1 + i) ** (valAt - t2) + B * (1 + i) ** (valAt - t1), 2), round(A * (1 + i) ** t1 + B * (1 + i) ** t2, 2)],
         `Accumulate each deposit by its OWN time to ${valAt}: $${A}(1+${fmt(i, 2)})^{${valAt - t1}}+${B}(1+${fmt(i, 2)})^{${valAt - t2}}=${money(round(val, 2)).slice(2, -1)}$. The trap is using a single common exponent — each cash flow has a different time-to-valuation.`,
         money, TIER_DIFF.superhard);
+    }),
+    T("superhard", () => {
+      // Time-varying force of interest: integrate δ_t over the year. a = 2b makes
+      // ∫δ = ln(1+b t²) exact, so the accumulation factor is a clean ratio.
+      const b = pick([0.05, 0.1, 0.15, 0.2]);
+      const a = round(2 * b, 4);
+      const k = rint(2, 5);
+      const acc = round((1 + b * k * k) / (1 + b * (k - 1) * (k - 1)), 6);
+      const iK = round(acc - 1, 4);
+      const deltaAtK = round((a * k) / (1 + b * k * k), 4);
+      return build(
+        `The force of interest is $\\delta_t=\\dfrac{${fmt(a, 2)}\\,t}{1+${fmt(b, 2)}\\,t^2}$ for $t>0$. Find the effective annual rate of interest earned in year ${k} (from time ${k - 1} to time ${k}).`,
+        iK, [deltaAtK, round(acc, 4), round((1 + b * (k - 1) * (k - 1)) / (1 + b * k * k) - 1, 4), round(iK * 1.5, 4)],
+        `A rate over an interval needs the integral of the force: $\\int_{${k - 1}}^{${k}}\\delta_t\\,dt=\\big[\\ln(1+${fmt(b, 2)}t^2)\\big]_{${k - 1}}^{${k}}$ (here $\\tfrac{${fmt(a, 2)}}{2\\cdot${fmt(b, 2)}}=1$). The accumulation factor is $\\dfrac{1+${fmt(b, 2)}\\cdot${k}^2}{1+${fmt(b, 2)}\\cdot${k - 1}^2}=${fmt(acc, 4)}$, so $i_{${k}}=${fmt(acc, 4)}-1=${fmt(iK, 4)}$. Plugging $t=${k}$ into $\\delta_t$ (the instantaneous force $${fmt(deltaAtK, 4)}$) is the trap.`,
+        prob, TIER_DIFF.superhard);
+    }),
+    T("superhard", () => {
+      // Force ↔ nominal-convertible conversion, then solve for n.
+      const delta = pick([0.02, 0.025, 0.03, 0.04, 0.05]);
+      const Tdbl = round(Math.log(2) / delta, 2);
+      const n = pick([40, 60, 80, 100]);
+      const G = round((1 + 2 * delta) ** (n / 2), 2);
+      const wrongNoConv = Math.round((2 * Math.log(G)) / Math.log(1 + delta));
+      return build(
+        `An investment of $1$ doubles in ${Tdbl} years at a constant force of interest $\\delta$. A separate investment of $1$ grows to $${G}$ in $n$ years at a nominal rate of interest numerically equal to $\\delta$, convertible once every two years. Find $n$.`,
+        n, [n / 2, wrongNoConv, n * 2, Math.round(Tdbl)],
+        `Doubling fixes the force: $\\delta=\\dfrac{\\ln 2}{${Tdbl}}=${fmt(delta, 4)}$. "Nominal $=\\delta$, convertible once every two years" makes the rate over each 2-year period $2\\delta=${fmt(2 * delta, 4)}$, so the accumulation is $(1+2\\delta)^{n/2}$. Solve $(1+${fmt(2 * delta, 4)})^{n/2}=${G}\\Rightarrow n=\\dfrac{2\\ln ${G}}{\\ln(1+${fmt(2 * delta, 4)})}=${n}$. Using $1+\\delta$ (forgetting the 2-year conversion) is the trap.`,
+        integer, TIER_DIFF.superhard);
     }),
   ],
 
@@ -738,6 +799,21 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
     diagram: (q) => /exponential|memoryless|lifetime|until.*(fail|arriv)|decay/i.test(q.q)
       ? { kind: "exponential", caption: "Exponential density $f(x)=\\lambda e^{-\\lambda x}$." }
       : { kind: "bell", caption: "Normal curve — area in the tails beyond $\\pm k\\sigma$." },
+  },
+  "interest-and-accumulation": {
+    trick: "Accumulation $=\\exp\\!\\int_{t_1}^{t_2}\\delta_s\\,ds$ — a rate over an interval needs the **integral** of the force, not $\\delta$ at a point. Doubling time $T$ gives $\\delta=\\dfrac{\\ln 2}{T}$. A nominal rate convertible $m$ times/yr has per-period rate (nominal)$/m$.",
+    decode: [
+      { label: "Cash flows", value: "what is invested/paid and when" },
+      { label: "Rate basis", value: "effective, nominal-convertible-$m$, or a force $\\delta_t$" },
+      { label: "Asked", value: "an accumulated value, present value, or a rate" },
+      { label: "Timing", value: "the interval each amount actually earns over" },
+    ],
+    sanity: [
+      "For positive interest, accumulated value $>$ amount invested.",
+      "An effective rate exceeds the nominal it came from once compounding is more than once a year.",
+      "Discounting moves value backward in time; accumulating moves it forward.",
+    ],
+    diagram: () => undefined,
   },
 };
 
