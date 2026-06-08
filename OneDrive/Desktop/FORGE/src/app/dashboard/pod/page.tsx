@@ -329,7 +329,7 @@ export default function PodPage() {
 
               {/* Solo pod — invite nudge */}
               {pod.memberCount === 1 && (() => {
-                const shareText = `I'm building in public on The Forge — AI-powered accountability for developers 🔥\n\nJoin me and get matched into an accountability pod → theforge.app`;
+                const shareText = `I'm building in public on The Forge — AI-powered accountability for developers.\n\nJoin me and get matched into an accountability pod → theforge.app`;
                 const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
                 return (
                   <div style={{

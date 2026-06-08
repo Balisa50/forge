@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { requireLearnerAccess } from "@/lib/role-guard";
 import Link from "next/link";
-import { Award, ExternalLink, Clock, CheckCircle2, Fingerprint, Target, Lock } from "lucide-react";
+import { Award, ExternalLink, Clock, CheckCircle2, Fingerprint, Target, Lock, Star } from "lucide-react";
 import CertShareButton from "@/components/CertShareButton";
 
 export const dynamic = "force-dynamic";
@@ -98,8 +98,12 @@ export default async function CertificatesPage() {
                 textAlign: "center",
                 boxShadow: "inset 0 0 0 1px rgba(212,175,55,0.25)",
               }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.35em", color: "#d4af37", marginBottom: "0.75rem" }}>
-                  ★ ★ ★  THE FORGE  ★ ★ ★
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.35em", color: "#d4af37", marginBottom: "0.75rem" }}>
+                  <Star size={9} fill="#d4af37" strokeWidth={0} />
+                  <Star size={9} fill="#d4af37" strokeWidth={0} />
+                  <span style={{ paddingLeft: "0.35em" }}>THE FORGE</span>
+                  <Star size={9} fill="#d4af37" strokeWidth={0} />
+                  <Star size={9} fill="#d4af37" strokeWidth={0} />
                 </div>
                 <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: "0.875rem", color: "#c9b178", marginBottom: "1rem" }}>
                   Certificate of Completion
@@ -180,8 +184,8 @@ export default async function CertificatesPage() {
               <div key={cert.id} className="forge-panel" style={{ padding: "1.25rem" }}>
                 <div className="flex items-start justify-between gap-4" style={{ flexWrap: "wrap", marginBottom: "1.25rem" }}>
                   <div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--green)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.375rem" }}>
-                      ✓ Verified
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--green)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.375rem" }}>
+                      <CheckCircle2 size={12} /> Verified
                     </div>
                     <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", letterSpacing: "0.03em", marginBottom: "0.25rem" }}>
                       {cert.title}

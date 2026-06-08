@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Share2, Copy, CheckCheck } from "lucide-react";
+import { Share2, Copy, CheckCheck, X } from "lucide-react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://theforge.app";
 
@@ -20,7 +20,7 @@ export default function CertShareButton({ certTitle, verifyCode, passRate, total
   const verifyUrl = `${BASE_URL}/verify/cert/${verifyCode}`;
   const pct = Math.round(passRate * 100);
 
-  const shareText = `I just earned a verified certificate on The Forge ⚡\n\n📜 ${certTitle}\n✅ ${totalTasks} tasks · ${totalHours.toFixed(0)}h · ${pct}% pass rate\n\nEvery task was verified by AI — no self-reporting.\n\nVerify it: ${verifyUrl}`;
+  const shareText = `I just earned a verified certificate on The Forge.\n\n${certTitle}\n${totalTasks} tasks · ${totalHours.toFixed(0)}h · ${pct}% pass rate\n\nEvery task was verified by AI — no self-reporting.\n\nVerify it: ${verifyUrl}`;
 
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
 
@@ -68,9 +68,10 @@ export default function CertShareButton({ certTitle, verifyCode, passRate, total
             </span>
             <button
               onClick={() => setOpen(false)}
-              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}
+              aria-label="Close"
+              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", display: "inline-flex", alignItems: "center" }}
             >
-              ✕
+              <X size={14} />
             </button>
           </div>
 

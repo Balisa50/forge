@@ -49,7 +49,7 @@ const BASE_STYLE = `
 function header(title: string): string {
   return `
     <div style="background:#0c0c12;border-bottom:1px solid #1a1d2a;padding:1.5rem 2rem;">
-      <span style="font-size:1.25rem;font-weight:900;letter-spacing:0.1em;color:#f59e0b;">⚡ THE FORGE</span>
+      <span style="font-size:1.25rem;font-weight:900;letter-spacing:0.1em;color:#f59e0b;">THE FORGE</span>
     </div>
     <div style="padding:2rem;">
       <h1 style="margin:0 0 0.25rem;font-size:1.5rem;color:#f59e0b;letter-spacing:0.05em;">${title}</h1>
@@ -161,7 +161,7 @@ export function interrogationResultEmailHtml(
 
       ${verdict ? `
         <div style="background:#0c0c12;border:1px solid #1a1d2a;border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;">
-          <p style="margin:0 0 0.5rem;font-family:monospace;font-size:0.6875rem;color:#3b82f6;letter-spacing:0.2em;text-transform:uppercase;">⚡ VERDICT</p>
+          <p style="margin:0 0 0.5rem;font-family:monospace;font-size:0.6875rem;color:#3b82f6;letter-spacing:0.2em;text-transform:uppercase;">VERDICT</p>
           <p style="margin:0;color:#adadb5;font-size:0.9375rem;line-height:1.7;">${verdict}</p>
         </div>
       ` : ""}
@@ -211,7 +211,7 @@ export function podActivityEmailHtml(
               <span style="font-family:monospace;font-size:0.6875rem;padding:0.125rem 0.5rem;border-radius:4px;
                 background:${m.checkedIn ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)"};
                 color:${m.checkedIn ? "#22c55e" : "#ef4444"};">
-                ${m.checkedIn ? "✓ ACTIVE" : "QUIET"}
+                ${m.checkedIn ? "ACTIVE" : "QUIET"}
               </span>
             </div>
           </div>
@@ -290,7 +290,7 @@ export async function sendApplicationApprovedEmail(to: string, name: string, inv
   try {
     await sendMail(
       to,
-      `⚡ You're in — your Forge invite code`,
+      `You're in — your Forge invite code`,
       applicationApprovedEmailHtml(name, inviteCode, registerUrl),
     );
   } catch (e) {
@@ -300,7 +300,7 @@ export async function sendApplicationApprovedEmail(to: string, name: string, inv
 
 export async function sendWelcomeEmail(to: string, name: string) {
   try {
-    await sendMail(to, `Welcome to The Forge, ${name} ⚡`, welcomeEmailHtml(name));
+    await sendMail(to, `Welcome to The Forge, ${name}`, welcomeEmailHtml(name));
   } catch (e) {
     console.error("[email] sendWelcomeEmail failed:", (e as Error).message);
   }
@@ -310,7 +310,7 @@ export async function sendCheckinReminderEmail(to: string, name: string, taskTit
   try {
     await sendMail(
       to,
-      `⚡ ${name}, you haven't checked in yet today`,
+      `${name}, you haven't checked in yet today`,
       checkinReminderEmailHtml(name, taskTitle),
     );
   } catch (e) {
@@ -330,7 +330,7 @@ export async function sendInterrogationResultEmail(
   try {
     await sendMail(
       to,
-      passed ? `✅ You passed today's check-in — The Forge` : `❌ Check-in failed — The Forge`,
+      passed ? `You passed today's check-in — The Forge` : `Check-in failed — The Forge`,
       interrogationResultEmailHtml(name, passed, score, maxScore, verdict, taskTitle),
     );
   } catch (e) {

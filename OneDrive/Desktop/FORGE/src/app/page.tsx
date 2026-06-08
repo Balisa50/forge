@@ -151,7 +151,7 @@ export default function LandingPage() {
             </p>
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
               {[
-                "GitHub repo verified ✓",
+                "GitHub repo verified",
                 "Proof: live URL + commits",
                 "Task: Build a REST API with auth",
                 "Date: Apr 19, 2026",
