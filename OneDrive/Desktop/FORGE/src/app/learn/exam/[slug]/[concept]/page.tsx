@@ -7,6 +7,7 @@ import ConceptStatusBar from "@/components/exam/ConceptStatusBar";
 import StartConceptButton from "@/components/exam/StartConceptButton";
 import MasteryGate from "@/components/exam/MasteryGate";
 import ActuaryQuestionSolver from "@/components/exam/ActuaryQuestionSolver";
+import StudyPractice from "@/components/exam/StudyPractice";
 import { workedExamples } from "@/lib/examWorkedExamples";
 
 export const dynamic = "force-dynamic";
@@ -83,6 +84,9 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
             </div>
           </section>
         )}
+
+        {/* Infinite enriched practice (study mode) — trick / diagram / 4-step */}
+        <StudyPractice slug={slug} conceptId={conceptId} />
 
         {/* Completion closure → unlocks the mastery gate */}
         <div className="mt-10">

@@ -26,7 +26,10 @@
  * — the tempting wrong answers the SOA actually writes, not random noise.
  */
 
-import type { MasteryQuestion } from "@/lib/examPaths";
+import type { MasteryQuestion, DiagramSpec } from "@/lib/examPaths";
+
+/** Study-mode enrichments a template may attach (all optional). */
+type QuestionExtra = Partial<Pick<MasteryQuestion, "trick" | "diagram" | "decode" | "steps" | "sanity">>;
 
 /* ───────────────────────── rng + helpers ───────────────────────── */
 
@@ -94,6 +97,7 @@ function build(
   explain: string,
   format: (v: number) => string,
   difficulty: MasteryQuestion["difficulty"] = "core",
+  extra?: QuestionExtra,
 ): MasteryQuestion {
   const tol = 1e-9;
   const vals: number[] = [correct];
@@ -116,7 +120,7 @@ function build(
   }
   const choices = vals.map(format);
   const correctIdx = vals.findIndex((v) => Math.abs(v - correct) < tol);
-  return { q, choices, correct: correctIdx, explain, difficulty };
+  return { q, choices, correct: correctIdx, explain, difficulty, ...extra };
 }
 
 /* ───────────────────────── tiers ───────────────────────── */
@@ -639,22 +643,133 @@ function templatesFor(conceptId: string, tier: Tier): Template[] {
 }
 
 /** One fresh, non-repeating question of the requested tier. */
+/* ───────────────────── concept-level study enrichment ─────────────────────
+ * Trick, decode framework, sanity checks, and a (stem-aware) diagram are the
+ * SAME for every question of a concept — they describe the method, not the
+ * sampled numbers. So we attach them once, here, to every generated question
+ * rather than hand-editing each template. A template can still override any
+ * field via build(..., extra); enrich() only fills what's missing. The precise
+ * per-question arithmetic stays in each question's `explain` (the solver's
+ * Solution panel falls back to it when `steps` isn't set).
+ */
+
+interface ConceptEnrichment {
+  trick: string;
+  decode: { label: string; value: string }[];
+  sanity: string[];
+  /** Stem-aware so distribution buckets pick the right figure. */
+  diagram?: (q: MasteryQuestion) => DiagramSpec | undefined;
+}
+
+const GENERIC_PROB_DECODE = [
+  { label: "Experiment", value: "the random trial described in the stem" },
+  { label: "Sample space", value: "every outcome that trial can produce" },
+  { label: "Event", value: "the outcome whose probability is asked for" },
+  { label: "Given", value: "any condition stated after “given”, “if”, or “knowing”" },
+];
+const GENERIC_PROB_SANITY = [
+  "The probability lands in $[0,1]$.",
+  "It moves the sensible way — extra information should push it up or down for a reason.",
+  "It cross-checks against a diagram or the complement $1-P(\\text{not it})$.",
+];
+
+const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
+  "sample-spaces-and-events": {
+    trick: "Equally-likely outcomes → **favourable ÷ total**. Overlapping events → inclusion–exclusion: $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: GENERIC_PROB_SANITY,
+    diagram: () => ({ kind: "venn-conditional", caption: "Sets in the sample space — the overlap is $A\\cap B$." }),
+  },
+  "counting-and-axioms": {
+    trick: "See **“without replacement”** → hypergeometric $\\dfrac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}$, not $p^k$. See **“at least one”** → complement $1-P(\\text{none})$.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: GENERIC_PROB_SANITY,
+    diagram: () => ({ kind: "tree", caption: "Sequential draws — multiply along a path." }),
+  },
+  "conditional-probability": {
+    trick: "$P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}$ — **shade $B$ first**; the answer is the share of $B$ that is also $A$. Conditioning **divides**, it never multiplies.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: GENERIC_PROB_SANITY,
+    diagram: () => ({ kind: "venn-conditional", caption: "Shade $B$, then read $A\\cap B$ as a fraction of it." }),
+  },
+  "bayes-theorem": {
+    trick: "**Reverse the tree**: $P(A\\mid B)=\\dfrac{P(B\\mid A)\\,P(A)}{P(B)}$, with $P(B)$ from the law of total probability. The base rate $P(A)$ is the part everyone forgets.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: [
+      "The posterior is in $[0,1]$.",
+      "With a rare prior, even a strong test gives a modest posterior — don't expect it near the sensitivity.",
+      "Forward check: the branch probabilities under each hypothesis sum to $1$.",
+    ],
+    diagram: () => ({ kind: "tree", caption: "Forward tree gives $P(B)$; Bayes reads it backward." }),
+  },
+  "independence": {
+    trick: "Independent $\\Rightarrow P(A\\cap B)=P(A)P(B)$ and $P(A\\mid B)=P(A)$. **Verify independence before multiplying** — it's the most common false assumption.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: GENERIC_PROB_SANITY,
+    diagram: () => ({ kind: "venn-conditional", caption: "Independence: knowing $B$ doesn't reshape $A$'s share." }),
+  },
+  "expectation-and-variance": {
+    trick: "Linearity: $E[aX+b]=aE[X]+b$. Variance scales squared: $\\operatorname{Var}(aX+b)=a^2\\operatorname{Var}(X)$. Fast variance: $\\operatorname{Var}(X)=E[X^2]-(E[X])^2$.",
+    decode: [
+      { label: "Random variable", value: "what $X$ counts or measures" },
+      { label: "Distribution", value: "the PMF/PDF or the table of $x$ with $P(X=x)$" },
+      { label: "Asked", value: "a mean $E[\\cdot]$, a variance, or a function $E[g(X)]$" },
+      { label: "Given", value: "parameters or a transformation $aX+b$" },
+    ],
+    sanity: [
+      "Variance is $\\ge 0$.",
+      "$E[X]$ falls inside the range of $X$.",
+      "A scale change by $a$ multiplies $\\operatorname{Var}$ by $a^2$, not $a$.",
+    ],
+    diagram: () => ({ kind: "pmf-bars", caption: "$E[X]$ is the balance point of the distribution." }),
+  },
+  "common-discrete-distributions": {
+    trick: "**Identify first.** Binomial (fixed $n$ trials): $\\binom{n}{k}p^k(1-p)^{n-k}$. Poisson (rate $\\lambda$): $\\dfrac{\\lambda^k e^{-\\lambda}}{k!}$. Geometric (first success): $(1-p)^{k-1}p$.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: GENERIC_PROB_SANITY,
+    diagram: (q) => /poisson|per (hour|minute|day|year)|rate \$?\\?lambda|arriv/i.test(q.q)
+      ? { kind: "poisson-timeline", caption: "Events on a timeline at rate $\\lambda$." }
+      : { kind: "pmf-bars", caption: "Discrete PMF — probability mass per outcome." },
+  },
+  "common-continuous-distributions": {
+    trick: "Continuous → probabilities are **areas** under the density. Exponential is **memoryless**: $P(X>s+t\\mid X>s)=P(X>t)$. Normal → **standardize** $Z=\\dfrac{X-\\mu}{\\sigma}$, then read the table.",
+    decode: GENERIC_PROB_DECODE,
+    sanity: GENERIC_PROB_SANITY,
+    diagram: (q) => /exponential|memoryless|lifetime|until.*(fail|arriv)|decay/i.test(q.q)
+      ? { kind: "exponential", caption: "Exponential density $f(x)=\\lambda e^{-\\lambda x}$." }
+      : { kind: "bell", caption: "Normal curve — area in the tails beyond $\\pm k\\sigma$." },
+  },
+};
+
+/** Fill missing study-mode fields from the concept's enrichment (template wins). */
+function enrich(conceptId: string, q: MasteryQuestion): MasteryQuestion {
+  const e = CONCEPT_ENRICHMENT[conceptId];
+  if (!e) return q;
+  return {
+    ...q,
+    trick: q.trick ?? e.trick,
+    decode: q.decode ?? e.decode,
+    sanity: q.sanity ?? e.sanity,
+    diagram: q.diagram ?? e.diagram?.(q),
+  };
+}
+
 function genOne(conceptId: string, tier: Tier, usedThisSet: Set<string>): MasteryQuestion {
   const pool = templatesFor(conceptId, tier);
-  if (!pool.length) return GENERATORS[conceptId][0].gen();
+  if (!pool.length) return enrich(conceptId, GENERATORS[conceptId][0].gen());
   for (let attempt = 0; attempt < 80; attempt++) {
     const tpl = pick(pool);
     const q = tpl.gen();
     if (!usedThisSet.has(q.q) && !isRepeat(conceptId, q.q)) {
       usedThisSet.add(q.q);
       remember(conceptId, q.q);
-      return q;
+      return enrich(conceptId, q);
     }
   }
   const q = pick(pool).gen();
   usedThisSet.add(q.q);
   remember(conceptId, q.q);
-  return q;
+  return enrich(conceptId, q);
 }
 
 /** A balanced exam ladder of `count` tiers — always opens easy, always ends superhard. */
