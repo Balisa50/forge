@@ -2962,9 +2962,13 @@
               "body": "## Tags are mutable\nThe snippet below shows exactly what to do:\n\n```dockerfile\nFROM node:20-alpine\n```\nThat `20-alpine` tag points at SOME image today. The maintainer can re-tag it tomorrow to point at a different image (typically a security patch — fine). But in principle, anyone who controls the tag can re-target it.\n\n## Digest pins are immutable\nThe snippet below shows exactly what to do:\n\n```dockerfile\nFROM node:20-alpine@sha256:5a3b9d4f6b8c2d1e9a3f7b2c4d6e8a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f\n```\nThat digest is content-addressed. The bytes ARE that hash. Cannot be re-pointed.\n\n## How to find the current digest\nThe snippet below shows exactly what to do:\n\n```bash\ndocker pull node:20-alpine\ndocker inspect --format='{{index .RepoDigests 0}}' node:20-alpine\n# node@sha256:5a3b9d4f...\nThe snippet below shows exactly what to do:\n\n```\n\nOr just:\n```bash\ndocker manifest inspect node:20-alpine | grep digest\n```\n\n## Pin in the Dockerfile\nThe snippet below shows exactly what to do:\n\n```dockerfile\n# Pinned 2026-06-05. Refresh quarterly or when CVE patch needed.\nFROM node:20-alpine@sha256:5a3b9d4f6b8c... AS build\n# ...\nFROM gcr.io/distroless/nodejs20-debian12@sha256:7e8f9a0b1c2d... AS runtime\n# ...\nThe snippet below shows exactly what to do:\n\n```\n\n## Refresh discipline\n- Quarterly: re-fetch tag → grab new digest → update Dockerfile → rebuild → retest.\n- On CVE disclosure: refresh immediately for the affected base.\n- Use Dependabot / Renovate to automate digest refresh PRs.\n\n## The supply-chain win\nPinning by digest means: even if Docker Hub gets compromised AND your tag gets pointed at malicious content, your build still pulls the original bytes. Cryptographic anchor."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Pin tags by digest",
-              "body": "## Deeper dive: Pin tags by digest\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Pin tags by digest** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Hardening Techniques - CompTIA Security+ SY0-701 - 2.5",
+              "url": "https://www.youtube.com/watch?v=wXoC46Qr_9Q",
+              "duration_min": 13,
+              "creator": "Professor Messer",
+              "difficulty": "curated",
+              "why": "This 13-minute Professor Messer video teaches Pin tags by digest directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -4292,9 +4296,13 @@
               "body": "## Liveness, readiness, and startup probes\n\nRunning Kubernetes in development (W9) teaches the concepts. Running it in production teaches the hard lessons. Production Kubernetes requires four things that are unnecessary in local testing: probes (how the cluster knows your pod is healthy), resource management (how the scheduler places pods and prevents noisy neighbours), autoscaling (how the cluster handles traffic spikes without over-provisioning), and storage (how stateful applications persist data across pod restarts).\n\nProbes: Kubernet\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Liveness, readiness, and startup probes",
-              "body": "## Deeper dive: Liveness, readiness, and startup probes\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Liveness, readiness, and startup probes** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Kubernetes Services explained | ClusterIP vs NodePort vs LoadBalancer vs Headless Service",
+              "url": "https://www.youtube.com/watch?v=T4Z7visMM4E",
+              "duration_min": 25,
+              "creator": "TechWorld with Nana",
+              "difficulty": "curated",
+              "why": "This 25-minute TechWorld with Nana video on Liveness, readiness, and startup probes — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -6680,9 +6688,13 @@
               "body": "## Lock-in inventory\n\nEvery cloud provider has different APIs, different pricing models, different service names, and different strengths. AWS has the broadest service catalogue. GCP has the best Kubernetes and data engineering services. Azure is dominant in enterprise environments with Microsoft licenses. Choosing a cloud provider (or using multiple) is a significant architectural decision.\n\nVendor lock-in is the state where you depend on a specific vendor's proprietary services to the point where switching is prohi\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Lock-in inventory",
-              "body": "## Deeper dive: Lock-in inventory\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Lock-in inventory** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Why you're addicted to cloud computing",
+              "url": "https://www.youtube.com/watch?v=4Wa5DivljOM",
+              "duration_min": 6,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 6-minute Fireship video teaches Lock-in inventory directly — watch it end to end."
             },
             {
               "kind": "swipe",

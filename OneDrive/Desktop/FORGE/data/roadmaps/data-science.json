@@ -2646,13 +2646,9 @@
               "body": "## What it is\nA point estimate ('mean fare = $16.42') hides its own uncertainty. A **confidence interval (CI)** reports a range: 'the true mean fare is between $16.18 and $16.66 (95% CI).' It turns a single number into an honest statement about precision.\n\n```python\nfrom scipy import stats\nmean = fares.mean()\nsem  = stats.sem(fares)                 # standard error of the mean\nci   = stats.t.interval(0.95, len(fares)-1, loc=mean, scale=sem)\n```\n\n## What '95% confidence' means\nIf you repeated your sampling many times and built a CI each time, ~95% of those intervals would contain the true mean. The width comes from the **standard error**, which shrinks as sample size grows (SE = sd/√n).\n\n## Why it matters — the √n law\nMore data = a tighter interval, but with diminishing returns: to halve the CI width you need **4x** the data (because of the square root). This is why a sample of 100 gives a wide, mushy estimate and 1000 gives a crisp one — and why going from 10,000 to 40,000 barely helps. Knowing this stops you from over-collecting.\n\n## Where this fits\nToday you compute a CI for mean fare at n=1000 and n=100, and watch the interval widen as data shrinks."
             },
             {
-              "kind": "video",
-              "title": "Confidence Intervals, Clearly Explained!!!",
-              "url": "https://www.youtube.com/watch?v=TqOeMYtOc1w",
-              "duration_min": 7,
-              "creator": "StatQuest with Josh Starmer",
-              "difficulty": "curated",
-              "why": "This 7-minute StatQuest with Josh Starmer video teaches Confidence intervals directly — watch it end to end."
+              "kind": "lesson",
+              "title": "Deeper dive: Confidence intervals",
+              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -3550,9 +3546,13 @@
               "body": "## What it is\n**Web scraping** is extracting data from websites programmatically — fetching a page's HTML and pulling out the structured bits (titles, prices, links). It's the bridge for when the data you need exists only on a web page that nobody has packaged for you.\n\n## The rules come first\nBefore a single line of code, you check two things:\n- **robots.txt** (e.g. `news.ycombinator.com/robots.txt`) — the site's machine-readable statement of which paths bots may access\n- **Terms of Service** — the legal layer; some sites explicitly forbid scraping\n\nAnd you follow the etiquette:\n- **Rate-limit** yourself (a delay between requests) so you don't hammer the server\n- **Identify** your scraper with a clear User-Agent string\n- **Take only what you need**, and prefer an official API if one exists\n\n## Why it matters\nScraping sits in a genuine ethical and legal grey zone. Aggressive scraping can overload a small site (effectively a denial-of-service), violate terms, or get your IP banned. Respecting robots.txt and rate-limiting isn't just politeness — it's what separates a professional gathering data from a bot abusing a server. Getting this wrong can have real consequences.\n\n## Where this fits\nThis week you build a scraper toolkit on Hacker News — a simple, scrape-friendly site — starting today by reading its robots.txt and writing down the rules you'll follow."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Ethics + robots.txt",
-              "body": "## Deeper dive: Ethics + robots.txt\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Ethics + robots.txt** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Am I going to jail for web scraping?",
+              "url": "https://www.youtube.com/watch?v=8GhFmQPZAlo",
+              "duration_min": 5,
+              "creator": "Fireship",
+              "difficulty": "curated",
+              "why": "This 5-minute Fireship video teaches Ethics + robots.txt directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -5884,9 +5884,13 @@
               "body": "## What it is\nLast week a generic model labelled your 1000 posts, and you suspected some labels were wrong. This week you do what most courses skip: build a **gold set** — a sample of posts you label *by hand*, that you trust as **ground truth**.\n\n## Why ground truth is the foundation of everything\nHere's the inescapable logic: **you cannot measure a model's accuracy without labels you know are correct.** 'The model is 85% accurate' means '85% agreement with ground truth.' No ground truth -> no accuracy number -> no way to compare models or know if you're improving. The gold set is the measuring stick that makes every later claim possible.\n\n## Why the pretrained labels can't be the ground truth\nYou can't measure the pretrained model against its own labels — that's circular (it would score 100%). You need an *independent* source of truth, and on your specific domain, the most reliable source is a careful human (you) reading each post. The model trained on movie reviews doesn't know 'this paper is fire' is praise; you do.\n\n## Labelling well\nBe consistent: decide your rules upfront (is a neutral technical question NEUTRAL or excluded?), and apply them the same way every time. Inconsistent labels poison the gold set. Quality over quantity — 200 carefully-labelled posts beat 1000 sloppy ones.\n\n## Where this fits\nThis week (v0.2): hand-label 200 posts, train your own TF-IDF + LogReg classifier on them, and discover whether your simple model beats the fancy pretrained one on YOUR data."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why hand-label",
-              "body": "## Deeper dive: Why hand-label\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why hand-label** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Sentiment Analysis?",
+              "url": "https://www.youtube.com/watch?v=5HQCNAsSO-s",
+              "duration_min": 11,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 11-minute IBM Technology video teaches Why hand-label directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -7257,9 +7261,13 @@
               "body": "## What it is\nYour fine-tuned DistilBERT predicts 'NEGATIVE' for a post. **Why?** You don't know — the decision lives in millions of opaque weights. **Interpretability** is the discipline of opening that box: explaining *why* a model made a specific prediction.\n\n## Why the stakes determine the need\n- **Low-stakes** (recommend a movie, suggest a playlist): a wrong call costs nothing. A black box is fine.\n- **High-stakes** (deny a loan, flag a post for moderation, screen a CV): a wrong call causes real harm and may be **legally challengeable**. You *must* be able to explain and defend the decision.\n\nSentiment moderation sits on the high-stakes side: if your model flags posts, the people affected (and your boss, and possibly a regulator) will ask 'why was MY post flagged?' 'The neural net said so' is not an acceptable answer.\n\n## What interpretability buys you\n1. **Trust** — stakeholders accept a model they can understand\n2. **Debugging** — you find where the model reasons wrongly\n3. **Bias detection** — you catch the model keying off something it shouldn't (a subreddit name, profanity, a demographic proxy)\n\n## Where this fits\nThis week you use **SHAP** to explain your sentiment model's predictions — first a simple classical model, then (optionally) the transformer — and you'll find at least one real bias your model has."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Why interpretability matters",
-              "body": "## Deeper dive: Why interpretability matters\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Why interpretability matters** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is interpretability?",
+              "url": "https://www.youtube.com/watch?v=TxhhMTOTMDg",
+              "duration_min": 4,
+              "creator": "Anthropic",
+              "difficulty": "curated",
+              "why": "This 4-minute Anthropic video teaches Why interpretability matters directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -10173,13 +10181,9 @@
               "body": "## What they are\nA **prediction interval** is a band around the forecast that contains the true value with some probability — typically 95%. Wider intervals later in the horizon, because uncertainty grows.\n\n```python\nforecast, conf = model.predict(n_periods=len(test), return_conf_int=True, alpha=0.05)\nlower, upper = conf[:, 0], conf[:, 1]\n```\n\n## Why intervals matter more than the point forecast\nA point forecast of '17,400 MW for next Tuesday' is technically wrong. The truth is **a distribution**. Reporting the interval communicates:\n- How sure the model is\n- How that uncertainty grows over the horizon (always widening)\n- Where the *plausible worst case* sits — critical for capacity planning where 'we MIGHT need 19,500 MW' is the actionable number\n\nA grid operator can't act on '17,400 MW.' They can act on '17,400 with 95% chance between 16,100 and 18,700.' Intervals turn a number into a decision.\n\n## What 95% actually means\nIf the model's assumptions hold (stationary residuals, no major regime change), the true value will fall inside the 95% interval ~95% of the time across many forecasts. It does NOT mean 'I am 95% sure for THIS specific forecast.'"
             },
             {
-              "kind": "video",
-              "title": "Confidence Intervals, Clearly Explained!!!",
-              "url": "https://www.youtube.com/watch?v=TqOeMYtOc1w",
-              "duration_min": 7,
-              "creator": "StatQuest with Josh Starmer",
-              "difficulty": "curated",
-              "why": "This 7-minute StatQuest with Josh Starmer video teaches Confidence intervals directly — watch it end to end."
+              "kind": "lesson",
+              "title": "Deeper dive: Confidence intervals",
+              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 22 ('Energy Forecast v0.2: ARIMA model'), day 5."
             },
             {
               "kind": "lesson",
@@ -10912,9 +10916,13 @@
               "body": "## The full preparation\nThe snippet below shows exactly what to do:\n\n```python\nimport numpy as np, torch\nfrom sklearn.preprocessing import MinMaxScaler\n\n# 1. Scale on TRAIN ONLY, then transform train and test with the same scaler\nscaler = MinMaxScaler()\ntrain_arr = scaler.fit_transform(train[['y']].values).flatten()\ntest_arr  = scaler.transform(test[['y']].values).flatten()\n\n# 2. Window into (X, y) pairs\nLOOKBACK = 14\ndef make_windows(series, lookback):\n    X, y = [], []\n    for i in range(len(series) - lookback):\n        X.append(series[i:i + lookback])\n        y.append(series[i + lookback])\n    return np.array(X), np.array(y)\n\nX_train, y_train = make_windows(train_arr, LOOKBACK)\nX_test,  y_test  = make_windows(test_arr,  LOOKBACK)\n\n# 3. To PyTorch tensors. LSTM expects (batch, seq_len, features).\nX_train = torch.tensor(X_train, dtype=torch.float32).unsqueeze(-1)  # add feature dim\ny_train = torch.tensor(y_train, dtype=torch.float32).unsqueeze(-1)\nX_test  = torch.tensor(X_test,  dtype=torch.float32).unsqueeze(-1)\ny_test  = torch.tensor(y_test,  dtype=torch.float32).unsqueeze(-1)\nprint(X_train.shape)\n# torch.Size([4019, 14, 1])   <- 4019 sequences, 14 days each, 1 feature\nThe snippet below shows exactly what to do:\n\n```\n\n## Critical: scale on train only\n`scaler.fit_transform(train)`, then `scaler.transform(test)`. Fitting on the full series leaks future statistics into training — a subtle but common mistake.\n\n## Shape conventions PyTorch expects\n`(batch_size, sequence_length, n_features)`. For a univariate forecaster, n_features=1. `unsqueeze(-1)` adds that trailing dimension."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Prepare windowed data",
-              "body": "## Deeper dive: Prepare windowed data\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Prepare windowed data** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is LSTM (Long Short Term Memory)?",
+              "url": "https://www.youtube.com/watch?v=b61DPVFX03I",
+              "duration_min": 9,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 9-minute IBM Technology video teaches Prepare windowed data directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -16254,9 +16262,13 @@
               "body": "## The model\nFor a meaningful audit, you want a model that:\n- Makes a DECISION (classification, ranking, allocation) — not just a forecast\n- Has held-out predictions you can analyse\n- Has sample-level features that include or proxy a protected attribute\n\nBest candidates from your portfolio:\n- **Reddit Sentiment classifier** — protected attribute proxy via username demographics\n- **Capstone classifier** — if it's a classification task\n- **Any image classifier from W34** — if the dataset has demographic metadata\n\nAvoid: pure forecasting models (no individual decisions to audit).\n\n## The attribute\nPick the protected attribute MOST LIKELY to expose a disparity. Don't pick the 'safest' one (race in a model with no race signal — you'll find no disparity and learn nothing).\n\nCommon protected attributes:\n- **Gender** (binary, ternary, or self-reported)\n- **Race / ethnicity**\n- **Age** (often binned: <25, 25-45, 45+)\n- **Disability status**\n- **Geography / nationality**\n\nFor a Reddit classifier: gender proxy via name analysis. For an image classifier: dataset-provided demographic labels (FairFace, UTKFace). For a capstone: whatever attribute the data plausibly contains.\n\n## What if your data doesn't have a protected attribute?\nTwo honest options:\n1. **Use a public benchmark dataset** with known protected attributes (Adult Income, COMPAS, German Credit). These are the textbook fairness datasets for a reason.\n2. **Infer the attribute from a proxy** with a clearly documented limitation. E.g., infer gender from first name via Genderize.io. Cite the inference, note the error rate.\n\nWhat's NOT acceptable: 'my data doesn't have protected attributes so fairness doesn't apply'. That's how disparities ship.\n\n## The Adult Income dataset (recommended for the audit)\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd\nurl = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data'\ncols = ['age','workclass','fnlwgt','education','education_num','marital_status',\n        'occupation','relationship','race','sex','capital_gain','capital_loss',\n        'hours_per_week','native_country','income']\ndf = pd.read_csv(url, names=cols, na_values=' ?', skipinitialspace=True).dropna()\ndf['income_50k'] = (df['income'] == '>50K').astype(int)\n```\n\nAdult Income: predict whether someone earns >$50k. Sensitive attributes: sex, race. Documented disparities. Classic fairness audit target."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Pick model + sensitive attribute",
-              "body": "## Deeper dive: Pick model + sensitive attribute\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Pick model + sensitive attribute** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Protected Attributes and 'Fairness through Unawareness,' Exploring Fairness in Machine Learning",
+              "url": "https://www.youtube.com/watch?v=6EPDzvUNCd0",
+              "duration_min": 7,
+              "creator": "MIT OpenCourseWare",
+              "difficulty": "curated",
+              "why": "This 7-minute MIT OpenCourseWare video teaches Pick model + sensitive attribute directly — watch it end to end."
             },
             {
               "kind": "swipe",

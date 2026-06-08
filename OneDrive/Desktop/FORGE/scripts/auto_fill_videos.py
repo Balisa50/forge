@@ -14,6 +14,8 @@ Usage:
 """
 import argparse
 import csv
+import json
+import re
 import sys
 import time
 from collections import OrderedDict
@@ -29,6 +31,47 @@ try:
 except Exception:
     pass
 
+_VIDID = re.compile(r'(?:youtu\.be/|[?&]v=|/embed/|/shorts/)([A-Za-z0-9_-]{11})')
+
+# track slug -> roadmap json (enriched preferred; raw for the three that have no enriched file)
+_TRACK_FILES = {
+    'ai-engineering': 'ai-engineering-enriched.json', 'cybersecurity': 'cybersecurity-enriched.json',
+    'ai-automation': 'ai-automation-enriched.json', 'mobile-engineering': 'mobile-engineering-enriched.json',
+    'full-stack-web': 'full-stack-web-enriched.json', 'devops-cloud': 'devops-cloud-enriched.json',
+    'bi-analytics': 'bi-analytics-enriched.json', 'ml-engineering': 'ml-engineering-enriched.json',
+    'data-analysis': 'data-analysis.json', 'data-engineering': 'data-engineering.json',
+    'data-science': 'data-science.json',
+}
+
+
+def _library_video_ids():
+    """All video ids already in curated_library.json (so we never re-pick one)."""
+    lib = ROADMAPS / "curated_library.json"
+    if not lib.exists():
+        return set()
+    try:
+        data = json.loads(lib.read_text(encoding="utf-8"))
+    except Exception:
+        return set()
+    return {e.get("video_id", "") for e in data.get("videos", []) if e.get("video_id")}
+
+
+def _week_title_lookup():
+    """(track, week_number_str) -> week title, used as broad-discovery context."""
+    out = {}
+    for track, fn in _TRACK_FILES.items():
+        p = ROADMAPS / fn
+        if not p.exists():
+            continue
+        try:
+            d = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        weeks = d["weeks"] if isinstance(d, dict) else d
+        for w in weeks:
+            out[(track, str(w.get("number")))] = w.get("title", "") or ""
+    return out
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -36,6 +79,8 @@ def main():
     ap.add_argument("--output", help="where to write the filled CSV (default: overwrite input)")
     ap.add_argument("--manual", help="where to write rows that need manual review")
     ap.add_argument("--tracks", nargs="*", default=None, help="only process these tracks")
+    ap.add_argument("--broad", action="store_true",
+                    help="use week-context-aware broad discovery for hyper-specific micro-concepts")
     args = ap.parse_args()
 
     inp = Path(args.input)
@@ -52,26 +97,53 @@ def main():
     rows = list(csv.DictReader(open(inp, encoding="utf-8")))
     only = set(args.tracks) if args.tracks else None
 
-    groups = OrderedDict()
+    # video ids already committed (in the CSV or the live library) so we never repeat one
+    used = set()
     for r in rows:
-        if (r.get("video_id") or "").strip():
-            continue
-        if only and r.get("track") not in only:
-            continue
-        groups.setdefault(r.get("concept", ""), []).append(r)
+        used |= set(_VIDID.findall(r.get("video_id") or ""))
+    used |= _library_video_ids()
 
-    print(f"Auto-filling {sum(len(v) for v in groups.values())} rows across {len(groups)} concepts...")
+    todo = [r for r in rows
+            if not (r.get("video_id") or "").strip()
+            and not (only and r.get("track") not in only)]
+
     filled = 0
-    for concept, grp in groups.items():
-        if not concept:
-            continue
-        picks = V.auto_discover_video(concept, count=len(grp))
-        for r, p in zip(grp, picks):
-            r["video_id"] = p["url"]
-            r["duration_min"] = p["duration_min"]
-            r["creator"] = p["creator"]
-            filled += 1
-        time.sleep(0.3)  # polite scraping
+    if args.broad:
+        # week-context-aware: each row searched with its own week theme; row-by-row.
+        week_titles = _week_title_lookup()
+        print(f"Auto-filling {len(todo)} rows (BROAD, week-context aware)...")
+        for r in todo:
+            concept = r.get("concept", "")
+            if not concept:
+                continue
+            ctx = week_titles.get((r.get("track", ""), str(r.get("week", "")).strip()), "")
+            for p in V.auto_discover_video_broad(concept, week_context=ctx, count=8):
+                if p["video_id"] in used:
+                    continue
+                r["video_id"] = p["url"]
+                r["duration_min"] = p["duration_min"]
+                r["creator"] = p["creator"]
+                used.add(p["video_id"])
+                filled += 1
+                break
+            time.sleep(0.3)  # polite scraping
+    else:
+        groups = OrderedDict()
+        for r in todo:
+            groups.setdefault(r.get("concept", ""), []).append(r)
+        print(f"Auto-filling {sum(len(v) for v in groups.values())} rows across {len(groups)} concepts...")
+        for concept, grp in groups.items():
+            if not concept:
+                continue
+            picks = [p for p in V.auto_discover_video(concept, count=len(grp) + 4)
+                     if p["video_id"] not in used]
+            for r, p in zip(grp, picks):
+                r["video_id"] = p["url"]
+                r["duration_min"] = p["duration_min"]
+                r["creator"] = p["creator"]
+                used.add(p["video_id"])
+                filled += 1
+            time.sleep(0.3)  # polite scraping
 
     cols = list(rows[0].keys())
     with open(out, "w", newline="", encoding="utf-8") as f:
