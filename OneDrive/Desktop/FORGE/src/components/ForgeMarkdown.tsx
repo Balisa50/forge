@@ -143,11 +143,27 @@ const ACTION_COLORS: Record<string, string> = {
   BUILD: "#fb923c", WATCH: "#fb7185", THINK: "#818cf8",
 };
 
+/** Shared inline-code chip style (explicit `code` and auto-detected code). */
+const CODE_CHIP: React.CSSProperties = {
+  fontFamily: "var(--font-mono)",
+  background: "rgba(212,175,55,0.12)",
+  color: "var(--accent)",
+  padding: "1px 6px",
+  borderRadius: 4,
+  fontSize: "0.875em",
+  border: "1px solid rgba(212,175,55,0.22)",
+  whiteSpace: "pre-wrap",
+  overflowWrap: "anywhere",
+};
+
 function InlineText({ text }: { text: string }) {
   const parts: React.ReactNode[] = [];
   // Inline math \( ... \) is matched first so its contents aren't mistaken for
   // bold/italic/code; then action tags, bold, italic, inline code.
-  const re = /(\\\([\s\S]+?\\\)|\[(?:READ|COPY|PRODUCE|EXAMPLE|WRITE|CODE|BUILD|WATCH|THINK)\]|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g;
+  // Last alternative auto-detects unfenced code tokens in prose: an identifier
+  // followed by one+ of `.attr`, `(...)`, `[...]` — e.g.
+  // df.groupby('Sub-Category')['Profit'].sum().sort_values(), df.shape, monthly_report.py.
+  const re = /(\\\([\s\S]+?\\\)|\[(?:READ|COPY|PRODUCE|EXAMPLE|WRITE|CODE|BUILD|WATCH|THINK)\]|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|[A-Za-z_][\w]*(?:\.[A-Za-z_]\w*|\([^()\n]*\)|\[[^\]\n]*\])+)/g;
   let last = 0, k = 0;
   let m: RegExpExecArray | null;
 
@@ -181,17 +197,18 @@ function InlineText({ text }: { text: string }) {
     } else if (tok.startsWith("**")) {
       parts.push(<strong key={k++} style={{ color: "var(--text-primary)", fontWeight: 700 }}>{tok.slice(2, -2)}</strong>);
     } else if (tok.startsWith("`")) {
-      parts.push(
-        <code key={k++} style={{
-          fontFamily: "var(--font-mono)",
-          background: "rgba(212,175,55,0.12)",
-          color: "var(--accent)",
-          padding: "1px 6px",
-          borderRadius: 4,
-          fontSize: "0.875em",
-          border: "1px solid rgba(212,175,55,0.22)",
-        }}>{tok.slice(1, -1)}</code>
-      );
+      parts.push(<code key={k++} style={CODE_CHIP}>{tok.slice(1, -1)}</code>);
+    } else if (/^[A-Za-z_]/.test(tok)) {
+      // Auto-detected code candidate. Only style it as code when it carries a
+      // strong code signal — a call/subscript, snake_case, a code file extension,
+      // or a data-lib alias — so abbreviations like "e.g." stay prose.
+      const isCode =
+        /[([_]/.test(tok) ||
+        /\.(py|csv|xlsx|xls|ipynb|json|parquet|sql|md|tsv|txt)$/i.test(tok) ||
+        /^(df|pd|np|plt|sns|ax|fig|sc|spark)\b/.test(tok);
+      parts.push(isCode
+        ? <code key={k++} style={CODE_CHIP}>{tok}</code>
+        : <span key={k++}>{tok}</span>);
     } else {
       parts.push(<em key={k++} style={{ color: "var(--text-secondary)" }}>{tok.slice(1, -1)}</em>);
     }

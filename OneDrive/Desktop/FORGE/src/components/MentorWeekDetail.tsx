@@ -20,6 +20,7 @@ import {
   BookOpen, Upload, MessageSquare, Activity as ActivityIcon, FileText,
 } from "lucide-react";
 import { parseTaskDetail } from "@/lib/parse-task-detail";
+import ForgeMarkdown from "@/components/ForgeMarkdown";
 import SubmissionConfigPicker from "@/components/SubmissionConfigPicker";
 import SubmissionViewer from "@/components/SubmissionViewer";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
@@ -316,7 +317,7 @@ export default function MentorWeekDetail({
             </div>
             {editing === "brief"
               ? <TextEditor initial={d.context} saving={saving} placeholder="What this week is about…" onCancel={() => setEditing(null)} onSave={(v) => saveContent({ context: v })} />
-              : <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", lineHeight: 1.6 }}>{d.context || <em style={{ color: "var(--text-dim)" }}>No brief yet — click the pencil to add one.</em>}</p>}
+              : d.context ? <ForgeMarkdown>{d.context}</ForgeMarkdown> : <p style={{ fontSize: "0.875rem" }}><em style={{ color: "var(--text-dim)" }}>No brief yet — click the pencil to add one.</em></p>}
           </div>
 
           <div style={card}>
@@ -342,7 +343,7 @@ export default function MentorWeekDetail({
             </div>
             {editing === "project"
               ? <TextEditor initial={d.project} saving={saving} placeholder="The project for this week…" onCancel={() => setEditing(null)} onSave={(v) => saveContent({ project: v })} />
-              : <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", lineHeight: 1.6 }}>{d.project || <em style={{ color: "var(--text-dim)" }}>—</em>}</p>}
+              : d.project ? <ForgeMarkdown>{d.project}</ForgeMarkdown> : <p style={{ fontSize: "0.875rem" }}><em style={{ color: "var(--text-dim)" }}>—</em></p>}
           </div>
         </div>
       )}
