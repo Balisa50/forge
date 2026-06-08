@@ -102,6 +102,15 @@ input[type=range]::-moz-range-thumb{
 .w-btn:active{transform:translateY(1px)}
 .w-btn:disabled{opacity:.4;cursor:not-allowed}
 .w-btn.alt{background:transparent;color:var(--text-2);border-color:var(--border)}
+/* FORGE dropdown — replaces the OS <select> picker inside widgets. Opens
+   in-flow (not absolute) so the auto-height iframe grows instead of clipping. */
+.fsel{position:relative;display:inline-block;vertical-align:middle}
+.fsel-btn{display:inline-flex;align-items:center;gap:8px}
+.fsel-car{font-size:9px;line-height:1;transition:transform .15s}
+.fsel-panel{margin-top:5px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:4px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.fsel-opt{font-family:var(--mono);font-size:11px;color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.fsel-opt:hover{background:rgba(212,175,55,.16)}
+.fsel-opt.sel{color:var(--accent);font-weight:600}
 .w-chip{
   display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
   font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:999px;
@@ -168,6 +177,52 @@ const HEIGHT_REPORTER = `
 })();
 `;
 
+// Replaces every native <select> with a FORGE-themed dropdown so the OS's own
+// off-theme picker never appears. The real <select> is kept (hidden) and stays
+// the source of truth: picking an option sets its value and re-dispatches
+// input + change, so each widget's existing listeners and .value reads keep
+// working with zero per-widget changes. Newly added selects are caught too.
+const SELECT_ENHANCER = `
+(function(){
+  function enhance(sel){
+    if(sel.dataset.fsel) return; sel.dataset.fsel="1";
+    var cls=sel.className||"";
+    sel.style.display="none";
+    var wrap=document.createElement("div"); wrap.className="fsel";
+    var btn=document.createElement("button"); btn.type="button"; btn.className="fsel-btn w-btn "+(cls.indexOf("alt")>-1?"alt":"");
+    var lbl=document.createElement("span"); lbl.className="fsel-lbl"; btn.appendChild(lbl);
+    var car=document.createElement("span"); car.className="fsel-car"; car.textContent="\\u25BE"; btn.appendChild(car);
+    var panel=document.createElement("div"); panel.className="fsel-panel"; panel.style.display="none";
+    function syncLabel(){ var o=sel.options[sel.selectedIndex]; lbl.textContent=o?o.text:""; }
+    function build(){
+      panel.innerHTML="";
+      [].forEach.call(sel.options,function(o,i){
+        var it=document.createElement("div"); it.className="fsel-opt"+(i===sel.selectedIndex?" sel":"");
+        it.textContent=o.text;
+        it.addEventListener("click",function(){
+          sel.selectedIndex=i; syncLabel(); close();
+          sel.dispatchEvent(new Event("input",{bubbles:true}));
+          sel.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        panel.appendChild(it);
+      });
+    }
+    var open=false;
+    function openP(){ build(); panel.style.display="block"; open=true; car.style.transform="rotate(180deg)"; }
+    function close(){ panel.style.display="none"; open=false; car.style.transform=""; }
+    btn.addEventListener("click",function(e){ e.stopPropagation(); if(open)close(); else openP(); });
+    document.addEventListener("click",function(){ if(open)close(); });
+    sel.addEventListener("change",syncLabel); // stay in sync if the widget sets value itself
+    sel.parentNode.insertBefore(wrap,sel);
+    wrap.appendChild(btn); wrap.appendChild(panel); wrap.appendChild(sel);
+    syncLabel();
+  }
+  function run(){ [].forEach.call(document.querySelectorAll("select"),enhance); }
+  run();
+  new MutationObserver(run).observe(document.body,{childList:true,subtree:true});
+})();
+`;
+
 /** Builds the predict-gate script for one widget. Runs AFTER the sim's own
  *  script, so the sim is already initialised (and measured) underneath. */
 function predictScript(p: PredictSpec): string {
@@ -216,6 +271,7 @@ export function widgetDoc(body: string, script: string, predict?: PredictSpec): 
 <script>(function(){try{${script}}catch(e){
   document.body.innerHTML='<div class="w-stage" style="color:var(--red)">Widget error: '+(e&&e.message||e)+'</div>';
 }})();</script>
+<script>(function(){try{${SELECT_ENHANCER}}catch(e){}})();</script>
 ${gate}
 </body></html>`;
 }
