@@ -24,6 +24,7 @@ import katex from "katex";
 import {
   Copy, Check, Code2, PenLine, AlertCircle,
   ChevronRight, FileCode2, BookOpen,
+  Sparkles, Target, Lightbulb, ChevronDown, ChevronUp, ListChecks, Search, LineChart,
 } from "lucide-react";
 
 /** Render a LaTeX string to KaTeX HTML. Never throws — on a malformed
@@ -53,11 +54,70 @@ type DividerBlock = { t: "divider"; label?: string };
 type PassBlock = { t: "pass"; items: string[] };
 type TableBlock = { t: "table"; headers: string[]; rows: string[][] };
 type MathBlock = { t: "math"; tex: string };
+type AiAssistBlock = { t: "aiassist"; text: string };
+type CheckpointsBlock = { t: "checkpoints"; items: string[] };
 
 type Block =
   | HeadingBlock | ParagraphBlock | UlBlock | OlBlock
   | ChecklistBlock | CodeBlock | MdTemplateBlock | CellBlock | StepBlock
-  | DividerBlock | PassBlock | TableBlock | MathBlock;
+  | DividerBlock | PassBlock | TableBlock | MathBlock
+  | AiAssistBlock | CheckpointsBlock;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Section extraction — turn a run-on lesson paragraph into structured blocks.
+// Forge lesson bodies often pack the whole project into one string:
+//   "<project prose> AI ASSIST <tips> MASTERY CHECKPOINTS 1. … 2. … 10. …"
+// We carve those named sections out so they render as a callout + cards instead
+// of a wall of text. Detection is conservative: checkpoints must be a real
+// sequential 1,2,3… run, so stray "$50." style numbers never trigger it.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Split a run-on like "1. a 2. b 10. c" into ["a","b",…] — but ONLY when the
+ *  numbers form a sequential chain starting at 1. Returns [] otherwise. */
+function splitNumbered(s: string): string[] {
+  const re = /(\d{1,2})\.\s+/g;
+  const bounds: { idx: number; n: number; len: number }[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(s))) bounds.push({ idx: m.index, n: parseInt(m[1], 10), len: m[0].length });
+  const chain: typeof bounds = [];
+  let expect = 1;
+  for (const b of bounds) if (b.n === expect) { chain.push(b); expect++; }
+  if (chain.length < 2) return [];
+  const items: string[] = [];
+  for (let i = 0; i < chain.length; i++) {
+    const start = chain[i].idx + chain[i].len;
+    const end = i + 1 < chain.length ? chain[i + 1].idx : s.length;
+    const it = s.slice(start, end).trim();
+    if (it) items.push(it);
+  }
+  return items;
+}
+
+/** Push a paragraph, first carving out AI ASSIST (→ callout) and MASTERY
+ *  CHECKPOINTS (→ cards) when present. Falls back to a plain paragraph. */
+function pushParagraph(blocks: Block[], text: string): void {
+  let head = text;
+  let checkpoints: string[] | null = null;
+
+  const cpIdx = head.search(/\bMASTERY\s+CHECKPOINTS?\b/i);
+  if (cpIdx >= 0) {
+    const after = head.slice(cpIdx).replace(/^\s*MASTERY\s+CHECKPOINTS?\s*[:\-—]?\s*/i, "");
+    const items = splitNumbered(after);
+    if (items.length >= 2) { checkpoints = items; head = head.slice(0, cpIdx).trim(); }
+  }
+
+  const aiIdx = head.search(/\bAI\s+ASSIST\b/i);
+  if (aiIdx >= 0) {
+    const before = head.slice(0, aiIdx).trim();
+    const assist = head.slice(aiIdx).replace(/^\s*AI\s+ASSIST\s*[:\-—]?\s*/i, "").trim();
+    if (before) blocks.push({ t: "p", text: before });
+    if (assist) blocks.push({ t: "aiassist", text: assist });
+  } else if (head) {
+    blocks.push({ t: "p", text: head });
+  }
+
+  if (checkpoints) blocks.push({ t: "checkpoints", items: checkpoints });
+}
 
 /** Is an indented block actually a markdown TEMPLATE (a structure the student
  *  should write — headings + prose) rather than real code? Heading present and
@@ -550,6 +610,67 @@ function TldrCallout({ children }: { children: React.ReactNode }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// AI Assist callout
+// ─────────────────────────────────────────────────────────────────────────────
+
+function AiAssistCallout({ text }: { text: string }) {
+  return (
+    <div style={{ borderRadius: 10, padding: "0.875rem 1rem", background: "rgba(96,165,250,0.06)", border: "1px solid rgba(96,165,250,0.25)", margin: "0.75rem 0" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#60a5fa", marginBottom: "0.5rem", fontWeight: 700 }}>
+        <Sparkles size={11} /> AI Assist
+      </div>
+      <div style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
+        <InlineText text={text} />
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mastery checkpoint cards
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CHECKPOINT_ICONS = [Target, Search, LineChart, ListChecks, Code2, BookOpen];
+
+function CheckpointCard({ index, text }: { index: number; text: string }) {
+  const [showHint, setShowHint] = useState(false);
+  const hintM = text.match(/\b(?:Hint|Tip)\s*[:\-—]\s*([\s\S]+)$/i);
+  const hint = hintM ? hintM[1].trim() : null;
+  const question = hint && hintM ? text.slice(0, hintM.index).trim() : text;
+  const Icon = CHECKPOINT_ICONS[index % CHECKPOINT_ICONS.length];
+
+  return (
+    <div style={{ border: "1px solid var(--border)", borderRadius: 10, background: "var(--bg-card)", padding: "0.875rem 1rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
+        <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 8, background: "rgba(212,175,55,0.12)", border: "1px solid rgba(212,175,55,0.3)", color: "var(--accent)", display: "grid", placeItems: "center", fontFamily: "var(--font-mono)", fontWeight: 800, fontSize: "0.75rem" }}>
+          {index + 1}
+        </span>
+        <Icon size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+      </div>
+      <div style={{ fontSize: "0.9375rem", color: "var(--text-primary)", lineHeight: 1.6 }}>
+        <InlineText text={question} />
+      </div>
+      {hint && (
+        <>
+          <button
+            type="button"
+            onClick={() => setShowHint((v) => !v)}
+            style={{ marginTop: "0.5rem", display: "inline-flex", alignItems: "center", gap: "0.3rem", background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.08em", textTransform: "uppercase", padding: 0 }}
+          >
+            <Lightbulb size={12} /> {showHint ? "Hide hint" : "Hint"} {showHint ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          </button>
+          {showHint && (
+            <div style={{ marginTop: "0.4rem", padding: "0.5rem 0.75rem", borderRadius: 8, background: "rgba(96,165,250,0.06)", border: "1px solid rgba(96,165,250,0.2)", fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.55 }}>
+              <InlineText text={hint} />
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Parser
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -761,7 +882,7 @@ function parse(raw: string): Block[] {
       i++;
     }
     if (paraLines.length) {
-      blocks.push({ t: "p", text: paraLines.join(" ") });
+      pushParagraph(blocks, paraLines.join(" "));
     }
   }
 
@@ -1146,6 +1267,23 @@ function BlockRenderer({
           style={{ margin: "0.875rem 0", padding: "0.25rem 0", overflowX: "auto", textAlign: "center", color: "var(--text-primary)" }}
           dangerouslySetInnerHTML={{ __html: katexHtml(block.tex, true) }}
         />
+      );
+
+    case "aiassist":
+      return <AiAssistCallout text={block.text} />;
+
+    case "checkpoints":
+      return (
+        <div style={{ margin: "1rem 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.625rem", fontWeight: 700 }}>
+            <ListChecks size={12} /> Mastery checkpoints
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+            {block.items.map((item, i) => (
+              <CheckpointCard key={i} index={i} text={item} />
+            ))}
+          </div>
+        </div>
       );
 
     default:
