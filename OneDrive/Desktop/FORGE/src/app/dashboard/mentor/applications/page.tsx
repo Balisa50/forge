@@ -214,7 +214,7 @@ export default function ApplicationsPage() {
                   style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: allSelected ? "var(--accent)" : "var(--text-dim)", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "0.375rem" }}
                 >
                   <span style={{ width: 14, height: 14, border: `1.5px solid ${allSelected ? "var(--accent)" : "var(--border)"}`, borderRadius: 3, display: "inline-grid", placeItems: "center", background: allSelected ? "var(--accent)" : "none" }}>
-                    {allSelected && <span style={{ color: "#000", fontSize: "0.5rem", fontWeight: 900 }}>✓</span>}
+                    {allSelected && <Check size={10} strokeWidth={3} style={{ color: "#000" }} />}
                   </span>
                   {allSelected ? "Deselect all" : "Select all"}
                 </button>
@@ -234,7 +234,7 @@ export default function ApplicationsPage() {
                           onClick={(e) => { e.stopPropagation(); toggleSelect(a.id); }}
                           style={{ flexShrink: 0, width: 18, height: 18, border: `1.5px solid ${isSelected ? "var(--accent)" : "var(--border)"}`, borderRadius: 4, background: isSelected ? "var(--accent)" : "none", display: "grid", placeItems: "center", cursor: "pointer" }}
                         >
-                          {isSelected && <span style={{ color: "#000", fontSize: "0.625rem", fontWeight: 900 }}>✓</span>}
+                          {isSelected && <Check size={12} strokeWidth={3} style={{ color: "#000" }} />}
                         </button>
                       </div>
                       <button

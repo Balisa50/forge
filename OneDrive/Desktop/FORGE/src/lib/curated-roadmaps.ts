@@ -16,21 +16,22 @@ export interface CuratedRoadmapPickerEntry {
   outcome: string;
   weeks: number;
   phases: number;
-  emoji: string;
+  /** Lucide icon name (render with the matching lucide-react component). */
+  icon: string;
   gradient: string;
 }
 
-const EMOJI: Record<string, string> = {
-  "ai-engineering": "🤖",
-  "ml-engineering": "📊",
-  "full-stack-web": "🌐",
-  "mobile-engineering": "📱",
-  "devops-cloud": "☁️",
-  "cybersecurity": "🛡️",
-  "data-science": "🧪",
-  "data-analysis": "📈",
-  "bi-analytics": "📋",
-  "ai-automation": "⚡",
+const ICON: Record<string, string> = {
+  "ai-engineering": "Bot",
+  "ml-engineering": "BarChart3",
+  "full-stack-web": "Globe",
+  "mobile-engineering": "Smartphone",
+  "devops-cloud": "Cloud",
+  "cybersecurity": "Shield",
+  "data-science": "FlaskConical",
+  "data-analysis": "TrendingUp",
+  "bi-analytics": "ClipboardList",
+  "ai-automation": "Zap",
 };
 
 export function loadCuratedRoadmaps(): CuratedRoadmapPickerEntry[] {
@@ -45,7 +46,7 @@ export function loadCuratedRoadmaps(): CuratedRoadmapPickerEntry[] {
         outcome: meta?.outcome ?? "",
         weeks: r.total_weeks,
         phases,
-        emoji: EMOJI[r.slug] ?? "📘",
+        icon: ICON[r.slug] ?? "BookOpen",
         gradient: meta?.gradient ?? "from-cyan-500 to-blue-500",
       };
     })
