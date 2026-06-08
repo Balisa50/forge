@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import RoadmapView from "@/components/RoadmapView";
 import Link from "next/link";
 import { loadAllRoadmaps, type RoadmapWeek } from "@/lib/roadmaps";
+import { Map as MapIcon } from "lucide-react";
 
 export default async function RoadmapPage() {
   const session = await auth();
@@ -60,7 +61,7 @@ export default async function RoadmapPage() {
       <div>
         <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Roadmap</h1>
         <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center", marginTop: "2rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
+          <MapIcon size={44} strokeWidth={1.5} style={{ color: "var(--text-dim)", margin: "0 auto 1rem", display: "block" }} />
           <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.75rem", marginBottom: "1rem" }}>No Active Roadmap</h2>
           <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Create a roadmap to structure your learning journey.</p>
           <form action="/api/roadmaps" method="post">

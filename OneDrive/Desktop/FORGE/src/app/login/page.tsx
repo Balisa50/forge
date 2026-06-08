@@ -314,12 +314,6 @@ export default function LoginPage() {
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
         </div>
 
-        <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginBottom: "0.5rem", lineHeight: 1.5 }}>
-          Type your full Personal ID, including the <strong style={{ color: "var(--accent)" }}>FORGE-</strong> prefix.
-          <br />
-          Example: <strong style={{ color: "var(--accent)" }}>FORGE-XXXX-XXXX</strong>
-        </p>
-
         <form onSubmit={handleMenteeReturn}>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <input

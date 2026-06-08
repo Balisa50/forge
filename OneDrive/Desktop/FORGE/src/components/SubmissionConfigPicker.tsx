@@ -28,8 +28,6 @@ export default function SubmissionConfigPicker({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
-  const help = SUBMISSION_CONFIG_OPTIONS.find((o) => o.type === type)?.help ?? "";
-
   const onChange = async (next: SubmissionConfigType) => {
     const prev = type;
     setType(next);
@@ -78,7 +76,6 @@ export default function SubmissionConfigPicker({
           </span>
         )}
       </div>
-      <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "0.375rem", lineHeight: 1.5 }}>{help}</p>
       {error && (
         <p style={{ color: "var(--red)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.25rem" }}>{error}</p>
       )}

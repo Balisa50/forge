@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
+import { BookOpen } from "lucide-react";
 
 /**
  * Journal — the student's permanent record of every check-in.
@@ -55,7 +56,7 @@ export default async function JournalPage() {
 
       {checkins.length === 0 ? (
         <div className="forge-panel" style={{ padding: "2rem 1.5rem", textAlign: "center" }}>
-          <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>📖</div>
+          <BookOpen size={36} strokeWidth={1.5} style={{ color: "var(--text-dim)", margin: "0 auto 1rem", display: "block" }} />
           <p style={{ color: "var(--text-secondary)" }}>No sessions yet. Complete your first check-in to start your journal.</p>
         </div>
       ) : (

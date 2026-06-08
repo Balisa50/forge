@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Target, Flame, Lock, Hourglass, BookOpen } from "lucide-react";
+import { AlertTriangle, CheckCircle2, MapIcon, Zap, ArrowRight, Clock, Building2, Target, Flame, Lock, Hourglass, BookOpen, MessageSquare } from "lucide-react";
 import WeekVerifiedCelebration from "@/components/WeekVerifiedCelebration";
 import ForgePactCard from "@/components/ForgePactCard";
 import ShippedChain from "@/components/ShippedChain";
@@ -271,8 +271,8 @@ export default async function DashboardPage() {
               <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>{releasedWeek.title}</h2>
               {releasedNote && (
                 <div style={{ marginBottom: "1rem", padding: "0.875rem 1rem", borderRadius: 8, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.25)" }}>
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--blue)", marginBottom: "0.375rem" }}>
-                    💬 Note from {primaryMentor?.name?.split(" ")[0] ?? "your mentor"}
+                  <p style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--blue)", marginBottom: "0.375rem" }}>
+                    <MessageSquare size={12} /> Note from {primaryMentor?.name?.split(" ")[0] ?? "your mentor"}
                   </p>
                   <p style={{ color: "var(--text-primary)", fontSize: "0.9375rem", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>
                     {releasedNote.body}

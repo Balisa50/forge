@@ -378,12 +378,6 @@ export default function PodPage() {
               })()}
             </div>
 
-            {/* Tip */}
-            <div style={{ marginTop: "1.5rem", padding: "1rem 1.25rem", background: "rgba(137,180,250,0.05)", border: "1px solid rgba(137,180,250,0.15)", borderRadius: "8px" }}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)", lineHeight: 1.6 }}>
-                💡 Your pod members can see when you last checked in and your overall progress. No messages, no pressure — just the facts. Show up consistently and they&apos;ll know.
-              </p>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import CheckinForm from "@/components/CheckinForm";
 import Link from "next/link";
+import { Map, CheckCircle2 } from "lucide-react";
 
 export default async function CheckinPage() {
   const session = await auth();
@@ -27,7 +28,7 @@ export default async function CheckinPage() {
   if (!roadmap) {
     return (
       <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
+        <Map size={44} strokeWidth={1.5} style={{ color: "var(--text-dim)", margin: "0 auto 1rem", display: "block" }} />
         <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", marginBottom: "1rem" }}>No Active Roadmap</h2>
         <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Create a roadmap first before checking in.</p>
         <Link href="/dashboard/roadmap" className="forge-btn forge-btn-primary">Create Roadmap</Link>
@@ -53,7 +54,7 @@ export default async function CheckinPage() {
   if (todayCheckin) {
     return (
       <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✅</div>
+        <CheckCircle2 size={44} strokeWidth={1.5} style={{ color: "var(--green)", margin: "0 auto 1rem", display: "block" }} />
         <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", marginBottom: "1rem" }}>Already Checked In Today</h2>
         <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>You&apos;ve checked in today. Come back tomorrow.</p>
         <Link href="/dashboard" className="forge-btn forge-btn-ghost">Back to Dashboard</Link>

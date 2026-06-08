@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
           taskId: firstTask.id,
           mentorId: mentor.id,
           menteeId: match.mentee.id,
-          body: `🔑 ${match.mentee.name} requested their Personal ID. Use the "Personal ID" card on their drilldown to Copy + send privately.`,
+          body: `${match.mentee.name} requested their Personal ID. Use the "Personal ID" card on their drilldown to Copy + send privately.`,
           authorRole: "mentee",
           kind: "request_unlock",
         },
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: mentor.id,
         kind: "mentee-requested-recovery",
-        title: `🔑 ${match.mentee.name} forgot their Personal ID`,
+        title: `${match.mentee.name} forgot their Personal ID`,
         body: `Open their drilldown and hit Copy on the Personal ID card. Send it via WhatsApp / SMS.`,
         href: `/dashboard/mentor/${match.mentee.id}`,
       },
