@@ -20,10 +20,21 @@
  */
 
 import { useState, useCallback } from "react";
+import katex from "katex";
 import {
   Copy, Check, Code2, PenLine, AlertCircle,
   ChevronRight, FileCode2, BookOpen,
 } from "lucide-react";
+
+/** Render a LaTeX string to KaTeX HTML. Never throws — on a malformed
+ *  expression it falls back to the raw source so the lesson still reads. */
+function katexHtml(tex: string, displayMode: boolean): string {
+  try {
+    return katex.renderToString(tex, { displayMode, throwOnError: false, output: "html" });
+  } catch {
+    return tex;
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Block types
@@ -41,11 +52,12 @@ type StepBlock = { t: "step"; number: string; title: string; bodyLines: string[]
 type DividerBlock = { t: "divider"; label?: string };
 type PassBlock = { t: "pass"; items: string[] };
 type TableBlock = { t: "table"; headers: string[]; rows: string[][] };
+type MathBlock = { t: "math"; tex: string };
 
 type Block =
   | HeadingBlock | ParagraphBlock | UlBlock | OlBlock
   | ChecklistBlock | CodeBlock | MdTemplateBlock | CellBlock | StepBlock
-  | DividerBlock | PassBlock | TableBlock;
+  | DividerBlock | PassBlock | TableBlock | MathBlock;
 
 /** Is an indented block actually a markdown TEMPLATE (a structure the student
  *  should write — headings + prose) rather than real code? Heading present and
@@ -73,7 +85,9 @@ const ACTION_COLORS: Record<string, string> = {
 
 function InlineText({ text }: { text: string }) {
   const parts: React.ReactNode[] = [];
-  const re = /(\[(?:READ|COPY|PRODUCE|EXAMPLE|WRITE|CODE|BUILD|WATCH|THINK)\]|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g;
+  // Inline math \( ... \) is matched first so its contents aren't mistaken for
+  // bold/italic/code; then action tags, bold, italic, inline code.
+  const re = /(\\\([\s\S]+?\\\)|\[(?:READ|COPY|PRODUCE|EXAMPLE|WRITE|CODE|BUILD|WATCH|THINK)\]|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g;
   let last = 0, k = 0;
   let m: RegExpExecArray | null;
 
@@ -81,7 +95,9 @@ function InlineText({ text }: { text: string }) {
     if (m.index > last) parts.push(<span key={k++}>{text.slice(last, m.index)}</span>);
     const tok = m[0];
 
-    if (tok.startsWith("[")) {
+    if (tok.startsWith("\\(")) {
+      parts.push(<span key={k++} dangerouslySetInnerHTML={{ __html: katexHtml(tok.slice(2, -2).trim(), false) }} />);
+    } else if (tok.startsWith("[")) {
       const tag = tok.slice(1, -1);
       const color = ACTION_COLORS[tag] ?? "#9ca3af";
       parts.push(
@@ -564,6 +580,30 @@ function parse(raw: string): Block[] {
       continue;
     }
 
+    // Display math: \[ ... \] or $$ ... $$ (may span multiple lines)
+    const dispClose = trimmed.startsWith("\\[") ? "\\]" : trimmed.startsWith("$$") ? "$$" : null;
+    if (dispClose) {
+      const openTok = trimmed.startsWith("\\[") ? "\\[" : "$$";
+      const buf: string[] = [];
+      const rest = trimmed.slice(openTok.length);
+      const sameLine = rest.indexOf(dispClose);
+      if (sameLine >= 0) {
+        buf.push(rest.slice(0, sameLine));
+        i++;
+      } else {
+        buf.push(rest);
+        i++;
+        while (i < lines.length) {
+          const ci = lines[i].indexOf(dispClose);
+          if (ci >= 0) { buf.push(lines[i].slice(0, ci)); i++; break; }
+          buf.push(lines[i]); i++;
+        }
+      }
+      const tex = buf.join("\n").trim();
+      if (tex) blocks.push({ t: "math", tex });
+      continue;
+    }
+
     // Heading: # ## ###
     const hm = trimmed.match(/^(#{1,3})\s+(.+)$/);
     if (hm) {
@@ -708,6 +748,7 @@ function parse(raw: string): Block[] {
       const l = lines[i];
       const tr = l.trim();
       if (!tr) { i++; break; }
+      if (tr.startsWith("\\[") || tr.startsWith("$$")) break;
       if (/^#{1,3}\s/.test(tr)) break;
       if (/^[─━═\-]{3,}/.test(tr)) break;
       if (/^STEP\s+\d+/i.test(tr)) break;
@@ -1097,6 +1138,14 @@ function BlockRenderer({
             </tbody>
           </table>
         </div>
+      );
+
+    case "math":
+      return (
+        <div
+          style={{ margin: "0.875rem 0", padding: "0.25rem 0", overflowX: "auto", textAlign: "center", color: "var(--text-primary)" }}
+          dangerouslySetInnerHTML={{ __html: katexHtml(block.tex, true) }}
+        />
       );
 
     default:

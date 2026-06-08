@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Providers from "@/components/Providers";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://theforge.app";
 
