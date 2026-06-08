@@ -1859,12 +1859,12 @@
             },
             {
               "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -1909,12 +1909,12 @@
             },
             {
               "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "title": "SQL in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -5350,9 +5350,13 @@
               "body": "## Choose the file format\n\nConvert raw JSON/CSV landings to Parquet for cheap, typed, columnar storage.\n\n## Why it matters\nParquet is the standard lake format because it slashes scan cost downstream.\n\n## In practice\nConvert a landing to Parquet:\n\n```python\npd.read_json('raw/dt=2026-06-06/data.json').to_parquet('lake/trips/dt=2026-06-06/part.parquet')\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Choose the file format",
-              "body": "## Deeper dive: Choose the file format\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Choose the file format** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is a Data Lake?",
+              "url": "https://www.youtube.com/watch?v=LxcH6z8TFpI",
+              "duration_min": 6,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 6-minute IBM Technology video teaches Raw storage in the lake directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -5396,9 +5400,13 @@
               "body": "## Design the partition scheme\n\nPartition lake tables by the column queries filter on most, usually date.\n\n## Why it matters\nThe right partition key is the single biggest lever on downstream query cost.\n\n## In practice\nLay out partitions by date:\n\n```text\nlake/trips/dt=2026-06-05/  lake/trips/dt=2026-06-06/\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Design the partition scheme",
-              "body": "## Deeper dive: Design the partition scheme\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Design the partition scheme** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "What is Object Storage?",
+              "url": "https://www.youtube.com/watch?v=ZfTOQJlLsAs",
+              "duration_min": 11,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 11-minute IBM Technology video teaches Raw storage in the lake directly — watch it end to end."
             },
             {
               "kind": "swipe",
@@ -5776,9 +5784,13 @@
               "body": "## Stage raw into the warehouse\n\nLoad lake Parquet into staging tables that mirror the source shape with minimal change.\n\n## Why it matters\nStaging untouched data first keeps extraction and transformation cleanly separated.\n\n## In practice\nCreate an external or loaded staging table:\n\n```sql\nLOAD DATA INTO capstone.stg_trips FROM FILES(format='PARQUET', uris=['gs://capstone-lake/trips/*']);\n```"
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Stage raw into the warehouse",
-              "body": "## Deeper dive: Stage raw into the warehouse\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Stage raw into the warehouse** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Creating your first Data Warehouse in Microsoft Fabric",
+              "url": "https://www.youtube.com/watch?v=StIBBb69wDw",
+              "duration_min": 7,
+              "creator": "Guy in a Cube",
+              "difficulty": "curated",
+              "why": "This 7-minute Guy in a Cube video teaches Loading to the warehouse directly — watch it end to end."
             },
             {
               "kind": "swipe",

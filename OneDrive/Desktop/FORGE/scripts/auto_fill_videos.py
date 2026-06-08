@@ -113,7 +113,9 @@ def main():
         week_titles = _week_title_lookup()
         print(f"Auto-filling {len(todo)} rows (BROAD, week-context aware)...")
         for r in todo:
-            concept = r.get("concept", "")
+            # Prefer an explicit `search` term (e.g. a clean week theme) over the
+            # `concept` field, which may be a full week title kept for placement.
+            concept = (r.get("search") or "").strip() or r.get("concept", "")
             if not concept:
                 continue
             ctx = week_titles.get((r.get("track", ""), str(r.get("week", "")).strip()), "")

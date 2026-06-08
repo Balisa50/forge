@@ -551,12 +551,12 @@
             },
             {
               "kind": "video",
-              "title": "Pandas in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=DkjCaAMBGWM",
+              "title": "Jupyter in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=h1sAzPojKMg",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Pandas in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Jupyter in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -608,12 +608,12 @@
             },
             {
               "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "title": "Pandas in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=DkjCaAMBGWM",
               "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Pandas in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -723,9 +723,13 @@
               "body": "## What it is\nAnalysis is mostly **slicing** a table down to what matters: choose the **columns** you care about, keep the **rows** that meet a condition. pandas gives you a small, precise vocabulary for this, and once it's reflex, most questions become one line.\n\nThere are three moves, and it helps to see them as a family:\n\n- **Select a column:** `df[\"sales\"]` returns one column — a **Series**.\n- **Select several columns:** `df[[\"name\", \"sales\"]]` (note the *double* brackets — a list of names) returns a smaller **DataFrame**.\n- **Filter rows:** `df[df[\"sales\"] > 500]` keeps only rows where the condition is `True`. The part inside, `df[\"sales\"] > 500`, is a boolean Series (a mask), exactly like Day 1.\n\nThe fourth, more powerful tool is **`.loc`**, which selects rows *and* columns by label in one shot: `df.loc[row_condition, [\"col1\", \"col2\"]]`.\n\n## Why it matters\nEvery business question is a slice. \"Which East-region orders lost money?\" is a row filter (`region == East` **and** `profit < 0`) plus a column selection (`order_id`, `profit`). The faster you translate a sentence into a select-and-filter, the faster you answer questions — and the less you fall back on slow, error-prone manual scanning.\n\n## The one rule people trip on\nCombine conditions with **`&`** (and) / **`|`** (or), and wrap each condition in its own parentheses: `df[(df[\"region\"] == \"East\") & (df[\"sales\"] > 500)]`. Using the Python words `and`/`or` here raises an error, because pandas needs to combine the masks element by element. Burn that in now and you'll save yourself a confusing afternoon later.\n\nWatch the short video, then the code below shows each move with the exact output it returns."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Selecting columns and filtering rows",
-              "body": "## Deeper dive: Selecting columns and filtering rows\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Selecting columns and filtering rows** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",

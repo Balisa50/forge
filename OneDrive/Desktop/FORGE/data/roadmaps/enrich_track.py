@@ -1480,9 +1480,16 @@ def pad_day(raw_day, week_context, day_num, week_title, track_slug, used_video_u
     # day title AND the week title, so a day inside (say) the "Transformers" or "RAG"
     # week still gets that concept's video even if the day title is generic. When no
     # on-topic video fits, add a 'deeper dive' second lesson instead.
-    match_topic = f"{day_title} {week_title}"
-    video = pick_video_for_day(match_topic, used_video_urls, cache, track_slug,
-                               budget_for_day(day_title, day_num, track_slug))
+    # Two-phase pick so a day's OWN concept always wins, and the week theme only
+    # FILLS a day that has no concept video of its own (never displaces one):
+    #   phase 1 — match on the day title alone (day-specific concept video)
+    #   phase 2 — match on day + week title (week-theme / week-concept fallback)
+    budget = budget_for_day(day_title, day_num, track_slug)
+    video = pick_video_for_day(day_title, used_video_urls, cache, track_slug, budget)
+    if not video or video['url'] in used_video_urls:
+        alt = pick_video_for_day(f"{day_title} {week_title}", used_video_urls, cache, track_slug, budget)
+        if alt and alt['url'] not in used_video_urls:
+            video = alt
     first_lesson_idx = next((i for i, it in enumerate(items) if it.get('kind') == 'lesson'), -1)
     insert_at = first_lesson_idx + 1 if first_lesson_idx >= 0 else 0
     if video and video['url'] not in used_video_urls:

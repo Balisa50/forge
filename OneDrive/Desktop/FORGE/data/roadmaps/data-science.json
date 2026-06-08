@@ -1686,9 +1686,13 @@
               "body": "## What it is\nA **database** holds one or more **tables**. A table is exactly what you'd expect: named columns, typed values, many rows. To practise SQL you need real data in a real table.\n\n**SQLite** is the simplest possible database — a single file, no server to install. `sqliteonline.com` runs it in your browser, so you can import a CSV and start querying in two minutes. (The SQL you write here is the same SQL that runs on BigQuery, Postgres, and Snowflake — you learn the language once.)\n\n## Why a sample, not the full 3.2M rows\nBrowser SQLite handles ~100k rows comfortably; 3.2 million would choke it. You export a 100k random sample from `clean.parquet` to CSV. A random sample preserves the distributions, so your query *answers* will closely match the full-data pandas results — close enough to verify correctness.\n\n## Where this fits\nToday you create the `taxi` table from a sample of your cleaned data. Every query the rest of the week runs against it. Tomorrow you'll confirm each SQL answer matches the pandas answer you already trust."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Load TaxiPulse data into SQL",
-              "body": "## Deeper dive: Load TaxiPulse data into SQL\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Load TaxiPulse data into SQL** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "The Complete Data Science Roadmap",
+              "url": "https://www.youtube.com/watch?v=9R3X0JoCLyU",
+              "duration_min": 7,
+              "creator": "Programming with Mosh",
+              "difficulty": "curated",
+              "why": "This 7-minute Programming with Mosh video teaches SQL for Data Scientists directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -2646,9 +2650,13 @@
               "body": "## What it is\nA point estimate ('mean fare = $16.42') hides its own uncertainty. A **confidence interval (CI)** reports a range: 'the true mean fare is between $16.18 and $16.66 (95% CI).' It turns a single number into an honest statement about precision.\n\n```python\nfrom scipy import stats\nmean = fares.mean()\nsem  = stats.sem(fares)                 # standard error of the mean\nci   = stats.t.interval(0.95, len(fares)-1, loc=mean, scale=sem)\n```\n\n## What '95% confidence' means\nIf you repeated your sampling many times and built a CI each time, ~95% of those intervals would contain the true mean. The width comes from the **standard error**, which shrinks as sample size grows (SE = sd/√n).\n\n## Why it matters — the √n law\nMore data = a tighter interval, but with diminishing returns: to halve the CI width you need **4x** the data (because of the square root). This is why a sample of 100 gives a wide, mushy estimate and 1000 gives a crisp one — and why going from 10,000 to 40,000 barely helps. Knowing this stops you from over-collecting.\n\n## Where this fits\nToday you compute a CI for mean fare at n=1000 and n=100, and watch the interval widen as data shrinks."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Confidence intervals",
-              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Tutorial 31- Hypothesis Test, Type 1 Error, Type 2 Error",
+              "url": "https://www.youtube.com/watch?v=Y3QzLIBp64M",
+              "duration_min": 12,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 12-minute Krish Naik video teaches Statistical inference + hypothesis testing directly — watch it end to end."
             },
             {
               "kind": "lesson",
@@ -3120,9 +3128,13 @@
               "body": "## What it is\nA trained model is an object in memory — weights, trees, configuration. **Serialisation** writes that object to a file so you can reload it later without retraining:\n\n```python\nimport joblib\njoblib.dump(model, 'fare_model.pkl')      # save\nloaded = joblib.load('fare_model.pkl')    # reload, ready to predict\n```\n\n**joblib** is the standard for sklearn/XGBoost models — it's like pickle but optimised for the large NumPy arrays inside ML models.\n\n## Why save instead of retrain in the API\nTraining takes seconds to minutes and needs the full dataset. You cannot do that on every API request. Instead you train **once**, save the artifact, and the API **loads it once at startup**. Each prediction is then a millisecond `.predict()` call. Train-once / serve-many is the fundamental shape of every ML deployment.\n\n## Verify the round-trip\nAlways test that the reloaded model predicts identically to the original before you build on it — a corrupted save discovered now is cheap; discovered in production, expensive.\n\n## Where this fits\nToday you save your Week 5 model to `fare_model.pkl` and confirm the loaded copy predicts correctly. The API will load this exact file."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Save the model",
-              "body": "## Deeper dive: Save the model\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Save the model** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "How To Deploy Machine Learning Models Using FastAPI-Deployment Of ML Models As API’s",
+              "url": "https://www.youtube.com/watch?v=b5F667g1yCk",
+              "duration_min": 19,
+              "creator": "Krish Naik",
+              "difficulty": "curated",
+              "why": "This 19-minute Krish Naik video on TaxiPulse v0.4: Deploy a fare-predictor API — watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "lesson",
@@ -10183,7 +10195,7 @@
             {
               "kind": "lesson",
               "title": "Deeper dive: Confidence intervals",
-              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n\n## Context\nThis applies specifically to week 22 ('Energy Forecast v0.2: ARIMA model'), day 5."
+              "body": "## Deeper dive: Confidence intervals\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Confidence intervals** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
             },
             {
               "kind": "lesson",
@@ -16170,6 +16182,15 @@
               "body": "## What it is\nML Fairness and Bias - the audit you actually run is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
+              "kind": "video",
+              "title": "Fairness Criteria, Exploring Fairness in Machine Learning",
+              "url": "https://www.youtube.com/watch?v=euwc0va-7Vo",
+              "duration_min": 8,
+              "creator": "MIT OpenCourseWare",
+              "difficulty": "curated",
+              "why": "This 8-minute MIT OpenCourseWare video teaches ML Fairness and Bias - the audit you actually run directly — watch it end to end."
+            },
+            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\nThe snippet below shows exactly what to do:\n\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 36 ('ML Fairness and Bias - the audit you actually run'), day 0."
@@ -16656,12 +16677,12 @@
             },
             {
               "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
+              "title": "Python in 100 Seconds",
+              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
+              "duration_min": 2,
               "creator": "Fireship",
               "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -16705,9 +16726,13 @@
               "body": "## What it is\nIn W28-W30 you built a baseline. Today you tighten it: a STRONG, fair, well-evaluated baseline is the bar your main model has to clear. The honest comparison is the spine of the audit.\n\n## Strong baselines by problem type\nThe snippet below shows exactly what to do:\n\n```text\nRegression:\n  Ridge regression on engineered features. NOT 'predict the mean'.\n  Engineering matters: include interactions, polynomial terms.\n\nClassification:\n  Logistic regression on engineered features, class-weighted if imbalanced.\n  NOT 'majority class predictor' — that's a sanity check, not a baseline.\n\nTime series:\n  ETS or SARIMA, properly cross-validated with time-aware splits.\n  Persistence is a sanity check; ETS is the real baseline.\n\nRecommendation:\n  Item popularity + per-user popularity bias. NOT 'random recommend'.\n```\n\n## Why the baseline matters more in v0.2 than v0.1\nIn W28-W30 a weak baseline was fine; the goal was 'something works'. In v0.2 the goal is 'something works AND we know exactly how much better than the simplest defensible alternative'. If your fancy model is 2% better than a properly-tuned linear regression, you have a different story than if it's 30% better.\n\n## Tune the baseline the same way you tune the main model\nA common cheat: under-tune the baseline so the main model looks better. Don't. Cross-validated hyperparameter search for the baseline too.\n\n```python\nfrom sklearn.linear_model import LogisticRegressionCV\nbaseline = LogisticRegressionCV(\n    Cs=10, cv=5, class_weight='balanced', max_iter=2000,\n    scoring='roc_auc', random_state=SEED,\n)\nbaseline.fit(X_train, y_train)\n```\n\n## Document the baseline\nThe snippet below shows exactly what to do:\n\n```markdown\n## Baseline\n\n- Model: LogisticRegressionCV (10 C values, 5-fold inner CV)\n- Features: <list>\n- Class weighting: balanced (target is imbalanced 7:1)\n- Cross-validated 5-fold AUC: 0.812 ± 0.011\n- Single train/test AUC: 0.819 (test set)\n```\n\nBoth numbers — the CV mean ± std AND the single test number — go in the report. Different audiences read each."
             },
             {
-              "kind": "lesson",
-              "title": "Deeper dive: Baseline first — done properly",
-              "body": "## Deeper dive: Baseline first — done properly\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Baseline first — done properly** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "kind": "video",
+              "title": "Git Branches Explained",
+              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
+              "duration_min": 8,
+              "creator": "Fireship",
+              "difficulty": "beginner",
+              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -17914,6 +17939,15 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nReinforcement Learning - the practical intro is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
+            },
+            {
+              "kind": "video",
+              "title": "Reinforcement Learning from Human Feedback (RLHF) Explained",
+              "url": "https://www.youtube.com/watch?v=T_X4XFwKX8k",
+              "duration_min": 12,
+              "creator": "IBM Technology",
+              "difficulty": "curated",
+              "why": "This 12-minute IBM Technology video teaches Reinforcement Learning - the practical intro directly — watch it end to end."
             },
             {
               "kind": "lesson",
