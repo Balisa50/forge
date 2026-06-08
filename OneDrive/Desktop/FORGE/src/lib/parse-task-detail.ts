@@ -80,6 +80,31 @@ function humanise(text: string): string {
     .trim();
 }
 
+/** The inverse of parseTaskDetail: rebuild the markdown blob from structured
+ *  sections so a mentor's per-section edits persist back into Task.detail and
+ *  re-parse cleanly. Empty sections are omitted. Canonical headings are used so
+ *  the next parseTaskDetail() round-trips. */
+export function serializeTaskDetail(p: ParsedTaskDetail): string {
+  const parts: string[] = [];
+  const ctx = (p.context || "").trim();
+  if (ctx) parts.push(ctx);
+  if (p.topics.length) {
+    parts.push("**Topics to study:**\n" + p.topics.map((t) => `- ${t.trim()}`).join("\n"));
+  }
+  if (p.tasks.length) {
+    parts.push("**Tasks & deliverables:**\n" + p.tasks.map((t, i) => `${i + 1}. ${t.trim()}`).join("\n"));
+  }
+  const proj = (p.project || "").trim();
+  if (proj) parts.push("**Real-world project:**\n" + proj);
+  if (p.questions.length) {
+    parts.push("**Think like an expert — questions on your data:**\n" + p.questions.map((q, i) => `${i + 1}. ${q.trim()}`).join("\n"));
+  }
+  if (p.exercises.length) {
+    parts.push("**Practical exercises:**\n" + p.exercises.map((e, i) => `${i + 1}. ${e.trim()}`).join("\n"));
+  }
+  return parts.join("\n\n");
+}
+
 export function parseTaskDetail(detail: string): ParsedTaskDetail {
   if (!detail) {
     return { context: "", topics: [], tasks: [], project: "", questions: [], exercises: [] };
