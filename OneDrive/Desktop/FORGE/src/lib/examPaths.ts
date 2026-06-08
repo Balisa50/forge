@@ -53,6 +53,37 @@ export interface MasteryQuestion {
   explain: string;
   /** Rough difficulty tag for analytics/sequencing. */
   difficulty?: "warmup" | "core" | "exam" | "stretch";
+
+  // ── Optional study-mode enrichments (ActuaryQuestionSolver) ──────────────
+  // All optional, so existing questions/generators are untouched. When present,
+  // the solver exposes Decode / Trick / Diagram / Solution panels.
+
+  /** Step 1 — decode the English into structure (experiment, sample space, …). */
+  decode?: { label: string; value: string }[];
+  /** Step 2/Rule 2 — the fastest way to solve this TYPE (may contain LaTeX). */
+  trick?: string;
+  /** Step 3 — ordered compute steps, each may contain LaTeX. */
+  steps?: string[];
+  /** Step 4 — sanity checks (each may contain LaTeX). */
+  sanity?: string[];
+  /** A diagram to render (key into the exam diagram library) + optional labels. */
+  diagram?: DiagramSpec;
+}
+
+/** A reference to one of the SVG diagrams in ExamDiagrams.tsx. */
+export type DiagramKind =
+  | "venn-conditional"   // two overlapping sets, overlap shaded
+  | "tree"               // 2-level probability tree
+  | "partition"          // sample space split into boxes (law of total prob)
+  | "bell"               // normal curve with ±1σ/±2σ/±3σ tails
+  | "pmf-bars"           // discrete PMF as bars
+  | "poisson-timeline"   // events as dots on a timeline
+  | "exponential";       // memoryless decay curve
+
+export interface DiagramSpec {
+  kind: DiagramKind;
+  /** Optional caption shown under the figure (may contain LaTeX). */
+  caption?: string;
 }
 
 export interface Concept {

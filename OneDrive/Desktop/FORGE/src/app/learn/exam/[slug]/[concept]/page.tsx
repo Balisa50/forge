@@ -6,6 +6,8 @@ import ConceptSections from "@/components/exam/ConceptSections";
 import ConceptStatusBar from "@/components/exam/ConceptStatusBar";
 import StartConceptButton from "@/components/exam/StartConceptButton";
 import MasteryGate from "@/components/exam/MasteryGate";
+import ActuaryQuestionSolver from "@/components/exam/ActuaryQuestionSolver";
+import { workedExamples } from "@/lib/examWorkedExamples";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +26,8 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
   const pos = flat.findIndex((f) => f.concept.id === conceptId);
   const prev = pos > 0 ? flat[pos - 1] : null;
   const next = pos < flat.length - 1 ? flat[pos + 1] : null;
+
+  const examples = workedExamples(conceptId);
 
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
@@ -62,6 +66,23 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
         <div className="mt-8">
           <ConceptSections sections={concept.sections} />
         </div>
+
+        {/* Worked examples — study mode: decode, trick, diagram, step-by-step */}
+        {examples.length > 0 && (
+          <section className="mt-10">
+            <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.25rem" }}>
+              Worked examples
+            </h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", marginBottom: "1rem" }}>
+              Work each one yourself first — then reveal the decode, the trick, the diagram, and the full solution.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {examples.map((ex, i) => (
+                <ActuaryQuestionSolver key={i} question={ex} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Completion closure → unlocks the mastery gate */}
         <div className="mt-10">
