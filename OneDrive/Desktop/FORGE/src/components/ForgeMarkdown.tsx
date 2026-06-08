@@ -156,6 +156,17 @@ const CODE_CHIP: React.CSSProperties = {
   overflowWrap: "anywhere",
 };
 
+/** Mentor highlight (==text==). Semi-transparent yellow so it reads on the dark
+ *  theme without washing out the text underneath. */
+const HIGHLIGHT: React.CSSProperties = {
+  background: "rgba(250,204,21,0.32)",
+  color: "inherit",
+  padding: "0 0.15rem",
+  borderRadius: 3,
+  boxDecorationBreak: "clone",
+  WebkitBoxDecorationBreak: "clone",
+};
+
 function InlineText({ text }: { text: string }) {
   const parts: React.ReactNode[] = [];
   // Inline math \( ... \) is matched first so its contents aren't mistaken for
@@ -163,7 +174,10 @@ function InlineText({ text }: { text: string }) {
   // Last alternative auto-detects unfenced code tokens in prose: an identifier
   // followed by one+ of `.attr`, `(...)`, `[...]` — e.g.
   // df.groupby('Sub-Category')['Profit'].sum().sort_values(), df.shape, monthly_report.py.
-  const re = /(\\\([\s\S]+?\\\)|\[(?:READ|COPY|PRODUCE|EXAMPLE|WRITE|CODE|BUILD|WATCH|THINK)\]|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|[A-Za-z_][\w]*(?:\.[A-Za-z_]\w*|\([^()\n]*\)|\[[^\]\n]*\])+)/g;
+  // Token alternatives, in priority order:
+  //  \(…\) inline math · ==highlight== · [ACTION] · **bold** · *italic* · `code`
+  //  · caret-superscript math (X^T, (X^T X)^{-1}) → KaTeX · auto-detected code token.
+  const re = /(\\\([\s\S]+?\\\)|==[^=\n]+?==|\[(?:READ|COPY|PRODUCE|EXAMPLE|WRITE|CODE|BUILD|WATCH|THINK)\]|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|(?:\([^()\n]*\)|[A-Za-z0-9])\^(?:\{[^}\n]*\}|-?[A-Za-z0-9]+)|[A-Za-z_][\w]*(?:\.[A-Za-z_]\w*|\([^()\n]*\)|\[[^\]\n]*\])+)/g;
   let last = 0, k = 0;
   let m: RegExpExecArray | null;
 
@@ -173,6 +187,8 @@ function InlineText({ text }: { text: string }) {
 
     if (tok.startsWith("\\(")) {
       parts.push(<span key={k++} dangerouslySetInnerHTML={{ __html: katexHtml(tok.slice(2, -2).trim(), false) }} />);
+    } else if (tok.startsWith("==")) {
+      parts.push(<mark key={k++} style={HIGHLIGHT}><InlineText text={tok.slice(2, -2)} /></mark>);
     } else if (tok.startsWith("[")) {
       const tag = tok.slice(1, -1);
       const color = ACTION_COLORS[tag] ?? "#9ca3af";
@@ -198,6 +214,9 @@ function InlineText({ text }: { text: string }) {
       parts.push(<strong key={k++} style={{ color: "var(--text-primary)", fontWeight: 700 }}>{tok.slice(2, -2)}</strong>);
     } else if (tok.startsWith("`")) {
       parts.push(<code key={k++} style={CODE_CHIP}>{tok.slice(1, -1)}</code>);
+    } else if (tok.includes("^")) {
+      // Caret superscript (X^T, (X^T X)^{-1}) is already valid LaTeX — typeset it.
+      parts.push(<span key={k++} dangerouslySetInnerHTML={{ __html: katexHtml(tok, false) }} />);
     } else if (/^[A-Za-z_]/.test(tok)) {
       // Auto-detected code candidate. Only style it as code when it carries a
       // strong code signal — a call/subscript, snake_case, a code file extension,

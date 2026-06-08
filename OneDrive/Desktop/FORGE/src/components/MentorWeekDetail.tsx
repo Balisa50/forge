@@ -13,11 +13,11 @@
  * the page (they open shared dialogs) and arrive as onRelease / onAction props.
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Pencil, Plus, Trash2, Check, ArrowUp, ArrowDown, Clock, Unlock, Lock,
   ShieldCheck, RotateCcw, Send, Pin, Link2, ExternalLink, Loader2, ListChecks,
-  BookOpen, Upload, MessageSquare, Activity as ActivityIcon, FileText,
+  BookOpen, Upload, MessageSquare, Activity as ActivityIcon, FileText, Highlighter,
 } from "lucide-react";
 import { parseTaskDetail } from "@/lib/parse-task-detail";
 import ForgeMarkdown from "@/components/ForgeMarkdown";
@@ -91,11 +91,34 @@ function TextEditor({ initial, onSave, onCancel, saving, placeholder, rows = 4 }
   initial: string; onSave: (v: string) => void; onCancel: () => void; saving: boolean; placeholder?: string; rows?: number;
 }) {
   const [v, setV] = useState(initial);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+
+  /** Wrap the current selection in ==…== (the markdown highlight mark). */
+  const highlight = () => {
+    const ta = taRef.current;
+    if (!ta) return;
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    if (s === e) return; // nothing selected
+    const next = v.slice(0, s) + "==" + v.slice(s, e) + "==" + v.slice(e);
+    setV(next);
+    requestAnimationFrame(() => { ta.focus(); ta.setSelectionRange(s + 2, e + 2); });
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
-      <textarea value={v} onChange={(e) => setV(e.target.value)} rows={rows} placeholder={placeholder}
+      <textarea
+        ref={taRef}
+        value={v}
+        onChange={(e) => setV(e.target.value)}
+        onKeyDown={(e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "h") { e.preventDefault(); highlight(); } }}
+        rows={rows}
+        placeholder={placeholder}
         style={{ width: "100%", padding: "0.5rem 0.75rem", background: "var(--bg)", border: "1px solid var(--accent)", borderRadius: 8, color: "var(--text-primary)", fontFamily: "var(--font-body)", fontSize: "0.875rem", resize: "vertical" }} />
-      <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", alignItems: "center" }}>
+        <button type="button" onClick={highlight} title="Highlight selection (Ctrl+H)" className="forge-btn forge-btn-ghost"
+          style={{ padding: "0.35rem 0.75rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.35rem", alignItems: "center", marginRight: "auto" }}>
+          <Highlighter size={13} /> Highlight
+        </button>
         <button type="button" onClick={onCancel} className="forge-btn forge-btn-ghost" style={{ padding: "0.35rem 0.75rem", fontSize: "0.8125rem" }}>Cancel</button>
         <button type="button" onClick={() => onSave(v)} disabled={saving} className="forge-btn forge-btn-primary" style={{ padding: "0.35rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.35rem", alignItems: "center" }}>
           {saving ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />} Save
