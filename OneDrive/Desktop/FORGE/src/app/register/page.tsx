@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import ForgeSelect from "@/components/ForgeSelect";
 
 const TIMEZONES = [
   "UTC", "Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa", "Africa/Algiers",
@@ -120,11 +121,12 @@ export default function RegisterPage() {
           </div>
           <div>
             <label style={{ display: "block", color: "var(--text-secondary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Timezone <span style={{ color: "var(--red)" }}>*</span></label>
-            <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="forge-input" style={{ appearance: "none" }}>
-              {TIMEZONES.map((tz) => (
-                <option key={tz} value={tz}>{tz}</option>
-              ))}
-            </select>
+            <ForgeSelect
+              value={timezone}
+              onChange={setTimezone}
+              ariaLabel="Timezone"
+              options={TIMEZONES.map((tz) => ({ value: tz, label: tz }))}
+            />
             <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "0.375rem" }}>Critical: affects your daily deadlines</p>
           </div>
 

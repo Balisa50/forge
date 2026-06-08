@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Copy, Check, Eye, EyeOff } from "lucide-react";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
+import ForgeSelect from "@/components/ForgeSelect";
 
 const TIMEZONES = [
   "UTC", "Africa/Abidjan", "Africa/Accra", "Africa/Banjul", "Africa/Cairo",
@@ -239,14 +240,15 @@ export default function SettingsForm({ user, role, isAlsoLearning }: Props) {
             {isLearner && (
               <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "0.5rem" }}>This affects your daily check-in deadlines</p>
             )}
-            <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="forge-input" style={{ appearance: "none" }}>
-              {/* Always include the user's current value, even if it's not in the
-                  hardcoded list — prevents a silent mismatch where the select
-                  visually shows the first option but state holds something else. */}
-              {(TIMEZONES.includes(timezone) ? TIMEZONES : [timezone, ...TIMEZONES]).map((tz) => (
-                <option key={tz} value={tz}>{tz}</option>
-              ))}
-            </select>
+            {/* Always include the user's current value, even if it's not in the
+                hardcoded list — prevents a silent mismatch where the select
+                visually shows the first option but state holds something else. */}
+            <ForgeSelect
+              value={timezone}
+              onChange={setTimezone}
+              ariaLabel="Timezone"
+              options={(TIMEZONES.includes(timezone) ? TIMEZONES : [timezone, ...TIMEZONES]).map((tz) => ({ value: tz, label: tz }))}
+            />
           </div>
 
           {role !== "bootcamp" && (

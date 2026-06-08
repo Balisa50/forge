@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, AlertTriangle, Shield, Flame, ChevronDown, UserPlus } from "lucide-react";
+import ForgeSelect from "@/components/ForgeSelect";
 
 interface Student {
   user: { id: string; name: string; email: string; image: string | null; integrityScore: number };
@@ -75,19 +76,19 @@ export default function StudentsPage() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <div style={{ position: "relative" }}>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="forge-input"
-              style={{ paddingRight: "2rem", width: "auto", fontSize: "0.8125rem" }}
-            >
-              <option value="progress">Sort: Progress</option>
-              <option value="integrity">Sort: Integrity</option>
-              <option value="streak">Sort: Streak</option>
-              <option value="score">Sort: Avg Score</option>
-            </select>
-          </div>
+          <ForgeSelect
+            value={sortBy}
+            onChange={(v) => setSortBy(v as typeof sortBy)}
+            searchable={false}
+            ariaLabel="Sort students"
+            options={[
+              { value: "progress", label: "Sort: Progress" },
+              { value: "integrity", label: "Sort: Integrity" },
+              { value: "streak", label: "Sort: Streak" },
+              { value: "score", label: "Sort: Avg Score" },
+            ]}
+            style={{ width: 200 }}
+          />
           <button onClick={() => setShowInvite(!showInvite)} className="forge-btn forge-btn-primary" style={{ gap: "0.375rem" }}>
             <UserPlus size={14} /> Add Student
           </button>

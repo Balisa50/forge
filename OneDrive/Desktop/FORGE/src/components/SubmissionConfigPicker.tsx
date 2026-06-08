@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ClipboardList, Check, Loader2 } from "lucide-react";
+import ForgeSelect from "@/components/ForgeSelect";
 import {
   SUBMISSION_CONFIG_OPTIONS,
   normalizeSubmissionConfig,
@@ -11,7 +12,7 @@ import {
 /**
  * Mentor control: choose what a mentee must submit for this week (Task).
  * Persists to PUT /api/mentor/tasks/:id/submission-config. Optimistic — the
- * <select> updates immediately and a saved/error pill confirms the write.
+ * dropdown updates immediately and a saved/error pill confirms the write.
  */
 export default function SubmissionConfigPicker({
   taskId,
@@ -61,27 +62,15 @@ export default function SubmissionConfigPicker({
         <ClipboardList size={12} /> Submission requirement
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-        <select
+        <ForgeSelect
           value={type}
           disabled={saving}
-          onChange={(e) => onChange(e.target.value as SubmissionConfigType)}
-          style={{
-            flex: "1 1 220px",
-            minWidth: 0,
-            padding: "0.5rem 0.75rem",
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)",
-            borderRadius: 8,
-            color: "var(--text-primary)",
-            fontFamily: "var(--font-body)",
-            fontSize: "0.8125rem",
-            cursor: saving ? "wait" : "pointer",
-          }}
-        >
-          {SUBMISSION_CONFIG_OPTIONS.map((o) => (
-            <option key={o.type} value={o.type}>{o.label}</option>
-          ))}
-        </select>
+          searchable={false}
+          ariaLabel="Submission requirement"
+          onChange={(v) => onChange(v as SubmissionConfigType)}
+          options={SUBMISSION_CONFIG_OPTIONS.map((o) => ({ value: o.type, label: o.label }))}
+          style={{ flex: "1 1 220px", minWidth: 0 }}
+        />
         {saving && <Loader2 size={14} className="animate-spin" style={{ color: "var(--text-dim)" }} />}
         {saved && !saving && (
           <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>

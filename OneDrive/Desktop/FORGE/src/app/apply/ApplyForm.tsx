@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Flame, Loader2, CheckCircle2 } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+import ForgeSelect from "@/components/ForgeSelect";
 
 interface ApplyFormProps {
   mentorId?: string;
@@ -168,17 +169,15 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
 
           <div>
             <label style={label}>Path</label>
-            <select
+            <ForgeSelect
               value={trackSlug}
-              onChange={(e) => setTrackSlug(e.target.value)}
-              className="forge-input"
-              style={{ appearance: "none" }}
-            >
-              <option value="">Not sure yet — help me choose</option>
-              {CURATED_ROADMAPS.map((r) => (
-                <option key={r.slug} value={r.slug}>{r.title}</option>
-              ))}
-            </select>
+              onChange={setTrackSlug}
+              ariaLabel="Path"
+              options={[
+                { value: "", label: "Not sure yet — help me choose" },
+                ...CURATED_ROADMAPS.map((r) => ({ value: r.slug, label: r.title })),
+              ]}
+            />
           </div>
 
           <div>

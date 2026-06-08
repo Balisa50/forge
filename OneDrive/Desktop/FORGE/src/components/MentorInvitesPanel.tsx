@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Copy, CheckCircle2, Plus, Trash2, Loader2, Share2, KeyRound } from "lucide-react";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
+import ForgeSelect from "@/components/ForgeSelect";
 
 interface Invite {
   id: string;
@@ -131,16 +132,17 @@ export default function MentorInvitesPanel() {
           placeholder="Mentee's full name (required)"
           style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--accent)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 600 }}
         />
-        <select
+        <ForgeSelect
           value={draft.roadmapSlug}
-          onChange={(e) => setDraft({ ...draft, roadmapSlug: e.target.value })}
-          style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
-        >
-          <option value="">Path (mentee picks)</option>
-          {CURATED_ROADMAPS.map((r) => (
-            <option key={r.slug} value={r.slug}>{r.title}</option>
-          ))}
-        </select>
+          onChange={(v) => setDraft({ ...draft, roadmapSlug: v })}
+          ariaLabel="Path"
+          className=""
+          buttonStyle={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
+          options={[
+            { value: "", label: "Path (mentee picks)" },
+            ...CURATED_ROADMAPS.map((r) => ({ value: r.slug, label: r.title })),
+          ]}
+        />
         <input
           value={draft.label}
           onChange={(e) => setDraft({ ...draft, label: e.target.value })}

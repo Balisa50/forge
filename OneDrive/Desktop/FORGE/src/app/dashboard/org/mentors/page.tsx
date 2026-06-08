@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, ArrowRight, X, UserCheck } from "lucide-react";
+import ForgeSelect from "@/components/ForgeSelect";
 
 interface MLink {
   id: string;
@@ -88,21 +89,23 @@ export default function MentorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="label-mono" style={{ display: "block", marginBottom: "0.375rem" }}>Mentor</label>
-              <select className="forge-input" value={mentorId} onChange={(e) => setMentorId(e.target.value)}>
-                <option value="">Select mentor...</option>
-                {mentors.map((m) => (
-                  <option key={m.user.id} value={m.user.id}>{m.user.name} ({m.role})</option>
-                ))}
-              </select>
+              <ForgeSelect
+                value={mentorId}
+                onChange={setMentorId}
+                placeholder="Select mentor..."
+                ariaLabel="Mentor"
+                options={mentors.map((m) => ({ value: m.user.id, label: `${m.user.name} (${m.role})` }))}
+              />
             </div>
             <div>
               <label className="label-mono" style={{ display: "block", marginBottom: "0.375rem" }}>Student</label>
-              <select className="forge-input" value={menteeId} onChange={(e) => setMenteeId(e.target.value)}>
-                <option value="">Select student...</option>
-                {students.map((m) => (
-                  <option key={m.user.id} value={m.user.id}>{m.user.name}</option>
-                ))}
-              </select>
+              <ForgeSelect
+                value={menteeId}
+                onChange={setMenteeId}
+                placeholder="Select student..."
+                ariaLabel="Student"
+                options={students.map((m) => ({ value: m.user.id, label: m.user.name ?? m.user.id }))}
+              />
             </div>
             <div>
               <label className="label-mono" style={{ display: "block", marginBottom: "0.375rem" }}>Note (optional)</label>
