@@ -609,13 +609,13 @@ export default function CheckinForm({
           />
         </div>
         {projectUrl && !isValidUrl(projectUrl) && (
-          <div style={{ color: "var(--red)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
-            ✕ Must start with https:// or http://
+          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "var(--red)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
+            <AlertCircle size={12} /> Must start with https:// or http://
           </div>
         )}
         {projectUrl && isValidUrl(projectUrl) && (
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.375rem" }}>
-            <span style={{ color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>✓ Valid URL</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}><CheckCircle2 size={12} /> Valid URL</span>
             {(() => {
               const d = detectUrlType(projectUrl.trim());
               return d ? (
@@ -660,15 +660,15 @@ export default function CheckinForm({
           />
         </div>
         {videoUrl && !isValidUrl(videoUrl) && (
-          <div style={{ color: "var(--red)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
-            ✕ Must start with https:// or http://
+          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "var(--red)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
+            <AlertCircle size={12} /> Must start with https:// or http://
           </div>
         )}
         {videoUrl && isValidUrl(videoUrl) && (() => {
           const d = detectUrlType(videoUrl.trim());
           return (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.375rem" }}>
-              <span style={{ color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>✓ Valid URL</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}><CheckCircle2 size={12} /> Valid URL</span>
               {d && (
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color: d.color, background: `${d.color}1f`, border: `1px solid ${d.color}55`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
                   {d.label}

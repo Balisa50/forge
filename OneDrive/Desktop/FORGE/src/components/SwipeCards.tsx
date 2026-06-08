@@ -119,8 +119,8 @@ export default function SwipeCards({ cards }: { cards: SwipeCard[] }) {
         }}
       >
         {/* swipe hints */}
-        <span style={{ position: "absolute", top: 12, left: 12, opacity: hintLeft ? 1 : 0.25, color: "#ef4444", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", fontWeight: 700, transition: "opacity 0.1s" }}>✗ FALSE</span>
-        <span style={{ position: "absolute", top: 12, right: 12, opacity: hintRight ? 1 : 0.25, color: "#22c55e", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", fontWeight: 700, transition: "opacity 0.1s" }}>TRUE ✓</span>
+        <span style={{ position: "absolute", top: 12, left: 12, display: "inline-flex", alignItems: "center", gap: "0.25rem", opacity: hintLeft ? 1 : 0.25, color: "#ef4444", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", fontWeight: 700, transition: "opacity 0.1s" }}><X size={13} /> FALSE</span>
+        <span style={{ position: "absolute", top: 12, right: 12, display: "inline-flex", alignItems: "center", gap: "0.25rem", opacity: hintRight ? 1 : 0.25, color: "#22c55e", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", fontWeight: 700, transition: "opacity 0.1s" }}>TRUE <Check size={13} /></span>
 
         <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--accent)", textAlign: "center", margin: "0.5rem 0 0.75rem" }}>
           Retention check {idx + 1}/{total}

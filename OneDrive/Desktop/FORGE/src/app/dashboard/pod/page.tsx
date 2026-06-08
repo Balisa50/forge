@@ -272,8 +272,8 @@ export default function PodPage() {
                             </span>
                           )}
                           {checkedToday && (
-                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--green)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "3px", padding: "0.0625rem 0.375rem" }}>
-                              ✓ TODAY
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--green)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "3px", padding: "0.0625rem 0.375rem" }}>
+                              <CheckCircle2 size={10} /> TODAY
                             </span>
                           )}
                         </div>

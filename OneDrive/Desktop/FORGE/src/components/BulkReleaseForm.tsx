@@ -282,8 +282,8 @@ export default function BulkReleaseForm({ tracks }: { tracks: Track[] }) {
           {result.released.length > 0 && (
             <ul style={{ fontSize: "0.875rem", marginBottom: result.skipped.length ? "0.75rem" : 0, color: "var(--text-secondary)" }}>
               {result.released.map((r) => (
-                <li key={r.menteeId} style={{ padding: "0.25rem 0" }}>
-                  ✓ <strong style={{ color: "var(--text-primary)" }}>{r.menteeName}</strong> - {r.weekTitle}
+                <li key={r.menteeId} style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.25rem 0" }}>
+                  <CheckCircle2 size={13} style={{ color: "var(--green)", flexShrink: 0 }} /> <strong style={{ color: "var(--text-primary)" }}>{r.menteeName}</strong> - {r.weekTitle}
                 </li>
               ))}
             </ul>

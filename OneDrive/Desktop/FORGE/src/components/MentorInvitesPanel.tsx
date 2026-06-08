@@ -201,7 +201,7 @@ export default function MentorInvitesPanel() {
                       {path}
                       {i.label && <> · {i.label}</>}
                       {i.expiresAt && <> · {expired ? "expired" : `expires ${new Date(i.expiresAt).toLocaleDateString()}`}</>}
-                      {consumed && <> · ✓ joined</>}
+                      {consumed && <> · <CheckCircle2 size={11} style={{ display: "inline", verticalAlign: "-1px" }} /> joined</>}
                       {!i.isActive && !consumed && <> · deactivated</>}
                     </div>
                   </div>

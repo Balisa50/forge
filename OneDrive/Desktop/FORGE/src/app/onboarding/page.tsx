@@ -352,8 +352,8 @@ export default function OnboardingPage() {
                   />
                   {invitePreview?.valid && invitePreview.mentor && (
                     <div style={{ marginTop: "0.625rem", padding: "0.625rem 0.875rem", borderRadius: 8, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)" }}>
-                      <p style={{ color: "var(--green)", fontSize: "0.8125rem" }}>
-                        ✓ Pairing with <strong>{invitePreview.mentor.name ?? invitePreview.mentor.email}</strong>
+                      <p style={{ display: "flex", alignItems: "center", gap: "0.35rem", color: "var(--green)", fontSize: "0.8125rem" }}>
+                        <UserCheck size={14} style={{ flexShrink: 0 }} /> Pairing with <strong>{invitePreview.mentor.name ?? invitePreview.mentor.email}</strong>
                         {invitePreview.roadmapSlug && <span style={{ color: "var(--text-secondary)" }}> on the <strong>{invitePreview.roadmapSlug.replace(/-/g, " ")}</strong> path</span>}
                       </p>
                     </div>
