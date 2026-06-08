@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import {
   type FileAttachment,
+  type SubmissionConfigType,
   MAX_TOTAL_BYTES,
   MAX_FILE_BYTES,
   getFileExtension,
@@ -18,6 +19,8 @@ import {
   getLanguageLabel,
   ACCEPTED_MIME_TYPES,
   detectUrlType,
+  submissionRequirements,
+  validateSubmission,
 } from "@/lib/submission-types";
 import { upload } from "@vercel/blob/client";
 
@@ -63,6 +66,19 @@ function fileIcon(ext: string) {
   return <File size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />;
 }
 
+/** "Or" / "And" separator between two submission fields. */
+function Divider({ word }: { word: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", margin: "1.25rem 0 0.875rem" }}>
+      <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.16em", textTransform: "uppercase" }}>
+        {word}
+      </span>
+      <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+    </div>
+  );
+}
+
 export default function CheckinForm({
   roadmap,
 }: {
@@ -76,6 +92,7 @@ export default function CheckinForm({
   const [selectedTrackId, setSelectedTrackId] = useState(roadmap.tracks[0]?.id ?? "");
   const [selectedTaskId, setSelectedTaskId] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [fileError, setFileError] = useState("");
@@ -104,11 +121,12 @@ export default function CheckinForm({
       const raw = window.localStorage.getItem(DRAFT_KEY);
       if (raw) {
         const d = JSON.parse(raw) as {
-          trackId?: string; taskId?: string; projectUrl?: string; attachments?: FileAttachment[];
+          trackId?: string; taskId?: string; projectUrl?: string; videoUrl?: string; attachments?: FileAttachment[];
         };
         if (d.trackId && roadmap.tracks.some((t) => t.id === d.trackId)) setSelectedTrackId(d.trackId);
         if (typeof d.taskId === "string") setSelectedTaskId(d.taskId);
         if (typeof d.projectUrl === "string") setProjectUrl(d.projectUrl);
+        if (typeof d.videoUrl === "string") setVideoUrl(d.videoUrl);
         if (Array.isArray(d.attachments)) setAttachments(d.attachments);
       }
     } catch { /* corrupt draft — ignore */ }
@@ -123,10 +141,10 @@ export default function CheckinForm({
     try {
       window.localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ trackId: selectedTrackId, taskId: selectedTaskId, projectUrl, attachments }),
+        JSON.stringify({ trackId: selectedTrackId, taskId: selectedTaskId, projectUrl, videoUrl, attachments }),
       );
     } catch { /* quota exceeded (large files) — skip persisting this change */ }
-  }, [hydrated, DRAFT_KEY, selectedTrackId, selectedTaskId, projectUrl, attachments]);
+  }, [hydrated, DRAFT_KEY, selectedTrackId, selectedTaskId, projectUrl, videoUrl, attachments]);
 
   const clearDraft = () => {
     if (typeof window !== "undefined") {
@@ -143,6 +161,7 @@ export default function CheckinForm({
     missing?: number;
     total?: number;
     learnUrl?: string;
+    submissionConfig?: { type: SubmissionConfigType };
   }
   const [preflight, setPreflight] = useState<Preflight | null>(null);
   const [preflightLoading, setPreflightLoading] = useState(false);
@@ -316,7 +335,32 @@ export default function CheckinForm({
     return () => { cancelled = true; };
   }, [selectedTaskId]);
 
-  const hasProof = (projectUrl.trim() && isValidUrl(projectUrl.trim())) || attachments.length > 0;
+  // The mentor's submission requirement for this week (defaults to link_or_file
+  // until the preflight call returns, and for any non-curated/legacy week).
+  const configType: SubmissionConfigType = preflight?.submissionConfig?.type ?? "link_or_file";
+  const req = submissionRequirements(configType);
+  const connector = req.mode === "any" ? "Or" : "And";
+  const requirementSummary = (() => {
+    switch (configType) {
+      case "link_only": return "Submit a project link for this week.";
+      case "video_only": return "Submit a video link (Google Drive / YouTube) for this week.";
+      case "link_or_video": return "Submit either a project link or a video link.";
+      case "link_and_video": return "Submit both a project link and a video link.";
+      case "video_and_file": return "Submit both a video link and a file.";
+      default: return "Provide at least one — a project link or a file. Some weeks (spreadsheets, paper exercises, diagrams) won't have a repo — just upload your file.";
+    }
+  })();
+
+  const linkValid = projectUrl.trim().length > 0 && isValidUrl(projectUrl.trim());
+  const videoValid = videoUrl.trim().length > 0 && isValidUrl(videoUrl.trim());
+  const hasLink = req.link !== "hidden" && linkValid;
+  const hasVideo = req.video !== "hidden" && videoValid;
+  const hasFile = req.file !== "hidden" && attachments.length > 0;
+
+  // Single source of truth (shared with the server): does the submission satisfy
+  // the mentor's config? null when satisfied, else the reason it isn't.
+  const shapeError = validateSubmission(configType, { hasLink, hasVideo, hasFile });
+  const hasProof = shapeError === null;
   const allAnswered = mentorQuestions.length === 0
     || mentorQuestions.every((q) => (answers[q.id] ?? "").trim().length > 0);
 
@@ -329,12 +373,16 @@ export default function CheckinForm({
       setError(`Tick every day item on the week page first — ${preflight?.missing}/${preflight?.total} unticked. Open ${preflight?.learnUrl ?? "the week page"}.`);
       return;
     }
-    if (!hasProof) {
-      setError("Add at least one piece of proof — a URL, a code file, or a document.");
+    if (req.link !== "hidden" && projectUrl.trim() && !isValidUrl(projectUrl.trim())) {
+      setError("Please enter a valid project URL starting with http:// or https://");
       return;
     }
-    if (projectUrl.trim() && !isValidUrl(projectUrl.trim())) {
-      setError("Please enter a valid URL starting with http:// or https://");
+    if (req.video !== "hidden" && videoUrl.trim() && !isValidUrl(videoUrl.trim())) {
+      setError("Please enter a valid video URL starting with http:// or https://");
+      return;
+    }
+    if (!hasProof) {
+      setError(shapeError ?? "This week's submission requirement isn't met yet.");
       return;
     }
     if (!allAnswered) {
@@ -352,8 +400,9 @@ export default function CheckinForm({
           roadmapId: roadmap.id,
           trackId: selectedTrackId,
           taskId: selectedTaskId,
-          projectUrl: projectUrl.trim() || null,
-          files: attachments.length > 0 ? attachments : undefined,
+          projectUrl: req.link !== "hidden" ? (projectUrl.trim() || null) : null,
+          videoUrl: req.video !== "hidden" ? (videoUrl.trim() || null) : null,
+          files: req.file !== "hidden" && attachments.length > 0 ? attachments : undefined,
           answers: mentorQuestions.length > 0
             ? mentorQuestions.map((q) => ({ questionId: q.id, answer: answers[q.id] ?? "" }))
             : undefined,
@@ -526,13 +575,16 @@ export default function CheckinForm({
             </span>
           )}
         </div>
-        <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1rem", lineHeight: 1.5 }}>
-          Provide <strong style={{ color: "var(--text-secondary)" }}>at least one</strong> — a URL <em>or</em> a file. Some weeks (Excel spreadsheets, paper exercises, hand-drawn diagrams) won&apos;t have a repo — just upload your file.
+        <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", marginBottom: "1.25rem", lineHeight: 1.5 }}>
+          {requirementSummary}
         </p>
 
-        {/* Sub-label for URL option */}
+        {/* ── LINK ── */}
+        {req.link !== "hidden" && (<>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-          Option A — Link
+          Link {req.link === "required"
+            ? <span style={{ color: "var(--red)" }}>(required)</span>
+            : <span style={{ color: "var(--text-dim)" }}>(optional)</span>}
         </div>
         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "0.625rem", lineHeight: 1.5 }}>
           GitHub repo, deployed app, CodeSandbox, Colab notebook, etc.
@@ -575,21 +627,68 @@ export default function CheckinForm({
           </div>
         )}
 
-        {/* OR divider */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", margin: "1.25rem 0 0.875rem" }}>
-          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.16em", textTransform: "uppercase" }}>
-            Or
-          </span>
-          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-        </div>
+        </>)}
 
-        {/* Sub-label for file option */}
+        {/* ── VIDEO ── */}
+        {req.video !== "hidden" && (<>
+        {req.link !== "hidden" && <Divider word={connector} />}
         <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-          Option B — File(s)
+          Video {req.video === "required"
+            ? <span style={{ color: "var(--red)" }}>(required)</span>
+            : <span style={{ color: "var(--text-dim)" }}>(optional)</span>}
+        </div>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "0.625rem", lineHeight: 1.5 }}>
+          Upload your video to Google Drive or YouTube, set sharing to &ldquo;anyone with the link,&rdquo; then paste the link here.
+        </p>
+        <div style={{ position: "relative" }}>
+          <span style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", color: videoUrl && isValidUrl(videoUrl) ? "var(--green)" : "var(--text-dim)" }}>
+            {videoUrl && isValidUrl(videoUrl) ? <CheckCircle2 size={16} /> : <Film size={16} />}
+          </span>
+          <input
+            type="url"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            className="forge-input"
+            style={{
+              paddingLeft: "2.5rem",
+              borderColor: videoUrl && !isValidUrl(videoUrl) ? "var(--red)"
+                : videoUrl && isValidUrl(videoUrl) ? "var(--green)"
+                : undefined,
+              transition: "border-color 0.2s",
+            }}
+            placeholder="https://drive.google.com/... or https://youtu.be/..."
+          />
+        </div>
+        {videoUrl && !isValidUrl(videoUrl) && (
+          <div style={{ color: "var(--red)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginTop: "0.375rem" }}>
+            ✕ Must start with https:// or http://
+          </div>
+        )}
+        {videoUrl && isValidUrl(videoUrl) && (() => {
+          const d = detectUrlType(videoUrl.trim());
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.375rem" }}>
+              <span style={{ color: "var(--green)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>✓ Valid URL</span>
+              {d && (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color: d.color, background: `${d.color}1f`, border: `1px solid ${d.color}55`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
+                  {d.label}
+                </span>
+              )}
+            </div>
+          );
+        })()}
+        </>)}
+
+        {/* ── FILE ── */}
+        {req.file !== "hidden" && (<>
+        {(req.link !== "hidden" || req.video !== "hidden") && <Divider word={connector} />}
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+          File(s) {req.file === "required"
+            ? <span style={{ color: "var(--red)" }}>(required)</span>
+            : <span style={{ color: "var(--text-dim)" }}>(optional)</span>}
         </div>
         <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginBottom: "1rem", lineHeight: 1.55 }}>
-          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 150 MB per file, 300 MB total. <strong style={{ color: "var(--text-secondary)" }}>For video, paste a Google Drive or YouTube link in Option A above</strong> instead of uploading the file.
+          .xlsx · .pdf · .docx · .csv · .py · .js · .ipynb · .sql · screenshots · whatever proves your work. Max 150 MB per file, 300 MB total. <strong style={{ color: "var(--text-secondary)" }}>For video, use the video link field</strong> instead of uploading the file.
         </p>
 
         {/* Drop zone */}
@@ -635,7 +734,7 @@ export default function CheckinForm({
               Video files aren&apos;t uploaded directly.
             </p>
             <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.55 }}>
-              Upload your video to Google Drive or YouTube, set sharing to &ldquo;anyone with the link,&rdquo; then paste the share link in <strong style={{ color: "var(--text-primary)" }}>Option A</strong> above. It&apos;ll be tagged automatically so your mentor knows it&apos;s a video.
+              Upload your video to Google Drive or YouTube, set sharing to &ldquo;anyone with the link,&rdquo; then paste the share link in the <strong style={{ color: "var(--text-primary)" }}>Link</strong> or <strong style={{ color: "var(--text-primary)" }}>Video</strong> field above. It&apos;ll be tagged automatically so your mentor knows it&apos;s a video.
             </p>
           </div>
         )}
@@ -708,6 +807,7 @@ export default function CheckinForm({
             <span style={{ color: "var(--yellow)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>{fileError}</span>
           </div>
         )}
+        </>)}
       </div>
 
       {/* Mentor's questions — required to submit when the mentor has authored any */}

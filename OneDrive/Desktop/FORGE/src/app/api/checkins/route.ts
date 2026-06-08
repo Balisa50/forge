@@ -2,10 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyProjectUrl } from "@/lib/verify-url";
-import { type FileAttachment, MAX_TOTAL_BYTES, MAX_FILE_BYTES, getFileExtension, isAcceptedExtension } from "@/lib/submission-types";
+import {
+  type FileAttachment, MAX_TOTAL_BYTES, MAX_FILE_BYTES, getFileExtension, isAcceptedExtension,
+  normalizeSubmissionConfig, validateSubmission,
+} from "@/lib/submission-types";
 import { loadRoadmap } from "@/lib/roadmaps";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
 import { sendNotification } from "@/lib/notify";
+
+function isHttpUrl(s: string): boolean {
+  try {
+    const u = new URL(s);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Engagement gate: a mentee can't submit a check-in for Week N until they've
@@ -126,6 +138,7 @@ export async function POST(req: NextRequest) {
   let trackId: string | undefined;
   let taskId: string | undefined;
   let projectUrl: string | null = null;
+  let videoUrl: string | null = null;
   let screenshotFile: File | null = null;
   let incomingFiles: unknown[] = [];
   let incomingAnswers: Array<{ questionId?: unknown; answer?: unknown }> = [];
@@ -136,6 +149,7 @@ export async function POST(req: NextRequest) {
     trackId = body.trackId as string | undefined;
     taskId = body.taskId as string | undefined;
     projectUrl = ((body.projectUrl as string | null | undefined) ?? "").trim() || null;
+    videoUrl = ((body.videoUrl as string | null | undefined) ?? "").trim() || null;
     if (Array.isArray(body.files)) incomingFiles = body.files;
     if (Array.isArray(body.answers)) incomingAnswers = body.answers;
   } else {
@@ -144,6 +158,7 @@ export async function POST(req: NextRequest) {
     trackId = formData.get("trackId") as string | undefined;
     taskId = formData.get("taskId") as string | undefined;
     projectUrl = ((formData.get("projectUrl") as string | null) ?? "").trim() || null;
+    videoUrl = ((formData.get("videoUrl") as string | null) ?? "").trim() || null;
     screenshotFile = formData.get("screenshot") as File | null;
   }
 
@@ -161,21 +176,12 @@ export async function POST(req: NextRequest) {
 
   const hasFiles = validatedFiles.length > 0 || !!screenshotFile;
   const hasUrl = !!projectUrl;
+  const hasVideo = !!videoUrl;
 
-  // Require at least one form of proof
-  if (!hasUrl && !hasFiles) {
-    return NextResponse.json(
-      { error: "Submit proof: a GitHub repo, a deployed URL, or attach a file." },
-      { status: 400 }
-    );
-  }
-
-  // Verify URL if provided
-  if (projectUrl) {
-    const result = await verifyProjectUrl(projectUrl);
-    if (!result.verified) {
-      return NextResponse.json({ error: result.error ?? "Couldn't verify that URL." }, { status: 400 });
-    }
+  // A video link must be a real http(s) URL. We never fetch it (Drive/YouTube
+  // links routinely refuse server-side requests), so this is format-only.
+  if (videoUrl && !isHttpUrl(videoUrl)) {
+    return NextResponse.json({ error: "Video link must be a valid http(s) URL." }, { status: 400 });
   }
 
   // Verify ownership
@@ -183,6 +189,32 @@ export async function POST(req: NextRequest) {
     where: { id: roadmapId, userId },
   });
   if (!roadmap) return NextResponse.json({ error: "Roadmap not found" }, { status: 404 });
+
+  // Fetch the task + its mentor-chosen submission config up-front so we can
+  // validate the submission's SHAPE against what the mentor requires this week.
+  const task = await prisma.task.findFirst({
+    where: { id: taskId, phase: { trackId, track: { roadmapId } } },
+    select: { id: true, title: true, submissionConfig: true },
+  });
+  if (!task) return NextResponse.json({ error: "Task not found" }, { status: 404 });
+
+  // SUBMISSION-SHAPE GATE — link / video / file requirement is the mentor's
+  // call per week. One shared validator (also used by the student form) decides.
+  const submissionConfig = normalizeSubmissionConfig(task.submissionConfig);
+  const shapeError = validateSubmission(submissionConfig.type, {
+    hasLink: hasUrl, hasVideo, hasFile: hasFiles,
+  });
+  if (shapeError) {
+    return NextResponse.json({ error: shapeError, kind: "submission-shape" }, { status: 400 });
+  }
+
+  // Verify the project link (reachability) if one was provided.
+  if (projectUrl) {
+    const result = await verifyProjectUrl(projectUrl);
+    if (!result.verified) {
+      return NextResponse.json({ error: result.error ?? "Couldn't verify that URL." }, { status: 400 });
+    }
+  }
 
   // ── ONE ROW PER (USER, TASK) — see /api/mentee/review-answers for the
   // same pattern. If a Checkin already exists for this (user, task), we will
@@ -237,16 +269,14 @@ export async function POST(req: NextRequest) {
       evidenceUrl = null;
     }
     evidenceData = { files: validatedFiles };
-  } else {
+  } else if (projectUrl) {
     // URL only
     evidenceType = "url";
+  } else {
+    // Video-only submission (the shape gate guarantees a video is present here).
+    evidenceType = "video";
+    evidenceUrl = null;
   }
-
-  // Verify task belongs to this roadmap/track
-  const task = await prisma.task.findFirst({
-    where: { id: taskId, phase: { trackId, track: { roadmapId } } },
-  });
-  if (!task) return NextResponse.json({ error: "Task not found" }, { status: 404 });
 
   // ENGAGEMENT GATE — block submission until the mentee has actually gone
   // through every day's items for this week. Pure no-op for non-curated
@@ -301,6 +331,7 @@ export async function POST(req: NextRequest) {
         data: {
           evidenceType,
           evidenceUrl,
+          videoUrl,
           evidenceData: evidenceData as object,
           status: "passed", // reset placeholder; pill derives from interrogation
           attemptNum: existingForTask.attemptNum + 1,
@@ -315,6 +346,7 @@ export async function POST(req: NextRequest) {
           description: "",
           evidenceType,
           evidenceUrl,
+          videoUrl,
           evidenceData: evidenceData as object,
           // placeholder. Journal + dashboard derive the user-facing status
           // from Interrogation.mentorReviewedAt + passed when one exists.

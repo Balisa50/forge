@@ -12,6 +12,7 @@ import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import MentorQuestionBank from "@/components/MentorQuestionBank";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 import SubmissionViewer from "@/components/SubmissionViewer";
+import SubmissionConfigPicker from "@/components/SubmissionConfigPicker";
 import MenteeRecoveryCard from "@/components/MenteeRecoveryCard";
 import MentorCertReleaseCard from "@/components/MentorCertReleaseCard";
 import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
@@ -22,6 +23,7 @@ interface Checkin {
   description: string;
   evidenceType: string;
   evidenceUrl: string | null;
+  videoUrl: string | null;
   evidenceData: EvidenceData | null;
   status: string;
   attemptNum: number;
@@ -61,6 +63,7 @@ interface MenteeTask {
   deadline: string | null;
   closedAt: string | null;
   sortOrder: number;
+  submissionConfig: unknown;
   checkins: Checkin[];
   mentorComments: MentorComment[];
   mentorResources: MentorGrantedResource[];
@@ -871,6 +874,10 @@ export default function MenteeDrilldownPage() {
                             </div>
                           )}
 
+                          {/* Submission requirement — mentor chooses what the
+                              mentee must hand in for this week. */}
+                          <SubmissionConfigPicker taskId={task.id} initialConfig={task.submissionConfig} />
+
                           {/* Check-ins */}
                           {task.checkins.length > 0 ? (
                             <div style={{ marginTop: "0.875rem" }}>
@@ -905,6 +912,7 @@ export default function MenteeDrilldownPage() {
                                     <SubmissionViewer
                                       evidenceType={c.evidenceType}
                                       evidenceUrl={c.evidenceUrl}
+                                      videoUrl={c.videoUrl}
                                       evidenceData={c.evidenceData}
                                     />
                                   </li>

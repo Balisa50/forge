@@ -237,6 +237,11 @@ model Task {
   intentWhere    String?
   intentFirst    String?
   intentSetAt    DateTime?
+  /// Mentor-chosen submission requirement for this week. Shape: { "type": <SubmissionConfigType> }
+  /// where type ∈ link_or_file (default) | link_only | video_only | link_or_video |
+  /// link_and_video | video_and_file. NULL is treated as the default (link_or_file),
+  /// so every pre-existing week keeps its current "a link OR a file" behaviour.
+  submissionConfig Json?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
@@ -257,6 +262,10 @@ model Checkin {
   description  String
   evidenceType String        @default("url")
   evidenceUrl  String?
+  /// A Google Drive / YouTube / Loom / Vimeo share link the mentee submitted as
+  /// a video walkthrough. Stored as text — we never host the video file itself.
+  /// Distinct from evidenceUrl (the project link) so a week can require BOTH.
+  videoUrl     String?
   evidenceData Json?
   status       CheckinStatus @default(passed)
   attemptNum   Int           @default(1)

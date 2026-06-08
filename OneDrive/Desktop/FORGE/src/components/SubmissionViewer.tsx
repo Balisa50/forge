@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   ExternalLink, FileCode2, FileText, File, Image, Film,
-  Download, ChevronDown, ChevronUp, Link2,
+  Download, ChevronDown, ChevronUp, Link2, PlayCircle,
 } from "lucide-react";
 import {
   type FileAttachment,
@@ -16,12 +16,74 @@ import {
   isVideo,
   isAudio,
   detectUrlType,
+  videoThumbnail,
+  videoEmbedUrl,
 } from "@/lib/submission-types";
 
 interface SubmissionViewerProps {
   evidenceType: string;
   evidenceUrl: string | null;
   evidenceData: EvidenceData | null;
+  /** A Drive/YouTube/Loom video link the mentee submitted (separate field). */
+  videoUrl?: string | null;
+}
+
+/** A submitted video link: detection badge, clickable URL, and an inline
+ *  player (YouTube/Drive embed) or thumbnail when one can be derived. */
+function VideoEvidence({ url }: { url: string }) {
+  const [open, setOpen] = useState(false);
+  const d = detectUrlType(url);
+  const thumb = videoThumbnail(url);
+  const embed = videoEmbedUrl(url);
+  const color = d?.color ?? "#f87171";
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", minWidth: 0 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", flexShrink: 0, fontFamily: "var(--font-mono)", fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em", color, background: `${color}1f`, border: `1px solid ${color}55`, borderRadius: 5, padding: "0.1rem 0.45rem" }}>
+          <Film size={11} /> {d?.label ?? "Video"}
+        </span>
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer noopener"
+          style={{ display: "flex", alignItems: "center", gap: "0.375rem", color: "var(--accent)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", textDecoration: "none", minWidth: 0, flex: "1 1 auto" }}
+        >
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0, flex: "1 1 auto" }}>{url}</span>
+          <ExternalLink size={11} style={{ flexShrink: 0 }} />
+        </a>
+      </div>
+
+      {/* Inline player when embeddable; otherwise a clickable thumbnail. */}
+      {embed && open ? (
+        <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" }}>
+          <iframe
+            src={embed}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+            title="Submitted video"
+          />
+        </div>
+      ) : embed ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          style={{ position: "relative", padding: 0, border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden", cursor: "pointer", background: "#000", maxWidth: 360 }}
+          title="Play video"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {thumb ? <img src={thumb} alt="video thumbnail" style={{ display: "block", width: "100%", height: "auto", opacity: 0.85 }} />
+                 : <div style={{ width: 360, maxWidth: "100%", aspectRatio: "16 / 9", display: "grid", placeItems: "center", color: "var(--text-dim)" }}>Preview</div>}
+          <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+            <span style={{ width: 54, height: 54, borderRadius: "50%", background: "rgba(0,0,0,0.6)", display: "grid", placeItems: "center" }}>
+              <PlayCircle size={40} style={{ color: "#fff" }} />
+            </span>
+          </span>
+        </button>
+      ) : null}
+    </div>
+  );
 }
 
 function fileIcon(ext: string, size = 15) {
@@ -251,12 +313,15 @@ function FilePreviewCard({ file }: { file: FileAttachment }) {
   );
 }
 
-export default function SubmissionViewer({ evidenceType, evidenceUrl, evidenceData }: SubmissionViewerProps) {
-  // Nothing to show at all
-  if (evidenceType === "url" && !evidenceUrl) return null;
-  if (!evidenceType) return null;
-
+export default function SubmissionViewer({ evidenceType, evidenceUrl, evidenceData, videoUrl }: SubmissionViewerProps) {
   const files: FileAttachment[] = evidenceData?.files ?? [];
+
+  // Nothing to show at all (no link, no video, no files, no legacy screenshot)
+  const isLegacyScreenshotEmpty = evidenceType === "screenshot" && !evidenceData?.dataUrl;
+  if (!evidenceUrl && !videoUrl && files.length === 0 && (evidenceType === "url" || evidenceType === "video" || isLegacyScreenshotEmpty)) {
+    return null;
+  }
+  if (!evidenceType && !videoUrl) return null;
 
   // Legacy screenshot (base64 image stored directly in evidenceData)
   const isLegacyScreenshot = evidenceType === "screenshot" && evidenceData?.dataUrl;
@@ -298,6 +363,9 @@ export default function SubmissionViewer({ evidenceType, evidenceUrl, evidenceDa
           </div>
         );
       })()}
+
+      {/* Video link evidence (separate field — Drive/YouTube walkthrough) */}
+      {videoUrl && <VideoEvidence url={videoUrl} />}
 
       {/* Legacy screenshot */}
       {isLegacyScreenshot && (

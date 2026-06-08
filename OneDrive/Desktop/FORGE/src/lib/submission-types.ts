@@ -188,6 +188,159 @@ export function getLanguageLabel(ext: string): string {
   return map[ext] ?? ext.toUpperCase();
 }
 
+// ─── Mentor-chosen submission requirements ──────────────────────────────────
+// A mentor decides, per week (Task), what the mentee must hand in. The same
+// config drives three places: the mentor's settings UI, the student form's
+// rendered fields, and the server-side validation on submit. Keep all of that
+// logic here so the three can never drift.
+
+export type SubmissionConfigType =
+  | "link_or_file"   // default — a project link OR a file (legacy behaviour)
+  | "link_only"      // a project link only
+  | "video_only"     // a video link only (Drive/YouTube/Loom/Vimeo)
+  | "link_or_video"  // mentee chooses: link OR video
+  | "link_and_video" // both a link AND a video required
+  | "video_and_file"; // both a video AND a file required
+
+export interface SubmissionConfig {
+  type: SubmissionConfigType;
+}
+
+export const DEFAULT_SUBMISSION_CONFIG: SubmissionConfig = { type: "link_or_file" };
+
+const SUBMISSION_CONFIG_TYPES: SubmissionConfigType[] = [
+  "link_or_file", "link_only", "video_only", "link_or_video", "link_and_video", "video_and_file",
+];
+
+/** Mentor-facing option metadata for the settings UI (label + one-line help). */
+export const SUBMISSION_CONFIG_OPTIONS: { type: SubmissionConfigType; label: string; help: string }[] = [
+  { type: "link_or_file", label: "Link or file (default)", help: "Mentee submits a project link OR uploads a file." },
+  { type: "link_only", label: "Link only", help: "Mentee must submit a URL (GitHub, deployed app, etc.)." },
+  { type: "video_only", label: "Video only", help: "Mentee must submit a Google Drive / YouTube video link." },
+  { type: "link_or_video", label: "Link or video", help: "Mentee chooses: submit a link OR a video." },
+  { type: "link_and_video", label: "Link and video", help: "Mentee must submit BOTH a link and a video." },
+  { type: "video_and_file", label: "Video and file", help: "Mentee must submit BOTH a video and a file." },
+];
+
+/** Coerce an unknown JSON value (DB column, request body) into a valid config.
+ *  NULL / malformed / unknown type all fall back to the default so nothing breaks. */
+export function normalizeSubmissionConfig(raw: unknown): SubmissionConfig {
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const t = (raw as Record<string, unknown>).type;
+    if (typeof t === "string" && (SUBMISSION_CONFIG_TYPES as string[]).includes(t)) {
+      return { type: t as SubmissionConfigType };
+    }
+  }
+  return { ...DEFAULT_SUBMISSION_CONFIG };
+}
+
+/** Which fields a config exposes and whether each is required. `mode: "any"`
+ *  means the listed fields satisfy the requirement together (at least one). */
+export interface FieldRequirements {
+  link: "required" | "optional" | "hidden";
+  video: "required" | "optional" | "hidden";
+  file: "required" | "optional" | "hidden";
+  mode: "all" | "any";
+}
+
+export function submissionRequirements(type: SubmissionConfigType): FieldRequirements {
+  switch (type) {
+    case "link_only":
+      return { link: "required", video: "hidden", file: "hidden", mode: "all" };
+    case "video_only":
+      return { link: "hidden", video: "required", file: "hidden", mode: "all" };
+    case "link_or_video":
+      return { link: "optional", video: "optional", file: "hidden", mode: "any" };
+    case "link_and_video":
+      return { link: "required", video: "required", file: "hidden", mode: "all" };
+    case "video_and_file":
+      return { link: "hidden", video: "required", file: "required", mode: "all" };
+    case "link_or_file":
+    default:
+      return { link: "optional", video: "hidden", file: "optional", mode: "any" };
+  }
+}
+
+export interface SubmittedFields {
+  hasLink: boolean;
+  hasVideo: boolean;
+  hasFile: boolean;
+}
+
+/** The ONE validation function. Returns an error string if the submission does
+ *  not satisfy the config, or null if it's good. Used identically on client and
+ *  server so the button-disable logic and the API guard can never disagree. */
+export function validateSubmission(type: SubmissionConfigType, f: SubmittedFields): string | null {
+  switch (type) {
+    case "link_only":
+      return f.hasLink ? null : "A project link is required for this week.";
+    case "video_only":
+      return f.hasVideo ? null : "A video link is required for this week.";
+    case "link_or_video":
+      return f.hasLink || f.hasVideo ? null : "Submit either a project link or a video link.";
+    case "link_and_video":
+      if (!f.hasLink) return "This week requires a project link.";
+      if (!f.hasVideo) return "This week requires a video link.";
+      return null;
+    case "video_and_file":
+      if (!f.hasVideo) return "This week requires a video link.";
+      if (!f.hasFile) return "This week requires a file upload.";
+      return null;
+    case "link_or_file":
+    default:
+      return f.hasLink || f.hasFile
+        ? null
+        : "Add at least one piece of proof — a link or a file.";
+  }
+}
+
+// ─── Video link helpers (thumbnail / embed for the mentor review UI) ──────────
+
+/** Extract a YouTube video id from any common YouTube URL shape, else null. */
+export function youTubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "");
+    if (host === "youtu.be") return u.pathname.slice(1).split("/")[0] || null;
+    if (host.endsWith("youtube.com")) {
+      if (u.pathname === "/watch") return u.searchParams.get("v");
+      const m = u.pathname.match(/^\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{6,})/);
+      if (m) return m[1];
+    }
+  } catch { /* not a URL */ }
+  return null;
+}
+
+/** Extract a Google Drive file id from a /file/d/<id>/ or ?id=<id> link, else null. */
+export function googleDriveId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (!/drive\.google\.com|docs\.google\.com/.test(u.hostname)) return null;
+    const m = u.pathname.match(/\/d\/([A-Za-z0-9_-]+)/);
+    if (m) return m[1];
+    return u.searchParams.get("id");
+  } catch {
+    return null;
+  }
+}
+
+/** A still-thumbnail URL for a video link, or null when we can't derive one
+ *  without an API (e.g. plain Drive links, Loom, Vimeo). */
+export function videoThumbnail(url: string): string | null {
+  const yt = youTubeId(url);
+  if (yt) return `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`;
+  return null;
+}
+
+/** An embeddable player URL for a video link, or null when not embeddable. */
+export function videoEmbedUrl(url: string): string | null {
+  const yt = youTubeId(url);
+  if (yt) return `https://www.youtube.com/embed/${yt}`;
+  const drive = googleDriveId(url);
+  if (drive) return `https://drive.google.com/file/d/${drive}/preview`;
+  return null;
+}
+
 /** Detect what a pasted proof URL is, so mentors know what they're opening
  *  without clicking — and so the submission form can badge it on entry. Pure
  *  string inspection; never blocks or rewrites the URL. Returns null for input

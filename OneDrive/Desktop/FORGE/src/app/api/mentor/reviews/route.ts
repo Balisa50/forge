@@ -29,6 +29,7 @@ export async function GET() {
           description: true,
           evidenceType: true,
           evidenceUrl: true,
+          videoUrl: true,
           evidenceData: true,
           user: { select: { id: true, name: true, email: true } },
           task: { select: { id: true, title: true } },

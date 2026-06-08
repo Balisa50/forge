@@ -36,6 +36,7 @@ interface Review {
     description: string;
     evidenceType: string;
     evidenceUrl: string | null;
+    videoUrl: string | null;
     evidenceData: EvidenceData | null;
     user: { id: string; name: string | null; email: string };
     task: { id: string; title: string };
@@ -174,6 +175,7 @@ export default function MentorReviewsPage() {
             <SubmissionViewer
               evidenceType={active.checkin.evidenceType}
               evidenceUrl={active.checkin.evidenceUrl}
+              videoUrl={active.checkin.videoUrl}
               evidenceData={active.checkin.evidenceData}
             />
           </div>
