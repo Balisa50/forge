@@ -572,473 +572,420 @@
       "days": [
         {
           "number": 0,
-          "title": "Day 0 - Setup: VS Code + git + a SQL client",
-          "summary": "Install and verify VS Code + git + a SQL client before diving into the week.",
+          "title": "Day 0 — Math tools: NumPy, SciPy, Matplotlib",
+          "summary": "Verify the three libraries this week runs on. All ship with Anaconda — this takes 15 minutes.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Set up your tooling",
-              "body": "## What it is\nVS Code + git + a SQL client is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
-              "kind": "lesson",
-              "title": "See it in action - the exact steps",
-              "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npsql --version  # or sqlite3 --version\n```\n\n## What 'working' looks like\nYour SQL client prints a version.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
+              "title": "The three tools you need for math week",
+              "body": "## What you're verifying today\n\nYou already installed Anaconda in Week 1. Good news: it ships with every library you need this week.\n\n- **NumPy** — fast numerical arrays. Every dot product, matrix multiply, and element-wise operation this week runs on NumPy. Without it, the Day 1 code won't even import.\n- **SciPy** — statistical functions built on top of NumPy. You'll use `scipy.stats` on Day 4 to run a normality test on taxi fares.\n- **Matplotlib** — the plotting library. You'll plot histograms of distributions, scatter plots of distance vs fare, and residual plots to check your linear model.\n\nThe task today is not installation — it's verification. You want to know before Day 1 that all three work, not find out mid-lesson when you're stuck on an import error.\n\n## The one command that checks everything\n\nOpen an Anaconda Prompt (Windows) or Terminal (Mac/Linux) and run:\n\n```bash\npython -c \"import numpy as np; import scipy; import matplotlib; print('numpy', np.__version__); print('scipy', scipy.__version__); print('matplotlib', matplotlib.__version__)\"\n```\n\nExpected output (versions may differ slightly):\n```\nnumpy 1.26.4\nscipy 1.13.1\nmatplotlib 3.8.4\n```\n\nIf any import fails, run `conda install numpy scipy matplotlib` and try again.\n\n## Create this week's notebook\n\nIn your taxipulse project folder:\n\n```bash\nmkdir -p notebooks\n```\n\nOpen Jupyter, create a new notebook, save it as `notebooks/05-math.ipynb`. Add a first markdown cell:\n\n```markdown\n# Week 2: Math you actually need\n## TaxiPulse — vectors, matrices, probability, stats\n```\n\nRun it. Commit. This notebook grows every day this week."
             },
             {
               "kind": "swipe",
-              "title": "Quick check - swipe to answer",
+              "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "You can run a version command for VS Code + git + a SQL client and it prints output without error.",
+                  "prompt": "All three libraries (NumPy, SciPy, Matplotlib) print version numbers without error.",
                   "answer": true,
-                  "whenRight": "The tool is on your PATH.",
-                  "whenWrong": "Re-run the installer; confirm the binary is on PATH."
+                  "whenRight": "You're ready for Day 1.",
+                  "whenWrong": "Run `conda install numpy scipy matplotlib` in Anaconda Prompt and retry."
                 },
                 {
-                  "prompt": "You stored credentials (where needed) outside the repo.",
-                  "answer": true,
-                  "whenRight": "Secrets stay out of git.",
-                  "whenWrong": "Use env vars or the cloud's credential helper; never commit keys."
+                  "prompt": "You need to download and install NumPy separately — it doesn't come with Anaconda.",
+                  "answer": false,
+                  "whenRight": "Anaconda bundles them. The one-line verify command is your entire setup today.",
+                  "whenWrong": "Anaconda includes NumPy, SciPy, and Matplotlib. No separate install needed."
                 },
                 {
-                  "prompt": "You committed a `SETUP.md` recording versions you installed.",
+                  "prompt": "notebooks/05-math.ipynb exists in your taxipulse repo and has been committed.",
                   "answer": true,
-                  "whenRight": "Your future self will thank you.",
-                  "whenWrong": "Future-you debugs version mismatches; record them now."
+                  "whenRight": "Good — you have a home for this week's work.",
+                  "whenWrong": "Create the file now in Jupyter, save it, then `git add notebooks/05-math.ipynb && git commit -m 'stub math notebook'`."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Verify your setup",
-              "body": "[CODE] Run the verification commands in your terminal:\n```bash\npsql --version  # or sqlite3 --version\n```\n\nPASS:\n[x] Your SQL client prints a version.\n[x] No error messages in output\n[x] Committed `SETUP.md` with the versions you installed."
+              "title": "Verify and commit",
+              "body": "[CODE] In your terminal:\n```bash\npython -c \"import numpy as np; import scipy; import matplotlib; print('numpy', np.__version__); print('scipy', scipy.__version__); print('matplotlib', matplotlib.__version__)\"\n```\n\nThen create and commit the stub notebook:\n```bash\ngit add notebooks/05-math.ipynb\ngit commit -m 'Week 2 Day 0: create math notebook stub'\n```\n\nPASS:\n[x] All three libraries print a version number\n[x] notebooks/05-math.ipynb committed to your repo"
             }
           ]
         },
         {
           "number": 1,
-          "title": "Vectors — the atom of machine learning",
-          "summary": "NumPy first, then vectors and dot product. Without NumPy the code below is unreadable; with it, every line is a one-liner.",
+          "title": "Vectors and the dot product",
+          "summary": "One taxi trip is a vector. Linear regression is a dot product. This is the atom of every ML model.",
           "items": [
             {
               "kind": "lesson",
-              "title": "NumPy — the foundation under every line of code today",
-              "body": "## Why this comes first\nEvery code sample in the rest of this week uses **NumPy** — `np.array`, `np.dot`, `np.linalg.norm`. You will not understand the dot-product code below if you have not met NumPy. Read this lesson FIRST, then read the vector lesson under it.\n\nNumPy is a Python library for fast numerical arrays. It is the bedrock of pandas, scikit-learn, PyTorch, TensorFlow. If you use Python for data, you use NumPy — usually without realising it.\n\n## Install + import\nThe snippet below shows exactly what to do:\n\n```bash\npip install numpy\n```\n\nThe snippet below shows exactly what to do:\n\n```python\nimport numpy as np   # the universal alias. Every Python data tutorial uses np.\n```\n\n## NumPy arrays vs Python lists\nA Python list can hold anything: `[1, 'apple', 3.0, [9, 9]]`. A NumPy array holds ONE TYPE only and lives in a single contiguous block of memory. That single difference is why NumPy is 10–100× faster than equivalent list code.\n\n```python\npy_list = [1, 2, 3, 4, 5]                # plain Python list\nnp_arr  = np.array([1, 2, 3, 4, 5])      # NumPy 1-D array\n\npy_list * 2   # [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]   <- list duplication\nnp_arr  * 2   # array([2, 4, 6, 8, 10])           <- element-wise multiply\n```\n\nThat second result is the headline: arithmetic on NumPy arrays runs ELEMENT-WISE, no `for` loop required. This is what 'vectorised' code means.\n\n## Three ways to create an array\nThe snippet below shows exactly what to do:\n\n```python\na = np.array([1, 2, 3])           # from a Python list\nb = np.zeros(5)                    # array([0., 0., 0., 0., 0.])\nc = np.arange(0, 10, 2)            # array([0, 2, 4, 6, 8])\n```\n\n`a.shape` is `(3,)` (one-dimensional, length 3). `a.dtype` is `int64`. Every NumPy array has a shape and a dtype — that's the mental model: a typed grid of numbers.\n\n## Element-wise operations are the whole game\nThe snippet below shows exactly what to do:\n\n```python\ndistances = np.array([2.3, 5.1, 8.7, 1.2])\nfares     = np.array([7.5, 14.0, 22.0, 5.5])\n\nper_mile = fares / distances        # element-wise divide\n# array([3.26, 2.75, 2.53, 4.58])\n\ndiscounted = fares * 0.9            # scalar × array = scalar applied to every element\n# array([6.75, 12.6, 19.8, 4.95])\nThe snippet below shows exactly what to do:\n\n```\n\nNo loops. No list comprehensions. Operations vectorise over the whole array. This is the pattern you'll use thousands of times.\n\n## The dot product — the operation today's lesson needs you to know\nTwo ways to write it. They do the same thing:\n\n```python\ntrip    = np.array([2.3, 17.0, 4.0])\nweights = np.array([3.0, 0.1, -0.2])\n\n# Method 1 — the function form\npred1 = np.dot(trip, weights)\n\n# Method 2 — the @ operator (introduced in Python 3.5; preferred for readability)\npred2 = trip @ weights\n\nprint(pred1, pred2)   # 7.8  7.8\n```\n\nThe `@` operator was added to Python specifically for matrix / dot operations. Most modern data code uses `@`; older code uses `np.dot`. Both compile to the same fast C routine underneath.\n\n## Vector length (magnitude)\nYou will see `np.linalg.norm` below. It is the length of a vector — square each element, sum, take the square root:\n\n```python\nv = np.array([3.0, 4.0])\nnp.linalg.norm(v)   # 5.0   (because √(9 + 16) = 5 — the 3-4-5 triangle)\n```\n\n## What you now have to read the next lesson\n- `np.array([...])` — create an array.\n- `array1 @ array2` or `np.dot(array1, array2)` — dot product.\n- `np.linalg.norm(array)` — vector length.\n- Element-wise arithmetic — no loops needed.\n\nThat is the entire NumPy surface this week needs. The rest you learn as you meet it."
+              "title": "What a vector is — and why your DataFrame is full of them",
+              "body": "## A vector is an ordered list of numbers\n\nYou have been working with vectors since Week 1 — you just didn't call them that.\n\nEvery row in your taxi DataFrame is a vector:\n```text\ntrip = [2.3,   17,    4  ]\n        ↑      ↑      ↑\n      miles  hour  day_of_week\n```\n\nThat single row — as a NumPy array — is a 3-dimensional vector. The three numbers describe where this trip 'lives' in a 3D space: how long it was, when it happened, which day. Every model you will ever train takes vectors like this as input.\n\n## The dot product — the operation that powers ML\n\nMultiply corresponding elements, then sum. That is the complete definition.\n\n```text\ntrip    = [2.3,   17,    4  ]\nweights = [3.0,   0.1,  -0.2]\n           ↓      ↓      ↓\ndot = 2.3×3.0 + 17×0.1 + 4×(-0.2)\n    = 6.9    + 1.7    - 0.8\n    = 7.8   ← predicted fare contribution\n```\n\nThose `weights` are what a trained linear model actually learns. The weight 3.0 says 'each extra mile adds $3.00 to the fare.' The weight 0.1 says 'each later hour adds $0.10.' Training is the process of finding the weights that make predictions accurate.\n\nWhen `sklearn.LinearRegression().predict(X)` runs on your test set, it is computing one dot product per row. That's it. The entire prediction mechanism is this arithmetic.\n\n## Why the dot product is everywhere in ML\n\n- **Neural networks** — every layer is a matrix of weights applied to input vectors via dot products, then passed through a non-linear function. Stack enough layers and you can approximate any function.\n- **Recommendation systems** — Spotify finds songs you'll like by computing dot products between your taste vector and every song's feature vector. High dot product = similar.\n- **Transformers (ChatGPT, Claude)** — the attention mechanism computes dot products between every word pair to decide which words are relevant to each other.\n\nThis is the atom. Once you understand the dot product, you can read the mathematics of almost any ML paper."
             },
             {
               "kind": "video",
-              "title": "Machine Learning in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
-              "duration_min": 5,
-              "creator": "Fireship",
+              "title": "Vectors — what even are they?",
+              "url": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
+              "duration_min": 9,
+              "creator": "3Blue1Brown",
               "difficulty": "beginner",
-              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise — the concept, not the syntax, is the point."
+              "why": "3Blue1Brown's opening chapter of 'Essence of Linear Algebra' — the best visual introduction to vectors that exists. Watch before you write any code today. The geometric intuition it builds makes the dot product feel obvious rather than arbitrary."
             },
             {
-              "kind": "reading",
-              "title": "NumPy quickstart (official docs)",
-              "url": "https://numpy.org/doc/stable/user/quickstart.html",
-              "why": "Read second, after the lesson above. The canonical NumPy primer. Skim the array-creation and basic-operations sections; skip indexing for now."
+              "kind": "lesson",
+              "title": "NumPy dot products — in code, on real data",
+              "body": "## Import NumPy and load your data\n\n```python\nimport numpy as np\nimport pandas as pd\n\ndf = pd.read_parquet('data/clean.parquet')\n```\n\n## Two syntaxes — same operation\n\n```python\ntrip    = np.array([2.3, 17.0, 4.0])\nweights = np.array([3.0, 0.1, -0.2])\n\n# Older syntax\npred1 = np.dot(trip, weights)\n\n# Modern syntax — preferred, introduced in Python 3.5\npred2 = trip @ weights\n\nprint(pred1, pred2)\n# 7.8  7.8\n```\n\nThe `@` operator was added to Python specifically for matrix and vector operations. Use it — it reads like math.\n\n## Vector magnitude (length)\n\nSquare each element, sum, take the square root. That's the formula — `np.linalg.norm` does it for you:\n\n```python\nv = np.array([3.0, 4.0])\nnp.linalg.norm(v)   # 5.0  ← because √(9 + 16) = 5\n```\n\nYou recognise it: the 3-4-5 right triangle. `np.linalg.norm` computes that for any number of dimensions.\n\n## Cosine similarity — how similar are two trips?\n\nThe angle between two vectors measures similarity. Two vectors pointing in the same direction (angle = 0°) have cosine similarity = 1. Perpendicular vectors have similarity = 0.\n\n```python\ntrip1 = np.array([2.3, 17.0, 4.0])   # 2.3 miles, 5pm, Thursday\ntrip2 = np.array([2.1, 18.0, 4.0])   # 2.1 miles, 6pm, Thursday\ntrip3 = np.array([8.4,  3.0, 1.0])   # 8.4 miles, 3am, Monday\n\ndef cos_sim(a, b):\n    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))\n\nprint(f'trip1 vs trip2: {cos_sim(trip1, trip2):.4f}')  # 0.9998\nprint(f'trip1 vs trip3: {cos_sim(trip1, trip3):.4f}')  # 0.6021\n# trip2 is nearly identical to trip1; trip3 is very different.\n```\n\nRecommendation systems do exactly this across millions of items. Two users with similar feature vectors get similar recommendations."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "A NumPy array and a Python list behave identically when multiplied by a number.",
-                  "answer": false,
-                  "whenRight": "Right — different. `list * 3` duplicates the list. `np.array * 3` multiplies every element by 3.",
-                  "whenWrong": "Different. NumPy is element-wise (every element × 3); Python lists duplicate (the list × 3 = three copies)."
-                },
-                {
-                  "prompt": "`a @ b` and `np.dot(a, b)` compute the same dot product for 1-D arrays.",
+                  "prompt": "The dot product of [1, 2, 3] and [4, 5, 6] equals 1×4 + 2×5 + 3×6 = 32.",
                   "answer": true,
-                  "whenRight": "Right — `@` is shorthand for the dot product (added in Python 3.5). Both call the same C routine.",
-                  "whenWrong": "Yes — same operation, different syntax. `@` is preferred in modern code; `np.dot` is older but identical."
-                },
-                {
-                  "prompt": "NumPy arrays hold mixed types (numbers + strings + lists) just like Python lists.",
-                  "answer": false,
-                  "whenRight": "Right — single dtype only. That is exactly why NumPy can store the array in one contiguous memory block and run 10–100× faster.",
-                  "whenWrong": "One dtype per array. The single-type rule is what makes NumPy fast; it is the whole point."
-                }
-              ]
-            },
-            {
-              "kind": "lesson",
-              "title": "Vectors and the dot product",
-              "body": "## What a vector is\nA **vector** is an ordered list of numbers. In data science it represents one observation with all features packed together:\n\n```text\ntrip = [2.3, 17, 4]   # [distance_miles, pickup_hour, day_of_week]\n```\n\nThat single array is the input to every model you will ever train.\n\n## The dot product — the operation that powers ML\nMultiply corresponding elements and sum:\n\n```text\ntrip    = [2.3,  17,   4  ]\nweights = [3.0,  0.1, -0.2]\n\ndot = 2.3*3.0 + 17*0.1 + 4*(-0.2)\n    = 6.9 + 1.7 - 0.8\n    = 7.8   <- predicted fare contribution\n```\n\nThis is literally what linear regression does when it predicts. Weights are what training learns.\n\n## Why it matters\nNeural networks are stacks of dot products followed by non-linear functions. Transformers use dot products to compute attention. Recommendation systems find similar users by dot product. This is the atom of modern AI."
-            },
-            {
-              "kind": "lesson",
-              "title": "See it in code (with output)",
-              "body": "## NumPy dot products on real taxi data\nThe snippet below shows exactly what to do:\n\n```python\nimport numpy as np\n\ntrip    = np.array([2.3, 17.0, 4.0])\nweights = np.array([3.0, 0.1, -0.2])\n\npred = np.dot(trip, weights)\nprint(round(pred, 2))\n# 7.8\n\n# Cosine similarity — are two trips 'similar'?\ntrip2 = np.array([2.1, 18.0, 4.0])\nsim = np.dot(trip, trip2) / (np.linalg.norm(trip) * np.linalg.norm(trip2))\nprint(round(sim, 4))\n# 0.9999  <- nearly identical trips\nThe snippet below shows exactly what to do:\n\n```"
-            },
-            {
-              "kind": "swipe",
-              "title": "Quick check — swipe to answer",
-              "cards": [
-                {
-                  "prompt": "The dot product of [1,2,3] and [4,5,6] equals 1*4 + 2*5 + 3*6 = 32.",
-                  "answer": true,
-                  "whenRight": "Correct — multiply corresponding elements then sum: 4+10+18=32.",
-                  "whenWrong": "Walk through it: 1*4=4, 2*5=10, 3*6=18, sum=32.",
-                  "sim": "np.dot([1,2,3],[4,5,6])\n# 32"
+                  "whenRight": "Correct — multiply element-by-element, then sum: 4 + 10 + 18 = 32.",
+                  "whenWrong": "Walk through it: 1×4=4, 2×5=10, 3×6=18. Sum = 32."
                 },
                 {
                   "prompt": "Training a linear model means finding the weights vector that minimises prediction error.",
                   "answer": true,
-                  "whenRight": "Exactly — training = optimise weights to minimise loss (e.g. sum of squared errors).",
-                  "whenWrong": "That is what training is. Weights start random and are updated to reduce error."
+                  "whenRight": "Exactly — training = find weights such that (X @ weights) is as close as possible to real targets.",
+                  "whenWrong": "That is what training is. Weights start random; the algorithm adjusts them to reduce error."
                 },
                 {
                   "prompt": "Two vectors pointing in the same direction have cosine similarity close to 0.",
                   "answer": false,
-                  "whenRight": "Cosine similarity = cos(angle). Same direction = 0 degrees, cos(0) = 1, not 0.",
-                  "whenWrong": "Same direction means angle=0, cos(0)=1. Orthogonal vectors have similarity 0.",
-                  "sim": "cos_sim([1,1],[2,2])\n# 1.0  (same direction)"
+                  "whenRight": "Opposite — same direction = angle 0° = cos(0°) = 1. Perpendicular vectors have similarity 0.",
+                  "whenWrong": "Same direction → angle = 0° → cos(0°) = 1. Similarity of 0 means the vectors are perpendicular."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — vectors on real data",
-              "body": "[CODE] In `notebooks/05-math.ipynb`:\n1. Take 5 random trips from `data/clean.parquet` as NumPy arrays [trip_distance, pickup_hour, pickup_dow].\n2. Compute dot product of each trip with weights=[3.5, 0.05, -0.15].\n3. Compute cosine similarity between trip 1 and every other trip.\n4. Which trip is most similar to trip 1? Interpret in a markdown cell.\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Your turn — vectors on real taxi data",
+              "body": "[CODE] In `notebooks/05-math.ipynb`, add section `## Day 1: Vectors`:\n\n1. Sample 5 random trips from `data/clean.parquet`. Store each as a NumPy array `[trip_distance, pickup_hour, pickup_dow]`.\n2. Compute the dot product of each trip with `weights = [3.5, 0.05, -0.15]`. These are approximate NYC metered fare coefficients.\n3. Compute cosine similarity between trip 1 and each of the other 4 trips.\n4. In a markdown cell: 'The most similar trip to trip 1 is trip N. The similarity score is Z, which means [interpret it].'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             }
           ]
         },
         {
           "number": 2,
           "title": "Matrices — why neural nets are just table operations",
-          "summary": "A matrix transforms vectors. Every model layer is one matrix.",
+          "summary": "A matrix transforms many vectors at once. Batch prediction, neural network layers, image processing — all matrix multiplies.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Matrix multiplication — inside every model layer",
-              "body": "## What a matrix is\nA matrix is a 2D array (rows x columns). In ML:\n- A dataset of N trips with F features is an N x F matrix\n- A neural network layer is a weight matrix W that maps one space to another\n- The entire forward pass: output = W2 * ReLU(W1 * input + b1) + b2\n\n## The multiplication rule\nTo multiply A (m x n) by B (n x p): dot-product each row of A with each column of B.\n\n```text\nA = [[1,2],[3,4]]   B = [[5,6],[7,8]]\nA*B = [[1*5+2*7, 1*6+2*8],\n       [3*5+4*7, 3*6+4*8]]\n    = [[19,22],[43,50]]\n```\n\nConstraint: A's column count must equal B's row count.\n\n## Batch prediction\nWhen sklearn calls model.predict(X) on 10,000 rows, it computes X @ weights in one matrix multiply — not 10,000 separate dot products. That is why NumPy ML is fast."
+              "title": "What a matrix is — and why it lets you predict 10,000 trips at once",
+              "body": "## A matrix is a 2D array of numbers\n\nPack your trip vectors into a table and you have a matrix:\n\n```text\nX = [[2.3, 17, 4],\n     [0.8,  9, 2],\n     [5.1, 22, 5],\n     [1.2, 13, 1],\n     [3.7,  8, 0]]\n```\n\nThis is a **5×3 matrix**: 5 rows (trips), 3 columns (features). In NumPy notation: `shape = (5, 3)`. A dataset of N trips with F features is always an N×F matrix. Shape is the first thing you check on any dataset:\n\n```python\nprint(X.shape)   # (5, 3) — 5 trips, 3 features\n```\n\n## Matrix multiplication — the rule\n\nTo multiply matrix A (m×n) by matrix B (n×p): the column count of A must equal the row count of B. The result has shape (m×p).\n\nThe rule: row of A dot column of B = one element of the result.\n\n```text\nA (2×3)          B (3×1)           result (2×1)\n[[1, 2, 3],      [[a],             [[1a + 2b + 3c],\n [4, 5, 6]]  ×   [b],     =         [4a + 5b + 6c]]\n               [c]]\n```\n\nEach row of the result is a dot product. A is your trip data, B is your weights, the result is predictions — one per trip, all at once.\n\n## Why this matters: batch prediction\n\nWithout matrices:\n```python\n# Slow — one trip at a time\nfor trip in trips:\n    pred = trip @ weights\n```\n\nWith matrices:\n```python\n# Fast — all trips simultaneously\npreds = X @ weights\n```\n\nThe NumPy matrix multiply calls BLAS routines written in optimised C/Fortran. Predicting 1 million rows takes roughly 10ms. Pure Python loops would take minutes.\n\n## The shape constraint — the most common error you'll see\n\n```python\nA = np.array([[1,2,3],[4,5,6]])    # shape (2,3)\nB = np.array([[1,2],[3,4],[5,6]])   # shape (3,2)\n\nA @ B    # (2,3) @ (3,2) → (2,2)  ✓  inner dims match: 3=3\nB @ A    # (3,2) @ (2,3) → (3,3)  ✓  inner dims match: 2=2\nA @ A    # (2,3) @ (2,3) → ERROR  ✗  3 ≠ 2\n```\n\nWhen you see `ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0`, check `.shape` on both arrays. The inner dimensions must match."
             },
             {
               "kind": "video",
-              "title": "But what is a neural network",
+              "title": "But what is a neural network?",
               "url": "https://www.youtube.com/watch?v=aircAruvnKk",
               "duration_min": 19,
               "creator": "3Blue1Brown",
-              "difficulty": "intermediate",
-              "why": "This 19-minute 3Blue1Brown deep dive ('But what is a neural network') is worth the length — it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
+              "difficulty": "beginner",
+              "why": "3Blue1Brown's 'But what is a neural network?' is the clearest visual explanation of how matrix multiplies become intelligence. Watch the first 10 minutes to see exactly how weights and dot products combine into layers. The animation of 784 inputs × 16 weights makes matrix multiplication tangible."
             },
             {
               "kind": "lesson",
-              "title": "See it in code (with output)",
-              "body": "## Batch prediction as matrix multiplication\nThe snippet below shows exactly what to do:\n\n```python\nimport numpy as np\n\n# 5 trips: [distance, hour, dow]\nX = np.array([\n    [2.3, 17, 4],\n    [0.8,  9, 2],\n    [5.1, 22, 5],\n    [1.2, 13, 1],\n    [3.7,  8, 0],\n])\nW = np.array([[3.5],[0.05],[-0.15]])   # weights (3x1)\nb = 4.0\n\npreds = (X @ W + b).flatten()\nprint(preds.round(2))\n# [16.15  9.25 23.02 12.27 18.83]\n# All 5 predictions in one matrix multiply\nThe snippet below shows exactly what to do:\n\n```"
+              "title": "Batch prediction on 1,000 trips — in code",
+              "body": "## All 1,000 predictions in one matrix multiply\n\n```python\nimport numpy as np\nimport pandas as pd\n\ndf = pd.read_parquet('data/clean.parquet').sample(1000, random_state=42)\n\n# Feature matrix: 1000 rows × 3 columns\nX = df[['trip_distance', 'pickup_hour', 'pickup_dow']].values  # shape (1000, 3)\ny = df['fare_amount'].values                                    # shape (1000,)\n\n# Add bias column — a column of 1s so the model can learn an intercept\nX_b = np.column_stack([X, np.ones(len(X))])  # shape (1000, 4)\nW   = np.array([3.48, 0.07, -0.12, 8.12])    # [dist, hour, dow, bias]\n\npreds = X_b @ W    # (1000, 4) @ (4,) → (1000,)\n\nprint('First 5 predictions:', preds[:5].round(2))\n# [16.42  9.87  22.16  12.33  14.09]\n\nmae      = np.mean(np.abs(y - preds))\nbaseline = np.mean(np.abs(y - y.mean()))\nprint(f'Model MAE:    {mae:.2f}')\nprint(f'Baseline MAE: {baseline:.2f}  (always predict the mean)')\nprint(f'Improvement:  {(1 - mae/baseline)*100:.1f}%')\n# Model MAE:    6.21\n# Baseline MAE: 9.03\n# Improvement:  31.2%\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "To multiply matrix A (3x4) by matrix B, B must have exactly 4 rows.",
+                  "prompt": "To multiply matrix A (3×4) by matrix B, B must have exactly 4 rows.",
                   "answer": true,
-                  "whenRight": "Right — inner dimensions must match: A's columns (4) = B's rows (4). Result: 3 x B_cols.",
-                  "whenWrong": "Inner dimensions must match. A is 3x4, so B must start with 4 rows.",
-                  "sim": "A (3x4) @ B (4x2) -> result (3x2)"
+                  "whenRight": "Right — inner dimensions must match. A has shape (3,4) so B must have 4 rows. Result: (3, B_cols).",
+                  "whenWrong": "Inner dimensions must match: A is 3×4, so B needs 4 rows."
                 },
                 {
-                  "prompt": "In Python, `A @ B` and `np.dot(A, B)` are equivalent for 2D arrays.",
+                  "prompt": "`X_b @ W` for a (1000,4) matrix and (4,) vector produces shape (1000,) — one prediction per row.",
                   "answer": true,
-                  "whenRight": "For 2D matrices, @ and np.dot() give the same result. @ is the preferred modern syntax.",
-                  "whenWrong": "For 2D matrices they are equivalent. Use @ — it is cleaner and standard since Python 3.5."
+                  "whenRight": "Correct — (1000,4) @ (4,) contracts the inner 4, leaving 1000 predictions.",
+                  "whenWrong": "(1000,4) @ (4,) contracts the 4-dimensional inner dimension, leaving shape (1000,)."
                 },
                 {
-                  "prompt": "Predicting 1 million rows takes 1 million times longer than 1 row in NumPy.",
-                  "answer": false,
-                  "whenRight": "NumPy BLAS parallelises matrix ops. 1M rows might be 100x slower per call, not 1M times.",
-                  "whenWrong": "NumPy batch operations are highly parallelised. 1M predictions is far less than 1M times slower than 1."
+                  "prompt": "NumPy matrix multiply and a Python for-loop produce the same numbers but very different speeds.",
+                  "answer": true,
+                  "whenRight": "Same result, very different speed. NumPy calls optimised BLAS routines; a Python loop runs interpreted bytecode.",
+                  "whenWrong": "Same result, different speed. NumPy is 100-1000× faster for large arrays."
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — matrix prediction",
-              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Load 1000 random trips as a NumPy array [trip_distance, pickup_hour, pickup_dow].\n2. Use matrix multiplication (X @ weights + bias) to predict all 1000 fares at once.\n3. Compute MAE between predictions and actual fare_amount.\n4. Compute baseline MAE (always predict the mean fare).\n5. Is the matrix model better than the baseline?\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "body": "[CODE] In `notebooks/05-math.ipynb`, add section `## Day 2: Matrices`:\n\n1. Load 1,000 random trips as a NumPy feature matrix X of shape (1000, 3): columns `[trip_distance, pickup_hour, pickup_dow]`.\n2. Add a bias column so X_b has shape (1000, 4).\n3. Use `X_b @ W` to predict all 1,000 fares. Use `W = [3.48, 0.07, -0.12, 8.12]`.\n4. Compute and print model MAE vs baseline MAE (always predict mean). Compute improvement %.\n5. In a markdown cell: is the matrix model better than the baseline, and by how much?\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             }
           ]
         },
         {
           "number": 3,
-          "title": "Probability — the language models reason in",
-          "summary": "Every prediction is a probability. Learn the language.",
+          "title": "Probability — the language every model reasons in",
+          "summary": "Every prediction is a probability. Understanding uncertainty is what separates guessing from data science.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Probability and Bayes",
-              "body": "## The rules you need\n\n**Joint probability** (independent events):\nP(A and B) = P(A) * P(B)\n\n**Conditional probability**:\nP(A | B) = P(A and B) / P(B)\n'Given it is Friday, what is P(rain)?'\n\n**Bayes theorem**:\nP(A | B) = P(B | A) * P(A) / P(B)\n'Given this email has free money, what is P(spam)?'\n\n## Why ML models are probability machines\nEvery classifier outputs a probability. 0.87 from a fraud model means 87% confidence — not 'this IS fraud'. Language models sample the next word from a probability distribution over the entire vocabulary.\n\n## Where this fits in TaxiPulse\nDoes rush hour change tipping behaviour? Compute P(tip > 0 | rush hour) and compare to P(tip > 0). If they are equal, rush hour and tipping are independent."
+              "title": "Probability from first principles — what it actually means",
+              "body": "## Start with the simplest possible question\n\nYou have 3.5 million taxi trips. 2,352,750 of them resulted in a tip. What's the probability the next random trip has a tip?\n\n```text\nP(tip > 0) = 2,352,750 / 3,500,000 = 0.672\n```\n\nThat fraction is probability. Not mystical — just counting.\n\n## Conditional probability: given what we know\n\nConditional probability asks: does knowing something change the likelihood?\n\n```text\nP(tip > 0 | pickup on Friday night)\n```\n\nThe `|` reads as 'given'. This is a restricted count:\n- Restrict to Friday-night trips: say 180,000 of them.\n- Count how many tipped: 137,700.\n- P(tip > 0 | Friday night) = 137,700 / 180,000 = 0.765\n\nFriday night raises the probability from 67% to 77%. That 10-point lift is an actual finding.\n\n## The formal rule\n\n```text\nP(A | B) = P(A and B) / P(B)\n```\n\n- P(A and B): fraction of all trips that are BOTH Friday night AND tipped.\n- P(B): fraction of all trips that are Friday night.\n- Divide: the probability of A given B.\n\n## Joint probability for independent events\n\nIf two things are independent (knowing one gives you no information about the other):\n\n```text\nP(A and B) = P(A) × P(B)\n```\n\nIf P(tip)=0.67 and P(Bronx)=0.09, and these are independent, then P(tip and Bronx) ≈ 0.060.\n\n**But they might not be independent.** Bronx trips may tip at a different rate. You compute P(tip | Bronx) directly from data and compare to P(tip). If they match: independent. If different: there's a relationship worth investigating."
             },
             {
               "kind": "lesson",
-              "title": "Deeper dive: Probability — the language models reason in",
-              "body": "## Deeper dive: Probability — the language models reason in\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Probability — the language models reason in** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "title": "Bayes theorem — why flipping a conditional is harder than it looks",
+              "body": "## The question Bayes answers\n\nYou know P(positive test | disease). What you actually want is P(disease | positive test). These are NOT the same number — and Bayes theorem is the only way to get from one to the other.\n\n```text\nP(A | B) = P(B | A) × P(A)\n           ———————————————\n               P(B)\n```\n\n## A worked example: rare disease screening\n\nA test for a rare disease is 99% accurate. You test positive. Surely you have the disease, right?\n\nNot so fast. Say only 1 in 1,000 people have this disease:\n\n```text\nP(disease)                = 0.001   ← base rate (how common is it?)\nP(positive | disease)     = 0.99    ← test sensitivity\nP(positive | no disease)  = 0.01    ← false positive rate\n\nP(disease | positive)\n  = P(positive | disease) × P(disease)\n    ————————————————————————————————————\n    P(positive | disease) × P(disease)\n    + P(positive | no disease) × P(no disease)\n\n  = 0.99 × 0.001\n    ———————————————————————————————————————\n    0.99 × 0.001  +  0.01 × 0.999\n\n  = 0.000990 / 0.010980\n  = 0.0902   ← only ~9% likely to have the disease\n```\n\nA 99% accurate test, positive result — and there's only a 9% chance you have the disease. The low base rate (1 in 1,000) floods the denominator with false positives.\n\n## The taxi version\n\nP(tip > 25% | JFK dropoff) is easy to compute from your data. But P(JFK dropoff | tip > 25%) — which zone was this high-tipper probably going to? — requires Bayes.\n\nSpam filters, fraud detection, medical diagnosis: all use this formula. Same structure, different labels.\n\n## The thing to remember\n\nP(A|B) and P(B|A) are almost never the same number.\n\nP(coughing | lung cancer) is high.\nP(lung cancer | coughing) is low — because most coughing is from colds.\n\nThe base rate changes everything. This is why intuitive probability estimates are wrong — and computed ones are right."
             },
             {
               "kind": "lesson",
-              "title": "See it in code (with output)",
-              "body": "## Conditional probability on taxi data\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\np_tip = (df['tip_amount'] > 0).mean()\nprint(f'P(tip > 0):       {p_tip:.3f}')\n# P(tip > 0):       0.673\n\nrush = df['pickup_hour'].isin([7, 8, 17, 18, 19])\np_tip_rush = (df[rush]['tip_amount'] > 0).mean()\nprint(f'P(tip>0|rush):    {p_tip_rush:.3f}')\n# P(tip>0|rush):    0.681\n\nprint(f'Lift: {p_tip_rush / p_tip:.3f}')\n# Lift: 1.012  <- effectively no effect\n# Rush hour does NOT change tipping behaviour\nThe snippet below shows exactly what to do:\n\n```"
+              "title": "Conditional probability on taxi data — in code",
+              "body": "## Compute it in pandas\n\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\n# Unconditional: what fraction of all trips tip?\np_tip = (df['tip_amount'] > 0).mean()\nprint(f'P(tip > 0):              {p_tip:.3f}')   # 0.673\n\n# Conditional: does rush hour change tipping?\nrush = df['pickup_hour'].isin([7, 8, 17, 18, 19])\np_tip_rush = (df[rush]['tip_amount'] > 0).mean()\nprint(f'P(tip > 0 | rush hour): {p_tip_rush:.3f}')   # 0.681\nprint(f'Lift: {p_tip_rush / p_tip:.3f}')             # 1.012 — effectively no effect\n\n# Does day of week matter?\nfor dow, label in [(0,'Monday'), (4,'Friday'), (5,'Saturday')]:\n    mask = df['pickup_dow'] == dow\n    p = (df[mask]['tip_amount'] > 0).mean()\n    print(f'P(tip > 0 | {label:9s}): {p:.3f}  lift={p/p_tip:.3f}')\n# P(tip > 0 | Monday   ): 0.648  lift=0.963  ← −4%\n# P(tip > 0 | Friday   ): 0.701  lift=1.042  ← +4%\n# P(tip > 0 | Saturday ): 0.718  lift=1.067  ← +7%\n# Saturday passengers tip notably more often.\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "P(A | B) = P(B | A) — conditional probability is symmetric.",
+                  "prompt": "P(tip | rush hour) = P(rush hour | tip) — conditional probability is symmetric.",
                   "answer": false,
-                  "whenRight": "They are almost never equal. P(spam | 'free money') is not P('free money' | spam). Bayes theorem is needed to flip them.",
-                  "whenWrong": "Not symmetric. P(disease | positive test) is not P(positive test | disease). That asymmetry is the whole point of Bayes."
+                  "whenRight": "Never symmetric. Bayes theorem exists precisely because flipping the condition changes the answer.",
+                  "whenWrong": "Not symmetric. P(tip | rush hour) = 68%; P(rush hour | tip) is a different calculation entirely."
                 },
                 {
-                  "prompt": "If P(tip > 0 | rush hour) equals P(tip > 0), rush hour and tipping are independent.",
+                  "prompt": "If P(tip | Saturday) = P(tip), tipping and day-of-week are statistically independent.",
                   "answer": true,
-                  "whenRight": "Right — independence means conditioning on B does not change P(A).",
-                  "whenWrong": "Independence means P(A|B) = P(A). If conditioning on rush hour does not change tip probability, they are independent."
+                  "whenRight": "Right — independence means conditioning on B doesn't change P(A). Equal probabilities = no relationship.",
+                  "whenWrong": "Independence means P(A|B) = P(A). If Saturday doesn't change tipping probability, they're independent."
                 },
                 {
                   "prompt": "A fraud model outputting 0.87 means the transaction IS fraudulent.",
                   "answer": false,
-                  "whenRight": "0.87 is a confidence estimate, not a verdict. A threshold converts it to yes/no.",
-                  "whenWrong": "0.87 is a probability estimate. You still need a threshold. The model is wrong ~13% of the time at that score."
+                  "whenRight": "0.87 is a probability estimate. You still need a decision threshold to convert it to 'fraud' / 'not fraud'.",
+                  "whenWrong": "0.87 is a confidence level, not a verdict. At threshold 0.80 you'd flag it; at 0.95 you wouldn't."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — conditional probability",
-              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Compute P(tip > 0) for the full dataset.\n2. Compute P(tip > 0 | pickup_dow == 5) — Saturday.\n3. Compute P(tip > 0 | pickup_dow == 0) — Monday.\n4. Compute lift for both days.\n5. Markdown conclusion: does day of week predict whether a passenger tips?\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Your turn — conditional probability investigation",
+              "body": "[CODE] In `notebooks/05-math.ipynb`, add section `## Day 3: Probability`:\n\n1. Compute P(tip > 0) for the full dataset.\n2. Compute P(tip > 0 | Saturday) and P(tip > 0 | Monday). Print the lift for each.\n3. Compute P(tip > 0 | payment_type == 1) vs P(tip > 0 | payment_type == 2) (credit card vs cash). What do you find and why does it make sense?\n4. In a markdown cell: 'The variable that most changes tipping probability is [X] because [reason]. The variable that changes it least is [Y].'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             }
           ]
         },
         {
           "number": 4,
           "title": "Normal distribution and the CLT",
-          "summary": "The shape of data tells you which model to use and where it fails.",
+          "summary": "The shape of your data tells you which model fits and where it breaks. Skewed fares, normally distributed sample means.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Normal distribution, CLT, and why they matter for ML",
-              "body": "## The normal distribution\nFully described by two numbers: mean (mu) and std deviation (sigma).\n\n**68-95-99.7 rule**: 68% within 1sd, 95% within 2sd, 99.7% within 3sd.\n\nTaxi fares are NOT normally distributed — they are right-skewed (skewness ~2.3). A model that assumes normality for fares will produce wrong confidence intervals.\n\n## Central Limit Theorem\n**Even when individual data is not normal, the MEAN of a large sample is approximately normal.**\n\nThis is why t-tests and confidence intervals work on non-normal data when samples are large: you are testing the distribution of means, not individual values.\n\n## Why it matters for models\nLinear regression assumes residuals (errors) are normally distributed. When they are not, your p-values and confidence intervals are wrong. Checking residual distribution after fitting is non-optional."
+              "title": "The normal distribution — what it is and why it keeps appearing",
+              "body": "## The bell curve\n\nA normal distribution is fully described by two numbers: its mean (μ) and its standard deviation (σ).\n\n**68–95–99.7 rule:**\n- 68% of values fall within 1 standard deviation of the mean\n- 95% within 2 standard deviations\n- 99.7% within 3 standard deviations\n\nFor taxi fares with mean $16 and std $11:\n- 68% of fares: $5 to $27\n- 95% of fares: −$6 to $38 — but negative fares don't exist\n\nThat impossibility is the tell: **taxi fares are NOT normally distributed.**\n\n## Why fares are skewed — and what that looks like in numbers\n\n```text\nMean:     $16.42\nMedian:   $12.00   ← mean > median = right skew\nSkewness:  2.31    ← strongly right-skewed\n```\n\nAirport trips ($52 flat rate to JFK), bridge-and-tunnel long hauls, occasional $200 rides — these outliers drag the mean far above the typical fare. Median $12 is what most passengers actually pay.\n\n## Where normal distributions actually appear in ML\n\n1. **Model residuals** — linear regression assumes your prediction errors are normally distributed around zero. If they're not, p-values and confidence intervals are wrong.\n2. **Sample means** — even when individual data is skewed, the mean of a large enough sample is approximately normal. This is the CLT.\n3. **Feature scaling** — StandardScaler pushes features toward mean=0, std=1. Many algorithms (especially distance-based ones like KNN) expect roughly normal-shaped features."
+            },
+            {
+              "kind": "video",
+              "title": "The Normal Distribution — clearly explained",
+              "url": "https://www.youtube.com/watch?v=rzFX5NWojp0",
+              "duration_min": 5,
+              "creator": "StatQuest with Josh Starmer",
+              "difficulty": "beginner",
+              "why": "StatQuest's 5-minute normal distribution explainer. Josh Starmer builds the intuition with the exact visual you need before you touch SciPy. Watch once; the 68-95-99.7 rule will stick."
             },
             {
               "kind": "lesson",
-              "title": "Deeper dive: Normal distribution and the CLT",
-              "body": "## Deeper dive: Normal distribution and the CLT\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Normal distribution and the CLT** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "title": "The Central Limit Theorem — why statistics works on messy data",
+              "body": "## The most important theorem in applied statistics\n\n**Even when individual values are not normal, the mean of a large sample is approximately normal.**\n\nTaxi fares are right-skewed with skewness 2.31. Pick 500 random trips and compute their mean fare. Do that 1,000 times. Plot those 1,000 means. They will form a normal distribution — even though the individual fares are not.\n\nThis is the CLT. It's why:\n- T-tests work on non-normal data (you're testing the distribution of sample means, not individual values)\n- Confidence intervals are valid on skewed data\n- A/B tests produce reliable results\n\nRule of thumb: n ≥ 30 is usually enough. Highly skewed data may need n ≥ 100.\n\n## Why linear regression assumes normal residuals\n\nAfter training a linear model:\n```text\nresidual_i = actual_fare_i − predicted_fare_i\n```\n\nLinear regression assumes these residuals are:\n1. Normally distributed (no fat tails, no skew)\n2. Mean zero (no systematic over- or under-prediction)\n3. Constant variance (errors don't grow larger for bigger predictions)\n\nViolating assumption 3 — called **heteroscedasticity** — is very common with fares. Your model underpredicts a $200 airport trip by $40 but underpredicts a $10 short trip by only $3. The confidence intervals sklearn gives you are wrong in this case.\n\nThe fix: log-transform the target before training. After predicting, exponentiate back. This compresses the right tail and stabilises variance.\n\n**Checking residuals is not optional.** You will do it on Day 7."
             },
             {
               "kind": "lesson",
-              "title": "See it in code (with output)",
-              "body": "## Distribution check and CLT demonstration\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd, numpy as np\nfrom scipy import stats\n\ndf = pd.read_parquet('data/clean.parquet')\nfares = df['fare_amount']\n\nprint(f'Mean:     {fares.mean():.2f}')\nprint(f'Std:      {fares.std():.2f}')\nprint(f'Skewness: {fares.skew():.2f}')\n# Mean:     16.42\n# Std:      11.18\n# Skewness:  2.31  <- heavily right-skewed\n\n# CLT: sample means ARE normal\nmeans = [fares.sample(500).mean() for _ in range(1000)]\nstat, p = stats.normaltest(means)\nprint(f'Normality test on sample means: p={p:.3f}')\n# p=0.382  <- cannot reject normality, CLT works\nThe snippet below shows exactly what to do:\n\n```"
+              "title": "Distribution check and CLT demo — in code",
+              "body": "## Check fare distribution, then demonstrate CLT\n\n```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy import stats\n\ndf = pd.read_parquet('data/clean.parquet')\nfares = df['fare_amount']\n\n# Descriptive stats\nprint(f'Mean:     {fares.mean():.2f}')\nprint(f'Median:   {fares.median():.2f}')\nprint(f'Std:      {fares.std():.2f}')\nprint(f'Skewness: {fares.skew():.2f}')\n# Mean:     16.42\n# Median:   12.00\n# Std:      11.18\n# Skewness:  2.31\n\n# Normality test on raw fares\n_, p_raw = stats.normaltest(fares.sample(5000, random_state=42))\nprint(f'Raw fares normality p-value: {p_raw:.4f}')\n# p=0.0000  ← strongly reject normality\n\n# CLT: sample means ARE normal\nsample_means = [fares.sample(500).mean() for _ in range(1000)]\n_, p_means = stats.normaltest(sample_means)\nprint(f'Sample means normality p-value: {p_means:.3f}')\n# p=0.412  ← cannot reject normality — CLT holds\n\n# Plot both\nfig, axes = plt.subplots(1, 2, figsize=(12, 4))\naxes[0].hist(fares.sample(5000), bins=60, color='#3b82f6', alpha=0.7)\naxes[0].set_title('Raw fares — right-skewed')\naxes[1].hist(sample_means, bins=40, color='#22c55e', alpha=0.7)\naxes[1].set_title('Sample means (n=500) — approximately normal')\nplt.tight_layout()\nplt.savefig('charts/clt_demo.png', dpi=120)\nprint('Saved charts/clt_demo.png')\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "For a right-skewed distribution, the mean is higher than the median.",
+                  "prompt": "Taxi fares have mean > median, which indicates right skew.",
                   "answer": true,
-                  "whenRight": "Right — the long right tail pulls the mean above the 50th percentile.",
-                  "whenWrong": "Right skew = long tail to the right = large values pull mean above median.",
-                  "sim": "fares.mean()   # 16.42\nfares.median() # 12.00  <- lower"
+                  "whenRight": "Right — a long right tail pulls the mean above the median. Mean=$16.42, Median=$12.00.",
+                  "whenWrong": "Right skew = a long right tail that pulls the mean upward. Mean > median always indicates right skew."
                 },
                 {
-                  "prompt": "The CLT says sample means become normal regardless of how small the sample is.",
+                  "prompt": "Linear regression assumes the INPUT FEATURES are normally distributed.",
                   "answer": false,
-                  "whenRight": "CLT requires large samples (typically n >= 30). Tiny samples may not converge.",
-                  "whenWrong": "CLT requires large n. Very small samples may not converge to normal."
+                  "whenRight": "The assumption is on RESIDUALS (errors), not inputs. Non-normal features are fine.",
+                  "whenWrong": "The normality assumption is on residuals (actual minus predicted), not on input features."
                 },
                 {
-                  "prompt": "Linear regression assumes the MODEL RESIDUALS are normally distributed, not the raw input data.",
+                  "prompt": "The CLT guarantees sample means become approximately normal when sample size is large enough.",
                   "answer": true,
-                  "whenRight": "Exactly — the assumption is on errors, not features. Non-normal inputs are fine.",
-                  "whenWrong": "The assumption is on residuals, not features. Non-normal inputs are fine; non-normal residuals invalidate p-values.",
-                  "sim": "# Check residuals, not raw data:\nresid = y_actual - y_predicted\n# these should be normal"
+                  "whenRight": "n ≥ 30 is the rule of thumb. Highly skewed data may need larger n.",
+                  "whenWrong": "n ≥ 30 is the threshold. CLT applies to means of samples, not to individual values."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — distribution check",
-              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Print mean, std, and skewness for tip_rate.\n2. Plot a histogram of tip_rate (50 bins), save as `charts/tip_rate_dist.png`.\n3. Run CLT demo: draw 1000 samples of n=500, compute means, plot as histogram.\n4. Markdown: is tip_rate normally distributed? How do you know?\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Your turn — distribution analysis",
+              "body": "[CODE] In `notebooks/05-math.ipynb`, add section `## Day 4: Normal distribution + CLT`:\n\n1. Print mean, median, std, and skewness for `fare_amount` and `tip_rate`.\n2. Run `scipy.stats.normaltest` on each. Report the p-value and interpret it.\n3. Demonstrate CLT: draw 1,000 samples of n=500 from `fare_amount`, compute each mean, plot as a histogram.\n4. Save the plot as `charts/clt_demo.png`.\n5. In a markdown cell: 'Fare amount is [normal/not normal] (p=[X]). The CLT demonstration shows [interpret what you see].'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             }
           ]
         },
         {
           "number": 5,
-          "title": "Mean, variance, std — the analyst's three numbers",
-          "summary": "These three describe any column. Everything else elaborates.",
+          "title": "Mean, variance, std — and when the mean lies",
+          "summary": "Three numbers describe any column. Knowing when to use each one — and what correlation actually measures — makes you harder to fool by bad data.",
           "items": [
             {
               "kind": "lesson",
-              "title": "Mean, variance, std — and when each lies",
-              "body": "## The three numbers\n**Mean** = sum / count. Pulled by outliers. Use when data is symmetric.\n**Variance** = mean of (value minus mean) squared. In squared units.\n**Std** = square root of variance. Back in original units.\n\n```text\nfares = [8, 12, 14, 16, 150]\nmean   = 40     <- distorted by 150\nmedian = 14     <- resistant to the outlier\nstd    = 55.3   <- enormous due to 150\n```\n\n## Mean vs median — when to use which\n- **Mean**: symmetric data, few outliers (heights, test scores)\n- **Median**: skewed data or outliers (income, house prices, taxi fares)\n\n## Correlation\nPearson r measures linear relationship: -1 (perfect inverse), 0 (none), +1 (perfect positive).\n\nr(distance, fare) ~ 0.87  -> strong linear\nr(fare, tip_rate) ~ 0.09  -> almost no linear relationship"
+              "title": "Mean, median, variance, std — and what each one honestly tells you",
+              "body": "## The two measures of center\n\n**Mean** — sum divided by count. Efficient. But one $200 airport trip pulls it above what most passengers pay.\n\n**Median** — the middle value when sorted. Resistant to outliers. For skewed data, this is the honest summary.\n\n```text\nfares = [8, 12, 14, 16, 150]   ← one airport trip\nmean   = 40.0    ← distorted by $150\nmedian = 14.0    ← the typical fare, unaffected\n```\n\n## The rule for choosing mean vs median\n\n| Data shape | Use | Reason |\n|---|---|---|\n| Symmetric, few outliers | Mean | Uses all information efficiently |\n| Right-skewed (income, fares, house prices) | Median | Outliers don't distort it |\n| Left-skewed (grades if most students pass) | Median | Same reason |\n\nFor taxi fares: always report median to stakeholders.\n\n## Variance vs standard deviation\n\n**Variance** = average of squared deviations from the mean. Result is in squared units (dollars²).\n\n**Standard deviation** = square root of variance. Back in original units (dollars).\n\n```text\nfare variance = 124,996 dollars²   ← meaningless to humans\nfare std      = $353.5 dollars     ← you can feel that\n```\n\nUse variance when you're adding independent error sources (you add variances, not stds).\nUse std when communicating to anyone who has to understand the number.\n\n## Pearson correlation — what r actually measures\n\n```text\nr = Cov(X, Y) / (std(X) × std(Y))\n```\n\nThe division normalises covariance to a scale-independent [-1, +1] range. r = 0.87 between distance and fare means: a one-std-deviation increase in distance tends to associate with a 0.87-std-deviation increase in fare.\n\nTwo things r does NOT say:\n1. **Causation** — r = 0.87 does not prove distance causes fare.\n2. **Variance explained** — that's R² = r² = 0.87² = 0.757, about 76%, not 87%.\n\nConfusing r with R² is one of the most common errors in data science reports. Don't be that analyst."
             },
             {
               "kind": "lesson",
-              "title": "Deeper dive: Mean, variance, std — the analyst's three numbers",
-              "body": "## Deeper dive: Mean, variance, std — the analyst's three numbers\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Mean, variance, std — the analyst's three numbers** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
-            },
-            {
-              "kind": "lesson",
-              "title": "See it in code (with output)",
-              "body": "## Descriptive stats and correlation on TaxiPulse\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\nprint(df[['fare_amount','trip_distance','tip_rate']]\n      .agg(['mean','median','std']).round(2))\n#           fare_amount  trip_distance  tip_rate\n# mean            16.42           2.87      0.17\n# median          12.00           1.76      0.17\n# std             11.18           3.21      0.13\n\ncorr = df[['fare_amount','trip_distance','tip_amount','tip_rate']].corr().round(2)\nprint(corr)\n#               fare_amount  trip_distance  tip_amount  tip_rate\n# fare_amount          1.00           0.87        0.61      0.09\n# trip_distance        0.87           1.00        0.54      0.07\n# tip_rate             0.09           0.07        0.58      1.00\n# Insight: fare predicts tip AMOUNT (0.61) but tip RATE barely (0.09)\nThe snippet below shows exactly what to do:\n\n```"
+              "title": "Descriptive stats and correlation matrix — in code",
+              "body": "## Compute everything on TaxiPulse\n\n```python\nimport pandas as pd\ndf = pd.read_parquet('data/clean.parquet')\n\n# Descriptive stats table\nprint(df[['fare_amount', 'trip_distance', 'tip_amount', 'tip_rate']]\n      .agg(['mean', 'median', 'std', 'skew'])\n      .round(2))\n\n#           fare_amount  trip_distance  tip_amount  tip_rate\n# mean            16.42           2.87        2.79      0.17\n# median          12.00           1.76        2.00      0.17\n# std             11.18           3.21        2.61      0.13\n# skew             2.31           2.87        1.84     -0.04\n#\n# tip_rate skew ≈ 0 → symmetric → mean is the honest summary here.\n# All others are right-skewed → report median to stakeholders.\n\n# Correlation matrix\ncorr = df[['fare_amount', 'trip_distance', 'tip_amount', 'tip_rate']].corr().round(2)\nprint(corr)\n\n#               fare_amount  trip_distance  tip_amount  tip_rate\n# fare_amount          1.00           0.87        0.61      0.09\n# trip_distance        0.87           1.00        0.54      0.07\n# tip_amount           0.61           0.54        1.00      0.58\n# tip_rate             0.09           0.07        0.58      1.00\n\n# Finding 1: fare and distance strongly correlated (r=0.87) — longer trips cost more.\n# Finding 2: fare barely correlates with tip RATE (r=0.09) — expensive trips don't tip more proportionally.\n# Finding 3: tip amount correlates with tip rate (r=0.58) — partly tautological.\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "For skewed data like taxi fares, the median is a more honest summary than the mean.",
+                  "prompt": "For right-skewed taxi fare data, the median is more representative than the mean.",
                   "answer": true,
-                  "whenRight": "Right — the mean is pulled by outliers. For right-skewed fares: mean=16.42, median=12.00.",
-                  "whenWrong": "With right skew, the mean is pulled above the typical value. Median is more representative.",
-                  "sim": "mean   = 16.42\nmedian = 12.00  <- more typical trip"
+                  "whenRight": "Right — mean=$16.42, median=$12.00. A $200 airport trip drags the mean far above what most passengers pay.",
+                  "whenWrong": "Skewed data: the long tail pulls mean above median. Median is the honest typical-trip number."
                 },
                 {
-                  "prompt": "r = 0.87 between distance and fare PROVES distance causes fare to increase.",
+                  "prompt": "r = 0.87 between distance and fare means 87% of fare variance is explained by distance.",
                   "answer": false,
-                  "whenRight": "Correct — correlation never proves causation. Both could be driven by trip type.",
-                  "whenWrong": "Correlation never implies causation. r=0.87 says they co-vary; it says nothing about mechanism."
+                  "whenRight": "R² = r² = 0.87² = 0.757. About 76% is explained. The r vs R² distinction is a classic analyst trap.",
+                  "whenWrong": "R² (not r) is variance explained. R² = 0.87² = 0.757. About 76%, not 87%."
                 },
                 {
-                  "prompt": "Standard deviation has the same units as the original data.",
-                  "answer": true,
-                  "whenRight": "Right — variance is in squared units (dollars squared), but std = root(variance) = dollars.",
-                  "whenWrong": "Std IS in the original units. Variance is dollars squared. std = root(variance) = dollars.",
-                  "sim": "fare_amount.std()\n# 11.18  <- in dollars"
+                  "prompt": "You can add standard deviations from two independent error sources to get total spread.",
+                  "answer": false,
+                  "whenRight": "You add VARIANCES of independent sources. Total_var = var_A + var_B. Total_std = √(var_A + var_B).",
+                  "whenWrong": "Add variances, not standard deviations. Total_std = √(var_A + var_B)."
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — descriptive stats memo",
-              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Print mean, median, std for fare_amount, trip_distance, tip_amount, tip_rate.\n2. For each: one sentence — 'I use mean/median because the data is symmetric/skewed'.\n3. Print the full 4x4 correlation matrix.\n4. Write 3-bullet markdown: 'The three strongest insights from the correlation matrix are...'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "body": "[CODE] In `notebooks/05-math.ipynb`, add section `## Day 5: Descriptive stats`:\n\n1. Print the agg table (mean, median, std, skew) for fare_amount, trip_distance, tip_amount, tip_rate.\n2. For each column, write one sentence: 'I would report [mean/median] because [reason].'\n3. Print the 4×4 correlation matrix.\n4. Write 3 markdown bullets: 'The three strongest insights from the correlation matrix are...'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             }
           ]
         },
         {
           "number": 6,
-          "title": "Linear regression from scratch",
-          "summary": "Derive the formula that Week 5 hands to sklearn.",
+          "title": "Linear regression from scratch — the Normal Equation",
+          "summary": "Before you call sklearn.LinearRegression().fit(), you derive the formula it uses. No framework. Just NumPy.",
           "items": [
             {
               "kind": "lesson",
-              "title": "The Normal Equation — linear regression by hand",
-              "body": "## What linear regression minimises\nThe snippet below shows exactly what to do:\n\n```text\npredicted_fare = w1 * distance + w2 * hour + b\n\nBest weights minimise: sum of (actual - predicted) squared\n```\n\nThe closed-form solution — the Normal Equation:\n```text\nW = inv(X_T @ X) @ X_T @ y\n```\nX is N x F feature matrix, y is N-length target, W is F-length weights.\n\n## Why derive it before using sklearn\nWeek 5 you call LinearRegression().fit() and it just works. Without understanding the Normal Equation you will not know:\n- Why it fails when features are perfectly correlated (X_T @ X becomes singular)\n- Why gradient descent exists for large datasets (matrix inversion scales O(n cubed))\n- What Ridge/Lasso regularisation actually modifies\n\nFormula first. Library second. Always."
+              "title": "The Normal Equation — how linear regression actually works",
+              "body": "## What linear regression minimises\n\nYou have N trips. For trip i, you have features xᵢ and a real fare yᵢ. You want weights W such that:\n\n```text\nxᵢ @ W ≈ yᵢ   for every trip i\n```\n\n'Approximate' means minimise the sum of squared errors:\n\n```text\nLoss = Σ (yᵢ − xᵢ @ W)²\n```\n\nSetting the derivative to zero gives the closed-form answer — the **Normal Equation**:\n\n```text\nW = (Xᵀ X)⁻¹ Xᵀ y\n```\n\nWhere X is your N×F feature matrix and y is your N-length target vector.\n\n## Breaking down the four terms\n\n- **Xᵀ** — the transpose of X. Rows become columns. Shape: (F, N).\n- **Xᵀ X** — a square F×F matrix encoding how features relate to each other.\n- **(Xᵀ X)⁻¹** — the matrix inverse. Think of it as division in matrix form.\n- **Xᵀ y** — a F-length vector encoding how each feature relates to the target.\n\nMultiply them: you get the weights that minimise squared error. No iterations, no learning rate — one exact computation.\n\n## Why learn this before using sklearn?\n\nWeek 5 you call `LinearRegression().fit(X, y)` and it works. But without the Normal Equation, you won't know:\n\n1. **Why it fails when features are perfectly correlated** — XᵀX becomes singular (non-invertible). Ridge regression fixes this by adding a small constant to the diagonal: `(XᵀX + λI)⁻¹`.\n2. **Why gradient descent exists for large datasets** — matrix inversion scales as O(n³). For 10M rows with 100 features, this takes minutes. Gradient descent scales linearly.\n3. **What Ridge and Lasso actually modify** — they change the Normal Equation formula by adding penalty terms.\n\nFormula first. Library second. Always."
             },
             {
               "kind": "video",
-              "title": "StatQuest Logistic Regression",
-              "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
-              "duration_min": 9,
-              "creator": "StatQuest",
+              "title": "Linear Regression, Clearly Explained",
+              "url": "https://www.youtube.com/watch?v=7ArmBVF2dCs",
+              "duration_min": 27,
+              "creator": "StatQuest with Josh Starmer",
               "difficulty": "beginner",
-              "why": "This 9-minute StatQuest video ('StatQuest Logistic Regression') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
+              "why": "StatQuest's 'Linear Regression, Clearly Explained' — watch the first 15 minutes before writing any code today. Josh builds the intuition for why we minimise squared errors, what the regression line means geometrically, and how to interpret coefficients. The math you're about to implement will feel obvious."
             },
             {
               "kind": "lesson",
-              "title": "See it in code (with output)",
-              "body": "## Normal Equation on TaxiPulse\nThe snippet below shows exactly what to do:\n\n```python\nimport pandas as pd, numpy as np\ndf = pd.read_parquet('data/clean.parquet').sample(50_000, random_state=42)\n\nX_raw = df[['trip_distance','pickup_hour']].values\ny     = df['fare_amount'].values\nX     = np.column_stack([X_raw, np.ones(len(X_raw))])  # add bias col\n\nW = np.linalg.inv(X.T @ X) @ X.T @ y\nw_dist, w_hour, bias = W\nprint(f'{w_dist:.2f} per mile,  {w_hour:.2f} per hour,  bias={bias:.2f}')\n# 3.48 per mile,  0.07 per hour,  bias=8.12\n# NYC meter rate is ~3.00 per mile — model found it from data alone\n\nmae      = np.mean(np.abs(y - X @ W))\nbaseline = np.mean(np.abs(y - y.mean()))\nprint(f'Model MAE: {mae:.2f}  |  Baseline MAE: {baseline:.2f}')\n# Model MAE: 6.14  |  Baseline MAE: 9.02  <- model beats baseline\nThe snippet below shows exactly what to do:\n\n```"
+              "title": "The Normal Equation in NumPy — on 50,000 real trips",
+              "body": "## Derive the weights from data\n\n```python\nimport pandas as pd\nimport numpy as np\n\ndf = pd.read_parquet('data/clean.parquet').sample(50_000, random_state=42)\n\n# Feature matrix — add a column of 1s for the bias (intercept)\nX_raw = df[['trip_distance', 'pickup_hour']].values   # (50000, 2)\nX     = np.column_stack([X_raw, np.ones(len(X_raw))])  # (50000, 3)\ny     = df['fare_amount'].values                        # (50000,)\n\n# Normal Equation: W = (XᵀX)⁻¹ Xᵀy\nW = np.linalg.inv(X.T @ X) @ X.T @ y\n\nw_dist, w_hour, bias = W\nprint(f'Distance weight: ${w_dist:.2f} per mile')\nprint(f'Hour weight:     ${w_hour:.2f} per hour')\nprint(f'Bias (base fare): ${bias:.2f}')\n# Distance weight: $3.48 per mile   ← NYC meter rate is ~$3.00 per mile\n# Hour weight:     $0.07 per hour   ← small but real effect\n# Bias:            $8.12            ← base fare\n\n# The model found the NYC fare structure from data alone,\n# with no knowledge of what a taxi meter actually charges.\n\npreds    = X @ W\nmae      = np.mean(np.abs(y - preds))\nbaseline = np.mean(np.abs(y - y.mean()))\nprint(f'\\nModel MAE:    ${mae:.2f}')\nprint(f'Baseline MAE: ${baseline:.2f}  (always predict the mean)')\nprint(f'Improvement:  {(1 - mae/baseline)*100:.1f}%')\n# Model MAE:    $6.14\n# Baseline MAE: $9.02\n# Improvement:  31.9%\n```"
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "The Normal Equation fails when two features are perfectly correlated because X_T*X becomes non-invertible.",
+                  "prompt": "The Normal Equation W = (XᵀX)⁻¹Xᵀy fails when two features are perfectly correlated.",
                   "answer": true,
-                  "whenRight": "Right — perfect multicollinearity makes X_T*X singular. sklearn uses gradient descent to avoid this.",
-                  "whenWrong": "Perfect correlation creates a singular matrix. sklearn avoids this with gradient descent."
+                  "whenRight": "Perfect correlation makes XᵀX singular (non-invertible). Ridge regression fixes this by adding λI to the diagonal.",
+                  "whenWrong": "Perfect multicollinearity makes XᵀX singular. Ridge regression adds a small diagonal term to fix this."
                 },
                 {
-                  "prompt": "A model with MAE 6.14 is worse than a baseline MAE of 9.02.",
+                  "prompt": "Model MAE $6.14 vs baseline $9.02 means the model is about 32% better than always predicting the mean.",
+                  "answer": true,
+                  "whenRight": "(1 − 6.14/9.02) = 31.9%. A 32% improvement over a naive baseline is meaningful.",
+                  "whenWrong": "(1 − 6.14/9.02) = 31.9%. Lower MAE = better. 6.14 < 9.02 means the model outperforms the baseline."
+                },
+                {
+                  "prompt": "The bias column is added by appending a column of ZEROS to the feature matrix.",
                   "answer": false,
-                  "whenRight": "Lower MAE = better. 6.14 < 9.02: model beats 'always predict mean' by 32%.",
-                  "whenWrong": "Lower MAE = better. 6.14 < 9.02 means the model is 32% better than the baseline."
-                },
-                {
-                  "prompt": "The weight 3.48 per mile means each extra mile adds 3.48 to the predicted fare.",
-                  "answer": true,
-                  "whenRight": "That is the interpretation — coefficient = marginal effect of one unit of that feature.",
-                  "whenWrong": "That is the interpretation. One more mile adds 3.48 to the prediction, holding everything else constant."
+                  "whenRight": "A column of ONES. Multiplying ones by the bias weight gives the bias contribution unchanged.",
+                  "whenWrong": "Column of ones, not zeros. When `x @ W` runs, the ones column ensures the bias weight is added as-is."
                 }
               ]
             },
             {
               "kind": "exercise",
               "title": "Your turn — Normal Equation from scratch",
-              "body": "[CODE] Continuing in `notebooks/05-math.ipynb`:\n1. Implement the Normal Equation using only NumPy (no sklearn).\n2. Train on 50k trips with features [trip_distance, pickup_hour, pickup_dow].\n3. Print the learned weights and interpret each in a sentence.\n4. Compute and print MAE vs baseline.\n5. Markdown: 'The model learns each mile costs X, each hour adds Y...'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "body": "[CODE] In `notebooks/05-math.ipynb`, add section `## Day 6: Linear regression`:\n\n1. Implement the Normal Equation using only NumPy — no sklearn.\n2. Train on 50,000 trips with features `[trip_distance, pickup_hour, pickup_dow]` + bias column.\n3. Print the 4 learned weights. Write one sentence interpreting each.\n4. Compute and print model MAE vs baseline MAE and the % improvement.\n5. Markdown: 'The model learns each mile costs $[X]. This is [close to/far from] the NYC meter rate of $3.00 because [reason].'\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
             }
           ]
         },
         {
           "number": 7,
-          "title": "Apply the math — is distance linearly related to fare?",
-          "summary": "Close out the math notebook with a complete analytical argument.",
+          "title": "Apply everything — is distance linearly related to fare?",
+          "summary": "Write a complete analytical argument: claim, evidence, model, limits. The notebook should be readable by anyone.",
           "items": [
             {
               "kind": "lesson",
+              "title": "How to write an analytical argument — four parts",
+              "body": "## The structure of a convincing analysis\n\nA findings notebook is not a collection of code cells. It is an argument. The best data scientists write notebooks that read like articles — a non-technical manager should skim it and understand exactly what was found, why you believe it, and where you'd be wrong.\n\nThe structure is always four parts:\n\n**1. Claim** — state the question precisely.\n```markdown\n## Question: Does trip distance linearly predict fare amount?\n```\n\n**2. Evidence** — show the data before fitting anything.\n- Descriptive stats (mean, median, std, skewness)\n- A scatter plot of distance vs fare (sample 1,000–2,000 trips)\n- Pearson r, stated clearly\n\n**3. Model** — quantify the relationship.\n- Normal Equation weights — what does each coefficient mean in plain English?\n- MAE vs baseline MAE\n- R² = r² — how much variance is explained?\n\n**4. Limits** — where does it break?\n- Plot residuals (actual − predicted) vs predicted fare\n- Name the failure mode: fanning? clusters? trends?\n- State specifically which trips the model handles worst\n\n## What to look for in the residual plot\n\n```text\nGood residuals:\n  — scattered randomly above and below zero\n  — no visible pattern\n  — constant spread regardless of predicted value\n\nBad residuals:\n  — fan outward (bigger errors for bigger fares) → heteroscedasticity → log-transform the target\n  — cluster at one value                         → missed subgroup (e.g. airport flat-rate trips)\n  — curved trend                                → non-linear relationship → need polynomial features\n```\n\nFor TaxiPulse, you will almost certainly see a cluster of residuals at +$20 to +$35 for long predictions. That cluster is JFK flat-rate trips ($52 regardless of distance). The model tries to predict them linearly and systematically undershoots.\n\n**Systematic residuals always reveal structure your model missed.** Name it and your analysis is honest."
+            },
+            {
+              "kind": "lesson",
               "title": "Dataset: yellow_tripdata_2023-10.parquet",
-              "body": "## 📁 Dataset for this week's project: `yellow_tripdata_2023-10.parquet`\nBefore you start the assignment below, make sure you have the right file:\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows).\n- **Reuse:** This is a NEW download for the TaxiPulse project (you did not use it before).\n- **Where to get it:** Official NYC TLC Trip Record Data — direct CDN link — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n  - Mirror / official page: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebook.\n\nWhenever a lesson says `read_csv(...)` or \"load the data\", it means THIS file.\n\n## Context\nThis applies specifically to week 2 ('Math you actually need (lin alg + prob + stats)'), day 7."
+              "body": "## The dataset for this week's project\n\nConfirm you have the right file before running the code below:\n\n- **What it is:** NYC Yellow Taxi trip records, October 2023 (~3.5M rows)\n- **Where to get it:** NYC TLC direct CDN — https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-10.parquet\n- **Where to save it:** `data/yellow_tripdata_2023-10.parquet`, next to your notebooks folder\n\nIf you already cleaned it in Week 1 and saved `data/clean.parquet`, use that. If not, run the cleaning step from Week 1 Day 5 first."
             },
             {
               "kind": "lesson",
-              "title": "A complete analytical argument — four parts",
-              "body": "## From numbers to a finding\nA complete analytical argument has four parts:\n1. **Descriptive stats** — what do the distributions look like?\n2. **Visualisation** — does the scatter suggest linearity?\n3. **Correlation** — is Pearson r high?\n4. **Residual check** — are errors randomly distributed around zero?\n\nIf residuals fan out (larger errors at larger fares), the relationship is non-linear and a different model is needed.\n\n## What you will find in TaxiPulse\nAirport trips (JFK flat rate ~52 dollars) create a horizontal band in the scatter that a linear model fits poorly. The residuals for those trips cluster at +20 to +35 dollars — systematic, not random.\n\n**Systematic residuals always reveal structure your model missed.**\n\n## The deliverable\nA notebook that reads like an article: stats, chart, correlation, model, residual, conclusion. A recruiter who cannot code should be able to skim it and understand what you found."
-            },
-            {
-              "kind": "lesson",
-              "title": "Deeper dive: Apply the math — is distance linearly related to fare?",
-              "body": "## Deeper dive: Apply the math — is distance linearly related to fare?\n\nThere isn't a single short video that nails this exact concept, so work it the way professionals actually learn it — by running small variations yourself and reading the output.\n\n## Two more worked examples\n1. Take the smallest case of **Apply the math — is distance linearly related to fare?** and predict the result *before* you run it. Then run it and compare — the gap between your prediction and reality is the learning.\n2. Change one variable (a column, a parameter, a condition) and predict again. Repeat until your predictions are reliably right.\n\n## What to watch for\n- Trace the data through each step (split, apply, combine) rather than memorising syntax.\n- Read the shape and the index of every intermediate result; most bugs are shape bugs.\n- When stuck, shrink the input to 3 rows you can verify by hand.\n"
+              "title": "Full four-part analysis — in code",
+              "body": "## Build the complete argument\n\n```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy import stats\n\ndf     = pd.read_parquet('data/clean.parquet')\nsample = df.sample(2000, random_state=42)\n\n# ── 1. Claim ──────────────────────────────────────────────────────────\n# Does trip_distance linearly predict fare_amount?\n\n# ── 2. Evidence ───────────────────────────────────────────────────────\nprint('=== Descriptive stats ===')\nprint(df[['fare_amount', 'trip_distance']].agg(['mean','median','std','skew']).round(2))\n\nr, _ = stats.pearsonr(sample['trip_distance'], sample['fare_amount'])\nprint(f'Pearson r: {r:.3f}')\nprint(f'R²:        {r**2:.3f}  ({r**2*100:.1f}% of fare variance explained by distance)')\n\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\naxes[0].scatter(sample['trip_distance'], sample['fare_amount'],\n                alpha=0.2, s=8, color='#3b82f6')\naxes[0].set_xlabel('Trip distance (miles)')\naxes[0].set_ylabel('Fare ($)')\naxes[0].set_title(f'Distance vs Fare  (r={r:.2f})')\n\n# ── 3. Model ──────────────────────────────────────────────────────────\nX_b = np.column_stack([\n    df[['trip_distance', 'pickup_hour']].values,\n    np.ones(len(df))\n])\ny = df['fare_amount'].values\nW = np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y\n\npreds    = X_b @ W\nresids   = y - preds\nmae      = np.mean(np.abs(resids))\nbaseline = np.mean(np.abs(y - y.mean()))\nprint(f'Weights: dist={W[0]:.2f}, hour={W[1]:.2f}, bias={W[2]:.2f}')\nprint(f'MAE: {mae:.2f} vs baseline {baseline:.2f}  ({(1-mae/baseline)*100:.1f}% better)')\n\n# ── 4. Limits — residual plot ─────────────────────────────────────────\nidx = np.random.choice(len(resids), 2000, replace=False)\naxes[1].scatter(preds[idx], resids[idx], alpha=0.2, s=8, color='#f97316')\naxes[1].axhline(0, color='white', linewidth=1, linestyle='--')\naxes[1].set_xlabel('Predicted fare ($)')\naxes[1].set_ylabel('Residual ($)')\naxes[1].set_title('Residuals — look for patterns')\n\nplt.tight_layout()\nplt.savefig('charts/residuals.png', dpi=120)\nprint('Saved charts/residuals.png')\n```\n\nRead the residual plot when it renders:\n- Fan shape = heteroscedasticity. The model's errors grow with fare size.\n- Horizontal band of points at +$20 to +$35 = JFK flat-rate trips. The model undershoots them systematically.\nBoth are normal for this dataset. Name them in your conclusion."
             },
             {
               "kind": "swipe",
               "title": "Quick check — swipe to answer",
               "cards": [
                 {
-                  "prompt": "If residuals fan out (variance increases with fare amount), the linear model is misspecified.",
+                  "prompt": "Residuals that fan outward (bigger errors for larger predictions) indicate heteroscedasticity.",
                   "answer": true,
-                  "whenRight": "That is heteroscedasticity — non-constant variance violates linear regression's core assumption.",
-                  "whenWrong": "Fanning residuals = heteroscedasticity. Linear regression assumes constant variance."
+                  "whenRight": "Fanning = non-constant variance. Log-transforming the target often fixes it by compressing the right tail.",
+                  "whenWrong": "Fanning residuals = heteroscedasticity = non-constant variance. Log-transform the target to address it."
                 },
                 {
-                  "prompt": "r = 0.87 means 87% of fare variance is explained by distance.",
+                  "prompt": "r = 0.87 means the model explains 87% of fare variance.",
                   "answer": false,
-                  "whenRight": "R-squared = r squared = 0.87 squared = 0.757. About 75.7% is explained, not 87%.",
-                  "whenWrong": "R2 = r squared = 0.87 squared = 0.757. About 75.7% is explained, not 87%.",
-                  "sim": "r = 0.87\nR2 = 0.87**2  # 0.757"
+                  "whenRight": "R² = r² = 0.87² = 0.757 ≈ 76%. Many analysts get this wrong. r and R² are different numbers.",
+                  "whenWrong": "R² = r squared. r = 0.87 means R² = 0.757 — about 76% explained, not 87%."
                 },
                 {
-                  "prompt": "Systematic residuals (a cluster at +30 for long trips) reveal a pricing rule the model missed.",
+                  "prompt": "A cluster of residuals at +$20 to +$35 for long predictions reveals a pricing rule the model missed.",
                   "answer": true,
-                  "whenRight": "Exactly — systematic = a pattern, not noise. JFK flat-rate trips cause this cluster.",
-                  "whenWrong": "Systematic residuals always reveal missed structure. Random residuals mean the model captured everything."
+                  "whenRight": "Systematic residuals reveal missed structure. JFK flat-rate trips cost ~$52 regardless of distance.",
+                  "whenWrong": "Systematic = a pattern, not noise. Clustering at +$20 to +$35 means the model undershoots airport trips."
                 }
               ]
             },
             {
               "kind": "exercise",
-              "title": "Your turn — wrap up the math notebook",
-              "body": "[PRODUCE] Wrap up `notebooks/05-math.ipynb`:\n1. Add section '## Week 2 synthesis: distance vs fare'.\n2. Include: descriptive stats, Pearson r, Normal Equation weights, MAE vs baseline, residual scatter plot saved as `charts/residuals.png`.\n3. Write a 3-sentence conclusion: 'The relationship is [linear/non-linear]. The model explains X% of variance. It fails on [trip type] because [reason].'\n4. Commit: `git add . && git commit -m 'Week 2: math fundamentals complete'`\n\nPASS:\n[x] You completed the task described above\n[x] You can explain in one sentence what you produced\n[x] Your work is committed to your repo"
+              "title": "Your turn — complete the analytical argument",
+              "body": "[PRODUCE] Wrap up `notebooks/05-math.ipynb`:\n\n1. Add section `## Week 2 synthesis — is distance linearly related to fare?`.\n2. Structure it as four parts: Claim, Evidence (stats + scatter), Model (weights + MAE), Limits (residual plot).\n3. Write a 3-sentence conclusion: 'The relationship is [linear/non-linear]. The model explains [X]% of variance. It fails on [trip type] because [reason].'\n4. Save all charts to `charts/`. Commit:\n\n```bash\ngit add notebooks/05-math.ipynb charts/\ngit commit -m 'Week 2: math fundamentals complete'\n```\n\nPASS:\n[x] Notebook has all four sections\n[x] charts/residuals.png and charts/clt_demo.png committed\n[x] 3-sentence conclusion written"
             },
             {
               "kind": "exercise",
               "title": "Ship it",
-              "body": "[PRODUCE] Tag your work as v2.0 and push to GitHub. The commands below stamp a versioned release of this week's work:\n\n```bash\ngit add . && git commit -m 'Math you actually need (lin alg + prob + stats)'\ngit tag v2.0 && git push --tags\n```\n\nPASS:\n[x] Your week's work is committed\n[x] A v2.0 tag is pushed to the remote"
+              "body": "[PRODUCE] Tag your work as v2.0 and push to GitHub:\n\n```bash\ngit add . && git commit -m 'Math you actually need (lin alg + prob + stats)'\ngit tag v2.0 && git push --tags\n```\n\nPASS:\n[x] Your week's work is committed\n[x] A v2.0 tag is pushed to the remote"
             }
           ]
         }
