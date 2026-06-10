@@ -12,16 +12,16 @@ import { useEffect } from "react";
  * no-op.
  */
 export default function ClientRememberName({ name }: { name: string | null }) {
-  useEffect(() => {
-    if (!name) return;
-    try {
-      const hasPid = localStorage.getItem("forge_remembered_personal_id");
-      if (hasPid) {
-        localStorage.setItem("forge_remembered_name", name);
-      }
-    } catch {
-      // localStorage blocked — silently ignore
-    }
-  }, [name]);
-  return null;
+ useEffect(() => {
+ if (!name) return;
+ try {
+ const hasPid = localStorage.getItem("forge_remembered_personal_id");
+ if (hasPid) {
+ localStorage.setItem("forge_remembered_name", name);
+ }
+ } catch {
+ // localStorage blocked, silently ignore
+ }
+ }, [name]);
+ return null;
 }

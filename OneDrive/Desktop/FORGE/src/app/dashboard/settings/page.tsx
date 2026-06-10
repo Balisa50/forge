@@ -3,32 +3,32 @@ import { prisma } from "@/lib/prisma";
 import SettingsForm from "@/components/SettingsForm";
 
 export default async function SettingsPage() {
-  const session = await auth();
-  const userId = session!.user!.id!;
+ const session = await auth();
+ const userId = session!.user!.id!;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true, name: true, email: true, timezone: true, tier: true,
-      integrityScore: true, createdAt: true,
-      bio: true, github: true, linkedin: true, isPublic: true, showInFeed: true,
-      role: true, isAlsoLearning: true, mentorDisplayName: true,
-    },
-  });
+ const user = await prisma.user.findUnique({
+ where: { id: userId },
+ select: {
+ id: true, name: true, email: true, timezone: true, tier: true,
+ integrityScore: true, createdAt: true,
+ bio: true, github: true, linkedin: true, isPublic: true, showInFeed: true,
+ role: true, isAlsoLearning: true, mentorDisplayName: true,
+ },
+ });
 
-  if (!user) return null;
+ if (!user) return null;
 
-  return (
-    <div style={{ width: "100%" }}>
-      <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Settings</h1>
-      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Manage your account and preferences.</p>
+ return (
+ <div style={{ width: "100%" }}>
+ <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.5rem", marginBottom: "0.5rem" }}>Settings</h1>
+ <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Manage your account and preferences.</p>
 
-      <SettingsForm
-        user={{ ...user, createdAt: user.createdAt.toISOString() }}
-        userId={userId}
-        role={user.role}
-        isAlsoLearning={user.isAlsoLearning}
-      />
-    </div>
-  );
+ <SettingsForm
+ user={{ ...user, createdAt: user.createdAt.toISOString() }}
+ userId={userId}
+ role={user.role}
+ isAlsoLearning={user.isAlsoLearning}
+ />
+ </div>
+ );
 }

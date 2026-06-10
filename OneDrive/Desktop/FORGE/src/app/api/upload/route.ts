@@ -15,56 +15,55 @@ import { auth } from "@/lib/auth";
 import { MAX_FILE_BYTES } from "@/lib/submission-types";
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
+ const body = (await request.json()) as HandleUploadBody;
 
-  try {
-    const jsonResponse = await handleUpload({
-      body,
-      request,
-      onBeforeGenerateToken: async () => {
-        // Only signed-in users may upload; the size cap and content types are
-        // enforced here so a leaked token can't be abused.
-        const session = await auth();
-        if (!session?.user?.id) {
-          throw new Error("You must be signed in to upload.");
-        }
-        return {
-          addRandomSuffix: true,
-          maximumSizeInBytes: MAX_FILE_BYTES,
-          allowedContentTypes: [
-            "image/*",
-            "video/*",
-            "audio/*",
-            "text/*",
-            "application/pdf",
-            "application/json",
-            "application/xml",
-            "application/zip",
-            "application/octet-stream",
-            "application/x-ipynb+json",
-            "application/msword",
-            "application/vnd.ms-excel",
-            "application/vnd.ms-powerpoint",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            "application/vnd.oasis.opendocument.text",
-            "application/vnd.oasis.opendocument.spreadsheet",
-            "application/vnd.oasis.opendocument.presentation",
-          ],
-          tokenPayload: JSON.stringify({ userId: session.user.id }),
-        };
-      },
-      // Fires via webhook after upload (no-op locally). We don't depend on it —
-      // the client receives the blob URL directly and submits it with the check-in.
-      onUploadCompleted: async () => {},
-    });
+ try {
+ const jsonResponse = await handleUpload({
+ body,
+ request,
+ onBeforeGenerateToken: async () => {
+ // Only signed-in users may upload; the size cap and content types are
+ // enforced here so a leaked token can't be abused.
+ const session = await auth();
+ if (!session?.user?.id) {
+ throw new Error("You must be signed in to upload.");
+ }
+ return {
+ addRandomSuffix: true,
+ maximumSizeInBytes: MAX_FILE_BYTES,
+ allowedContentTypes: [
+ "image/*",
+ "video/*",
+ "audio/*",
+ "text/*",
+ "application/pdf",
+ "application/json",
+ "application/xml",
+ "application/zip",
+ "application/octet-stream",
+ "application/x-ipynb+json",
+ "application/msword",
+ "application/vnd.ms-excel",
+ "application/vnd.ms-powerpoint",
+ "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+ "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+ "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+ "application/vnd.oasis.opendocument.text",
+ "application/vnd.oasis.opendocument.spreadsheet",
+ "application/vnd.oasis.opendocument.presentation",
+ ],
+ tokenPayload: JSON.stringify({ userId: session.user.id }),
+ };
+ },
+ // Fires via webhook after upload (no-op locally). We don't depend on it, // the client receives the blob URL directly and submits it with the check-in.
+ onUploadCompleted: async () => {},
+ });
 
-    return NextResponse.json(jsonResponse);
-  } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Upload failed" },
-      { status: 400 },
-    );
-  }
+ return NextResponse.json(jsonResponse);
+ } catch (error) {
+ return NextResponse.json(
+ { error: error instanceof Error ? error.message : "Upload failed" },
+ { status: 400 },
+ );
+ }
 }

@@ -53,7 +53,7 @@
             {
               "kind": "lesson",
               "title": "Data engineering vs analytics vs software engineering",
-              "body": "## Data engineering vs analytics vs software engineering\n\nData engineers build the pipelines and storage that feed analysts and models; analysts query and interpret; software engineers build the apps that generate data in the first place.\n\n## Why it matters\nKnowing the boundary tells you what you own (reliable data delivery) versus what you consume or hand off.\n\n## In practice\nList the three roles and one deliverable each. A useful framing:\n\n```text\nSoftware eng  -> produces data (app events, orders)\nData eng      -> moves + shapes data (pipelines, warehouse)\nAnalyst/ML    -> consumes data (dashboards, models)\n```"
+              "body": "## Data engineering vs analytics vs software engineering\n\nData engineers build the pipelines and storage that feed analysts and models; analysts query and interpret; software engineers build the apps that generate data in the first place.\n\n## Why it matters\nKnowing the boundary tells you what you own (reliable data delivery) versus what you consume or hand off.\n\n## In practice\nList the three roles and one deliverable each. A useful framing:\n\n```text\nSoftware eng -> produces data (app events, orders)\nData eng -> moves + shapes data (pipelines, warehouse)\nAnalyst/ML -> consumes data (dashboards, models)\n```"
             },
             {
               "kind": "exercise",
@@ -87,7 +87,7 @@
             {
               "kind": "lesson",
               "title": "Batch vs streaming: the core trade-off",
-              "body": "## Batch vs streaming: the core trade-off\n\nBatch processing handles data in scheduled chunks (hourly, daily); streaming handles each event as it arrives (sub-second to seconds).\n\n## Why it matters\nChoosing wrong means either stale dashboards or wildly over-engineered infrastructure.\n\n## In practice\nDecide batch or streaming for three scenarios. A rule of thumb:\n\n```text\nDaily sales report      -> batch (cheap, simple)\nFraud alert on payment  -> streaming (latency matters)\nMonthly payroll         -> batch\n```"
+              "body": "## Batch vs streaming: the core trade-off\n\nBatch processing handles data in scheduled chunks (hourly, daily); streaming handles each event as it arrives (sub-second to seconds).\n\n## Why it matters\nChoosing wrong means either stale dashboards or wildly over-engineered infrastructure.\n\n## In practice\nDecide batch or streaming for three scenarios. A rule of thumb:\n\n```text\nDaily sales report -> batch (cheap, simple)\nFraud alert on payment -> streaming (latency matters)\nMonthly payroll -> batch\n```"
             },
             {
               "kind": "exercise",
@@ -104,7 +104,7 @@
             {
               "kind": "lesson",
               "title": "The modern data stack",
-              "body": "## The modern data stack\n\nA typical stack today is: ingestion (Fivetran/Airbyte) -> warehouse (BigQuery/Snowflake) -> transformation (dbt) -> BI (Looker/Power BI), wired together by an orchestrator.\n\n## Why it matters\nAlmost every job description lists a subset of these; knowing the shape lets you read any architecture diagram.\n\n## In practice\nLabel each layer of a stack diagram. The shape to memorise:\n\n```text\nsources -> ingestion -> warehouse/lake -> transform (dbt) -> BI\n                                  \\-> orchestration ties it together\n```"
+              "body": "## The modern data stack\n\nA typical stack today is: ingestion (Fivetran/Airbyte) -> warehouse (BigQuery/Snowflake) -> transformation (dbt) -> BI (Looker/Power BI), wired together by an orchestrator.\n\n## Why it matters\nAlmost every job description lists a subset of these; knowing the shape lets you read any architecture diagram.\n\n## In practice\nLabel each layer of a stack diagram. The shape to memorise:\n\n```text\nsources -> ingestion -> warehouse/lake -> transform (dbt) -> BI\n \\-> orchestration ties it together\n```"
             },
             {
               "kind": "exercise",
@@ -121,7 +121,7 @@
             {
               "kind": "lesson",
               "title": "Roles on a data team",
-              "body": "## Roles on a data team\n\nBeyond the data engineer you will work with analytics engineers, ML engineers, platform/infra engineers, and data product managers.\n\n## Why it matters\nKnowing who owns what keeps you from rebuilding something another team already maintains.\n\n## In practice\nMatch responsibilities to roles. A quick map:\n\n```text\nAnalytics eng -> dbt models, metrics layer\nML eng        -> feature pipelines, serving\nPlatform eng  -> the warehouse + orchestration infra\n```"
+              "body": "## Roles on a data team\n\nBeyond the data engineer you will work with analytics engineers, ML engineers, platform/infra engineers, and data product managers.\n\n## Why it matters\nKnowing who owns what keeps you from rebuilding something another team already maintains.\n\n## In practice\nMatch responsibilities to roles. A quick map:\n\n```text\nAnalytics eng -> dbt models, metrics layer\nML eng -> feature pipelines, serving\nPlatform eng -> the warehouse + orchestration infra\n```"
             },
             {
               "kind": "exercise",
@@ -155,7 +155,7 @@
             {
               "kind": "lesson",
               "title": "Sketch your first pipeline",
-              "body": "## Sketch your first pipeline\n\nA pipeline sketch names the source, the destination, the transformation, the schedule, and the owner before any code is written.\n\n## Why it matters\nA five-line sketch catches design mistakes that would cost days to undo in code.\n\n## In practice\nWrite a one-page pipeline spec. The template:\n\n```text\nSource:      public weather API\nDestination: BigQuery table weather.daily\nTransform:   parse JSON, keep city/date/temp\nSchedule:    daily at 06:00\nOwner:       you\n```"
+              "body": "## Sketch your first pipeline\n\nA pipeline sketch names the source, the destination, the transformation, the schedule, and the owner before any code is written.\n\n## Why it matters\nA five-line sketch catches design mistakes that would cost days to undo in code.\n\n## In practice\nWrite a one-page pipeline spec. The template:\n\n```text\nSource: public weather API\nDestination: BigQuery table weather.daily\nTransform: parse JSON, keep city/date/temp\nSchedule: daily at 06:00\nOwner: you\n```"
             },
             {
               "kind": "exercise",
@@ -250,7 +250,7 @@
             {
               "kind": "lesson",
               "title": "Normalization vs denormalization",
-              "body": "## Normalization vs denormalization\n\nOLTP favours normalized tables (no duplicated data, many joins); OLAP often denormalizes to reduce joins and speed up scans.\n\n## Why it matters\nThe right level of normalization depends entirely on whether you optimise for writes or for reads.\n\n## In practice\nContrast the two shapes. Normalized splits; denormalized flattens:\n\n```text\nNormalized:   orders + users + products (3 tables, joins)\nDenormalized: order_facts (1 wide table, no joins)\n```"
+              "body": "## Normalization vs denormalization\n\nOLTP favours normalized tables (no duplicated data, many joins); OLAP often denormalizes to reduce joins and speed up scans.\n\n## Why it matters\nThe right level of normalization depends entirely on whether you optimise for writes or for reads.\n\n## In practice\nContrast the two shapes. Normalized splits; denormalized flattens:\n\n```text\nNormalized: orders + users + products (3 tables, joins)\nDenormalized: order_facts (1 wide table, no joins)\n```"
             },
             {
               "kind": "exercise",
@@ -267,7 +267,7 @@
             {
               "kind": "lesson",
               "title": "Facts and dimensions",
-              "body": "## Facts and dimensions\n\nA fact table stores measurable events (a sale, a click) with foreign keys; dimension tables store the descriptive context (who, what, when, where).\n\n## Why it matters\nSeparating facts from dimensions is what makes a warehouse queryable by business questions.\n\n## In practice\nIdentify facts vs dimensions. A sale decomposes as:\n\n```text\nfact_sales: sale_id, date_key, product_key, customer_key, amount\ndim_product, dim_customer, dim_date  (the context)\n```"
+              "body": "## Facts and dimensions\n\nA fact table stores measurable events (a sale, a click) with foreign keys; dimension tables store the descriptive context (who, what, when, where).\n\n## Why it matters\nSeparating facts from dimensions is what makes a warehouse queryable by business questions.\n\n## In practice\nIdentify facts vs dimensions. A sale decomposes as:\n\n```text\nfact_sales: sale_id, date_key, product_key, customer_key, amount\ndim_product, dim_customer, dim_date (the context)\n```"
             },
             {
               "kind": "exercise",
@@ -301,7 +301,7 @@
             {
               "kind": "lesson",
               "title": "The snowflake schema",
-              "body": "## The snowflake schema\n\nA snowflake schema normalizes dimensions into sub-dimensions (e.g., dim_product -> dim_category), trading some query speed for less redundancy.\n\n## Why it matters\nKnowing when to snowflake versus stay star keeps your model from becoming either bloated or slow.\n\n## In practice\nSee the extra hop snowflaking adds:\n\n```text\nstar:      fact -> dim_product(category_name)\nsnowflake: fact -> dim_product -> dim_category(category_name)\n```"
+              "body": "## The snowflake schema\n\nA snowflake schema normalizes dimensions into sub-dimensions (e.g., dim_product -> dim_category), trading some query speed for less redundancy.\n\n## Why it matters\nKnowing when to snowflake versus stay star keeps your model from becoming either bloated or slow.\n\n## In practice\nSee the extra hop snowflaking adds:\n\n```text\nstar: fact -> dim_product(category_name)\nsnowflake: fact -> dim_product -> dim_category(category_name)\n```"
             },
             {
               "kind": "exercise",
@@ -318,7 +318,7 @@
             {
               "kind": "lesson",
               "title": "Surrogate keys and slowly changing dimensions",
-              "body": "## Surrogate keys and slowly changing dimensions\n\nSurrogate keys are warehouse-generated integer keys that decouple the model from source IDs; slowly changing dimensions (SCD) track how descriptive attributes change over time.\n\n## Why it matters\nWithout SCD handling, a customer who moves cities silently rewrites history in your reports.\n\n## In practice\nSee a Type 2 SCD keep history with row versions:\n\n```text\ncustomer_key | customer_id | city     | valid_from | valid_to\n1            | 42          | Banjul   | 2025-01-01 | 2026-05-31\n2            | 42          | Serrekunda| 2026-06-01 | NULL\n```"
+              "body": "## Surrogate keys and slowly changing dimensions\n\nSurrogate keys are warehouse-generated integer keys that decouple the model from source IDs; slowly changing dimensions (SCD) track how descriptive attributes change over time.\n\n## Why it matters\nWithout SCD handling, a customer who moves cities silently rewrites history in your reports.\n\n## In practice\nSee a Type 2 SCD keep history with row versions:\n\n```text\ncustomer_key | customer_id | city | valid_from | valid_to\n1 | 42 | Banjul | 2025-01-01 | 2026-05-31\n2 | 42 | Serrekunda| 2026-06-01 | NULL\n```"
             },
             {
               "kind": "exercise",
@@ -464,7 +464,7 @@
             {
               "kind": "lesson",
               "title": "Warehouse cost models",
-              "body": "## Warehouse cost models\n\nWarehouses bill either per byte scanned (BigQuery on-demand) or per compute-time (Snowflake/Redshift), so the cheapest design depends on the pricing model.\n\n## Why it matters\nThe same query can be cheap on one warehouse and expensive on another purely due to the billing model.\n\n## In practice\nMatch optimisation to billing:\n\n```text\nper-byte  -> select fewer columns, partition, filter early\nper-time  -> right-size compute, auto-suspend, cache results\n```"
+              "body": "## Warehouse cost models\n\nWarehouses bill either per byte scanned (BigQuery on-demand) or per compute-time (Snowflake/Redshift), so the cheapest design depends on the pricing model.\n\n## Why it matters\nThe same query can be cheap on one warehouse and expensive on another purely due to the billing model.\n\n## In practice\nMatch optimisation to billing:\n\n```text\nper-byte -> select fewer columns, partition, filter early\nper-time -> right-size compute, auto-suspend, cache results\n```"
             },
             {
               "kind": "exercise",
@@ -627,7 +627,7 @@
             {
               "kind": "lesson",
               "title": "dbt tests",
-              "body": "## dbt tests\n\ndbt ships generic tests (unique, not_null, accepted_values, relationships) you declare in YAML, plus custom SQL tests.\n\n## Why it matters\nTests turn silent data corruption into a failed build you notice before stakeholders do.\n\n## In practice\nDeclare tests on a column in schema.yml:\n\n```yaml\nmodels:\n  - name: stg_orders\n    columns:\n      - name: order_id\n        tests: [unique, not_null]\n```"
+              "body": "## dbt tests\n\ndbt ships generic tests (unique, not_null, accepted_values, relationships) you declare in YAML, plus custom SQL tests.\n\n## Why it matters\nTests turn silent data corruption into a failed build you notice before stakeholders do.\n\n## In practice\nDeclare tests on a column in schema.yml:\n\n```yaml\nmodels:\n - name: stg_orders\n columns:\n - name: order_id\n tests: [unique, not_null]\n```"
             },
             {
               "kind": "exercise",
@@ -722,7 +722,7 @@
             {
               "kind": "lesson",
               "title": "Why Parquet beats CSV",
-              "body": "## Why Parquet beats CSV\n\nParquet is a columnar, compressed, typed file format; CSV is row-based, untyped, and bloated.\n\n## Why it matters\nSwitching a pipeline from CSV to Parquet routinely cuts storage and scan cost by 5-10x.\n\n## In practice\nConvert and compare sizes:\n\n```python\nimport pandas as pd\ndf = pd.read_csv('orders.csv')\ndf.to_parquet('orders.parquet')  # smaller + typed\n```"
+              "body": "## Why Parquet beats CSV\n\nParquet is a columnar, compressed, typed file format; CSV is row-based, untyped, and bloated.\n\n## Why it matters\nSwitching a pipeline from CSV to Parquet routinely cuts storage and scan cost by 5-10x.\n\n## In practice\nConvert and compare sizes:\n\n```python\nimport pandas as pd\ndf = pd.read_csv('orders.csv')\ndf.to_parquet('orders.parquet') # smaller + typed\n```"
             },
             {
               "kind": "exercise",
@@ -885,7 +885,7 @@
             {
               "kind": "lesson",
               "title": "Airflow DAGs",
-              "body": "## Airflow DAGs\n\nIn Airflow a DAG (directed acyclic graph) is Python code that defines tasks and their dependencies.\n\n## Why it matters\nBecause the DAG is plain Python, your pipeline definition is testable, reviewable code.\n\n## In practice\nDefine a two-task DAG with a dependency:\n\n```python\nextract = PythonOperator(task_id='extract', python_callable=do_extract)\nload    = PythonOperator(task_id='load', python_callable=do_load)\nextract >> load  # load runs after extract\n```"
+              "body": "## Airflow DAGs\n\nIn Airflow a DAG (directed acyclic graph) is Python code that defines tasks and their dependencies.\n\n## Why it matters\nBecause the DAG is plain Python, your pipeline definition is testable, reviewable code.\n\n## In practice\nDefine a two-task DAG with a dependency:\n\n```python\nextract = PythonOperator(task_id='extract', python_callable=do_extract)\nload = PythonOperator(task_id='load', python_callable=do_load)\nextract >> load # load runs after extract\n```"
             },
             {
               "kind": "exercise",
@@ -902,7 +902,7 @@
             {
               "kind": "lesson",
               "title": "Operators and tasks",
-              "body": "## Operators and tasks\n\nOperators are templated task types (PythonOperator, BashOperator, SQL operators); a task is one instance of an operator in a DAG.\n\n## Why it matters\nPicking the right operator means you write glue, not boilerplate, for common actions.\n\n## In practice\nUse a Bash and a SQL operator together:\n\n```python\nrun_sql = BigQueryInsertJobOperator(task_id='agg', configuration={...})\nnotify  = BashOperator(task_id='notify', bash_command='echo done')\n```"
+              "body": "## Operators and tasks\n\nOperators are templated task types (PythonOperator, BashOperator, SQL operators); a task is one instance of an operator in a DAG.\n\n## Why it matters\nPicking the right operator means you write glue, not boilerplate, for common actions.\n\n## In practice\nUse a Bash and a SQL operator together:\n\n```python\nrun_sql = BigQueryInsertJobOperator(task_id='agg', configuration={...})\nnotify = BashOperator(task_id='notify', bash_command='echo done')\n```"
             },
             {
               "kind": "exercise",
@@ -1008,7 +1008,7 @@
             "Throughput depends only on disk"
           ],
           "correct": 1,
-          "explain": "Within a consumer group each partition is assigned to exactly one consumer. Once consumers equal partitions, additional consumers have nothing to read and sit idle. Throughput therefore scales with partition count, not raw consumer count."
+          "explain": "Within a consumer group each partition is assigned to exactly one consumer. Once consumers equal partitions, additional consumers have nothing to read and sit idle. Throughput So scales with partition count, not raw consumer count."
         },
         {
           "q": "How do teams cheaply approximate exactly-once processing?",
@@ -1031,7 +1031,7 @@
             {
               "kind": "lesson",
               "title": "Streams vs batch, revisited",
-              "body": "## Streams vs batch, revisited\n\nA stream is an unbounded, continuously arriving sequence of events; batch is a bounded chunk processed on a schedule.\n\n## Why it matters\nModelling data as an unbounded stream changes how you think about completeness and time.\n\n## In practice\nSee the mental shift:\n\n```text\nbatch:  [ today's file ] -> process once\nstream: ...e e e e e e e... -> process as each arrives\n```"
+              "body": "## Streams vs batch, revisited\n\nA stream is an unbounded, continuously arriving sequence of events; batch is a bounded chunk processed on a schedule.\n\n## Why it matters\nModelling data as an unbounded stream changes how you think about completeness and time.\n\n## In practice\nSee the mental shift:\n\n```text\nbatch: [ today's file ] -> process once\nstream: ...e e e e e e e... -> process as each arrives\n```"
             },
             {
               "kind": "exercise",
@@ -1116,7 +1116,7 @@
             {
               "kind": "lesson",
               "title": "Amazon Kinesis",
-              "body": "## Amazon Kinesis\n\nKinesis is AWS's managed streaming service with shards (like partitions) and tight integration with Lambda and Firehose.\n\n## Why it matters\nManaged streaming removes the operational burden of running your own Kafka cluster.\n\n## In practice\nNote the Kafka-to-Kinesis vocabulary map:\n\n```text\nKafka topic     ~ Kinesis stream\nKafka partition ~ Kinesis shard\n```"
+              "body": "## Amazon Kinesis\n\nKinesis is AWS's managed streaming service with shards (like partitions) and tight integration with Lambda and Firehose.\n\n## Why it matters\nManaged streaming removes the operational burden of running your own Kafka cluster.\n\n## In practice\nNote the Kafka-to-Kinesis vocabulary map:\n\n```text\nKafka topic ~ Kinesis stream\nKafka partition ~ Kinesis shard\n```"
             },
             {
               "kind": "exercise",
@@ -1133,7 +1133,7 @@
             {
               "kind": "lesson",
               "title": "Windowing over streams",
-              "body": "## Windowing over streams\n\nBecause streams are unbounded, aggregations use time windows (tumbling, sliding, session) to produce finite results.\n\n## Why it matters\nWindowing is how you answer 'how many orders in the last 5 minutes' over never-ending data.\n\n## In practice\nPicture a tumbling window:\n\n```text\n|--5min--||--5min--||--5min--|  each event lands in exactly one bucket\n```"
+              "body": "## Windowing over streams\n\nBecause streams are unbounded, aggregations use time windows (tumbling, sliding, session) to produce finite results.\n\n## Why it matters\nWindowing is how you answer 'how many orders in the last 5 minutes' over never-ending data.\n\n## In practice\nPicture a tumbling window:\n\n```text\n|--5min--||--5min--||--5min--| each event lands in exactly one bucket\n```"
             },
             {
               "kind": "exercise",
@@ -1194,7 +1194,7 @@
             {
               "kind": "lesson",
               "title": "Why distributed processing",
-              "body": "## Why distributed processing\n\nWhen data exceeds one machine's memory or time budget, you split work across a cluster of executors coordinated by a driver.\n\n## Why it matters\nSpark exists for the moment pandas runs out of RAM on a single box.\n\n## In practice\nSee the division of labour:\n\n```text\ndriver  -> plans the job, splits work\nexecutors -> run tasks on partitions in parallel\n```"
+              "body": "## Why distributed processing\n\nWhen data exceeds one machine's memory or time budget, you split work across a cluster of executors coordinated by a driver.\n\n## Why it matters\nSpark exists for the moment pandas runs out of RAM on a single box.\n\n## In practice\nSee the division of labour:\n\n```text\ndriver -> plans the job, splits work\nexecutors -> run tasks on partitions in parallel\n```"
             },
             {
               "kind": "exercise",
@@ -1228,7 +1228,7 @@
             {
               "kind": "lesson",
               "title": "Transformations and actions",
-              "body": "## Transformations and actions\n\nTransformations (select, filter, groupBy) are lazy and build a plan; actions (count, collect, write) trigger execution.\n\n## Why it matters\nKnowing the lazy/eager split explains why nothing runs until you call an action.\n\n## In practice\nSee lazy then eager:\n\n```python\nfiltered = df.filter(df.total > 100)  # lazy, nothing runs\nfiltered.count()                       # action, now it runs\n```"
+              "body": "## Transformations and actions\n\nTransformations (select, filter, groupBy) are lazy and build a plan; actions (count, collect, write) trigger execution.\n\n## Why it matters\nKnowing the lazy/eager split explains why nothing runs until you call an action.\n\n## In practice\nSee lazy then eager:\n\n```python\nfiltered = df.filter(df.total > 100) # lazy, nothing runs\nfiltered.count() # action, now it runs\n```"
             },
             {
               "kind": "exercise",
@@ -1374,7 +1374,7 @@
             {
               "kind": "lesson",
               "title": "dbt tests as quality gates",
-              "body": "## dbt tests as quality gates\n\ndbt's unique, not_null, accepted_values, and relationships tests assert table invariants on every build.\n\n## Why it matters\nWiring tests into the build means corrupt data fails loudly instead of shipping silently.\n\n## In practice\nAssert a foreign-key relationship in YAML:\n\n```yaml\ncolumns:\n  - name: customer_id\n    tests:\n      - relationships: {to: ref('dim_customer'), field: customer_id}\n```"
+              "body": "## dbt tests as quality gates\n\ndbt's unique, not_null, accepted_values, and relationships tests assert table invariants on every build.\n\n## Why it matters\nWiring tests into the build means corrupt data fails loudly instead of shipping silently.\n\n## In practice\nAssert a foreign-key relationship in YAML:\n\n```yaml\ncolumns:\n - name: customer_id\n tests:\n - relationships: {to: ref('dim_customer'), field: customer_id}\n```"
             },
             {
               "kind": "exercise",
@@ -1408,7 +1408,7 @@
             {
               "kind": "lesson",
               "title": "Schema tests and contracts",
-              "body": "## Schema tests and contracts\n\nSchema tests assert column names and types; data contracts formalise the agreement between producers and consumers so upstream changes do not silently break you.\n\n## Why it matters\nA contract turns a surprise schema change into a caught, negotiated event.\n\n## In practice\nPin a schema expectation:\n\n```yaml\nmodels:\n  - name: stg_orders\n    config: {contract: {enforced: true}}\n    columns: [{name: order_id, data_type: int}]\n```"
+              "body": "## Schema tests and contracts\n\nSchema tests assert column names and types; data contracts formalise the agreement between producers and consumers so upstream changes do not silently break you.\n\n## Why it matters\nA contract turns a surprise schema change into a caught, negotiated event.\n\n## In practice\nPin a schema expectation:\n\n```yaml\nmodels:\n - name: stg_orders\n config: {contract: {enforced: true}}\n columns: [{name: order_id, data_type: int}]\n```"
             },
             {
               "kind": "exercise",
@@ -1425,7 +1425,7 @@
             {
               "kind": "lesson",
               "title": "Freshness monitoring",
-              "body": "## Freshness monitoring\n\nFreshness tests assert that data arrived recently enough; stale data is a common silent failure.\n\n## Why it matters\nA pipeline that succeeds but loads yesterday's data is worse than one that fails loudly.\n\n## In practice\nDeclare a source-freshness rule in dbt:\n\n```yaml\nsources:\n  - name: shop\n    freshness: {warn_after: {count: 12, period: hour}}\n    loaded_at_field: _loaded_at\n```"
+              "body": "## Freshness monitoring\n\nFreshness tests assert that data arrived recently enough; stale data is a common silent failure.\n\n## Why it matters\nA pipeline that succeeds but loads yesterday's data is worse than one that fails loudly.\n\n## In practice\nDeclare a source-freshness rule in dbt:\n\n```yaml\nsources:\n - name: shop\n freshness: {warn_after: {count: 12, period: hour}}\n loaded_at_field: _loaded_at\n```"
             },
             {
               "kind": "exercise",
@@ -1459,7 +1459,7 @@
             {
               "kind": "lesson",
               "title": "Quality gates in CI",
-              "body": "## Quality gates in CI\n\nRunning tests in CI on every pull request blocks bad transformations from ever reaching production.\n\n## Why it matters\nCI is where data quality shifts from hope to enforcement.\n\n## In practice\nGate a merge on tests in CI:\n\n```yaml\n# .github/workflows/dbt.yml\n- run: dbt build   # runs models AND tests; fails the PR on any test failure\n```"
+              "body": "## Quality gates in CI\n\nRunning tests in CI on every pull request blocks bad transformations from ever reaching production.\n\n## Why it matters\nCI is where data quality shifts from hope to enforcement.\n\n## In practice\nGate a merge on tests in CI:\n\n```yaml\n# .github/workflows/dbt.yml\n- run: dbt build # runs models AND tests; fails the PR on any test failure\n```"
             },
             {
               "kind": "exercise",
@@ -1537,7 +1537,7 @@
             {
               "kind": "lesson",
               "title": "Metadata: the data about data",
-              "body": "## Metadata: the data about data\n\nTechnical, business, and operational metadata describe schemas, meanings, and run history, powering search and trust.\n\n## Why it matters\nRich metadata is what lets a new analyst find the right table in minutes, not days.\n\n## In practice\nDistinguish the metadata types:\n\n```text\ntechnical: column types, size\nbusiness:  'revenue = net of refunds'\noperational: last run, row count\n```"
+              "body": "## Metadata: the data about data\n\nTechnical, business, and operational metadata describe schemas, meanings, and run history, powering search and trust.\n\n## Why it matters\nRich metadata is what lets a new analyst find the right table in minutes, not days.\n\n## In practice\nDistinguish the metadata types:\n\n```text\ntechnical: column types, size\nbusiness: 'revenue = net of refunds'\noperational: last run, row count\n```"
             },
             {
               "kind": "exercise",
@@ -1588,7 +1588,7 @@
             {
               "kind": "lesson",
               "title": "PII and data classification",
-              "body": "## PII and data classification\n\nSensitive data (PII, financial, health) must be identified, tagged, and handled under stricter access and retention rules.\n\n## Why it matters\nMishandling PII is not just a trust problem but a legal and regulatory one.\n\n## In practice\nTag sensitive columns explicitly:\n\n```text\ndim_customer.email     -> PII\ndim_customer.card_last4 -> financial-sensitive\n```"
+              "body": "## PII and data classification\n\nSensitive data (PII, financial, health) must be identified, tagged, and handled under stricter access and retention rules.\n\n## Why it matters\nMishandling PII is not just a trust problem but a legal and regulatory one.\n\n## In practice\nTag sensitive columns explicitly:\n\n```text\ndim_customer.email -> PII\ndim_customer.card_last4 -> financial-sensitive\n```"
             },
             {
               "kind": "exercise",
@@ -1605,7 +1605,7 @@
             {
               "kind": "lesson",
               "title": "Access control and least privilege",
-              "body": "## Access control and least privilege\n\nRole-based access control grants the minimum permissions each role needs, and masking hides sensitive fields from those who do not.\n\n## Why it matters\nLeast privilege limits the blast radius of both mistakes and breaches.\n\n## In practice\nGrant scoped, not blanket, access:\n\n```sql\nGRANT SELECT ON analytics.fct_orders TO ROLE analyst;  -- not GRANT ALL\n```"
+              "body": "## Access control and least privilege\n\nRole-based access control grants the minimum permissions each role needs, and masking hides sensitive fields from those who do not.\n\n## Why it matters\nLeast privilege limits the blast radius of both mistakes and breaches.\n\n## In practice\nGrant scoped, not blanket, access:\n\n```sql\nGRANT SELECT ON analytics.fct_orders TO ROLE analyst; -- not GRANT ALL\n```"
             },
             {
               "kind": "exercise",
@@ -1683,7 +1683,7 @@
             {
               "kind": "lesson",
               "title": "Pick a source and define the question",
-              "body": "## Pick a source and define the question\n\nA capstone starts with one business question and a public source that can answer it.\n\n## Why it matters\nScoping to one question keeps a 14-week build from sprawling into nothing shipped.\n\n## In practice\nWrite the one-liner that anchors everything:\n\n```text\nQuestion: how do daily bike trips vary by weather?\nSource:   public bike-share + weather APIs\n```"
+              "body": "## Pick a source and define the question\n\nA capstone starts with one business question and a public source that can answer it.\n\n## Why it matters\nScoping to one question keeps a 14-week build from sprawling into nothing shipped.\n\n## In practice\nWrite the one-liner that anchors everything:\n\n```text\nQuestion: how do daily bike trips vary by weather?\nSource: public bike-share + weather APIs\n```"
             },
             {
               "kind": "exercise",
@@ -1717,7 +1717,7 @@
             {
               "kind": "lesson",
               "title": "Define the data contract",
-              "body": "## Define the data contract\n\nAgree the schema, freshness, and ownership of each dataset up front.\n\n## Why it matters\nA contract makes downstream breakage a caught event, not a surprise.\n\n## In practice\nPin the contract for your raw source:\n\n```text\nraw.trips: trip_id, start_ts, end_ts, station_id  | daily | owner: you\n```"
+              "body": "## Define the data contract\n\nAgree the schema, freshness, and ownership of each dataset up front.\n\n## Why it matters\nA contract makes downstream breakage a caught event, not a surprise.\n\n## In practice\nPin the contract for your raw source:\n\n```text\nraw.trips: trip_id, start_ts, end_ts, station_id | daily | owner: you\n```"
             },
             {
               "kind": "exercise",
@@ -1880,7 +1880,7 @@
             {
               "kind": "lesson",
               "title": "Handle pagination and rate limits",
-              "body": "## Handle pagination and rate limits\n\nLoop through pages and back off on rate-limit responses to fetch complete data politely.\n\n## Why it matters\nSkipping pagination silently truncates your dataset; ignoring limits gets you blocked.\n\n## In practice\nPage until exhausted with backoff:\n\n```python\nwhile next_page:\n    r = get(next_page)\n    if r.status_code == 429: time.sleep(backoff); continue\n    next_page = r.json().get('next')\n```"
+              "body": "## Handle pagination and rate limits\n\nLoop through pages and back off on rate-limit responses to fetch complete data politely.\n\n## Why it matters\nSkipping pagination silently truncates your dataset; ignoring limits gets you blocked.\n\n## In practice\nPage until exhausted with backoff:\n\n```python\nwhile next_page:\n r = get(next_page)\n if r.status_code == 429: time.sleep(backoff); continue\n next_page = r.json().get('next')\n```"
             },
             {
               "kind": "exercise",
@@ -1897,7 +1897,7 @@
             {
               "kind": "lesson",
               "title": "Make extraction idempotent",
-              "body": "## Make extraction idempotent\n\nRe-extracting a date should overwrite, not duplicate, that date's landing file.\n\n## Why it matters\nIdempotent extraction lets you safely rerun failed days during backfills.\n\n## In practice\nOverwrite the date partition deterministically:\n\n```python\npath = f'raw/dt={d}/data.json'  # same path each run for date d\n```"
+              "body": "## Make extraction idempotent\n\nRe-extracting a date should overwrite, not duplicate, that date's landing file.\n\n## Why it matters\nIdempotent extraction lets you safely rerun failed days during backfills.\n\n## In practice\nOverwrite the date partition deterministically:\n\n```python\npath = f'raw/dt={d}/data.json' # same path each run for date d\n```"
             },
             {
               "kind": "exercise",
@@ -1931,7 +1931,7 @@
             {
               "kind": "lesson",
               "title": "Validate the landed data",
-              "body": "## Validate the landed data\n\nBefore declaring success, check the landed file is non-empty and parseable.\n\n## Why it matters\nA quick post-land check catches empty or truncated extracts immediately.\n\n## In practice\nAssert the landing is sane:\n\n```python\nassert os.path.getsize(path) > 0\njson.load(open(path))  # parseable\n```"
+              "body": "## Validate the landed data\n\nBefore declaring success, check the landed file is non-empty and parseable.\n\n## Why it matters\nA quick post-land check catches empty or truncated extracts immediately.\n\n## In practice\nAssert the landing is sane:\n\n```python\nassert os.path.getsize(path) > 0\njson.load(open(path)) # parseable\n```"
             },
             {
               "kind": "exercise",
@@ -2026,7 +2026,7 @@
             {
               "kind": "lesson",
               "title": "Design the partition scheme",
-              "body": "## Design the partition scheme\n\nPartition lake tables by the column queries filter on most, usually date.\n\n## Why it matters\nThe right partition key is the single biggest lever on downstream query cost.\n\n## In practice\nLay out partitions by date:\n\n```text\nlake/trips/dt=2026-06-05/  lake/trips/dt=2026-06-06/\n```"
+              "body": "## Design the partition scheme\n\nPartition lake tables by the column queries filter on most, usually date.\n\n## Why it matters\nThe right partition key is the single biggest lever on downstream query cost.\n\n## In practice\nLay out partitions by date:\n\n```text\nlake/trips/dt=2026-06-05/ lake/trips/dt=2026-06-06/\n```"
             },
             {
               "kind": "exercise",
@@ -2094,7 +2094,7 @@
             {
               "kind": "lesson",
               "title": "Compact small files",
-              "body": "## Compact small files\n\nMany tiny files slow reads; compaction merges them into right-sized files.\n\n## Why it matters\nThe small-files problem quietly throttles every query until you compact.\n\n## In practice\nReduce file count on write:\n\n```python\ndf.repartition(1).write.parquet(path)  # fewer, larger files\n```"
+              "body": "## Compact small files\n\nMany tiny files slow reads; compaction merges them into right-sized files.\n\n## Why it matters\nThe small-files problem quietly throttles every query until you compact.\n\n## In practice\nReduce file count on write:\n\n```python\ndf.repartition(1).write.parquet(path) # fewer, larger files\n```"
             },
             {
               "kind": "exercise",
@@ -2189,7 +2189,7 @@
             {
               "kind": "lesson",
               "title": "External tables vs loading",
-              "body": "## External tables vs loading\n\nExternal tables query files in place; native loads copy data in for speed.\n\n## Why it matters\nChoosing in-place versus loaded storage trades freshness against query speed and cost.\n\n## In practice\nCompare the two access modes:\n\n```text\nexternal: query files in the lake directly (no copy)\nnative:   COPY into warehouse storage (faster scans)\n```"
+              "body": "## External tables vs loading\n\nExternal tables query files in place; native loads copy data in for speed.\n\n## Why it matters\nChoosing in-place versus loaded storage trades freshness against query speed and cost.\n\n## In practice\nCompare the two access modes:\n\n```text\nexternal: query files in the lake directly (no copy)\nnative: COPY into warehouse storage (faster scans)\n```"
             },
             {
               "kind": "exercise",
@@ -2335,7 +2335,7 @@
             {
               "kind": "lesson",
               "title": "Set up dbt on the warehouse",
-              "body": "## Set up dbt on the warehouse\n\nConnect dbt to the warehouse and point sources at your staging tables.\n\n## Why it matters\nA working dbt connection is the gate to the entire transformation layer.\n\n## In practice\nDeclare the source and test the connection:\n\n```bash\ndbt debug   # confirms warehouse connectivity\n```"
+              "body": "## Set up dbt on the warehouse\n\nConnect dbt to the warehouse and point sources at your staging tables.\n\n## Why it matters\nA working dbt connection is the gate to the entire transformation layer.\n\n## In practice\nDeclare the source and test the connection:\n\n```bash\ndbt debug # confirms warehouse connectivity\n```"
             },
             {
               "kind": "exercise",
@@ -2369,7 +2369,7 @@
             {
               "kind": "lesson",
               "title": "Naming conventions",
-              "body": "## Naming conventions\n\nConsistent prefixes (stg_, int_, fct_, dim_) make a project navigable.\n\n## Why it matters\nConventions let any teammate predict where a model lives and what it does.\n\n## In practice\nAdopt a layered naming scheme:\n\n```text\nstg_*  raw-cleaned | int_* intermediate | fct_/dim_* marts\n```"
+              "body": "## Naming conventions\n\nConsistent prefixes (stg_, int_, fct_, dim_) make a project navigable.\n\n## Why it matters\nConventions let any teammate predict where a model lives and what it does.\n\n## In practice\nAdopt a layered naming scheme:\n\n```text\nstg_* raw-cleaned | int_* intermediate | fct_/dim_* marts\n```"
             },
             {
               "kind": "exercise",
@@ -2386,7 +2386,7 @@
             {
               "kind": "lesson",
               "title": "Add staging tests",
-              "body": "## Add staging tests\n\nAssert uniqueness and non-null on keys in every staging model.\n\n## Why it matters\nTesting at staging stops bad data before it spreads into marts.\n\n## In practice\nTest the grain key:\n\n```yaml\ncolumns:\n  - name: trip_id\n    tests: [unique, not_null]\n```"
+              "body": "## Add staging tests\n\nAssert uniqueness and non-null on keys in every staging model.\n\n## Why it matters\nTesting at staging stops bad data before it spreads into marts.\n\n## In practice\nTest the grain key:\n\n```yaml\ncolumns:\n - name: trip_id\n tests: [unique, not_null]\n```"
             },
             {
               "kind": "exercise",
@@ -2403,7 +2403,7 @@
             {
               "kind": "lesson",
               "title": "Document the models",
-              "body": "## Document the models\n\nAdd descriptions to models and columns so the catalog and docs are meaningful.\n\n## Why it matters\nDescriptions written now save every future reader a Slack message.\n\n## In practice\nDescribe a model in YAML:\n\n```yaml\nmodels:\n  - name: stg_trips\n    description: One row per bike trip, cleaned and typed.\n```"
+              "body": "## Document the models\n\nAdd descriptions to models and columns so the catalog and docs are meaningful.\n\n## Why it matters\nDescriptions written now save every future reader a Slack message.\n\n## In practice\nDescribe a model in YAML:\n\n```yaml\nmodels:\n - name: stg_trips\n description: One row per bike trip, cleaned and typed.\n```"
             },
             {
               "kind": "exercise",
@@ -2549,7 +2549,7 @@
             {
               "kind": "lesson",
               "title": "Add mart-level tests",
-              "body": "## Add mart-level tests\n\nTest fact-to-dimension relationships and measure ranges.\n\n## Why it matters\nMart tests are the last gate before numbers reach a dashboard.\n\n## In practice\nAssert the fact joins cleanly:\n\n```yaml\ncolumns:\n  - name: station_key\n    tests: [{relationships: {to: ref('dim_station'), field: station_key}}]\n```"
+              "body": "## Add mart-level tests\n\nTest fact-to-dimension relationships and measure ranges.\n\n## Why it matters\nMart tests are the last gate before numbers reach a dashboard.\n\n## In practice\nAssert the fact joins cleanly:\n\n```yaml\ncolumns:\n - name: station_key\n tests: [{relationships: {to: ref('dim_station'), field: station_key}}]\n```"
             },
             {
               "kind": "exercise",
@@ -3072,7 +3072,7 @@
             {
               "kind": "lesson",
               "title": "Wire tests into CI",
-              "body": "## Wire tests into CI\n\nRun the full test suite on every pull request to block regressions.\n\n## Why it matters\nCI enforcement is what makes quality durable rather than occasional.\n\n## In practice\nGate merges on the suite:\n\n```yaml\n- run: dbt build   # models + tests; PR fails on any failure\n```"
+              "body": "## Wire tests into CI\n\nRun the full test suite on every pull request to block regressions.\n\n## Why it matters\nCI enforcement is what makes quality durable rather than occasional.\n\n## In practice\nGate merges on the suite:\n\n```yaml\n- run: dbt build # models + tests; PR fails on any failure\n```"
             },
             {
               "kind": "exercise",
@@ -3167,7 +3167,7 @@
             {
               "kind": "lesson",
               "title": "Document datasets",
-              "body": "## Document datasets\n\nWrite clear descriptions for every model and key column.\n\n## Why it matters\nDocumentation is the difference between a reusable asset and a mystery table.\n\n## In practice\nDescribe a mart in YAML:\n\n```yaml\nmodels:\n  - name: fct_trips\n    description: One row per completed bike trip with weather context.\n```"
+              "body": "## Document datasets\n\nWrite clear descriptions for every model and key column.\n\n## Why it matters\nDocumentation is the difference between a reusable asset and a mystery table.\n\n## In practice\nDescribe a mart in YAML:\n\n```yaml\nmodels:\n - name: fct_trips\n description: One row per completed bike trip with weather context.\n```"
             },
             {
               "kind": "exercise",

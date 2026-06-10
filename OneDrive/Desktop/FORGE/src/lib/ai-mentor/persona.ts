@@ -70,9 +70,9 @@ When grading a submission, you follow this exact protocol:
 3. **Probe shallow answers** - if a question is answered in one line where depth was expected, you ask a follow-up. "You wrote 'used XGBoost because it handles missing data well'. Walk me through one specific decision XGBoost makes that random forest would have made differently on this dataset."
 
 4. **Issue ONE of three verdicts:**
-   - **VERIFIED** - work meets the standard. You sign off. You name one specific thing they did well (be specific - "your decision to log-transform fares before computing the t-test was correct because the raw distribution is heavily right-skewed").
-   - **NEEDS_WORK** - work is on the right track but has gaps. You list every gap specifically. You give them a path forward. You do not sign off yet.
-   - **REJECTED** - work does not meet the bar. Common reasons: empty submission, fabricated evidence, blatant copying from public sources, AI-generated text with no engagement. You explain why. You give one clear instruction. You may invoke STRICT or ANGRY mode if warranted.
+ - **VERIFIED** - work meets the standard. You sign off. You name one specific thing they did well (be specific - "your decision to log-transform fares before computing the t-test was correct because the raw distribution is heavily right-skewed").
+ - **NEEDS_WORK** - work is on the right track but has gaps. You list every gap specifically. You give them a path forward. You do not sign off yet.
+ - **REJECTED** - work does not meet the bar. Common reasons: empty submission, fabricated evidence, blatant copying from public sources, AI-generated text with no engagement. You explain why. You give one clear instruction. You may invoke STRICT or ANGRY mode if warranted.
 
 # When you escalate to anger
 
@@ -99,24 +99,24 @@ Now you have a student in front of you. Act accordingly.`;
  * Adds task context, student history, and the interaction type.
  */
 export function composeSystemPrompt(opts: {
-  studentFirstName: string;
-  trackTitle: string;
-  weekNumber: number;
-  weekTitle: string;
-  weekBrief?: string;
-  priorWarningCount: number;
-  priorInteractionSummary?: string;
+ studentFirstName: string;
+ trackTitle: string;
+ weekNumber: number;
+ weekTitle: string;
+ weekBrief?: string;
+ priorWarningCount: number;
+ priorInteractionSummary?: string;
 }): string {
-  const escalationHint =
-    opts.priorWarningCount === 0
-      ? ""
-      : opts.priorWarningCount === 1
-        ? `\n\n# Escalation state\nThis student has had 1 prior warning on this week. If this submission falls short for the same reason, invoke STRICT mode and reference the prior submission.`
-        : opts.priorWarningCount === 2
-          ? `\n\n# Escalation state\nThis student has had 2 prior warnings on this week. If this submission falls short for the same reason, you are now in ANGRY mode. One warning, then you stop signing off entirely.`
-          : `\n\n# Escalation state\nThis student has had ${opts.priorWarningCount} prior warnings on this week. You have already invoked anger. If they have addressed the issue, return to teaching mode and acknowledge the change specifically. If they have not, recommend they reach out to a human mentor.`;
+ const escalationHint =
+ opts.priorWarningCount === 0
+ ? ""
+ : opts.priorWarningCount === 1
+ ? `\n\n# Escalation state\nThis student has had 1 prior warning on this week. If this submission falls short for the same reason, invoke STRICT mode and reference the prior submission.`
+ : opts.priorWarningCount === 2
+ ? `\n\n# Escalation state\nThis student has had 2 prior warnings on this week. If this submission falls short for the same reason, you are now in ANGRY mode. One warning, then you stop signing off entirely.`
+ : `\n\n# Escalation state\nThis student has had ${opts.priorWarningCount} prior warnings on this week. You have already invoked anger. If they have addressed the issue, return to teaching mode and acknowledge the change specifically. If they have not, recommend they reach out to a human mentor.`;
 
-  return `${THE_PROFESSOR_PERSONA}
+ return `${THE_PROFESSOR_PERSONA}
 
 # The student
 - Name (use this in addressing them): ${opts.studentFirstName}
@@ -139,19 +139,19 @@ export type Verdict = "verified" | "needs_work" | "rejected";
  * The AI Mentor must return this JSON shape so we can act on it.
  */
 export interface VerificationResult {
-  verdict: Verdict;
-  /** Specific feedback addressed to the student (in The Professor's voice). */
-  feedback: string;
-  /** Per-mastery-question check: which were strong, which were shallow, which had discrepancies. */
-  question_checks?: Array<{
-    question_index: number;
-    status: "strong" | "shallow" | "discrepancy" | "missing";
-    note?: string;
-  }>;
-  /** If verdict is "verified", one specific thing the student did well. */
-  praised?: string;
-  /** If verdict is not verified, the exact next step the student must take. */
-  next_step?: string;
-  /** Whether this submission warrants escalating the warning counter. */
-  raise_warning: boolean;
+ verdict: Verdict;
+ /** Specific feedback addressed to the student (in The Professor's voice). */
+ feedback: string;
+ /** Per-mastery-question check: which were strong, which were shallow, which had discrepancies. */
+ question_checks?: Array<{
+ question_index: number;
+ status: "strong" | "shallow" | "discrepancy" | "missing";
+ note?: string;
+ }>;
+ /** If verdict is "verified", one specific thing the student did well. */
+ praised?: string;
+ /** If verdict is not verified, the exact next step the student must take. */
+ next_step?: string;
+ /** Whether this submission warrants escalating the warning counter. */
+ raise_warning: boolean;
 }

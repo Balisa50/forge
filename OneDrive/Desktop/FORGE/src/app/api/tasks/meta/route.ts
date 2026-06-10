@@ -10,38 +10,38 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const url = new URL(req.url);
-  const idsParam = url.searchParams.get("ids") ?? "";
-  const ids = idsParam.split(",").filter(Boolean).slice(0, 100);
-  if (ids.length === 0) return NextResponse.json({ tasks: [] });
+ const session = await auth();
+ if (!session?.user?.id) {
+ return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+ }
+ const url = new URL(req.url);
+ const idsParam = url.searchParams.get("ids") ?? "";
+ const ids = idsParam.split(",").filter(Boolean).slice(0, 100);
+ if (ids.length === 0) return NextResponse.json({ tasks: [] });
 
-  const tasks = await prisma.task.findMany({
-    where: {
-      id: { in: ids },
-      phase: { track: { roadmap: { userId: session.user.id } } },
-    },
-    select: {
-      id: true,
-      title: true,
-      phase: {
-        select: {
-          title: true,
-          track: { select: { roadmap: { select: { title: true } } } },
-        },
-      },
-    },
-  });
+ const tasks = await prisma.task.findMany({
+ where: {
+ id: { in: ids },
+ phase: { track: { roadmap: { userId: session.user.id } } },
+ },
+ select: {
+ id: true,
+ title: true,
+ phase: {
+ select: {
+ title: true,
+ track: { select: { roadmap: { select: { title: true } } } },
+ },
+ },
+ },
+ });
 
-  return NextResponse.json({
-    tasks: tasks.map((t) => ({
-      id: t.id,
-      title: t.title,
-      phaseTitle: t.phase.title,
-      roadmapTitle: t.phase.track.roadmap.title,
-    })),
-  });
+ return NextResponse.json({
+ tasks: tasks.map((t) => ({
+ id: t.id,
+ title: t.title,
+ phaseTitle: t.phase.title,
+ roadmapTitle: t.phase.track.roadmap.title,
+ })),
+ });
 }

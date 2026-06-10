@@ -4,24 +4,24 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+ const session = await auth();
+ if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { stripeCustomerId: true },
-  });
+ const user = await prisma.user.findUnique({
+ where: { id: session.user.id },
+ select: { stripeCustomerId: true },
+ });
 
-  if (!user?.stripeCustomerId) {
-    return NextResponse.json({ error: "No billing account found" }, { status: 400 });
-  }
+ if (!user?.stripeCustomerId) {
+ return NextResponse.json({ error: "No billing account found" }, { status: 400 });
+ }
 
-  const origin = req.headers.get("origin") || "http://localhost:3000";
+ const origin = req.headers.get("origin") || "http://localhost:3000";
 
-  const portalSession = await stripe.billingPortal.sessions.create({
-    customer: user.stripeCustomerId,
-    return_url: `${origin}/dashboard/settings`,
-  });
+ const portalSession = await stripe.billingPortal.sessions.create({
+ customer: user.stripeCustomerId,
+ return_url: `${origin}/dashboard/settings`,
+ });
 
-  return NextResponse.json({ url: portalSession.url });
+ return NextResponse.json({ url: portalSession.url });
 }

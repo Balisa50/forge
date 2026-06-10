@@ -8,22 +8,22 @@ import { redirect } from "next/navigation";
  * Redirects mentor-only and bootcamp users to their own dashboards.
  */
 export async function requireLearnerAccess(userId: string) {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { role: true, isAlsoLearning: true },
-  });
+ const user = await prisma.user.findUnique({
+ where: { id: userId },
+ select: { role: true, isAlsoLearning: true },
+ });
 
-  if (!user) redirect("/login");
+ if (!user) redirect("/login");
 
-  // Mentor-only → mentor dashboard
-  if (user.role === "mentor" && !user.isAlsoLearning) {
-    redirect("/dashboard/mentor");
-  }
+ // Mentor-only → mentor dashboard
+ if (user.role === "mentor" && !user.isAlsoLearning) {
+ redirect("/dashboard/mentor");
+ }
 
-  // Bootcamp admin → org dashboard
-  if (user.role === "bootcamp") {
-    redirect("/dashboard/org");
-  }
+ // Bootcamp admin → org dashboard
+ if (user.role === "bootcamp") {
+ redirect("/dashboard/org");
+ }
 
-  return user;
+ return user;
 }

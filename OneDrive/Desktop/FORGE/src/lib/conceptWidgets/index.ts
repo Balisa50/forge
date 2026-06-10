@@ -20,41 +20,41 @@ import { actuaryWidgets } from "./actuary";
  * automatically.
  */
 const ALL: ConceptWidgetDef[] = [
-  ...dataWidgets,
-  ...mlWidgets,
-  ...aiWidgets,
-  ...webWidgets,
-  ...mobileWidgets,
-  ...devopsWidgets,
-  ...securityWidgets,
-  ...biWidgets,
-  ...automationWidgets,
-  ...actuaryWidgets,
+ ...dataWidgets,
+ ...mlWidgets,
+ ...aiWidgets,
+ ...webWidgets,
+ ...mobileWidgets,
+ ...devopsWidgets,
+ ...securityWidgets,
+ ...biWidgets,
+ ...automationWidgets,
+ ...actuaryWidgets,
 ];
 
 const REGISTRY: Record<string, ConceptWidgetDef> = {};
 for (const w of ALL) {
-  if (REGISTRY[w.id]) throw new Error(`Duplicate concept widget id: ${w.id}`);
-  REGISTRY[w.id] = w;
+ if (REGISTRY[w.id]) throw new Error(`Duplicate concept widget id: ${w.id}`);
+ REGISTRY[w.id] = w;
 }
 
 export function getWidget(id: string): ConceptWidgetDef | undefined {
-  return REGISTRY[id];
+ return REGISTRY[id];
 }
 
 /** Build the full sandboxed HTML document for a widget ref. Returns null for
- *  an unknown id so the renderer can gracefully render nothing. */
+ * an unknown id so the renderer can gracefully render nothing. */
 export function renderWidgetHtml(id: string, params?: WidgetParams): string | null {
-  const w = REGISTRY[id];
-  return w ? w.html(params) : null;
+ const w = REGISTRY[id];
+ return w ? w.html(params) : null;
 }
 
 export function widgetMeta(id: string): { title: string; blurb: string; bridge?: string } | null {
-  const w = REGISTRY[id];
-  return w ? { title: w.title, blurb: w.blurb, bridge: w.bridge } : null;
+ const w = REGISTRY[id];
+ return w ? { title: w.title, blurb: w.blurb, bridge: w.bridge } : null;
 }
 
-/** Every registered widget id — handy for seeding scripts and audits. */
+/** Every registered widget id, handy for seeding scripts and audits. */
 export const WIDGET_IDS: string[] = ALL.map((w) => w.id);
 
 export type { ConceptWidgetDef, WidgetParams };

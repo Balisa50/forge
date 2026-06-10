@@ -2,8 +2,8 @@
  * Learning-mode feature flags.
  *
  * FORGE has two learning modes:
- *   - SOLO    : self-paced, no human mentor (AI companions them)
- *   - MENTEE  : mentor-controlled weekly releases, real human accountability
+ * - SOLO : self-paced, no human mentor (AI companions them)
+ * - MENTEE : mentor-controlled weekly releases, real human accountability
  *
  * Solo mode is gated behind a flag so FORGE can launch mentor-required
  * (every learner has a human accountable to them - the core moat) and
@@ -14,10 +14,10 @@
 
 /** True when self-paced Solo learning is open to users. Defaults FALSE. */
 export function soloModeEnabled(): boolean {
-  return process.env.SOLO_MODE_ENABLED === "true";
+ return process.env.SOLO_MODE_ENABLED === "true";
 }
 
 /** True when the public env mirror says solo is on (for client components). */
 export function soloModeEnabledClient(): boolean {
-  return process.env.NEXT_PUBLIC_SOLO_MODE_ENABLED === "true";
+ return process.env.NEXT_PUBLIC_SOLO_MODE_ENABLED === "true";
 }

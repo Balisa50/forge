@@ -8,22 +8,22 @@
  */
 
 export function aiMentorEnabled(opts?: { userId?: string }): boolean {
-  // Global kill switch first. If this is not "true", nothing runs.
-  if (process.env.AI_MENTOR_ENABLED !== "true") return false;
+ // Global kill switch first. If this is not "true", nothing runs.
+ if (process.env.AI_MENTOR_ENABLED !== "true") return false;
 
-  // Optional per-user whitelist via comma-separated env var.
-  const whitelist = process.env.AI_MENTOR_BETA_USERS;
-  if (whitelist && opts?.userId) {
-    const allowed = whitelist.split(",").map((s) => s.trim()).filter(Boolean);
-    if (allowed.length > 0 && !allowed.includes(opts.userId)) return false;
-  }
+ // Optional per-user whitelist via comma-separated env var.
+ const whitelist = process.env.AI_MENTOR_BETA_USERS;
+ if (whitelist && opts?.userId) {
+ const allowed = whitelist.split(",").map((s) => s.trim()).filter(Boolean);
+ if (allowed.length > 0 && !allowed.includes(opts.userId)) return false;
+ }
 
-  // Belt + braces: require the Anthropic key to actually be present
-  // before claiming we are enabled. Prevents a half-configured deploy
-  // from claiming the feature is on.
-  if (!process.env.ANTHROPIC_API_KEY) return false;
+ // Belt + braces: require the Anthropic key to actually be present
+ // before claiming we are enabled. Prevents a half-configured deploy
+ // from claiming the feature is on.
+ if (!process.env.ANTHROPIC_API_KEY) return false;
 
-  return true;
+ return true;
 }
 
 /**
@@ -32,6 +32,6 @@ export function aiMentorEnabled(opts?: { userId?: string }): boolean {
  * honest error.
  */
 export const AI_MENTOR_DISABLED_RESPONSE = {
-  error: "ai_mentor_disabled",
-  message: "The AI Mentor is not yet active on this instance. The feature is built and waiting to be turned on by the operator.",
+ error: "ai_mentor_disabled",
+ message: "The AI Mentor is not yet active on this instance. The feature is built and waiting to be turned on by the operator.",
 } as const;

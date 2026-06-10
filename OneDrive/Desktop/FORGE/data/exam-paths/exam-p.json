@@ -8,14 +8,14 @@
     "questions": 30,
     "minutes": 180,
     "choices": 5,
-    "passing": "Grade 6 or higher on the SOA 0–10 scale, roughly 70% of questions correct. You get 3 hours for 30 questions, so about 6 minutes each, but the easy ones should take 90 seconds so you can spend 8+ on the hard ones."
+    "passing": "Grade 6 or higher on the SOA 0, 10 scale, roughly 70% of questions correct. You get 3 hours for 30 questions, so about 6 minutes each, but the easy ones should take 90 seconds so you can spend 8+ on the hard ones."
   },
   "gradient": "from-amber-400 to-yellow-600",
   "modules": [
     {
       "id": "general-probability",
       "title": "General Probability",
-      "weight": "23–30%",
+      "weight": "23, 30%",
       "blurb": "Sample spaces, the axioms, counting, conditional probability, Bayes, and independence. This is the grammar of the entire exam, every later topic is built on it, and roughly a quarter of your questions live right here.",
       "concepts": [
         {
@@ -26,27 +26,27 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Before you can compute a probability you have to know **what you are counting over**. Get the sample space wrong and every later step is exactly wrong. Most missed P questions are not algebra mistakes, they are set-up mistakes made in the first ten seconds."
+              "body": "Before you can compute a probability you have to know what you are counting over. Get the sample space wrong and every later step is exactly wrong. Most missed P questions are not algebra mistakes, they are set-up mistakes made in the first ten seconds."
             },
             {
               "kind": "intuition",
               "title": "Think of it as a room of outcomes",
-              "body": "The **sample space** $S$ is the complete list of everything that could happen, the whole room. An **event** is any group of those outcomes, a roped-off section of the room. Probability is just *what fraction of the room* an event occupies (when outcomes are equally likely). Union $A \\cup B$ = in either section. Intersection $A \\cap B$ = in both at once. Complement $A^c$ = everything outside the section. That is the entire vocabulary. Concretely: roll one fair die and the room holds six equally likely outcomes $\\{1,2,3,4,5,6\\}$; the event *even* ropes off $\\{2,4,6\\}$, so it occupies $3/6$ of the room. The instant outcomes stop being equally likely (a loaded die, a non-uniform population) the counting shortcut dies and you must **add the individual probabilities of the outcomes inside the event**. Most set-up errors are exactly this: assuming a uniform room the problem never promised."
+              "body": "The sample space $S$ is the complete list of everything that could happen, the whole room. An event is any group of those outcomes, a roped-off section of the room. Probability is just what fraction of the room an event occupies (when outcomes are equally likely). Union $A \\cup B$ = in either section. Intersection $A \\cap B$ = in both at once. Complement $A^c$ = everything outside the section. That is the entire vocabulary. Concretely: roll one fair die and the room holds six equally likely outcomes $\\{1,2,3,4,5,6\\}$; the event even ropes off $\\{2,4,6\\}$, so it occupies $3/6$ of the room. The instant outcomes stop being equally likely (a loaded die, a non-uniform population) the counting shortcut dies and you must add the individual probabilities of the outcomes inside the event. Most set-up errors are exactly this: assuming a uniform room the problem never promised."
             },
             {
               "kind": "formula",
               "title": "The identities you actually reuse",
-              "body": "Inclusion–exclusion: $$P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$$ Complement: $$P(A^c) = 1 - P(A)$$ De Morgan, the most under-used pair on the exam: $$(A \\cup B)^c = A^c \\cap B^c, \\qquad (A \\cap B)^c = A^c \\cup B^c$$"
+              "body": "Inclusion, exclusion: $$P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$$ Complement: $$P(A^c) = 1 - P(A)$$ De Morgan, the most under-used pair on the exam: $$(A \\cup B)^c = A^c \\cap B^c, \\qquad (A \\cap B)^c = A^c \\cup B^c$$"
             },
             {
               "kind": "formula",
               "title": "Three more identities the exam quietly tests",
-              "body": "**Difference rule** (the part of $A$ that avoids $B$): $$P(A \\cap B^c) = P(A) - P(A \\cap B)$$ **Monotonicity** (a bigger event is at least as likely): if $A \\subseteq B$ then $P(A) \\le P(B)$. **Boole's inequality** (the union bound), true even when you do not know the overlaps: $$P\\!\\left(\\bigcup_i A_i\\right) \\le \\sum_i P(A_i)$$ with equality exactly when the $A_i$ are disjoint. And the silent referee on every line: every probability lives in $[0,1]$, so a running total above $1$ or below $0$ is a flag that you double-counted or mis-built the space."
+              "body": "Difference rule (the part of $A$ that avoids $B$): $$P(A \\cap B^c) = P(A) - P(A \\cap B)$$ Monotonicity (a bigger event is at least as likely): if $A \\subseteq B$ then $P(A) \\le P(B)$. Boole's inequality (the union bound), true even when you do not know the overlaps: $$P\\!\\left(\\bigcup_i A_i\\right) \\le \\sum_i P(A_i)$$ with equality exactly when the $A_i$ are disjoint. And the silent referee on every line: every probability lives in $[0,1]$, so a running total above $1$ or below $0$ is a flag that you double-counted or mis-built the space."
             },
             {
               "kind": "worked",
-              "title": "Inclusion–exclusion in the wild",
-              "body": "In a group, $P(\\text{coffee}) = 0.7$, $P(\\text{tea}) = 0.5$, and $P(\\text{both}) = 0.3$. Find the probability a person drinks **neither**.",
+              "title": "Inclusion, exclusion in the wild",
+              "body": "In a group, $P(\\text{coffee}) = 0.7$, $P(\\text{tea}) = 0.5$, and $P(\\text{both}) = 0.3$. Find the probability a person drinks neither.",
               "steps": [
                 "Drinks at least one: $P(C \\cup T) = 0.7 + 0.5 - 0.3 = 0.9$.",
                 "Neither is the complement of at least one: $P((C \\cup T)^c) = 1 - 0.9$.",
@@ -56,8 +56,8 @@
             },
             {
               "kind": "worked",
-              "title": "Inclusion–exclusion for three events",
-              "body": "A student is enrolled in Math, Physics, and Chemistry with $P(M)=0.5$, $P(P)=0.4$, $P(C)=0.3$, $P(M\\cap P)=0.2$, $P(M\\cap C)=0.15$, $P(P\\cap C)=0.1$, and $P(M\\cap P\\cap C)=0.05$. Find the probability the student takes **at least one** of the three.",
+              "title": "Inclusion, exclusion for three events",
+              "body": "A student is enrolled in Math, Physics, and Chemistry with $P(M)=0.5$, $P(P)=0.4$, $P(C)=0.3$, $P(M\\cap P)=0.2$, $P(M\\cap C)=0.15$, $P(P\\cap C)=0.1$, and $P(M\\cap P\\cap C)=0.05$. Find the probability the student takes at least one of the three.",
               "steps": [
                 "The three-event version adds back the triple overlap that the pairwise subtractions remove twice: $P(M\\cup P\\cup C) = \\sum P(\\text{singles}) - \\sum P(\\text{pairs}) + P(\\text{triple})$.",
                 "Singles: $0.5 + 0.4 + 0.3 = 1.2$. Pairs: $0.2 + 0.15 + 0.1 = 0.45$. Triple: $0.05$.",
@@ -81,23 +81,23 @@
             {
               "kind": "trick",
               "title": "Draw the two-circle Venn, fill the middle first",
-              "body": "Always place $P(A \\cap B)$ in the overlap **first**, then subtract it from each circle so the *only-A* and *only-B* regions are correct. Once the three regions and the outside sum to 1, you can read off any compound probability by eye, no formula recall under pressure."
+              "body": "Always place $P(A \\cap B)$ in the overlap first, then subtract it from each circle so the only-A and only-B regions are correct. Once the three regions and the outside sum to 1, you can read off any compound probability by eye, no formula recall under pressure."
             },
             {
               "kind": "trap",
               "title": "Adding probabilities that overlap",
-              "body": "$P(A \\cup B) = P(A) + P(B)$ is **only** true when $A$ and $B$ are mutually exclusive (no overlap). If they can both happen, you double-count the middle. When a problem says *or* and the events can co-occur, you must subtract $P(A \\cap B)$. Forgetting this single subtraction is the most common General-Probability error."
+              "body": "$P(A \\cup B) = P(A) + P(B)$ is only true when $A$ and $B$ are mutually exclusive (no overlap). If they can both happen, you double-count the middle. When a problem says or and the events can co-occur, you must subtract $P(A \\cap B)$. Forgetting this single subtraction is the most common General-Probability error."
             },
             {
               "kind": "trap",
               "title": "A probability above 1 is a signal, not an answer",
-              "body": "If a union, a sum of cases, or an inclusion, exclusion line ever lands above $1$ (or below $0$), **stop**, you have not found a strange answer, you have found a bug. The usual cause is adding events that overlap as if they were disjoint, or forgetting to subtract a shared region. Treat the $[0,1]$ box as a free, instant error check on every intermediate quantity, not just the final one."
+              "body": "If a union, a sum of cases, or an inclusion, exclusion line ever lands above $1$ (or below $0$), stop, you have not found a strange answer, you have found a bug. The usual cause is adding events that overlap as if they were disjoint, or forgetting to subtract a shared region. Treat the $[0,1]$ box as a free, instant error check on every intermediate quantity, not just the final one."
             },
             {
               "kind": "recall",
               "cards": [
                 {
-                  "front": "Why does inclusion–exclusion subtract $P(A\\cap B)$, and why add the triple back for three events?",
+                  "front": "Why does inclusion, exclusion subtract $P(A\\cap B)$, and why add the triple back for three events?",
                   "back": "Adding $P(A)+P(B)$ counts the overlap twice, so you subtract it once to count each outcome exactly once. With three events the pairwise subtractions remove the central triple-overlap region too many times, so you add $P(A\\cap B\\cap C)$ back to restore it. It is all bookkeeping to count every region precisely once."
                 },
                 {
@@ -129,7 +129,7 @@
                   "$0.5$"
                 ],
                 "correct": 2,
-                "explain": "Rearrange inclusion–exclusion: $P(A \\cap B) = P(A) + P(B) - P(A \\cup B) = 0.6 + 0.5 - 0.8 = 0.3$.",
+                "explain": "Rearrange inclusion, exclusion: $P(A \\cap B) = P(A) + P(B) - P(A \\cup B) = 0.6 + 0.5 - 0.8 = 0.3$.",
                 "difficulty": "warmup"
               },
               {
@@ -181,7 +181,7 @@
                   "$0.90$"
                 ],
                 "correct": 3,
-                "explain": "Independence gives $P(A \\cap B) = 0.5\\,P(B)$. Inclusion–exclusion: $0.9 = 0.5 + P(B) - 0.5P(B) = 0.5 + 0.5P(B)$, so $0.5P(B) = 0.4$ and $P(B) = 0.8$.",
+                "explain": "Independence gives $P(A \\cap B) = 0.5\\,P(B)$. Inclusion, exclusion: $0.9 = 0.5 + P(B) - 0.5P(B) = 0.5 + 0.5P(B)$, so $0.5P(B) = 0.4$ and $P(B) = 0.8$.",
                 "difficulty": "exam"
               },
               {
@@ -194,7 +194,7 @@
                   "$0.05$"
                 ],
                 "correct": 2,
-                "explain": "Three-event inclusion–exclusion: $P(A\\cup B\\cup C) = (0.5+0.4+0.3) - (0.2+0.15+0.12) + 0.05 = 1.2 - 0.47 + 0.05 = 0.78$, so none $= 1 - 0.78 = 0.22$. Dropping the triple term gives 0.27; subtracting it instead of adding gives 0.32; 0.78 is the union itself, not its complement.",
+                "explain": "Three-event inclusion, exclusion: $P(A\\cup B\\cup C) = (0.5+0.4+0.3) - (0.2+0.15+0.12) + 0.05 = 1.2 - 0.47 + 0.05 = 0.78$, so none $= 1 - 0.78 = 0.22$. Dropping the triple term gives 0.27; subtracting it instead of adding gives 0.32; 0.78 is the union itself, not its complement.",
                 "difficulty": "stretch"
               },
               {
@@ -221,12 +221,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "When outcomes are equally likely, probability collapses to **counting**: favorable over total. The entire difficulty is counting correctly, and 90% of that is one decision: *does order matter?*"
+              "body": "When outcomes are equally likely, probability collapses to counting: favorable over total. The entire difficulty is counting correctly, and 90% of that is one decision: does order matter?"
             },
             {
               "kind": "intuition",
               "title": "Order matters → permutation. Order does not → combination.",
-              "body": "Picking a **president, VP, treasurer** from a club: order matters, the roles are different, that is a permutation. Picking a **committee of 3**: order does not matter, a group is a group, that is a combination. The number of combinations is always smaller, because you stop counting the same group in different seat orders. Behind that one question sit **two** independent switches, and together they make the four sampling models you will ever need: does *order* matter, and is there *replacement*? Ordered with replacement gives $n^k$; ordered without gives $P(n,k)$; unordered without gives $\\binom{n}{k}$; unordered with replacement gives stars-and-bars. Pin a problem to its corner of that $2\\times2$ grid and the formula is no longer a guess."
+              "body": "Picking a president, VP, treasurer from a club: order matters, the roles are different, that is a permutation. Picking a committee of 3: order does not matter, a group is a group, that is a combination. The number of combinations is always smaller, because you stop counting the same group in different seat orders. Behind that one question sit two independent switches, and together they make the four sampling models you will ever need: does order matter, and is there replacement? Ordered with replacement gives $n^k$; ordered without gives $P(n,k)$; unordered without gives $\\binom{n}{k}$; unordered with replacement gives stars-and-bars. Pin a problem to its corner of that $2\\times2$ grid and the formula is no longer a guess."
             },
             {
               "kind": "formula",
@@ -236,7 +236,7 @@
             {
               "kind": "formula",
               "title": "The four sampling models, and two facts that save time",
-              "body": "Drawing $k$ items from $n$, classified by *order* and *replacement*: $$\\text{ordered, with: } n^k \\qquad \\text{ordered, without: } \\tfrac{n!}{(n-k)!}$$ $$\\text{unordered, without: } \\binom{n}{k} \\qquad \\text{unordered, with: } \\binom{n+k-1}{k}$$ Two identities that turn ugly arithmetic into one-liners: **symmetry** $\\binom{n}{k} = \\binom{n}{n-k}$ (choosing who is *in* = choosing who is *out*), and **Pascal's rule** $\\binom{n}{k} = \\binom{n-1}{k-1} + \\binom{n-1}{k}$ (split on whether one fixed item is included)."
+              "body": "Drawing $k$ items from $n$, classified by order and replacement: $$\\text{ordered, with: } n^k \\qquad \\text{ordered, without: } \\tfrac{n!}{(n-k)!}$$ $$\\text{unordered, without: } \\binom{n}{k} \\qquad \\text{unordered, with: } \\binom{n+k-1}{k}$$ Two identities that turn ugly arithmetic into one-liners: symmetry $\\binom{n}{k} = \\binom{n}{n-k}$ (choosing who is in = choosing who is out), and Pascal's rule $\\binom{n}{k} = \\binom{n-1}{k-1} + \\binom{n-1}{k}$ (split on whether one fixed item is included)."
             },
             {
               "kind": "worked",
@@ -253,7 +253,7 @@
             {
               "kind": "worked",
               "title": "When order matters: an offices problem",
-              "body": "A club of 8 members elects a president, a vice-president, and a treasurer, three *distinct* offices, one person each. In how many ways can the slate be filled, and what is the probability that a particular member, Ann, holds one of the three offices?",
+              "body": "A club of 8 members elects a president, a vice-president, and a treasurer, three distinct offices, one person each. In how many ways can the slate be filled, and what is the probability that a particular member, Ann, holds one of the three offices?",
               "steps": [
                 "Order matters here (the roles differ), so use a permutation: $P(8,3) = 8 \\cdot 7 \\cdot 6 = 336$ possible slates.",
                 "Count the slates where Ann holds an office: she can take any of the 3 roles, and the remaining 2 roles are filled from the other 7: $3 \\cdot P(7,2) = 3 \\cdot (7 \\cdot 6) = 126$.",
@@ -277,17 +277,17 @@
             {
               "kind": "trick",
               "title": "Build the count as choose-this-then-that",
-              "body": "Every hypergeometric-style count is *choose the good ones $\\times$ choose the rest, over choose everything*. Write the denominator first ($\\binom{N}{n}$, choose your whole sample), then split the numerator into the groups the problem cares about. The structure writes itself."
+              "body": "Every hypergeometric-style count is choose the good ones $\\times$ choose the rest, over choose everything. Write the denominator first ($\\binom{N}{n}$, choose your whole sample), then split the numerator into the groups the problem cares about. The structure writes itself."
             },
             {
               "kind": "trap",
               "title": "Using a permutation when order is irrelevant",
-              "body": "If you count a 3-person committee with $P(n,3)$ instead of $\\binom{n}{3}$, you over-count by $3! = 6$. The tell: if swapping two chosen items gives a *different* outcome you care about, order matters; if it gives the *same* outcome, divide out the $k!$."
+              "body": "If you count a 3-person committee with $P(n,3)$ instead of $\\binom{n}{3}$, you over-count by $3! = 6$. The tell: if swapping two chosen items gives a different outcome you care about, order matters; if it gives the same outcome, divide out the $k!$."
             },
             {
               "kind": "trap",
               "title": "Additivity needs disjointness, the axiom has fine print",
-              "body": "The third axiom, $P(\\bigcup A_i) = \\sum P(A_i)$, holds **only for mutually disjoint** events. Adding probabilities of events that can co-occur silently breaks it and inflates your total. A clean self-check: if your candidate probabilities are supposed to partition the sample space, they must sum to exactly $1$, no more (overlap) and no less (a missing case)."
+              "body": "The third axiom, $P(\\bigcup A_i) = \\sum P(A_i)$, holds only for mutually disjoint events. Adding probabilities of events that can co-occur silently breaks it and inflates your total. A clean self-check: if your candidate probabilities are supposed to partition the sample space, they must sum to exactly $1$, no more (overlap) and no less (a missing case)."
             },
             {
               "kind": "recall",
@@ -355,7 +355,7 @@
                 "difficulty": "core"
               },
               {
-                "q": "A 4-digit PIN allows digits 0–9 with repetition. How many PINs have no two adjacent digits equal?",
+                "q": "A 4-digit PIN allows digits 0, 9 with repetition. How many PINs have no two adjacent digits equal?",
                 "choices": [
                   "$10 \\cdot 9^3$",
                   "$10^4$",
@@ -417,17 +417,17 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Almost every hard P question hides a *given that*, and the moment you condition, you are working in a **smaller world**. Students who picture that shrinking world get these right fast; students who memorize the formula blind get tangled in which probability goes on the bottom."
+              "body": "Almost every hard P question hides a given that, and the moment you condition, you are working in a smaller world. Students who picture that shrinking world get these right fast; students who memorize the formula blind get tangled in which probability goes on the bottom."
             },
             {
               "kind": "intuition",
               "title": "Conditioning = restrict, then renormalize",
-              "body": "$P(A \\mid B)$ asks: *given we already landed inside $B$, how much of $B$ is also $A$?* You throw away everything outside $B$ (the new world is $B$), then ask what fraction of that world is $A \\cap B$. That is why $B$ sits in the denominator, it is the new total. Picture it with counts: out of $100$ people, $40$ own a car ($B$) and $10$ own *both* a car and a bike ($A\\cap B$). Asked $P(A\\mid B)$, you stand inside the $40$ car-owners and ask what share also bike: $10/40 = 0.25$. The original $100$ has vanished; the conditioned world *is* the $40$."
+              "body": "$P(A \\mid B)$ asks: given we already landed inside $B$, how much of $B$ is also $A$? You throw away everything outside $B$ (the new world is $B$), then ask what fraction of that world is $A \\cap B$. That is why $B$ sits in the denominator, it is the new total. Picture it with counts: out of $100$ people, $40$ own a car ($B$) and $10$ own both a car and a bike ($A\\cap B$). Asked $P(A\\mid B)$, you stand inside the $40$ car-owners and ask what share also bike: $10/40 = 0.25$. The original $100$ has vanished; the conditioned world is the $40$."
             },
             {
               "kind": "formula",
               "title": "Conditioning makes a brand-new, fully valid probability world",
-              "body": "Fix $B$ with $P(B) > 0$. Then $P(\\cdot \\mid B)$ obeys **all three axioms** by itself, so every identity you already trust still works *inside* the conditioned world: $$P(A^c \\mid B) = 1 - P(A \\mid B), \\qquad P(A \\cup C \\mid B) = P(A\\mid B) + P(C\\mid B) - P(A \\cap C \\mid B).$$ The **chain rule** extends the multiplication rule to a sequence, read it left to right as 'first this, then the next given the first, then the next given both': $$P(A_1 \\cap A_2 \\cap A_3) = P(A_1)\\,P(A_2 \\mid A_1)\\,P(A_3 \\mid A_1 \\cap A_2).$$"
+              "body": "Fix $B$ with $P(B) > 0$. Then $P(\\cdot \\mid B)$ obeys all three axioms by itself, so every identity you already trust still works inside the conditioned world: $$P(A^c \\mid B) = 1 - P(A \\mid B), \\qquad P(A \\cup C \\mid B) = P(A\\mid B) + P(C\\mid B) - P(A \\cap C \\mid B).$$ The chain rule extends the multiplication rule to a sequence, read it left to right as 'first this, then the next given the first, then the next given both': $$P(A_1 \\cap A_2 \\cap A_3) = P(A_1)\\,P(A_2 \\mid A_1)\\,P(A_3 \\mid A_1 \\cap A_2).$$"
             },
             {
               "kind": "formula",
@@ -448,7 +448,7 @@
             {
               "kind": "worked",
               "title": "The multiplication rule in sequence (no replacement)",
-              "body": "An urn holds 5 red and 3 blue balls. You draw two balls *without replacement*. What is the probability both are red?",
+              "body": "An urn holds 5 red and 3 blue balls. You draw two balls without replacement. What is the probability both are red?",
               "steps": [
                 "Chain the draws with the multiplication rule: $P(R_1 \\cap R_2) = P(R_1)\\,P(R_2 \\mid R_1)$.",
                 "First draw: $P(R_1) = 5/8$. After a red is removed, 4 reds remain of 7 balls, so $P(R_2 \\mid R_1) = 4/7$, conditioning *shrinks the world* from 8 balls to 7.",
@@ -472,17 +472,17 @@
             {
               "kind": "trick",
               "title": "The tree: branch probabilities multiply along a path",
-              "body": "Draw a tree: first branch on the condition ($F_1$ vs $F_2$), then on the outcome (defect vs not). The probability of any leaf is the **product** along its path. To get a marginal like $P(D)$, **add** every leaf where $D$ happens. Multiply along, add across, that single rule solves most conditional problems without algebra."
+              "body": "Draw a tree: first branch on the condition ($F_1$ vs $F_2$), then on the outcome (defect vs not). The probability of any leaf is the product along its path. To get a marginal like $P(D)$, add every leaf where $D$ happens. Multiply along, add across, that single rule solves most conditional problems without algebra."
             },
             {
               "kind": "trap",
               "title": "Flipping the condition",
-              "body": "$P(A \\mid B) \\ne P(B \\mid A)$ in general. *The probability a defective part came from Factory 2* is **not** the same as *the defect rate at Factory 2*. Confusing these two directions is the single biggest conditional-probability mistake, and it is exactly what Bayes' theorem exists to fix."
+              "body": "$P(A \\mid B) \\ne P(B \\mid A)$ in general. The probability a defective part came from Factory 2 is not the same as the defect rate at Factory 2. Confusing these two directions is the single biggest conditional-probability mistake, and it is exactly what Bayes' theorem exists to fix."
             },
             {
               "kind": "trap",
               "title": "Conditioning on $B$ vs on $B^c$ are different worlds",
-              "body": "It is true that $P(A^c \\mid B) = 1 - P(A \\mid B)$, complementing the *event* inside a fixed world. It is **false** in general that $P(A \\mid B^c) = 1 - P(A \\mid B)$, that swaps the *world* you are standing in. Flipping the conditioning event is not the same as flipping the conditioned event; only the latter is a clean complement."
+              "body": "It is true that $P(A^c \\mid B) = 1 - P(A \\mid B)$, complementing the event inside a fixed world. It is false in general that $P(A \\mid B^c) = 1 - P(A \\mid B)$, that swaps the world you are standing in. Flipping the conditioning event is not the same as flipping the conditioned event; only the latter is a clean complement."
             },
             {
               "kind": "recall",
@@ -497,7 +497,7 @@
                 },
                 {
                   "front": "Why may you reuse complement and inclusion-exclusion *inside* a conditional like $P(\\cdot\\mid B)$?",
-                  "back": "Because $P(\\cdot\\mid B)$ is itself a genuine probability measure: it is non-negative, assigns $P(B\\mid B)=1$ to its new sample space $B$, and is additive over disjoint events. Anything provable from the three axioms therefore holds verbatim inside the conditioned world, e.g. $P(A^c\\mid B)=1-P(A\\mid B)$."
+                  "back": "Because $P(\\cdot\\mid B)$ is itself a genuine probability measure: it is non-negative, assigns $P(B\\mid B)=1$ to its new sample space $B$, and is additive over disjoint events. Anything provable from the three axioms So holds verbatim inside the conditioned world, e.g. $P(A^c\\mid B)=1-P(A\\mid B)$."
                 },
                 {
                   "front": "Why is the chain rule the natural extension of the multiplication rule?",
@@ -612,22 +612,22 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "A disease hits 1 in 100 people. A test is 99% accurate both ways. You test positive. Most people, including doctors, guess your chance of being sick is about 99%. **It is roughly 50%.** Bayes is the tool that makes that counterintuitive truth obvious, and the SOA loves it."
+              "body": "A disease hits 1 in 100 people. A test is 99% accurate both ways. You test positive. Most people, including doctors, guess your chance of being sick is about 99%. It is roughly 50%. Bayes is the tool that makes that counterintuitive truth obvious, and the SOA loves it."
             },
             {
               "kind": "intuition",
               "title": "Rare causes stay rare even after evidence",
-              "body": "The base rate dominates. If almost nobody has the disease, then the *false positives drawn from the huge healthy crowd* can rival or outnumber the *true positives from the tiny sick group*. Bayes simply weighs each path by how many people actually walk it. Always think in **counts of people**, not floating probabilities. There is an even faster lens for two hypotheses: **work in odds**. The posterior odds are just the prior odds scaled by how much better the evidence fits one hypothesis than the other, no denominator to compute. That single multiplication is how professionals update beliefs as evidence arrives."
+              "body": "The base rate dominates. If almost nobody has the disease, then the false positives drawn from the huge healthy crowd can rival or outnumber the true positives from the tiny sick group. Bayes simply weighs each path by how many people actually walk it. Always think in counts of people, not floating probabilities. There is an even faster lens for two hypotheses: work in odds. The posterior odds are just the prior odds scaled by how much better the evidence fits one hypothesis than the other, no denominator to compute. That single multiplication is how professionals update beliefs as evidence arrives."
             },
             {
               "kind": "formula",
               "title": "Bayes' theorem",
-              "body": "$$P(B_k \\mid A) = \\frac{P(A \\mid B_k)\\,P(B_k)}{\\sum_i P(A \\mid B_i)\\,P(B_i)}$$ The numerator is one path; the denominator is the law of total probability, *all* the paths that produce the evidence $A$. The whole theorem is: this path's weight divided by every path's weight."
+              "body": "$$P(B_k \\mid A) = \\frac{P(A \\mid B_k)\\,P(B_k)}{\\sum_i P(A \\mid B_i)\\,P(B_i)}$$ The numerator is one path; the denominator is the law of total probability, all the paths that produce the evidence $A$. The whole theorem is: this path's weight divided by every path's weight."
             },
             {
               "kind": "formula",
               "title": "The odds form: prior odds times the likelihood ratio",
-              "body": "For two competing causes, divide Bayes by itself and the shared denominator cancels: $$\\underbrace{\\frac{P(B_1 \\mid A)}{P(B_2 \\mid A)}}_{\\text{posterior odds}} = \\underbrace{\\frac{P(B_1)}{P(B_2)}}_{\\text{prior odds}} \\times \\underbrace{\\frac{P(A \\mid B_1)}{P(A \\mid B_2)}}_{\\text{likelihood ratio}}.$$ Evidence enters as a single multiplier (the **Bayes factor**). Independent pieces of evidence multiply their factors in turn, which makes sequential updating trivial."
+              "body": "For two competing causes, divide Bayes by itself and the shared denominator cancels: $$\\underbrace{\\frac{P(B_1 \\mid A)}{P(B_2 \\mid A)}}_{\\text{posterior odds}} = \\underbrace{\\frac{P(B_1)}{P(B_2)}}_{\\text{prior odds}} \\times \\underbrace{\\frac{P(A \\mid B_1)}{P(A \\mid B_2)}}_{\\text{likelihood ratio}}.$$ Evidence enters as a single multiplier (the Bayes factor). Independent pieces of evidence multiply their factors in turn, which makes sequential updating trivial."
             },
             {
               "kind": "widget",
@@ -652,7 +652,7 @@
             {
               "kind": "worked",
               "title": "Reversing the conditional: which factory?",
-              "body": "Recall the factories: Factory 1 makes 60% of units at a 2% defect rate; Factory 2 makes 40% at a 5% defect rate, so the overall defect rate is $0.032$. A unit is found **defective**, what is the probability it came from Factory 2?",
+              "body": "Recall the factories: Factory 1 makes 60% of units at a 2% defect rate; Factory 2 makes 40% at a 5% defect rate, so the overall defect rate is $0.032$. A unit is found defective, what is the probability it came from Factory 2?",
               "steps": [
                 "Bayes flips the known direction (defect rate *given* factory) into the wanted one (factory *given* defective): $P(F_2 \\mid D) = \\dfrac{P(D\\mid F_2)P(F_2)}{P(D)}$.",
                 "Numerator, the $F_2$ path: $P(D\\mid F_2)P(F_2) = (0.05)(0.4) = 0.020$.",
@@ -665,7 +665,7 @@
             {
               "kind": "worked",
               "title": "Odds form, and a second positive test",
-              "body": "Disease prevalence $1\\%$, a test with sensitivity and specificity both $99\\%$. Use odds to find the chance of disease after **one** positive, then after a **second independent** positive.",
+              "body": "Disease prevalence $1\\%$, a test with sensitivity and specificity both $99\\%$. Use odds to find the chance of disease after one positive, then after a second independent positive.",
               "steps": [
                 "**Prior odds** (sick : healthy) $= 1 : 99$.",
                 "**Likelihood ratio** of a positive $= \\dfrac{P(+\\mid \\text{sick})}{P(+\\mid \\text{healthy})} = \\dfrac{0.99}{0.01} = 99$.",
@@ -677,17 +677,17 @@
             {
               "kind": "trick",
               "title": "Skip the formula, use a population of 10,000",
-              "body": "Never plug into the Bayes fraction cold under time pressure. Pick a round population (10,000 or 100,000), split it by the base rate, then apply the rates to get integer counts in each cell. The answer is *favorable count / total positive count*. Faster, and you literally cannot flip the conditional by accident."
+              "body": "Never plug into the Bayes fraction cold under time pressure. Pick a round population (10,000 or 100,000), split it by the base rate, then apply the rates to get integer counts in each cell. The answer is favorable count / total positive count. Faster, and you literally cannot flip the conditional by accident."
             },
             {
               "kind": "trap",
               "title": "Ignoring the base rate",
-              "body": "The base-rate fallacy: jumping from *the test is 99% accurate* to *I am 99% likely sick*. That throws away $P(B_k)$, the prior. When a condition is rare, even an excellent test produces a flood of false positives. The prior is never optional, it is half the calculation."
+              "body": "The base-rate fallacy: jumping from the test is 99% accurate to I am 99% likely sick. That throws away $P(B_k)$, the prior. When a condition is rare, even an excellent test produces a flood of false positives. The prior is never optional, it is half the calculation."
             },
             {
               "kind": "trap",
               "title": "Assuming repeated tests are independent when they are not",
-              "body": "The clean $\\times 99$-per-test update above assumes the tests are **conditionally independent given disease status**. Real retests often share a cause of error (the same reagent flaw, the same biological quirk), so a person who false-positives once is likelier to do it again. When errors are correlated, a second positive adds *less* than a full likelihood ratio, never assume independence the problem has not granted."
+              "body": "The clean $\\times 99$-per-test update above assumes the tests are conditionally independent given disease status. Real retests often share a cause of error (the same reagent flaw, the same biological quirk), so a person who false-positives once is likelier to do it again. When errors are correlated, a second positive adds less than a full likelihood ratio, never assume independence the problem has not granted."
             },
             {
               "kind": "recall",
@@ -817,17 +817,17 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Independence lets you **multiply**, it turns hard joint probabilities into easy products. But it is constantly confused with mutual exclusivity, which is almost its opposite. Nailing the distinction is free points."
+              "body": "Independence lets you multiply, it turns hard joint probabilities into easy products. But it is constantly confused with mutual exclusivity, which is almost its opposite. Nailing the distinction is free points."
             },
             {
               "kind": "intuition",
               "title": "Independent = no information; exclusive = total information",
-              "body": "**Independent**: learning $B$ happened tells you *nothing* about $A$, coin flips. **Mutually exclusive**: learning $B$ happened tells you $A$ *definitely did not*, they cannot co-occur. Far from being the same, mutually exclusive events (with positive probability) are *strongly dependent*: one happening rules the other out. One subtlety the exam exploits: with three or more events, checking them **two at a time** is not enough. Events can be *pairwise* independent yet fail to be *mutually* independent, so the clean product rule over all of them can quietly break even when every pair looks fine."
+              "body": "Independent: learning $B$ happened tells you nothing about $A$, coin flips. Mutually exclusive: learning $B$ happened tells you $A$ definitely did not, they cannot co-occur. Far from being the same, mutually exclusive events (with positive probability) are strongly dependent: one happening rules the other out. One subtlety the exam exploits: with three or more events, checking them two at a time is not enough. Events can be pairwise independent yet fail to be mutually independent, so the clean product rule over all of them can quietly break even when every pair looks fine."
             },
             {
               "kind": "formula",
               "title": "Mutual independence, and closure under complements",
-              "body": "True **mutual** independence of $A_1,\\dots,A_n$ demands the product rule for *every* subset, not just every pair: $$P\\!\\left(\\bigcap_{i\\in T} A_i\\right) = \\prod_{i\\in T} P(A_i) \\quad\\text{for all } T.$$ Pairwise independence is the $|T|=2$ case alone and is strictly weaker. One convenient fact: if $A$ and $B$ are independent, so are $A$ and $B^c$ (and $A^c,B^c$), independence is preserved when you complement either side."
+              "body": "True mutual independence of $A_1,\\dots,A_n$ demands the product rule for every subset, not just every pair: $$P\\!\\left(\\bigcap_{i\\in T} A_i\\right) = \\prod_{i\\in T} P(A_i) \\quad\\text{for all } T.$$ Pairwise independence is the $|T|=2$ case alone and is strictly weaker. One convenient fact: if $A$ and $B$ are independent, so are $A$ and $B^c$ (and $A^c,B^c$), independence is preserved when you complement either side."
             },
             {
               "kind": "formula",
@@ -850,7 +850,7 @@
               "title": "Testing whether two events are independent",
               "body": "You are told $P(A) = 0.5$, $P(B) = 0.4$, and $P(A \\cup B) = 0.7$. Are $A$ and $B$ independent?",
               "steps": [
-                "Independence is a *checkable equation*, not a story, first recover the overlap. Inclusion–exclusion: $P(A\\cap B) = P(A) + P(B) - P(A\\cup B) = 0.5 + 0.4 - 0.7 = 0.2$.",
+                "Independence is a *checkable equation*, not a story, first recover the overlap. Inclusion, exclusion: $P(A\\cap B) = P(A) + P(B) - P(A\\cup B) = 0.5 + 0.4 - 0.7 = 0.2$.",
                 "Compare to the independence benchmark $P(A)P(B) = 0.5 \\times 0.4 = 0.20$.",
                 "The actual overlap $0.2$ equals the product $0.20$, so **yes, $A$ and $B$ are independent**.",
                 "Cross-check through the conditional form: $P(A\\mid B) = \\dfrac{0.2}{0.4} = 0.5 = P(A)$, knowing $B$ leaves $A$'s probability unchanged, the defining signature of independence. ✓"
@@ -872,17 +872,17 @@
             {
               "kind": "trick",
               "title": "'At least one' → take the complement",
-              "body": "Whenever you see *at least one*, do not sum the messy cases, compute $1 - P(\\text{none})$. With independence, $P(\\text{none})$ is just a clean product of the individual failure probabilities. This complement move shows up on the exam constantly."
+              "body": "Whenever you see at least one, do not sum the messy cases, compute $1 - P(\\text{none})$. With independence, $P(\\text{none})$ is just a clean product of the individual failure probabilities. This complement move shows up on the exam constantly."
             },
             {
               "kind": "trap",
               "title": "Treating mutually exclusive as independent",
-              "body": "If $A$ and $B$ are mutually exclusive and both have positive probability, they are **dependent**, because $P(A \\mid B) = 0 \\ne P(A)$. So you cannot multiply their probabilities. Two events can be independent, or mutually exclusive, but (with positive probability) never both."
+              "body": "If $A$ and $B$ are mutually exclusive and both have positive probability, they are dependent, because $P(A \\mid B) = 0 \\ne P(A)$. So you cannot multiply their probabilities. Two events can be independent, or mutually exclusive, but (with positive probability) never both."
             },
             {
               "kind": "trick",
               "title": "To prove independence, check one equation; to disprove it, find one violation",
-              "body": "Independence is a numerical claim, not a vibe. To confirm it, verify $P(A\\cap B) = P(A)P(B)$ (or equivalently $P(A\\mid B)=P(A)$) for the relevant events. To *refute* it you need just a single subset where the product rule fails, which is exactly how the pairwise-but-not-mutual counterexamples are built. Never argue independence from the story alone; the exam writes stories designed to fool that instinct."
+              "body": "Independence is a numerical claim, not a vibe. To confirm it, verify $P(A\\cap B) = P(A)P(B)$ (or equivalently $P(A\\mid B)=P(A)$) for the relevant events. To refute it you need just a single subset where the product rule fails, which is exactly how the pairwise-but-not-mutual counterexamples are built. Never argue independence from the story alone; the exam writes stories designed to fool that instinct."
             },
             {
               "kind": "recall",
@@ -1009,7 +1009,7 @@
     {
       "id": "univariate-random-variables",
       "title": "Univariate Random Variables",
-      "weight": "44–50%",
+      "weight": "44, 50%",
       "blurb": "The biggest slice of the exam by far, nearly half your questions. Distributions, expectation and variance, the named discrete and continuous families, and moment generating functions. Master this module and you have mastered most of Exam P.",
       "concepts": [
         {
@@ -1020,12 +1020,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Half the exam lives on top of one idea: a random variable carries a **total of 1** unit of probability, and a distribution describes exactly how that 1 is spread. Once you see every pmf and pdf as *the same single unit, distributed differently*, the named families stop being memorization."
+              "body": "Half the exam lives on top of one idea: a random variable carries a total of 1 unit of probability, and a distribution describes exactly how that 1 is spread. Once you see every pmf and pdf as the same single unit, distributed differently, the named families stop being memorization."
             },
             {
               "kind": "intuition",
               "title": "Discrete sprinkles, continuous spreads",
-              "body": "A **discrete** variable drops chunks of probability on specific points, the heights $p(x)$ are actual probabilities and must sum to 1. A **continuous** variable smears probability like butter; the height $f(x)$ is a *density*, not a probability, and you get probability only by integrating over an interval (an *area*). For a continuous variable, $P(X = x) = 0$, a single point has no width, hence no area. One more shape lives between the two: a **mixed** variable that drops a chunk of probability on a point *and* spreads the rest as density, e.g. an insurance payout that is exactly $0$ with probability $0.3$ (a deductible never met) and continuous above that. Its CDF then has a visible *jump* of height $0.3$ at $0$ and climbs smoothly afterward. Reading those jumps is a recurring exam skill."
+              "body": "A discrete variable drops chunks of probability on specific points, the heights $p(x)$ are actual probabilities and must sum to 1. A continuous variable smears probability like butter; the height $f(x)$ is a density, not a probability, and you get probability only by integrating over an interval (an area). For a continuous variable, $P(X = x) = 0$, a single point has no width, hence no area. One more shape lives between the two: a mixed variable that drops a chunk of probability on a point and spreads the rest as density, e.g. an insurance payout that is exactly $0$ with probability $0.3$ (a deductible never met) and continuous above that. Its CDF then has a visible jump of height $0.3$ at $0$ and climbs smoothly afterward. Reading those jumps is a recurring exam skill."
             },
             {
               "kind": "formula",
@@ -1035,7 +1035,7 @@
             {
               "kind": "formula",
               "title": "Every CDF obeys four rules, and the survival function",
-              "body": "Whatever the variable, its CDF $F(x)=P(X\\le x)$ is **non-decreasing**, **right-continuous**, and runs from $\\lim_{x\\to-\\infty}F(x)=0$ up to $\\lim_{x\\to\\infty}F(x)=1$. For a discrete variable the size of the jump at a point *is* its probability: $$P(X=x) = F(x) - F(x^-).$$ The **survival function** $S(x)=P(X>x)=1-F(x)$ is the exam's favorite alternate view, tail probabilities, reliability, and 'at least' questions all read more cleanly through $S$."
+              "body": "Whatever the variable, its CDF $F(x)=P(X\\le x)$ is non-decreasing, right-continuous, and runs from $\\lim_{x\\to-\\infty}F(x)=0$ up to $\\lim_{x\\to\\infty}F(x)=1$. For a discrete variable the size of the jump at a point is its probability: $$P(X=x) = F(x) - F(x^-).$$ The survival function $S(x)=P(X>x)=1-F(x)$ is the exam's favorite alternate view, tail probabilities, reliability, and 'at least' questions all read more cleanly through $S$."
             },
             {
               "kind": "widget",
@@ -1088,12 +1088,12 @@
             {
               "kind": "trap",
               "title": "Reading a density as a probability",
-              "body": "$f(x)$ can exceed 1, it is a density, not a probability. A narrow tall pdf can have $f(x) = 5$ and still integrate to 1. Never write $P(X = a) = f(a)$ for a continuous variable; that probability is 0. Probability is always an *area* under $f$, never a height."
+              "body": "$f(x)$ can exceed 1, it is a density, not a probability. A narrow tall pdf can have $f(x) = 5$ and still integrate to 1. Never write $P(X = a) = f(a)$ for a continuous variable; that probability is 0. Probability is always an area under $f$, never a height."
             },
             {
               "kind": "trap",
               "title": "For discrete variables, $\\le$ and $<$ are not interchangeable",
-              "body": "With continuous variables $P(X\\le a)=P(X<a)$ because the single point carries no area, so swapping $\\le$ and $<$ is harmless. With **discrete** variables the point holds real mass, so $P(X<a)=F(a)-P(X=a)$, strictly less than $F(a)$. Misreading 'fewer than 3' as 'at most 3' silently adds one whole probability lump."
+              "body": "With continuous variables $P(X\\le a)=P(X<a)$ because the single point carries no area, so swapping $\\le$ and $<$ is harmless. With discrete variables the point holds real mass, so $P(X<a)=F(a)-P(X=a)$, strictly less than $F(a)$. Misreading 'fewer than 3' as 'at most 3' silently adds one whole probability lump."
             },
             {
               "kind": "recall",
@@ -1228,7 +1228,7 @@
             {
               "kind": "intuition",
               "title": "Balance point and spread",
-              "body": "$E[X]$ is the **balance point** of the distribution, where the probability mass would teeter on a fulcrum. Variance measures the *average squared distance* from that balance point: small variance means tightly clustered, large variance means wild. We square the distances so positives and negatives do not cancel; the standard deviation un-squares it back to the original units. Two cautions the exam builds traps around. First, $E[X]$ need not be a value $X$ can actually take, the average household size is $2.4$ people. Second, expectation does **not** pass through nonlinear functions: $E[g(X)] \\ne g(E[X])$ in general, so $E[X^2]\\ne (E[X])^2$ (their gap is precisely the variance) and $E[1/X]\\ne 1/E[X]$."
+              "body": "$E[X]$ is the balance point of the distribution, where the probability mass would teeter on a fulcrum. Variance measures the average squared distance from that balance point: small variance means tightly clustered, large variance means wild. We square the distances so positives and negatives do not cancel; the standard deviation un-squares it back to the original units. Two cautions the exam builds traps around. First, $E[X]$ need not be a value $X$ can actually take, the average household size is $2.4$ people. Second, expectation does not pass through nonlinear functions: $E[g(X)] \\ne g(E[X])$ in general, so $E[X^2]\\ne (E[X])^2$ (their gap is precisely the variance) and $E[1/X]\\ne 1/E[X]$."
             },
             {
               "kind": "formula",
@@ -1238,7 +1238,7 @@
             {
               "kind": "formula",
               "title": "Linearity always; the tail formula for nonnegative $X$",
-              "body": "Expectation is **linear no matter what**, even for dependent variables: $$E[aX+bY+c] = aE[X]+bE[Y]+c.$$ Variance is *not* so generous, $\\mathrm{Var}(X+Y)=\\mathrm{Var}(X)+\\mathrm{Var}(Y)+2\\,\\mathrm{Cov}(X,Y)$, with the covariance term vanishing only when $X,Y$ are uncorrelated. For a nonnegative variable there is a slick mean shortcut via the survival function: $$E[X]=\\int_0^\\infty S(x)\\,dx = \\int_0^\\infty\\big(1-F(x)\\big)\\,dx.$$"
+              "body": "Expectation is linear no matter what, even for dependent variables: $$E[aX+bY+c] = aE[X]+bE[Y]+c.$$ Variance is not so generous, $\\mathrm{Var}(X+Y)=\\mathrm{Var}(X)+\\mathrm{Var}(Y)+2\\,\\mathrm{Cov}(X,Y)$, with the covariance term vanishing only when $X,Y$ are uncorrelated. For a nonnegative variable there is a slick mean shortcut via the survival function: $$E[X]=\\int_0^\\infty S(x)\\,dx = \\int_0^\\infty\\big(1-F(x)\\big)\\,dx.$$"
             },
             {
               "kind": "worked",
@@ -1283,12 +1283,12 @@
             {
               "kind": "trap",
               "title": "Forgetting to square the scalar in variance",
-              "body": "$\\mathrm{Var}(aX + b) = a^2\\mathrm{Var}(X)$, **not** $a\\,\\mathrm{Var}(X)$, and the $+b$ contributes nothing. Doubling a random variable quadruples its variance. Equally common: $\\mathrm{Var}(X+Y) \\ne \\mathrm{Var}(X) + \\mathrm{Var}(Y)$ unless $X$ and $Y$ are uncorrelated."
+              "body": "$\\mathrm{Var}(aX + b) = a^2\\mathrm{Var}(X)$, not $a\\,\\mathrm{Var}(X)$, and the $+b$ contributes nothing. Doubling a random variable quadruples its variance. Equally common: $\\mathrm{Var}(X+Y) \\ne \\mathrm{Var}(X) + \\mathrm{Var}(Y)$ unless $X$ and $Y$ are uncorrelated."
             },
             {
               "kind": "trap",
               "title": "Expectation does not commute with nonlinear functions (Jensen)",
-              "body": "Writing $E[X^2]=(E[X])^2$ or $E[\\sqrt{X}]=\\sqrt{E[X]}$ is the classic blunder. For a convex function $g$, **Jensen's inequality** gives $E[g(X)]\\ge g(E[X])$ (concave reverses it), so the two sides are equal only when $g$ is linear or $X$ is constant. The whole point of variance, $E[X^2]-(E[X])^2>0$, is a measure of exactly this gap."
+              "body": "Writing $E[X^2]=(E[X])^2$ or $E[\\sqrt{X}]=\\sqrt{E[X]}$ is the classic blunder. For a convex function $g$, Jensen's inequality gives $E[g(X)]\\ge g(E[X])$ (concave reverses it), so the two sides are equal only when $g$ is linear or $X$ is constant. The whole point of variance, $E[X^2]-(E[X])^2>0$, is a measure of exactly this gap."
             },
             {
               "kind": "recall",
@@ -1418,12 +1418,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "You will not derive distributions on the exam, you will **recognize** them. Each named discrete family is a story: counting successes, counting trials until success, counting rare events in an interval. Learn the stories and the right formula leaps out before you finish reading the stem."
+              "body": "You will not derive distributions on the exam, you will recognize them. Each named discrete family is a story: counting successes, counting trials until success, counting rare events in an interval. Learn the stories and the right formula leaps out before you finish reading the stem."
             },
             {
               "kind": "intuition",
               "title": "Each distribution answers one question",
-              "body": "**Binomial**: how many successes in $n$ fixed independent trials? **Geometric**: how many trials until the first success? **Negative binomial**: until the $r$-th success? **Poisson**: how many rare events in a fixed interval, given an average rate? **Hypergeometric**: like binomial but drawing *without* replacement from a finite pool. Match the question to the story first; reach for the formula second. Two relatives complete the family. The **negative binomial** generalizes the geometric: instead of waiting for the *first* success it waits for the *$r$-th*, so it is a sum of $r$ independent geometrics. The **hypergeometric** is the binomial's without-replacement twin, used when the population is finite and small enough that each draw visibly changes the odds (drawing defectives from a crate, not flipping a coin)."
+              "body": "Binomial: how many successes in $n$ fixed independent trials? Geometric: how many trials until the first success? Negative binomial: until the $r$-th success? Poisson: how many rare events in a fixed interval, given an average rate? Hypergeometric: like binomial but drawing without replacement from a finite pool. Match the question to the story first; reach for the formula second. Two relatives complete the family. The negative binomial generalizes the geometric: instead of waiting for the first success it waits for the $r$-th, so it is a sum of $r$ independent geometrics. The hypergeometric is the binomial's without-replacement twin, used when the population is finite and small enough that each draw visibly changes the odds (drawing defectives from a crate, not flipping a coin)."
             },
             {
               "kind": "formula",
@@ -1433,7 +1433,7 @@
             {
               "kind": "formula",
               "title": "Negative binomial, hypergeometric, and geometric memorylessness",
-              "body": "**Negative binomial** (trials until the $r$-th success): $P(X=k)=\\binom{k-1}{r-1}p^r(1-p)^{k-r}$, mean $r/p$, variance $r(1-p)/p^2$. **Hypergeometric** (draw $n$ without replacement from $N$ items, $K$ of them 'good'): $P(X=k)=\\dfrac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}$, mean $n\\frac{K}{N}$. The **geometric is memoryless** (the only discrete distribution that is): $P(X>s+t\\mid X>s)=P(X>t)$, past failures never improve your luck."
+              "body": "Negative binomial (trials until the $r$-th success): $P(X=k)=\\binom{k-1}{r-1}p^r(1-p)^{k-r}$, mean $r/p$, variance $r(1-p)/p^2$. Hypergeometric (draw $n$ without replacement from $N$ items, $K$ of them 'good'): $P(X=k)=\\dfrac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}$, mean $n\\frac{K}{N}$. The geometric is memoryless (the only discrete distribution that is): $P(X>s+t\\mid X>s)=P(X>t)$, past failures never improve your luck."
             },
             {
               "kind": "worked",
@@ -1449,7 +1449,7 @@
             {
               "kind": "worked",
               "title": "Binomial recognition and 'at least'",
-              "body": "A student guesses on a 10-question multiple-choice quiz, each question correct with probability $0.25$ independently. Find the probability of **at least 2** correct, plus the mean and standard deviation of the score.",
+              "body": "A student guesses on a 10-question multiple-choice quiz, each question correct with probability $0.25$ independently. Find the probability of at least 2 correct, plus the mean and standard deviation of the score.",
               "steps": [
                 "Identify the story: a *fixed* number of independent trials ($n=10$) with constant success probability ($p=0.25$), counting successes → Binomial$(10, 0.25)$.",
                 "'At least 2' is cheapest via the complement: $P(X\\ge 2) = 1 - P(X=0) - P(X=1)$.",
@@ -1462,7 +1462,7 @@
             {
               "kind": "worked",
               "title": "Hypergeometric: defectives without replacement",
-              "body": "A box holds $20$ fuses, $5$ of them defective. You draw $4$ at random *without replacement*. Find the probability exactly $2$ are defective.",
+              "body": "A box holds $20$ fuses, $5$ of them defective. You draw $4$ at random without replacement. Find the probability exactly $2$ are defective.",
               "steps": [
                 "Drawing without replacement from a small finite pool, count of 'good' (defective) items, this is hypergeometric with $N=20$, $K=5$, $n=4$.",
                 "Favorable: choose $2$ of the $5$ defective and $2$ of the $15$ good: $\\binom{5}{2}\\binom{15}{2} = 10\\cdot105 = 1050$.",
@@ -1474,17 +1474,17 @@
             {
               "kind": "trick",
               "title": "Poisson's signature: mean equals variance",
-              "body": "If a problem hands you a mean and a variance that are *equal*, suspect Poisson immediately. Also: a binomial with large $n$ and small $p$ is well-approximated by Poisson with $\\lambda = np$, handy when $n$ is too big to compute $\\binom{n}{k}$ comfortably."
+              "body": "If a problem hands you a mean and a variance that are equal, suspect Poisson immediately. Also: a binomial with large $n$ and small $p$ is well-approximated by Poisson with $\\lambda = np$, handy when $n$ is too big to compute $\\binom{n}{k}$ comfortably."
             },
             {
               "kind": "trap",
               "title": "Geometric indexing and the binomial coefficient",
-              "body": "Two classic slips: (1) the geometric can be indexed as *trials until success* (support $1,2,3,\\dots$, mean $1/p$) or *failures before success* (support $0,1,2,\\dots$, mean $(1-p)/p$), read which the problem wants. (2) Binomial needs the $\\binom{n}{k}$ coefficient; dropping it counts only one specific ordering of successes, undercounting badly."
+              "body": "Two classic slips: (1) the geometric can be indexed as trials until success (support $1,2,3,\\dots$, mean $1/p$) or failures before success (support $0,1,2,\\dots$, mean $(1-p)/p$), read which the problem wants. (2) Binomial needs the $\\binom{n}{k}$ coefficient; dropping it counts only one specific ordering of successes, undercounting badly."
             },
             {
               "kind": "trap",
               "title": "With replacement vs without: binomial vs hypergeometric",
-              "body": "If draws are **independent with constant $p$** (replacement, or an effectively infinite pool), it is binomial. If draws are **without replacement from a finite pool**, each draw shifts the odds and it is hypergeometric, the trials are dependent. Using binomial for a small-pool problem overstates the variance, because removing items actually makes the count *less* variable (the finite-population correction)."
+              "body": "If draws are independent with constant $p$ (replacement, or an effectively infinite pool), it is binomial. If draws are without replacement from a finite pool, each draw shifts the odds and it is hypergeometric, the trials are dependent. Using binomial for a small-pool problem overstates the variance, because removing items actually makes the count less variable (the finite-population correction)."
             },
             {
               "kind": "recall",
@@ -1614,12 +1614,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Continuous distributions carry two of the highest-yield tricks on the exam: the exponential's **memorylessness** (the past does not matter) and the normal's **standardization** (every normal question becomes one $Z$-table lookup). These come up again and again, make them reflexes."
+              "body": "Continuous distributions carry two of the highest-yield tricks on the exam: the exponential's memorylessness (the past does not matter) and the normal's standardization (every normal question becomes one $Z$-table lookup). These come up again and again, make them reflexes."
             },
             {
               "kind": "intuition",
               "title": "Three shapes you must recognize on sight",
-              "body": "**Uniform**: flat, every value in $[a,b]$ equally likely. **Exponential**: waiting time for a Poisson event; a memoryless decay from a peak at 0. **Normal**: the symmetric bell, the limit that the CLT funnels everything toward. If you can sketch these three from memory and know roughly where their mass sits, most continuous questions are half-solved before any algebra. The exponential and the Poisson are two views of one process: if events arrive at Poisson rate $\\lambda$, the *count* in a fixed window is Poisson$(\\lambda t)$ while the *gap* between events is Exponential$(\\lambda)$. Count vs wait, same $\\lambda$. And the standard normal table value $\\Phi(z)$ is symmetric, $\\Phi(-z)=1-\\Phi(z)$, which is how you handle negative $Z$-scores from a table that only prints positive ones."
+              "body": "Uniform: flat, every value in $[a,b]$ equally likely. Exponential: waiting time for a Poisson event; a memoryless decay from a peak at 0. Normal: the symmetric bell, the limit that the CLT funnels everything toward. If you can sketch these three from memory and know roughly where their mass sits, most continuous questions are half-solved before any algebra. The exponential and the Poisson are two views of one process: if events arrive at Poisson rate $\\lambda$, the count in a fixed window is Poisson$(\\lambda t)$ while the gap between events is Exponential$(\\lambda)$. Count vs wait, same $\\lambda$. And the standard normal table value $\\Phi(z)$ is symmetric, $\\Phi(-z)=1-\\Phi(z)$, which is how you handle negative $Z$-scores from a table that only prints positive ones."
             },
             {
               "kind": "formula",
@@ -1629,7 +1629,7 @@
             {
               "kind": "formula",
               "title": "Uniform CDF, normal symmetry, and the minimum of exponentials",
-              "body": "**Uniform$(a,b)$** CDF: $F(x)=\\dfrac{x-a}{b-a}$ on $[a,b]$, so probabilities are just length ratios. **Normal symmetry**: $\\Phi(-z)=1-\\Phi(z)$, the bell's mirror image. **Competing exponentials**: if $X_1,\\dots,X_n$ are independent with rates $\\lambda_1,\\dots,\\lambda_n$, the first to occur is $$\\min(X_i)\\sim\\text{Exponential}\\!\\Big(\\textstyle\\sum_i \\lambda_i\\Big),$$ because surviving past $t$ requires *all* of them to, and survival functions multiply."
+              "body": "Uniform$(a,b)$ CDF: $F(x)=\\dfrac{x-a}{b-a}$ on $[a,b]$, so probabilities are just length ratios. Normal symmetry: $\\Phi(-z)=1-\\Phi(z)$, the bell's mirror image. Competing exponentials: if $X_1,\\dots,X_n$ are independent with rates $\\lambda_1,\\dots,\\lambda_n$, the first to occur is $$\\min(X_i)\\sim\\text{Exponential}\\!\\Big(\\textstyle\\sum_i \\lambda_i\\Big),$$ because surviving past $t$ requires all of them to, and survival functions multiply."
             },
             {
               "kind": "worked",
@@ -1658,7 +1658,7 @@
             {
               "kind": "worked",
               "title": "Competing risks: the first of several exponentials",
-              "body": "Three independent components have exponential lifetimes with rates $\\lambda_1=0.1$, $\\lambda_2=0.2$, $\\lambda_3=0.3$ per year. The system fails when the *first* component fails. Find the mean time to system failure.",
+              "body": "Three independent components have exponential lifetimes with rates $\\lambda_1=0.1$, $\\lambda_2=0.2$, $\\lambda_3=0.3$ per year. The system fails when the first component fails. Find the mean time to system failure.",
               "steps": [
                 "System survives past $t$ only if every component does: $P(T>t)=\\prod_i e^{-\\lambda_i t}=e^{-(\\lambda_1+\\lambda_2+\\lambda_3)t}$.",
                 "That is an exponential survival function with combined rate $\\lambda = 0.1+0.2+0.3 = 0.6$.",
@@ -1670,17 +1670,17 @@
             {
               "kind": "trick",
               "title": "Memorylessness kills the conditioning",
-              "body": "For an exponential, $P(X > s + t \\mid X > s) = P(X > t)$, always. The moment you see *given it has already survived...*, drop the elapsed time entirely and compute the fresh tail probability. And for the normal, the empirical rule (68–95–99.7 within 1–2–3 SDs) lets you eyeball many answers without a table."
+              "body": "For an exponential, $P(X > s + t \\mid X > s) = P(X > t)$, always. The moment you see given it has already survived..., drop the elapsed time entirely and compute the fresh tail probability. And for the normal, the empirical rule (68, 95, 99.7 within 1, 2, 3 SDs) lets you eyeball many answers without a table."
             },
             {
               "kind": "trap",
               "title": "Rate vs mean, and continuity of the normal",
-              "body": "The exponential's $\\lambda$ is a **rate**; its mean is $1/\\lambda$. A mean lifetime of 5 means $\\lambda = 0.2$, not 5. Mixing these inverts your exponents. Also: when standardizing, divide by $\\sigma$ (the SD), not $\\sigma^2$ (the variance), a frequent, costly slip."
+              "body": "The exponential's $\\lambda$ is a rate; its mean is $1/\\lambda$. A mean lifetime of 5 means $\\lambda = 0.2$, not 5. Mixing these inverts your exponents. Also: when standardizing, divide by $\\sigma$ (the SD), not $\\sigma^2$ (the variance), a frequent, costly slip."
             },
             {
               "kind": "trap",
               "title": "Count vs wait, and reading negative $Z$ from the table",
-              "body": "Keep the two roles of one Poisson process straight: the **number** of events in a window is Poisson; the **time** to the next event is exponential. Plugging a time into a Poisson pmf (or vice versa) is a frequent mix-up. On the normal, a table printing only $z\\ge0$ still handles negatives via $\\Phi(-z)=1-\\Phi(z)$, forgetting the flip turns a lower-tail probability into its complement."
+              "body": "Keep the two roles of one Poisson process straight: the number of events in a window is Poisson; the time to the next event is exponential. Plugging a time into a Poisson pmf (or vice versa) is a frequent mix-up. On the normal, a table printing only $z\\ge0$ still handles negatives via $\\Phi(-z)=1-\\Phi(z)$, forgetting the flip turns a lower-tail probability into its complement."
             },
             {
               "kind": "recall",
@@ -1810,22 +1810,22 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Imagine a single function that, when you take its derivatives at zero, hands you the mean, the variance, the third moment, every moment, on demand. That is the **moment generating function**, and the exam loves it because it also *uniquely fingerprints* a distribution and collapses the sum of independent variables into a simple product. Master the MGF and a whole class of questions becomes mechanical."
+              "body": "Imagine a single function that, when you take its derivatives at zero, hands you the mean, the variance, the third moment, every moment, on demand. That is the moment generating function, and the exam loves it because it also uniquely fingerprints a distribution and collapses the sum of independent variables into a simple product. Master the MGF and a whole class of questions becomes mechanical."
             },
             {
               "kind": "intuition",
               "title": "Why differentiating at zero pulls out moments",
-              "body": "The MGF is $M(t) = E[e^{tX}]$. Expand $e^{tX} = 1 + tX + \\frac{t^2X^2}{2!} + \\frac{t^3X^3}{3!} + \\cdots$ and take expectations: $M(t) = 1 + tE[X] + \\frac{t^2}{2!}E[X^2] + \\cdots$. The coefficient of $t^k$ is $E[X^k]/k!$, so the $k$-th derivative at $t=0$ peels off exactly $E[X^k]$. The MGF is a power series whose coefficients *are* the moments, differentiation is just reading off the term you want. A caution the exam occasionally tests: an MGF does not always exist. It requires $E[e^{tX}]$ to be finite on an interval around $0$, which fails for heavy-tailed laws like the lognormal or Cauchy, their tails grow faster than $e^{tx}$ can be tamed. When an MGF exists, though, it is unique, so two variables sharing an MGF share everything."
+              "body": "The MGF is $M(t) = E[e^{tX}]$. Expand $e^{tX} = 1 + tX + \\frac{t^2X^2}{2!} + \\frac{t^3X^3}{3!} + \\cdots$ and take expectations: $M(t) = 1 + tE[X] + \\frac{t^2}{2!}E[X^2] + \\cdots$. The coefficient of $t^k$ is $E[X^k]/k!$, so the $k$-th derivative at $t=0$ peels off exactly $E[X^k]$. The MGF is a power series whose coefficients are the moments, differentiation is just reading off the term you want. A caution the exam occasionally tests: an MGF does not always exist. It requires $E[e^{tX}]$ to be finite on an interval around $0$, which fails for heavy-tailed laws like the lognormal or Cauchy, their tails grow faster than $e^{tx}$ can be tamed. When an MGF exists, though, it is unique, so two variables sharing an MGF share everything."
             },
             {
               "kind": "formula",
               "title": "The three properties you will actually use",
-              "body": "**Moments:** $E[X^k] = M^{(k)}(0)$. So $E[X] = M'(0)$ and $\\mathrm{Var}(X) = M''(0) - [M'(0)]^2$. **Uniqueness:** if two variables have the same MGF on an interval around 0, they have the same distribution, match the MGF to a known form to identify it. **Independent sums:** if $X$ and $Y$ are independent, $M_{X+Y}(t) = M_X(t)\\,M_Y(t)$; and $M_{aX+b}(t) = e^{bt}M_X(at)$."
+              "body": "Moments: $E[X^k] = M^{(k)}(0)$. So $E[X] = M'(0)$ and $\\mathrm{Var}(X) = M''(0) - [M'(0)]^2$. Uniqueness: if two variables have the same MGF on an interval around 0, they have the same distribution, match the MGF to a known form to identify it. Independent sums: if $X$ and $Y$ are independent, $M_{X+Y}(t) = M_X(t)\\,M_Y(t)$; and $M_{aX+b}(t) = e^{bt}M_X(at)$."
             },
             {
               "kind": "formula",
               "title": "More canonical MGFs, and the linear-transform rule",
-              "body": "Add these to your recognition set: **Binomial$(n,p)$**: $\\big(1-p+pe^t\\big)^n$. **Geometric$(p)$** (trials form): $\\dfrac{pe^t}{1-(1-p)e^t}$. **Bernoulli$(p)$**: $1-p+pe^t$. The **linear transform** rides the constant outside and the scale inside the argument: $$M_{aX+b}(t)=e^{bt}M_X(at).$$ So scaling stretches the $t$-axis and shifting tacks on an exponential factor, it does *not* multiply $M_X$ by $a$."
+              "body": "Add these to your recognition set: Binomial$(n,p)$: $\\big(1-p+pe^t\\big)^n$. Geometric$(p)$ (trials form): $\\dfrac{pe^t}{1-(1-p)e^t}$. Bernoulli$(p)$: $1-p+pe^t$. The linear transform rides the constant outside and the scale inside the argument: $$M_{aX+b}(t)=e^{bt}M_X(at).$$ So scaling stretches the $t$-axis and shifting tacks on an exponential factor, it does not multiply $M_X$ by $a$."
             },
             {
               "kind": "worked",
@@ -1871,7 +1871,7 @@
             {
               "kind": "trap",
               "title": "Subtract the square, and respect the $e^{bt}$ shift",
-              "body": "$M''(0)$ gives $E[X^2]$, **not** the variance, you still subtract $[M'(0)]^2$. Forgetting this is the single most common MGF error. Second trap: for a linear transform $aX+b$, the MGF is $e^{bt}M_X(at)$, with the constant riding *outside* as $e^{bt}$ and the scale going *inside* the argument, do not multiply $M_X$ by $a$."
+              "body": "$M''(0)$ gives $E[X^2]$, not the variance, you still subtract $[M'(0)]^2$. Forgetting this is the single most common MGF error. Second trap: for a linear transform $aX+b$, the MGF is $e^{bt}M_X(at)$, with the constant riding outside as $e^{bt}$ and the scale going inside the argument, do not multiply $M_X$ by $a$."
             },
             {
               "kind": "trap",
@@ -2006,17 +2006,17 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "The exam rarely hands you the variable you want. It gives you $X$ and asks about $Y = X^2$, or $Y = e^X$, or $Y = \\sqrt{X}$. There is one method that *never* fails, go through the CDF, and one shortcut that is faster when the transform is one-to-one. Knowing which to reach for is the whole game."
+              "body": "The exam rarely hands you the variable you want. It gives you $X$ and asks about $Y = X^2$, or $Y = e^X$, or $Y = \\sqrt{X}$. There is one method that never fails, go through the CDF, and one shortcut that is faster when the transform is one-to-one. Knowing which to reach for is the whole game."
             },
             {
               "kind": "intuition",
               "title": "Chase the probability through the CDF",
-              "body": "A transformation reshapes the density, but probabilities of *events* are preserved. So translate the question about $Y$ into an equivalent question about $X$: $F_Y(y) = P(Y \\le y) = P(g(X) \\le y)$. Solve the inequality for $X$, evaluate using the known CDF of $X$, then differentiate to get the density of $Y$. You are simply following the same probability mass to its new location on the $y$-axis. When $g$ is monotone *decreasing*, the same Jacobian formula works but the inverse's derivative is negative, which is exactly why the formula takes the **absolute value**: a density can never be negative, and the $|\\cdot|$ records the stretch while discarding the flip in direction. For a *discrete* variable there is no Jacobian at all, you just relabel the support and sum the pmf over every $x$ that maps to each new value."
+              "body": "A transformation reshapes the density, but probabilities of events are preserved. So translate the question about $Y$ into an equivalent question about $X$: $F_Y(y) = P(Y \\le y) = P(g(X) \\le y)$. Solve the inequality for $X$, evaluate using the known CDF of $X$, then differentiate to get the density of $Y$. You are simply following the same probability mass to its new location on the $y$-axis. When $g$ is monotone decreasing, the same Jacobian formula works but the inverse's derivative is negative, which is exactly why the formula takes the absolute value: a density can never be negative, and the $|\\cdot|$ records the stretch while discarding the flip in direction. For a discrete variable there is no Jacobian at all, you just relabel the support and sum the pmf over every $x$ that maps to each new value."
             },
             {
               "kind": "formula",
               "title": "CDF method and the Jacobian shortcut",
-              "body": "**CDF method (always works):** $F_Y(y) = P(g(X)\\le y)$; differentiate to get $f_Y(y)$. **Jacobian (monotone $g$ only):** if $y=g(x)$ is one-to-one with inverse $x = g^{-1}(y)$, then $f_Y(y) = f_X\\!\\big(g^{-1}(y)\\big)\\left|\\frac{d}{dy}g^{-1}(y)\\right|$. The absolute value of the derivative is the **Jacobian**, it rescales the density so total area stays 1."
+              "body": "CDF method (always works): $F_Y(y) = P(g(X)\\le y)$; differentiate to get $f_Y(y)$. Jacobian (monotone $g$ only): if $y=g(x)$ is one-to-one with inverse $x = g^{-1}(y)$, then $f_Y(y) = f_X\\!\\big(g^{-1}(y)\\big)\\left|\\frac{d}{dy}g^{-1}(y)\\right|$. The absolute value of the derivative is the Jacobian, it rescales the density so total area stays 1."
             },
             {
               "kind": "worked",
@@ -2057,17 +2057,17 @@
             {
               "kind": "trick",
               "title": "Probability integral transform",
-              "body": "Two universal facts the exam exploits: (1) If $U \\sim \\text{Uniform}(0,1)$ then $X = F^{-1}(U)$ has CDF $F$, this is how you *simulate* any distribution. (2) Going the other way, if $X$ has continuous CDF $F$, then $F(X) \\sim \\text{Uniform}(0,1)$. So a transform like $Y = 1 - e^{-\\lambda X}$ applied to an exponential is *exactly* its own CDF, making $Y$ uniform on $(0,1)$ instantly, no integration needed."
+              "body": "Two universal facts the exam exploits: (1) If $U \\sim \\text{Uniform}(0,1)$ then $X = F^{-1}(U)$ has CDF $F$, this is how you simulate any distribution. (2) Going the other way, if $X$ has continuous CDF $F$, then $F(X) \\sim \\text{Uniform}(0,1)$. So a transform like $Y = 1 - e^{-\\lambda X}$ applied to an exponential is exactly its own CDF, making $Y$ uniform on $(0,1)$ instantly, no integration needed."
             },
             {
               "kind": "trap",
               "title": "Monotonicity and the new support",
-              "body": "Never apply the Jacobian formula to a non-monotone $g$ (like $x^2$ over a symmetric interval), you will miss half the probability. When $g$ folds the line, split into monotone pieces or use the CDF method. Second trap: always restate the **support** of $Y$. The range of $g$ over the support of $X$ sets where $f_Y$ is nonzero; forgetting to update it produces a density that does not integrate to 1."
+              "body": "Never apply the Jacobian formula to a non-monotone $g$ (like $x^2$ over a symmetric interval), you will miss half the probability. When $g$ folds the line, split into monotone pieces or use the CDF method. Second trap: always restate the support of $Y$. The range of $g$ over the support of $X$ sets where $f_Y$ is nonzero; forgetting to update it produces a density that does not integrate to 1."
             },
             {
               "kind": "trap",
               "title": "Decreasing transforms still need the absolute value",
-              "body": "For a decreasing $g$ (say $Y=e^{-X}$), the inverse derivative $\\frac{d}{dy}g^{-1}(y)$ is **negative**. Dropping the absolute value in $f_Y(y)=f_X(g^{-1}(y))\\,|\\,(g^{-1})'(y)\\,|$ yields a negative 'density', an immediate red flag. The Jacobian measures a *stretch*, so only its magnitude enters; the sign just tells you $g$ reversed orientation."
+              "body": "For a decreasing $g$ (say $Y=e^{-X}$), the inverse derivative $\\frac{d}{dy}g^{-1}(y)$ is negative. Dropping the absolute value in $f_Y(y)=f_X(g^{-1}(y))\\,|\\,(g^{-1})'(y)\\,|$ yields a negative 'density', an immediate red flag. The Jacobian measures a stretch, so only its magnitude enters; the sign just tells you $g$ reversed orientation."
             },
             {
               "kind": "recall",
@@ -2197,22 +2197,22 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "The mean is one summary of a distribution, but the exam also asks for the **median** (the 50th percentile), the **mode** (the most likely value), and arbitrary **percentiles** ('the value-at-risk such that only 5% exceeds it'). Each answers a different question, and in a skewed distribution they pull apart in a predictable order you can exploit."
+              "body": "The mean is one summary of a distribution, but the exam also asks for the median (the 50th percentile), the mode (the most likely value), and arbitrary percentiles ('the value-at-risk such that only 5% exceeds it'). Each answers a different question, and in a skewed distribution they pull apart in a predictable order you can exploit."
             },
             {
               "kind": "intuition",
               "title": "Three different notions of 'center'",
-              "body": "The **median** splits the area under the density in half, half the probability lies on each side. The **mode** is where the density is tallest, the most likely neighborhood. The **mean** is the balance point, the center of mass. For a symmetric distribution all three coincide. Skew the distribution and they spread out: a long right tail drags the mean above the median, which sits above the mode. Percentiles are the language of risk. Actuaries quote **Value-at-Risk** as a percentile of the loss, 'the 99th-percentile loss is the amount exceeded only 1% of the time', and spread is often summarized by the **interquartile range** IQR $=Q_3-Q_1$, the width of the middle 50%. Both are just the percentile machinery $F(\\pi_p)=p$ read at chosen $p$ values."
+              "body": "The median splits the area under the density in half, half the probability lies on each side. The mode is where the density is tallest, the most likely neighborhood. The mean is the balance point, the center of mass. For a symmetric distribution all three coincide. Skew the distribution and they spread out: a long right tail drags the mean above the median, which sits above the mode. Percentiles are the language of risk. Actuaries quote Value-at-Risk as a percentile of the loss, 'the 99th-percentile loss is the amount exceeded only 1% of the time', and spread is often summarized by the interquartile range IQR $=Q_3-Q_1$, the width of the middle 50%. Both are just the percentile machinery $F(\\pi_p)=p$ read at chosen $p$ values."
             },
             {
               "kind": "formula",
               "title": "Finding each one",
-              "body": "**$p$-th percentile** $\\pi_p$: solve $F(\\pi_p) = p$. **Median** $m$: solve $F(m) = 0.5$. **Mode**: maximize $f(x)$, for a differentiable density, solve $f'(x)=0$ and check it is a maximum. For the exponential$(\\lambda)$, setting $1-e^{-\\lambda \\pi_p} = p$ gives $\\pi_p = -\\frac{1}{\\lambda}\\ln(1-p)$, so the median is $\\frac{\\ln 2}{\\lambda}$."
+              "body": "$p$-th percentile $\\pi_p$: solve $F(\\pi_p) = p$. Median $m$: solve $F(m) = 0.5$. Mode: maximize $f(x)$, for a differentiable density, solve $f'(x)=0$ and check it is a maximum. For the exponential$(\\lambda)$, setting $1-e^{-\\lambda \\pi_p} = p$ gives $\\pi_p = -\\frac{1}{\\lambda}\\ln(1-p)$, so the median is $\\frac{\\ln 2}{\\lambda}$."
             },
             {
               "kind": "formula",
               "title": "VaR, IQR, and the normal quantile",
-              "body": "**Value-at-Risk** at level $p$ is the percentile $\\pi_p$ solving $F(\\pi_p)=p$ (equivalently $S(\\pi_p)=1-p$). **IQR** $=\\pi_{0.75}-\\pi_{0.25}$ measures spread robustly, unaffected by extreme tails. For a **normal**, percentiles come straight from a $z$-score: $$\\pi_p = \\mu + z_p\\,\\sigma,\\qquad z_{0.95}=1.645,\\ z_{0.975}=1.960,\\ z_{0.99}=2.326.$$"
+              "body": "Value-at-Risk at level $p$ is the percentile $\\pi_p$ solving $F(\\pi_p)=p$ (equivalently $S(\\pi_p)=1-p$). IQR $=\\pi_{0.75}-\\pi_{0.25}$ measures spread robustly, unaffected by extreme tails. For a normal, percentiles come straight from a $z$-score: $$\\pi_p = \\mu + z_p\\,\\sigma,\\qquad z_{0.95}=1.645,\\ z_{0.975}=1.960,\\ z_{0.99}=2.326.$$"
             },
             {
               "kind": "worked",
@@ -2253,12 +2253,12 @@
             {
               "kind": "trick",
               "title": "Mean > median > mode for right skew",
-              "body": "For a right-skewed distribution (long upper tail, lognormal, exponential, most loss models), the ordering is **mean $>$ median $>$ mode**. The rare large values inflate the mean most, the median less, and leave the mode (the peak) alone. If a question shows mean far above median, you are looking at right skew, and the mean is *not* a typical value. This single fact answers many qualitative questions instantly."
+              "body": "For a right-skewed distribution (long upper tail, lognormal, exponential, most loss models), the ordering is mean $>$ median $>$ mode. The rare large values inflate the mean most, the median less, and leave the mode (the peak) alone. If a question shows mean far above median, you are looking at right skew, and the mean is not a typical value. This single fact answers many qualitative questions instantly."
             },
             {
               "kind": "trap",
               "title": "Percentile means the value, not the probability",
-              "body": "The $p$-th percentile is the **$x$-value** $\\pi_p$ such that $F(\\pi_p)=p$, not the probability $p$ itself. Students sometimes report 0.90 when asked for the 90th percentile; the answer is the dollar/time amount. Also: for discrete or mixed distributions the percentile may not be unique (a flat stretch of the CDF), and the median is the conventional choice in that interval."
+              "body": "The $p$-th percentile is the $x$-value $\\pi_p$ such that $F(\\pi_p)=p$, not the probability $p$ itself. Students sometimes report 0.90 when asked for the 90th percentile; the answer is the dollar/time amount. Also: for discrete or mixed distributions the percentile may not be unique (a flat stretch of the CDF), and the median is the conventional choice in that interval."
             },
             {
               "kind": "trap",
@@ -2393,22 +2393,22 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Once you are past uniform, exponential, and normal, three more families show up with real frequency, and each has a *story* that tells you when it appears. **Gamma** is the wait for several Poisson events. **Beta** lives on $[0,1]$ and models proportions. **Lognormal** is what you get when effects multiply instead of add. Recognize the story and you have already picked the distribution."
+              "body": "Once you are past uniform, exponential, and normal, three more families show up with real frequency, and each has a story that tells you when it appears. Gamma is the wait for several Poisson events. Beta lives on $[0,1]$ and models proportions. Lognormal is what you get when effects multiply instead of add. Recognize the story and you have already picked the distribution."
             },
             {
               "kind": "intuition",
               "title": "Each family's origin story",
-              "body": "**Gamma$(\\alpha,\\theta)$**: add $\\alpha$ independent exponentials with mean $\\theta$ and you get a Gamma, the total time to the $\\alpha$-th arrival. Shape $\\alpha$ controls how bell-like it becomes. **Beta$(\\alpha,\\beta)$**: the natural distribution for a random *fraction*, flexible shapes on $[0,1]$, the conjugate prior for a binomial proportion. **Lognormal**: if $\\ln X$ is normal, $X$ is lognormal, the limit of many *multiplicative* shocks, so it models asset prices and loss sizes with a long right tail. These three are less exotic than they look, each is a familiar face in disguise. The **exponential** is just Gamma with shape $\\alpha=1$. The **chi-square** with $k$ degrees of freedom is Gamma$(k/2,\\,2)$, the workhorse of statistics. And a **uniform$(0,1)$** is Beta$(1,1)$. Seeing gamma as 'stacked exponentials' and beta as 'the flexible $[0,1]$ shape' turns a scary trio into one idea each."
+              "body": "Gamma$(\\alpha,\\theta)$: add $\\alpha$ independent exponentials with mean $\\theta$ and you get a Gamma, the total time to the $\\alpha$-th arrival. Shape $\\alpha$ controls how bell-like it becomes. Beta$(\\alpha,\\beta)$: the natural distribution for a random fraction, flexible shapes on $[0,1]$, the conjugate prior for a binomial proportion. Lognormal: if $\\ln X$ is normal, $X$ is lognormal, the limit of many multiplicative shocks, so it models asset prices and loss sizes with a long right tail. These three are less exotic than they look, each is a familiar face in disguise. The exponential is just Gamma with shape $\\alpha=1$. The chi-square with $k$ degrees of freedom is Gamma$(k/2,\\,2)$, the workhorse of statistics. And a uniform$(0,1)$ is Beta$(1,1)$. Seeing gamma as 'stacked exponentials' and beta as 'the flexible $[0,1]$ shape' turns a scary trio into one idea each."
             },
             {
               "kind": "formula",
               "title": "Moments worth memorizing",
-              "body": "**Gamma$(\\alpha,\\theta)$**: mean $\\alpha\\theta$, variance $\\alpha\\theta^2$, MGF $(1-\\theta t)^{-\\alpha}$. **Beta$(\\alpha,\\beta)$**: mean $\\frac{\\alpha}{\\alpha+\\beta}$, variance $\\frac{\\alpha\\beta}{(\\alpha+\\beta)^2(\\alpha+\\beta+1)}$. **Lognormal**: if $\\ln X \\sim N(\\mu,\\sigma^2)$, then $E[X] = e^{\\mu + \\sigma^2/2}$ and $\\mathrm{Var}(X) = e^{2\\mu+\\sigma^2}\\big(e^{\\sigma^2}-1\\big)$. Probabilities for the lognormal are done by taking logs and using the normal table."
+              "body": "Gamma$(\\alpha,\\theta)$: mean $\\alpha\\theta$, variance $\\alpha\\theta^2$, MGF $(1-\\theta t)^{-\\alpha}$. Beta$(\\alpha,\\beta)$: mean $\\frac{\\alpha}{\\alpha+\\beta}$, variance $\\frac{\\alpha\\beta}{(\\alpha+\\beta)^2(\\alpha+\\beta+1)}$. Lognormal: if $\\ln X \\sim N(\\mu,\\sigma^2)$, then $E[X] = e^{\\mu + \\sigma^2/2}$ and $\\mathrm{Var}(X) = e^{2\\mu+\\sigma^2}\\big(e^{\\sigma^2}-1\\big)$. Probabilities for the lognormal are done by taking logs and using the normal table."
             },
             {
               "kind": "formula",
               "title": "Special cases and gamma additivity",
-              "body": "**Exponential$(\\lambda)$** $=$ Gamma$(1,\\,1/\\lambda)$. **Chi-square$(k)$** $=$ Gamma$(k/2,\\,2)$, mean $k$, variance $2k$. **Gamma additivity** (same scale): independent $\\text{Gamma}(\\alpha_1,\\theta)+\\text{Gamma}(\\alpha_2,\\theta)=\\text{Gamma}(\\alpha_1+\\alpha_2,\\theta)$, the shapes add, which is why summing $\\alpha$ exponentials of mean $\\theta$ gives Gamma$(\\alpha,\\theta)$. **Beta$(1,1)$** is the Uniform$(0,1)$."
+              "body": "Exponential$(\\lambda)$ $=$ Gamma$(1,\\,1/\\lambda)$. Chi-square$(k)$ $=$ Gamma$(k/2,\\,2)$, mean $k$, variance $2k$. Gamma additivity (same scale): independent $\\text{Gamma}(\\alpha_1,\\theta)+\\text{Gamma}(\\alpha_2,\\theta)=\\text{Gamma}(\\alpha_1+\\alpha_2,\\theta)$, the shapes add, which is why summing $\\alpha$ exponentials of mean $\\theta$ gives Gamma$(\\alpha,\\theta)$. Beta$(1,1)$ is the Uniform$(0,1)$."
             },
             {
               "kind": "worked",
@@ -2425,7 +2425,7 @@
             {
               "kind": "worked",
               "title": "Gamma as a sum of waits",
-              "body": "Claims arrive in a Poisson process; the time between successive claims is exponential with mean $\\theta = 2$ hours. Find the mean and standard deviation of the waiting time until the **4th** claim, and name the distribution.",
+              "body": "Claims arrive in a Poisson process; the time between successive claims is exponential with mean $\\theta = 2$ hours. Find the mean and standard deviation of the waiting time until the 4th claim, and name the distribution.",
               "steps": [
                 "The 4th-arrival time is the sum of 4 independent exponential waits, which is exactly Gamma$(\\alpha, \\theta) = \\text{Gamma}(4, 2)$, that is the Gamma's origin story.",
                 "Mean straight from the formula: $E[X] = \\alpha\\theta = 4(2) = 8$ hours.",
@@ -2449,17 +2449,17 @@
             {
               "kind": "trick",
               "title": "Take logs first for anything lognormal",
-              "body": "Every lognormal *probability* question reduces to a normal one: turn $X$ into $\\ln X$, standardize, hit the $Z$-table. Never integrate the lognormal density. And for the Gamma, remember it is just a sum of exponentials, if you see 'time until the 3rd claim' with exponential interarrivals, that total is Gamma$(3,\\theta)$ and you can quote mean $3\\theta$ and variance $3\\theta^2$ without setup."
+              "body": "Every lognormal probability question reduces to a normal one: turn $X$ into $\\ln X$, standardize, hit the $Z$-table. Never integrate the lognormal density. And for the Gamma, remember it is just a sum of exponentials, if you see 'time until the 3rd claim' with exponential interarrivals, that total is Gamma$(3,\\theta)$ and you can quote mean $3\\theta$ and variance $3\\theta^2$ without setup."
             },
             {
               "kind": "trap",
               "title": "Lognormal mean is not $e^{\\mu}$",
-              "body": "The most punished lognormal error: $E[X] = e^{\\mu + \\sigma^2/2}$, **not** $e^{\\mu}$. The quantity $e^{\\mu}$ is the *median* of the lognormal; the mean is larger because of the right skew. Forgetting the $+\\sigma^2/2$ understates the mean every time. Separately, for the Gamma, $\\theta$ is the **scale** (so variance carries $\\theta^2$); some texts use rate $\\beta = 1/\\theta$, check which convention a problem uses."
+              "body": "The most punished lognormal error: $E[X] = e^{\\mu + \\sigma^2/2}$, not $e^{\\mu}$. The quantity $e^{\\mu}$ is the median of the lognormal; the mean is larger because of the right skew. Forgetting the $+\\sigma^2/2$ understates the mean every time. Separately, for the Gamma, $\\theta$ is the scale (so variance carries $\\theta^2$); some texts use rate $\\beta = 1/\\theta$, check which convention a problem uses."
             },
             {
               "kind": "trap",
               "title": "Gamma additivity needs a *common* scale",
-              "body": "Shapes add only when the gammas share the **same scale $\\theta$** (equivalently the same rate). $\\text{Gamma}(\\alpha_1,\\theta)+\\text{Gamma}(\\alpha_2,\\theta)=\\text{Gamma}(\\alpha_1+\\alpha_2,\\theta)$, but if the scales differ the sum is *not* a gamma at all. Watch the convention too: scale $\\theta$ vs rate $\\beta=1/\\theta$, the MGF is $(1-\\theta t)^{-\\alpha}$ in scale form, $(1-t/\\beta)^{-\\alpha}$ in rate form."
+              "body": "Shapes add only when the gammas share the same scale $\\theta$ (equivalently the same rate). $\\text{Gamma}(\\alpha_1,\\theta)+\\text{Gamma}(\\alpha_2,\\theta)=\\text{Gamma}(\\alpha_1+\\alpha_2,\\theta)$, but if the scales differ the sum is not a gamma at all. Watch the convention too: scale $\\theta$ vs rate $\\beta=1/\\theta$, the MGF is $(1-\\theta t)^{-\\alpha}$ in scale form, $(1-t/\\beta)^{-\\alpha}$ in rate form."
             },
             {
               "kind": "recall",
@@ -2586,7 +2586,7 @@
     {
       "id": "multivariate-random-variables",
       "title": "Multivariate Random Variables",
-      "weight": "23–30%",
+      "weight": "23, 30%",
       "blurb": "Two or more variables at once: joint and marginal distributions, covariance and correlation, conditional expectation, sums of random variables, and the Central Limit Theorem that ties the whole exam together.",
       "concepts": [
         {
@@ -2597,12 +2597,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "When two random variables interact, a loss and its deductible, a claim count and its severity, they share **one joint distribution**, a surface of probability over a plane. Reading that surface (and collapsing it back to one variable) is the core skill of the final module."
+              "body": "When two random variables interact, a loss and its deductible, a claim count and its severity, they share one joint distribution, a surface of probability over a plane. Reading that surface (and collapsing it back to one variable) is the core skill of the final module."
             },
             {
               "kind": "intuition",
               "title": "Marginalize = sum out what you ignore",
-              "body": "The **joint** $f(x,y)$ is the full surface. To get the **marginal** of $X$ alone, you collapse the surface along the $Y$ direction, sum (discrete) or integrate (continuous) over all $y$. You are pooling together every way $X = x$ could happen, regardless of $Y$. The word *marginal* is literal: old textbooks wrote these sums in the margins."
+              "body": "The joint $f(x,y)$ is the full surface. To get the marginal of $X$ alone, you collapse the surface along the $Y$ direction, sum (discrete) or integrate (continuous) over all $y$. You are pooling together every way $X = x$ could happen, regardless of $Y$. The word marginal is literal: old textbooks wrote these sums in the margins."
             },
             {
               "kind": "formula",
@@ -2635,12 +2635,12 @@
             {
               "kind": "trick",
               "title": "Test independence by trying to factor",
-              "body": "To check independence fast, see whether $f(x,y)$ splits into a pure-$x$ piece times a pure-$y$ piece **over a rectangular region**. If the support is a triangle, or the density tangles $x$ and $y$ together (like $x + y$), they are dependent, no need to compute marginals first."
+              "body": "To check independence fast, see whether $f(x,y)$ splits into a pure-$x$ piece times a pure-$y$ piece over a rectangular region. If the support is a triangle, or the density tangles $x$ and $y$ together (like $x + y$), they are dependent, no need to compute marginals first."
             },
             {
               "kind": "trap",
               "title": "Ignoring the region of support",
-              "body": "The limits of integration come from the **support**, not always $0$ to $1$. If $X$ and $Y$ live on a triangle like $0 < x < y < 1$, the marginal of $X$ integrates $y$ from $x$ to $1$, not $0$ to $1$. Getting the bounds wrong silently corrupts every downstream answer, sketch the region first."
+              "body": "The limits of integration come from the support, not always $0$ to $1$. If $X$ and $Y$ live on a triangle like $0 < x < y < 1$, the marginal of $X$ integrates $y$ from $x$ to $1$, not $0$ to $1$. Getting the bounds wrong silently corrupts every downstream answer, sketch the region first."
             },
             {
               "kind": "recall",
@@ -2749,12 +2749,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Covariance measures whether two variables rise and fall together. Its single most-tested consequence: the **variance of a sum** picks up a covariance term. Forget that term and you will systematically miss portfolio and aggregate-loss questions worth real points."
+              "body": "Covariance measures whether two variables rise and fall together. Its single most-tested consequence: the variance of a sum picks up a covariance term. Forget that term and you will systematically miss portfolio and aggregate-loss questions worth real points."
             },
             {
               "kind": "intuition",
               "title": "Do they move together or against?",
-              "body": "Positive covariance: when $X$ is above its mean, $Y$ tends to be too, they move *together*. Negative: they move *oppositely*. Zero: no linear relationship. Correlation is just covariance rescaled to $[-1, 1]$ so you can compare across different units, it strips out the magnitudes and keeps only the direction and tightness of the linear link."
+              "body": "Positive covariance: when $X$ is above its mean, $Y$ tends to be too, they move together. Negative: they move oppositely. Zero: no linear relationship. Correlation is just covariance rescaled to $[-1, 1]$ so you can compare across different units, it strips out the magnitudes and keeps only the direction and tightness of the linear link."
             },
             {
               "kind": "formula",
@@ -2787,12 +2787,12 @@
             {
               "kind": "trick",
               "title": "Independent → covariance is 0 → variances just add",
-              "body": "If the problem says independent (or uncorrelated), $\\mathrm{Cov} = 0$, so $\\mathrm{Var}(X \\pm Y) = \\mathrm{Var}(X) + \\mathrm{Var}(Y)$, note it is a **plus** even for a difference, because the covariance term that would carry the sign is zero. That subtlety trips up a lot of students."
+              "body": "If the problem says independent (or uncorrelated), $\\mathrm{Cov} = 0$, so $\\mathrm{Var}(X \\pm Y) = \\mathrm{Var}(X) + \\mathrm{Var}(Y)$, note it is a plus even for a difference, because the covariance term that would carry the sign is zero. That subtlety trips up a lot of students."
             },
             {
               "kind": "trap",
               "title": "Zero correlation does not mean independent",
-              "body": "$\\rho = 0$ rules out a *linear* relationship, but variables can be strongly dependent in a nonlinear way and still have zero covariance (e.g. $Y = X^2$ with $X$ symmetric about 0). Independence implies zero covariance; the reverse is false. Do not upgrade *uncorrelated* to *independent*."
+              "body": "$\\rho = 0$ rules out a linear relationship, but variables can be strongly dependent in a nonlinear way and still have zero covariance (e.g. $Y = X^2$ with $X$ symmetric about 0). Independence implies zero covariance; the reverse is false. Do not upgrade uncorrelated to independent."
             },
             {
               "kind": "recall",
@@ -2914,12 +2914,12 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Information changes probability. The instant you learn that a policyholder filed exactly two claims, the distribution of their *total loss* shifts. The machinery for that update, slicing the joint distribution and rescaling it, is the **conditional distribution**, and it underpins every credibility, mixture, and double-expectation question on the exam."
+              "body": "Information changes probability. The instant you learn that a policyholder filed exactly two claims, the distribution of their total loss shifts. The machinery for that update, slicing the joint distribution and rescaling it, is the conditional distribution, and it underpins every credibility, mixture, and double-expectation question on the exam."
             },
             {
               "kind": "intuition",
               "title": "A conditional density is a renormalized slice",
-              "body": "Picture the joint surface $f(x,y)$. Fixing $Y = y$ takes a single vertical slice through it. That slice has the right *shape* for the distribution of $X$ given $Y=y$, but its area is only $f_Y(y)$, not 1. Divide by $f_Y(y)$ to rescale the slice back to a legitimate density. That is all a conditional density is: a slice, renormalized so it integrates to 1."
+              "body": "Picture the joint surface $f(x,y)$. Fixing $Y = y$ takes a single vertical slice through it. That slice has the right shape for the distribution of $X$ given $Y=y$, but its area is only $f_Y(y)$, not 1. Divide by $f_Y(y)$ to rescale the slice back to a legitimate density. That is all a conditional density is: a slice, renormalized so it integrates to 1."
             },
             {
               "kind": "formula",
@@ -2953,12 +2953,12 @@
             {
               "kind": "trick",
               "title": "Recognize the slice as a named distribution",
-              "body": "After you divide by the marginal, the conditional density is often a *standard* distribution in disguise, uniform, exponential, beta. The moment you recognize it (as Uniform$(0,y)$ above), you can quote its mean and variance instead of integrating. This shortcut is enormous in double-expectation problems, where you need $E[X\\mid Y]$ as a function of $Y$."
+              "body": "After you divide by the marginal, the conditional density is often a standard distribution in disguise, uniform, exponential, beta. The moment you recognize it (as Uniform$(0,y)$ above), you can quote its mean and variance instead of integrating. This shortcut is enormous in double-expectation problems, where you need $E[X\\mid Y]$ as a function of $Y$."
             },
             {
               "kind": "trap",
               "title": "Divide by the right marginal, and keep the support",
-              "body": "$f_{X\\mid Y}(x\\mid y)$ divides by $f_Y(y)$, the marginal of the variable you *conditioned on*, not the one you want. Swapping them is a classic error. And the conditional's support depends on $y$: above, $X$ ranges only over $(0,y)$, not $(0,1)$. Carrying the wrong support breaks the normalization and every expectation after it."
+              "body": "$f_{X\\mid Y}(x\\mid y)$ divides by $f_Y(y)$, the marginal of the variable you conditioned on, not the one you want. Swapping them is a classic error. And the conditional's support depends on $y$: above, $X$ ranges only over $(0,y)$, not $(0,1)$. Carrying the wrong support breaks the normalization and every expectation after it."
             },
             {
               "kind": "recall",
@@ -3053,7 +3053,7 @@
                   "$0.7$"
                 ],
                 "correct": 4,
-                "explain": "Marginal $f_X(x) = \\int_x^1 2\\,dy = 2(1-x)$, so $f_{Y\\mid X}(y\\mid x) = \\frac{2}{2(1-x)} = \\frac{1}{1-x}$ on $(x,1)$, i.e. $Y\\mid X=x$ is Uniform$(x,1)$. Thus $E[Y\\mid X=0.4] = \\frac{0.4+1}{2} = 0.7$. Forgetting the support starts at $x$ (using Uniform$(0,1)$) gives 0.5.",
+                "explain": "Marginal $f_X(x) = \\int_x^1 2\\,dy = 2(1-x)$, so $f_{Y\\mid X}(y\\mid x) = \\frac{2}{2(1-x)} = \\frac{1}{1-x}$ on $(x,1)$, i.e. $Y\\mid X=x$ is Uniform$(x,1)$. So $E[Y\\mid X=0.4] = \\frac{0.4+1}{2} = 0.7$. Forgetting the support starts at $x$ (using Uniform$(0,1)$) gives 0.5.",
                 "difficulty": "stretch"
               },
               {
@@ -3080,23 +3080,23 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Some of the highest-value questions on Exam P look impossible head-on: a Poisson number of claims, each of random size; a loss whose mean depends on an unknown risk class. The key that unlocks all of them is **conditioning**, solve the easy problem given the hidden variable, then average over it. Two laws make this airtight: the **law of total expectation** and the **law of total variance**."
+              "body": "Some of the highest-value questions on Exam P look impossible head-on: a Poisson number of claims, each of random size; a loss whose mean depends on an unknown risk class. The key that unlocks all of them is conditioning, solve the easy problem given the hidden variable, then average over it. Two laws make this airtight: the law of total expectation and the law of total variance."
             },
             {
               "kind": "intuition",
               "title": "Average the conditional answers",
-              "body": "If you knew the risk class $Y$, finding $E[X\\mid Y]$ would be easy. You do not know $Y$, so treat $E[X\\mid Y]$ as a *random variable* (it depends on which $Y$ you land in) and average it: $E[X]=E[E[X\\mid Y]]$. Variance splits the same way but into **two** pieces: the average spread *within* each class, plus the spread *between* the class means. Total uncertainty = uncertainty inside groups + uncertainty across groups."
+              "body": "If you knew the risk class $Y$, finding $E[X\\mid Y]$ would be easy. You do not know $Y$, so treat $E[X\\mid Y]$ as a random variable (it depends on which $Y$ you land in) and average it: $E[X]=E[E[X\\mid Y]]$. Variance splits the same way but into two pieces: the average spread within each class, plus the spread between the class means. Total uncertainty = uncertainty inside groups + uncertainty across groups."
             },
             {
               "kind": "formula",
               "title": "The two laws",
-              "body": "**Total expectation:** $$E[X] = E\\big[E[X\\mid Y]\\big]$$ **Total variance:** $$\\mathrm{Var}(X) = \\underbrace{E\\big[\\mathrm{Var}(X\\mid Y)\\big]}_{\\text{within (expected process var)}} + \\underbrace{\\mathrm{Var}\\big(E[X\\mid Y]\\big)}_{\\text{between (variance of hypothetical means)}}$$ In credibility language these are the *expected process variance* and the *variance of the hypothetical means*."
+              "body": "Total expectation: $$E[X] = E\\big[E[X\\mid Y]\\big]$$ Total variance: $$\\mathrm{Var}(X) = \\underbrace{E\\big[\\mathrm{Var}(X\\mid Y)\\big]}_{\\text{within (expected process var)}} + \\underbrace{\\mathrm{Var}\\big(E[X\\mid Y]\\big)}_{\\text{between (variance of hypothetical means)}}$$ In credibility language these are the expected process variance and the variance of the hypothetical means."
             },
             {
               "kind": "widget",
               "widget": {
                 "id": "total-variance",
-                "caption": "Two risk classes, each with its own mean and spread. Watch how the **total** variance is always the within-class variance plus the between-class variance, and how widening the gap between the class means inflates the 'between' term while leaving the 'within' term untouched."
+                "caption": "Two risk classes, each with its own mean and spread. Watch how the total variance is always the within-class variance plus the between-class variance, and how widening the gap between the class means inflates the 'between' term while leaving the 'within' term untouched."
               }
             },
             {
@@ -3131,7 +3131,7 @@
             {
               "kind": "trap",
               "title": "Don't drop the between-group term",
-              "body": "The most expensive error in this topic: computing only $E[\\mathrm{Var}(X\\mid Y)]$ and calling it the variance. That ignores the variance *between* the conditional means and **understates** total variance. Total variance is always the sum of both pieces. Symmetric warning: $E[X]$ uses only the first law, but $\\mathrm{Var}(X)$ needs both, never reuse the expectation shortcut for variance."
+              "body": "The most expensive error in this topic: computing only $E[\\mathrm{Var}(X\\mid Y)]$ and calling it the variance. That ignores the variance between the conditional means and understates total variance. Total variance is always the sum of both pieces. Symmetric warning: $E[X]$ uses only the first law, but $\\mathrm{Var}(X)$ needs both, never reuse the expectation shortcut for variance."
             },
             {
               "kind": "recall",
@@ -3253,17 +3253,17 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Add two independent random variables and the distribution of the total is a **convolution**, a sliding integral that blends the two densities. The exam almost never wants you to grind out that integral. Instead it rewards knowing which families are *closed under addition*: add two of the same kind and you get the same kind, with parameters that simply combine."
+              "body": "Add two independent random variables and the distribution of the total is a convolution, a sliding integral that blends the two densities. The exam almost never wants you to grind out that integral. Instead it rewards knowing which families are closed under addition: add two of the same kind and you get the same kind, with parameters that simply combine."
             },
             {
               "kind": "intuition",
               "title": "Every split that lands on the target",
-              "body": "To find $P(X+Y = s)$, you sum over every way the total can be $s$: $X=k$ and $Y=s-k$, for all $k$. That sum-over-splits *is* the convolution. Geometrically you slide one density across the other and integrate the overlap. Most of the time, though, the algebra collapses because the MGFs multiply into a recognizable form, so you skip the integral entirely."
+              "body": "To find $P(X+Y = s)$, you sum over every way the total can be $s$: $X=k$ and $Y=s-k$, for all $k$. That sum-over-splits is the convolution. Geometrically you slide one density across the other and integrate the overlap. Most of the time, though, the algebra collapses because the MGFs multiply into a recognizable form, so you skip the integral entirely."
             },
             {
               "kind": "formula",
               "title": "Convolution and the family-closure rules",
-              "body": "Discrete: $P(X+Y=s)=\\sum_k P(X=k)P(Y=s-k)$. Continuous: $f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$. **Closure shortcuts (independent):** Normal $+$ Normal $=$ Normal (means and variances add). Poisson$(\\lambda)+$Poisson$(\\mu)=$Poisson$(\\lambda+\\mu)$. Binomial$(m,p)+$Binomial$(n,p)=$Binomial$(m+n,p)$. Gamma$(\\alpha_1,\\theta)+$Gamma$(\\alpha_2,\\theta)=$Gamma$(\\alpha_1+\\alpha_2,\\theta)$, same scale required."
+              "body": "Discrete: $P(X+Y=s)=\\sum_k P(X=k)P(Y=s-k)$. Continuous: $f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$. Closure shortcuts (independent): Normal $+$ Normal $=$ Normal (means and variances add). Poisson$(\\lambda)+$Poisson$(\\mu)=$Poisson$(\\lambda+\\mu)$. Binomial$(m,p)+$Binomial$(n,p)=$Binomial$(m+n,p)$. Gamma$(\\alpha_1,\\theta)+$Gamma$(\\alpha_2,\\theta)=$Gamma$(\\alpha_1+\\alpha_2,\\theta)$, same scale required."
             },
             {
               "kind": "worked",
@@ -3297,7 +3297,7 @@
             {
               "kind": "trap",
               "title": "Closure needs matching parameters and independence",
-              "body": "Binomials add only with the **same $p$**; Gammas add only with the **same scale $\\theta$**. Mismatched parameters break closure, the sum is *not* in the family, and you are back to a convolution or CLT approximation. And every closure rule assumes **independence**: dependent sums pick up covariance and the simple parameter-adding fails."
+              "body": "Binomials add only with the same $p$; Gammas add only with the same scale $\\theta$. Mismatched parameters break closure, the sum is not in the family, and you are back to a convolution or CLT approximation. And every closure rule assumes independence: dependent sums pick up covariance and the simple parameter-adding fails."
             },
             {
               "kind": "recall",
@@ -3419,17 +3419,17 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "Insurance lives at the extremes: the *largest* claim drives reinsurance, the *first* failure ends a warranty. These are **order statistics**, what you get when you sort a sample and look at the ends. The minimum and maximum have shortcut formulas so clean you should never integrate a density to find them."
+              "body": "Insurance lives at the extremes: the largest claim drives reinsurance, the first failure ends a warranty. These are order statistics, what you get when you sort a sample and look at the ends. The minimum and maximum have shortcut formulas so clean you should never integrate a density to find them."
             },
             {
               "kind": "intuition",
               "title": "Max via 'all below', min via 'all above'",
-              "body": "The maximum of $n$ draws is $\\le y$ exactly when **every** draw is $\\le y$, that is one event repeated $n$ times. By independence the probabilities multiply, so the max's CDF is $[F(y)]^n$. The minimum is $> y$ exactly when **all** draws exceed $y$, giving survival $[1-F(y)]^n$. Both reduce a sorting question to raising a single CDF to the $n$-th power."
+              "body": "The maximum of $n$ draws is $\\le y$ exactly when every draw is $\\le y$, that is one event repeated $n$ times. By independence the probabilities multiply, so the max's CDF is $[F(y)]^n$. The minimum is $> y$ exactly when all draws exceed $y$, giving survival $[1-F(y)]^n$. Both reduce a sorting question to raising a single CDF to the $n$-th power."
             },
             {
               "kind": "formula",
               "title": "Min and max distributions (iid sample)",
-              "body": "For $n$ iid draws with CDF $F$: **Maximum** $Y_{(n)}=\\max$: $$F_{\\max}(y)=[F(y)]^n$$ **Minimum** $Y_{(1)}=\\min$: $$P(\\min > y)=[1-F(y)]^n,\\quad F_{\\min}(y)=1-[1-F(y)]^n$$ Differentiate for densities: $f_{\\max}(y)=n[F(y)]^{n-1}f(y)$ and $f_{\\min}(y)=n[1-F(y)]^{n-1}f(y)$."
+              "body": "For $n$ iid draws with CDF $F$: Maximum $Y_{(n)}=\\max$: $$F_{\\max}(y)=[F(y)]^n$$ Minimum $Y_{(1)}=\\min$: $$P(\\min > y)=[1-F(y)]^n,\\quad F_{\\min}(y)=1-[1-F(y)]^n$$ Differentiate for densities: $f_{\\max}(y)=n[F(y)]^{n-1}f(y)$ and $f_{\\min}(y)=n[1-F(y)]^{n-1}f(y)$."
             },
             {
               "kind": "worked",
@@ -3463,7 +3463,7 @@
             {
               "kind": "trap",
               "title": "Max is not symmetric to min, and don't forget the chain rule",
-              "body": "The max uses $[F(y)]^n$ (all below); the min uses the *survival* $[1-F(y)]^n$ (all above), they are **not** mirror formulas, and swapping them is a frequent slip. When differentiating to get a density, remember the chain rule pulls down the inner $f(y)$: $f_{\\max}(y)=n[F(y)]^{n-1}f(y)$, not just $n[F(y)]^{n-1}$."
+              "body": "The max uses $[F(y)]^n$ (all below); the min uses the survival $[1-F(y)]^n$ (all above), they are not mirror formulas, and swapping them is a frequent slip. When differentiating to get a density, remember the chain rule pulls down the inner $f(y)$: $f_{\\max}(y)=n[F(y)]^{n-1}f(y)$, not just $n[F(y)]^{n-1}$."
             },
             {
               "kind": "recall",
@@ -3585,7 +3585,7 @@
           "sections": [
             {
               "kind": "hook",
-              "body": "The Central Limit Theorem is the closest thing probability has to magic: sum enough independent pieces and the total is approximately **normal**, regardless of the shape you started with. The SOA uses it to turn ugly aggregate-loss questions into a single $Z$-table lookup."
+              "body": "The Central Limit Theorem is the closest thing probability has to magic: sum enough independent pieces and the total is approximately normal, regardless of the shape you started with. The SOA uses it to turn ugly aggregate-loss questions into a single $Z$-table lookup."
             },
             {
               "kind": "intuition",
@@ -3623,12 +3623,12 @@
             {
               "kind": "trick",
               "title": "SD of a sum grows like √n, not n",
-              "body": "The *variance* of a sum scales with $n$, so the *standard deviation* scales with $\\sqrt{n}$. That is why averages get tighter slowly: to halve the SD of an average you need *four times* the sample. Whenever you standardize a sum, the denominator is $\\sigma\\sqrt{n}$, never $\\sigma n$."
+              "body": "The variance of a sum scales with $n$, so the standard deviation scales with $\\sqrt{n}$. That is why averages get tighter slowly: to halve the SD of an average you need four times the sample. Whenever you standardize a sum, the denominator is $\\sigma\\sqrt{n}$, never $\\sigma n$."
             },
             {
               "kind": "trap",
               "title": "Adding standard deviations directly",
-              "body": "You cannot add standard deviations, only **variances** add (for independent variables). To combine spreads, square to variance, add, then square-root back. Writing $\\mathrm{SD}(X+Y) = \\mathrm{SD}(X) + \\mathrm{SD}(Y)$ is wrong and inflates the spread badly."
+              "body": "You cannot add standard deviations, only variances add (for independent variables). To combine spreads, square to variance, add, then square-root back. Writing $\\mathrm{SD}(X+Y) = \\mathrm{SD}(X) + \\mathrm{SD}(Y)$ is wrong and inflates the spread badly."
             },
             {
               "kind": "widget",
@@ -3646,7 +3646,7 @@
                 },
                 {
                   "front": "Why does the SD of a sum scale like $\\sqrt{n}$, and why can't you add SDs directly?",
-                  "back": "For independent variables only *variances* add, so $n$ iid terms give variance $n\\sigma^2$ and therefore SD $\\sigma\\sqrt{n}$, not $\\sigma n$. To combine two spreads you square to variance, add, then square-root back; writing $\\mathrm{SD}(X+Y)=\\mathrm{SD}(X)+\\mathrm{SD}(Y)$ overstates the spread. (This $\\sqrt{n}$ growth is also why halving an average's SD needs $4\\times$ the data.)"
+                  "back": "For independent variables only *variances* add, so $n$ iid terms give variance $n\\sigma^2$ and So SD $\\sigma\\sqrt{n}$, not $\\sigma n$. To combine two spreads you square to variance, add, then square-root back; writing $\\mathrm{SD}(X+Y)=\\mathrm{SD}(X)+\\mathrm{SD}(Y)$ overstates the spread. (This $\\sqrt{n}$ growth is also why halving an average's SD needs $4\\times$ the data.)"
                 }
               ]
             }
