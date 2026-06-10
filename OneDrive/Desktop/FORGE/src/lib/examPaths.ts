@@ -62,6 +62,8 @@ export interface MasteryQuestion {
   decode?: { label: string; value: string }[];
   /** Step 2/Rule 2 — the fastest way to solve this TYPE (may contain LaTeX). */
   trick?: string;
+  /** Step 2 — the governing formula/rule for this concept (may contain LaTeX). */
+  formula?: string;
   /** Step 3 — ordered compute steps, each may contain LaTeX. */
   steps?: string[];
   /** Step 4 — sanity checks (each may contain LaTeX). */
@@ -78,12 +80,32 @@ export type DiagramKind =
   | "bell"               // normal curve with ±1σ/±2σ/±3σ tails
   | "pmf-bars"           // discrete PMF as bars
   | "poisson-timeline"   // events as dots on a timeline
-  | "exponential";       // memoryless decay curve
+  | "exponential"        // memoryless decay curve
+  | "uniform"            // flat density rectangle
+  | "clt"                // sampling distribution tightening to normal as n grows
+  | "urn"                // hypergeometric: drawn vs remaining balls
+  | "timeline";          // FM cash-flow timeline
 
 export interface DiagramSpec {
   kind: DiagramKind;
   /** Optional caption shown under the figure (may contain LaTeX). */
   caption?: string;
+  /**
+   * Question-specific values injected by the generator so each diagram shows
+   * the ACTUAL numbers from that question, not hard-coded examples.
+   *
+   * Keys by kind:
+   *   venn-conditional  pA, pB, pAB, labelA?, labelB?
+   *   tree              p1, l1, p11, l11, p12, l12, p21, l21, p22, l22
+   *   bell              mu, sigma, x1?   (x1 = highlighted value)
+   *   pmf-bars          ps (comma-sep probs), xs? (comma-sep x labels), highlight?
+   *   poisson-timeline  lambda, t, expected?
+   *   exponential       lambda, x0?
+   *   uniform           a, b, x1?, x2?   (x1..x2 = shaded probability region)
+   *   urn               N, K, n
+   *   timeline          n, pmt, rate, t0val?  (t0val = amount at t=0, signed)
+   */
+  labels?: Record<string, string | number | undefined>;
 }
 
 export interface Concept {

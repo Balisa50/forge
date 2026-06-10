@@ -149,7 +149,7 @@ export default function ActuaryQuestionSolver({ question }: { question: MasteryQ
 
       {open.diagram && question.diagram && (
         <Panel title="Diagram" icon={Shapes}>
-          <Diagram kind={question.diagram.kind} />
+          <Diagram kind={question.diagram.kind} labels={question.diagram.labels} />
           {question.diagram.caption && (
             <div style={{ textAlign: "center", fontSize: "0.8125rem", color: "var(--text-dim)", marginTop: "0.375rem" }}>{RT(question.diagram.caption, "cap")}</div>
           )}
@@ -158,6 +158,12 @@ export default function ActuaryQuestionSolver({ question }: { question: MasteryQ
 
       {open.solution && (
         <Panel title="Step-by-step solution" icon={ListChecks} accent="#22c55e">
+          {question.formula && (
+            <div style={{ marginBottom: "0.625rem" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>Formula</div>
+              <div style={{ fontSize: "0.9375rem", color: "var(--text-primary)" }}>{RT(question.formula, "formula")}</div>
+            </div>
+          )}
           {question.steps?.length ? (
             <ol style={{ margin: 0, paddingLeft: "1.25rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {question.steps.map((s, i) => (

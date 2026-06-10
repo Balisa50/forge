@@ -716,6 +716,8 @@ function templatesFor(conceptId: string, tier: Tier): Template[] {
 
 interface ConceptEnrichment {
   trick: string;
+  /** The governing formula/rule (Step 2). */
+  formula?: string;
   decode: { label: string; value: string }[];
   sanity: string[];
   /** Stem-aware so distribution buckets pick the right figure. */
@@ -734,43 +736,172 @@ const GENERIC_PROB_SANITY = [
   "It cross-checks against a diagram or the complement $1-P(\\text{not it})$.",
 ];
 
+const FM_DECODE = [
+  { label: "Cash flows", value: "what is paid/received, and at which times" },
+  { label: "Rate basis", value: "effective $i$, nominal $i^{(m)}$, or a force $\\delta$" },
+  { label: "Asked", value: "a present value, accumulated value, payment, or rate" },
+  { label: "Timing", value: "the interval each cash flow is discounted/accumulated over" },
+];
+const FM_SANITY = [
+  "For positive interest, accumulated value $>$ amount invested.",
+  "Present value $<$ future value — discounting shrinks, accumulating grows.",
+  "An effective rate exceeds the nominal it came from once compounding is more than once a year.",
+];
+
+/* ── Tiny regex helpers that extract the ACTUAL numbers from each generated
+ * question stem so the diagram shows those numbers, not hard-coded defaults. ──
+ */
+function _num(s: string, re: RegExp, fallback: number): number {
+  const m = s.match(re);
+  return m ? parseFloat(m[1]) : fallback;
+}
+
 const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
   "sample-spaces-and-events": {
     trick: "Equally-likely outcomes → **favourable ÷ total**. Overlapping events → inclusion–exclusion: $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$.",
+    formula: "$P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$",
     decode: GENERIC_PROB_DECODE,
     sanity: GENERIC_PROB_SANITY,
-    diagram: () => ({ kind: "venn-conditional", caption: "Sets in the sample space — the overlap is $A\\cap B$." }),
+    diagram: (q) => {
+      const pA  = _num(q.q, /P\(A\)=([0-9.]+)/, 0.45);
+      const pB  = _num(q.q, /P\(B\)=([0-9.]+)/, 0.35);
+      // Try to find P(A∩B); if not in stem, derive from union where possible
+      const rawAB = q.q.match(/P\(A\\cap B\)=([0-9.]+)/);
+      const union  = q.q.match(/P\(A\\cup B\)=([0-9.]+)/);
+      const pAB = rawAB
+        ? parseFloat(rawAB[1])
+        : union
+          ? +(pA + pB - parseFloat(union[1])).toFixed(4)
+          : +(pA * pB * 0.65).toFixed(4);
+      return {
+        kind: "venn-conditional",
+        caption: "Sets in the sample space — the overlap is $A\\cap B$.",
+        labels: { pA, pB, pAB: Math.max(0, pAB) },
+      };
+    },
   },
+
   "counting-and-axioms": {
     trick: "See **“without replacement”** → hypergeometric $\\dfrac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}$, not $p^k$. See **“at least one”** → complement $1-P(\\text{none})$.",
+    formula: "$\\dfrac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}\\quad\\text{and}\\quad P(\\ge 1)=1-P(\\text{none})$",
     decode: GENERIC_PROB_DECODE,
     sanity: GENERIC_PROB_SANITY,
-    diagram: () => ({ kind: "tree", caption: "Sequential draws — multiply along a path." }),
+    diagram: (q) => {
+      if (/without replacement|defective|women|committee/i.test(q.q)) {
+        // Extract N (population), K (successes in population), n (draw size)
+        const Nm = q.q.match(/(\d+) items?/) ?? q.q.match(/(\d+) people/) ?? q.q.match(/group has (\d+)/);
+        const Km = q.q.match(/(\d+) defective/) ?? q.q.match(/(\d+) women/);
+        const nm = q.q.match(/Draw (\d+)/) ?? q.q.match(/committee of (\d+)/);
+        const N = Nm ? parseInt(Nm[1]) : 12;
+        const K = Km ? parseInt(Km[1]) : Math.round(N * 0.35);
+        const n = nm ? parseInt(nm[1]) : 3;
+        return {
+          kind: "urn",
+          caption: "Drawing without replacement from a finite population.",
+          labels: { N, K, n },
+        };
+      }
+      return { kind: "tree", caption: "Sequential draws — multiply along a path." };
+    },
   },
+
   "conditional-probability": {
     trick: "$P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}$ — **shade $B$ first**; the answer is the share of $B$ that is also $A$. Conditioning **divides**, it never multiplies.",
+    formula: "$P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}$",
     decode: GENERIC_PROB_DECODE,
     sanity: GENERIC_PROB_SANITY,
-    diagram: () => ({ kind: "venn-conditional", caption: "Shade $B$, then read $A\\cap B$ as a fraction of it." }),
+    diagram: (q) => {
+      // Bayes-like factory questions: build a tree instead
+      if (/factory|machine|urn|bag/i.test(q.q) && /defect|red|blue/i.test(q.q)) {
+        const p1 = _num(q.q, /(\d+(?:\.\d+)?)\\%.*(?:factory|urn|machine)/i, 60) / 100;
+        return {
+          kind: "tree",
+          caption: "Branch by source, then condition on the outcome.",
+          labels: {
+            p1, l1: "Src 1", l2: "Src 2",
+            p11: _num(q.q, /([0-9.]+)\\% defect.*factory 1/i, 2) / 100,
+            p21: _num(q.q, /([0-9.]+)\\% defect.*factory 2/i, 4) / 100,
+          },
+        };
+      }
+      const pAB = _num(q.q, /P\(A\\cap B\)=([0-9.]+)/, 0.15);
+      const pB  = _num(q.q, /P\(B\)=([0-9.]+)/, 0.40);
+      const pA  = Math.max(pAB + 0.10, _num(q.q, /P\(A\)=([0-9.]+)/, pAB + 0.15));
+      return {
+        kind: "venn-conditional",
+        caption: "Shade $B$, then read $A\\cap B$ as a fraction of it.",
+        labels: { pA, pB, pAB },
+      };
+    },
   },
+
   "bayes-theorem": {
     trick: "**Reverse the tree**: $P(A\\mid B)=\\dfrac{P(B\\mid A)\\,P(A)}{P(B)}$, with $P(B)$ from the law of total probability. The base rate $P(A)$ is the part everyone forgets.",
+    formula: "$P(A_i\\mid B)=\\dfrac{P(B\\mid A_i)\\,P(A_i)}{\\sum_j P(B\\mid A_j)\\,P(A_j)}$",
     decode: GENERIC_PROB_DECODE,
     sanity: [
       "The posterior is in $[0,1]$.",
       "With a rare prior, even a strong test gives a modest posterior — don't expect it near the sensitivity.",
       "Forward check: the branch probabilities under each hypothesis sum to $1$.",
     ],
-    diagram: () => ({ kind: "tree", caption: "Forward tree gives $P(B)$; Bayes reads it backward." }),
+    diagram: (q) => {
+      // Extract the prior and likelihoods from the stem
+      const p1  = _num(q.q, /P\(A\)=([0-9.]+)/, 0.50);
+      // P(B|A) appears as "P(B\mid A)=..."
+      const p11 = _num(q.q, /P\(B\\mid A\)=([0-9.]+)/, 0.80);
+      // P(B|A^c) appears as "P(B\mid A^c)=..."
+      const p21 = _num(q.q, /P\(B\\mid A\^c\)=([0-9.]+)/, 0.20);
+      // Urn question: pick from proportions
+      const urnA = q.q.match(/Urn A holds (\d+) red of (\d+)/);
+      const urnB = q.q.match(/Urn B holds (\d+) red of (\d+)/);
+      if (urnA && urnB) {
+        const lA = parseInt(urnA[1]) / parseInt(urnA[2]);
+        const lB = parseInt(urnB[1]) / parseInt(urnB[2]);
+        return {
+          kind: "tree",
+          caption: "Forward tree gives $P(\\text{red})$; Bayes reads it backward.",
+          labels: { p1: 0.5, l1: "Urn A", l2: "Urn B", p11: +lA.toFixed(4), p21: +lB.toFixed(4) },
+        };
+      }
+      // Medical test / machine question: use prevalence as prior
+      const prev = q.q.match(/prevalence ([0-9.]+)\\%/);
+      if (prev) {
+        const pr = parseFloat(prev[1]) / 100;
+        const se = _num(q.q, /sensitivity ([0-9.]+)\\%/, 90) / 100;
+        const sp = _num(q.q, /specificity ([0-9.]+)\\%/, 95) / 100;
+        return {
+          kind: "tree",
+          caption: "Forward tree gives $P(+)$; Bayes reads it backward for $P(\\text{disease}\\mid +)$.",
+          labels: { p1: pr, l1: "Disease", l2: "Healthy", p11: se, p21: +(1 - sp).toFixed(4), l11: "+|D", l12: "−|D", l21: "+|H", l22: "−|H" },
+        };
+      }
+      return {
+        kind: "tree",
+        caption: "Forward tree gives $P(B)$; Bayes reads it backward.",
+        labels: { p1, l1: "A", l2: "A'", p11, p21, l11: "B|A", l12: "B'|A", l21: "B|A'", l22: "B'|A'" },
+      };
+    },
   },
+
   "independence": {
     trick: "Independent $\\Rightarrow P(A\\cap B)=P(A)P(B)$ and $P(A\\mid B)=P(A)$. **Verify independence before multiplying** — it's the most common false assumption.",
+    formula: "$P(A\\cap B)=P(A)\\,P(B)$",
     decode: GENERIC_PROB_DECODE,
     sanity: GENERIC_PROB_SANITY,
-    diagram: () => ({ kind: "venn-conditional", caption: "Independence: knowing $B$ doesn't reshape $A$'s share." }),
+    diagram: (q) => {
+      const pA = _num(q.q, /P\(A\)=([0-9.]+)/, 0.50);
+      const pB = _num(q.q, /P\(B\)=([0-9.]+)/, 0.45);
+      return {
+        kind: "venn-conditional",
+        caption: "Independence: knowing $B$ does not reshape $A$'s share.",
+        labels: { pA, pB, pAB: +(pA * pB).toFixed(4) },
+      };
+    },
   },
+
   "expectation-and-variance": {
     trick: "Linearity: $E[aX+b]=aE[X]+b$. Variance scales squared: $\\operatorname{Var}(aX+b)=a^2\\operatorname{Var}(X)$. Fast variance: $\\operatorname{Var}(X)=E[X^2]-(E[X])^2$.",
+    formula: "$E[aX+b]=aE[X]+b,\\quad \\operatorname{Var}(aX+b)=a^2\\operatorname{Var}(X),\\quad \\operatorname{Var}(X)=E[X^2]-(E[X])^2$",
     decode: [
       { label: "Random variable", value: "what $X$ counts or measures" },
       { label: "Distribution", value: "the PMF/PDF or the table of $x$ with $P(X=x)$" },
@@ -782,38 +913,229 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
       "$E[X]$ falls inside the range of $X$.",
       "A scale change by $a$ multiplies $\\operatorname{Var}$ by $a^2$, not $a$.",
     ],
-    diagram: () => ({ kind: "pmf-bars", caption: "$E[X]$ is the balance point of the distribution." }),
+    diagram: (q) => {
+      // n-sided die → uniform discrete PMF
+      const dieMatch = q.q.match(/(\d+)-sided die/);
+      if (dieMatch) {
+        const s = Math.min(parseInt(dieMatch[1]), 8);
+        const p = +(1 / s).toFixed(4);
+        return {
+          kind: "pmf-bars",
+          caption: "$E[X]$ is the balance point; each bar has height $1/{" + s + "}$.",
+          labels: {
+            ps: Array(s).fill(p).join(","),
+            xs: Array.from({ length: s }, (_, i) => i + 1).join(","),
+          },
+        };
+      }
+      // Biased coin / Bernoulli
+      const coinMatch = q.q.match(/probability \$([0-9.]+)\$/);
+      if (coinMatch) {
+        const ph = parseFloat(coinMatch[1]);
+        return {
+          kind: "pmf-bars",
+          caption: "$E[X]=p\\cdot\\text{win}$; bar at $X=1$ has height $p$.",
+          labels: {
+            ps: `${+(1 - ph).toFixed(4)},${+ph.toFixed(4)}`,
+            xs: "0,1",
+            highlight: 1,
+          },
+        };
+      }
+      return { kind: "pmf-bars", caption: "$E[X]$ is the balance point of the distribution." };
+    },
   },
+
   "common-discrete-distributions": {
     trick: "**Identify first.** Binomial (fixed $n$ trials): $\\binom{n}{k}p^k(1-p)^{n-k}$. Poisson (rate $\\lambda$): $\\dfrac{\\lambda^k e^{-\\lambda}}{k!}$. Geometric (first success): $(1-p)^{k-1}p$.",
+    formula: "Binomial $\\binom{n}{k}p^k(1-p)^{n-k}$ · Poisson $\\dfrac{\\lambda^k e^{-\\lambda}}{k!}$ · Geometric $(1-p)^{k-1}p$",
     decode: GENERIC_PROB_DECODE,
     sanity: GENERIC_PROB_SANITY,
-    diagram: (q) => /poisson|per (hour|minute|day|year)|rate \$?\\?lambda|arriv/i.test(q.q)
-      ? { kind: "poisson-timeline", caption: "Events on a timeline at rate $\\lambda$." }
-      : { kind: "pmf-bars", caption: "Discrete PMF — probability mass per outcome." },
+    diagram: (q) => {
+      // Poisson questions always have \lambda= in the stem
+      const lamMatch = q.q.match(/\\lambda=([0-9.]+)/);
+      if (lamMatch) {
+        const lam = parseFloat(lamMatch[1]);
+        const kMatch = q.q.match(/P\(X=(\d+)\)/);
+        return {
+          kind: "poisson-timeline",
+          caption: "Events on a timeline at rate $\\lambda$.",
+          labels: { lambda: lam, t: 1, expected: +lam.toFixed(4) },
+        };
+      }
+      // Binomial: extract n and p, compute the PMF bars
+      const nMatch = q.q.match(/n=(\d+)/);
+      const pMatch = q.q.match(/p=([0-9.]+)/);
+      if (nMatch && pMatch) {
+        const n = Math.min(parseInt(nMatch[1]), 9);
+        const p = parseFloat(pMatch[1]);
+        const ps = Array.from(
+          { length: n + 1 },
+          (_, k) => +(nCr(n, k) * p ** k * (1 - p) ** (n - k)).toFixed(4),
+        ).join(",");
+        const xs = Array.from({ length: n + 1 }, (_, k) => k).join(",");
+        const kMatch = q.q.match(/P\(X=(\d+)\)/);
+        const highlight = kMatch ? parseInt(kMatch[1]) : Math.round(n * p);
+        return {
+          kind: "pmf-bars",
+          caption: `Binomial$(${n}, ${p})$ PMF — highlighted bar is the exact value asked.`,
+          labels: { ps, xs, highlight },
+        };
+      }
+      return { kind: "pmf-bars", caption: "Discrete PMF — probability mass per outcome." };
+    },
   },
+
   "common-continuous-distributions": {
     trick: "Continuous → probabilities are **areas** under the density. Exponential is **memoryless**: $P(X>s+t\\mid X>s)=P(X>t)$. Normal → **standardize** $Z=\\dfrac{X-\\mu}{\\sigma}$, then read the table.",
+    formula: "Exponential $f(x)=\\lambda e^{-\\lambda x},\\ P(X>x)=e^{-\\lambda x}$ · Normal $Z=\\dfrac{X-\\mu}{\\sigma}$",
     decode: GENERIC_PROB_DECODE,
     sanity: GENERIC_PROB_SANITY,
-    diagram: (q) => /exponential|memoryless|lifetime|until.*(fail|arriv)|decay/i.test(q.q)
-      ? { kind: "exponential", caption: "Exponential density $f(x)=\\lambda e^{-\\lambda x}$." }
-      : { kind: "bell", caption: "Normal curve — area in the tails beyond $\\pm k\\sigma$." },
+    diagram: (q) => {
+      // Exponential (mean theta)
+      const expMatch = q.q.match(/[Ee]xponential.*mean \$(\d+)/);
+      if (expMatch) {
+        const theta = parseInt(expMatch[1]);
+        const lambda = +(1 / theta).toFixed(4);
+        // Look for a threshold value "P(X > t)" in the stem
+        const x0Match = q.q.match(/X > (\d+(?:\.\d+)?)/);
+        const x0 = x0Match ? parseFloat(x0Match[1]) : undefined;
+        return {
+          kind: "exponential",
+          caption: "Exponential density $f(x)=\\lambda e^{-\\lambda x}$. Shaded = $P(X>x_0)$.",
+          labels: x0 !== undefined ? { lambda, x0 } : { lambda },
+        };
+      }
+      // Uniform on [a, b]
+      const unifMatch = q.q.match(/uniform on \$\[(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)\]/);
+      if (unifMatch) {
+        const a = parseFloat(unifMatch[1]), b = parseFloat(unifMatch[2]);
+        const x1Match = q.q.match(/X > (\d+(?:\.\d+)?)/);
+        const x1 = x1Match ? parseFloat(x1Match[1]) : undefined;
+        return {
+          kind: "uniform",
+          caption: "Uniform density on $[a,b]$ — shaded region is the asked probability.",
+          labels: x1 !== undefined ? { a, b, x1, x2: b } : { a, b },
+        };
+      }
+      // Minimum of n exponentials → exponential with rate n/theta
+      const minMatch = q.q.match(/i\.i\.d\. Exponential each with mean \$(\d+)/);
+      const nIndepMatch = q.q.match(/X_1.*X_(\d+)/);
+      if (minMatch) {
+        const theta = parseInt(minMatch[1]);
+        const nInd  = nIndepMatch ? parseInt(nIndepMatch[1]) : 2;
+        const lambda = +(nInd / theta).toFixed(4);
+        const x0Match = q.q.match(/> (\d+(?:\.\d+)?)/);
+        const x0 = x0Match ? parseFloat(x0Match[1]) : undefined;
+        return {
+          kind: "exponential",
+          caption: `$\\min(X_1,\\dots,X_n) \\sim \\text{Exp}(\\lambda=${lambda})$ — minimum is also exponential.`,
+          labels: x0 !== undefined ? { lambda, x0 } : { lambda },
+        };
+      }
+      // Default: bell curve
+      return { kind: "bell", caption: "Normal curve — area in the tails beyond $\\pm k\\sigma$." };
+    },
   },
+
   "interest-and-accumulation": {
     trick: "Accumulation $=\\exp\\!\\int_{t_1}^{t_2}\\delta_s\\,ds$ — a rate over an interval needs the **integral** of the force, not $\\delta$ at a point. Doubling time $T$ gives $\\delta=\\dfrac{\\ln 2}{T}$. A nominal rate convertible $m$ times/yr has per-period rate (nominal)$/m$.",
-    decode: [
-      { label: "Cash flows", value: "what is invested/paid and when" },
-      { label: "Rate basis", value: "effective, nominal-convertible-$m$, or a force $\\delta_t$" },
-      { label: "Asked", value: "an accumulated value, present value, or a rate" },
-      { label: "Timing", value: "the interval each amount actually earns over" },
-    ],
+    formula: "$a(t)=\\exp\\!\\int_0^t\\delta_s\\,ds$ · $i^{(m)}/m$ per period · $\\delta=\\dfrac{\\ln 2}{T_{\\text{double}}}$",
+    decode: FM_DECODE,
+    sanity: FM_SANITY,
+    diagram: (q) => {
+      // Extract the interest rate (as "5.0\%")
+      const rateMatch = q.q.match(/([0-9]+(?:\.[0-9]+)?)\\%/);
+      const rate = rateMatch ? parseFloat(rateMatch[1]) / 100 : 0.05;
+      // Extract period length ("for n years")
+      const nMatch = q.q.match(/for (\d+) years/);
+      const n = nMatch ? parseInt(nMatch[1]) : 5;
+      // First dollar amount is the lump-sum invested
+      const t0Match = q.q.match(/\\\$([0-9,]+)/);
+      const t0val = t0Match ? -parseFloat(t0Match[1].replace(/,/g, "")) : -1000;
+      return {
+        kind: "timeline",
+        caption: "Each amount earns compound interest over its own time interval.",
+        labels: { n, rate, pmt: 0, t0val },
+      };
+    },
+  },
+
+  "level-annuities": {
+    trick: "Annuity-immediate $a_{\\overline{n}|}=\\dfrac{1-v^n}{i}$ (payments at END of period); annuity-due $\\ddot a_{\\overline{n}|}=a_{\\overline{n}|}(1+i)$ (payments at START). Accumulated value uses $s_{\\overline{n}|}=\\dfrac{(1+i)^n-1}{i}$.",
+    formula: "$a_{\\overline{n}|}=\\dfrac{1-v^n}{i},\\quad s_{\\overline{n}|}=\\dfrac{(1+i)^n-1}{i},\\quad \\ddot a_{\\overline{n}|}=(1+i)\\,a_{\\overline{n}|}$",
+    decode: FM_DECODE,
+    sanity: FM_SANITY,
+    diagram: (q) => {
+      const rateMatch = q.q.match(/([0-9]+(?:\.[0-9]+)?)\\%/);
+      const rate = rateMatch ? parseFloat(rateMatch[1]) / 100 : 0.05;
+      const nMatch = q.q.match(/(\d+) years/) ?? q.q.match(/(\d+)-year/);
+      const n = nMatch ? parseInt(nMatch[1]) : 10;
+      // Payment amount: first dollar amount in the stem
+      const pmtMatch = q.q.match(/\\\$(\d+)/);
+      const pmt = pmtMatch ? parseInt(pmtMatch[1]) : 1000;
+      return {
+        kind: "timeline",
+        caption: "Level payments — PV with $a_{\\overline{n}|}$, AV with $s_{\\overline{n}|}$.",
+        labels: { n, pmt, rate },
+      };
+    },
+  },
+
+  "loan-amortization": {
+    trick: "Level payment $X=\\dfrac{L}{a_{\\overline{n}|}}$. Outstanding balance = PV of REMAINING payments (prospective): $X\\,a_{\\overline{n-t}|}$. Interest in payment $t$ is $X(1-v^{\\,n-t+1})$; the rest is principal.",
+    formula: "$X=\\dfrac{L}{a_{\\overline{n}|}}$ · balance $=X\\,a_{\\overline{n-t}|}$ · interest$_t=X(1-v^{\\,n-t+1})$",
+    decode: FM_DECODE,
     sanity: [
-      "For positive interest, accumulated value $>$ amount invested.",
-      "An effective rate exceeds the nominal it came from once compounding is more than once a year.",
-      "Discounting moves value backward in time; accumulating moves it forward.",
+      "The balance falls toward $0$ at the final payment.",
+      "Early payments are mostly interest; later payments mostly principal.",
+      "Total paid $=nX$ exceeds the principal $L$ by the total interest.",
     ],
-    diagram: () => undefined,
+    diagram: (q) => {
+      const rateMatch = q.q.match(/([0-9]+(?:\.[0-9]+)?)\\%/);
+      const rate = rateMatch ? parseFloat(rateMatch[1]) / 100 : 0.06;
+      const nMatch = q.q.match(/(\d+) years/);
+      const n = nMatch ? parseInt(nMatch[1]) : 10;
+      // Loan principal: first dollar amount
+      const loanMatch = q.q.match(/\\\$([0-9,]+)/);
+      const L = loanMatch ? parseFloat(loanMatch[1].replace(/,/g, "")) : 10000;
+      const pmt = +(L / aImm(n, rate)).toFixed(2);
+      return {
+        kind: "timeline",
+        caption: "Each level payment splits into an interest portion + principal reduction.",
+        labels: { n, pmt, rate, t0val: -L },
+      };
+    },
+  },
+
+  "bond-pricing": {
+    trick: "Price $=$ PV of coupons $+$ PV of redemption: $P=Fr\\,a_{\\overline{n}|}+C v^n$. Coupon rate $>$ yield → **premium** ($P>C$); $<$ yield → **discount**. For a callable premium bond, price to the WORST call/maturity date.",
+    formula: "$P=Fr\\,a_{\\overline{n}|}+C\\,v^n$",
+    decode: FM_DECODE,
+    sanity: [
+      "Coupon rate $=$ yield ⇒ price $=$ par.",
+      "Higher yield ⇒ lower price (inverse relationship).",
+      "A premium bond's price declines to redemption value over time.",
+    ],
+    diagram: (q) => {
+      // The bond generators always include "at a yield of X%" or "yield X%"
+      const yieldMatch = q.q.match(/yield.*?([0-9]+(?:\.[0-9]+)?)\\%/i) ?? q.q.match(/([0-9]+(?:\.[0-9]+)?)\\%.*?yield/i);
+      const rate = yieldMatch ? parseFloat(yieldMatch[1]) / 100 : 0.06;
+      // Maturity in years: the larger of the two n values in "matures in N years"
+      const allN = [...q.q.matchAll(/(\d+) years/g)].map(m => parseInt(m[1]));
+      const n = allN.length ? Math.max(...allN) : 10;
+      // Coupon payment = face × coupon rate; face is first dollar amount
+      const faceMatch = q.q.match(/\\\$(\d{3,})/);
+      const face = faceMatch ? parseInt(faceMatch[1]) : 1000;
+      const couponRateMatch = q.q.match(/([0-9]+(?:\.[0-9]+)?)\\% annual coupon/) ?? q.q.match(/coupons at ([0-9]+(?:\.[0-9]+)?)\\%/i);
+      const couponRate = couponRateMatch ? parseFloat(couponRateMatch[1]) / 100 : 0.06;
+      const pmt = +(face * couponRate).toFixed(2);
+      return {
+        kind: "timeline",
+        caption: "Coupon payments each period + redemption value at maturity.",
+        labels: { n, pmt, rate, t0val: -face },
+      };
+    },
   },
 };
 
@@ -824,6 +1146,7 @@ function enrich(conceptId: string, q: MasteryQuestion): MasteryQuestion {
   return {
     ...q,
     trick: q.trick ?? e.trick,
+    formula: q.formula ?? e.formula,
     decode: q.decode ?? e.decode,
     sanity: q.sanity ?? e.sanity,
     diagram: q.diagram ?? e.diagram?.(q),
