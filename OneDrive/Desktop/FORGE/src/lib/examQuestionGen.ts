@@ -143,7 +143,7 @@ const GENERATORS: Record<string, Template[]> = {
  return build(`Events $A$ and $B$ are mutually exclusive with $P(A)=${fmt(a, 2)}$ and $P(B)=${fmt(b, 2)}$. Find $P(A \\cup B)$.`,
  round(a + b, 4), [round(a * b, 4), a, round(a + b - a * b, 4), b],
  `Mutually exclusive means $P(A\\cap B)=0$, so $P(A\\cup B)=P(A)+P(B)=${fmt(a, 2)}+${fmt(b, 2)}=${fmt(a + b, 4)}$. Multiplying would only be right for independence, a different idea.`,
- prob, TIER_DIFF.easy);
+ prob, TIER_DIFF.easy, { diagram: { kind: "venn-conditional", caption: "Mutually exclusive: circles never overlap. P(A∩B) = 0.", labels: { pA: a, pB: b, pAB: 0 } } });
  }),
  T("easy", () => {
  const a = rstep(0.3, 0.8, 0.05);
@@ -178,7 +178,7 @@ const GENERATORS: Record<string, Template[]> = {
  return build(`$P(A)=${fmt(a, 2)}$, $P(B)=${fmt(b, 2)}$, and $P(A\\cup B)=${fmt(u, 2)}$. Find the probability that EXACTLY one of $A,B$ occurs.`,
  exactlyOne, [both, round(a + b - 2 * (a + b - u), 4) + 0.0, u, round(u - 2 * both, 4)],
  `First recover the overlap: $P(A\\cap B)=P(A)+P(B)-P(A\\cup B)=${fmt(a, 2)}+${fmt(b, 2)}-${fmt(u, 2)}=${fmt(both, 4)}$. "Exactly one" is the union minus the overlap (the part in both): $${fmt(u, 2)}-${fmt(both, 4)}=${fmt(exactlyOne, 4)}$, equivalently $2P(A\\cup B)-P(A)-P(B)$. Reporting the overlap itself is the trap.`,
- prob, TIER_DIFF.superhard);
+ prob, TIER_DIFF.superhard, { diagram: { kind: "venn-conditional", caption: `P(exactly one) = P(A∪B) − P(A∩B) = ${fmt(u, 2)} − ${fmt(both, 4)} = ${fmt(exactlyOne, 4)}`, labels: { pA: a, pB: b, pAB: both } } });
  }),
  ],
 
@@ -257,7 +257,7 @@ const GENERATORS: Record<string, Template[]> = {
  return build(`Factory 1 makes ${pct(w1)} of units at a ${pct(d1)} defect rate; Factory 2 makes the rest at ${pct(d2)}. What fraction of all units are defective?`,
  pd, [round((d1 + d2) / 2, 5), round(w1 * d1, 5), round(d1 + d2, 5), round((1 - w1) * d2, 5)],
  `Law of total probability: $P(D)=(${fmt(w1, 2)})(${fmt(d1, 2)})+(${fmt(round(1 - w1, 2), 2)})(${fmt(d2, 2)})=${fmt(pd, 5)}$. Averaging the two rates is only valid if the shares are equal, here they are not.`,
- prob, TIER_DIFF.medium);
+ prob, TIER_DIFF.medium, { diagram: { kind: "tree", caption: "Multiply along each branch; add the two paths that end in D.", labels: { p1: w1, l1: "F1", l2: "F2", p11: d1, l11: "D|F1", l12: "D'|F1", p21: d2, l21: "D|F2", l22: "D'|F2" } } });
  }),
  T("hard", () => {
  const R = rint(5, 12), B = rint(3, 10);
@@ -265,7 +265,7 @@ const GENERATORS: Record<string, Template[]> = {
  return build(`A bag has ${R} red and ${B} blue balls. You draw 2 without replacement. Given the first is red, find $P(\\text{second is red})$.`,
  round(p2, 4), [round(R / (R + B), 4), round((R - 1) / (R + B), 4), round(R / (R + B - 1), 4), round((R - 1) / (R + B - 2), 4)],
  `Condition on the first red being gone: ${R - 1} reds remain among $${R + B} - 1 = ${R + B - 1}$ balls, so $\\dfrac{${R - 1}}{${R + B - 1}}=${fmt(p2, 4)}$. Using $\\tfrac{R}{R+B}$ forgets the ball already removed.`,
- prob, TIER_DIFF.hard);
+ prob, TIER_DIFF.hard, { diagram: { kind: "tree", caption: `Draw 1 removes one ball. Branches show P(2nd red | 1st draw).`, labels: { p1: round(R / (R + B), 4), l1: "Red₁", l2: "Blue₁", p11: round((R - 1) / (R + B - 1), 4), l11: "Red₂|R₁", l12: "Blue₂|R₁", p21: round(R / (R + B - 1), 4), l21: "Red₂|B₁", l22: "Blue₂|B₁" } } });
  }),
  T("superhard", () => {
  const R = rint(3, 9), B = rint(4, 13);
@@ -315,7 +315,7 @@ const GENERATORS: Record<string, Template[]> = {
  return build(`Three machines make ${pct(s1)}, ${pct(s2)}, ${pct(s3)} of output at defect rates ${pct(d1)}, ${pct(d2)}, ${pct(d3)}. A defective unit is found. Find $P(\\text{machine 3}\\mid \\text{defective})$.`,
  round(post, 4), [round(s3 * d3, 4), d3, round(denom, 4), round((s3 * d3) / (s1 * d1 + s2 * d2), 4)],
  `Extended Bayes over three causes: $\\dfrac{s_3 d_3}{s_1 d_1+s_2 d_2+s_3 d_3}=\\dfrac{(${fmt(s3, 2)})(${fmt(d3, 2)})}{${fmt(denom, 5)}}=${fmt(post, 4)}$. The trap is dividing by only the other machines, or stopping at the joint $s_3 d_3$ without normalising over the total defect probability.`,
- prob, TIER_DIFF.superhard);
+ prob, TIER_DIFF.superhard, { diagram: { kind: "partition", caption: `M1(${pct(s1)}, d=${pct(d1)})  M2(${pct(s2)}, d=${pct(d2)})  M3(${pct(s3)}, d=${pct(d3)}). Gold band = defective units.`, labels: { l1: `M1 ${pct(s1)}`, l2: `M2 ${pct(s2)}`, l3: `M3 ${pct(s3)}` } } });
  }),
  T("hard", () => {
  // Law of total probability over overlapping segments (only-life / only-health / both).
@@ -330,7 +330,7 @@ const GENERATORS: Record<string, Template[]> = {
  `Among an insurer's policyholders, $${pct(L)}$ hold a life policy, $${pct(H)}$ a health policy, and $${pct(B)}$ hold both. Next year, $${pct(rL)}$ of life-ONLY holders, $${pct(rH)}$ of health-ONLY holders, and $${pct(rB)}$ of those with BOTH will renew. For a random policyholder, find the probability they renew a life or health policy next year.`,
  renew, [noCarveOut, round(L + H - B, 4), round(rB * B, 4), round(renew / (L + H - B), 4)],
  `Carve the holders into disjoint segments first: life-only $=${fmt(L, 2)}-${fmt(B, 2)}=${fmt(onlyL, 4)}$, health-only $=${fmt(onlyH, 4)}$, both $=${fmt(B, 2)}$. Law of total probability: $${fmt(rL, 2)}(${fmt(onlyL, 4)})+${fmt(rH, 2)}(${fmt(onlyH, 4)})+${fmt(rB, 2)}(${fmt(B, 2)})=${fmt(renew, 4)}$. Applying the renewal rates to the FULL life/health percentages double-counts the "both" group, the trap.`,
- prob, TIER_DIFF.hard);
+ prob, TIER_DIFF.hard, { diagram: { kind: "partition", caption: `Renewal rates: Life-only ${pct(rL)}, Both ${pct(rB)}, Health-only ${pct(rH)}. Gold band = renewing policyholders.`, labels: { l1: `Life ${pct(onlyL)}`, l2: `Both ${pct(B)}`, l3: `Health ${pct(onlyH)}` } } });
  }),
  ],
 
