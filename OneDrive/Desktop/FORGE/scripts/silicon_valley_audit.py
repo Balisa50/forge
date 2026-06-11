@@ -556,21 +556,21 @@ def main() -> None:
 
     # ── Summary table ──────────────────────────────────────────────────────────
     print()
-    print("╔══════════════════════════════════════════════════════════════════╗")
-    print("║         SILICON VALLEY FINAL AUDIT  –  THE FORGE               ║")
-    print("╠══════════════════════════════════════════════════════════════════╣")
+    print("+------------------------------------------------------------------+")
+    print("|         SILICON VALLEY FINAL AUDIT  -  THE FORGE                |")
+    print("+------------------------------------------------------------------+")
     for title, key in sections:
         issues = results[key]
-        symbol = "✅ PASS" if not issues else f"❌ FAIL ({len(issues)} issues)"
+        symbol = "PASS" if not issues else f"FAIL ({len(issues)} issues)"
         label  = title[:38].ljust(38)
-        print(f"║  {label}: {symbol:<18} ║")
+        print(f"|  {label}: {symbol:<18} |")
     cross_label = "8. Cross-track uniqueness (allowed)  "[:38].ljust(38)
-    print(f"║  {cross_label}: ✅ PASS (by spec)    ║")
-    print("╠══════════════════════════════════════════════════════════════════╣")
+    print(f"|  {cross_label}: PASS (by spec)      |")
+    print("+------------------------------------------------------------------+")
     all_pass = all(not results[k] for k in results)
-    overall = "✅ THE FORGE IS SILICON VALLEY READY" if all_pass else "❌ ISSUES FOUND  —  FIX ABOVE"
-    print(f"║  OVERALL: {overall:<54}║")
-    print("╚══════════════════════════════════════════════════════════════════╝")
+    overall = "THE FORGE IS SILICON VALLEY READY" if all_pass else "ISSUES FOUND  -  FIX ABOVE"
+    print(f"|  OVERALL: {overall:<54}|")
+    print("+------------------------------------------------------------------+")
 
 if __name__ == "__main__":
     main()
