@@ -718,15 +718,6 @@
               "body": "## What it is\nNow you connect the three pieces in Terraform so your domain serves the site over HTTPS:\n\n1. **`aliases`** on the CloudFront distribution, tells CloudFront 'I also answer to yourdomain.com and www.yourdomain.com'\n2. **`viewer_certificate`** with your ACM cert ARN, replaces the default `*.cloudfront.net` cert so HTTPS works for YOUR name\n3. A **Route 53 alias record**, an A record pointing your apex domain at the CloudFront distribution\n\n## Why an ALIAS record, not a CNAME\nThe apex (yourdomain.com with no `www`) cannot be a CNAME, DNS forbids it. Route 53's alias record is an AWS-specific A record that points at an AWS resource (CloudFront) and resolves correctly at the apex. This is exactly the kind of edge case IaC documents for you so you never re-learn it.\n\n## Why it matters\nThis day is where everything from the week becomes one coherent stack, all in `main.tf`, all version-controlled. Change the cert later? It's a diff. Move domains? It's a diff.\n\n## Where this fits\nToday you update `main.tf` with aliases, the viewer certificate, and the Route 53 alias record, then `terraform apply`. After propagation, your domain is wired to CloudFront over HTTPS."
             },
             {
-              "kind": "video",
-              "title": "Terraform in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Terraform in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -944,15 +935,6 @@
               "body": "## What it is\nGitHub Actions workflow file basics is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\ngh --version\ngh auth status\n```\n\n## What 'working' looks like\ngh CLI prints version and logged-in user.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -1002,15 +984,6 @@
               "kind": "lesson",
               "title": "Before and after CI/CD",
               "body": "## Before\nA developer writes code. Tests it locally (maybe). SSHs into the server. `git pull && npm install && npm run build && systemctl restart app`. Hopes nothing broke. If it broke, SSHs back in, debugs at 2am.\n\n## After\nA developer writes code. Pushes to GitHub. A workflow runs: install deps → run tests → build → deploy. If tests fail, deploy doesn't happen, the developer sees the red ❌ in PR. If they pass, the server gets the new code automatically.\n\nThe human is REMOVED from the deploy path. That's the whole point.\n\n## CI vs CD, the two halves\n```text\nCI (Continuous Integration)\n Every push: pull, install, lint, test, build.\n Verdict: green or red. Visible on the PR.\n Goal: catch breakage BEFORE merge.\n\nCD (Continuous Deployment / Delivery)\n Every merge to main: deploy the green build to production.\n Goal: main is always shippable; deploy is a non-event.\n```\n\n## What GitHub Actions gives you\n- A YAML file in `.github/workflows/` defines the workflow.\n- Workflows trigger on events: `push`, `pull_request`, `workflow_dispatch`, `schedule`.\n- Each run gets a fresh Ubuntu/macOS/Windows VM (the runner).\n- Free minutes: 2,000/month for private repos, unlimited for public.\n\n## What you build this week\n`.github/workflows/deploy.yml` that runs on every push to `main`:\n1. Checks out the repo\n2. Validates the HTML (a basic test)\n3. Configures AWS credentials from GitHub Secrets\n4. Syncs `index.html` to S3\n5. Invalidates CloudFront so the new file goes live\n\nYou'll push a change to `index.html` and watch it land on your live URL ~90 seconds later. No SSH, no typing, no fear."
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -1685,7 +1658,7 @@
             {
               "kind": "lesson",
               "title": "MONITORING.md + tag",
-              "body": "## MONITORING.md\n```markdown\n# Monitoring & alerting\n\n## Black-box (synthetic)\nBetterUptime probe every 3 minutes from 3 regions.\n- Status page: https://status.betterstack.com/YOUR-PAGE-ID/\n- Alerts: email + Slack to <your channel>.\n\n## White-box (CloudWatch)\n\n### Billing alarm\n- Metric: AWS/Billing EstimatedCharges (USD)\n- Threshold: > $50\n- Period: 6h, EvaluationPeriods: 1\n- Notification: SNS → email\n\n### CloudFront 5xx rate\n- Metric: AWS/CloudFront 5xxErrorRate\n- Threshold: > 1.0% sustained for 10 minutes\n- Period: 5min, EvaluationPeriods: 2\n- treat_missing_data: notBreaching\n- Notification: SNS → email (alarm + recovery)\n\n## Logs\nCloudFront access logs → s3://cloudfront-logs-YOUR-NAME/portfolio/\nQueryable via Athena (cf_logs table).\n\n## Tested\nAll alarms exercised via `aws cloudwatch set-alarm-state ... ALARM` + verified notification arrived.\n\n## Limitations / known gaps\n- No alarm for DNS / cert issues (rely on BetterUptime).\n- No latency budget alarm yet (consider for v0.5).\n- Single recipient for alerts (consider PagerDuty for v0.5).\n```\n\n## README update\n```markdown\n## Monitoring\nSee [MONITORING.md](MONITORING.md). Uptime + 5xx + billing alarms.\nLive status: https://yoursite.com/status\n\n## Roadmap\n- [x] v0.1, bucket + static site\n- [x] v0.2, custom domain + HTTPS\n- [x] v0.3, automated CI/CD\n- [x] v0.4, monitoring + alarms (you are here)\n- [ ] v1.0, containerise + reusable IaC module\n```\n\n## Tag\n```bash\ngit add MONITORING.md README.md status.html\ngit commit -m 'docs: monitoring writeup + status page'\ngit tag v0.4\ngit push && git push --tags\n```"
+              "body": "Commit your monitoring configuration to the repo so any future engineer inherits your alerting setup without having to rediscover it.\n\n## MONITORING.md\n```markdown\n# Monitoring & alerting\n\n## Black-box (synthetic)\nBetterUptime probe every 3 minutes from 3 regions.\n- Status page: https://status.betterstack.com/YOUR-PAGE-ID/\n- Alerts: email + Slack to <your channel>.\n\n## White-box (CloudWatch)\n\n### Billing alarm\n- Metric: AWS/Billing EstimatedCharges (USD)\n- Threshold: > $50\n- Period: 6h, EvaluationPeriods: 1\n- Notification: SNS → email\n\n### CloudFront 5xx rate\n- Metric: AWS/CloudFront 5xxErrorRate\n- Threshold: > 1.0% sustained for 10 minutes\n- Period: 5min, EvaluationPeriods: 2\n- treat_missing_data: notBreaching\n- Notification: SNS → email (alarm + recovery)\n\n## Logs\nCloudFront access logs → s3://cloudfront-logs-YOUR-NAME/portfolio/\nQueryable via Athena (cf_logs table).\n\n## Tested\nAll alarms exercised via `aws cloudwatch set-alarm-state ... ALARM` + verified notification arrived.\n\n## Limitations / known gaps\n- No alarm for DNS / cert issues (rely on BetterUptime).\n- No latency budget alarm yet (consider for v0.5).\n- Single recipient for alerts (consider PagerDuty for v0.5).\n```\n\n## README update\n```markdown\n## Monitoring\nSee [MONITORING.md](MONITORING.md). Uptime + 5xx + billing alarms.\nLive status: https://yoursite.com/status\n\n## Roadmap\n- [x] v0.1, bucket + static site\n- [x] v0.2, custom domain + HTTPS\n- [x] v0.3, automated CI/CD\n- [x] v0.4, monitoring + alarms (you are here)\n- [ ] v1.0, containerise + reusable IaC module\n```\n\n## Tag\n```bash\ngit add MONITORING.md README.md status.html\ngit commit -m 'docs: monitoring writeup + status page'\ngit tag v0.4\ngit push && git push --tags\n```"
             },
             {
               "kind": "swipe",
@@ -2199,15 +2172,6 @@
               "body": "## What it is\nDocker Compose CLI verification is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\ndocker compose version\n```\n\n## What 'working' looks like\nCompose plugin version prints.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -2257,15 +2221,6 @@
               "kind": "lesson",
               "title": "Compose in one breath",
               "body": "## The problem\nYour local dev needs: web app + Postgres + Redis + maybe MailHog for email testing. With raw Docker, that's:\n```bash\ndocker network create app-net\ndocker volume create pg-data\ndocker run -d --name pg --network app-net -v pg-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres:16\ndocker run -d --name redis --network app-net redis:7-alpine\ndocker run -d --name mail --network app-net -p 8025:8025 mailhog/mailhog\ndocker run -d --name api --network app-net -p 3000:3000 -e DATABASE_URL=postgres://postgres:secret@pg:5432/postgres -e REDIS_URL=redis://redis:6379 myapp:dev\n```\nFive commands. Half a dozen flags each. Memorise the connection URLs. Re-type after every reboot.\n\n## The Compose version\n```yaml\n# docker-compose.yml\nservices:\n pg:\n image: postgres:16\n environment: { POSTGRES_PASSWORD: secret }\n volumes: [pg-data:/var/lib/postgresql/data]\n redis:\n image: redis:7-alpine\n mail:\n image: mailhog/mailhog\n ports: ['8025:8025']\n api:\n build: .\n ports: ['3000:3000']\n environment:\n DATABASE_URL: postgres://postgres:secret@pg:5432/postgres\n REDIS_URL: redis://redis:6379\n depends_on: [pg, redis]\n\nvolumes:\n pg-data:\n```\n\n```bash\ndocker compose up -d # everything, one command\ndocker compose logs -f api # follow the api logs\ndocker compose down # stop + remove everything\n```\n\nThat's it. The YAML is the source of truth for what your dev environment IS.\n\n## What you ship this week\n`docker-compose.yml` for a real two-service setup (Node API + Postgres):\n- API live-reloads on source change (bind mount).\n- Postgres persists data via named volume.\n- Healthcheck on Postgres; API waits for it.\n- Env vars in a `.env` file (NOT committed).\n- `docker compose up` brings the whole world up in <10 seconds."
-            },
-            {
-              "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -3040,15 +2995,6 @@
               "body": "## What it is\ncontainerd + nerdctl install is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\nnerdctl version\n```\n\n## What 'working' looks like\nBoth client and server versions are listed.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -3093,15 +3039,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nDocker is a tool, not a standard. The Open Container Initiative (OCI) defines the standards: the image format and the runtime specification. Docker implements these standards, but so do alternatives: containerd (the container runtime used by Kubernetes), podman (daemon-less, rootless Docker alternative), and runc (the low-level OCI runtime used by Docker and containerd). Understanding the container runtime landscape matters because in production, you are often not using Docker directly, you are\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Docker in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=Gjnup-PuquQ",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Docker in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -3552,15 +3489,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nKubernetes is the operating system for containers at scale. The core problem it solves: you have 10 containers (your app, the database, the cache, the background workers, the metrics collector) running across 5 servers. How do you decide which container runs on which server? How do you restart crashed containers? How do you update containers without downtime? How do you expose services on the network? Kubernetes answers all of these questions with a declarative API.\n\nThe key mental model: you te\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -4031,15 +3959,6 @@
               "body": "## Orient, what you're building this week\n\nRunning Kubernetes in development (W9) teaches the concepts. Running it in production teaches the hard lessons. Production Kubernetes requires four things that are unnecessary in local testing: probes (how the cluster knows your pod is healthy), resource management (how the scheduler places pods and prevents noisy neighbours), autoscaling (how the cluster handles traffic spikes without over-provisioning), and storage (how stateful applications persist data across pod restarts).\n\nProbes: Kubernet\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "reflection",
               "title": "Plan before you build",
               "body": "Read this week's intro above, then look at the project: \"Production-Harden Your K8s App.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is, start there if you stall."
@@ -4482,15 +4401,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nRaw Kubernetes YAML is verbose, repetitive, and hard to manage across environments. A Deployment manifest for your staging environment is almost identical to production, but with different image tags, replica counts, resource limits, and environment variables. Helm is the package manager for Kubernetes that solves this problem.\n\nA Helm chart is a collection of templates and default values. Templates are Kubernetes YAML files with Go template syntax for parameterisation: {{ .Values.replicaCount \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -4947,15 +4857,6 @@
               "body": "## Orient, what you're building this week\n\nKubernetes networking handles communication between pods and between the cluster and the outside world. But as applications grow more complex, microservices communicating with each other, diverse clients with different requirements, security policies between services, the basic Service and Ingress are not enough. Service meshes and modern networking tools fill this gap.\n\nThe service mesh problem: you have 50 microservices talking to each other. You want: mutual TLS (mTLS) between services (so \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Computer Networking in 100 seconds",
-              "url": "https://www.youtube.com/watch?v=qiQR5rTSshw",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Computer Networking in 100 seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "reflection",
               "title": "Plan before you build",
               "body": "Read this week's intro above, then look at the project: \"Add Linkerd to Your K8s App.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is, start there if you stall."
@@ -5355,15 +5256,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nTerraform CLI install + AWS credentials is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Terraform in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=tomUWcQ0P3k",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Terraform in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -5867,15 +5759,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nManaged Kubernetes services (EKS on AWS, GKE on Google Cloud, AKS on Azure) eliminate the burden of managing the Kubernetes control plane. In a self-managed cluster, you are responsible for: etcd backups, API server certificate rotation, control plane version upgrades, master node high availability, and more. With a managed service, the cloud provider handles all of that. You pay for the worker nodes; the control plane is managed.\n\nEKS (Amazon Elastic Kubernetes Service): AWS manages the control\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -6939,15 +6822,6 @@
               "body": "## Kubernetes Secrets\n\nSecrets management is one of the most consequential security decisions in infrastructure. A secret is any value that provides access: API keys, database passwords, TLS private keys, OAuth client secrets, SSH private keys. How you store, distribute, rotate, and audit secrets determines whether a breach exposes just one system or your entire infrastructure.\n\nThe worst approach: hardcoded secrets in source code. They end up in git history forever, visible to everyone with repository access, and cop\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "reading",
               "title": "Kubernetes docs",
               "url": "https://kubernetes.io/docs/home/",
@@ -7188,15 +7062,6 @@
               "body": "## What it is\nGitHub Actions runner + repo secrets is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\ngh --version\ngh auth status\n```\n\n## What 'working' looks like\ngh CLI prints version and logged-in user.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 17 ('CI/CD, From Push to Production in Minutes'), day 0."
@@ -7346,15 +7211,6 @@
               "body": "## GitLab CI\n\nContinuous Integration and Continuous Delivery in the DevOps/Cloud context is different from the application developer's CI/CD. As an infrastructure engineer, you are building the CI/CD systems that other teams use, managing deployments across multiple services and environments, and ensuring the pipeline itself is reliable, secure, and fast.\n\nA mature CI/CD pipeline is not just \"run tests and deploy.\" It is: source code → lint and type check → unit tests → integration tests → build Docker image \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "widget",
               "title": "Play with it before you read about it",
               "body": "Tick this once it makes sense. Interacting with the model beats memorising it.",
@@ -7460,15 +7316,6 @@
               "kind": "lesson",
               "title": "Canary and blue-green deploys at the K8s level (Argo Rollouts, Flagger)",
               "body": "## Canary and blue-green deploys at the K8s level (Argo Rollouts, Flagger)\n\nContinuous Integration and Continuous Delivery in the DevOps/Cloud context is different from the application developer's CI/CD. As an infrastructure engineer, you are building the CI/CD systems that other teams use, managing deployments across multiple services and environments, and ensuring the pipeline itself is reliable, secure, and fast.\n\nA mature CI/CD pipeline is not just \"run tests and deploy.\" It is: source code → lint and type check → unit tests → integration tests → build Docker image \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Kubernetes in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=X48VuDVv0do",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Kubernetes in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "reading",
@@ -7710,15 +7557,6 @@
               "body": "## Orient, what you're building this week\n\nGitOps is the operational model where the desired state of your infrastructure and applications is stored in git, and automation continuously reconciles actual state to match the desired state. The git repository becomes the single source of truth: if it is in git, it is deployed; if it is not in git, it should not exist. The phrase \"GitOps\" was coined by Weaveworks in 2017; the pattern is now widely adopted.\n\nThe two principles of GitOps: declarative (the desired state is expressed declarativel\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "reflection",
               "title": "Plan before you build",
               "body": "Read this week's intro above, then look at the project: \"Migrate Your CI/CD to GitOps with Argo CD.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is, start there if you stall."
@@ -7763,15 +7601,6 @@
               "kind": "lesson",
               "title": "GitOps principles",
               "body": "## GitOps principles\n\nGitOps is the operational model where the desired state of your infrastructure and applications is stored in git, and automation continuously reconciles actual state to match the desired state. The git repository becomes the single source of truth: if it is in git, it is deployed; if it is not in git, it should not exist. The phrase \"GitOps\" was coined by Weaveworks in 2017; the pattern is now widely adopted.\n\nThe two principles of GitOps: declarative (the desired state is expressed declarativel\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -8120,15 +7949,6 @@
               "body": "## What it is\nPrometheus + Grafana docker-compose stack is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\ndocker compose up -d\ncurl -s localhost:9090/-/healthy\n```\n\n## What 'working' looks like\nPrometheus answers Prometheus Server is Healthy.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -8178,15 +7998,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nObservability is the ability to understand the internal state of your system from its external outputs. The three pillars: metrics (numeric measurements over time), logs (timestamped event records), and traces (end-to-end request journeys across services). In a containerised, microservices environment, these three together tell the complete story of what your system is doing and why.\n\nPrometheus is the standard metrics system for Kubernetes. It pulls metrics from targets (your applications and K\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Prometheus in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "reflection",
@@ -10403,15 +10214,6 @@
               "body": "## What it is\nCapstone toolchain check (terraform, kubectl, helm, argocd) is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\nterraform -version\naws sts get-caller-identity\n```\n\n## What 'working' looks like\nTerraform and AWS identity both print.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 24 ('Capstone, Build and Operate Real Infrastructure'), day 0."
@@ -10456,15 +10258,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nThis is the capstone week. The DevOps/Cloud track ends where most engineers are trying to get to: owning and operating real infrastructure that serves real users. Edge Portfolio has evolved from a manually managed server (W1) to a production-grade Kubernetes deployment with GitOps, observability, security scanning, and disaster recovery. This week you bring all the pieces together and document the architecture.\n\nThe capstone deliverable is not just a running system, it is a documented, reproduc\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "reflection",

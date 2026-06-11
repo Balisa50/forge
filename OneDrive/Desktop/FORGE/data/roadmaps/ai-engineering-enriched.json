@@ -507,15 +507,6 @@
               "body": "## What it is\nStreamlit / Gradio install is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -1906,15 +1897,6 @@
               "body": "## OpenAI streaming\n```python\nstream = _oai.chat.completions.create(\n model=OPENAI_MODEL,\n messages=[{'role': 'user', 'content': prompt}],\n stream=True,\n)\nfor chunk in stream:\n delta = chunk.choices[0].delta.content\n if delta:\n print(delta, end='', flush=True)\n```\n\n## Anthropic streaming\n```python\nwith _anth.messages.stream(\n model=ANTH_MODEL,\n system=system,\n messages=[{'role': 'user', 'content': prompt}],\n max_tokens=1024,\n) as stream:\n for text in stream.text_stream:\n print(text, end='', flush=True)\n```\n\nAnthropic's SDK gives you a clean `text_stream` iterator that yields plain strings. OpenAI's gives you chunks with delta objects you have to unwrap. Different ergonomics for the same idea.\n\n## Why streaming matters perceptually\nNon-streaming UX: user clicks Send, screen blank for 3-5 seconds, full answer appears. Feels slow.\n\nStreaming UX: user clicks Send, first words appear in 200-400ms, more text scrolls in over 3-5 seconds. Same total time, but the user starts READING immediately. Perceived latency tracks first-token, not last-token.\n\nEvery consumer LLM product streams. ChatGPT streams. Claude streams. Cursor streams. If you're building anything user-facing, streaming is non-negotiable.\n\n## What you measure\n```text\n- TTFT (Time To First Token), the perceived-speed number\n- TPS (Tokens Per Second), sustained generation speed\n- Total time, the bill\n```\n\nPrint all three when you run streaming calls. The numbers tell you which provider feels fast and which is fast."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -2393,15 +2375,6 @@
               "body": "## Anthropic's tool use for structured outputs\n\nLanguage models are text generators. When you need structured data, a JSON object, a list of extracted entities, a form with typed fields, you cannot rely on asking nicely and hoping the model formats it correctly. JSON mode helps. Schema-enforced function calling helps more. The instructor library makes the whole thing reliable. This week you build an invoice parser that turns images of real invoices into structured Pydantic objects with a measurable success rate.\n\nThe fundamental insight is \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "OpenAI Function Calling - Full Beginner Tutorial",
-              "url": "https://www.youtube.com/watch?v=aqdWSYWC_LI",
-              "duration_min": 29,
-              "creator": "Dave Ebbelaar",
-              "difficulty": "curated",
-              "why": "This 29-minute Dave Ebbelaar deep dive on Function calling / tool use with LLMs is long but excellent, watch the first ~20 minutes for the core idea, then return later for the advanced parts."
-            },
-            {
               "kind": "reading",
               "title": "Anthropic docs",
               "url": "https://docs.anthropic.com/en/docs/welcome",
@@ -2504,15 +2477,6 @@
               "kind": "lesson",
               "title": "Streaming structured outputs",
               "body": "## Streaming structured outputs\n\nLanguage models are text generators. When you need structured data, a JSON object, a list of extracted entities, a form with typed fields, you cannot rely on asking nicely and hoping the model formats it correctly. JSON mode helps. Schema-enforced function calling helps more. The instructor library makes the whole thing reliable. This week you build an invoice parser that turns images of real invoices into structured Pydantic objects with a measurable success rate.\n\nThe fundamental insight is \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -2769,15 +2733,6 @@
               "kind": "lesson",
               "title": "Token streaming",
               "body": "## Token streaming\n\nTwo things determine whether an AI feature feels good to users: how fast it responds and how much it costs to operate. Streaming addresses the first, a response that appears word by word feels faster than a response that appears all at once after a 4-second wait, even if the total time is identical. Cost decomposition addresses the second, you cannot optimise what you do not measure.\n\nThis week you build a cost dashboard that reads from a SQLite database and visualises per-day cost, per-model \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -3126,15 +3081,6 @@
               "body": "## What it is\nTool / function-calling JSON schemas is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "OpenAI Structured Output - All You Need to Know",
-              "url": "https://www.youtube.com/watch?v=fuMKrKlaku4",
-              "duration_min": 25,
-              "creator": "Dave Ebbelaar",
-              "difficulty": "curated",
-              "why": "This 25-minute Dave Ebbelaar video on Structured outputs / JSON mode, watch the first ~15 minutes for the core pattern."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 8 ('Tool Use and Function Calling, Giving LLMs Hands'), day 0."
@@ -3184,15 +3130,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nLanguage models are limited to what is in their context window. Tool use is what extends that boundary, it lets the model reach out and touch real systems: your filesystem, a database, an external API, a code executor. The model does not run the tools itself. It decides when to call a tool and with what parameters. Your code runs the tool and returns the result. The model uses the result in its next response. This loop is the foundation of every agent you will build.\n\nThis week you build CLI-ma\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "OpenAI Function Calling - Full Beginner Tutorial",
-              "url": "https://www.youtube.com/watch?v=aqdWSYWC_LI",
-              "duration_min": 29,
-              "creator": "Dave Ebbelaar",
-              "difficulty": "curated",
-              "why": "This 29-minute Dave Ebbelaar deep dive on Function calling / tool use with LLMs is long but excellent, watch the first ~20 minutes for the core idea, then return later for the advanced parts."
             },
             {
               "kind": "reflection",
@@ -3815,15 +3752,6 @@
               "body": "## Batch embedding APIs\n\nEvery word, sentence, and paragraph can be represented as a point in a high-dimensional space. Words that mean similar things end up near each other. Sentences with similar intent cluster together. This spatial representation, called an embedding, is what makes semantic search possible: instead of matching keywords, you match meaning.\n\nThis week you build a personal semantic search engine over your notes or any folder of markdown files. You walk the directory, split content into paragraphs, em\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "reading",
               "title": "Anthropic, Embeddings",
               "url": "https://docs.anthropic.com/en/docs/build-with-claude/embeddings",
@@ -4179,15 +4107,6 @@
               "kind": "lesson",
               "title": "Vector DB landscape",
               "body": "## Vector DB landscape\n\nStoring embeddings in SQLite works for thousands of vectors. It breaks for millions. The vector database landscape exists because similarity search at scale requires specialised indexing, algorithms that avoid comparing every query vector against every stored vector. This week you build a hybrid search API: FastAPI endpoint, Qdrant or pgvector for storage, BM25 keyword search combined with vector search, and a cross-encoder reranker on the merged results.\n\nThe landscape of vector databases is g\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Vector databases are so hot right now. WTF are they?",
-              "url": "https://www.youtube.com/watch?v=klTvEwg3oJ4",
-              "duration_min": 4,
-              "creator": "Fireship",
-              "difficulty": "curated",
-              "why": "This 4-minute Fireship video teaches Vector DB landscape directly, watch it end to end."
             },
             {
               "kind": "reading",
@@ -4697,15 +4616,6 @@
               "body": "## Retrieval-then-rerank pipeline\n\nNaive RAG is simple: chunk documents, embed them, retrieve the top-k by similarity, stuff them into the prompt. It works on demos. In production, it fails in specific and predictable ways: the user asks a multi-part question and the retrieval only captures part of it; the user uses different vocabulary than the document; the retrieved chunks lack the context needed to understand them in isolation. This week you go beyond naive retrieval and build a paper assistant that implements the patterns th\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "widget",
               "title": "Play with it before you read about it",
               "body": "Tick this once it makes sense. Interacting with the model beats memorising it.",
@@ -5006,15 +4916,6 @@
               "body": "## What it is\nRAGAS evaluation framework install is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "How to Systematically Setup LLM Evals (Metrics, Unit Tests, LLM-as-a-Judge)",
-              "url": "https://www.youtube.com/watch?v=a3SMraZWNNs",
-              "duration_min": 56,
-              "creator": "Dave Ebbelaar",
-              "difficulty": "curated",
-              "why": "This 56-minute Dave Ebbelaar deep dive on Evals / LLM-as-judge is long but excellent, watch the first ~20 minutes for the core idea, then return later for the advanced parts."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 12 ('RAG Evaluation, Measuring What Matters'), day 0."
@@ -5121,15 +5022,6 @@
               "body": "## Building a golden test set\n\nYou have built RAG systems. Now you need to know whether they work. The answer is not \"I tried it and the answers seemed reasonable.\" The answer is numbers: retrieval precision, context recall, answer faithfulness, answer relevance. This week you build a RAG eval CLI that runs a complete evaluation pipeline from a config file and outputs a structured report.\n\nA golden test set is the foundation. Without ground truth, specific questions with known correct answers and known source documents, you\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "LLM as a Judge: Scaling AI Evaluation Strategies",
-              "url": "https://www.youtube.com/watch?v=trfUBIDeI1Y",
-              "duration_min": 7,
-              "creator": "IBM Technology",
-              "difficulty": "curated",
-              "why": "This 7-minute IBM Technology video teaches Evals / LLM-as-judge directly, watch it end to end."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -5174,15 +5066,6 @@
               "kind": "lesson",
               "title": "Answer metrics",
               "body": "## Answer metrics\n\nYou have built RAG systems. Now you need to know whether they work. The answer is not \"I tried it and the answers seemed reasonable.\" The answer is numbers: retrieval precision, context recall, answer faithfulness, answer relevance. This week you build a RAG eval CLI that runs a complete evaluation pipeline from a config file and outputs a structured report.\n\nA golden test set is the foundation. Without ground truth, specific questions with known correct answers and known source documents, you\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "What is RAG?",
-              "url": "https://www.youtube.com/watch?v=T-D1OfcDW1M",
-              "duration_min": 5,
-              "creator": "IBM Technology",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 5-minute IBM Technology explainer ('What is RAG?') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -6086,15 +5969,6 @@
               "body": "## Vector-based long-term memory\n\nSingle-turn agents answer one question and stop. Most useful agents need to remember: what the user asked yesterday, what topics have already been covered, who the user is and what they care about. Memory is the engineering problem that separates a demo agent from a daily-use one.\n\nThe conversation buffer is the simplest memory: append every turn to the history and pass it all to the model. It works until the context window fills, which happens faster than most people expect with verbose agents.\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Vector Databases in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=klTvEwg3oJ4",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Vector Databases in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "reading",
               "title": "Anthropic, Embeddings",
               "url": "https://docs.anthropic.com/en/docs/build-with-claude/embeddings",
@@ -6145,15 +6019,6 @@
               "kind": "lesson",
               "title": "Episodic memory",
               "body": "## Episodic memory\n\nSingle-turn agents answer one question and stop. Most useful agents need to remember: what the user asked yesterday, what topics have already been covered, who the user is and what they care about. Memory is the engineering problem that separates a demo agent from a daily-use one.\n\nThe conversation buffer is the simplest memory: append every turn to the history and pass it all to the model. It works until the context window fills, which happens faster than most people expect with verbose agents.\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "How AI Agents Actually Work: ReAct vs Plan-and-Execute",
-              "url": "https://www.youtube.com/watch?v=Y-VCZ_KTuzo",
-              "duration_min": 17,
-              "creator": "What's AI by Louis-François Bouchard",
-              "difficulty": "curated",
-              "why": "This 17-minute What's AI by Louis-François Bouchard video on Agent loops (ReAct / plan-execute), watch the first ~15 minutes for the core pattern."
             },
             {
               "kind": "swipe",
@@ -7767,15 +7632,6 @@
               "body": "## What it is\nArize Phoenix / Helicone install is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "AI and LLM Observability with Dynatrace",
-              "url": "https://www.youtube.com/watch?v=eW2KuWFeZyY",
-              "duration_min": 16,
-              "creator": "Dynatrace",
-              "difficulty": "curated",
-              "why": "This 16-minute Dynatrace video on LLM observability / tracing, watch the first ~15 minutes for the core pattern."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 18 ('Observability, Seeing Inside the Black Box'), day 0."
@@ -8220,15 +8076,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nAnthropic prompt cache + Batch API is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -8848,15 +8695,6 @@
               "kind": "lesson",
               "title": "Streaming responses through your hosting layer",
               "body": "## Streaming responses through your hosting layer\n\nCode that works locally but is not deployed is not a product. Deploying AI features involves every challenge of deploying regular web features, servers, containers, environment variables, scaling, plus AI-specific challenges: streaming responses through your hosting layer, managing API key rotation, handling the latency characteristics of large model calls, and keeping long-running agent tasks alive when HTTP connections time out.\n\nPlatform choices matter. Vercel and Railway are excellent for \n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -9812,15 +9650,6 @@
               "body": "## Realtime APIs\n\nLanguage models started as text-in, text-out systems. They are now text-in-anything-out and anything-in-text-out systems. Vision models read images. Audio models transcribe and generate speech. Video models are arriving. The unifying trend is that the modality boundary is dissolving, tasks that required specialised computer vision or speech processing pipelines can now often be handled by a capable multimodal model.\n\nThis week you build a meeting assistant. Audio in, structured notes and action\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "RESTful APIs in 100 Seconds // Build an API from Scratch with Node.js Express",
-              "url": "https://www.youtube.com/watch?v=-MTSQjw5DrM",
-              "duration_min": 12,
-              "creator": "Fireship",
-              "difficulty": "curated",
-              "why": "This 12-minute Fireship video teaches Realtime APIs directly, watch it end to end."
-            },
-            {
               "kind": "reading",
               "title": "OpenAI platform docs",
               "url": "https://platform.openai.com/docs",
@@ -10115,15 +9944,6 @@
               "kind": "lesson",
               "title": "Orient, what you're building this week",
               "body": "## Orient, what you're building this week\n\nAI features have a unique failure surface compared to regular software. The inputs are unbounded natural language. The outputs are probabilistic. The system can be manipulated through the very mechanism it uses to function. This week you take a production project and make it measurably faster and meaningfully safer.\n\nLatency engineering starts with measurement. Time-to-first-token (TTFT) is the user-perceived latency, how long until something appears on screen. Total completion time matters for\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "What is Prompt Caching? Optimize LLM Latency with AI Transformers",
-              "url": "https://www.youtube.com/watch?v=u57EnkQaUTY",
-              "duration_min": 10,
-              "creator": "IBM Technology",
-              "difficulty": "curated",
-              "why": "This 10-minute IBM Technology video teaches Latency engineering directly, watch it end to end."
             },
             {
               "kind": "reflection",
@@ -10518,15 +10338,6 @@
               "body": "## What it is\nFull AI stack check (SDKs, vector DB, evals, observability, deploy) is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "AI and LLM Observability with Dynatrace",
-              "url": "https://www.youtube.com/watch?v=eW2KuWFeZyY",
-              "duration_min": 16,
-              "creator": "Dynatrace",
-              "difficulty": "curated",
-              "why": "This 16-minute Dynatrace video on LLM observability / tracing, watch the first ~15 minutes for the core pattern."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npip install chromadb\npython -c \"import chromadb; print(chromadb.__version__)\"\n```\n\n## What 'working' looks like\nChromaDB version prints.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -10578,15 +10389,6 @@
               "body": "## Orient, what you're building this week\n\nTwenty-three weeks of skill building leads here: building one real AI product, end to end, and shipping it. Not a demo. Not a tutorial follow-along. A product that solves a specific problem for a specific user, with a public URL, an eval suite, observability, and a cost model that makes sense.\n\nThe scoping decision is the hardest part of a capstone. The instinct is to build something impressive, multi-agent, multimodal, RAG plus fine-tuning plus streaming. The correct instinct is to build somet\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "reflection",
               "title": "Plan before you build",
               "body": "Read this week's intro above, then look at the project: \"The capstone.\"\n\nIn two or three sentences, write down: (1) what you'll be able to DO by Friday that you can't do today, and (2) which of the five tasks below scares you most. That task is where the real learning is, start there if you stall."
@@ -10631,15 +10433,6 @@
               "kind": "lesson",
               "title": "Picking a project you can ship in 7-10 days",
               "body": "## Picking a project you can ship in 7-10 days\n\nTwenty-three weeks of skill building leads here: building one real AI product, end to end, and shipping it. Not a demo. Not a tutorial follow-along. A product that solves a specific problem for a specific user, with a public URL, an eval suite, observability, and a cost model that makes sense.\n\nThe scoping decision is the hardest part of a capstone. The instinct is to build something impressive, multi-agent, multimodal, RAG plus fine-tuning plus streaming. The correct instinct is to build somet\n\n## Key ideas\n- Understand the concept before reaching for code.\n- Build the smallest working example first.\n- Commit early and often so each step is reversible.\n"
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",

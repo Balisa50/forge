@@ -530,15 +530,6 @@
               "body": "## OLTP: systems built for writes\n\nOLTP (online transaction processing) databases like Postgres and MySQL are tuned for many small, fast, concurrent writes that keep an application running.\n\n## Why it matters\nRunning heavy analytics here will slow or crash the app your business depends on.\n\n## In practice\nInspect a normalized OLTP shape. Typical rows are tiny and frequent:\n\n```sql\nINSERT INTO orders(user_id, total, created_at) VALUES (42, 19.99, now());\n```"
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -578,15 +569,6 @@
               "kind": "lesson",
               "title": "OLAP: systems built for reads at scale",
               "body": "## OLAP: systems built for reads at scale\n\nOLAP (online analytical processing) databases like BigQuery and Snowflake are tuned for scanning billions of rows for aggregates, using columnar storage.\n\n## Why it matters\nColumnar layout reads only the columns a query needs, which is why analytics queries fly here.\n\n## In practice\nCompare a scan query's home. OLAP shines at:\n\n```sql\nSELECT country, SUM(total) FROM orders GROUP BY country;\n```"
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -884,15 +866,6 @@
               "body": "## What it is\nBigQuery / Snowflake free-tier account is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\ngcloud --version\nbq --version\nbq ls\n```\n\n## What 'working' looks like\nbq CLI lists at least one dataset.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -942,15 +915,6 @@
               "kind": "lesson",
               "title": "What a cloud data warehouse is",
               "body": "## What a cloud data warehouse is\n\nA cloud warehouse separates storage from compute, stores data columnar and compressed, and scales query power on demand.\n\n## Why it matters\nSeparation of storage and compute is why you can query a terabyte without owning a server farm.\n\n## In practice\nNote the architecture shift:\n\n```text\nold: one box holds data + compute (scaling = bigger box)\nnew: storage (cheap) <-> compute (elastic clusters)\n```"
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -1296,15 +1260,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\ndbt-core install + warehouse connection is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -1758,15 +1713,6 @@
               "body": "## Object storage as the lake foundation\n\nObject storage (S3, GCS, Azure Blob) stores files cheaply and durably at any scale, and is the substrate every data lake sits on.\n\n## Why it matters\nIt is an order of magnitude cheaper than warehouse storage, which is why raw data lands here first.\n\n## In practice\nPut and list an object:\n\n```bash\naws s3 cp orders.parquet s3://my-lake/raw/orders/\naws s3 ls s3://my-lake/raw/orders/\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -1806,15 +1752,6 @@
               "kind": "lesson",
               "title": "Why Parquet beats CSV",
               "body": "## Why Parquet beats CSV\n\nParquet is a columnar, compressed, typed file format; CSV is row-based, untyped, and bloated.\n\n## Why it matters\nSwitching a pipeline from CSV to Parquet routinely cuts storage and scan cost by 5-10x.\n\n## In practice\nConvert and compare sizes:\n\n```python\nimport pandas as pd\ndf = pd.read_csv('orders.csv')\ndf.to_parquet('orders.parquet') # smaller + typed\n```"
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -2119,15 +2056,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nApache Airflow (or Dagster) local install is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -2586,15 +2514,6 @@
               "body": "## Streams vs batch, revisited\n\nA stream is an unbounded, continuously arriving sequence of events; batch is a bounded chunk processed on a schedule.\n\n## Why it matters\nModelling data as an unbounded stream changes how you think about completeness and time.\n\n## In practice\nSee the mental shift:\n\n```text\nbatch: [ today's file ] -> process once\nstream: ...e e e e e e e... -> process as each arrives\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -2940,15 +2859,6 @@
               "body": "## What it is\nApache Spark / PySpark local install is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 8 ('Batch processing with Spark'), day 0."
@@ -3214,15 +3124,6 @@
               "body": "## Broadcast joins and tuning\n\nBroadcasting a small table to every executor avoids shuffling the large table, a key tuning trick.\n\n## Why it matters\nA broadcast join can turn a 20-minute shuffle join into seconds when one side is small.\n\n## In practice\nForce a broadcast of the small side:\n\n```python\nfrom pyspark.sql.functions import broadcast\norders.join(broadcast(small_dim), 'product_id')\n```"
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -3354,15 +3255,6 @@
               "body": "## What it is\nGreat Expectations + dbt tests is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npip install dbt-core\ndbt --version\n```\n\n## What 'working' looks like\ndbt prints version info.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 9 ('Data quality and testing'), day 0."
@@ -3491,15 +3383,6 @@
               "body": "## Great Expectations\n\nGreat Expectations defines expectation suites (declarative assertions) and validates batches of data against them with rich reports.\n\n## Why it matters\nIt brings quality checks to data that does not live in dbt, like raw files and Spark outputs.\n\n## In practice\nDeclare an expectation in Python:\n\n```python\nvalidator.expect_column_values_to_not_be_null('order_id')\nvalidator.expect_column_values_to_be_between('total', 0, 100000)\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -3580,15 +3463,6 @@
               "kind": "lesson",
               "title": "Freshness monitoring",
               "body": "## Freshness monitoring\n\nFreshness tests assert that data arrived recently enough; stale data is a common silent failure.\n\n## Why it matters\nA pipeline that succeeds but loads yesterday's data is worse than one that fails loudly.\n\n## In practice\nDeclare a source-freshness rule in dbt:\n\n```yaml\nsources:\n - name: shop\n freshness: {warn_after: {count: 12, period: hour}}\n loaded_at_field: _loaded_at\n```"
-            },
-            {
-              "kind": "video",
-              "title": "Prometheus in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -3763,15 +3637,6 @@
               "body": "## What it is\nOpenMetadata / Amundsen docker stack is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Docker Tutorial for Beginners",
-              "url": "https://www.youtube.com/watch?v=eGz9DS-aIeY",
-              "duration_min": 6,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 6-minute Fireship video ('Docker Tutorial for Beginners') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\ndocker run hello-world\n```\n\n## What 'working' looks like\nContainer starts and exits cleanly.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -3816,15 +3681,6 @@
               "kind": "lesson",
               "title": "What data governance covers",
               "body": "## What data governance covers\n\nGovernance is the set of policies and tools for discovery, ownership, quality, lineage, classification, and access control over data.\n\n## Why it matters\nWithout governance a growing data platform becomes an untrusted maze nobody can navigate.\n\n## In practice\nMap the pillars:\n\n```text\ndiscovery | ownership | lineage | classification | access | quality\n```"
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -4172,15 +4028,6 @@
               "body": "## What it is\nCapstone repo + warehouse + lake provisioned is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 11 ('Capstone kickoff: scope and architecture'), day 0."
@@ -4405,15 +4252,6 @@
               "body": "## Provision the warehouse and lake\n\nCreate the storage bucket and warehouse dataset your pipeline will write to.\n\n## Why it matters\nProvisioning early surfaces access and credential issues before they block you.\n\n## In practice\nCreate the landing locations:\n\n```bash\naws s3 mb s3://capstone-lake\n# + create warehouse dataset 'capstone'\n```"
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -4584,15 +4422,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nSource API access + requests + python-dotenv is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -4995,15 +4824,6 @@
               "body": "## What it is\nPyArrow + object-storage CLI for the lake is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 13 ('Raw storage in the lake'), day 0."
@@ -5402,15 +5222,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nWarehouse loader + service-account credentials is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -5813,15 +5624,6 @@
               "body": "## What it is\ndbt project connected to the warehouse is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npip install dbt-core\ndbt --version\n```\n\n## What 'working' looks like\ndbt prints version info.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 15 ('dbt staging models'), day 0."
@@ -6213,15 +6015,6 @@
               "body": "## What it is\ndbt marts + dimensional modelling tooling is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npip install dbt-core\ndbt --version\n```\n\n## What 'working' looks like\ndbt prints version info.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 16 ('dbt marts and the dimensional model'), day 0."
@@ -6602,15 +6395,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nAirflow / Dagster wired to the full pipeline is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -7004,15 +6788,6 @@
               "body": "## What it is\nKafka consumer + a fast store (Redis) is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 18 ('Adding a streaming increment'), day 0."
@@ -7393,15 +7168,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nGreat Expectations + dbt build in CI is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -7793,15 +7559,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\ndbt docs + a data catalog for lineage is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -8204,15 +7961,6 @@
               "body": "## What it is\nBI tool connected to the warehouse is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 21 ('Serving layer and dashboard'), day 0."
@@ -8595,15 +8343,6 @@
               "body": "## What it is\nMonitoring + alerting + cost dashboards is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Prometheus in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h4Sl21AKiDg",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Prometheus in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 22 ('Monitoring, alerting, and cost'), day 0."
@@ -8691,15 +8430,6 @@
               "body": "## Pipeline run monitoring\n\nTrack task success, duration, and SLA breaches in the orchestrator.\n\n## Why it matters\nRun monitoring turns silent failures into pages you can act on.\n\n## In practice\nSurface run health:\n\n```text\norchestrator UI -> success rate, durations, SLA misses\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check - swipe to answer",
               "cards": [
@@ -8780,15 +8510,6 @@
               "kind": "lesson",
               "title": "Data freshness dashboards",
               "body": "## Data freshness dashboards\n\nBuild a small ops view of when each dataset last updated.\n\n## Why it matters\nA freshness view is the first place to look when a number seems stale.\n\n## In practice\nTrack last-loaded per dataset:\n\n```sql\nSELECT table_name, max(loaded_at) FROM load_audit GROUP BY 1;\n```"
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -9002,15 +8723,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nGitHub Actions CI/CD + Terraform is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -9413,15 +9125,6 @@
               "body": "## What it is\nFull capstone toolchain check + README/demo is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 24 ('Capstone ship: docs, demo, and portfolio'), day 0."
@@ -9466,15 +9169,6 @@
               "kind": "lesson",
               "title": "Write the README",
               "body": "## Write the README\n\nA strong README explains the problem, architecture, how to run it, and the result.\n\n## Why it matters\nThe README is what a hiring manager reads first and often only.\n\n## In practice\nCover the essentials:\n\n```text\nproblem, architecture diagram, run steps, results, lessons\n```"
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",

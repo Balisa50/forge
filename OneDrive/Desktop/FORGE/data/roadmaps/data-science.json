@@ -3713,15 +3713,6 @@
               "body": "## What it is\nTree-based models: XGBoost, LightGBM is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "StatQuest Decision Trees",
-              "url": "https://www.youtube.com/watch?v=_L39rN6gz7Y",
-              "duration_min": 17,
-              "creator": "StatQuest",
-              "difficulty": "intermediate",
-              "why": "This 17-minute StatQuest deep dive ('StatQuest Decision Trees') is worth the length, it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 9 ('TaxiPulse v0.5: Streamlit explorer'), day 0."
@@ -3772,15 +3763,6 @@
               "kind": "lesson",
               "title": "From notebook to app, designing the explorer",
               "body": "## What it is\nA notebook is for you; a dashboard is for everyone else. Your TaxiPulse work has lived in Jupyter for eight weeks, invisible to anyone who can't open a notebook. Streamlit changes that: it turns a Python script into an interactive web app a non-technical person can use in a browser.\n\n## Plan before you code\nA good app starts with a sketch of what the user does, not what code you'll write. For the TaxiPulse explorer:\n- **Inputs** (what the user controls): borough, pickup hour, trip distance, duration\n- **Outputs** (what the app shows): a predicted fare (from your Week 5 model) + a relevant chart (the Q4 trend)\n- **The one job**: 'let anyone estimate a NYC taxi fare and see the data behind it'\n\n## Why planning matters\nApps sprawl. Without a clear single job, you bolt on widgets until it's a confusing wall of controls. Deciding the inputs, outputs, and the one thing the app is for, before writing code, keeps it focused and usable. The best dashboards do one thing clearly, not ten things vaguely.\n\n## Why Streamlit\nIt's genuinely magical the first time: you write a Python script with `st.slider(...)` and `st.write(...)`, run one command, and a real web app opens in your browser. No HTML, CSS, or JavaScript required.\n\n## Where this fits\nToday you sketch the explorer's inputs, outputs, and one-sentence purpose. The rest of the week builds it."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -4024,15 +4006,6 @@
               "kind": "lesson",
               "title": "Deploying to Streamlit Community Cloud",
               "body": "## What it is\nStreamlit Community Cloud hosts your app free, straight from a GitHub repo. The flow:\n1. Push `explorer.py`, `fare_model.pkl`, `requirements.txt`, and the data to a repo\n2. share.streamlit.io → New app → pick the repo and `explorer.py`\n3. Deploy → you get a public `https://...streamlit.app` URL\n\n## requirements.txt strikes again\nJust like the Flask deploy, the cloud needs your dependency list to rebuild the environment:\n```text\nstreamlit\npandas\nscikit-learn\nxgboost\njoblib\npyarrow\n```\nForgetting a package here is the #1 cause of a failed Streamlit deploy, the app builds, then crashes on an import. The fix is always: add the missing package to requirements.txt and redeploy.\n\n## Data size consideration\nThe free tier has limited resources. If `clean_q4.parquet` is large, commit a smaller sampled version for the cloud app (the trend chart looks the same on a sample). Knowing to slim the data for deployment is a practical deploy skill.\n\n## Why it matters\nThis is the payoff: a link you can put on your resume, text to anyone, where they interact with your model and data live, no install, no notebook. 'Try my taxi fare explorer at [url]' is a portfolio sentence that lands.\n\n## Where this fits\nToday you deploy the explorer and confirm it works at its public URL."
-            },
-            {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
             },
             {
               "kind": "lesson",
@@ -4797,15 +4770,6 @@
               "body": "## What it is\nAI is excellent at SQL, if you give it your schema. Paste the table structure, then ask for the query in plain English:\n\n```text\nTable: taxi(pickup_datetime, pickup_hour, trip_distance,\n trip_minutes, fare_amount, tip_amount, pickup_borough)\n\nWrite a SQL query that finds the 3 boroughs with the LARGEST gap\nbetween weekday and weekend average fares. Use a CTE.\n```\n\n## Why the schema is the key input\nWithout your schema, the AI guesses column names and you get a query that references `fare` when yours is `fare_amount`. With the schema, it uses your exact columns and the query often runs first try. The schema is the context that turns a generic guess into a usable query.\n\n## Verify by running, not by reading alone\nAI SQL can be subtly wrong, a missing GROUP BY column, a join that double-counts, a window frame that's off. Don't just eyeball it: run it in SQLite Online and check the result against what you expect (e.g. does the row count look sane? do the numbers match a pandas spot-check?). If it errors, paste the error back to the AI, it's good at fixing its own mistakes when you show it the message.\n\n## Why it matters\nComplex SQL (multi-CTE, window functions) is exactly the tedious-but-mechanical work AI accelerates well. You still own correctness, but the first draft arrives in seconds.\n\n## Where this fits\nToday you give AI your taxi schema, ask for a non-trivial CTE query, run it, and fix it with the AI if needed."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -5475,15 +5439,6 @@
               "body": "## What it is\nTime series basics + statsmodels is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Machine Learning in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
-              "duration_min": 5,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 13 ('Reddit Sentiment v0.2: Hand-label + classical ML'), day 0."
@@ -5623,15 +5578,6 @@
               "kind": "lesson",
               "title": "TF-IDF vectorisation and logistic regression",
               "body": "## What it is\nTo train your own classifier, you turn text into numbers with TF-IDF, then fit a Logistic Regression:\n\n```python\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\n\ndf = pd.read_csv('data/gold.csv')\nvec = TfidfVectorizer(max_features=2000, ngram_range=(1,2))\nX = vec.fit_transform(df['title'])\ny = df['true_label']\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.25, random_state=42)\nmodel = LogisticRegression(max_iter=1000).fit(X_tr, y_tr)\n```\n\n## What TF-IDF does\nTerm Frequency-Inverse Document Frequency converts each post into a numeric vector. Words that appear everywhere (the, is, a) get low weight; words distinctive to a post get high weight. `ngram_range=(1,2)` includes single words AND two-word phrases ('not good' as a unit, which matters for sentiment). `max_features=2000` keeps the 2000 most useful terms.\n\n## Why logistic regression\nIt's the classic text classifier: fast, interpretable (you can read which words push toward each class, tomorrow's lesson), and a strong baseline. For bag-of-words sentiment, it's often shockingly competitive with far heavier models.\n\n## Why this can rival the transformer\nCrucially, this model trains on your hand-labelled domain data. It learns your domain's sentiment vocabulary directly, something the movie-trained pretrained model never saw. That's the whole hypothesis you'll test.\n\n## Where this fits\nToday you vectorise your gold set with TF-IDF and train a LogReg classifier on it."
-            },
-            {
-              "kind": "video",
-              "title": "StatQuest Logistic Regression",
-              "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
-              "duration_min": 9,
-              "creator": "StatQuest",
-              "difficulty": "beginner",
-              "why": "This 9-minute StatQuest video ('StatQuest Logistic Regression') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -6782,15 +6728,6 @@
               "body": "## What it is\nFastAPI + serving a model behind an endpoint is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npip install fastapi uvicorn\nuvicorn --version\n```\n\n## What 'working' looks like\nuvicorn prints version.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out."
@@ -7206,15 +7143,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nStreamlit + a one-page dashboard is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -7699,15 +7627,6 @@
               "body": "## What it is\nEverything in Project 2 so far has been offline, static files, local notebooks, results only you can see. This week the model goes live: one button pulls the 50 newest r/ML posts, scores each with your fine-tuned model, and shows the sentiment breakdown. A non-technical person can use it without ever seeing your code.\n\n## Plan before you build (same as TaxiPulse's explorer)\nDecide the user's experience first:\n- **The action:** click 'Refresh' → scrape + score the latest posts\n- **The outputs:** a sentiment bar chart, the most positive/negative posts, and a trend over time\n- **The one job:** 'see the live mood of r/ML at a glance'\n\n## Why this is a different kind of deliverable\nA fine-tuned model in a repo proves you can build. A live dashboard proves you can put a model in front of real users and make it useful. Those are different skills, and the second is rarer. It's also what makes the project demoable, you can screen-share it, link it, show it in an interview.\n\n## The architecture decision (today's real work)\nTo build this cleanly, your scraping and prediction logic must live in importable functions, not buried in notebook cells. The dashboard will `from scrape import fetch_latest` and `from predict import predict`. Planning that module split now saves you copy-pasting (and later, drift), it's the foundation the rest of the week builds on.\n\n## Where this fits\nToday you sketch the dashboard (inputs, outputs, one job) and plan how to extract scrape/predict into reusable modules."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "Designing for reuse, extract the logic",
               "body": "## The module split\n```text\nscrape.py -> def fetch_latest(n) -> list[post] # the Week-12 scraping logic\npredict.py -> def predict(texts) -> list[label] # loads the fine-tuned model\napp.py -> imports both, renders the UI\n```\n\n## Why this matters beyond tidiness\nRight now your scraping code is probably inside `scrape.py` as a script and your prediction inside a notebook. If you copy-paste those into the Streamlit app, you now have two copies that will drift, you'll fix a bug in one and forget the other. Extracting them into functions that both the notebook and the app import gives you one source of truth.\n\nThis is a real engineering habit (DRY, Don't Repeat Yourself), and it's the difference between a project that stays maintainable and one that rots. The dashboard is the forcing function that makes you do it.\n\n## Where this fits\nPlan the function signatures today; you'll implement `predict()` tomorrow and wire the app on Day 3."
@@ -7809,15 +7728,6 @@
               "kind": "lesson",
               "title": "The dashboard skeleton",
               "body": "## What it is\nWire the reusable functions into a Streamlit app with a single Refresh button:\n\n```python\nimport streamlit as st\nfrom scrape import fetch_latest\nfrom predict import predict\n\nst.title('r/ML Sentiment, Live')\n\nif st.button('Refresh'):\n with st.spinner('Scraping + scoring...'):\n posts = fetch_latest(50)\n labels = predict([p['title'] for p in posts])\n for p, lab in zip(posts, labels):\n p['sentiment'] = lab\n st.session_state['posts'] = posts\n st.success(f'Scored {len(posts)} posts')\n```\n\n## Two Streamlit patterns at work\n1. **`st.spinner`**, shows a loading indicator during the slow scrape+score, so the user knows it's working rather than frozen. Always wrap a slow operation in a spinner.\n2. **`st.session_state`**, Streamlit reruns the whole script on every interaction (the model from Week 9). Without saving results to `session_state`, the scored posts would vanish on the next rerun. session_state is how you persist data across reruns.\n\n## Why the import pays off immediately\nNotice the app is tiny, it imports `fetch_latest` and `predict` and just orchestrates them. All the real logic lives in the reusable modules. The dashboard is pure presentation. That clean separation (logic in modules, presentation in the app) is exactly what made the day-1 planning worth it.\n\n## Where this fits\nToday you build the skeleton: a button that scrapes, scores, and stores the results in session_state. Tomorrow you add the charts."
-            },
-            {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -7948,15 +7858,6 @@
               "kind": "lesson",
               "title": "Deploying the live dashboard",
               "body": "## What it is\nDeploy to Streamlit Community Cloud (same as TaxiPulse v0.5), with the wrinkles a model-backed app brings:\n\n1. Push `app.py`, `scrape.py`, `predict.py`, `models/` (via Git LFS), and `requirements.txt`\n2. Add your **Reddit API secrets** to Streamlit Cloud's secrets manager (never commit them)\n3. Deploy → public `.streamlit.app` URL\n\n## The model-size constraint\nStreamlit Cloud's free tier has ~1GB RAM. Your DistilBERT model (~250MB loaded, more in memory during inference) may be tight. Two mitigations:\n- If it fits: great, the fine-tuned model serves live.\n- If it OOMs (out-of-memory): **fall back to the lighter scikit baseline** for the deployed version. A slightly-less-accurate model that's actually live beats a better model that crashes the app.\n\nThat trade-off, shipping the model that fits the constraints over the theoretically-best one, is a real production decision you'll make constantly.\n\n## Secrets management\nYour scraper needs Reddit credentials. They go in Streamlit Cloud's secrets manager (a secure key-value store), read via `st.secrets`, never in the committed code. Same discipline as `.env` locally, the platform just provides the secure store for you.\n\n## Where this fits\nToday you deploy the dashboard, configure secrets, and handle the model-size constraint. The result: a live, linkable sentiment tool."
-            },
-            {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
             },
             {
               "kind": "reading",
@@ -8347,15 +8248,6 @@
               "body": "## What it is\nHugging Face Spaces hosts ML apps free, including Docker-based services. The flow:\n1. Create a new Space with the **Docker SDK**\n2. Push your `Dockerfile` + `api.py`, `predict.py`, `models/` (Git LFS)\n3. Spaces builds the image and runs it → public URL like `reddit-sentiment-api.hf.space`\n\n## Why HF Spaces for an ML API\nSpaces is built for ML, it handles model files well (it's where models live), offers more generous memory than some free tiers, and the Docker SDK means it runs the exact image you tested locally. Because you containerized in Day 4, deployment is 'push the same Dockerfile', the image that worked on your laptop works here, no surprises. That's the Docker reproducibility paying off directly.\n\n## The deploy checklist\n- Model files tracked via Git LFS (from Week 15)\n- requirements.txt complete (the #1 deploy-failure cause, as in TaxiPulse)\n- The Dockerfile EXPOSEs the port Spaces expects (check their docs, often 7860)\n\n## Why a deployed API is a portfolio milestone\nA live, callable model API is a different and stronger artifact than a notebook or even a dashboard. It says: 'my model runs as a real service that any application can use.' That's the shape of how ML is actually deployed in industry, and showing you've done it end-to-end, model → API → container → live URL, is genuinely senior-level evidence.\n\n## Where this fits\nToday you deploy the Docker API to Spaces and test the live endpoint. Tomorrow you point the dashboard at it."
             },
             {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -8395,15 +8287,6 @@
               "kind": "lesson",
               "title": "Decoupling the dashboard from the model",
               "body": "## What it is\nNow complete the split: remove the model from the Streamlit app and have it call the API instead:\n\n```python\nimport requests\nAPI_URL = 'https://reddit-sentiment-api.hf.space'\n\n# Was: labels = predict(titles) (model loaded in Streamlit)\n# Now: call the API\nr = requests.post(f'{API_URL}/predict', json={'texts': titles})\nresults = r.json()['predictions']\n```\n\n## What this changes\nThe Streamlit app no longer imports the 250MB model, no longer needs `models/`, no longer needs torch/transformers in its requirements. It becomes a thin frontend, it scrapes, calls the API, and renders. Result:\n- The dashboard deploys faster and uses far less memory (the OOM risk from Week 18 disappears)\n- The model lives in exactly one place (the API)\n- A mobile app or any other client could call the same API\n\n## The architecture is now correct\n```text\n[HF Spaces: model API] <--HTTP-- [Streamlit: thin UI]\n```\nThis is the production shape: a model service and a separate, lightweight presentation layer. The dashboard from last week still looks the same to the user, but underneath, it's now a proper client of a real API. Same UX, far better architecture.\n\n## Why this is the satisfying payoff\nEverything connects: the `predict()` you extracted in Week 18 now powers the API; the dashboard you built then now consumes that API. The clean boundaries you set up turned a monolith into a proper client/server system with minimal rework.\n\n## Where this fits\nToday you strip the model out of the Streamlit app, repoint it at the API, and redeploy the now-lightweight dashboard."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
@@ -8535,15 +8418,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nCloud notebooks: Colab / SageMaker is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Jupyter in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=h1sAzPojKMg",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Jupyter in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -8934,15 +8808,6 @@
               "body": "## What it is\nBig-data interfaces: PySpark or Dask is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 21 ('Project 3, Energy Forecast v0.1'), day 0."
@@ -8987,15 +8852,6 @@
               "kind": "lesson",
               "title": "What makes time series its own discipline",
               "body": "## What it is\nProject 3 is Energy Forecast, predicting hourly electricity demand from AEP (American Electric Power) data. It's a time series problem, and time series breaks almost every intuition you built on tabular and text data.\n\n## The one idea that changes everything: rows aren't independent\nIn TaxiPulse and Reddit Sentiment, each row stood alone, one trip, one post. You could shuffle them, random-split them, treat each as an independent example. Time series rows are not independent. Each hour's electricity demand depends on the previous hours. The order is the signal.\n\nTwo hard consequences:\n1. **You cannot shuffle**, shuffling destroys the temporal pattern you're trying to learn.\n2. **You cannot random-split**, a random split puts future points in training, leaking the future. You must split **chronologically**: train on the past, test on the future.\n\n## What you forecast, and against what bar\nThe task: predict future demand from past demand. The honest bar is the persistence baseline, 'next value = last value.' It's shockingly hard to beat. Any real model (ARIMA in W22, Prophet in W23, LSTM in W24) must beat persistence to justify itself.\n\n## Why a third project, deliberately different\nTaxiPulse was tabular, Reddit was text, Energy is temporal. Three domains means you learn that the process (load → explore → baseline → model → evaluate → ship) transfers, while the techniques must adapt to the data's nature. That adaptability is the real skill.\n\n## Where this fits\nThis week (v0.1): get the AEP data, plot it, decompose it into trend/seasonality, find the daily/weekly patterns, and set up a chronological split with a persistence baseline."
-            },
-            {
-              "kind": "video",
-              "title": "Machine Learning in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=I74ymkoNTnw",
-              "duration_min": 5,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 5-minute Fireship explainer ('Machine Learning in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -10620,15 +10476,6 @@
               "body": "## What it is\nInterview prep: SQL + take-home is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\npsql --version # or sqlite3 --version\n```\n\n## What 'working' looks like\nYour SQL client prints a version.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 25 ('MLOps, MLflow + drift monitoring'), day 0."
@@ -11059,15 +10906,6 @@
               "body": "## What it is\nCapstone toolchain check is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 26 ('Cloud + BigQuery for Data Scientists'), day 0."
@@ -11117,15 +10955,6 @@
               "kind": "lesson",
               "title": "The three reasons cloud knowledge is non-optional",
               "body": "## What it is\nYou've spent 25 weeks shipping projects that run on your laptop. That's perfect for learning. It's perfect for portfolios. It is not perfect for the actual job. In your first DS role you will hit one of three walls:\n\n1. **The data is too big.** A real customer or transactional dataset is 50-500 GB. You can't `pd.read_parquet` that on a 16 GB laptop. The data lives in **S3 (or GCS / Azure Blob)**; you query it from there with SQL (BigQuery, Athena, Snowflake) or stream it through Spark/Dask.\n2. **The model has to run on a schedule.** Not 'I ran it once.' 'It runs every Sunday at 3am whether or not I'm awake.' That means cron on a cloud machine, or a managed service (Lambda, Cloud Run, Step Functions).\n3. **Other people need to reach it.** Your model has to be loadable by other teams, your dashboard has to live somewhere your boss can click. None of that works from your laptop with the lid closed.\n\nAll three roads lead to cloud object storage. This week you set up the basics on AWS and Google Cloud, safely, with billing alarms, and run a meaningful task on both. By Sunday you have a working AWS account, a working BigQuery project, your Prophet model living in S3, and one full TaxiPulse query running on BigQuery's public NYC taxi dataset.\n\n## Why before the capstone\nThe W28-W30 capstone may well use a public dataset that's too big to download locally. The cloud setup you do this week unlocks that option."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "lesson",
@@ -11590,15 +11419,6 @@
               "body": "## What it is\nA single-page Streamlit app that:\n1. Loads the Prophet model from S3 (Week 26 setup paying off).\n2. Lets the user pick a forecast horizon (slider, 7-30 days).\n3. Shows the forecast plot with the 95% interval shaded.\n4. Shows the components plot (trend / weekly / yearly / holidays).\n5. Shows a small table: 'next 7 days forecast + interval'.\n\n## Why Streamlit\nFor a portfolio dashboard with no real users, Streamlit is the fastest path. Same reason the Reddit Sentiment dashboard used it. ~80 lines of Python and you have something deployable.\n\n## File layout\n```text\napp/\n streamlit_app.py # main entry point\n load_model.py # boto3 + joblib helper (from W26)\n requirements.txt # streamlit, prophet, boto3, joblib, matplotlib\n```\n\n## Cache the model load\nThe Prophet model is several MB. Without caching, Streamlit reloads it on every interaction. With `@st.cache_resource`, it loads once per session.\n```python\n@st.cache_resource\ndef get_model():\n return load_prophet_from_s3()\n```\n\n## What you'll see by end of day\n`streamlit run app/streamlit_app.py` opens the browser at localhost:8501. Slider works. Forecast updates. Components render. That's the local prototype that goes live tomorrow."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "lesson",
               "title": "See it in code (with output)",
               "body": "## Minimal streamlit_app.py\n```python\nimport streamlit as st\nimport pandas as pd\nfrom load_model import get_model\n\nst.set_page_config(page_title='Energy Forecast', layout='wide')\nst.title('AEP Energy Demand Forecast')\n\nhorizon = st.slider('Forecast horizon (days)', 7, 30, 14)\n\n@st.cache_resource\ndef cached():\n return get_model()\n\nmodel = cached()\nfuture = model.make_future_dataframe(periods=horizon, freq='D')\nforecast = model.predict(future).tail(horizon)\n\ncol1, col2 = st.columns([2, 1])\nwith col1:\n st.subheader('Forecast')\n fig = model.plot(model.predict(model.make_future_dataframe(periods=horizon, freq='D')))\n st.pyplot(fig)\nwith col2:\n st.subheader('Next ' + str(horizon) + ' days')\n st.dataframe(forecast[['ds','yhat','yhat_lower','yhat_upper']].round(0))\n\nst.subheader('Components')\nst.pyplot(model.plot_components(model.predict(model.make_future_dataframe(periods=horizon, freq='D'))))\n```\n\n## What this gives the viewer\nIn ~50 lines: a usable forecaster with intervals and explainability. They drag the slider; the forecast updates; the components plot tells them WHY. That's a complete demo."
@@ -11643,15 +11463,6 @@
               "kind": "lesson",
               "title": "Going live in 20 minutes",
               "body": "## Streamlit Community Cloud (recommended)\nFree, no card. The path:\n1. Push your `app/` folder + `requirements.txt` to a GitHub repo (even your existing Energy Forecast repo works, point Streamlit at the `app/` subfolder).\n2. Sign in at https://share.streamlit.io with GitHub.\n3. New app → pick the repo → main file is `app/streamlit_app.py`.\n4. Add **secrets**: AWS access key + secret for the S3 model download. Streamlit's secrets UI keeps them out of git.\n5. Deploy. ~3 minutes later you have a public `https://your-app.streamlit.app` URL.\n\n## Why not Vercel or AWS\nVercel is for Next.js/Node, not Python. Direct AWS deployment (EC2, ECS, Lambda) takes hours and requires more infra knowledge than this project demands. Streamlit Cloud is the path of least resistance for a single Python script.\n\n## Hugging Face Spaces as a fallback\nIf Streamlit Cloud is down or you've hit its app limit, Hugging Face Spaces deploys the same Streamlit app from a different repo (their Spaces system supports Streamlit out of the box). Same deploy effort.\n\n## Test the public URL\nOpen it in an incognito window (no auth, no cached creds), confirm it loads, the slider works, the components plot renders. That's the URL going in the blog post."
-            },
-            {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
             },
             {
               "kind": "lesson",
@@ -11916,15 +11727,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nCapstone v0.1: Pick + scope is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -12332,15 +12134,6 @@
               "body": "## What it is\nCapstone v0.2: Build is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 29 ('Capstone v0.2: Build'), day 0."
@@ -12390,15 +12183,6 @@
               "kind": "lesson",
               "title": "Bringing in the full dataset",
               "body": "## What it is\nIn W28 you used 1000 rows for the prototype. Today you ingest the whole dataset, every row, every column you'll need, into a single canonical location your downstream notebooks all read from.\n\n## The pattern\n```python\nimport pandas as pd\n\n# Read from the source (Kaggle download, S3, BigQuery, etc.)\nraw = pd.read_csv('data/raw/<your_file>.csv')\nprint(raw.shape) # (rows, cols)\nprint(raw.dtypes) # quick sanity\nprint(raw.head())\n\n# Save as parquet, faster + smaller than CSV for subsequent reads\nraw.to_parquet('data/raw.parquet', index=False)\n```\n\n## Why parquet, not CSV\n- 5-10x smaller on disk\n- 10x faster to read\n- Preserves column types (no more 'CSV ate my dates')\n- Skippable by column on read (`columns=['x', 'y']`)\n\nFrom here, every notebook in the project reads from `data/raw.parquet`. One canonical source. No copies floating around.\n\n## If the data is too big to load\n- **BigQuery / Snowflake**, query a sample once, store as parquet locally.\n- **Streaming through Dask**, works but adds complexity. Avoid for the capstone unless you must.\n- **Sample down**, explicitly document the sample method in SPEC.md if you have to.\n\n## Document what's in the file\nAdd `capstone/DATA_DICT.md`, a one-line description per column. Future-you (and any reviewer) will thank you. Five minutes today saves an hour next week."
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "lesson",
@@ -12742,15 +12526,6 @@
               "body": "## What it is\nCapstone v1.0: Ship + roadmap done is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 30 ('Capstone v1.0: Ship + roadmap done'), day 0."
@@ -12802,15 +12577,6 @@
               "body": "## What it is\nA single-page Streamlit app around your frozen v0.2 model. Same shape as the Energy Forecast dashboard from W27, scaled to your capstone's specifics:\n\n- Loads the main model from disk (or S3 if you put it there in W26)\n- Takes user input that maps to your model's features (sliders, dropdowns, text)\n- Shows the prediction + uncertainty if applicable\n- Shows the components / explanation if the model supports it (SHAP, feature importance, attention)\n\n## The pattern\n```python\nimport streamlit as st\nimport joblib\n\n@st.cache_resource\ndef get_model():\n return joblib.load('models/main.pkl')\n\nst.title('<Your capstone>')\nst.write('<one-sentence what it does>')\n\n# Input widgets that map to your features\nfeature_a = st.slider('Feature A', ...)\nfeature_b = st.selectbox('Feature B', [...])\n\nmodel = get_model()\nif st.button('Predict'):\n pred = model.predict([[feature_a, feature_b, ...]])\n st.metric('Predicted', f'{pred[0]:.2f}')\n```\n\n## Why one page, not many\nFor a portfolio demo with no real users, one page that does one thing well > five pages that each do something half. Reviewers see the working thing in 5 seconds; they don't navigate."
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "Polish that pays off",
               "body": "## Three small touches that make the demo feel finished\n\n### 1. A title and one-line description at the top\nVisitors land knowing what it does in 2 seconds. Don't make them read the blog post first.\n\n### 2. Sensible defaults on every input\nOn first load the demo should already show A prediction. Empty defaults = blank screen = nobody clicks Predict.\n\n### 3. A link to the blog post and the GitHub repo\nIn the sidebar or footer. The demo proves the model works; the post explains it; the repo lets them check your code. Three artifacts, three links, one journey."
@@ -12855,15 +12621,6 @@
               "kind": "lesson",
               "title": "Going live",
               "body": "## The path\nSame as W27:\n1. Push `capstone/app/` + `requirements.txt` to your GitHub repo.\n2. share.streamlit.io → New app → point at `capstone/app/streamlit_app.py`.\n3. Add secrets (AWS keys if loading model from S3, API keys if needed) in Streamlit's secrets UI.\n4. Deploy.\n\n## Test in incognito\nOpen the public URL in an incognito window. No cookies, no cached creds. Confirm:\n- It loads in <10 seconds (cold start is OK)\n- Default values produce a prediction\n- Each input updates the prediction\n- Links to blog + repo work\n\n## Save the URL\nPaste it into the README + into `capstone/LINKS.md`. This is the link that goes into the blog post tomorrow and on your portfolio site next week."
-            },
-            {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
             },
             {
               "kind": "swipe",
@@ -13381,15 +13138,6 @@
               "body": "## The 4 things that matter\n\n### Headline\nNot 'Aspiring data scientist'. Not 'Learning ML'. Specific:\n```text\nData scientist · Time series + NLP · 4 shipped projects at <yourname.com>\n```\nThat single line is what shows up in every search result, comment, message preview. Make it specific.\n\n### About section\n3 short paragraphs:\n1. **Who** you are + what you focus on\n2. **What** you've shipped (4 projects with results)\n3. **Where** to find them (yourname.com)\n\nNO 'self-driven learner who loves solving problems'. Specific or skip.\n\n### Featured section\nAdd the capstone blog post + the portfolio site URL. Maximum 4 features; pick the strongest.\n\n### Skills (the right 10, not 50)\n```text\nPython · pandas · scikit-learn · PyTorch · SQL · Prophet · MLflow · \nAWS · Streamlit · FastAPI\n```\n10 specific skills you can defend in an interview > 50 vague keywords. LinkedIn surfaces the top 5 most-endorsed; ask 3 friends to endorse your top 5.\n\n## GitHub polish\n\n### Profile README\nYou did this in W30. Confirm it's current.\n\n### Pinned repos\n4 projects pinned in chronological order.\n\n### Contribution graph\nDon't worry about it. Recruiters who actually look at it know it's a weak signal. Don't game it.\n\n### Each project repo's README\nEach top-level README should have:\n- One-sentence what it does\n- Live demo link\n- Blog post link\n- 'How to run' section (3-5 commands)"
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -13560,15 +13308,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nLLM Era - Fine-tuning with LoRA + PEFT is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Transformers the tech behind LLMs Deep Learning",
-              "url": "https://www.youtube.com/watch?v=wjZofJX0v4M",
-              "duration_min": 27,
-              "creator": "3Blue1Brown",
-              "difficulty": "advanced",
-              "why": "This 27-minute 3Blue1Brown deep dive ('Transformers the tech behind LLMs Deep Learning') is worth the length, it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "lesson",
@@ -13811,7 +13550,7 @@
             {
               "kind": "lesson",
               "title": "Saving the comparison",
-              "body": "## Document it\n```markdown\n# Fine-tune results\n\n## Task\n<one-line>\n\n## Dataset\n<source, size, split>\n\n## Base model\n<model name + size>\n\n## LoRA config\n- rank: 8\n- alpha: 16\n- target modules: [q_proj, v_proj]\n- trainable params: 1.5M (0.13% of base)\n\n## Training\n- 10k examples × 3 epochs (stopped at epoch 2 to avoid overfit)\n- batch 16 (effective), lr 2e-4, fp16\n- Total wall time on Colab T4: ~75 min\n\n## Results\n- Base accuracy: 64.2%\n- LoRA accuracy: 81.7% (+17.5 pp)\n- 10/10 spot-checks show clearly improved format adherence\n\n## Honest weaknesses\n<what didn't work or where the model still fails>\n```"
+              "body": "Save your fine-tune results in a structured format so anyone reading the repo can reproduce your setup and verify the improvement over the base model.\n\n## Document it\n```markdown\n# Fine-tune results\n\n## Task\n<one-line>\n\n## Dataset\n<source, size, split>\n\n## Base model\n<model name + size>\n\n## LoRA config\n- rank: 8\n- alpha: 16\n- target modules: [q_proj, v_proj]\n- trainable params: 1.5M (0.13% of base)\n\n## Training\n- 10k examples × 3 epochs (stopped at epoch 2 to avoid overfit)\n- batch 16 (effective), lr 2e-4, fp16\n- Total wall time on Colab T4: ~75 min\n\n## Results\n- Base accuracy: 64.2%\n- LoRA accuracy: 81.7% (+17.5 pp)\n- 10/10 spot-checks show clearly improved format adherence\n\n## Honest weaknesses\n<what didn't work or where the model still fails>\n```"
             },
             {
               "kind": "swipe",
@@ -14306,15 +14045,6 @@
               "body": "## Streamlit demo\nSame pattern as W27 / W30. The minimum:\n```python\nimport streamlit as st\n\n@st.cache_resource\ndef load_components():\n # Load embedding model, FAISS index, BM25, chunks\n ...\n\nst.title('RAG over <your corpus>')\nquery = st.text_input('Ask a question:')\nif query:\n answer, hits = rag_answer(query)\n st.write(answer)\n with st.expander('Sources used'):\n for i, h in enumerate(hits, 1):\n st.markdown(f'**[{i}] {h[\"source\"]}**')\n st.text(h['text'])\n```\n\nDeploy to Streamlit Cloud as before. Public URL.\n\n## The blog post\n```text\n1. Hook, what you built + the score\n2. Why RAG (1 paragraph)\n3. Corpus + chunking choices\n4. Hybrid search, why it helped (or didn't)\n5. Eval results, pass rate + failure patterns\n6. Live demo URL\n7. What I'd improve\n```\n\n## Tag and ship\n```bash\ngit add rag/\ngit commit -m \"RAG system: <pass rate> on hand-eval over <corpus>\"\ngit tag rag-shipped\ngit push && git push --tags\n```\n\n## Why this matters for hiring\nEvery team that built an LLM application in 2023-2024 built RAG first. Showing a working RAG + hybrid search + honest eval puts you ahead of most candidates who only show 'I called the OpenAI API' projects."
             },
             {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -14403,15 +14133,6 @@
               "kind": "lesson",
               "title": "Set up your tooling",
               "body": "## What it is\nComputer Vision - CNN, transfer learning, Vision Transformers is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
-            },
-            {
-              "kind": "video",
-              "title": "Transformers the tech behind LLMs Deep Learning",
-              "url": "https://www.youtube.com/watch?v=wjZofJX0v4M",
-              "duration_min": 27,
-              "creator": "3Blue1Brown",
-              "difficulty": "advanced",
-              "why": "This 27-minute 3Blue1Brown deep dive ('Transformers the tech behind LLMs Deep Learning') is worth the length, it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "lesson",
@@ -14504,15 +14225,6 @@
               "kind": "lesson",
               "title": "Picking + preprocessing",
               "body": "## Pick a dataset\nGood learner options on HuggingFace `datasets`:\n- **CIFAR-10**, 60k 32×32 color images, 10 classes (planes, cats, etc.). Classic.\n- **Oxford Flowers**, 8k images, 102 classes. Bigger images, harder task.\n- **EuroSAT**, satellite imagery, 27k images, 10 land-use classes. Domain-specific feel.\n- **A subset of ImageNet** (50-100 classes), close to production-realistic\n\nPick one with ~5k-50k training images. Too small → not enough signal. Too big → training is slow on Colab.\n\n## Standard preprocessing for transfer learning\n```python\nfrom torchvision import transforms\n\n# Training transforms (augmentation = synthetic data variety)\ntrain_transform = transforms.Compose([\n transforms.RandomResizedCrop(224), # crop random region, resize to 224\n transforms.RandomHorizontalFlip(), # 50% flip\n transforms.ColorJitter(0.4, 0.4, 0.4), # slight brightness/contrast/saturation\n transforms.ToTensor(),\n transforms.Normalize(\n mean=[0.485, 0.456, 0.406], # ImageNet stats\n std=[0.229, 0.224, 0.225],\n ),\n])\n\n# Eval transforms (deterministic, no augmentation)\neval_transform = transforms.Compose([\n transforms.Resize(256),\n transforms.CenterCrop(224),\n transforms.ToTensor(),\n transforms.Normalize(\n mean=[0.485, 0.456, 0.406],\n std=[0.229, 0.224, 0.225],\n ),\n])\n```\n\n## Why ImageNet normalization stats\nResNet50 was pretrained on ImageNet with these exact normalization stats. If you use different stats, the pretrained weights produce gibberish. ALWAYS match the normalization the model expects.\n\n## Why augmentation for training but not eval\n- **Training**: augmentation = free synthetic variety, prevents overfitting\n- **Eval**: needs to be deterministic so results are comparable across runs\n\n## Sanity check\nDisplay 10 augmented training samples and 10 eval samples. Confirm:\n- Labels are correct\n- Images look reasonable after transforms\n- Class balance roughly matches what you expect"
-            },
-            {
-              "kind": "video",
-              "title": "ROC and AUC Clearly Explained",
-              "url": "https://www.youtube.com/watch?v=4jRBRDbJemM",
-              "duration_min": 16,
-              "creator": "StatQuest",
-              "difficulty": "intermediate",
-              "why": "This 16-minute StatQuest deep dive ('ROC and AUC Clearly Explained') is worth the length, it makes the concept click for good. Watch the first ~10 minutes for the essential intuition; the rest is bonus depth."
             },
             {
               "kind": "swipe",
@@ -15635,15 +15347,6 @@
               "body": "## What it is\nCapstone v0.2 - Build (extended) is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 37 ('Capstone v0.2 - Build (extended)'), day 0."
@@ -15695,15 +15398,6 @@
               "body": "## What it is\nRight now your capstone runs as a sequence of notebooks: `01_ingest.ipynb`, `02_clean.ipynb`, ..., `06_evaluate.ipynb`. To reproduce your results, someone has to:\n1. Clone the repo\n2. Install the right dependency versions\n3. Open Jupyter\n4. Run each notebook in order\n5. Hope nothing in the environment drifted\n\nThat's fragile. Today you replace it with a pipeline: one command, end-to-end, deterministic. The same input always produces the same output.\n\n## Two viable tools\n\n### Makefile (simplest, no extra deps)\n```makefile\n.PHONY: all clean ingest preprocess train evaluate\n\nall: evaluate\n\ndata/raw.parquet: src/ingest.py\n\tpython src/ingest.py\n\ndata/clean.parquet: data/raw.parquet src/clean.py\n\tpython src/clean.py\n\nmodels/main.pkl: data/clean.parquet src/train.py\n\tpython src/train.py\n\nreports/metrics.json: models/main.pkl src/evaluate.py\n\tpython src/evaluate.py\n\nevaluate: reports/metrics.json\n\nclean:\n\trm -rf data/*.parquet models/*.pkl reports/*.json\n```\n\nRun: `make`, only rebuilds what needs rebuilding (Make checks file timestamps).\n\n### DVC (data-versioning + pipeline)\n```bash\npip install dvc\ndvc init\ndvc stage add -n ingest -d src/ingest.py -o data/raw.parquet python src/ingest.py\ndvc stage add -n clean -d src/clean.py -d data/raw.parquet -o data/clean.parquet python src/clean.py\ndvc stage add -n train -d src/train.py -d data/clean.parquet -o models/main.pkl python src/train.py\ndvc stage add -n eval -d src/evaluate.py -d models/main.pkl -m reports/metrics.json python src/evaluate.py\n\ndvc repro\n```\n\nDVC tracks data file HASHES (not just timestamps), and metrics are first-class. Heavier than Make; better when datasets are big or pinned to S3.\n\n## Convert your notebooks to scripts FIRST\n```bash\njupyter nbconvert --to script notebooks/01_ingest.ipynb --output ../src/ingest\n# repeat for the rest, then clean up the auto-generated cruft\n```\n\nNotebooks stay for exploration; scripts run the pipeline.\n\n## Pin dependency versions\n```bash\npip freeze > requirements.txt\n```\n\nOr better: `pyproject.toml` with pinned versions. The point is reproducibility, `pandas` works differently in 1.5 vs 2.0; pin it.\n\n## Pin the random seed\nIn every place randomness matters (train/test split, model init, sample weights):\n```python\nimport numpy as np, random, torch\nSEED = 42\nnp.random.seed(SEED); random.seed(SEED); torch.manual_seed(SEED)\n```\n\n## What you'll have by end of day\n- Notebooks → scripts in `src/`\n- Makefile (or `dvc.yaml`) that runs the whole pipeline\n- Pinned `requirements.txt`\n- One global SEED in `src/config.py`\n- `make clean && make` reproduces all metrics exactly"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -15745,15 +15439,6 @@
               "body": "## What it is\nIn W28-W30 you built a baseline. Today you tighten it: a STRONG, fair, well-evaluated baseline is the bar your main model has to clear. The honest comparison is the spine of the audit.\n\n## Strong baselines by problem type\n```text\nRegression:\n Ridge regression on engineered features. NOT 'predict the mean'.\n Engineering matters: include interactions, polynomial terms.\n\nClassification:\n Logistic regression on engineered features, class-weighted if imbalanced.\n NOT 'majority class predictor', that's a sanity check, not a baseline.\n\nTime series:\n ETS or SARIMA, properly cross-validated with time-aware splits.\n Persistence is a sanity check; ETS is the real baseline.\n\nRecommendation:\n Item popularity + per-user popularity bias. NOT 'random recommend'.\n```\n\n## Why the baseline matters more in v0.2 than v0.1\nIn W28-W30 a weak baseline was fine; the goal was 'something works'. In v0.2 the goal is 'something works AND we know exactly how much better than the simplest defensible alternative'. If your fancy model is 2% better than a properly-tuned linear regression, you have a different story than if it's 30% better.\n\n## Tune the baseline the same way you tune the main model\nA common cheat: under-tune the baseline so the main model looks better. Don't. Cross-validated hyperparameter search for the baseline too.\n\n```python\nfrom sklearn.linear_model import LogisticRegressionCV\nbaseline = LogisticRegressionCV(\n Cs=10, cv=5, class_weight='balanced', max_iter=2000,\n scoring='roc_auc', random_state=SEED,\n)\nbaseline.fit(X_train, y_train)\n```\n\n## Document the baseline\n```markdown\n## Baseline\n\n- Model: LogisticRegressionCV (10 C values, 5-fold inner CV)\n- Features: <list>\n- Class weighting: balanced (target is imbalanced 7:1)\n- Cross-validated 5-fold AUC: 0.812 ± 0.011\n- Single train/test AUC: 0.819 (test set)\n```\n\nBoth numbers, the CV mean ± std AND the single test number, go in the report. Different audiences read each."
             },
             {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -15793,15 +15478,6 @@
               "kind": "lesson",
               "title": "Cross-validation that doesn't lie",
               "body": "## What it is\nA single train/test split gives you one number. k-fold CV gives you k numbers + their mean and standard deviation. The std-dev is the honest uncertainty around the point estimate.\n\n## The standard pattern\n```python\nfrom sklearn.model_selection import KFold, cross_val_score\nimport numpy as np\n\nkf = KFold(n_splits=5, shuffle=True, random_state=SEED)\nscores = cross_val_score(model, X, y, cv=kf, scoring='roc_auc', n_jobs=-1)\nprint(f'AUC: {scores.mean():.3f} ± {scores.std():.3f}')\n# AUC: 0.871 ± 0.014\n```\n\nThat ± is the honest report. 'AUC 0.871' alone is half a sentence.\n\n## Stratified k-fold for classification\n```python\nfrom sklearn.model_selection import StratifiedKFold\nskf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)\n```\n\nPreserves class proportions across folds. Required for imbalanced classification, without it, some folds might have very few minority-class examples.\n\n## Time-series cross-validation\nFor temporal data, standard k-fold LEAKS, it lets the model train on future and predict past. Use `TimeSeriesSplit`:\n```python\nfrom sklearn.model_selection import TimeSeriesSplit\ntscv = TimeSeriesSplit(n_splits=5)\nfor fold, (tr_idx, te_idx) in enumerate(tscv.split(X)):\n # tr_idx is always earlier than te_idx\n ...\n```\n\n## The leakage traps to know\n```text\n1. Feature engineering BEFORE the split, fit your StandardScaler on the\n train fold, apply to test. NOT on the full dataset.\n\n2. Target encoding leakage, encoding categorical features using statistics\n that include the test fold's outcomes. Use within-fold encoding only.\n\n3. Time leakage, using features that wouldn't have been known at\n prediction time (next-day temperature when forecasting tomorrow).\n\n4. Group leakage, same patient / user / customer in both train and test.\n Use GroupKFold to ensure groups don't span the split.\n```\n\n## Pipeline-aware CV (no leakage by construction)\n```python\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\npipe = Pipeline([\n ('scaler', StandardScaler()),\n ('clf', LogisticRegression(max_iter=2000)),\n])\n\nscores = cross_val_score(pipe, X, y, cv=skf, scoring='roc_auc')\n# Each fold: scaler fits on train fold only, transforms test fold\n# No leakage by construction.\n```\n\nThis is the move. Wrap everything pre-modeling into a `Pipeline`; cross-validate the pipeline; leakage is impossible because each fold gets its own fit.\n\n## Update reports\n```python\nimport json\njson.dump({\n 'cv_auc_mean': float(scores.mean()),\n 'cv_auc_std': float(scores.std()),\n 'cv_folds': [float(s) for s in scores],\n}, open('reports/cv_metrics.json', 'w'), indent=2)\n```"
-            },
-            {
-              "kind": "video",
-              "title": "Machine Learning Fundamentals Cross Validation",
-              "url": "https://www.youtube.com/watch?v=fSytzGwwBVw",
-              "duration_min": 6,
-              "creator": "StatQuest",
-              "difficulty": "beginner",
-              "why": "This 6-minute StatQuest video ('Machine Learning Fundamentals Cross Validation') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -16063,15 +15739,6 @@
               "body": "## What it is\nCapstone v0.3 - Polish + deploy is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 38 ('Capstone v0.3 - Polish + deploy'), day 0."
@@ -16121,15 +15788,6 @@
               "kind": "lesson",
               "title": "The targeted refactor",
               "body": "## What it is\nNot a top-to-bottom rewrite, a targeted attack on the ONE module that's hardest to read. Every project has this module: the one you scroll past with a grimace. Today you fix it.\n\n## Identifying the worst module\nThree signals:\n- You've had to re-read it more than twice to remember what it does\n- You've made a 'small change' there that broke something far away\n- It has the most TODO / FIXME / 'this is ugly' comments\n\nPick that one.\n\n## The refactor playbook\n```text\n1. RENAME variables and functions to say what they do.\n `process_data` → `clean_and_winsorize_outliers`\n `tmp` → `cleaned_df`\n\n2. EXTRACT functions: any block longer than ~20 lines becomes a function.\n Inline comments that explain WHAT → function names. Comments that\n explain WHY stay.\n\n3. REMOVE dead code: cells you ran once for debugging, commented-out\n alternatives 'in case', unused imports. Delete them. Git remembers.\n\n4. TYPE-HINT public functions: `def predict(X: pd.DataFrame) -> np.ndarray`\n Forces you to think about what goes in/out.\n\n5. DOCSTRING public functions: ONE line explaining the WHY. Not 'returns\n the prediction', 'compute calibrated probabilities, capping above\n the 99th percentile to limit influence of training-set outliers'.\n```\n\n## Before / after example\n```python\n# BEFORE\ndef process(d, t=0.5, x=None):\n # do the thing\n out = d.copy()\n out = out[out['v'] > 0]\n out['v'] = out['v'].clip(upper=out['v'].quantile(0.99))\n if x:\n out = out[out['cat'].isin(x)]\n out['p'] = model.predict_proba(out[FEATS])[:, 1]\n return out[out['p'] >= t]\n```\n\n```python\n# AFTER\ndef score_and_filter_customers(\n customers: pd.DataFrame,\n score_threshold: float = 0.5,\n categories: list[str] | None = None,\n) -> pd.DataFrame:\n \"\"\"Score customers, return those above threshold; optionally filter by category.\n\n Winsorises `value` at the 99th percentile to limit outlier influence on the\n learned ranking, the production score uses the same capping.\n \"\"\"\n eligible = customers[customers['value'] > 0].copy()\n eligible['value'] = eligible['value'].clip(upper=eligible['value'].quantile(0.99))\n if categories is not None:\n eligible = eligible[eligible['category'].isin(categories)]\n eligible['propensity'] = model.predict_proba(eligible[FEATURES])[:, 1]\n return eligible[eligible['propensity'] >= score_threshold]\n```\n\nSame logic; readable by someone who's never seen the project.\n\n## What you DON'T do today\n- A second module (focus matters; pick the worst, fix it well)\n- Architecture rewrites (too risky without tests, which arrive tomorrow)\n- Performance optimisation (premature; not a v0.3 concern)\n\n## Commit at the end of the day\n```bash\ngit add src/<module>.py\ngit commit -m \"Refactor <module>: rename + extract + type-hint\"\n```\n\nSmall, targeted commits. If something breaks after the refactor, the diff is small and easy to revert."
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -16221,15 +15879,6 @@
               "kind": "lesson",
               "title": "Containers, the minimal viable",
               "body": "## What it is\nA `Dockerfile` that packages your model + inference code into a portable container. Anyone with Docker installed can run your model with one command, no Python setup, no dependency hell.\n\n## The minimal Dockerfile\n```dockerfile\n# Dockerfile\nFROM python:3.11-slim\n\nWORKDIR /app\n\n# Install system deps first (cached layer)\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n build-essential \\\n && rm -rf /var/lib/apt/lists/*\n\n# Install Python deps next (cached if requirements unchanged)\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Copy code + model last (changes most often)\nCOPY src/ ./src/\nCOPY models/main.pkl ./models/main.pkl\nCOPY app/ ./app/\n\nEXPOSE 8000\n\nCMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n```\n\n## Layer ordering = build speed\nDocker caches each layer; if a layer's inputs don't change, it doesn't rebuild. Put slowly-changing things (apt installs) first, fast-changing things (your code) last. Rebuilds become near-instant during iteration.\n\n## The .dockerignore\n```text\n# .dockerignore\n.git\n__pycache__\n*.pyc\n.pytest_cache\nnotebooks/\ndata/raw.parquet\nreports/\n.venv/\n.env\n.DS_Store\n```\n\nWithout this, `COPY .` pulls in your git history, notebooks, raw data, virtualenv. Image bloats from 200MB to 2GB. Always have a `.dockerignore`.\n\n## Build + run\n```bash\ndocker build -t capstone:v0.3 .\ndocker run -p 8000:8000 capstone:v0.3\n\n# In another terminal\ncurl http://localhost:8000/predict -X POST -H 'Content-Type: application/json' \\\n -d '{\"features\": {...}}'\n# {\"prediction\": 1, \"probability\": 0.83}\n```\n\n## The 'multi-stage' upgrade (optional)\nIf your image is > 500MB, split into a build stage + runtime stage. Build heavy deps in the first; copy only what's needed into a slim runtime image.\n```dockerfile\nFROM python:3.11 AS builder\nCOPY requirements.txt .\nRUN pip install --user --no-cache-dir -r requirements.txt\n\nFROM python:3.11-slim AS runtime\nCOPY --from=builder /root/.local /root/.local\nENV PATH=/root/.local/bin:$PATH\nCOPY src/ ./src/\nCOPY models/main.pkl ./models/main.pkl\nCOPY app/ ./app/\nCMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n```\n\nNot required for v0.3 unless your image is huge.\n\n## What this gives the reviewer\n```bash\ndocker pull yourname/capstone:v0.3\ndocker run -p 8000:8000 yourname/capstone:v0.3\n# instant, no Python setup, no dependency hell\n```\n\nA working Docker image is the difference between 'try to run this on your machine' (recruiter gives up) and 'one docker command, working in 30 seconds' (recruiter is impressed)."
-            },
-            {
-              "kind": "video",
-              "title": "How I deploy serverless containers for free",
-              "url": "https://www.youtube.com/watch?v=cw34KMPSt4k",
-              "duration_min": 7,
-              "creator": "Beyond Fireship",
-              "difficulty": "curated",
-              "why": "This 7-minute Beyond Fireship video teaches Deploy directly, watch it end to end."
             },
             {
               "kind": "swipe",
@@ -16486,15 +16135,6 @@
               "body": "## What it is\nCapstone v1.0 - Ship + interview-ready story is the foundation for this week's work. Without it installed and working, every later day will fail with a cryptic error.\n\n## What you'll do today\n- Install the required tool(s)\n- Authenticate (if the tool talks to a cloud or remote service)\n- Run a one-line verification command\n- Commit a `day0` checkpoint to GitHub\n\n## Why before anything else\nThe #1 reason mentees stall is a missing CLI, a wrong PATH, or unauthenticated credentials. Spend 30 minutes here and save hours later."
             },
             {
-              "kind": "video",
-              "title": "Your First Git + GitHub Push",
-              "url": "https://www.youtube.com/watch?v=USjZcfj8yxE",
-              "duration_min": 10,
-              "creator": "Web Dev Simplified",
-              "difficulty": "beginner",
-              "why": "This 10-minute Web Dev Simplified video ('Your First Git + GitHub Push') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
-            },
-            {
               "kind": "lesson",
               "title": "See it in action - the exact steps",
               "body": "## Walkthrough\nDo every step now, in your terminal.\n\n```bash\n# Install per official docs, then verify with the tool's --version flag\n```\n\n## What 'working' looks like\nThe tool prints its version without error.\n\nIf anything errors, read the message carefully - 90% of Day 0 failures are PATH or auth issues, both of which the error spells out.\n\n## Context\nThis applies specifically to week 39 ('Capstone v1.0 - Ship + interview-ready story'), day 0."
@@ -16539,15 +16179,6 @@
               "kind": "lesson",
               "title": "The demo script, 3 minutes that earn callbacks",
               "body": "## What it is\nA 3-minute screen recording of you walking through the project. Tomorrow you record it. Today you SCRIPT it, word by word.\n\n## Why script (vs improvise)\n- Improvised demos meander. 3 minutes becomes 7 minutes.\n- Scripted demos hit the same beats every take.\n- You stop saying 'um', 'so', 'basically'.\n- You give yourself a chance to cut what's boring BEFORE recording.\n\n## The structure\n```text\n[0:00 - 0:20] Hook + problem\n 'This is <project>. It predicts <thing> for <who> from <data>.\n The baseline gets <X>; my model gets <Y>, that's the headline.\n Here's how, in three minutes.'\n\n[0:20 - 0:50] Show the live demo\n Open the deployed URL. Show one interaction.\n Speak to the result. 'You can see the model predicts <Z>; the\n interpretability panel shows it's relying on <feature> because <reason>.'\n\n[0:50 - 1:30] The data + the baseline\n Switch to the README or notebook.\n 'The dataset is <X> rows of <thing>. The simplest defensible\n baseline is <Y>, which gets <metric>. That's the bar to beat.'\n\n[1:30 - 2:15] The model + the result\n 'I tried <approach 1> and <approach 2>; <approach 1> won because <X>.\n The improvement over baseline is <Z>%, and here's why that's\n meaningful in context: <one sentence>.'\n\n[2:15 - 2:45] Honest weakness\n 'The model still fails on <specific subgroup or input>. That's\n documented in BIAS.md / DECISIONS.md / LIMITATIONS.md.'\n\n[2:45 - 3:00] Close + call to action\n 'Code is at <repo>. Live API at <url>. Happy to dive deeper.\n Thanks for watching.'\n```\n\n## Writing tips\n- **Short sentences.** Long sentences trip you up out loud.\n- **One number per sentence.** Two numbers per sentence loses the listener.\n- **Say the JUDGMENT, not just the metric.** 'AUC 0.871, which beats the linear baseline by 6 points, that gap is large enough to be meaningful for the use case.'\n- **No buzzwords.** 'leveraged cutting-edge state-of-the-art' adds zero. Cut.\n\n## Print the script + tape it to your monitor\nTomorrow you'll read it during recording. Print = no scrolling, no tab-switching, no missed beats."
-            },
-            {
-              "kind": "video",
-              "title": "Git Branches Explained",
-              "url": "https://www.youtube.com/watch?v=eulnSXkhE7I",
-              "duration_min": 8,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "This 8-minute Fireship video ('Git Branches Explained') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -17624,15 +17255,6 @@
               "body": "## The demo\n```python\nimport streamlit as st\nimport pandas as pd\n\nst.title('MovieLens Recommender')\n\n@st.cache_resource\ndef load_artifacts():\n # load: MF model, item features, movie titles, item embeddings\n ...\n\nmodel, items, movies = load_artifacts()\n\nst.subheader('Pick 5 movies you like')\nliked = st.multiselect('Movies', movies['title'].tolist())\n\nif len(liked) >= 5:\n # Build a temporary user from those 5 ratings; embed; recommend\n recs = recommend_for_new_user(liked, n=20)\n st.subheader('You might like')\n for r in recs:\n col1, col2, col3 = st.columns([3, 1, 2])\n col1.write(r['title'])\n col2.metric('Score', f\"{r['score']:.2f}\")\n col3.write(r['genres'])\nelse:\n st.info(f'Pick {5 - len(liked)} more movies to see recommendations.')\n```\n\n## Why the 'pick 5' UX\nCold-start in action. Users don't have ratings yet; the onboarding screen IS the cold-start mitigation. Streamlit lets you ship this in 30 lines.\n\n## Deploy on Streamlit Cloud\nSame path as every other week. Push to GitHub. Connect Streamlit Cloud. Get a URL.\n\n## The blog post (~1000 words)\n```text\n1. Hook, 'Three generations of recsys on the same dataset. The winner, and the surprising loser.'\n2. Why recsys matters, interview gold at consumer tech\n3. User-based CF, implementation + RMSE\n4. Matrix factorization, embeddings + the Netflix Prize moment\n5. Two-tower deep model, features + cold-start\n6. Cold-start strategy\n7. The comparison table, RMSE + ranking metrics + coverage\n8. What I'd add for production, counterfactual eval, real-time updates\n9. Live demo link + repo\n```\n\n## Tag and ship\n```bash\ngit add recsys/\ngit commit -m \"Recsys specialty: CF + MF + two-tower + cold-start, with multi-metric eval\"\ngit tag recsys-shipped\ngit push && git push --tags\n```\n\n## Why this is interview gold\n'Tell me how you'd build a recommender for X' is the most-asked technical question at consumer tech DS interviews. With three implementations + a comparison + a working demo + a documented cold-start strategy, you have a ready answer at every level of depth, from 30 seconds to 30 minutes."
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -17815,15 +17437,6 @@
               "body": "## What it is\nPySpark is the Python API for Apache Spark, the most-deployed distributed-compute framework in production data engineering and ML. Different from Dask in three ways:\n\n```text\n1. SEPARATE API, pyspark.sql.DataFrame, not pandas.\n The patterns are SQL-like; you'll feel at home if you know SQL.\n\n2. BIGGER ECOSYSTEM, MLlib (ML), Streaming, SQL, GraphX, Delta Lake.\n Same framework solves data engineering + analytics + ML.\n\n3. MORE OPERATIONAL, Real production deploys use cluster managers (YARN,\n Kubernetes, Databricks). Heavier than Dask but proven at scale.\n```\n\n## Local install\n```bash\npip install pyspark\n# Java 11 or 17 required; install if not present\n```\n\n```python\nfrom pyspark.sql import SparkSession\n\nspark = (\n SparkSession.builder\n .appName('DistML')\n .master('local[*]') # all available cores on this machine\n .config('spark.driver.memory', '8g')\n .getOrCreate()\n)\n\nprint(spark.version)\n# 3.5.x\n```\n\n## Read the same NYC taxi parquet\n```python\ndf = spark.read.parquet('data/yellow_2019_*.parquet')\ndf.printSchema()\n# root\n# |-- VendorID: integer (nullable = true)\n# |-- tpep_pickup_datetime: timestamp (nullable = true)\n# ...\n\nprint(df.count())\n# 32,150,832\n```\n\n## The same groupby in Spark SQL\n```python\nfrom pyspark.sql.functions import hour, col, count, mean\n\nby_hour = (\n df.withColumn('hour', hour('tpep_pickup_datetime'))\n .groupBy('hour')\n .agg(count('*').alias('trips'), mean('fare_amount').alias('avg_fare'))\n .orderBy('trips', ascending=False)\n)\nby_hour.show(5)\n# +----+--------+----------+\n# |hour| trips| avg_fare|\n# +----+--------+----------+\n# | 18| 2010491| 13.45|\n# ...\n```\n\n## Or write actual SQL\n```python\ndf.createOrReplaceTempView('trips')\nspark.sql(\"\"\"\n SELECT hour(tpep_pickup_datetime) AS hour, COUNT(*) AS trips\n FROM trips\n GROUP BY hour\n ORDER BY trips DESC\n\"\"\").show(5)\n```\n\n## The Spark UI\n```python\n# While the session is running, open:\n# http://localhost:4040\n# You'll see: jobs, stages, executors, SQL queries\n```\n\nSpark's UI is the production-monitoring equivalent of Dask's dashboard. You'll use it for debugging slow queries in real jobs.\n\n## When to reach for Spark over Dask\n```text\n- Your team / company already runs Spark, interoperability\n- You need the Spark ecosystem (MLlib, Delta Lake, structured streaming)\n- You're on Databricks, EMR, Glue, Synapse, Spark is native\n- Data scale truly exceeds what Dask handles cleanly (multi-TB)\n\n- Quick prototyping in pandas-style → Dask\n- Solo / small team, just need to scale beyond RAM → Dask\n```"
             },
             {
-              "kind": "video",
-              "title": "Python in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=x7X9w_GIm1s",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('Python in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -17865,15 +17478,6 @@
               "body": "## What you'll do\nRun the SAME query (busiest hour from NYC taxi data) in:\n1. **Pandas** (single-thread, in-memory)\n2. **Dask** (multi-core, lazy)\n3. **PySpark** (Spark on local mode, all cores)\n\nTime each one. Inspect peak memory.\n\n## The query (consistent across engines)\n```text\nFor each hour of day, count trips and average fare.\nFilter: fare_amount between 2.5 and 200.\nOrder by trips descending.\n```\n\n## Pandas\n```python\nimport pandas as pd, glob, time\nstart = time.time()\ndf = pd.concat([pd.read_parquet(f) for f in glob.glob('data/yellow_2019_*.parquet')])\ndf = df[(df['fare_amount'] >= 2.5) & (df['fare_amount'] <= 200)]\ndf['hour'] = df['tpep_pickup_datetime'].dt.hour\nresult = df.groupby('hour').agg(trips=('hour','count'),\n avg_fare=('fare_amount','mean'))\nresult = result.sort_values('trips', ascending=False)\nprint(f'pandas: {time.time()-start:.1f}s')\n```\n\nOn 30M rows, expect either OOM on 16GB machines or ~40-90 seconds and high memory.\n\n## Dask\n```python\nimport dask.dataframe as dd\nstart = time.time()\ndf = dd.read_parquet('data/yellow_2019_*.parquet')\ndf = df[(df['fare_amount'] >= 2.5) & (df['fare_amount'] <= 200)]\ndf['hour'] = df['tpep_pickup_datetime'].dt.hour\nresult = (\n df.groupby('hour')\n .agg({'hour': 'count', 'fare_amount': 'mean'})\n .rename(columns={'hour': 'trips', 'fare_amount': 'avg_fare'})\n .compute()\n .sort_values('trips', ascending=False)\n)\nprint(f'dask: {time.time()-start:.1f}s')\n```\n\nExpect ~15-30 seconds, lower memory footprint than pandas.\n\n## PySpark\n```python\nfrom pyspark.sql import SparkSession\nfrom pyspark.sql.functions import hour, col, count, mean\n\nspark = SparkSession.builder.master('local[*]').getOrCreate()\nstart = time.time()\ndf = spark.read.parquet('data/yellow_2019_*.parquet')\nresult = (\n df.filter((col('fare_amount') >= 2.5) & (col('fare_amount') <= 200))\n .withColumn('hour', hour('tpep_pickup_datetime'))\n .groupBy('hour')\n .agg(count('*').alias('trips'), mean('fare_amount').alias('avg_fare'))\n .orderBy('trips', ascending=False)\n)\nresult.show()\nprint(f'spark: {time.time()-start:.1f}s')\n```\n\nExpect ~20-40 seconds on local mode; Spark has higher startup cost than Dask but better at multi-stage queries.\n\n## Capture peak memory\n```python\n# Run each query in a subprocess + measure with /usr/bin/time -v on Linux\n# or psutil.Process().memory_info().rss on a polling loop.\n```\n\n## The honest comparison\n```markdown\n| Engine | Time (s) | Peak mem (GB) | Code length | Notes |\n|---------|----------|---------------|-------------|----------------------|\n| pandas | 80 | 14 | 8 lines | OOM risk above 30M |\n| Dask | 25 | 5 | 9 lines | Lazy; pandas-like |\n| Spark | 35 | 6 | 11 lines | Startup cost; SQL |\n```\n\nNote: numbers will vary widely by machine. The relative shape, pandas slower + memory-heavy, Dask + Spark roughly tied locally, is the lesson.\n\n## What this teaches\nAt single-machine scale, the engines are MORE SIMILAR than they look in marketing. The real differences emerge at cluster scale, which is tomorrow's lesson (training a model with Spark MLlib)."
             },
             {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
-            },
-            {
               "kind": "swipe",
               "title": "Quick check, swipe to answer",
               "cards": [
@@ -17913,15 +17517,6 @@
               "kind": "lesson",
               "title": "Distributed training with Spark MLlib",
               "body": "## What it is\nMLlib is Spark's built-in ML library. The killer feature is distributed training: same algorithm, runs on one machine OR a 100-node cluster, scales linearly with data.\n\nFor learner work, you'll train a regression on the NYC taxi data, predict trip fare from distance, time of day, day of week. Train on 30M rows. Watch it run distributedly.\n\n## The pattern (DataFrame API + MLlib Pipeline)\n```python\nfrom pyspark.sql.functions import hour, dayofweek, col\nfrom pyspark.ml.feature import VectorAssembler\nfrom pyspark.ml.regression import LinearRegression, GBTRegressor\nfrom pyspark.ml import Pipeline\nfrom pyspark.ml.evaluation import RegressionEvaluator\n\ndf = spark.read.parquet('data/yellow_2019_*.parquet')\ndf = df.filter((col('fare_amount').between(2.5, 200)) &\n (col('trip_distance').between(0.1, 100)))\n\n# Feature engineering at Spark scale\ndf = (\n df.withColumn('hour', hour('tpep_pickup_datetime'))\n .withColumn('dow', dayofweek('tpep_pickup_datetime'))\n)\n\n# Train / test split (random 80/20, Spark's randomSplit)\ntrain, test = df.randomSplit([0.8, 0.2], seed=42)\nprint(f'train: {train.count():,}, test: {test.count():,}')\n\n# Build the pipeline\nassembler = VectorAssembler(\n inputCols=['trip_distance', 'hour', 'dow', 'passenger_count'],\n outputCol='features',\n)\nlr = LinearRegression(featuresCol='features', labelCol='fare_amount')\npipeline = Pipeline(stages=[assembler, lr])\n\nmodel = pipeline.fit(train)\n\n# Evaluate on test\npreds = model.transform(test)\neval_rmse = RegressionEvaluator(labelCol='fare_amount', metricName='rmse')\neval_r2 = RegressionEvaluator(labelCol='fare_amount', metricName='r2')\nprint(f'RMSE: {eval_rmse.evaluate(preds):.2f}')\nprint(f'R²: {eval_r2.evaluate(preds):.3f}')\n```\n\nOn 30M rows, the LinearRegression fit takes ~30-60 seconds on local mode. Compare that to scikit-learn on the same data (likely OOM or several minutes if you sub-sample).\n\n## Try GBT for better accuracy\n```python\ngbt = GBTRegressor(\n featuresCol='features', labelCol='fare_amount',\n maxIter=20, maxDepth=6, seed=42,\n)\npipeline_gbt = Pipeline(stages=[assembler, gbt])\nmodel_gbt = pipeline_gbt.fit(train)\npreds_gbt = model_gbt.transform(test)\nprint(f'GBT RMSE: {eval_rmse.evaluate(preds_gbt):.2f}')\n# Typically ~30% lower than LR.\n```\n\nGBT training on 30M rows in local mode: ~3-5 minutes. Equivalent in sklearn: hours or impossible.\n\n## Cross-validation, the Spark way\n```python\nfrom pyspark.ml.tuning import CrossValidator, ParamGridBuilder\n\nparam_grid = (\n ParamGridBuilder()\n .addGrid(gbt.maxDepth, [4, 6, 8])\n .addGrid(gbt.maxIter, [10, 20])\n .build()\n)\n\ncv = CrossValidator(\n estimator=pipeline_gbt,\n estimatorParamMaps=param_grid,\n evaluator=eval_rmse,\n numFolds=3,\n parallelism=2,\n)\n# Heavy, would take ~30+ min on this data. Run with smaller sample first.\n```\n\n## What this gives you\n- Models trained on data that wouldn't fit on one machine\n- Standard Pipeline API, same shape as sklearn pipelines you know\n- Production-ready: same code runs on Databricks / EMR / Synapse clusters\n\n## Save the model\n```python\nmodel_gbt.write().overwrite().save('models/gbt_fare_v1')\n# Saves to a directory with model metadata + Spark-readable artifacts\n```\n\nTo load on inference:\n```python\nfrom pyspark.ml import PipelineModel\nloaded = PipelineModel.load('models/gbt_fare_v1')\npredictions = loaded.transform(new_data)\n```"
-            },
-            {
-              "kind": "video",
-              "title": "StatQuest Logistic Regression",
-              "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
-              "duration_min": 9,
-              "creator": "StatQuest",
-              "difficulty": "beginner",
-              "why": "This 9-minute StatQuest video ('StatQuest Logistic Regression') builds the intuition before the code. Focus on the mental model it draws; you'll apply exactly that in the exercise."
             },
             {
               "kind": "swipe",
@@ -18277,15 +17872,6 @@
               "kind": "lesson",
               "title": "The Laplace mechanism, the simplest DP primitive",
               "body": "## What it is\nFor any query whose sensitivity is bounded (each individual can change the answer by at most Δ), add Laplace noise with scale Δ/ε. The result is ε-differentially-private.\n\n```text\nDP_query(D) = TrueQuery(D) + Laplace(scale = Δ/ε)\n```\n\nCounts have sensitivity 1 (each person changes the count by at most 1). Sums of values bounded to [0, B] have sensitivity B. Etc.\n\n## A worked example\n```python\nimport numpy as np\n\ndef laplace_mechanism(true_value, sensitivity, epsilon):\n scale = sensitivity / epsilon\n noise = np.random.laplace(loc=0, scale=scale)\n return true_value + noise\n\ntrue_count = 532\n# Single query at ε=1.0:\nnoisy = laplace_mechanism(true_count, sensitivity=1, epsilon=1.0)\nprint(f'noisy count: {noisy:.1f}')\n# noisy count: 531.7 (or anywhere in the noise band)\n\n# Show the noise distribution:\nsamples = [laplace_mechanism(true_count, 1, 1.0) for _ in range(10000)]\nprint(f'noisy mean: {np.mean(samples):.2f}, std: {np.std(samples):.2f}')\n# noisy mean: 531.99, std: 1.41 <- centered on truth; ~1.4 std for ε=1\n```\n\n## Apply to a real query\nTake your capstone (or any project) dataset. Pick a count or aggregate that would be sensitive in a real release:\n```python\n# Example: count of users in a sensitive subgroup\n# (e.g., users who clicked a stigmatized category)\ntrue_count = (df['category'] == 'sensitive_x').sum()\n\nfor eps in [0.1, 1.0, 10.0]:\n noisy = laplace_mechanism(true_count, sensitivity=1, epsilon=eps)\n print(f'ε={eps:5.1f}: true={true_count} noisy={noisy:.1f}')\n# ε=0.1 : true=841 noisy=853.2 <- heavy noise; private\n# ε=1.0 : true=841 noisy=841.6 <- meaningful; private enough for analytics\n# ε=10.0: true=841 noisy=840.9 <- light noise; weak privacy\n```\n\n## The utility tradeoff\n```text\nε=0.1: noise std ≈ 10 → if the true count is 50, the noise dominates\nε=1.0: noise std ≈ 1 → if the true count is 50, noise is small but visible\nε=10: noise std ≈ 0.1 → noise invisible; privacy gone\n```\n\nFor SMALL counts the same ε feels less private; for LARGE counts the same ε feels more private. The mathematical guarantee is the same; the utility-vs-privacy intuition shifts with the question scale.\n\n## Build a 'DP analytics' helper\n```python\ndef dp_count(df, condition, epsilon):\n true_count = condition(df).sum()\n return laplace_mechanism(true_count, sensitivity=1, epsilon=epsilon)\n\ndef dp_sum(df, column, bound, epsilon):\n # Clip to [0, bound] so sensitivity = bound\n true_sum = df[column].clip(0, bound).sum()\n return laplace_mechanism(true_sum, sensitivity=bound, epsilon=epsilon)\n```\n\nThat tiny library is enough for most simple DP analytics. Real-world DP libraries (Google's diffprivlib, OpenDP) add more mechanisms but the Laplace pattern is the core.\n\n## The diffprivlib library (the production-grade version)\n```python\n# pip install diffprivlib\nfrom diffprivlib.mechanisms import Laplace\n\nm = Laplace(epsilon=1.0, sensitivity=1)\nnoisy = m.randomise(532)\n```\n\nSame math, more mechanisms, better testing. Use for anything beyond a tutorial."
-            },
-            {
-              "kind": "video",
-              "title": "SQL in 100 Seconds",
-              "url": "https://www.youtube.com/watch?v=zsjvFFKOm3c",
-              "duration_min": 2,
-              "creator": "Fireship",
-              "difficulty": "beginner",
-              "why": "Chosen for clarity: this 2-minute Fireship explainer ('SQL in 100 Seconds') nails the core idea fast. Watch once, then do the exercise, the concept, not the syntax, is the point."
             },
             {
               "kind": "swipe",
