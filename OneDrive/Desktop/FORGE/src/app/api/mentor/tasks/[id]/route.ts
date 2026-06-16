@@ -237,7 +237,9 @@ export async function PATCH(
  // next — not for deadline bookkeeping (extend/close), which is the clutter
  // they were complaining about.
  if (MENTEE_NOTIFY_ACTIONS.has(action)) {
- void sendNotification("mentor-action", {
+ // A manual verify is the same "your work passed" moment as a review
+ // sign-off, so give it the urgent work-verified kind (live toast).
+ void sendNotification(action === "verify" ? "work-verified" : "mentor-action", {
  recipientId: menteeId,
  actorId: mentorId,
  taskTitle: task.title,

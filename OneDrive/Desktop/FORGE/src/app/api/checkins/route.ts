@@ -20,6 +20,34 @@ function isHttpUrl(s: string): boolean {
 }
 
 /**
+ * Map a stored roadmap.title back to its curated slug.
+ *
+ * The DB stores the curriculum's OWN title at seed time (via loadRoadmap),
+ * which can differ from the static CURATED_ROADMAPS[].title — e.g. the data
+ * file says "DevOps & Cloud" but the client list says "DevOps and Cloud",
+ * likewise "Cybersecurity Engineering" vs "Cybersecurity" and "BI Analytics"
+ * vs "Business Intelligence". Matching ONLY the static list silently disabled
+ * the engagement gate for those three tracks, letting mentees submit without
+ * finishing the week. So resolve against the real loaded curriculum titles
+ * (the same source used at seed), with the static titles as fallback aliases.
+ * Memoized per server instance — the curriculum files are static.
+ */
+let _titleToSlug: Map<string, string> | null = null;
+function curatedSlugForTitle(roadmapTitle: string): string | null {
+ const norm = (s: string) => s.trim().toLowerCase();
+ if (!_titleToSlug) {
+ const map = new Map<string, string>();
+ for (const r of CURATED_ROADMAPS) {
+ map.set(norm(r.title), r.slug); // static client alias
+ const c = loadRoadmap(r.slug);
+ if (c?.title) map.set(norm(c.title), r.slug); // real seeded title
+ }
+ _titleToSlug = map;
+ }
+ return _titleToSlug.get(norm(roadmapTitle)) ?? null;
+}
+
+/**
  * Engagement gate: a mentee can't submit a check-in for Week N until they've
  * gone through every day's items on /learn/[slug]/N. Returns null when the
  * week is complete, or an error message naming what's missing.
@@ -30,10 +58,10 @@ async function engagementBlockerFor(userId: string, roadmapTitle: string, taskTi
  if (!m) return null; // not a weekly task, skip the gate
  const weekNumber = parseInt(m[1], 10);
 
- // Map the roadmap.title back to its curated slug (these stay in sync).
- const entry = CURATED_ROADMAPS.find((r) => r.title === roadmapTitle);
- if (!entry) return null; // custom / non-curated roadmap, no gate
- const slug = entry.slug;
+ // Map the roadmap.title back to its curated slug (resilient to title drift
+ // between the static client list and the curriculum data files).
+ const slug = curatedSlugForTitle(roadmapTitle);
+ if (!slug) return null; // custom / non-curated roadmap, no gate
 
  const curriculum = loadRoadmap(slug);
  if (!curriculum) return null;

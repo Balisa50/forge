@@ -2,26 +2,35 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquare, X } from "lucide-react";
+import { MessageSquare, CheckCircle2, AlertCircle, X, type LucideIcon } from "lucide-react";
 
 /**
- * Global live-message toast. Mounted once in the dashboard layout. Polls the
- * Messages view of the notification feed every ~12s and, when a NEW message
- * arrives while you're using the app, slides a toast in at the top. Clicking it
- * jumps to the thread. Near-live (no websockets/SSE), so it works fine on
- * Vercel's serverless model.
+ * Global live toast. Mounted once in the dashboard layout. Polls the "toast"
+ * view of the notification feed every ~12s and, when a NEW one arrives while
+ * you're using the app, slides a toast in at the top. Covers conversational
+ * messages AND the high-urgency review outcomes (work passed / sent back) so a
+ * mentee can't miss an accept/reject. Clicking it jumps to the thread/week.
+ * Near-live (no websockets/SSE), so it works fine on Vercel's serverless model.
  *
- * On first poll it just records the newest existing message as a baseline and
- * stays quiet — you only get toasted for messages that land AFTER the page
- * loads. Anything you missed while away is still counted by the Messages inbox
- * badge.
+ * On first poll it just records the newest existing item as a baseline and
+ * stays quiet — you only get toasted for things that land AFTER the page loads.
+ * Anything you missed while away is still counted by the inbox/bell badges.
  */
 interface MsgNotif {
  id: string;
+ kind: string;
  title: string;
  body?: string | null;
  href?: string | null;
  createdAt: string;
+}
+
+// Per-kind toast styling. Verified = green celebration, rejected = red "act
+// now", everything else (messages) = the default accent.
+function toastStyle(kind: string): { Icon: LucideIcon; accent: string; tint: string } {
+ if (kind === "work-verified") return { Icon: CheckCircle2, accent: "var(--green)", tint: "rgba(34,197,94,0.14)" };
+ if (kind === "work-rejected") return { Icon: AlertCircle, accent: "var(--red)", tint: "rgba(239,68,68,0.14)" };
+ return { Icon: MessageSquare, accent: "var(--accent)", tint: "rgba(245,158,11,0.14)" };
 }
 
 export default function MessageToast() {
@@ -39,7 +48,7 @@ export default function MessageToast() {
 
  const poll = useCallback(async () => {
  try {
- const res = await fetch("/api/notifications?view=messages");
+ const res = await fetch("/api/notifications?view=toast");
  if (!res.ok) return;
  const data = await res.json();
  const newest: MsgNotif | undefined = (data.notifications ?? [])[0];
@@ -75,6 +84,8 @@ export default function MessageToast() {
 
  if (!toast) return null;
 
+ const { Icon, accent, tint } = toastStyle(toast.kind);
+
  return (
  <div
  style={{
@@ -99,7 +110,7 @@ export default function MessageToast() {
  gap: "0.75rem",
  padding: "0.875rem 1rem",
  background: "var(--bg-panel)",
- border: "1px solid var(--accent)",
+ border: `1px solid ${accent}`,
  borderRadius: 12,
  boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
  cursor: "pointer",
@@ -108,11 +119,11 @@ export default function MessageToast() {
  <span
  style={{
  width: 30, height: 30, borderRadius: 8, flexShrink: 0,
- background: "rgba(245,158,11,0.14)", color: "var(--accent)",
+ background: tint, color: accent,
  display: "grid", placeItems: "center",
  }}
  >
- <MessageSquare size={16} />
+ <Icon size={16} />
  </span>
  <div style={{ flex: 1, minWidth: 0 }}>
  <p style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>

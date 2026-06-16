@@ -23,6 +23,8 @@ export type NotificationKind =
  | "mentor-shared-resource"
  | "mentor-sent-questions"
  | "mentor-action"
+ | "work-verified"
+ | "work-rejected"
  | "mentee-replied"
  | "mentee-requested-unlock"
  | "mentee-checked-in";
@@ -136,6 +138,16 @@ function renderTemplate(kind: NotificationKind, vars: Record<string, unknown>): 
  return {
  subject: `${a} ${vars.action as string} ${t}`,
  body: `<p><strong>${a}</strong> ${vars.action as string} the task <em>${t}</em>.</p>`,
+ };
+ case "work-verified":
+ return {
+ subject: `${a} passed your work on ${t}`,
+ body: `<p><strong>${a}</strong> reviewed and <strong>passed</strong> your work on <em>${t}</em>. Nice — your streak grows and the next week opens when they release it.</p>`,
+ };
+ case "work-rejected":
+ return {
+ subject: `${a} asked for changes on ${t}`,
+ body: `<p><strong>${a}</strong> reviewed your work on <em>${t}</em> and <strong>sent it back for revisions</strong>. Open the week, read their note, and resubmit.</p>`,
  };
  case "mentee-replied":
  return {

@@ -6,13 +6,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { MESSAGE_KINDS } from "@/lib/notification-kinds";
+import { MESSAGE_KINDS, TOAST_KINDS } from "@/lib/notification-kinds";
 
-// Translate ?view=events|messages into a Prisma kind filter. The bell asks for
-// "events", the Messages inbox + toast ask for "messages". No view = everything
-// (back-compat).
+// Translate ?view into a Prisma kind filter. The bell asks for "events", the
+// Messages inbox for "messages", and the live toast for "toast" (messages +
+// urgent review outcomes). No view = everything (back-compat).
 function kindWhere(view: string | null): { kind?: { in?: string[]; notIn?: string[] } } {
  if (view === "messages") return { kind: { in: [...MESSAGE_KINDS] } };
+ if (view === "toast") return { kind: { in: [...TOAST_KINDS] } };
  if (view === "events") return { kind: { notIn: [...MESSAGE_KINDS] } };
  return {};
 }

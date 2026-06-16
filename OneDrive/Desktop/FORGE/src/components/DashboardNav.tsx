@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -145,6 +145,26 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  const [mobileOpen, setMobileOpen] = useState(false);
  const [signingOut, setSigningOut] = useState(false);
 
+ // Pending-review count for mentors, polled so the Reviews nav item carries a
+ // live badge (and the mobile hamburger shows a dot when the sidebar is shut).
+ const isMentor = userRole === "mentor";
+ const [pendingReviews, setPendingReviews] = useState(0);
+ useEffect(() => {
+ if (!isMentor) return;
+ let cancelled = false;
+ const loadCount = async () => {
+ try {
+ const res = await fetch("/api/mentor/reviews?count=1");
+ if (!res.ok) return;
+ const data = await res.json();
+ if (!cancelled) setPendingReviews(data.count ?? 0);
+ } catch { /* silent */ }
+ };
+ loadCount();
+ const id = setInterval(loadCount, 45_000);
+ return () => { cancelled = true; clearInterval(id); };
+ }, [isMentor]);
+
  // Robust sign-out. The default next-auth flow waits on a server round-trip
  // (CSRF fetch -> POST -> redirect); if the function is cold or the DB is
  // under pressure that round-trip can stall for minutes with NO visual
@@ -255,6 +275,29 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  >
  <Icon size={16} strokeWidth={active ? 2.5 : 2} />
  {label}
+ {href === "/dashboard/mentor/reviews" && pendingReviews > 0 && (
+ <span
+ aria-label={`${pendingReviews} awaiting review`}
+ style={{
+ marginLeft: "auto",
+ minWidth: 18,
+ height: 18,
+ padding: "0 5px",
+ borderRadius: 9,
+ background: "var(--red)",
+ color: "#fff",
+ fontSize: "0.625rem",
+ fontWeight: 700,
+ fontFamily: "var(--font-mono)",
+ display: "inline-flex",
+ alignItems: "center",
+ justifyContent: "center",
+ lineHeight: 1,
+ }}
+ >
+ {pendingReviews > 99 ? "99+" : pendingReviews}
+ </span>
+ )}
  </Link>
  );
  })}
@@ -456,8 +499,9 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  >
  <button
  onClick={() => setMobileOpen(true)}
- aria-label="Open navigation"
+ aria-label={pendingReviews > 0 ? `Open navigation — ${pendingReviews} awaiting review` : "Open navigation"}
  style={{
+ position: "relative",
  background: "none",
  border: "none",
  padding: "0.25rem",
@@ -468,6 +512,31 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  }}
  >
  <Menu size={22} />
+ {/* Sidebar's closed on mobile, so surface the review count here too. */}
+ {isMentor && pendingReviews > 0 && (
+ <span
+ style={{
+ position: "absolute",
+ top: -2,
+ right: -4,
+ minWidth: 16,
+ height: 16,
+ padding: "0 4px",
+ borderRadius: 8,
+ background: "var(--red)",
+ color: "#fff",
+ fontSize: "0.5625rem",
+ fontWeight: 700,
+ fontFamily: "var(--font-mono)",
+ display: "inline-flex",
+ alignItems: "center",
+ justifyContent: "center",
+ lineHeight: 1,
+ }}
+ >
+ {pendingReviews > 9 ? "9+" : pendingReviews}
+ </span>
+ )}
  </button>
  <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em", flex: 1 }}>
  THE FORGE

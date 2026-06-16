@@ -10,17 +10,26 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendNotification } from "@/lib/notify";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
  const session = await auth();
  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
- const rows = await prisma.interrogation.findMany({
- where: {
+ const pendingWhere = {
  mode: "mentor_async",
  mentorReviewerId: session.user.id,
  mentorReviewedAt: null,
  completedAt: { not: null },
- },
+ } as const;
+
+ // Lightweight count mode for the nav badge — avoids shipping the full review
+ // payload (with rubrics) just to show a number.
+ if (new URL(req.url).searchParams.get("count") === "1") {
+ const count = await prisma.interrogation.count({ where: pendingWhere });
+ return NextResponse.json({ count });
+ }
+
+ const rows = await prisma.interrogation.findMany({
+ where: pendingWhere,
  orderBy: { completedAt: "desc" },
  include: {
  checkin: {
@@ -148,11 +157,12 @@ export async function POST(req: NextRequest) {
  return i;
  });
 
- void sendNotification(passed ? "mentor-action" : "mentor-action", {
+ // Dedicated verified/rejected kinds so the mentee gets a live, styled toast
+ // (green pass / red revisions) — not just a quiet line in the bell.
+ void sendNotification(passed ? "work-verified" : "work-rejected", {
  recipientId: interrogation.checkin.user.id,
  actorId: mentorId,
  taskTitle: interrogation.checkin.task.title,
- payload: { action: passed ? "verified" : "rejected" },
  });
 
  return NextResponse.json({ ok: true, interrogation: updated });

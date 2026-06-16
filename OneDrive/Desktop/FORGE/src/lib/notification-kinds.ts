@@ -18,3 +18,12 @@ export const MESSAGE_KINDS = [
 export function isMessageKind(kind: string): boolean {
  return (MESSAGE_KINDS as readonly string[]).includes(kind);
 }
+
+// Kinds that earn a live, in-app TOAST (not just a bell line): every message,
+// plus the high-urgency review outcomes a mentee must not miss. work-verified /
+// work-rejected still live in the events bell too — the toast is the live nudge.
+export const TOAST_KINDS = [
+ ...MESSAGE_KINDS,
+ "work-verified",
+ "work-rejected",
+] as const;
