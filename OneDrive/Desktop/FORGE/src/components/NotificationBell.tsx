@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { Bell, Trash2, X } from "lucide-react";
+import { Bell, Trash2, X, type LucideIcon } from "lucide-react";
 
 interface Notif {
  id: string;
@@ -177,11 +177,20 @@ function NotifRow({
 }
 
 export default function NotificationBell({
+ view = "events",
  align = "right",
  direction = "down",
+ icon: Icon = Bell,
+ title = "Notifications",
+ emptyText = "No notifications yet",
 }: {
+ /** "events" = the bell (system events), "messages" = the Messages inbox. */
+ view?: "events" | "messages";
  align?: "left" | "right";
  direction?: "up" | "down";
+ icon?: LucideIcon;
+ title?: string;
+ emptyText?: string;
 }) {
  const router = useRouter();
  const [notifs, setNotifs] = useState<Notif[]>([]);
@@ -193,13 +202,13 @@ export default function NotificationBell({
 
  const load = useCallback(async () => {
  try {
- const res = await fetch("/api/notifications");
+ const res = await fetch(`/api/notifications?view=${view}`);
  if (!res.ok) return;
  const data = await res.json();
  setNotifs(data.notifications ?? []);
  setUnread(data.unread ?? 0);
  } catch { /* silent */ }
- }, []);
+ }, [view]);
 
  // Poll every 30 seconds
  useEffect(() => {
@@ -223,7 +232,7 @@ export default function NotificationBell({
  }, [open]);
 
  const markAllRead = async () => {
- await fetch("/api/notifications", { method: "PATCH" });
+ await fetch(`/api/notifications?view=${view}`, { method: "PATCH" });
  setNotifs((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
  setUnread(0);
  };
@@ -232,7 +241,7 @@ export default function NotificationBell({
  setNotifs([]);
  setUnread(0);
  setOpen(false);
- try { await fetch("/api/notifications", { method: "DELETE" }); } catch { /* best-effort */ }
+ try { await fetch(`/api/notifications?view=${view}`, { method: "DELETE" }); } catch { /* best-effort */ }
  };
 
  // Dismiss a single notification. Optimistic: drop it from the list and adjust
@@ -269,9 +278,9 @@ export default function NotificationBell({
  borderRadius: 8,
  transition: "color 0.15s",
  }}
- aria-label="Notifications"
+ aria-label={title}
  >
- <Bell size={20} strokeWidth={1.75} />
+ <Icon size={20} strokeWidth={1.75} />
  {unread > 0 && (
  <span style={{
  position: "absolute",
@@ -317,7 +326,7 @@ export default function NotificationBell({
  onClick={(e) => e.stopPropagation()}
  role="dialog"
  aria-modal="true"
- aria-label="Notifications"
+ aria-label={title}
  style={{
  width: "min(420px, 100%)",
  maxHeight: "min(72vh, 580px)",
@@ -333,7 +342,7 @@ export default function NotificationBell({
  {/* Header */}
  <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", padding: "0.875rem 1rem", borderBottom: "1px solid var(--border)", background: "var(--bg-panel)" }}>
  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
- Notifications
+ {title}
  </span>
  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
  {unread > 0 && (
@@ -366,7 +375,7 @@ export default function NotificationBell({
  <div style={{ overflowY: "auto", flex: 1 }}>
  {notifs.length === 0 ? (
  <div style={{ padding: "2.5rem 1rem", textAlign: "center", color: "var(--text-dim)", fontSize: "0.875rem" }}>
- No notifications yet
+ {emptyText}
  </div>
  ) : (
  notifs.map((n) => (

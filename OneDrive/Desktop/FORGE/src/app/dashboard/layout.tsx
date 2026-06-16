@@ -5,6 +5,7 @@ import DashboardNav from "@/components/DashboardNav";
 import SuspensionLetter from "@/components/SuspensionLetter";
 import InviteRequired from "@/components/InviteRequired";
 import ClientRememberName from "@/components/ClientRememberName";
+import MessageToast from "@/components/MessageToast";
 import { effectiveVisibility } from "@/lib/visibility";
 import { soloModeEnabled } from "@/lib/modes";
 
@@ -110,6 +111,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
  a given Vercel build. Belt and braces. */}
  <div className="dashboard-content" style={{ width: "100%", maxWidth: 1200, marginLeft: "auto", marginRight: "auto" }}>
  <ClientRememberName name={dbUser.name ?? null} />
+ <MessageToast />
  {children}
  </div>
  </main>

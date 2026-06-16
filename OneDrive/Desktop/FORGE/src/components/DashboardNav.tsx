@@ -24,6 +24,7 @@ import {
  FolderOpen,
  Layers,
  MessageSquare,
+ Bell,
  Menu,
  X,
  Award,
@@ -203,11 +204,12 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  <Flame size={20} /> THE FORGE
  </span>
  </Link>
- {/* Desktop-only bell, sits next to the logo so the panel can open
- downward into the empty space below. Hidden on mobile because
- the mobile top-bar already has its own bell. */}
- <span className="nav-bell-desktop">
- <NotificationBell align="left" direction="down" />
+ {/* Desktop-only Messages + bell, sit next to the logo so each panel
+ can open downward into the empty space below. Hidden on mobile
+ because the mobile top-bar carries its own pair. */}
+ <span className="nav-bell-desktop" style={{ alignItems: "center", gap: "0.125rem" }}>
+ <NotificationBell view="messages" icon={MessageSquare} title="Messages" emptyText="No messages yet" align="left" direction="down" />
+ <NotificationBell view="events" icon={Bell} title="Notifications" align="left" direction="down" />
  </span>
  {/* Close button on mobile */}
  <button
@@ -470,7 +472,8 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  <span style={{ fontFamily: "var(--font-headline)", color: "var(--accent)", fontSize: "1.125rem", letterSpacing: "0.08em", flex: 1 }}>
  THE FORGE
  </span>
- <NotificationBell />
+ <NotificationBell view="messages" icon={MessageSquare} title="Messages" emptyText="No messages yet" />
+ <NotificationBell view="events" icon={Bell} title="Notifications" />
  </div>
 
  {/* Mobile overlay */}
