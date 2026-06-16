@@ -22,7 +22,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { loadRoadmap } from "@/lib/roadmaps";
-import { CURATED_ROADMAPS } from "@/lib/curated-roadmaps-client";
+import { curatedSlugForTitle } from "@/lib/curated-slug";
 import { normalizeSubmissionConfig, type SubmissionConfig } from "@/lib/submission-types";
 
 export async function GET(req: NextRequest) {
@@ -56,9 +56,11 @@ export async function GET(req: NextRequest) {
  if (!m) return reply({ gated: false });
  const week = parseInt(m[1], 10);
 
- const entry = CURATED_ROADMAPS.find((r) => r.title === roadmapTitle);
- if (!entry) return reply({ gated: false });
- const slug = entry.slug;
+ // Resolve via the shared resolver so the preflight check stays consistent
+ // with the actual POST gate even when the curriculum title drifts from the
+ // static client title (DevOps/Cyber/BI).
+ const slug = curatedSlugForTitle(roadmapTitle);
+ if (!slug) return reply({ gated: false });
 
  const curriculum = loadRoadmap(slug);
  if (!curriculum) return reply({ gated: false });
