@@ -30,7 +30,7 @@ export async function GET(
 
  const mentee = await prisma.user.findUnique({
  where: { id: menteeId },
- select: { id: true, name: true, email: true, image: true, createdAt: true },
+ select: { id: true, name: true, email: true, image: true, createdAt: true, isCodeOnly: true },
  });
  if (!mentee) {
  return NextResponse.json({ error: "Mentee not found" }, { status: 404 });
@@ -95,4 +95,68 @@ export async function GET(
  }
  : null,
  });
+}
+
+/**
+ * DELETE /api/mentor/mentees/:id?mode=remove|purge
+ *
+ * Two tiers of "get rid of a mentee":
+ * - mode=remove (default): deactivate the MentorLink. The mentee keeps their
+ * account and all progress, they're just no longer on this mentor's roster.
+ * Reversible (re-invite them later).
+ * - mode=purge: permanently delete the mentee's user account, which cascades
+ * away every roadmap, check-in, message, and notification. Only allowed for
+ * invite-created (isCodeOnly) accounts that exist solely inside this mentor's
+ * program, never a mentee who signed up with their own Google/email login.
+ *
+ * Either way, only the mentee's own active mentor can do it.
+ */
+export async function DELETE(
+ req: NextRequest,
+ { params }: { params: Promise<{ id: string }> },
+) {
+ const session = await auth();
+ if (!session?.user?.id) {
+ return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+ }
+
+ const { id: menteeId } = await params;
+ const mentorId = session.user.id;
+ const mode = new URL(req.url).searchParams.get("mode") === "purge" ? "purge" : "remove";
+
+ // Must be the mentor's own active mentee.
+ const link = await prisma.mentorLink.findFirst({
+ where: { mentorId, menteeId, isActive: true },
+ select: { id: true },
+ });
+ if (!link) {
+ return NextResponse.json({ error: "Not your mentee" }, { status: 403 });
+ }
+
+ if (mode === "purge") {
+ const mentee = await prisma.user.findUnique({
+ where: { id: menteeId },
+ select: { isCodeOnly: true },
+ });
+ if (!mentee) {
+ return NextResponse.json({ error: "Mentee not found" }, { status: 404 });
+ }
+ if (!mentee.isCodeOnly) {
+ return NextResponse.json(
+ { error: "This mentee signed up with their own account, so it can't be deleted. You can remove them from your roster instead." },
+ { status: 403 },
+ );
+ }
+ // Cascades: roadmaps -> tracks -> phases -> tasks -> checkins, plus mentor
+ // links, comments, notifications, pact, certificates, etc. all drop.
+ await prisma.user.delete({ where: { id: menteeId } });
+ return NextResponse.json({ status: "purged" });
+ }
+
+ // Default: unlink only. Keep the mentee's account and data intact.
+ await prisma.mentorLink.update({
+ where: { id: link.id },
+ data: { isActive: false },
+ });
+ return NextResponse.json({ status: "removed" });
 }

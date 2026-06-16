@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, Lock, Loader2 } from "lucide-react";
+import { ArrowLeft, MessageSquare, Lock, Loader2, UserMinus, Trash2 } from "lucide-react";
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 import MentorWeekDetail from "@/components/MentorWeekDetail";
@@ -84,6 +84,9 @@ interface Mentee {
  email: string;
  image: string | null;
  createdAt: string;
+ /** True when the mentee was created via this program's invite code (no
+ * Google/email login of their own). Only these can be hard-deleted. */
+ isCodeOnly: boolean;
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -107,6 +110,7 @@ const STATUS_LABEL: Record<string, string> = {
 export default function MenteeDrilldownPage() {
  const params = useParams<{ menteeId: string }>();
  const menteeId = params.menteeId;
+ const router = useRouter();
  // ?tool=recovery|visibility, driven from the contextual sidebar. When
  // set, only that tool's panel renders at the top of the page. When null,
  // the page shows the roadmap view normally.
@@ -321,6 +325,51 @@ export default function MenteeDrilldownPage() {
  });
  };
 
+ /** Remove the mentee from this mentor's roster (deactivate the link). The
+ * mentee keeps their account and progress; the mentor just stops seeing them.
+ * Reversible by re-inviting. */
+ const handleRemove = () => {
+ const first = mentee?.name?.split(" ")[0] ?? "this mentee";
+ setDialog({
+ kind: "confirm",
+ title: `Remove ${first} from your mentees?`,
+ message: `${mentee?.name ?? "This mentee"} will be unlinked from you and disappear from your roster. Their account and all progress stay intact, and you can re-invite them later. This does not delete anything.`,
+ confirmText: "Remove from roster",
+ danger: true,
+ onConfirm: async () => {
+ const res = await fetch(`/api/mentor/mentees/${menteeId}?mode=remove`, { method: "DELETE" });
+ if (!res.ok) {
+ const data = await res.json().catch(() => ({}));
+ throw new Error(data.error || `Failed (${res.status})`);
+ }
+ router.push("/dashboard/mentor");
+ },
+ });
+ };
+
+ /** Permanently delete an invite-created mentee's account and every trace of
+ * their progress. Irreversible, so it demands a typed confirmation. */
+ const handlePurge = () => {
+ const first = mentee?.name?.split(" ")[0] ?? "this mentee";
+ const phrase = mentee?.name?.trim() || mentee?.email || "DELETE";
+ setDialog({
+ kind: "confirm-text",
+ title: `Delete ${first}'s account?`,
+ message: `This permanently erases ${mentee?.name ?? "this mentee"}'s account and EVERYTHING tied to it — their roadmap, every check-in, all messages and notifications. This cannot be undone.`,
+ confirmPhrase: phrase,
+ confirmText: "Delete permanently",
+ danger: true,
+ onConfirm: async () => {
+ const res = await fetch(`/api/mentor/mentees/${menteeId}?mode=purge`, { method: "DELETE" });
+ if (!res.ok) {
+ const data = await res.json().catch(() => ({}));
+ throw new Error(data.error || `Failed (${res.status})`);
+ }
+ router.push("/dashboard/mentor");
+ },
+ });
+ };
+
  const stats = useMemo(() => {
  let total = 0, verified = 0, failed = 0, pending = 0;
  let mostRecentCheckin: Date | null = null;
@@ -418,16 +467,18 @@ export default function MenteeDrilldownPage() {
  )}
  </div>
  </div>
- {/* Suspend only appears on the default Roadmap view, tool drilldowns
- (Recovery / Visibility / Certificate) hide it so each tool page
- has a single clear concern. */}
- {!suspension && !activeTool && (
+ {/* Manage actions only appear on the default Roadmap view, tool
+ drilldowns (Recovery / Visibility / Certificate) hide them so each
+ tool page has a single clear concern. Suspend = temporary lockout;
+ Remove = unlink (reversible); Delete = permanent wipe (invite-only). */}
+ {!activeTool && (
+ <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0, flexWrap: "wrap" }}>
+ {!suspension && (
  <button
  type="button"
  onClick={handleBan}
  className="forge-btn forge-btn-ghost"
  style={{
- flexShrink: 0,
  padding: "0.5rem 0.875rem",
  fontSize: "0.75rem",
  minHeight: "unset",
@@ -440,6 +491,45 @@ export default function MenteeDrilldownPage() {
  >
  <Lock size={13} /> Suspend
  </button>
+ )}
+ <button
+ type="button"
+ onClick={handleRemove}
+ className="forge-btn forge-btn-ghost"
+ title="Unlink this mentee from your roster (keeps their account)"
+ style={{
+ padding: "0.5rem 0.875rem",
+ fontSize: "0.75rem",
+ minHeight: "unset",
+ color: "var(--text-secondary)",
+ display: "inline-flex",
+ alignItems: "center",
+ gap: "0.375rem",
+ }}
+ >
+ <UserMinus size={13} /> Remove
+ </button>
+ {mentee.isCodeOnly && (
+ <button
+ type="button"
+ onClick={handlePurge}
+ className="forge-btn forge-btn-ghost"
+ title="Permanently delete this mentee's account and all progress"
+ style={{
+ padding: "0.5rem 0.875rem",
+ fontSize: "0.75rem",
+ minHeight: "unset",
+ color: "var(--red)",
+ borderColor: "rgba(239,68,68,0.3)",
+ display: "inline-flex",
+ alignItems: "center",
+ gap: "0.375rem",
+ }}
+ >
+ <Trash2 size={13} /> Delete account
+ </button>
+ )}
+ </div>
  )}
  </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Bell, Trash2, X } from "lucide-react";
 
@@ -186,7 +187,9 @@ export default function NotificationBell({
  const [notifs, setNotifs] = useState<Notif[]>([]);
  const [unread, setUnread] = useState(0);
  const [open, setOpen] = useState(false);
- const ref = useRef<HTMLDivElement>(null);
+ // Portal can only target document.body after mount (not during SSR).
+ const [mounted, setMounted] = useState(false);
+ useEffect(() => setMounted(true), []);
 
  const load = useCallback(async () => {
  try {
@@ -205,14 +208,19 @@ export default function NotificationBell({
  return () => clearInterval(id);
  }, [load]);
 
- // Close on outside click
+ // Close the focus modal on Escape. Outside-click is handled by the backdrop.
+ // While open, the modal owns the screen: background scroll is locked.
  useEffect(() => {
- const handler = (e: MouseEvent) => {
- if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+ if (!open) return;
+ const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+ window.addEventListener("keydown", onKey);
+ const prevOverflow = document.body.style.overflow;
+ document.body.style.overflow = "hidden";
+ return () => {
+ window.removeEventListener("keydown", onKey);
+ document.body.style.overflow = prevOverflow;
  };
- document.addEventListener("mousedown", handler);
- return () => document.removeEventListener("mousedown", handler);
- }, []);
+ }, [open]);
 
  const markAllRead = async () => {
  await fetch("/api/notifications", { method: "PATCH" });
@@ -246,7 +254,7 @@ export default function NotificationBell({
  }, [router]);
 
  return (
- <div ref={ref} style={{ position: "relative" }}>
+ <>
  <button
  onClick={() => { setOpen((o) => !o); if (!open) load(); }}
  style={{
@@ -285,24 +293,45 @@ export default function NotificationBell({
  )}
  </button>
 
- {open && (
- <div style={{
- position: "absolute",
- ...(direction === "up"
- ? { bottom: "calc(100% + 0.5rem)" }
- : { top: "calc(100% + 0.5rem)" }),
- ...(align === "left" ? { left: 0 } : { right: 0 }),
- width: "min(360px, calc(100vw - 1.5rem))",
- maxHeight: 440,
- overflowY: "auto",
+ {/* Focus modal. Portaled to <body> so it escapes the fixed sidebar's
+ stacking context and truly covers the whole screen. The blurred,
+ dimmed backdrop blocks every click behind it — only the panel is
+ reachable until you close it (tap backdrop, ✕, or Escape). */}
+ {open && mounted && createPortal(
+ <div
+ onClick={() => setOpen(false)}
+ style={{
+ position: "fixed",
+ inset: 0,
+ zIndex: 9998,
+ background: "rgba(0,0,0,0.55)",
+ backdropFilter: "blur(4px)",
+ WebkitBackdropFilter: "blur(4px)",
+ display: "flex",
+ justifyContent: align === "left" ? "flex-start" : "center",
+ alignItems: direction === "up" ? "flex-end" : "flex-start",
+ padding: "4.5rem 1rem 1.5rem",
+ }}
+ >
+ <div
+ onClick={(e) => e.stopPropagation()}
+ role="dialog"
+ aria-modal="true"
+ aria-label="Notifications"
+ style={{
+ width: "min(420px, 100%)",
+ maxHeight: "min(72vh, 580px)",
+ display: "flex",
+ flexDirection: "column",
  background: "var(--bg-panel)",
  border: "1px solid var(--border)",
- borderRadius: 12,
- boxShadow: direction === "up" ? "0 -8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.4)",
- zIndex: 9999,
- }}>
- {/* Header, sticky so the actions stay reachable while the list scrolls */}
- <div style={{ position: "sticky", top: 0, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", padding: "0.875rem 1rem", borderBottom: "1px solid var(--border)", background: "var(--bg-panel)" }}>
+ borderRadius: 14,
+ boxShadow: "0 24px 60px rgba(0,0,0,0.55)",
+ overflow: "hidden",
+ }}
+ >
+ {/* Header */}
+ <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", padding: "0.875rem 1rem", borderBottom: "1px solid var(--border)", background: "var(--bg-panel)" }}>
  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
  Notifications
  </span>
@@ -323,12 +352,20 @@ export default function NotificationBell({
  Clear all
  </button>
  )}
+ <button
+ onClick={() => setOpen(false)}
+ aria-label="Close notifications"
+ style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", display: "flex", padding: "0.2rem" }}
+ >
+ <X size={16} />
+ </button>
  </div>
  </div>
 
- {/* List */}
+ {/* Scrollable list */}
+ <div style={{ overflowY: "auto", flex: 1 }}>
  {notifs.length === 0 ? (
- <div style={{ padding: "2rem 1rem", textAlign: "center", color: "var(--text-dim)", fontSize: "0.875rem" }}>
+ <div style={{ padding: "2.5rem 1rem", textAlign: "center", color: "var(--text-dim)", fontSize: "0.875rem" }}>
  No notifications yet
  </div>
  ) : (
@@ -337,6 +374,9 @@ export default function NotificationBell({
  ))
  )}
  </div>
+ </div>
+ </div>,
+ document.body
  )}
 
  {/* Desktop-only: reveal the per-row delete button on hover. Touch users
@@ -349,6 +389,6 @@ export default function NotificationBell({
  .notif-dismiss-btn { display: none; }
  }
  `}</style>
- </div>
+ </>
  );
 }

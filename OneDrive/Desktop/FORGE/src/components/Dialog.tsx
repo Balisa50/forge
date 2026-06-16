@@ -54,6 +54,19 @@ export type DialogConfig =
  taskTitle: string;
  /** Called with the 1, 5 depth rating the mentor picked. Null = skipped. */
  onSubmit: (depthRating: number | null) => void | Promise<void>;
+ }
+ | {
+ /** Destructive confirm that forces the user to type an exact phrase
+ * (e.g. the mentee's name) before the action unlocks. Used for
+ * irreversible operations like deleting a mentee's account. */
+ kind: "confirm-text";
+ title: string;
+ message: string;
+ /** Exact phrase the user must type to enable confirm (case-insensitive). */
+ confirmPhrase: string;
+ confirmText?: string;
+ danger?: boolean;
+ onConfirm: () => void | Promise<void>;
  };
 
 interface Props {
@@ -141,6 +154,11 @@ export default function Dialog({ config, onClose }: Props) {
  await runHandler(() => config.onSubmit(rating));
  return;
  }
+ if (config.kind === "confirm-text") {
+ if (note.trim().toLowerCase() !== config.confirmPhrase.trim().toLowerCase()) return;
+ await runHandler(() => config.onConfirm());
+ return;
+ }
  await runHandler(() => config.onConfirm());
  };
 
@@ -148,7 +166,7 @@ export default function Dialog({ config, onClose }: Props) {
  config.kind === "release" &&
  (!date || Number.isNaN(new Date(date + "T23:59:00").getTime()) || new Date(date + "T23:59:00").getTime() <= Date.now());
 
- const danger = (config.kind === "confirm" || config.kind === "prompt") && config.danger;
+ const danger = (config.kind === "confirm" || config.kind === "prompt" || config.kind === "confirm-text") && config.danger;
 
  return (
  <div
@@ -273,6 +291,36 @@ export default function Dialog({ config, onClose }: Props) {
  className="forge-input"
  style={{ resize: "vertical", lineHeight: 1.55 }}
  autoFocus
+ />
+ </div>
+ </div>
+ ) : config.kind === "confirm-text" ? (
+ <div className="flex flex-col gap-3">
+ <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>
+ {config.message}
+ </p>
+ <div>
+ <label
+ style={{
+ display: "block",
+ fontFamily: "var(--font-mono)",
+ fontSize: "0.6875rem",
+ color: "var(--text-dim)",
+ letterSpacing: "0.12em",
+ textTransform: "uppercase",
+ marginBottom: "0.375rem",
+ }}
+ >
+ Type <span style={{ color: "var(--red)", textTransform: "none", letterSpacing: 0 }}>{config.confirmPhrase}</span> to confirm
+ </label>
+ <input
+ type="text"
+ value={note}
+ onChange={(e) => setNote(e.target.value)}
+ placeholder={config.confirmPhrase}
+ className="forge-input"
+ autoFocus
+ autoComplete="off"
  />
  </div>
  </div>
@@ -445,14 +493,15 @@ export default function Dialog({ config, onClose }: Props) {
  )}
  <button
  ref={(el) => {
- if (config.kind !== "release" && config.kind !== "prompt" && el && !firstFocusRef.current) firstFocusRef.current = el;
+ if (config.kind !== "release" && config.kind !== "prompt" && config.kind !== "confirm-text" && el && !firstFocusRef.current) firstFocusRef.current = el;
  }}
  type="button"
  onClick={handleConfirm}
  disabled={
  busy ||
  (config.kind === "release" && releaseDateInvalid) ||
- (config.kind === "prompt" && note.trim().length < (config.minLength ?? 1))
+ (config.kind === "prompt" && note.trim().length < (config.minLength ?? 1)) ||
+ (config.kind === "confirm-text" && note.trim().toLowerCase() !== config.confirmPhrase.trim().toLowerCase())
  }
  className={danger ? "forge-btn forge-btn-red" : "forge-btn forge-btn-primary"}
  style={{ padding: "0.5rem 1.125rem", fontSize: "0.875rem", display: "inline-flex", alignItems: "center", gap: "0.375rem", minHeight: "unset" }}
