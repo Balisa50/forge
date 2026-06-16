@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -142,6 +142,24 @@ function getNavItems(userRole: string, isAlsoLearning: boolean): NavItem[] {
 export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning = false, visibility, hasMentor = false }: DashboardNavProps) {
  const pathname = usePathname();
  const [mobileOpen, setMobileOpen] = useState(false);
+ const [signingOut, setSigningOut] = useState(false);
+
+ // Robust sign-out. The default next-auth flow waits on a server round-trip
+ // (CSRF fetch -> POST -> redirect); if the function is cold or the DB is
+ // under pressure that round-trip can stall for minutes with NO visual
+ // feedback, so the user thinks the button is dead and clicks again. Here we
+ // (1) show an immediate "Signing out…" state and (2) force navigation to the
+ // public landing page after a short ceiling, so the user is always out within
+ // ~2.5s regardless of how slow the backend is.
+ const handleSignOut = useCallback(() => {
+ if (signingOut) return;
+ setSigningOut(true);
+ const escape = () => { window.location.href = "/"; };
+ const fallback = setTimeout(escape, 2500);
+ signOut({ redirect: false })
+ .catch(() => {})
+ .finally(() => { clearTimeout(fallback); escape(); });
+ }, [signingOut]);
  const vis = visibility ?? DEFAULT_VISIBILITY;
  const NAV_ITEMS = getNavItems(userRole, isAlsoLearning).filter((item) => {
  // Mentees don't navigate the Roadmap, mentor releases weeks directly to dashboard.
@@ -393,18 +411,21 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  </div>
  </div>
  <button
- onClick={() => signOut({ callbackUrl: "/" })}
+ onClick={handleSignOut}
+ disabled={signingOut}
  style={{
  display: "flex", alignItems: "center", gap: "0.375rem",
  fontFamily: "var(--font-body)", fontWeight: 500, fontSize: "0.8125rem",
- color: "var(--text-dim)", background: "none", border: "none",
- cursor: "pointer", padding: 0, transition: "color 0.15s",
+ color: signingOut ? "var(--accent)" : "var(--text-dim)",
+ background: "none", border: "none",
+ cursor: signingOut ? "default" : "pointer", padding: 0, transition: "color 0.15s",
+ opacity: signingOut ? 0.85 : 1,
  }}
- onMouseEnter={(e) => (e.currentTarget.style.color = "var(--red)")}
- onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-dim)")}
+ onMouseEnter={(e) => { if (!signingOut) e.currentTarget.style.color = "var(--red)"; }}
+ onMouseLeave={(e) => { if (!signingOut) e.currentTarget.style.color = "var(--text-dim)"; }}
  >
- <LogOut size={14} />
- Sign Out
+ <LogOut size={14} style={signingOut ? { animation: "forge-spin 0.8s linear infinite" } : undefined} />
+ {signingOut ? "Signing out…" : "Sign Out"}
  </button>
  </div>
  </>
@@ -489,6 +510,7 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  </nav>
 
  <style>{`
+ @keyframes forge-spin { to { transform: rotate(360deg); } }
  .nav-bell-desktop { display: inline-flex; }
  @media (max-width: 768px) {
  .nav-hamburger-bar { display: flex !important; }
