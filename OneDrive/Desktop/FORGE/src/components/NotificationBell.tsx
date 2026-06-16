@@ -319,7 +319,9 @@ export default function NotificationBell({
  display: "flex",
  justifyContent: align === "left" ? "flex-start" : "center",
  alignItems: direction === "up" ? "flex-end" : "flex-start",
- padding: "4.5rem 1rem 1.5rem",
+ // Sit just under the 3.5rem mobile top bar instead of floating with a
+ // big empty gap above the panel.
+ padding: "3.75rem 0.75rem 1.25rem",
  }}
  >
  <div

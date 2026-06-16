@@ -30,6 +30,15 @@ import { sendNotification } from "@/lib/notify";
 type Action = "release" | "extend" | "close" | "unlock" | "verify" | "reopen";
 const ALLOWED: Action[] = ["release", "extend", "close", "unlock", "verify", "reopen"];
 
+// Which actions are worth a bell notification to the MENTEE. Only the ones that
+// change what they can act on right now: a new week opened, early unlock, a
+// pass, or a redo. "extend"/"close" are deadline bookkeeping — the new state is
+// already visible on the week card and logged in the week thread, so pinging
+// the bell for them just buries the meaningful events (the mentee was getting
+// "extend ×3 / close" spam). Every action is still recorded as an action_log
+// comment regardless; this only governs the notification.
+const MENTEE_NOTIFY_ACTIONS = new Set<Action>(["release", "unlock", "verify", "reopen"]);
+
 export async function PATCH(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> },
@@ -224,12 +233,17 @@ export async function PATCH(
  const results = await prisma.$transaction(txOps as never);
  const updated = results[0];
 
+ // Only notify the mentee for actions that actually change what they can do
+ // next — not for deadline bookkeeping (extend/close), which is the clutter
+ // they were complaining about.
+ if (MENTEE_NOTIFY_ACTIONS.has(action)) {
  void sendNotification("mentor-action", {
  recipientId: menteeId,
  actorId: mentorId,
  taskTitle: task.title,
  payload: { action, deadlineAt: deadlineAt?.toISOString() ?? null },
  });
+ }
 
  return NextResponse.json({ task: updated, action });
 }

@@ -817,10 +817,11 @@ export default function WeekPageTabs({
  );
  })}
 
- {/* Previous / Next week navigation, CONTENT TAB ONLY. Lives here so the
- Submission and Mentor Review tabs don't get visual clutter that
- confuses students about where to act. */}
- {activeTab === "content" && (prev || next) && (
+ {/* Previous / Next week navigation, CONTENT TAB ONLY, and only for SOLO
+ learners. Mentees get their weeks released one at a time by the mentor,
+ so free week-to-week jumping doesn't apply to them — it just clutters
+ the page and lets them wander into locked weeks. Hidden when hasMentor. */}
+ {activeTab === "content" && !hasMentor && (prev || next) && (
  <nav
  aria-label="Week navigation"
  style={{
