@@ -319,9 +319,9 @@ export default function NotificationBell({
  display: "flex",
  justifyContent: align === "left" ? "flex-start" : "center",
  alignItems: direction === "up" ? "flex-end" : "flex-start",
- // Sit just under the 3.5rem mobile top bar instead of floating with a
- // big empty gap above the panel.
- padding: "3.75rem 0.75rem 1.25rem",
+ // Sit right near the top — the panel overlays the (dimmed) top bar so
+ // there's no wide empty gap above it. Only a thin backdrop strip shows.
+ padding: "0.75rem 0.75rem 1.25rem",
  }}
  >
  <div
