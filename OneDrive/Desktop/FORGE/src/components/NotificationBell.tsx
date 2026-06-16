@@ -341,16 +341,18 @@ export default function NotificationBell({
  overflow: "hidden",
  }}
  >
- {/* Header */}
+ {/* Header. All controls share line-height:1 + padding:0 button resets so
+ the ✕ lands on the exact same centre line as the title and text
+ actions (default <button> metrics were nudging the ✕ up). */}
  <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", padding: "0.875rem 1rem", borderBottom: "1px solid var(--border)", background: "var(--bg-panel)" }}>
- <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
+ <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", lineHeight: 1, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
  {title}
  </span>
- <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+ <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
  {unread > 0 && (
  <button
  onClick={markAllRead}
- style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}
+ style={{ background: "none", border: "none", padding: 0, lineHeight: 1, cursor: "pointer", color: "var(--accent)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}
  >
  Mark all read
  </button>
@@ -358,7 +360,7 @@ export default function NotificationBell({
  {notifs.length > 0 && (
  <button
  onClick={clearAll}
- style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}
+ style={{ background: "none", border: "none", padding: 0, lineHeight: 1, cursor: "pointer", color: "var(--text-dim)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}
  >
  Clear all
  </button>
@@ -366,7 +368,7 @@ export default function NotificationBell({
  <button
  onClick={() => setOpen(false)}
  aria-label="Close notifications"
- style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", display: "flex", padding: "0.2rem" }}
+ style={{ background: "none", border: "none", padding: 0, margin: 0, lineHeight: 0, cursor: "pointer", color: "var(--text-dim)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
  >
  <X size={16} />
  </button>
