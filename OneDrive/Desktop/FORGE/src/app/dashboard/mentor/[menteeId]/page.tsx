@@ -438,10 +438,11 @@ export default function MenteeDrilldownPage() {
  <ArrowLeft size={12} /> all mentees
  </Link>
 
- {/* Mentee header, flex-wrap so the Suspend button drops to its own line
- on mobile instead of clipping off the right edge. min-width:0 on the
- name/email column lets it shrink below content size (otherwise the
- long monospace email forces the row wider than the viewport). */}
+ {/* Mentee header, flex-wrap so the manage buttons drop to their own
+ line on mobile instead of squeezing the name. The name/email column
+ keeps a sensible min-width — it used to be min-width:0, which let it
+ collapse to ~one letter per line once there were three buttons beside
+ it. The email still wraps (break-all) so it can't overflow the row. */}
  <div className="flex items-start gap-4 mb-6" style={{ flexWrap: "wrap" }}>
  <div
  style={{
@@ -453,7 +454,7 @@ export default function MenteeDrilldownPage() {
  >
  {initials}
  </div>
- <div style={{ flex: 1, minWidth: 0 }}>
+ <div style={{ flex: 1, minWidth: "min(100%, 13rem)" }}>
  <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", overflowWrap: "anywhere" }}>{mentee.name ?? mentee.email}</h1>
  {/* overflowWrap:anywhere lets the long mentee_xxxxxxx@forge.local
  break mid-string instead of pushing the row off-screen. */}
