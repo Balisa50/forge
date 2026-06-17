@@ -42,12 +42,21 @@ function loadServed(slug) {
 // Is this lesson body a walkthrough that barely explains itself?
 function analyseLesson(body, title) {
  body = body || "";
- const codeStripped = body.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]+`/g, " ");
- const proseChars = codeStripped.trim().length;
+ // Deliverable templates (```text / ```markdown / ```md) are content the learner
+ // reads or fills in — teaching material, not code. Pull them out of the command/
+ // step/fence detection and count their text as explanation, so good day-7
+ // "ship/reflect" lessons aren't penalised for shipping a README skeleton.
+ let templateProse = 0;
+ const codeBody = body.replace(/```(?:text|markdown|md)\b[^\n]*\r?\n([\s\S]*?)```/gi, (_m, inner) => {
+  templateProse += inner.trim().length;
+  return " ";
+ });
+ const codeStripped = codeBody.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]+`/g, " ");
+ const proseChars = codeStripped.trim().length + templateProse;
  const cmd = /(^|\n)\s*(\d+\.\s*)?[`$]?\s*(git|pip|npm|npx|pnpm|yarn|docker|kubectl|terraform|cd|mkdir|curl|wget|ssh|sudo|apt|brew|python|node|aws|gcloud|psql|conda)\b/gi;
- const cmds = (body.match(cmd) || []).length;
- const steps = (body.match(/^\s*\d+\.\s/gm) || []).length;
- const fenced = Math.floor((body.match(/```/g) || []).length / 2);
+ const cmds = (codeBody.match(cmd) || []).length;
+ const steps = (codeBody.match(/^\s*\d+\.\s/gm) || []).length;
+ const fenced = Math.floor((codeBody.match(/```/g) || []).length / 2);
  const units = Math.max(cmds, steps, fenced);
  const verifyOnly = /\bPASS:|\[\s?x\s?\]/.test(body) && proseChars < 350;
  // Day-7 "ship/record/tag/README" items are verify checklists BY DESIGN — the
@@ -55,8 +64,20 @@ function analyseLesson(body, title) {
  const shipStep = /\bship\b|record|\btag\b|readme|\.md\b|retro|submit|deliver/i.test(title || "");
  const titleSaysWalk = /see it in action|exact steps|walk ?through|step.by.step|do every step|^set ?up|hands.on/i.test(title || "");
  const isWalkthrough = titleSaysWalk || steps >= 3 || cmds >= 3;
+ // A code-demo lesson ("see it in code / see it worked") teaches INSIDE the
+ // fence: it prints the result and annotates what it means. Output annotations
+ // appear as # (py/sh), -- (SQL) or // comments carrying a number; the house
+ // style for "here's the result AND what it means" is an arrow callout
+ // (118.4 <- highest, -> matches the 14% drop). Credit a demo when it shows
+ // output AND interprets it (an arrow over a number, or >=2 result lines plus a
+ // real summary sentence). A plot/command dump with neither stays thin and still
+ // gets a teaching pass.
+ const outputLines = (body.match(/^[ \t]*(?:#|--|\/\/)[^\n]*\d/gm) || []).length;
+ const arrowCallout = /(<-|->|←|→)/.test(body) && /\d/.test(body);
+ const teachesInFence = (outputLines >= 1 && arrowCallout) || (outputLines >= 2 && proseChars >= 120);
 
  if (verifyOnly && !shipStep) return { thin: true, reason: "verify-only checklist, no teaching", proseChars, units };
+ if (teachesInFence) return { thin: false, reason: "annotated-output demo", proseChars, units };
  if (isWalkthrough && units >= 3 && proseChars < 70 * units)
  return { thin: true, reason: `${units} steps/cmds but only ${proseChars}ch explanation`, proseChars, units };
  if (proseChars < 180) return { thin: true, reason: `only ${proseChars}ch`, proseChars, units };

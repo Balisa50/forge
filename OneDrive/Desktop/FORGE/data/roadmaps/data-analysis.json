@@ -113,7 +113,7 @@
             {
               "kind": "lesson",
               "title": "Git, version control from day 1",
-              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS: brew install git\n# Windows: download from git-scm.com (or `winget install Git.Git`)\n# Linux: sudo apt install git\n\ngit --version\ngit config --global user.name 'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init # turn a folder into a git repo\ngit add file.py # stage a change for the next commit\ngit commit -m 'message' # snapshot the staged changes\ngit status # what's changed since the last commit?\ngit log --oneline # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite, read it once, refer back to it whenever you're not sure."
+              "body": "## What Git is\nGit is the version-control tool every codebase past day 1 uses. It snapshots your project after every meaningful change so you can: see what changed, undo a mistake, collaborate without overwriting each other, and ship to GitHub.\n\nYou will use Git every single day on this track. The five commands below cover ~95% of daily work.\n\n## Install + first-time setup\n```bash\n# macOS: brew install git\n# Windows: download from git-scm.com (or `winget install Git.Git`)\n# Linux: sudo apt install git\n\ngit --version\ngit config --global user.name 'Your Name'\ngit config --global user.email 'you@example.com'\n```\n\n## The five commands you actually use\n```bash\ngit init # turn a folder into a git repo\ngit add file.py # stage a change for the next commit\ngit commit -m 'message' # snapshot the staged changes\ngit status # what's changed since the last commit?\ngit log --oneline # the history of snapshots\n```\n\n## Push to GitHub\n```bash\n# After creating an empty repo on github.com:\ngit remote add origin https://github.com/YOU/your-repo.git\ngit branch -M main\ngit push -u origin main\n```\n\n## When you'll see Git next\nEvery project on this track ships to GitHub. Every checkin you submit is backed by a commit. This is the prerequisite, read it once, refer back to it whenever you're not sure.\n\n## The one mental model that makes these click\nGit moves your work through three places, and every command above is just a move between them. Your **working directory** is the files as they are right now. `git add` copies a change into the **staging area**, a holding pen for 'things I want in my next snapshot'. `git commit` freezes everything staged into a permanent snapshot in your **local repository**. `git push` uploads those local snapshots to **GitHub**. That model explains the parts that confuse beginners: it takes two commands to save (`add` then `commit`) because staging lets you include some changes now and leave others for later; `git status` is just 'show me what's in each place'; and a commit isn't on GitHub until you `push`. Whenever a command confuses you, ask which of those four places it moves your work between."
             },
             {
               "kind": "video",
@@ -1846,7 +1846,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Peek at the table\n```sql\nSELECT * FROM superstore LIMIT 3;\n```\n```\norder_id sub_category sales profit discount category\nCA-2017-152156 Bookcases 261.96 41.91 0.00 Furniture\nCA-2017-152156 Chairs 731.94 219.58 0.00 Furniture\nUS-2016-108966 Tables 957.58 -383.03 0.45 Furniture\n```\n\n## Pick specific columns\n```sql\nSELECT sub_category, sales, profit FROM superstore LIMIT 3;\n```\n```\nsub_category sales profit\nBookcases 261.96 41.91\nChairs 731.94 219.58\nTables 957.58 -383.03\n```\n\n## Distinct values (like pandas .unique())\n```sql\nSELECT DISTINCT category FROM superstore;\n```\n```\ncategory\nFurniture\nOffice Supplies\nTechnology\n```\nThree categories, exactly what `df[\"Category\"].unique()` told you in pandas."
+              "body": "## Peek at the table\n```sql\nSELECT * FROM superstore LIMIT 3;\n```\n```\norder_id sub_category sales profit discount category\nCA-2017-152156 Bookcases 261.96 41.91 0.00 Furniture\nCA-2017-152156 Chairs 731.94 219.58 0.00 Furniture\nUS-2016-108966 Tables 957.58 -383.03 0.45 Furniture\n```\n\n## Pick specific columns\n```sql\nSELECT sub_category, sales, profit FROM superstore LIMIT 3;\n```\n```\nsub_category sales profit\nBookcases 261.96 41.91\nChairs 731.94 219.58\nTables 957.58 -383.03\n```\n\n## Distinct values (like pandas .unique())\n```sql\nSELECT DISTINCT category FROM superstore;\n```\n```\ncategory\nFurniture\nOffice Supplies\nTechnology\n```\nThree categories, exactly what `df[\"Category\"].unique()` told you in pandas.\n\nThe payoff is the last result: `SELECT DISTINCT category` returns Furniture / Office Supplies / Technology, the exact three values `df['Category'].unique()` gave you in pandas. That's the week's whole thesis in miniature, you're not learning new analysis, you're learning a second language for analysis you already own. Read `SELECT *` as 'show me every column' (always pair it with `LIMIT` so a peek doesn't pull the entire table), and `SELECT col1, col2` as picking columns, the SQL of `df[['col1','col2']]`. Same questions you answered in Weeks 2-4, different syntax, and on a real warehouse it runs against billions of rows instead of what fits in your laptop's RAM."
             },
             {
               "kind": "swipe",
@@ -1897,7 +1897,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Filter to loss-making orders\n```sql\nSELECT order_id, sub_category, profit\nFROM superstore\nWHERE profit < 0\nLIMIT 3;\n```\n```\norder_id sub_category profit\nUS-2016-108966 Tables -383.03\nCA-2017-118983 Tables -129.44\nUS-2015-150630 Binders -123.86\n```\n\n## Combine conditions with AND\n```sql\nSELECT order_id, region, sales\nFROM superstore\nWHERE region = 'East' AND sales > 500\nLIMIT 3;\n```\n```\norder_id region sales\nCA-2017-152156 East 731.94\nCA-2016-138688 East 957.58\n...\n```\n\n## The 10 biggest losses: filter + sort + cap\n```sql\nSELECT sub_category, profit\nFROM superstore\nWHERE profit < 0\nORDER BY profit ASC\nLIMIT 5;\n```\n```\nsub_category profit\nMachines -3839.99\nBinders -3701.89\nTables -3399.98\nBookcases -1665.05\nTables -1359.99\n```\n`ORDER BY profit ASC` puts the most negative (biggest losses) first."
+              "body": "## Filter to loss-making orders\n```sql\nSELECT order_id, sub_category, profit\nFROM superstore\nWHERE profit < 0\nLIMIT 3;\n```\n```\norder_id sub_category profit\nUS-2016-108966 Tables -383.03\nCA-2017-118983 Tables -129.44\nUS-2015-150630 Binders -123.86\n```\n\n## Combine conditions with AND\n```sql\nSELECT order_id, region, sales\nFROM superstore\nWHERE region = 'East' AND sales > 500\nLIMIT 3;\n```\n```\norder_id region sales\nCA-2017-152156 East 731.94\nCA-2016-138688 East 957.58\n...\n```\n\n## The 10 biggest losses: filter + sort + cap\n```sql\nSELECT sub_category, profit\nFROM superstore\nWHERE profit < 0\nORDER BY profit ASC\nLIMIT 5;\n```\n```\nsub_category profit\nMachines -3839.99\nBinders -3701.89\nTables -3399.98\nBookcases -1665.05\nTables -1359.99\n```\n`ORDER BY profit ASC` puts the most negative (biggest losses) first.\n\nThe three queries walk the filtering pattern from loose to precise: `WHERE profit < 0` finds every loss, adding `AND region = 'East'` narrows to one region, and `ORDER BY profit ASC LIMIT 5` surfaces the five worst (Machines at -3,839.99 leading). That last shape is the analyst's bread and butter, filter to the rows that matter, sort by the metric, cap to the headline few. The quoting rule is the one thing you'll trip on once and then never again: `'East'` is in quotes because it's text, `500` and `0` aren't because they're numbers. It's the same `df[df['profit'] < 0]` logic from Week 2, now written in words instead of boolean masks."
             },
             {
               "kind": "swipe",
@@ -2079,7 +2079,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## queries.sql, your reusable analysis\n```sql\n-- Q1: Margin leaders and laggards\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore GROUP BY sub_category ORDER BY total_profit DESC;\n\n-- Q2: Year-over-year revenue and profit\nSELECT strftime('%Y', order_date) AS yr, SUM(sales) AS revenue, SUM(profit) AS profit\nFROM superstore GROUP BY yr ORDER BY yr;\n\n-- Q3: Top 10 customers by lifetime profit (CLV)\nSELECT customer_name, SUM(profit) AS clv\nFROM superstore GROUP BY customer_name ORDER BY clv DESC LIMIT 10;\n```\nRe-run each in sqliteonline to confirm they still work end to end."
+              "body": "## queries.sql, your reusable analysis\n```sql\n-- Q1: Margin leaders and laggards\nSELECT sub_category, SUM(profit) AS total_profit\nFROM superstore GROUP BY sub_category ORDER BY total_profit DESC;\n\n-- Q2: Year-over-year revenue and profit\nSELECT strftime('%Y', order_date) AS yr, SUM(sales) AS revenue, SUM(profit) AS profit\nFROM superstore GROUP BY yr ORDER BY yr;\n\n-- Q3: Top 10 customers by lifetime profit (CLV)\nSELECT customer_name, SUM(profit) AS clv\nFROM superstore GROUP BY customer_name ORDER BY clv DESC LIMIT 10;\n```\nRe-run each in sqliteonline to confirm they still work end to end.\n\nWhat makes this a deliverable and not a scratchpad: each query carries a `-- Qn:` comment naming the business question it answers, so someone opening `queries.sql` cold sees Q1 ranks sub-categories by total profit, Q2 trends revenue and profit by year, Q3 pulls your top-10 customers by lifetime value, without rerunning a thing. That commenting habit is the entire point. An analyst is judged on work other people can re-run and trust, and a labelled `.sql` file is exactly that: hand it over, point it at the data, and every number reproduces. The queries you typed into a console and lost are worth nothing by comparison, reproducibility is the line between real analysis and ad-hoc poking."
             },
             {
               "kind": "swipe",
@@ -4889,7 +4889,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\n[ ] Restart & Run All -> no errors\n[ ] one canonical value per number, everywhere\n[ ] every chart labelled + has a takeaway\n[ ] all links click through; README has 'how to run'\n```"
+              "body": "```text\n[ ] Restart & Run All -> no errors\n[ ] one canonical value per number, everywhere\n[ ] every chart labelled + has a takeaway\n[ ] all links click through; README has 'how to run'\n```\n\nWork this list top to bottom and treat each box as binary, half-done doesn't count. 'Restart & Run All -> no errors' is the one people skip and regret: it proves the notebook runs clean from a blank kernel, not just in the out-of-order state you happen to have left it in, which is the single most common reason a reviewer can't reproduce your numbers. 'One canonical value per number' means if attrition is 16.1% in the headline, it's 16.1% in every chart and caption too, mismatched restatements of the same figure are the fastest way to lose a reader's trust. The last two are presentation: a chart without a takeaway is decoration, and a README with no 'how to run' is a locked box."
             },
             {
               "kind": "swipe",
@@ -4959,7 +4959,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Attrition rate by department, in SQL\n```sql\nSELECT Department,\n AVG(CASE WHEN Attrition='Yes' THEN 1.0 ELSE 0 END) AS attrition_rate,\n COUNT(*) AS employees\nFROM hr GROUP BY Department ORDER BY attrition_rate DESC;\n```\n```\nDepartment attrition_rate employees\nSales 0.206 446\nHuman Resources 0.190 63\nResearch & Development 0.138 961\n```\nMatches your pandas Week 10 result exactly, `AVG(CASE WHEN ...)` is the SQL of the 0/1 `left` mean."
+              "body": "## Attrition rate by department, in SQL\n```sql\nSELECT Department,\n AVG(CASE WHEN Attrition='Yes' THEN 1.0 ELSE 0 END) AS attrition_rate,\n COUNT(*) AS employees\nFROM hr GROUP BY Department ORDER BY attrition_rate DESC;\n```\n```\nDepartment attrition_rate employees\nSales 0.206 446\nHuman Resources 0.190 63\nResearch & Development 0.138 961\n```\nMatches your pandas Week 10 result exactly, `AVG(CASE WHEN ...)` is the SQL of the 0/1 `left` mean.\n\nRead the result as a finding, not just a query that ran: Sales churns at 20.6%, Human Resources 19.0%, R&D only 13.8%, so the attrition problem is concentrated in Sales, and the `COUNT(*)` column keeps you honest (HR's 19% is just 63 people, far noisier than Sales' 446). The trick worth keeping is `AVG(CASE WHEN Attrition='Yes' THEN 1.0 ELSE 0 END)`: turn a yes/no into 1/0 and average it to get a rate, that's how you do percentages in SQL when there's no built-in. The `1.0` (not `1`) forces float division so you get 0.206 rather than an integer-truncated 0. Same number your pandas `.mean()` on the 0/1 column produced back in Week 10."
             },
             {
               "kind": "swipe",
@@ -5029,7 +5029,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nAsk: \"Tell me in one sentence what I'm recommending and why.\"\nNote: every pause, every \"what's this?\", every misread number.\nThat list is tomorrow's fixes.\n```"
+              "body": "```text\nAsk: \"Tell me in one sentence what I'm recommending and why.\"\nNote: every pause, every \"what's this?\", every misread number.\nThat list is tomorrow's fixes.\n```\n\nThe single-sentence test is deliberately brutal: if your one reader can't restate what you're recommending and why, the problem is your headline, not their attention. Don't explain or defend while they read, silence is the data; every pause and every 're-read that part' marks a spot where your narrative didn't carry on its own. Write their confusions down verbatim instead of arguing with them, because you are the worst possible judge of your own clarity, you know what you meant, so the gaps are invisible to you. One fresh reader catches more jargon and unexplained jumps in five minutes than you will in an hour of re-reading your own memo."
             },
             {
               "kind": "swipe",
@@ -5301,7 +5301,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Fetch a page and extract data\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\nurl = \"https://books.toscrape.com/\" # a scraping-practice site\nhtml = requests.get(url, headers={\"User-Agent\": \"learn-scraper\"}).text\nsoup = BeautifulSoup(html, \"html.parser\")\n\nbooks = soup.find_all(\"article\", class_=\"product_pod\")\nfor b in books[:3]:\n title = b.h3.a[\"title\"]\n price = b.find(\"p\", class_=\"price_color\").text\n print(title, \"|\", price)\n```\nOutput:\n```\nA Light in the Attic | £51.77\nTipping the Velvet | £53.74\nSoumission | £50.10\n```\nYou just turned a web page into structured data. `find_all` got every book block; inside each, `find`/attribute access pulled the title and price."
+              "body": "## Fetch a page and extract data\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\nurl = \"https://books.toscrape.com/\" # a scraping-practice site\nhtml = requests.get(url, headers={\"User-Agent\": \"learn-scraper\"}).text\nsoup = BeautifulSoup(html, \"html.parser\")\n\nbooks = soup.find_all(\"article\", class_=\"product_pod\")\nfor b in books[:3]:\n title = b.h3.a[\"title\"]\n price = b.find(\"p\", class_=\"price_color\").text\n print(title, \"|\", price)\n```\nOutput:\n```\nA Light in the Attic | £51.77\nTipping the Velvet | £53.74\nSoumission | £50.10\n```\nYou just turned a web page into structured data. `find_all` got every book block; inside each, `find`/attribute access pulled the title and price.\n\nThose three output lines, 'A Light in the Attic | £51.77' and friends, are the moment a wall of HTML becomes a table you can analyse. The pattern that got you there is the whole skill and it repeats on every page: `find_all('article', class_='product_pod')` grabs the repeating block (one per book), then inside each block `b.h3.a['title']` reads an attribute and `b.find('p', class_='price_color').text` reads visible text. You found those tag and class names by right-clicking a book in the browser and choosing Inspect, that's the real work; the code is the easy part. Practise on books.toscrape.com precisely because it's built to be scraped, and never point this at a site whose terms forbid it."
             },
             {
               "kind": "swipe",
@@ -5343,7 +5343,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```python\n# scraper.py, append today's prices with a date stamp\nimport pandas as pd, datetime as dt\nrows = scrape() # your Day-3 function -> list of dicts\ndf = pd.DataFrame(rows)\ndf[\"scraped_on\"] = dt.date.today()\ndf.to_csv(\"prices.csv\", mode=\"a\", header=False, index=False) # APPEND\n```\n```text\nSchedule it: Windows Task Scheduler (daily) or cron `0 9 * * *`.\nEach run adds today's rows -> a growing time series.\n```"
+              "body": "```python\n# scraper.py, append today's prices with a date stamp\nimport pandas as pd, datetime as dt\nrows = scrape() # your Day-3 function -> list of dicts\ndf = pd.DataFrame(rows)\ndf[\"scraped_on\"] = dt.date.today()\ndf.to_csv(\"prices.csv\", mode=\"a\", header=False, index=False) # APPEND\n```\n```text\nSchedule it: Windows Task Scheduler (daily) or cron `0 9 * * *`.\nEach run adds today's rows -> a growing time series.\n```\n\nTwo choices in this snippet turn a one-off scrape into a dataset that grows itself. `df['scraped_on'] = dt.date.today()` stamps every row with its run date, without it, a thousand appended rows are an undated blur you can't trend. And `mode='a', header=False` APPENDS to `prices.csv` instead of overwriting it (header=False so you don't inject a column-name row mid-file on every run). Schedule that script daily with cron `0 9 * * *` or Windows Task Scheduler and the file fills in while you sleep; a month later you can finally ask the question a single snapshot can't, 'how did prices move?'. The failure mode to guard against: if `scrape()`'s columns ever change, appending mismatched rows silently corrupts the CSV."
             },
             {
               "kind": "swipe",
@@ -6894,7 +6894,7 @@
             {
               "kind": "lesson",
               "title": "See it worked (rubric)",
-              "body": "```text\nTIME <= 5:00? | FILLER count | any slide you can't explain in a breath?\nCONFIDENCE: facts not hedges | OPENING: rec in first 15s?\n```"
+              "body": "```text\nTIME <= 5:00? | FILLER count | any slide you can't explain in a breath?\nCONFIDENCE: facts not hedges | OPENING: rec in first 15s?\n```\n\nScore yourself honestly against each line, the rubric is built around the ways a 5-minute pitch usually fails. TIME first: if you ran over 5:00 in rehearsal you'll run over in the room, so cut a slide, don't talk faster. FILLER count (every 'um', 'sort of', 'I think') measures how sure you sound, aim to halve it on the next take. A 'slide you can't explain in a breath' is dead weight, if it needs a paragraph to justify, it isn't earning its place. CONFIDENCE means stating findings as facts ('conversion drops 40% at checkout'), not hedges ('it kind of looks like maybe'). And OPENING is the one most people botch: lead with the recommendation in the first 15 seconds, a busy stakeholder decides whether to keep listening in that window."
             },
             {
               "kind": "swipe",
@@ -7099,7 +7099,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\n[ ] Restart & Run All -> clean\n[ ] one canonical value per number everywhere\n[ ] every chart labelled + has a takeaway\n[ ] README: what it is + how to run\n```"
+              "body": "```text\n[ ] Restart & Run All -> clean\n[ ] one canonical value per number everywhere\n[ ] every chart labelled + has a takeaway\n[ ] README: what it is + how to run\n```\n\nSame four-box discipline as the HR ship week, now on the Olist funnel, and the order is deliberate: fix what breaks reproducibility before what's merely cosmetic. 'Restart & Run All -> clean' proves the notebook runs from a blank kernel, the out-of-order state you've been working in hides cells that secretly depend on something you've since deleted. 'One canonical value per number' matters doubly on a funnel: if the delivered-order count is 96,478 in the headline, it's 96,478 in every chart and in the SQL version too, a funnel whose stages don't reconcile reads as careless. Then the presentation pair: every chart earns a one-line takeaway, and the README tells a stranger how to run it."
             },
             {
               "kind": "swipe",
@@ -7134,7 +7134,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Orders by status, in SQL\n```sql\nSELECT order_status, COUNT(*) AS orders,\n ROUND(100.0*COUNT(*)/(SELECT COUNT(*) FROM orders), 1) AS pct\nFROM orders GROUP BY order_status ORDER BY orders DESC;\n```\n```\norder_status orders pct\ndelivered 96478 97.0\nshipped 1107 1.1\ncanceled 625 0.6\n...\n```\nMatches your pandas funnel. A JOIN version (orders + reviews) answers the delivery-vs-review question in SQL too."
+              "body": "## Orders by status, in SQL\n```sql\nSELECT order_status, COUNT(*) AS orders,\n ROUND(100.0*COUNT(*)/(SELECT COUNT(*) FROM orders), 1) AS pct\nFROM orders GROUP BY order_status ORDER BY orders DESC;\n```\n```\norder_status orders pct\ndelivered 96478 97.0\nshipped 1107 1.1\ncanceled 625 0.6\n...\n```\nMatches your pandas funnel. A JOIN version (orders + reviews) answers the delivery-vs-review question in SQL too.\n\nThe result is the funnel's top line in one query: 96,478 orders delivered, 97.0% of everything, with shipped (1.1%) and canceled (0.6%) trailing. The pattern worth stealing is the inline percentage, `ROUND(100.0*COUNT(*)/(SELECT COUNT(*) FROM orders), 1)`: a subquery counts the whole table as the denominator so each status shows its share rather than just its raw count, and the `100.0` (not `100`) forces float math so you get 97.0, not a truncated 97. That's the same funnel your pandas `value_counts(normalize=True)` produced. Because Olist is genuinely multi-table, the natural next step is a JOIN (orders + reviews) to ask whether late deliveries score worse reviews, the question a single table can't answer."
             },
             {
               "kind": "swipe",
@@ -7204,7 +7204,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nMemo: H1/H2 headings, captioned charts, page numbers -> PDF\nDeck: one title style, one colour per series, axes labelled, no clutter\n```"
+              "body": "```text\nMemo: H1/H2 headings, captioned charts, page numbers -> PDF\nDeck: one title style, one colour per series, axes labelled, no clutter\n```\n\nThis is the credibility layer, and on a public portfolio a recruiter judges it before reading a single finding. On the memo: real H1/H2 headings (not bold text pretending to be headings) give it a scannable spine, every chart needs a caption stating its takeaway, and page numbers make it referenceable, then export to PDF so formatting can't break on someone else's machine. On the deck, consistency is the whole game: one title style, one colour per data series used the same way on every slide, axes always labelled, and ruthless removal of clutter (stray gridlines, redundant legends, logos that earn nothing). Format doesn't prove your analysis is right, but sloppy format makes a reader quietly doubt that it is."
             },
             {
               "kind": "swipe",
@@ -7239,7 +7239,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nAsk: \"What am I recommending, and why?\" (one sentence)\nNote every pause, question, misread number -> the fix list.\n```"
+              "body": "```text\nAsk: \"What am I recommending, and why?\" (one sentence)\nNote every pause, question, misread number -> the fix list.\n```\n\nThe same one-sentence test from the HR retro, just as unforgiving on a funnel deck: hand it to someone who hasn't seen the project and ask them to state your recommendation and why in one sentence. If they can't, your headline is buried, and no amount of chart polish fixes a lede the reader has to dig for. Stay silent while they read, every pause and 'wait, what's this number?' is a free defect report you can't generate yourself, because you already know what you meant. Capture their confusions verbatim into tomorrow's fix list instead of explaining them away in the moment, the recruiter you're really writing for won't have you sitting beside them to clarify."
             },
             {
               "kind": "swipe",
@@ -7570,7 +7570,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nRows: Category | Columns: Region | Text/Colour: SUM(Profit)\nDrag SUM(Profit) onto Colour -> diverging red-green palette, centre at 0.\nNow loss cells are red and visible instantly.\n```"
+              "body": "```text\nRows: Category | Columns: Region | Text/Colour: SUM(Profit)\nDrag SUM(Profit) onto Colour -> diverging red-green palette, centre at 0.\nNow loss cells are red and visible instantly.\n```\n\nThe move that does the work is dragging `SUM(Profit)` onto the Colour shelf with a diverging palette centred at 0, that centre point is what makes losses render red and profits green instead of merely 'big vs small'. Build it as Category (rows) by Region (columns) and a wall of numbers becomes a pattern your eye reads in one pass, the red cells ARE the problem list, no scanning required. The instinct to develop here is that encoding beats listing: the same profit figures in a plain table take a stakeholder a minute to parse, the heatmap takes a second. Just keep the palette honest, centre it at zero (not at the data's own midpoint) so a barely-profitable cell doesn't get coloured like a deep loss."
             },
             {
               "kind": "swipe",
@@ -7856,7 +7856,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```sql\n-- After uploading Superstore as a table, query it in BigQuery:\nSELECT sub_category, SUM(profit) AS total_profit\nFROM `your_project.superstore.orders`\nGROUP BY sub_category ORDER BY total_profit DESC LIMIT 3;\n```\n```\nsub_category total_profit\nCopiers 55617.8\nPhones 44515.7\nAccessories 41936.6\n```\nSame answer as Week 5 SQL, the warehouse works; now dbt can build on it."
+              "body": "```sql\n-- After uploading Superstore as a table, query it in BigQuery:\nSELECT sub_category, SUM(profit) AS total_profit\nFROM `your_project.superstore.orders`\nGROUP BY sub_category ORDER BY total_profit DESC LIMIT 3;\n```\n```\nsub_category total_profit\nCopiers 55617.8\nPhones 44515.7\nAccessories 41936.6\n```\nSame answer as Week 5 SQL, the warehouse works; now dbt can build on it.\n\nThe check that matters is the agreement: Copiers / Phones / Accessories come back as your top-three profit drivers, exactly the Week 5 SQLite ranking, so the upload landed and BigQuery is parsing the columns the same way. Run this BEFORE wiring up dbt, if the warehouse disagreed with your known answer now, you'd want to fix the load (wrong types, a header row read as data) before any dbt model inherits the mistake. Note the fully-qualified `your_project.superstore.orders` name: BigQuery addresses tables as project.dataset.table, not the bare `superstore` SQLite let you use. Same SQL you already own, a warehouse that scales to billions of rows underneath it."
             },
             {
               "kind": "swipe",
@@ -7891,7 +7891,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```bash\npip install dbt-bigquery\ndbt init superstore_dbt # scaffolds the project\n# edit ~/.dbt/profiles.yml with project id, dataset, auth (gcloud)\ndbt debug # -> \"All checks passed!\"\n```\nA green `dbt debug` means dbt is talking to your warehouse."
+              "body": "```bash\npip install dbt-bigquery\ndbt init superstore_dbt # scaffolds the project\n# edit ~/.dbt/profiles.yml with project id, dataset, auth (gcloud)\ndbt debug # -> \"All checks passed!\"\n```\nA green `dbt debug` means dbt is talking to your warehouse.\n\nThe whole lesson hinges on one line of output: `dbt debug -> All checks passed!`. That command is dbt's pre-flight, and it checks the three things people trip on, in order: is `dbt-bigquery` importable, can it find and parse `~/.dbt/profiles.yml`, and can it actually authenticate to your BigQuery project and reach the dataset. When it fails it names which check broke, and the usual culprit is auth, run `gcloud auth application-default login` so dbt can borrow your gcloud credentials, and confirm the `project` and `dataset` in profiles.yml match the BigQuery console exactly. A green `dbt debug` means dbt can both read your tables and write models back, the foundation every later dbt step assumes, so don't move on until it's green."
             },
             {
               "kind": "swipe",
@@ -8230,7 +8230,7 @@
             {
               "kind": "lesson",
               "title": "See it worked (synthetic data)",
-              "body": "```python\nimport pandas as pd, numpy as np\nn = 2000\ndf = pd.DataFrame({\n \"date\": pd.date_range(\"2024-01-01\", periods=n, freq=\"h\"),\n \"store\": np.random.choice([\"A\",\"B\",\"C\"], n),\n \"temp_c\": np.random.normal(18, 8, n).round(1),\n})\n# build a REAL relationship: colder -> fewer sales\ndf[\"sales\"] = (200 - 3*np.maximum(0, 10 - df[\"temp_c\"]) + np.random.normal(0,20,n)).round(0)\nprint(df.head(3))\n```\n```\n date store temp_c sales\n0 2024-01-01 00:00:00 B 12.4 188.0\n1 2024-01-01 01:00:00 A 6.1 168.0\n2 2024-01-01 02:00:00 C 21.7 205.0\n```\nThe baked-in relationship (cold -> lower sales) is what your analysis will 'discover'."
+              "body": "```python\nimport pandas as pd, numpy as np\nn = 2000\ndf = pd.DataFrame({\n \"date\": pd.date_range(\"2024-01-01\", periods=n, freq=\"h\"),\n \"store\": np.random.choice([\"A\",\"B\",\"C\"], n),\n \"temp_c\": np.random.normal(18, 8, n).round(1),\n})\n# build a REAL relationship: colder -> fewer sales\ndf[\"sales\"] = (200 - 3*np.maximum(0, 10 - df[\"temp_c\"]) + np.random.normal(0,20,n)).round(0)\nprint(df.head(3))\n```\n```\n date store temp_c sales\n0 2024-01-01 00:00:00 B 12.4 188.0\n1 2024-01-01 01:00:00 A 6.1 168.0\n2 2024-01-01 02:00:00 C 21.7 205.0\n```\nThe baked-in relationship (cold -> lower sales) is what your analysis will 'discover'.\n\nThe line that makes this dataset worth analysing is `df['sales'] = 200 - 3*np.maximum(0, 10 - temp_c) + noise`: it bakes in a real, recoverable relationship, below 10 degrees every degree colder shaves about 3 sales, above 10 temperature stops mattering, plus Gaussian noise so nothing is suspiciously perfect. That's the craft of synthetic data: your analysis later 'discovers' the cold-weather sales dip precisely because you planted it, and the noise is what stops the discovery from being trivially clean. Junk random data has nothing to find; a believable generative story (sensible distributions, a plausible cause and effect, realistic ranges) is itself analytical thinking. Keep the noise small enough that the signal survives but large enough that you actually have to estimate it."
             },
             {
               "kind": "swipe",
@@ -8300,7 +8300,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Join sales to weather on date\n```python\nmodel = sales.merge(weather, on=\"date\", how=\"left\")\nprint(model.shape)\nprint(model[[\"date\",\"store\",\"temp_c\",\"sales\"]].head(2))\nprint(\"nulls after join:\", model[\"temp_c\"].isna().sum())\n```\n```\n(2000, 6)\n date store temp_c sales\n0 2024-01-01 00:00:00 B 12.4 188.0\n1 2024-01-01 01:00:00 A 6.1 168.0\nnulls after join: 0\n```\nClean left join, no orphaned rows, the model is ready. Always check post-join nulls/row-count to confirm the join behaved."
+              "body": "## Join sales to weather on date\n```python\nmodel = sales.merge(weather, on=\"date\", how=\"left\")\nprint(model.shape)\nprint(model[[\"date\",\"store\",\"temp_c\",\"sales\"]].head(2))\nprint(\"nulls after join:\", model[\"temp_c\"].isna().sum())\n```\n```\n(2000, 6)\n date store temp_c sales\n0 2024-01-01 00:00:00 B 12.4 188.0\n1 2024-01-01 01:00:00 A 6.1 168.0\nnulls after join: 0\n```\nClean left join, no orphaned rows, the model is ready. Always check post-join nulls/row-count to confirm the join behaved.\n\nThe two diagnostics after the merge are the point, not the merge itself. `model.shape == (2000, 6)` confirms the row count didn't change: a `how='left'` join should preserve every sales row, if it had ballooned to 4,000 you'd have a duplicate key in `weather` causing a fan-out, and if it shrank you used the wrong join type. `nulls after join: 0` confirms every sales row found its weather match, any nulls would mean dates present in sales but missing from weather, a coverage gap that silently drops those hours from the cold/warm averages. Run both checks on every join you ever do, a wrong join here doesn't raise an error, it quietly corrupts every KPI built on top of the model."
             },
             {
               "kind": "swipe",
@@ -8335,7 +8335,7 @@
             {
               "kind": "lesson",
               "title": "See it in code (with output)",
-              "body": "## Headline KPIs from the model\n```python\nprint(\"Total sales:\", model[\"sales\"].sum())\ncold = model[model[\"temp_c\"] < 10][\"sales\"].mean()\nwarm = model[model[\"temp_c\"] >= 10][\"sales\"].mean()\nprint(f\"Cold-day avg: {cold:.0f} Warm-day avg: {warm:.0f}\")\nprint(f\"Weather sensitivity: {(warm-cold)/warm:.1%} drop on cold days\")\n```\n```\nTotal sales: 392140.0\nCold-day avg: 171 Warm-day avg: 199\nWeather sensitivity: 14.1% drop on cold days\n```\nThere's your headline KPI and your spec's answer in one: sales drop ~14% on cold days. The dashboard will showcase this."
+              "body": "## Headline KPIs from the model\n```python\nprint(\"Total sales:\", model[\"sales\"].sum())\ncold = model[model[\"temp_c\"] < 10][\"sales\"].mean()\nwarm = model[model[\"temp_c\"] >= 10][\"sales\"].mean()\nprint(f\"Cold-day avg: {cold:.0f} Warm-day avg: {warm:.0f}\")\nprint(f\"Weather sensitivity: {(warm-cold)/warm:.1%} drop on cold days\")\n```\n```\nTotal sales: 392140.0\nCold-day avg: 171 Warm-day avg: 199\nWeather sensitivity: 14.1% drop on cold days\n```\nThere's your headline KPI and your spec's answer in one: sales drop ~14% on cold days. The dashboard will showcase this.\n\nThis tiny block IS the capstone's answer: total sales 392,140, and a 14.1% drop on cold days (cold-day avg 171 vs warm 199). That last number is the spec's question resolved, everything else you build is presentation of it. Two habits to notice: the threshold (`temp_c < 10`) is the same cutoff you baked into the synthetic relationship, so you're measuring back exactly what you planted, a sanity check that the pipeline didn't mangle it. And the sensitivity is expressed as a relative drop `(warm-cold)/warm`, not a raw difference, because '14% down' travels to a stakeholder far better than '28 sales units down'. Pick the three or four KPIs that answer the spec and stop, a dashboard's focus comes from what you leave off."
             },
             {
               "kind": "swipe",
@@ -8610,7 +8610,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nStore C ############## 40%\nStore A ######### 28%\nStore B ######## 24% ...\nSorted descending so the biggest contributor is obvious.\n```"
+              "body": "```text\nStore C ############## 40%\nStore A ######### 28%\nStore B ######## 24% ...\nSorted descending so the biggest contributor is obvious.\n```\n\nThe sort is the analysis here, not the bars. Descending order puts Store C's 40% on top, so the single most important fact, where the sales actually come from, is the first thing the eye lands on; an alphabetical or unsorted chart buries that lede. This is the visual that converts 'sales are $392k' into 'Store C drives 40% of it, A another 28%', the version a stakeholder can act on (study C's playbook, or worry about over-reliance on one store). It's just groupby-then-bar, the most common analytical chart you'll make, and the discipline that makes it land every time is the same three moves: sort by the value, label with the share, lead with the biggest contributor."
             },
             {
               "kind": "swipe",
@@ -8680,7 +8680,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\n[ Store: C v ] [ Date: 2024 v ] <- one filter panel\n -> Page 1 KPIs + charts update\n -> Page 2 table + charts update to the SAME selection\nConsistency across pages = trust.\n```"
+              "body": "```text\n[ Store: C v ] [ Date: 2024 v ] <- one filter panel\n -> Page 1 KPIs + charts update\n -> Page 2 table + charts update to the SAME selection\nConsistency across pages = trust.\n```\n\nThe architecture point hiding in this little diagram: one filter panel drives BOTH pages, so selecting 'Store C' updates page 1's KPIs and page 2's table to the same selection at once. That's what makes a multi-page dashboard feel like one tool instead of two disconnected reports, and it's why trust survives, the fastest way to lose a stakeholder is for page 2 to show a number page 1 contradicts because its filter didn't follow along. Wire this cross-page filter early: retrofitting a shared filter after you've built four pages of independently-scoped charts is painful rework, whereas designing for it upfront costs almost nothing. The user should be able to pick a selection once and carry it through the whole story."
             },
             {
               "kind": "swipe",
@@ -8840,7 +8840,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nPAGE 3, CUSTOMER\nKPIs: customers | repeat rate | avg value\n[segment value bar] [cohort retention mini-matrix]\nThe 'who' behind the sales.\n```"
+              "body": "```text\nPAGE 3, CUSTOMER\nKPIs: customers | repeat rate | avg value\n[segment value bar] [cohort retention mini-matrix]\nThe 'who' behind the sales.\n```\n\nWhat page 3 adds is the 'who', and the three KPIs chosen, customer count, repeat rate, average value, are deliberately the trio that frames any customer story: how many, how loyal, how valuable. A complete dashboard moves through questions in order: pages 1-2 answered 'what happened', this page answers 'to whom', and page 4 will answer 'how well are we running'. The two tiles under the KPIs do real work, the segment-value bar shows whether revenue leans on a few segments (concentration risk), and the cohort mini-matrix shows whether you keep the customers you win. Reusing your CLV and cohort skills here is the signal that you can carry a customer lens into any project, not just the week you first learned it."
             },
             {
               "kind": "swipe",
@@ -8875,7 +8875,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\ncohort m0 m1 m2\nJan 100% 22% 14%\nFeb 100% 25% 16% <- compact heatmap tile on page 3\n```"
+              "body": "```text\ncohort m0 m1 m2\nJan 100% 22% 14%\nFeb 100% 25% 16% <- compact heatmap tile on page 3\n```\n\nRead a cohort matrix across the rows, not down the columns: the Jan cohort starts at 100% (everyone's present in month 0 by definition), then 22% return in m1 and 14% in m2; the Feb cohort 25% then 16%. The story is in how the curve falls and whether later cohorts hold up better than earlier ones, Feb retaining 16% vs Jan's 14% at m2 hints something improved (a product change, better onboarding). That second-month number is usually the one to watch: the m0->m1 drop is normal churn, but a business that can't hold past m1 isn't really keeping anyone. Shrinking this to a dashboard tile is the flex, cohort retention is a senior signal most analysts only ever produce in a notebook, and here it sits live next to your headline KPIs."
             },
             {
               "kind": "swipe",
@@ -8910,7 +8910,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nPAGE 4, OPERATIONS\nKPIs: avg fulfilment time | on-time % | issue rate\n[trend: fulfilment time] [bar: issues by type]\nThe 'how well are we running' view.\n```"
+              "body": "```text\nPAGE 4, OPERATIONS\nKPIs: avg fulfilment time | on-time % | issue rate\n[trend: fulfilment time] [bar: issues by type]\nThe 'how well are we running' view.\n```\n\nPage 4 is the 'how well are we running' view, and including it at all is the real signal: it shows you understand a business has several audiences, finance cares about the sales on pages 1-2, the customer team about page 3, operations about fulfilment time, on-time rate and issue rate here. The two visuals are chosen to match how ops problems present: a trend line for fulfilment time (is it drifting up?) and a bar of issues by type (where's the pain concentrated?). Pick metrics someone could actually act on, 'on-time %' tells a warehouse lead whether to add capacity in a way 'total orders' never could. Building for finance, customer AND ops in one product is the mark of a mature analyst rather than a one-lens one."
             },
             {
               "kind": "swipe",
@@ -8945,7 +8945,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\nALERTS (page 1)\n ! Store B sales -20% vs last month\n ! Cold-week fulfilment time +30%\n (only shows when a rule is breached; green/quiet otherwise)\n```"
+              "body": "```text\nALERTS (page 1)\n ! Store B sales -20% vs last month\n ! Cold-week fulfilment time +30%\n (only shows when a rule is breached; green/quiet otherwise)\n```\n\nThe leap this section makes is from passive to active: a normal dashboard shows numbers and leaves the viewer to hunt for problems, an alerts block does the hunting and surfaces only what breached a rule ('Store B sales -20% vs last month'). The design detail that makes it work is staying quiet when nothing's wrong, alerts that fire constantly get ignored, so the panel should be green/empty most days and only shout on a real breach. Under the hood it's just conditional logic on your KPIs (if month-over-month change < -0.2, render a red flag), the same conditional-colour thinking from the Tableau heatmap, now driving text instead of fill. That's the line between a report and a decision-support tool: one tells you what happened, the other tells you what to look at."
             },
             {
               "kind": "swipe",
@@ -8980,7 +8980,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\n[ Store v ][ Date v ][ Segment v ] <- one panel, every page obeys it\nNavigate page 1->4 with Store C selected: all four stay on Store C.\n```"
+              "body": "```text\n[ Store v ][ Date v ][ Segment v ] <- one panel, every page obeys it\nNavigate page 1->4 with Store C selected: all four stay on Store C.\n```\n\nThis is W23's linked-filter idea scaled to the finished product: one panel (store, date, segment) that all four pages obey, so a user can select 'Store C' on page 1 and still be looking at Store C when they land on page 4. The test in the mockup is exactly right, navigate 1->4 with a selection held and confirm nothing silently resets. Persistent, consistent filtering is what makes four pages feel like one application instead of four charts in a trench coat, and it's the difference a recruiter clocks in seconds without being able to name it. Consolidating scattered per-page filters into one panel late is real rework, which is why the earlier you commit to a single shared filter state, the cheaper every later page is to add."
             },
             {
               "kind": "swipe",
@@ -9015,7 +9015,7 @@
             {
               "kind": "lesson",
               "title": "See it worked",
-              "body": "```text\n[ ] one colour palette across all 4 pages\n[ ] consistent title style + a simple logo/header\n[ ] every chart labelled, aligned, decluttered\n[ ] consistent fonts and spacing\n```"
+              "body": "```text\n[ ] one colour palette across all 4 pages\n[ ] consistent title style + a simple logo/header\n[ ] every chart labelled, aligned, decluttered\n[ ] consistent fonts and spacing\n```\n\nThis is the design pass from the deck weeks applied to the whole app, and the four boxes are ordered by how loudly they signal 'student-made' when skipped. One palette across all four pages is first because mismatched colours read as four separate projects stapled together; a consistent title style plus a simple header/logo gives it a spine; aligned, labelled, decluttered charts are the per-chart discipline (every element earns its place or goes); and consistent fonts/spacing is the quiet layer nobody notices when it's right and everybody feels when it's wrong. None of this changes a single number, but a recruiter judges polish in the first few seconds and lets that judgement colour how far they trust the analysis underneath. Treat it as borrowing credibility, cheap to do, expensive to skip."
             },
             {
               "kind": "swipe",
