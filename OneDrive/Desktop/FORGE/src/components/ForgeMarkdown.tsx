@@ -19,7 +19,7 @@
  * No external dependencies. All styling uses Forge CSS variables.
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import katex from "katex";
 import {
  Copy, Check, Code2, PenLine, AlertCircle,
@@ -1337,9 +1337,13 @@ interface ForgeMarkdownProps {
  compact?: boolean;
 }
 
-export default function ForgeMarkdown({ children, compact: _compact }: ForgeMarkdownProps) {
- if (!children?.trim()) return null;
- const blocks = parse(children);
+function ForgeMarkdown({ children, compact: _compact }: ForgeMarkdownProps) {
+ // Parse once per unique body. Without this the parser, and the synchronous
+ // KaTeX calls inside InlineText, re-run on every parent re-render — e.g. every
+ // time a learner ticks a day-item checkbox, which re-renders WeekPageTabs and
+ // would otherwise re-parse and re-typeset every open lesson body on the main
+ // thread. On a content-heavy day that froze low-end phones on each tap.
+ const blocks = useMemo(() => (children?.trim() ? parse(children) : []), [children]);
  if (!blocks.length) return null;
 
  return (
@@ -1348,3 +1352,9 @@ export default function ForgeMarkdown({ children, compact: _compact }: ForgeMark
  </div>
  );
 }
+
+// Memoised: the body string is stable across unrelated parent re-renders (a
+// checkbox toggle, a celebration toast), so this skips re-rendering entirely
+// instead of re-parsing markdown and re-running KaTeX every time. This is the
+// fix for the "tap a day's complete button and the phone freezes" report.
+export default memo(ForgeMarkdown);

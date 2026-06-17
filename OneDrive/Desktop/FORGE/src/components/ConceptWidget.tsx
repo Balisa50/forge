@@ -14,7 +14,7 @@
  * into view (IntersectionObserver). Off-screen widgets cost nothing.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { renderWidgetHtml, widgetMeta, type WidgetParams } from "@/lib/conceptWidgets";
 
@@ -24,7 +24,7 @@ interface Props {
  caption?: string;
 }
 
-export default function ConceptWidget({ id, params, caption }: Props) {
+function ConceptWidget({ id, params, caption }: Props) {
  const wrapRef = useRef<HTMLDivElement | null>(null);
  const frameRef = useRef<HTMLIFrameElement | null>(null);
  const [inView, setInView] = useState(false);
@@ -203,3 +203,9 @@ export default function ConceptWidget({ id, params, caption }: Props) {
  </div>
  );
 }
+
+// Memoised so a parent re-render (e.g. ticking a day-item checkbox in
+// WeekPageTabs) does not recompute the widget HTML and reload its sandboxed
+// iframe on every tap. Props (id/params/caption) are stable references from the
+// week JSON, so the shallow compare reliably skips the redundant re-render.
+export default memo(ConceptWidget);
