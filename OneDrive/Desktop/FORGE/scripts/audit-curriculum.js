@@ -84,27 +84,39 @@ function analyseLesson(body, title) {
  return { thin: false, reason: "", proseChars, units };
 }
 
+// Placeholder/stub detector: the v2 generator left many day lessons as a
+// truncated copy of the week intro ("...you te") plus generic "Key ideas"
+// boilerplate. These read as ~600ch of plausible prose, so the thinness check
+// passes them, yet they contain NONE of the day's actual teaching. Tracked
+// separately from "thin" because it's a different, worse defect: unwritten.
+function isStub(body) {
+ const b = body || "";
+ return /Understand the concept before reaching for code/.test(b)
+  || (/The key mental model/.test(b) && /\byou te(\s|$)/.test(b));
+}
+
 const listSlug = process.argv.includes("--list") ? process.argv[process.argv.indexOf("--list") + 1] : null;
 const rows = [];
-let grandThin = 0, grandLessons = 0;
+let grandThin = 0, grandLessons = 0, grandStub = 0;
 
 for (const slug of SLUGS) {
  const rm = loadServed(slug);
  if (!rm) { console.log(`MISSING ${slug}`); continue; }
- let lessons = 0, thin = 0;
+ let lessons = 0, thin = 0, stub = 0;
  const offenders = [];
  for (const w of (rm.weeks ?? [])) {
  for (const d of (w.days ?? [])) {
  for (const it of (d.items ?? [])) {
  if (it.kind !== "lesson") continue;
  lessons++;
+ if (isStub(it.body)) stub++;
  const a = analyseLesson(it.body, it.title);
  if (a.thin) { thin++; offenders.push({ w: w.number, wt: w.title, d: d.number, title: it.title, reason: a.reason }); }
  }
  }
  }
- grandThin += thin; grandLessons += lessons;
- rows.push({ slug, weeks: (rm.weeks ?? []).length, lessons, thin, pct: lessons ? Math.round((thin / lessons) * 100) : 0, offenders });
+ grandThin += thin; grandLessons += lessons; grandStub += stub;
+ rows.push({ slug, weeks: (rm.weeks ?? []).length, lessons, thin, stub, pct: lessons ? Math.round((thin / lessons) * 100) : 0, offenders });
 }
 
 if (listSlug) {
@@ -117,11 +129,12 @@ if (listSlug) {
 
 console.log("\n=========== FORGE LESSON-DEPTH AUDIT ===========");
 console.log("(thin = commands/steps listed without enough explanation)\n");
-console.log("track                 weeks  lessons  thin  %thin");
-rows.sort((a, b) => b.pct - a.pct);
+console.log("track                 weeks  lessons  thin  stub  %thin %stub");
+rows.sort((a, b) => b.stub - a.stub || b.pct - a.pct);
 for (const r of rows) {
- console.log(r.slug.padEnd(20) + String(r.weeks).padStart(6) + String(r.lessons).padStart(9) + String(r.thin).padStart(6) + String(r.pct + "%").padStart(7));
+ console.log(r.slug.padEnd(20) + String(r.weeks).padStart(6) + String(r.lessons).padStart(9) + String(r.thin).padStart(6) + String(r.stub).padStart(6) + String(r.pct + "%").padStart(7) + String(Math.round((r.stub / r.lessons) * 100) + "%").padStart(6));
 }
-console.log("\n" + "-".repeat(48));
-console.log(`TOTAL  ${grandThin}/${grandLessons} lesson bodies need a teaching pass (${Math.round((grandThin / grandLessons) * 100)}%)`);
+console.log("\n" + "-".repeat(60));
+console.log(`THIN   ${grandThin}/${grandLessons} bodies list steps without teaching them (${Math.round((grandThin / grandLessons) * 100)}%)`);
+console.log(`STUB   ${grandStub}/${grandLessons} bodies are unwritten placeholders, truncated intro + "Key ideas" boilerplate (${Math.round((grandStub / grandLessons) * 100)}%)`);
 console.log(`Drill in:  node scripts/audit-curriculum.js --list <track>`);
