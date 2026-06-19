@@ -15,41 +15,68 @@
  * powers every day of every track.
  */
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Check, X, ArrowLeft, ArrowRight, RotateCcw, Sparkles } from "lucide-react";
 import type { SwipeCard } from "@/lib/roadmaps";
 
-export default function SwipeCards({ cards }: { cards: SwipeCard[] }) {
+export default function SwipeCards({ cards, storageKey, onComplete }: {
+ cards: SwipeCard[];
+ /** Unique id for this swipe block; when set, answers persist in localStorage. */
+ storageKey?: string;
+ /** Fired once when every card has been answered (parent marks the item done -> server sync). */
+ onComplete?: () => void;
+}) {
+ const total = cards.length;
+ // answers[i] = the boolean the learner picked for card i (null = unanswered).
+ // Single source of truth so answers survive navigation + reload.
+ const [answers, setAnswers] = useState<(boolean | null)[]>(() => Array(total).fill(null));
  const [idx, setIdx] = useState(0);
- const [picked, setPicked] = useState<boolean | null>(null); // learner's answer (true=right)
  const [drag, setDrag] = useState(0); // px offset while dragging
- const [score, setScore] = useState(0);
  const startX = useRef<number | null>(null);
 
- const total = cards.length;
+ // Rehydrate saved answers on mount (client-only; SSR-safe, no hydration mismatch).
+ useEffect(() => {
+  if (!storageKey || typeof window === "undefined") return;
+  try {
+   const saved = JSON.parse(window.localStorage.getItem(storageKey) || "null");
+   if (Array.isArray(saved) && saved.length === total) {
+    setAnswers(saved);
+    const firstUnanswered = saved.findIndex((a) => a === null);
+    setIdx(firstUnanswered === -1 ? total : firstUnanswered);
+   }
+  } catch { /* ignore corrupt cache */ }
+ }, [storageKey, total]);
+
+ const saveLS = (nextAnswers: (boolean | null)[]) => {
+  if (storageKey && typeof window !== "undefined")
+   try { window.localStorage.setItem(storageKey, JSON.stringify(nextAnswers)); } catch { /* quota / privacy mode */ }
+ };
+
  const card = cards[idx];
  const done = idx >= total;
+ const picked = done ? null : answers[idx]; // derived (was useState)
+ const score = answers.reduce((s, a, i) => s + (a !== null && a === cards[i].answer ? 1 : 0), 0); // derived
 
- const answer = useCallback(
- (saidTrue: boolean) => {
- if (picked !== null || done) return;
- setPicked(saidTrue);
- if (saidTrue === card.answer) setScore((s) => s + 1);
- },
- [picked, done, card],
- );
+ const answer = (saidTrue: boolean) => {
+  if (done || answers[idx] !== null) return;
+  const nextAnswers = [...answers];
+  nextAnswers[idx] = saidTrue;
+  setAnswers(nextAnswers);
+  saveLS(nextAnswers);
+  if (nextAnswers.every((a) => a !== null)) onComplete?.(); // all answered -> mark item done (API sync via parent)
+ };
 
  const next = () => {
- setPicked(null);
- setDrag(0);
- setIdx((i) => i + 1);
+  setDrag(0);
+  setIdx((i) => i + 1);
  };
 
  const restart = () => {
- setIdx(0);
- setPicked(null);
- setDrag(0);
- setScore(0);
+  const cleared = Array(total).fill(null);
+  setAnswers(cleared);
+  saveLS(cleared);
+  setIdx(0);
+  setDrag(0);
  };
 
  // ----- pointer / touch drag -----

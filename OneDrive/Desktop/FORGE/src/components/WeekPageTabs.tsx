@@ -12,6 +12,7 @@ import ConceptPrimer from "@/components/ConceptPrimer";
 import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
 import SwipeCards from "@/components/SwipeCards";
+import ConceptCheck from "@/components/ConceptCheck";
 import ForgeMarkdown from "@/components/ForgeMarkdown";
 import MentorReviewSection from "@/components/MentorReviewSection";
 
@@ -312,6 +313,11 @@ export default function WeekPageTabs({
  {/* Visual-first concept primer, only on the Content tab. */}
  {activeTab === "content" && effectivePrimer && (
  <ConceptPrimer primer={effectivePrimer} imageUrl={week.concept_image_url} />
+ )}
+
+ {/* Optional MCQ warm-up (concept_check) - Content tab only. */}
+ {activeTab === "content" && week.concept_check && week.concept_check.length > 0 && (
+  <ConceptCheck questions={week.concept_check} storageKey={`forge:cc:${slug}:w${week.number}`} />
  )}
 
  {/* Fallback inline intro for sparse-context weeks, Content tab only. */}
@@ -714,7 +720,11 @@ export default function WeekPageTabs({
  that sits after the lesson, before the coding task. */}
  {item.kind === "swipe" && item.cards && item.cards.length > 0 && (
  <div style={{ marginTop: "0.5rem" }}>
- <SwipeCards cards={item.cards} />
+ <SwipeCards
+     cards={item.cards}
+     storageKey={`forge:swipe:${slug}:w${week.number}:${key}`}
+     onComplete={() => { if (!done[key]) persist({ ...done, [key]: true }, { [key]: true }); }}
+    />
  </div>
  )}
  {/* Inline VideoEmbed for video items with YouTube/Loom URLs.
