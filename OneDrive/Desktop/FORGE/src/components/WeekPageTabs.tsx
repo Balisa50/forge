@@ -13,6 +13,7 @@ import ConceptWidget from "@/components/ConceptWidget";
 import VideoEmbed from "@/components/VideoEmbed";
 import SwipeCards from "@/components/SwipeCards";
 import ConceptCheck from "@/components/ConceptCheck";
+import WeekAtAGlance from "@/components/WeekAtAGlance";
 import ForgeMarkdown from "@/components/ForgeMarkdown";
 import MentorReviewSection from "@/components/MentorReviewSection";
 
@@ -319,6 +320,9 @@ export default function WeekPageTabs({
  {activeTab === "content" && week.concept_check && week.concept_check.length > 0 && (
   <ConceptCheck questions={week.concept_check} storageKey={`forge:cc:${slug}:w${week.number}`} />
  )}
+
+ {/* Auto-generated "this week at a glance" overview (Content tab; renders from the week's own days). */}
+ {activeTab === "content" && <WeekAtAGlance week={week} />}
 
  {/* Fallback inline intro for sparse-context weeks, Content tab only. */}
  {activeTab === "content" && showInlineContext && (
