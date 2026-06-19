@@ -1689,30 +1689,364 @@
       "title": "AI-powered virtual assistant",
       "phase": "AI Operations",
       "commitment_hours": "6, 10",
-      "context": "AI is the force multiplier that lets one operator do the work of three, if you know how to direct it. This week you learn practical prompt engineering and build AI into your daily workflow: drafting, summarising, research acceleration, reporting, and light automation. The operators who get hired in the next few years are the ones who make AI do the repetitive work while they apply judgement. You will build an AI-assisted assistant system for Kola.",
+      "context": "AI is the force multiplier that lets one operator do the work of three, if you know how to direct it. The operators getting hired right now are not the ones who fear AI or the ones who blindly trust it; they are the ones who make AI do the repetitive work while they keep the judgement. This week you build AI into your daily operation: drafting, summarising, research acceleration, reporting, and light automation.\n\nYou will build an AI-assisted operations system for Kola: a documented prompt library you reuse every day, and a worked example of a workflow that went from hours to minutes. By Friday you can take a recurring task and make AI do the heavy lifting while you check and own the result.\n\nThe meta-skill this week is judgement: knowing when to trust AI, when to verify, and when a human must stay fully in the loop (anything touching money, legal commitments, or a client's voice on something sensitive).",
+      "concept_check": [
+        {
+          "q": "You ask AI 'write an email to a customer' and get a generic, robotic result. What is usually the real problem?",
+          "choices": [
+            "AI is just bad at email",
+            "The prompt lacked context: who you are, who it is for, the goal, the tone, and the key facts",
+            "You need a paid AI plan",
+            "Email cannot be written by AI"
+          ],
+          "correct": 1,
+          "explain": "Vague prompts produce vague output. A good prompt supplies role, context, the exact task, the format, and an example. Fix the prompt, not the result, by hand."
+        },
+        {
+          "q": "AI drafts a customer refund reply that quotes a policy. Before sending, what must you do?",
+          "choices": [
+            "Send it immediately to save time",
+            "Read it, check the policy and facts are correct, and adjust the tone, you own the message, not the AI",
+            "Trust it because AI is precise",
+            "Forward it to the customer and ask them to verify"
+          ],
+          "correct": 1,
+          "explain": "Always read and own AI output, especially anything touching money or commitments. A client can tell generic AI text, and 'the AI wrote it' is never a defence for an error."
+        },
+        {
+          "q": "Which task is the BEST candidate to hand to AI?",
+          "choices": [
+            "Deciding whether to fire a supplier",
+            "Summarising a long email thread into the key decision and action items",
+            "Comforting an upset long-term customer about a personal issue",
+            "Approving a large payment"
+          ],
+          "correct": 1,
+          "explain": "AI shines at repetitive, rule-based, language-heavy tasks like summarising. Judgement calls, relationships, money, and sensitive matters stay human."
+        }
+      ],
+      "days": [
+        {
+          "number": 0,
+          "title": "What AI does for an operator, and write your first real prompt",
+          "summary": "Set up your AI tools and learn the anatomy of a prompt that actually works.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "AI is leverage, not a replacement",
+              "body": "## The operator's edge\nPicture two assistants. One spends an hour writing a monthly report from scratch. The other feeds the raw numbers to AI, gets a solid draft in two minutes, then spends fifteen minutes making it accurate and human. Same quality output, a quarter of the time, and the second assistant just did three other things with the hours saved. That is the edge, and it is available to you this week.\n\n## What AI is genuinely good at\nRepetitive, language-heavy, rule-ish work: drafting and editing, summarising long text, restructuring information, brainstorming, converting formats, first-pass research. These are a huge slice of an operator's day.\n\n## What AI is bad at (keep these human)\nJudgement under uncertainty, relationships, anything sensitive or emotional, final decisions about money or commitments, and being correct about facts (it invents them). Your value is precisely the judgement AI lacks.\n\n## The model you keep\nThink of AI as a fast, tireless intern: brilliant at first drafts, eager, and occasionally confidently wrong. You direct it, check it, and put your name on the result. Used that way, it multiplies you. Used blindly, it embarrasses you. This week is about using it the first way.\n\n## This week's destination\nA documented prompt library you actually reuse, and one worked automation that shows real time saved. That library is portfolio artefact number five, proof you can run a modern, AI-leveraged operation."
+            },
+            {
+              "kind": "video",
+              "title": "Prompt Engineering Tutorial - Master ChatGPT and LLM Responses",
+              "url": "https://www.youtube.com/watch?v=_ZvnD73m40o",
+              "duration_min": 41,
+              "creator": "freeCodeCamp.org",
+              "difficulty": "beginner",
+              "why": "freeCodeCamp is a top free education channel. This is a thorough grounding in how to write prompts that get reliable results. It is long, so watch the first ~15 minutes for the core ideas, then return for depth. Then practise on real operator tasks below."
+            },
+            {
+              "kind": "lesson",
+              "title": "The anatomy of a prompt, step by step",
+              "body": "## Set up your tools\nCreate a free account on at least one of ChatGPT (chat.openai.com) and Claude (claude.ai). Both have capable free tiers. Keep one open in a pinned tab, it becomes part of your workflow, not a place you visit occasionally.\n\n## The four parts of a strong prompt\nA weak prompt is 'write an email about the delay'. A strong prompt has four parts:\n1. **Role:** who the AI should be. \"You are an experienced executive assistant.\"\n2. **Context:** the situation and key facts. \"A customer's order is 5 days late due to a courier delay; it will arrive Thursday; we are an e-commerce brand called Kola.\"\n3. **Task:** exactly what you want. \"Write a short, warm apology email that acknowledges the frustration, gives the new date, and offers free shipping on their next order.\"\n4. **Format:** how the output should look. \"Under 120 words, friendly but professional, no corporate jargon.\"\n\n## See the difference\nRun both in your AI tool: first 'write an apology email', then the full four-part version. The second produces something you could almost send. The gap between them is the entire skill of prompting.\n\n## Add an example for even better results\nIf you have a sample of the tone you want, paste it: \"Match the tone of this example: [paste].\" Showing beats telling. Now refine: if the first output is not right, do not start over, tell the AI what to change (\"make it warmer\", \"shorten by half\", \"remove the apology at the end\"). Iterating on the prompt is how pros work."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A strong prompt usually includes a role, the context and facts, the exact task, and the desired format.",
+                  "answer": true,
+                  "whenRight": "Yes. Role, context, task, format is the reliable recipe. Each part you add makes the output sharper and more usable.",
+                  "whenWrong": "It does. The four parts (role, context, task, format) are what turn a generic answer into one you could almost send as-is."
+                },
+                {
+                  "prompt": "If the first AI output is not quite right, you should start over with a brand-new prompt.",
+                  "answer": false,
+                  "whenRight": "Correct. Iterate instead: tell it what to change ('shorter', 'warmer', 'drop the last line'). Refining the conversation is faster and how pros work.",
+                  "whenWrong": "No need to restart. Just tell the AI what to fix. Iterating on the existing draft is faster than re-prompting from scratch."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn, write a four-part prompt",
+              "body": "- [ ] Create a free ChatGPT and/or Claude account\n- [ ] Run a weak prompt ('write an apology email') and save the result\n- [ ] Run a full four-part prompt (role, context, task, format) for the same email and save the result\n- [ ] Iterate once on the good version (ask for one specific change) and save that too\n\nDeliverable: the weak output, the four-part output, and the iterated output, with a sentence on what improved."
+            }
+          ]
+        },
+        {
+          "number": 1,
+          "title": "Prompt engineering fundamentals",
+          "summary": "Reliable techniques that work across every AI tool and task.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Techniques that consistently work",
+              "body": "## Beyond the four parts\nOnce you have role-context-task-format down, a few techniques sharpen results further:\n\n- **Give an example (few-shot).** Show one or two examples of input-and-desired-output. AI pattern-matches; examples beat description. \"Here are two captions I like: [...]. Write three more in that style.\"\n- **Ask for a specific structure.** \"Reply with: 1) a one-line summary, 2) three bullet risks, 3) a recommendation.\" Structured asks get structured, usable answers.\n- **Let it think for hard tasks.** For anything reasoning-heavy, add \"think step by step\" or \"first outline your approach, then do it.\" It noticeably improves quality on complex tasks.\n- **Constrain it.** \"Use only the information I gave you. If something is missing, ask me rather than guessing.\" This reduces invented facts.\n- **Assign a perspective.** \"Critique this email as a skeptical client would.\" Role-playing surfaces blind spots.\n\n## Iterate like a conversation\nTreat it as a dialogue, not a vending machine. Your second and third messages (\"more concise\", \"add a line about the discount\", \"that is too formal\") are where the real quality comes from. The people who get great output are not luckier; they refine.\n\n## When output is bad, debug the prompt\nBad output is almost always a prompt problem. Before blaming the tool, ask: did I give enough context? Was the task specific? Did I show the format I wanted? Nine times out of ten, adding the missing piece fixes it, and you learn a sharper prompt for next time."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Showing AI one or two examples of what you want (few-shot) usually beats only describing it.",
+                  "answer": true,
+                  "whenRight": "Yes. AI pattern-matches, so concrete examples of input and desired output produce closer results than description alone.",
+                  "whenWrong": "Examples win. AI learns the pattern from your samples, so 'here are two I like, do more like this' beats a long description."
+                },
+                {
+                  "prompt": "Telling AI 'use only the information I gave you, and ask if something is missing' helps reduce invented facts.",
+                  "answer": true,
+                  "whenRight": "Yes. Constraining it to your provided information and inviting it to ask instead of guess cuts down on confident fabrication.",
+                  "whenWrong": "It does help. That constraint discourages the model from filling gaps with made-up facts and nudges it to ask you instead."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Practise the techniques",
+              "body": "Pick one real operator task (e.g. drafting three social captions for Kola, or summarising a long supplier email).\n1. Use a few-shot prompt (give an example) and save the result.\n2. Ask for a specific output structure and save the result.\n3. Add a constraint ('only use what I gave you; ask if unclear') and note the difference.\n\nDeliverable: the three prompts and outputs, with one line on which technique helped most."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "AI for communication",
+          "summary": "Draft, edit, and adapt messages faster while keeping your voice.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Your daily writing co-pilot",
+              "body": "## The biggest daily win\nCommunication is most of an operator's day (Week 1), and AI is a superb writing co-pilot, if you stay the author. The goal is to write faster and clearer, not to sound like a robot.\n\n## High-value uses\n- **Improve a draft.** Write your rough version, then: \"Make this clearer and more concise without changing the meaning, and tell me what you cut.\" You stay in control and learn from the edits.\n- **Adjust tone.** \"Make this warmer\", \"make this more direct\", \"this needs to be firmer but still polite.\" Great for hard conversations.\n- **Adapt one message to many formats.** Turn an announcement into an email, a WhatsApp message, and a social post in one go.\n- **Catch the blind spot.** \"What might a busy founder misread in this message?\" surfaces ambiguity before you send.\n- **Reply in another language or fix a non-native draft** while keeping it natural.\n\n## Keep your voice\nThe danger is everything starting to sound the same, generic AI politeness. Two defences: feed it your own examples so it matches your voice, and always do a final human pass to add a specific, real detail (a name, a fact, a warm line). The best use of AI on communication is to sharpen your voice, not replace it.\n\n## What to never outsource blindly\nSensitive, emotional, or relationship-defining messages (a serious apology, firing a supplier, a delicate negotiation) should be human-led. Use AI to pressure-test your wording, but you write these. The client hired a person for exactly these moments."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The best use of AI on communication is to write everything for you so it all sounds polished and uniform.",
+                  "answer": false,
+                  "whenRight": "Correct. Uniform AI politeness is a weakness, clients notice it. Use AI to sharpen YOUR voice and always add a real human detail.",
+                  "whenWrong": "Uniform is the risk, not the goal. AI should accelerate and sharpen your writing, with a human pass that keeps it specific and in your voice."
+                },
+                {
+                  "prompt": "A serious apology or a delicate negotiation should be human-led, with AI only used to pressure-test wording.",
+                  "answer": true,
+                  "whenRight": "Yes. Relationship-defining messages are exactly what a client hired a person for. Let AI critique, but you write these.",
+                  "whenWrong": "Human-led is right. For sensitive, high-stakes messages, you write them; AI can stress-test the wording, but it should not author them."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "AI as writing co-pilot",
+              "body": "1. Take a rough email draft and ask AI to make it clearer and more concise without changing the meaning; note what it cut.\n2. Take one message and adapt it into three formats (email, WhatsApp, social post).\n3. Ask AI 'what could a busy founder misread here?' on a real message and fix any ambiguity.\n\nDeliverable: the before/after email, the three formats, and the misread-check result."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "AI for research and summarising",
+          "summary": "Compress long information into decisions, fast, then verify.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Turning walls of text into action",
+              "body": "## The summarising superpower\nOperators drown in long inputs: 40-message email threads, multi-page documents, meeting transcripts, supplier contracts. AI reads them in seconds and pulls out what matters, if you ask well.\n\n## High-value uses\n- **Thread to decision.** Paste a long email thread: \"Summarise this into the decision that was made and the action items, with who owns each.\" A 30-message chain becomes three lines.\n- **Document to key points.** \"Give me the five most important points in this document for a small business owner, and flag anything that looks risky.\"\n- **Meeting notes from a transcript.** Paste a transcript: \"Produce decisions made and action items as '[owner] will [task] by [date]'.\" (This is the Week 1 meeting-notes habit, automated.)\n- **Compare options.** Paste two supplier quotes: \"Compare these on price, terms, and delivery in a table.\"\n\n## The verification rule (non-negotiable)\nAI summaries can subtly distort or invent. For anything that matters, spot-check the summary against the source, especially numbers, names, and commitments. If AI says 'the supplier agreed to a 10% discount', confirm that is actually in the thread before you act on it. The summary saves you reading time, not thinking time.\n\n## Sourced research tools\nFor research questions, tools like Perplexity answer with citations, which makes them better than a plain chatbot for facts, you can click through to verify. Still verify; cited does not always mean correctly cited. Use AI to find and compress, then confirm before it reaches the founder."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "An AI summary of a contract or thread can be sent on without checking, because AI reads carefully.",
+                  "answer": false,
+                  "whenRight": "Correct. AI summaries can distort or invent, especially numbers and commitments. Spot-check against the source before acting.",
+                  "whenWrong": "Always verify. Summaries save reading time, not thinking time. Check key facts (numbers, names, promises) against the original."
+                },
+                {
+                  "prompt": "Asking AI to turn a meeting transcript into '[owner] will [task] by [date]' action items is a strong, legitimate use.",
+                  "answer": true,
+                  "whenRight": "Yes. That automates the Week 1 meeting-notes habit. Just verify the actions match what was actually agreed before sending.",
+                  "whenWrong": "It is a great use. Converting a transcript into clear owned action items is exactly what AI is good at, verify, then send."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Summarise and verify",
+              "body": "1. Paste a long email thread (real or invented, 15+ messages) and have AI extract the decision and action items; then verify against the thread.\n2. Paste a long article or document and ask for the five key points plus any risks; spot-check two points.\n3. Note one place the AI summary drifted or could have misled.\n\nDeliverable: the two summaries, your verification notes, and the drift you caught."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "AI-assisted reporting",
+          "summary": "Turn raw numbers and notes into a clean report a founder reads in a minute.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "From raw data to a readable report",
+              "body": "## The monthly-report grind, solved\nFounders want regular reports (sales, support, social, operations) but writing them is tedious. AI turns your raw inputs into a clean draft in minutes.\n\n## How to do it well\n1. **Gather the raw inputs.** Numbers, notes, a list of what happened. AI cannot report on what you do not give it.\n2. **Prompt with structure and audience.** \"You are an operations assistant. Turn these numbers into a one-page monthly report for a busy small-business owner. Structure: a headline summary, key wins, key issues, and one recommendation. Plain language, no jargon. Here is the data: [...]\"\n3. **Demand BLUF.** Ask for the headline takeaway first (Week 1 again). The founder should grasp the month in the first two lines.\n4. **Verify every number.** This is critical: AI can transcribe or calculate numbers wrong. Check each figure against your source data before sending. A report with a wrong number destroys trust faster than no report.\n\n## Make it a repeatable system\nSave the prompt as a template. Each month you paste in fresh numbers and get a consistent report in minutes. Consistency (the report always looks the same and lands the same way) is what makes a founder rely on it.\n\n## Charts and tables\nAI can suggest how to present data (which simple chart, what to put in a table) even if you build the visual in Sheets. \"What is the clearest way to show these three months of sales?\" is a useful question. Keep visuals simple, one clear point each."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "When AI drafts a report from your numbers, you must verify every figure before sending.",
+                  "answer": true,
+                  "whenRight": "Yes. AI can miscalculate or mis-transcribe numbers. One wrong figure destroys trust, so check each against your source data.",
+                  "whenWrong": "You must. Numbers are where AI errors are most damaging in a report. Verify every figure against the source before it goes out."
+                },
+                {
+                  "prompt": "Saving your report prompt as a template makes monthly reporting faster and more consistent.",
+                  "answer": true,
+                  "whenRight": "Yes. Paste fresh numbers into the same prompt each month and get a consistent report in minutes. Consistency builds the founder's trust.",
+                  "whenWrong": "It does. A reusable prompt turns reporting into a quick, repeatable system that produces the same clean format every time."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Build an AI-assisted report",
+              "body": "1. Invent a month of raw data for Kola (sales total, orders, top product, support tickets, social growth).\n2. Write a structured prompt and have AI produce a one-page monthly report (headline, wins, issues, one recommendation).\n3. Verify every number against your data and correct any errors.\n4. Save the prompt as a reusable Monthly Report template.\n\nDeliverable: the report, your number-verification note, and the saved prompt template."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Build your prompt library",
+          "summary": "Turn your best prompts into reusable assets you run every day.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "A prompt library is leverage you keep",
+              "body": "## Why a library\nJust like email templates (Week 1), your best prompts are assets worth saving. Re-inventing a good prompt each time is slow; a library means you paste a proven prompt, fill the blanks, and get a reliable result in seconds. This is what makes AI-leveraged operators fast and consistent.\n\n## What goes in it\nBuild a doc (or Notion page) of your go-to prompts, each with a title and `[brackets]` for the variable parts:\n- Draft/improve an email (with role, context, task, format baked in)\n- Summarise a thread into decision + actions\n- Turn a transcript into meeting notes\n- Draft a monthly report from numbers\n- Generate social captions in the brand voice\n- Brainstorm options / pros and cons for a decision\n- Compare two options in a table\n- Critique my draft as a skeptical client\n\n## Make them client-aware\nThe strongest prompts carry your client's context. A 'house style' prompt (\"Always write in Kola's voice: warm, plain, a little playful; we sell handmade West African goods; never use corporate jargon\") pasted at the start of a session makes everything on-brand. Save one of these per client.\n\n## The library compounds\nEvery time you craft a great prompt, add it. Within a few weeks you have a personal system that lets you handle in minutes what takes others hours, and you can show it to a future client as proof you run a modern operation. That library is the core of this week's portfolio piece."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Saving your best prompts in a reusable library is the AI equivalent of keeping email templates.",
+                  "answer": true,
+                  "whenRight": "Yes. A prompt library means you paste a proven prompt and fill the blanks, fast and consistent, instead of reinventing it each time.",
+                  "whenWrong": "It is exactly that. Reusable prompts are assets, just like templates, that make you quick and consistent on recurring AI tasks."
+                },
+                {
+                  "prompt": "A 'house style' prompt with your client's voice and facts makes AI output more on-brand.",
+                  "answer": true,
+                  "whenRight": "Yes. Pasting the client's voice and context at the start of a session keeps everything consistent and on-brand. Save one per client.",
+                  "whenWrong": "It does. Giving AI the client's voice and key facts up front means its drafts come out sounding like the client, not generic."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Build your prompt library",
+              "body": "Create a Prompt Library doc with at least eight reusable prompts (use `[brackets]` for variables): email draft/improve, thread summary, meeting notes, monthly report, social captions, options/pros-cons, compare-in-a-table, and a 'house style' prompt for Kola.\nTest three of them on real tasks and tweak based on results.\n\nDeliverable: the Prompt Library doc with at least eight prompts, three of them tested."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Light automation and AI's limits",
+          "summary": "Chain steps to save real time, and know exactly where AI must not go alone.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Automate the repetitive, guard the rest",
+              "body": "## Light automation\nYou do not need to be a developer to automate. Two accessible levels:\n- **Manual chains:** a documented sequence where AI does the heavy step. Example: paste raw numbers into your report prompt, AI drafts, you verify, you send. It is 'manual automation', a repeatable workflow that collapses a long task.\n- **No-code tools (Zapier, Make):** these connect apps so steps trigger automatically (e.g. a new form response creates a task, or an email gets auto-summarised). You will go deeper into these in the Automation-adjacent work later; for now, know they exist and that adding AI to them is powerful.\n\n## Measure the saving\nAn automation is only worth it if it saves real time. Time a task before and after adding AI. \"The monthly report went from 90 minutes to 20\" is a concrete, sellable result, and exactly the kind of thing that goes in your portfolio and your pitch.\n\n## AI's hard limits (memorise these)\n- **Hallucination:** it invents facts, sources, and details confidently. Verify anything factual.\n- **Privacy:** do not paste confidential client data (customer personal info, financials, passwords) into AI tools without checking the client is okay with it and the tool's data policy. When unsure, anonymise or do not paste.\n- **No real judgement:** it does not understand consequences. It will happily draft a message that damages a relationship. The judgement is yours.\n- **It is confidently wrong:** the dangerous part is the confidence. A wrong answer looks exactly like a right one.\n\n## The standing rule\nUse AI to go faster on the work, then read, verify, and own every output. Money, legal commitments, confidential data, and sensitive relationships always keep a human firmly in the loop."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "It is fine to paste a client's confidential customer data into any AI tool to save time.",
+                  "answer": false,
+                  "whenRight": "Correct. Check the client's wishes and the tool's data policy first; when unsure, anonymise or do not paste. Privacy is a hard line.",
+                  "whenWrong": "No. Confidential data needs care: confirm it is allowed and the tool's policy is acceptable, or anonymise. Convenience does not override privacy."
+                },
+                {
+                  "prompt": "Timing a task before and after adding AI gives you a concrete, sellable result.",
+                  "answer": true,
+                  "whenRight": "Yes. '90 minutes to 20' is exactly the kind of measurable win that belongs in your portfolio and your pitch to clients.",
+                  "whenWrong": "It does. A measured time saving is concrete proof of value, far more persuasive than 'I use AI'. Always measure the before and after."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Automate one task and measure it",
+              "body": "1. Pick one recurring task you do (report, summary, caption set, email batch).\n2. Time how long it takes the manual way.\n3. Design an AI-assisted workflow for it (prompt + your verification step) and time the new way.\n4. Write the before/after time and list two of AI's limits you stayed alert to.\n\nDeliverable: the documented workflow with before/after times and the limits noted."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship: your AI-assisted operations system",
+          "summary": "Package your prompt library and a worked automation. Portfolio artefact #5.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Proof you run a modern operation",
+              "body": "## The week's deliverable\nToday you package an AI-assisted operations system for Kola: your prompt library (10+ reusable prompts) plus a worked example of one workflow that went from hours to minutes, with the before/after time shown. This is portfolio artefact number five.\n\n## Why this is worth a lot\nMost assistants either ignore AI or use it carelessly. An operator who can show a documented, judgement-guarded AI system, prompts that produce reliable output, a measured time saving, and clear rules about what stays human, is exactly who founders want in the current market. You are not just 'someone who uses ChatGPT'; you are someone who has built a system that makes the whole operation faster without sacrificing quality or trust.\n\n## The standard\nYour system should pass three tests: the prompts produce genuinely usable output (not generic mush), the workflow shows a real measured saving, and the documentation states clearly where a human must stay in the loop. That combination, speed with judgement, is the whole point of this week."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "What makes an AI operations system valuable to a founder is speed combined with clear judgement about what stays human.",
+                  "answer": true,
+                  "whenRight": "Yes. Speed alone is risky; judgement alone is slow. The combination, fast AND safe, is exactly what founders want now.",
+                  "whenWrong": "It is the combination. A system that is fast but reckless is dangerous; the value is speed WITH clear human-in-the-loop rules."
+                },
+                {
+                  "prompt": "Showing a measured time saving ('90 to 20 minutes') is stronger portfolio proof than just saying 'I use AI'.",
+                  "answer": true,
+                  "whenRight": "Yes. A concrete, measured result is persuasive and specific; 'I use AI' is a claim anyone can make. Measure and show it.",
+                  "whenWrong": "Measured wins. Founders trust numbers. A documented before/after time is far more convincing than a vague claim of AI fluency."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Final build: the AI operations system",
+              "body": "This is the Week 5 portfolio deliverable. Assemble:\n1. **A documented prompt library** of at least 10 reusable, tested prompts (with a Kola house-style prompt).\n2. **One worked automation/workflow** for a recurring task, showing the before/after time saved and your verification step.\n3. **A short 'guardrails' note** stating what you always verify and what stays fully human (money, legal, confidential data, sensitive relationships).\n\nExport it as a PDF named `AI-Operations-System-YourName.pdf`. This is portfolio artefact #5."
+            }
+          ]
+        }
+      ],
       "topics": [
-        "Prompt engineering fundamentals (role, context, task, format)",
-        "Using ChatGPT, Claude, Gemini, and Perplexity well",
-        "AI for drafting and editing communication",
-        "AI for research acceleration and summarising",
-        "AI-assisted reporting and data summaries",
-        "Building reusable prompt templates",
-        "Light workflow automation concepts",
-        "Knowing AI's limits: hallucination, privacy, judgement"
+        "AI as leverage: strengths and hard limits",
+        "Prompt anatomy: role, context, task, format",
+        "Prompt techniques: few-shot, structure, constraints",
+        "AI for drafting, editing, and adapting communication",
+        "AI for summarising and research (with verification)",
+        "AI-assisted reporting from raw data",
+        "Building a reusable prompt library",
+        "Light automation, hallucination, privacy, and judgement"
       ],
       "tasks": [
-        "Write structured prompts that get reliable results",
-        "Build a personal prompt library for recurring tasks",
-        "Use AI to summarise a long document into an action list",
-        "Use AI to draft and then improve a report",
-        "Design an AI-assisted workflow for a real recurring task"
+        "Set up ChatGPT and/or Claude and write four-part prompts",
+        "Practise few-shot, structured, and constrained prompts",
+        "Use AI to improve drafts and adapt messages to formats",
+        "Summarise threads and documents, then verify",
+        "Build an AI-assisted monthly report and verify every number",
+        "Build a reusable prompt library (10+ prompts)",
+        "Automate one task and measure the time saved"
       ],
-      "project": "Build an 'AI-assisted operations system' for Kola: a documented prompt library (at least 10 reusable prompts for drafting, research, summarising, and reporting), plus a worked example of an automated research-to-report workflow that took a task from hours to minutes. Show before/after time. Portfolio artefact #5.",
+      "project": "Build an AI-assisted operations system for Kola: a documented prompt library of 10+ reusable, tested prompts (including a house-style prompt), one worked automation showing real before/after time saved, and a guardrails note on what stays human. Portfolio artefact #5.",
       "exercises": [
-        "Write a structured prompt (role, context, task, format) and refine it twice",
-        "Summarise a long thread or document into a decisions-and-actions list",
-        "Build five reusable prompt templates for your most common tasks",
-        "Use AI to draft a report, then edit it to sound human and accurate"
+        "Compare a weak prompt with a four-part prompt and iterate once",
+        "Use few-shot, structured, and constrained prompting on real tasks",
+        "Improve a draft and adapt one message into three formats with AI",
+        "Summarise a long thread into decisions and actions, then verify",
+        "Build an AI-assisted report and verify every figure"
       ],
       "questions": [
         "What are the parts of a prompt that reliably get good output?",
@@ -1722,34 +2056,35 @@
       "outputs": [
         "A documented prompt library (10+ prompts)",
         "A before/after automated workflow example",
-        "An AI-assisted report",
-        "A summary turning a long document into actions"
+        "An AI-assisted report with verified numbers",
+        "A guardrails note on human-in-the-loop limits"
       ],
       "mastery_questions": [
-        "Write a structured prompt using role, context, task, and output format",
-        "Improve a weak prompt and explain why the new version is better",
-        "Use AI to summarise a long document into a decisions-and-actions list",
-        "Build five reusable prompt templates for recurring operator tasks",
-        "Draft a report with AI and edit it for accuracy and human tone",
-        "Use Perplexity (or similar) for sourced research and verify the sources",
-        "Catch a hallucinated fact in AI output and correct it",
-        "Design a multi-step workflow where AI does the repetitive part",
-        "Measure time saved on one task before and after adding AI",
-        "Document an AI workflow so a teammate could reuse it"
+        "Write a four-part prompt (role, context, task, format) and show the improvement over a weak one",
+        "Use a few-shot prompt with an example to get on-style output",
+        "Add a constraint that reduces invented facts and explain why it helps",
+        "Use AI to improve a draft and report what it cut",
+        "Summarise a long thread into decisions and owned action items, then verify",
+        "Build an AI-drafted report and verify every number against the source",
+        "Create a reusable prompt with [brackets] for the variable parts",
+        "Write a Kola house-style prompt that keeps output on-brand",
+        "Measure the time saved on one task before and after adding AI",
+        "State what you always verify and what stays fully human"
       ],
-      "ai_assist": "This whole week is AI assist, so the meta-skill is judgement: when to trust it, when to verify, when to keep a human fully in the loop (anything involving money, legal commitments, or a client's voice on sensitive matters). Build the habit of always reading and owning AI output. The tools are powerful; your judgement is the product.",
-      "pre_flight": "Before automating anything, list the tasks you do most often and rank them by how repetitive and rule-based they are. Those are your best AI targets. Creative judgement and relationship work stay human.",
+      "ai_assist": "This whole week is AI assist, so the meta-skill is judgement. Build the permanent habit of reading and owning every output. Use AI to accelerate drafting, summarising, reporting, and brainstorming; keep a human firmly in the loop on money, legal commitments, confidential data, and sensitive relationships. Verify every fact, number, and source before it reaches the founder. The tools are powerful; your judgement is the product, and 'the AI said so' is never a defence.",
+      "pre_flight": "Before automating anything, list the tasks you do most often and rank them by how repetitive and rule-based they are, those are your best AI targets. Creative judgement and relationship work stay human. Time your top target now so you can measure the saving at the end of the week.",
       "common_mistakes": [
         "Sending AI output without reading it, so errors and generic tone slip through",
         "Vague prompts that produce vague results, then blaming the tool",
         "Pasting confidential client data into tools without checking privacy",
-        "Trusting AI 'facts' and sources without verification"
+        "Trusting AI 'facts', numbers, and sources without verification",
+        "Letting everything sound the same generic AI voice instead of the client's"
       ],
-      "debug_help": "If AI keeps giving mediocre output, the prompt is the problem 90% of the time. Add the missing context: who you are, who it is for, the exact task, the format you want, and an example of good output. Iterate on the prompt instead of fixing the result by hand each time.",
+      "debug_help": "If AI keeps giving mediocre output, the prompt is the problem about 90% of the time, add the missing context: who you are, who it is for, the exact task, the format you want, and an example of good output. Iterate on the prompt instead of fixing the result by hand each time. If output sounds robotic, feed it your own examples and do a human pass. If it states a 'fact' you cannot find a source for, assume it invented it.",
       "stretch": [
-        "Build a simple no-code automation (e.g. a Zapier or Make zap) that uses AI",
-        "Create a 'house style' prompt so AI always writes in your client's voice",
-        "Compare two models on the same task and document which wins where"
+        "Build a simple no-code automation (Zapier or Make) that uses AI",
+        "Create a per-client house-style prompt for two different brand voices",
+        "Compare two AI models on the same task and document which wins where"
       ],
       "resources": [
         {
@@ -1761,6 +2096,11 @@
           "label": "Perplexity",
           "url": "https://www.perplexity.ai/",
           "note": "Free tier, sourced research"
+        },
+        {
+          "label": "Anthropic (Claude)",
+          "url": "https://claude.ai/",
+          "note": "Free tier, strong writing"
         }
       ]
     },
@@ -1769,30 +2109,364 @@
       "title": "Project and task management",
       "phase": "Team Operations",
       "commitment_hours": "6, 10",
-      "context": "When a founder says 'can you just keep this organised?', they mean project management. This week you learn to plan projects, break work into tasks, coordinate a team, and report progress using the tools companies actually run on: Trello, Asana, ClickUp, Monday. You will manage a complete project end to end for Kola and build the dashboards that tell everyone where things stand at a glance.",
+      "context": "When a founder says 'can you just keep this organised?', they mean project management. It is the skill that turns a pile of tasks and a vague goal into something that actually ships, on time, with everyone knowing what they own. This week you learn to plan projects, break work into tasks, coordinate a team, and report progress using the tools companies actually run on: Trello, Asana, ClickUp, Monday.\n\nYou will plan and run a complete project for Kola, the December holiday sale launch, end to end: the plan, the board, the team coordination, two status reports, and a dashboard. By Friday you can take 'we want to launch X by Y' and turn it into a tracked plan that gets there.\n\nA project manager's real job is not the board; it is making sure the right things happen in the right order and nothing important quietly stalls.",
+      "concept_check": [
+        {
+          "q": "A task on the board reads 'marketing'. Three weeks later nothing has happened. What is the most likely cause?",
+          "choices": [
+            "The team is lazy",
+            "The task is too big and vague, with no clear owner or deadline, so no one can start it",
+            "The board software is bad",
+            "Marketing is just hard"
+          ],
+          "correct": 1,
+          "explain": "Stalled work is almost always a task that is too big, with fuzzy ownership and no date. Break it into a small concrete next action, give it one named owner and a deadline, and it moves."
+        },
+        {
+          "q": "Ama asks 'how's the launch going?' Which answer is most useful?",
+          "choices": [
+            "'Lots happening, lots of emails, very busy!'",
+            "'On track for the 1st. Done: store updated, emails drafted. Next: finalise discounts (me, Thu). One risk: the photographer is delayed, backup booked.'",
+            "'Fine.'",
+            "'I'll let you know when it's finished.'"
+          ],
+          "correct": 1,
+          "explain": "A useful status report covers progress against the goal, what is next and who owns it, and any risks, not activity ('lots happening') but real status the founder can act on."
+        },
+        {
+          "q": "Why assign every task a single named owner rather than a team?",
+          "choices": [
+            "To blame someone if it fails",
+            "Because a task owned by 'the team' is owned by no one; one named owner makes it clear who acts",
+            "It does not matter who owns a task",
+            "So one person does all the work"
+          ],
+          "correct": 1,
+          "explain": "Shared ownership diffuses responsibility, everyone assumes someone else has it. One named owner per task is the simplest way to make sure things actually move."
+        }
+      ],
+      "days": [
+        {
+          "number": 0,
+          "title": "What project management is, and build your first board",
+          "summary": "Understand the PM mindset, then set up a board in Trello and learn its building blocks.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "The coordinator who makes things ship",
+              "body": "## What you are really managing\nA project is any goal with multiple steps and a deadline: a product launch, a website redesign, an event, onboarding a new supplier. Left informal, projects drift, steps get forgotten, people wait on each other, and the deadline arrives with half the work undone. The project manager's job is to make sure the right things happen in the right order and nothing important stalls quietly.\n\n## The core loop\nEvery project, big or small, runs the same loop:\n1. **Define** the goal and deadline (what does done look like, by when).\n2. **Break it down** into tasks.\n3. **Assign** each task an owner and a date.\n4. **Track** progress and surface blockers.\n5. **Report** status and adjust.\n\nMaster that loop and you can run any project in any tool.\n\n## The tools are interchangeable\nTrello, Asana, ClickUp, and Monday all do the same fundamental thing: a visual board of tasks you move through stages. Learn one well (we will use Trello, the simplest) and you can pick up the others in an hour, because the concepts transfer. Do not get hung up on the software; the thinking is the skill.\n\n## This week's destination\nYou will run Kola's December holiday-sale launch as a tracked project: a plan, a live board, team coordination, status reports, and a dashboard. That package is portfolio artefact number six, and 'I can run your projects' is one of the most in-demand operator skills."
+            },
+            {
+              "kind": "video",
+              "title": "How to use TRELLO - Tutorial for Beginners",
+              "url": "https://www.youtube.com/watch?v=geRKHFzTxNY",
+              "duration_min": 12,
+              "creator": "Simpletivity",
+              "difficulty": "beginner",
+              "why": "Scott from Simpletivity gives a clear, fast tour of Trello's boards, lists, and cards, the exact building blocks you will use this week. Watch it, then build your own board in the exercise."
+            },
+            {
+              "kind": "lesson",
+              "title": "Build your first board, step by step",
+              "body": "## Set up Trello\nGo to trello.com and sign up free. Create a new board called `Kola - Holiday Sale Launch`.\n\n## The building blocks\n- **Board:** the whole project (one board per project).\n- **Lists:** the columns, usually stages. Create three to start: `To Do`, `In Progress`, `Done`. (You can add `Blocked` or `Review` later.)\n- **Cards:** individual tasks. Add a few to `To Do`: 'Update store with sale items', 'Draft launch emails', 'Design sale graphics'. Each card is one task you drag rightward as it progresses.\n- **Card details:** click a card to add a description, a due date, a member (owner), a checklist of sub-steps, and labels (e.g. colour by area: marketing, store, suppliers).\n\n## See the flow\nDrag a card from To Do to In Progress to Done. That simple motion is the heartbeat of project management: at a glance, anyone sees what is waiting, what is active, and what is finished. A founder glancing at this board instantly knows where the launch stands, no meeting required.\n\n## Why visual beats a list\nA flat to-do list hides status. A board shows it: a pile-up in 'In Progress' means too much started at once; an empty 'Done' near the deadline is a warning. The visual layout turns the state of the project into something you can read in two seconds."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Learning the concepts of one project tool (board, lists, cards) means you can pick up the others quickly.",
+                  "answer": true,
+                  "whenRight": "Yes. Trello, Asana, ClickUp, and Monday share the same core ideas, so the thinking transfers. Learn one well, adapt to any.",
+                  "whenWrong": "It does transfer. The tools differ in details but share the board/list/card model. Master the concepts once and the software is interchangeable."
+                },
+                {
+                  "prompt": "A visual board shows project status more clearly than a flat to-do list.",
+                  "answer": true,
+                  "whenRight": "Yes. A board makes status visible at a glance, what is waiting, active, done, and warning signs like a pile-up. A flat list hides all that.",
+                  "whenWrong": "The board wins. Columns show the state of every task instantly; a flat list tells you the tasks but not where each one stands."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Your turn, build a board",
+              "body": "- [ ] Sign up for Trello (free) and create a `Kola - Holiday Sale Launch` board\n- [ ] Create three lists: To Do, In Progress, Done\n- [ ] Add at least six task cards to To Do\n- [ ] Open one card and add a due date, a description, and a label\n- [ ] Drag one card to In Progress to see the flow\n\nDeliverable: a screenshot (or share link) of your board."
+            }
+          ]
+        },
+        {
+          "number": 1,
+          "title": "Breaking a goal into tasks",
+          "summary": "Turn a vague goal into a sequence of small, doable, owned steps.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Decomposition: the heart of planning",
+              "body": "## Why goals stall\n'Launch the holiday sale' is a goal, not a task. You cannot 'do' it, which is exactly why vague goals stall. The skill is decomposition: breaking a goal into tasks small enough that each one has an obvious next action.\n\n## How to decompose\nWork backwards from done and ask 'what has to happen for this?' Keep splitting until each task is a single concrete action one person can do in a sitting. For Kola's launch:\n- Decide the sale dates and discount\n- Choose which products are on sale\n- Update the store: prices, a sale banner, a sale collection\n- Design the sale graphics\n- Write the launch email and two follow-ups\n- Schedule the social posts\n- Brief the support inbox on likely questions\n- Test the checkout with a discount code\n\nEach of those is concrete and ownable. 'Launch the sale' was not.\n\n## The right size for a task\nToo big ('do marketing') and it stalls. Too small ('open laptop') and it is noise. Aim for a task that is one clear action with a clear 'done', roughly an hour to a day of work. If a card keeps not moving, it is probably still too big, split it.\n\n## Sequence and dependencies\nSome tasks must come before others, you cannot write the launch email before deciding the discount. Note these dependencies so the plan runs in a possible order. Spotting that 'X is blocked until Y is done' before it happens is what keeps a project from stalling at the worst moment."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "'Launch the holiday sale' is a good, actionable task to put on a board as-is.",
+                  "answer": false,
+                  "whenRight": "Correct. That is a goal, not a task, you cannot 'do' it. Break it into concrete actions (set discount, update store, write email) that each have an owner.",
+                  "whenWrong": "It is a goal, not a task. It needs decomposing into small, concrete, ownable actions before anyone can actually start."
+                },
+                {
+                  "prompt": "If a card on the board keeps not moving week after week, it is probably too big and should be split.",
+                  "answer": true,
+                  "whenRight": "Yes. A stuck card usually means the task is too large or vague. Break it into a small, clear next action with one owner and it moves.",
+                  "whenWrong": "Splitting usually fixes it. Persistent stalling is the classic sign of a task that is too big; shrink it to one concrete next step."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Decompose the launch",
+              "body": "1. Take the goal 'Launch Kola's December holiday sale by the 1st'.\n2. Break it into 15 to 25 concrete tasks, each a single clear action.\n3. Mark any dependencies (which tasks must finish before others can start).\n4. Put them on your Trello board in To Do.\n\nDeliverable: the task list with dependencies noted, on the board."
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Boards, lists, cards, and labels",
+          "summary": "Use the board's features so status is obvious to everyone.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Make the board readable at a glance",
+              "body": "## A board is a communication tool\nThe board is not just for you; it is how the whole team and the founder see the project without a meeting. Set it up so anyone can read it in seconds.\n\n## Lists that match your workflow\nThree lists (To Do / In Progress / Done) suit most small projects. Add stages only if they earn their place: a `Blocked` list makes stalled work visible; a `Review` list works when things need approval before done. Resist over-engineering, more columns means more to maintain.\n\n## Labels for category\nUse coloured labels to group tasks by area: marketing, store, suppliers, support. Now you can glance at the board and see 'all the marketing work is still in To Do' even though tasks are scattered across lists. Labels turn a board into something you can filter and read by theme.\n\n## Cards that hold everything\nA good card is self-contained: a clear title (a verb: 'Write launch email'), a description with any context or links, a checklist of sub-steps, a due date, and an owner. The test: could the owner open this card and start working with no other explanation? If they would have to ask you something, add it to the card.\n\n## Keep it current\nA board is only useful if it reflects reality. The discipline is moving cards as work actually progresses and updating dates when they slip. A stale board ('everything still says To Do but half is done') is worse than no board, because people stop trusting it. Update it as part of your daily and weekly review."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Adding lots of lists/columns always makes a board more useful.",
+                  "answer": false,
+                  "whenRight": "Correct. More columns means more to maintain and a messier view. Add a stage only if it earns its place (e.g. Blocked, Review).",
+                  "whenWrong": "Not always. Over-engineering a board makes it harder to read and keep current. Keep stages minimal and meaningful."
+                },
+                {
+                  "prompt": "A board that is not kept up to date can be worse than having no board at all.",
+                  "answer": true,
+                  "whenRight": "Yes. A stale board misleads people and they stop trusting it. The board's whole value is reflecting reality, so keep it current.",
+                  "whenWrong": "It can be worse. If the board says 'To Do' when work is done, people are misinformed and lose trust in it. Keep it current or it backfires."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Set up the board properly",
+              "body": "On your launch board:\n1. Confirm your lists match the real workflow (add Blocked or Review only if useful).\n2. Add coloured labels by area (marketing, store, suppliers, support) and apply them to your cards.\n3. Make three cards fully self-contained: clear verb title, description, a checklist, due date.\n\nDeliverable: a screenshot of the labelled board and one fully-detailed card."
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Owners, deadlines, and dependencies",
+          "summary": "Make it unambiguous who does what, by when, and in what order.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Ownership is what makes work happen",
+              "body": "## The single most important rule\nEvery task has one named owner. Not 'the team', not 'us', one person who is responsible for it moving. A task owned by everyone is owned by no one; each person assumes someone else has it, and it stalls. Assigning a single owner is the simplest, highest-impact thing a coordinator does.\n\n## Every task has a date\nA task with no deadline is a wish. Dates create the gentle pressure that makes things happen and let you see what is due, late, or coming. When you assign a card, set its due date. As coordinator, your job is partly to chase the dates: a quiet nudge before something is due beats a scramble after it is late.\n\n## Dependencies: order matters\nMap which tasks block others. 'Schedule social posts' depends on 'design graphics'; 'send launch email' depends on 'finalise discount'. If you start tasks in an impossible order, people sit blocked. Sequencing the work so each task is ready when its turn comes is a quiet skill that separates smooth projects from chaotic ones.\n\n## Realistic estimates and buffer\nPeople underestimate how long things take, and projects slip. Add buffer before the real deadline, do not plan to finish the launch at 11pm on the 30th for a December 1st sale. Aim to be done a couple of days early so there is room for the inevitable surprise. A plan with no slack is a plan that misses.\n\n## The coordinator's daily habit\nEach day, glance at what is due soon and what is overdue, and nudge the owners. You are not doing all the work; you are making sure it flows. That gentle, consistent follow-through is exactly what a founder cannot do themselves while running the business, which is why they pay you to."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "Assigning a task to 'the whole team' is a reliable way to make sure it gets done.",
+                  "answer": false,
+                  "whenRight": "Correct. Shared ownership means everyone assumes someone else has it. One named owner per task is what actually makes work move.",
+                  "whenWrong": "It backfires. 'The team' owns nothing in practice. Give each task one named owner so responsibility is clear."
+                },
+                {
+                  "prompt": "Building buffer time before the real deadline is wise because projects usually slip.",
+                  "answer": true,
+                  "whenRight": "Yes. People underestimate task time and surprises happen. Aim to finish a couple of days early so there is room to absorb the slip.",
+                  "whenWrong": "Buffer is wise. Plans without slack miss, because tasks run long and surprises land. Target an early finish to protect the real deadline."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Assign owners, dates, and order",
+              "body": "On your launch board:\n1. Give every card a single named owner (invent team members: you, Ama, a designer, a support person).\n2. Set a realistic due date on each, working back from a December 1st launch with two days of buffer.\n3. List the key dependencies (which tasks must finish before others start).\n\nDeliverable: the board with owners and dates, plus a short dependency list."
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Coordinating a team",
+          "summary": "Keep people moving and aligned without nagging or chaos.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Moving work through people",
+              "body": "## Your job: flow, not control\nCoordinating a team means making sure work flows between people smoothly, handoffs happen, blockers get cleared, and everyone knows what is expected. You are the connective tissue, not the boss. Done well, the team barely notices the coordination; things just keep moving.\n\n## Clear handoffs\nMost delays happen at handoffs: the designer finishes the graphic but no one tells the person scheduling posts. As coordinator, you make handoffs explicit: when a card moves to Done, the next owner is notified and knows it is their turn. A comment on the card ('@scheduler graphics are ready, you are up') closes the gap.\n\n## The gentle nudge\nPeople are busy and forget. A short, friendly reminder before a due date ('hey, the launch email is due Thursday, all good?') is not nagging, it is your job, and people appreciate it because it keeps them from being caught out. The tone matters: helpful, not policing.\n\n## Surface and clear blockers\nWhen someone is stuck ('I cannot finish the store update until the prices are confirmed'), that blocker is now your problem to clear, get the prices confirmed, or escalate to the founder. A coordinator who actively hunts down blockers keeps the project moving; one who just watches the board does not.\n\n## Lightweight check-ins\nFor a team, a short regular check-in (an async message or a brief call) keeps everyone aligned: what is done, what is next, anything stuck. Keep it short and decision-focused, the goal is alignment, not a meeting that eats the morning. Often a written daily or twice-weekly update beats a call entirely."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A friendly reminder before a task is due counts as nagging and should be avoided.",
+                  "answer": false,
+                  "whenRight": "Correct. A helpful pre-deadline nudge is part of coordinating, and people appreciate it. Tone matters: helpful, not policing.",
+                  "whenWrong": "It is not nagging, it is the job. A gentle reminder keeps people from being caught out. The skill is the friendly tone, not avoiding the nudge."
+                },
+                {
+                  "prompt": "When a team member is blocked, clearing that blocker is the coordinator's problem to chase.",
+                  "answer": true,
+                  "whenRight": "Yes. A coordinator actively hunts and clears blockers (or escalates them). Just watching the board while someone stays stuck is not coordinating.",
+                  "whenWrong": "It is yours to chase. The coordinator's value is removing blockers so work flows, not merely noting that someone is stuck."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Coordinate the launch team",
+              "body": "Simulate coordination on your board:\n1. Write the handoff comment you would post when graphics are done and the scheduler is up next.\n2. Write a friendly pre-deadline nudge for an owner whose task is due in two days.\n3. A team member is blocked waiting on confirmed prices, write how you would clear or escalate it.\n4. Draft a short twice-weekly team check-in message (done / next / blocked).\n\nDeliverable: the four messages."
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Progress tracking and status reports",
+          "summary": "Tell the founder where the project really stands, in a form they can act on.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "Reporting status that means something",
+              "body": "## Activity is not progress\n'Lots happening, very busy' is not a status report, it is noise. A founder needs to know whether the project will hit its goal, what is next, and what might go wrong. Report progress against the goal, not how busy you have been.\n\n## The status report shape\nA useful update, weekly for an ongoing project, has four parts:\n1. **Headline:** on track / at risk / off track for the deadline. One line, up front.\n2. **Done since last update:** the meaningful completions.\n3. **Next:** what happens next and who owns it.\n4. **Risks/blockers:** anything threatening the deadline, and what you are doing about it.\n\nExample: \"Holiday sale, on track for Dec 1. Done: store updated, emails drafted, graphics complete. Next: schedule posts (me, Mon) and test checkout (me, Tue). Risk: the discount code plugin is glitchy, I am testing a fix today; will escalate if not resolved by Wed.\"\n\n## Honesty about risk\nThe hardest and most valuable part is flagging risk early. A founder would much rather hear 'this might slip, here is my plan' on Monday than 'it slipped' on the deadline. Surfacing problems early, with a proposed response, is what makes a founder trust you with bigger things. Hiding a slipping deadline is the fastest way to lose that trust.\n\n## Cadence and consistency\nSend the update on a regular rhythm (e.g. every Friday) so the founder knows when to expect it and never has to ask. Consistency turns your reporting into something they rely on, the project is handled, and they will hear if it is not."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A good status report leads with whether the project is on track, at risk, or off track.",
+                  "answer": true,
+                  "whenRight": "Yes. Headline first (BLUF): the founder gets the bottom line immediately, with detail underneath if they want it.",
+                  "whenWrong": "It should lead with that. The on-track/at-risk verdict is the thing the founder most needs; put it first, then the detail."
+                },
+                {
+                  "prompt": "If a deadline might slip, it is better to flag it early with a plan than to hope you recover before anyone notices.",
+                  "answer": true,
+                  "whenRight": "Yes. Early warning with a proposed response builds trust; a silent slip discovered at the deadline destroys it. Flag risk early.",
+                  "whenWrong": "Flag it early. Founders far prefer 'this might slip, here is my plan' on Monday over a surprise miss on the deadline. Silence is the costly choice."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Write two status reports",
+              "body": "1. Write a week-1 status report for the launch (headline, done, next, risks), with the project on track.\n2. Write a week-2 report where one risk has materialised (e.g. the photographer is delayed). Show how you flag it and what you are doing about it.\n\nDeliverable: the two status reports."
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Dashboards and handling delays",
+          "summary": "Show project health at a glance and keep moving when things go wrong.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "At-a-glance health, and recovering from slips",
+              "body": "## The dashboard\nA dashboard is a single view that shows project health without reading every card: how many tasks are done versus remaining, what is overdue, what is blocked, and whether you are on pace. In Trello you can approximate this with a clear board layout, labels, and the count of cards per list; tools like Asana and ClickUp have built-in dashboard views with charts. The point is the same: a founder (or you) glances at it and instantly knows if the project is healthy.\n\n## What makes a dashboard useful\n- **Progress:** done vs total (a simple 'we are 12 of 20 tasks done, on pace for the 1st').\n- **Overdue:** anything past its date, flagged.\n- **Blocked:** anything stuck, so it is visible and gets cleared.\n- **Upcoming:** what is due in the next few days.\n\nKeep it simple, one screen the founder reads in ten seconds. A cluttered dashboard nobody reads is worse than a clear sentence.\n\n## When things slip (they will)\nProjects rarely go exactly to plan. A task runs long, someone gets sick, a supplier is late. The coordinator's job is to re-plan calmly, not panic:\n1. **Assess the impact:** does this threaten the deadline, or just shuffle the order?\n2. **Re-sequence:** can other work continue while this is stuck? Keep the rest moving.\n3. **Communicate:** tell the founder early, with the impact and your plan (Day 5's risk reporting).\n4. **Protect the goal:** cut or simplify the least important tasks if needed to hit the deadline. Knowing what to drop is as important as knowing what to do.\n\n## The mindset\nA great coordinator is unflappable. Problems are expected; the value is calm, communicated re-planning. The founder should feel that whatever goes wrong, you have it handled, that feeling is the whole product."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "A good dashboard is a single, simple view that shows project health in about ten seconds.",
+                  "answer": true,
+                  "whenRight": "Yes. Progress, overdue, blocked, upcoming, one clear screen. A cluttered dashboard nobody reads defeats the purpose.",
+                  "whenWrong": "Simple and glanceable is the goal. If it takes more than a few seconds to read, it is not doing its job. One clear screen."
+                },
+                {
+                  "prompt": "When a task slips, sometimes the right move is to cut or simplify a less important task to protect the deadline.",
+                  "answer": true,
+                  "whenRight": "Yes. Protecting the goal can mean dropping the least important work. Knowing what to cut is as much a skill as knowing what to do.",
+                  "whenWrong": "It can be right. If the deadline matters most, trimming lower-priority tasks to hit it is smart re-planning, not failure."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Build a dashboard and re-plan a slip",
+              "body": "1. Create a simple dashboard view for the launch (done vs total, overdue, blocked, upcoming), as a Trello layout or a short summary.\n2. A key task slips by three days four days before launch. Write your re-plan: impact, what keeps moving, what you tell Ama, and what (if anything) you would cut to protect the deadline.\n\nDeliverable: the dashboard and the re-plan note."
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Ship: run the project end to end",
+          "summary": "Deliver the full project package for Kola's launch. Portfolio artefact #6.",
+          "items": [
+            {
+              "kind": "lesson",
+              "title": "The complete project, packaged",
+              "body": "## The week's deliverable\nToday you assemble the whole project into a portfolio package: the plan, the live board (with owners, dates, labels, dependencies), two status reports, and a dashboard. This is portfolio artefact number six, and it proves you can take a goal and a deadline and actually deliver it through other people.\n\n## Why this skill is in such demand\nFounders are full of ideas and short on execution. The person who can turn 'we should run a holiday sale' into a tracked, on-time launch is worth a great deal, because they convert intention into results. Project coordination also scales into bigger roles (operations coordinator, project manager) with higher pay. This package is your evidence.\n\n## The standard\nThree tests: the board is clear enough that a stranger could see the project's status in seconds; every task has an owner and a date; and the status reports show real progress against the goal with honest risk-flagging. If a founder could hand you their next launch based on this package, you have hit the bar."
+            },
+            {
+              "kind": "swipe",
+              "title": "Quick check, swipe to answer",
+              "cards": [
+                {
+                  "prompt": "The core value a project coordinator provides is turning a founder's intentions into delivered results.",
+                  "answer": true,
+                  "whenRight": "Yes. Founders have no shortage of ideas; execution is the gap. Reliably converting 'we should' into 'it is done, on time' is the whole value.",
+                  "whenWrong": "That is the value. The skill is execution, taking a goal and deadline and making it actually happen through coordination."
+                },
+                {
+                  "prompt": "A project board passes the standard if only you can understand its current status.",
+                  "answer": false,
+                  "whenRight": "Correct. The standard is that a stranger (or the founder) can read the status in seconds. A board only you understand is not done.",
+                  "whenWrong": "Not enough. The board is a communication tool; it must be clear to others. If only you can read it, it fails the standard."
+                }
+              ]
+            },
+            {
+              "kind": "exercise",
+              "title": "Final build: the project package",
+              "body": "This is the Week 6 portfolio deliverable. Assemble for Kola's holiday-sale launch:\n1. **The project plan** (goal, deadline, the decomposed tasks).\n2. **The live board** with lists, labelled cards, owners, due dates, and dependencies.\n3. **Two weekly status reports** (one on-track, one flagging a risk).\n4. **A dashboard** showing progress, overdue, blocked, and upcoming.\n\nKeep the board shareable and export the plan + reports as a PDF. This is portfolio artefact #6."
+            }
+          ]
+        }
+      ],
       "topics": [
-        "Project planning and breaking work into tasks",
-        "Task management boards (Trello, Asana, ClickUp, Monday)",
-        "Assigning owners, deadlines, and dependencies",
-        "Coordinating a team's work",
-        "Progress tracking and status reporting",
-        "Running a project from kickoff to delivery",
-        "Dashboards and at-a-glance status",
-        "Handling scope, delays, and blockers"
+        "The project-management loop: define, break down, assign, track, report",
+        "Boards, lists, cards, and labels (Trello/Asana/ClickUp/Monday)",
+        "Decomposing a goal into owned tasks",
+        "Owners, deadlines, and dependencies",
+        "Coordinating a team and clearing blockers",
+        "Progress tracking and status reports",
+        "Dashboards and at-a-glance health",
+        "Handling delays and re-planning calmly"
       ],
       "tasks": [
-        "Break a real project into tasks with owners and deadlines",
-        "Set up a project board in Trello or Asana",
-        "Track progress and report status to stakeholders",
-        "Identify and escalate blockers",
-        "Build a simple project dashboard"
+        "Build a project board in Trello",
+        "Decompose a goal into 15-25 owned tasks",
+        "Set owners, deadlines, and dependencies",
+        "Coordinate a team with handoffs, nudges, and blocker-clearing",
+        "Write weekly status reports",
+        "Build a project dashboard",
+        "Run a complete project end to end and package it"
       ],
-      "project": "Plan and 'run' a complete project for Kola, the December holiday sale launch: build the task board (with owners, deadlines, and dependencies), write the project plan, produce two weekly status reports, and create a dashboard showing progress at a glance. Portfolio artefact #6.",
+      "project": "Plan and run Kola's December holiday-sale launch as a tracked project: a project plan, a live board with owners/dates/labels/dependencies, two weekly status reports, and a dashboard showing progress at a glance. Portfolio artefact #6.",
       "exercises": [
-        "Decompose a launch into 15-25 tasks with owners and due dates",
-        "Build a Trello/Asana board with lists, cards, labels, and dates",
-        "Write a one-page project status report",
-        "Create a dashboard view that shows progress and blockers"
+        "Build a Trello board with lists, labelled cards, and a detailed card",
+        "Decompose a launch into 15-25 tasks with dependencies",
+        "Assign every card an owner and a realistic due date with buffer",
+        "Write two status reports (one on-track, one flagging a risk)",
+        "Build a simple dashboard and re-plan a slipped task"
       ],
       "questions": [
         "How do you break a vague goal into a trackable plan?",
@@ -1801,35 +2475,36 @@
       ],
       "outputs": [
         "A project plan with tasks, owners, and deadlines",
-        "A live project board",
+        "A live, labelled project board",
         "Two weekly status reports",
         "A progress dashboard"
       ],
       "mastery_questions": [
-        "Break a project goal into tasks with clear owners and deadlines",
-        "Set up a board with To Do / Doing / Done and meaningful labels",
-        "Add dependencies so blocked tasks are visible",
-        "Write a status report covering progress, risks, and next steps",
-        "Build a dashboard that shows project health at a glance",
-        "Identify a blocker and write the escalation message",
-        "Estimate and sequence tasks realistically",
+        "Break a project goal into 15-25 tasks with clear owners and deadlines",
+        "Set up a board with lists and meaningful labels",
+        "Note the dependencies so blocked tasks are visible",
+        "Assign every task one named owner and a realistic due date with buffer",
+        "Write a handoff message and a friendly pre-deadline nudge",
+        "Write a status report covering on-track/at-risk, done, next, and risks",
+        "Build a dashboard that shows progress, overdue, and blocked at a glance",
+        "Re-plan calmly when a task slips, protecting the deadline",
         "Run a project kickoff: goal, scope, roles, timeline",
-        "Update a board and re-plan when a deadline slips",
-        "Hand a project board to someone else with no verbal explanation needed"
+        "Hand a project board to someone else so they understand it with no explanation"
       ],
-      "ai_assist": "Use AI to break a goal into a task list, draft a project plan, and turn raw board updates into a clean status report. Ask it to spot risks and missing steps in your plan. You stay the coordinator who knows the people and the real priorities; AI just speeds the paperwork.",
-      "pre_flight": "Before building a board, write the project's one-line goal and its deadline. Every task should ladder up to that goal. If a task does not, question whether it belongs.",
+      "ai_assist": "Use AI to break a goal into a first-draft task list, draft a project plan, and turn your raw board notes into a clean status report. Ask it to spot missing steps and risks in your plan ('what am I forgetting for an e-commerce holiday launch?'). You stay the coordinator who knows the people, the priorities, and the real deadlines; AI just speeds the planning and paperwork. Verify its task list against reality before you commit to it.",
+      "pre_flight": "Before building a board, write the project's one-line goal and its hard deadline. Every task must ladder up to that goal; if one does not, question whether it belongs. Decide what 'done' looks like before you plan the steps to get there.",
       "common_mistakes": [
         "Tasks with no owner or no deadline, so nothing actually moves",
-        "A beautiful board no one updates, so it goes stale",
+        "A beautiful board no one updates, so it goes stale and misleads",
         "Reporting activity ('lots happening') instead of progress against the goal",
-        "Hiding blockers instead of escalating them early"
+        "Hiding blockers or a slipping deadline instead of flagging them early",
+        "Over-engineering the board with too many columns to maintain"
       ],
-      "debug_help": "If a project is drifting, it is usually because tasks are too big or ownership is fuzzy. Break the stuck task into smaller concrete steps and assign one named owner with one date. Momentum returns when the next action is small and clearly someone's job.",
+      "debug_help": "If a project is drifting, it is usually because tasks are too big or ownership is fuzzy, break the stuck task into a small concrete next action and assign one named owner with one date. If the board feels useless, you are probably not keeping it current; update it as part of your daily and weekly review. If a deadline is slipping, re-plan calmly: assess impact, keep other work moving, flag it early with a plan, and cut the least important tasks if needed.",
       "stretch": [
         "Learn one automation in your PM tool (auto-move cards, due-date reminders)",
         "Build a reusable project template for recurring launches",
-        "Create a RACI chart for who is responsible, accountable, consulted, informed"
+        "Create a RACI chart (responsible, accountable, consulted, informed) for the launch"
       ],
       "resources": [
         {
