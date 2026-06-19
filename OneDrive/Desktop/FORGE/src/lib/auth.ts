@@ -141,7 +141,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
  "full-stack-web": "#00c8ff", "mobile-engineering": "#ec4899",
  "devops-cloud": "#f59e0b", "cybersecurity": "#22c55e",
  "data-science": "#3b82f6", "data-analysis": "#14b8a6",
- "bi-analytics": "#f97316",
+ "bi-analytics": "#f97316", "remote-ops": "#7c3aed",
  };
  const trackColor = TRACK_COLORS[invite.roadmapSlug] ?? "#00c8ff";
  const { weekToTaskDetail, weekToTaskMilestone, weekToTaskResources, weekToTaskWhy, parseCommitmentHours } = await import("@/lib/curated-roadmaps");

@@ -189,6 +189,11 @@ const META: Record<string, { tagline: string; outcome: string; gradient: string 
  outcome: "Own the analytics layer for a whole business unit, Power BI, modelling, automation",
  gradient: "from-amber-500 via-orange-500 to-rose-600",
  },
+ "remote-ops": {
+ tagline: "Become the remote operator startups, founders and agencies hire, virtual assistant skills and beyond",
+ outcome: "Graduate with 10 real projects, a service package, and the skills to land paid remote work before you finish",
+ gradient: "from-indigo-500 via-violet-500 to-purple-600",
+ },
 };
 
 export const ROADMAP_META = META;
@@ -249,7 +254,7 @@ export function loadRoadmap(slug: string): Roadmap | null {
 export const PREVIEW_SLUGS = [
  "data-science", "data-analysis", "ai-engineering", "ml-engineering",
  "devops-cloud", "full-stack-web", "mobile-engineering", "cybersecurity",
- "bi-analytics", "ai-automation", "data-engineering",
+ "bi-analytics", "ai-automation", "remote-ops", "data-engineering",
 ];
 
 /**

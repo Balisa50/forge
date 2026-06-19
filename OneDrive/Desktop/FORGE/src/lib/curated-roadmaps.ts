@@ -32,6 +32,7 @@ const ICON: Record<string, string> = {
  "data-analysis": "TrendingUp",
  "bi-analytics": "ClipboardList",
  "ai-automation": "Zap",
+ "remote-ops": "Headset",
 };
 
 export function loadCuratedRoadmaps(): CuratedRoadmapPickerEntry[] {
@@ -53,7 +54,7 @@ export function loadCuratedRoadmaps(): CuratedRoadmapPickerEntry[] {
  // Show in a consistent order: AI/ML/Full Stack first, then the rest
  .sort((a, b) => {
  const priority = (s: string) =>
- ({ "ai-engineering": 0, "ml-engineering": 1, "ai-automation": 2, "full-stack-web": 3, "mobile-engineering": 4, "devops-cloud": 5, "cybersecurity": 6 }[s] ?? 99);
+ ({ "ai-engineering": 0, "ml-engineering": 1, "ai-automation": 2, "full-stack-web": 3, "mobile-engineering": 4, "devops-cloud": 5, "cybersecurity": 6, "remote-ops": 7 }[s] ?? 99);
  return priority(a.slug) - priority(b.slug);
  });
 }

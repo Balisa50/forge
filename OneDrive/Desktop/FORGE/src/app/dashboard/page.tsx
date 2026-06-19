@@ -26,6 +26,7 @@ const CANONICAL_TITLE_TO_SLUG: Record<string, string> = {
  "Data Analysis": "data-analysis",
  "BI Analytics": "bi-analytics",
  "AI Automation": "ai-automation",
+ "Remote Operations Professional": "remote-ops",
 };
 const normaliseTitle = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
 const NORM_TITLE_TO_SLUG: Record<string, string> = Object.fromEntries(

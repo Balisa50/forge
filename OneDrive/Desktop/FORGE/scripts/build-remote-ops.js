@@ -1,0 +1,1467 @@
+/**
+ * Authoring source of truth for the "Remote Operations Professional" track.
+ *
+ * Re-run to regenerate data/roadmaps/remote-ops.json:
+ *   node scripts/build-remote-ops.js
+ *
+ * This builder is CANONICAL. Do not hand-edit the generated JSON, re-running
+ * would clobber it. To add a week's day-by-day teaching, fill that week's
+ * `days` array here and re-run.
+ *
+ * Status: Week 1 fully authored (days D1-D7). Weeks 2-13 ship as week-level
+ * outlines (context/topics/tasks/project/outputs/mastery) and render in the
+ * Overview tab until their `days` arrays are written. Lessons serve live from
+ * the JSON, so adding days later reaches enrolled students on the next deploy.
+ *
+ * Recurring client persona across the track: Ama Mensah, founder of "Kola", an
+ * Accra-based e-commerce startup selling handmade West African goods that ships
+ * across the region. The student is Ama's new remote operations assistant.
+ */
+const fs = require("fs");
+const path = require("path");
+
+/* ============================================================ WEEK 1 */
+const week1 = {
+  number: 1,
+  title: "Professional communication",
+  phase: "Professional Foundations",
+  commitment_hours: "6, 10",
+  context:
+    "A remote operator lives or dies by the words they send. Nobody sees you work. They see your emails, your messages, your meeting notes, and your follow-through, and from those few signals they decide whether you are someone they can hand real responsibility to. This week is the foundation the whole track stands on, because every later skill (calendar, research, project management, support) is delivered through communication.\n\n" +
+    "You will be working for Ama Mensah, founder of Kola, an Accra-based e-commerce startup that sells handmade West African goods and ships across the region. Ama is busy, a little disorganised, and drowning in messages. Your job this week is to become the person whose emails she trusts without re-reading. By Friday you will have a reusable Communication Toolkit (your own templates) and three real executive emails written on Ama's behalf, the first pieces of your portfolio.\n\n" +
+    "The bar for this week is simple: a stranger should be able to read anything you send and know, in ten seconds, what it is about and what they need to do.",
+  days: [
+    {
+      number: 1,
+      title: "What the job really is, and why writing is most of it",
+      summary: "Set up your professional identity and understand what a remote operator is actually paid for.",
+      items: [
+        {
+          kind: "lesson",
+          title: "What a remote operator actually does",
+          body:
+            "## The job in one sentence\n" +
+            "A remote operator (virtual assistant, executive assistant, operations coordinator, the title changes, the work does not) takes work off a busy person's plate so that person can do the thing only they can do. Ama can design products and talk to suppliers. She cannot also answer 60 emails, book 4 meetings, chase 3 invoices, and keep the team's tasks straight. That second list is your list.\n\n" +
+            "## What you are actually paid for\n" +
+            "Not hours. Not tasks completed. You are paid for **reliability and judgement**. A founder is handing you access to their inbox, their calendar, sometimes their money. The thing they are buying is the feeling of *I do not have to check whether this got done.* Everything in this track builds toward earning that feeling.\n\n" +
+            "Here is the part most people miss: almost all of that trust is built through writing. You will rarely be in the same room as the people you work for. They form their entire opinion of you from your messages. A clear, calm, well-structured email tells them *this person has it handled.* A vague, rambling one tells them *I am going to have to double-check everything this person touches.* Same work, opposite outcome, decided by the words.\n\n" +
+            "## Case study: two assistants, same task\n" +
+            "Ama asks two assistants to follow up with a supplier who is late on a delivery.\n\n" +
+            "Assistant A sends: *\"Hi, just checking on the order, any update? Thanks.\"*\n\n" +
+            "Assistant B sends: *\"Hi Kwesi, following up on PO-114 (50 woven baskets), due last Friday the 6th. Could you confirm a new ship date by end of day tomorrow? If it will slip past the 15th, let me know and I will adjust our store listing. Thank you, Ama's team.\"*\n\n" +
+            "Both 'did the task'. But B named the order, stated the original deadline, asked for one specific thing by a specific time, and signalled what happens next. Ama can forward B's email without editing it. She has to rewrite A's. After a week of this, B gets handed bigger things and A gets micromanaged. That gap is the whole career.\n\n" +
+            "## This week's destination\n" +
+            "By Day 7 you will own a small library of templates for the messages you will send a hundred times (status update, follow-up, scheduling, saying no, apologising), plus three polished emails written for Ama. You are not learning 'how to email'. You are building the assets that make you fast and consistent under pressure.",
+        },
+        {
+          kind: "reading",
+          title: "Gmail Help Center",
+          url: "https://support.google.com/mail/",
+          why: "Most clients run on Gmail or Google Workspace. Skim the basics now (labels, filters, signatures) so the tool is never the thing slowing you down.",
+        },
+        {
+          kind: "exercise",
+          title: "Set up your professional identity",
+          body:
+            "Spend 30-40 minutes building the foundation you will use for the rest of the track.\n\n" +
+            "1. **Email address.** If your only address is something like `coolguy_232@...`, create a clean one: `firstname.lastname@gmail.com` or close to it. Clients judge this in half a second.\n" +
+            "2. **Email signature.** Set a simple signature in Gmail settings: your name, a one-line role (\"Remote Operations Assistant\"), and one contact method. No images, no quotes, no clutter.\n" +
+            "3. **Profile photo.** A clear, friendly headshot against a plain background. Phone camera is fine. Good light, no sunglasses.\n" +
+            "4. **A working doc.** Create one Google Doc titled \"Communication Toolkit, [Your Name]\". This is where every template you write this week will live. Paste in five empty headings now: Status Update, Follow-Up, Scheduling, Saying No, Apology / Bad News.\n\n" +
+            "Deliverable: a screenshot of your new signature, and the empty Toolkit doc shared with view access.",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "A remote operator is mostly paid for completing as many tasks as possible.",
+              answer: false,
+              whenRight: "Correct. You are paid for reliability and judgement, the feeling that things are handled without supervision. Volume without trust gets you micromanaged.",
+              whenWrong: "Not quite. Task volume is easy to fake and easy to get wrong. What clients actually buy is not having to check your work. That comes from reliability and judgement.",
+            },
+            {
+              prompt: "Assistant B's email worked because it named the order, gave a deadline, and asked for one specific thing.",
+              answer: true,
+              whenRight: "Yes. Specifics (which order, original deadline, one clear ask, by when, what happens next) are what make a message forwardable without edits.",
+              whenWrong: "Look again. B won because of specifics: the order number, the original due date, a single clear ask, a deadline, and the next step. That is the whole difference.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      number: 2,
+      title: "Writing that respects the reader's time",
+      summary: "Learn BLUF and the three-pass edit so a busy person can act on your message in seconds.",
+      items: [
+        {
+          kind: "lesson",
+          title: "BLUF: Bottom Line Up Front",
+          body:
+            "## The reader is skimming. Write for that.\n" +
+            "Ama reads your message on her phone, between two other things, while walking. She is not going to study it. If your main point is buried in paragraph three, she will miss it, and then you will both lose a day to the back-and-forth that follows.\n\n" +
+            "The fix is a habit the military, journalism, and consulting all independently arrived at: **Bottom Line Up Front (BLUF)**. Put the most important thing, the decision, the ask, the answer, in the first sentence. Then the supporting detail underneath, in case they want it.\n\n" +
+            "## Before and after\n" +
+            "Buried version:\n\n" +
+            "> *Hi Ama, I hope you are well. I have been looking into the printing options for the new packaging like you asked. There were a few vendors and I compared their prices and turnaround times, and one of them is closed next week for a holiday, which complicates things a bit. Anyway, after all that I think we should go with Accra Print Co because they are cheaper and faster. Let me know what you think.*\n\n" +
+            "BLUF version:\n\n" +
+            "> *Recommendation: use Accra Print Co for the new packaging. They are 20% cheaper and 3 days faster than the other two vendors. One catch, our second choice is closed all next week, so if you want a backup we should decide today. Details below.*\n\n" +
+            "Same information. But Ama can act on the second one in five seconds, and the detail is there if she wants it. The first one makes her do the work of finding the point.\n\n" +
+            "## The three-pass edit\n" +
+            "Good writing is rewriting. Before you send anything that matters, run three fast passes:\n\n" +
+            "1. **Point pass.** Is my main message in the first line? If not, move it there.\n" +
+            "2. **Cut pass.** Delete every word that does not change the meaning. \"I just wanted to quickly reach out to see if maybe\" becomes \"Could you\". \"At this point in time\" becomes \"now\". Hedging words (just, maybe, sort of, I think) make you sound unsure, cut most of them.\n" +
+            "3. **Action pass.** Is it obvious what the reader should do next, and by when? If there is an ask, it should be impossible to miss.\n\n" +
+            "This takes under a minute once it is a habit, and it is the single biggest upgrade to how seriously people take you.",
+        },
+        {
+          kind: "exercise",
+          title: "Rewrite three rambling messages",
+          body:
+            "Below are three messages an assistant actually sent Ama. Rewrite each one using BLUF and the three-pass edit. Aim to cut the length by at least a third while making the point clearer.\n\n" +
+            "1. *\"Hey! So I was thinking about the customer who emailed about the broken vase, and I am not totally sure what our policy is on refunds versus replacements, and I did not want to promise the wrong thing, so I was wondering if maybe you could let me know how you usually like to handle these kinds of situations when you get a chance? No rush!\"*\n\n" +
+            "2. *\"Hi Ama, just a quick update, things are going okay on the supplier side, I have been in touch with a couple of them and waiting to hear back from one, the other one replied but I need to double check something before I can confirm, will keep you posted.\"*\n\n" +
+            "3. *\"Hello, I wanted to reach out regarding the Instagram posts for next week because I had some ideas and also a question about whether we are still doing the discount thing and if so when, let me know your thoughts whenever.\"*\n\n" +
+            "Paste your three rewrites into your Toolkit doc under a new heading \"BLUF practice\". Then write one sentence on what was wrong with each original.",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "BLUF means saving your recommendation for the end so the reader follows your reasoning first.",
+              answer: false,
+              whenRight: "Right. BLUF is the opposite: the bottom line goes first, supporting detail after. Busy readers skim, so lead with the point.",
+              whenWrong: "Flip it. Bottom Line Up Front means the conclusion or ask comes first. Reasoning lives underneath for anyone who wants it.",
+            },
+            {
+              prompt: "Words like 'just', 'maybe', and 'I think' usually make a message stronger.",
+              answer: false,
+              whenRight: "Correct. Those are hedges. A few are fine for tone, but a pile of them makes you sound unsure. The cut pass removes most.",
+              whenWrong: "Other way around. Hedging words weaken you. Trim them in the cut pass so your ask reads as confident, not tentative.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      number: 3,
+      title: "The anatomy of a professional email",
+      summary: "Subject lines, structure, tone, and the cc/bcc/reply-all rules that separate pros from amateurs.",
+      items: [
+        {
+          kind: "lesson",
+          title: "Every part of an email, done right",
+          body:
+            "## The subject line is the email\n" +
+            "Half of whether your email works is decided before it is opened. A subject line should let the reader know the topic and urgency without opening it. Compare \"Question\" with \"Refund policy question, customer waiting, need answer today\". The second one gets handled first.\n\n" +
+            "Rules: be specific, front-load the keyword, and if there is a deadline, put it in. Update an existing thread's subject when the topic changes instead of replying to a three-week-old chain about something else.\n\n" +
+            "## The structure that always works\n" +
+            "1. **Greeting.** \"Hi Ama,\" is right for almost everyone. \"Dear Mr Owusu,\" for first contact with someone senior and formal. Get the name spelling right, every time.\n" +
+            "2. **One-line context or BLUF.** Why you are writing.\n" +
+            "3. **The body.** Short paragraphs. If there is more than one point, use a numbered or bulleted list. Walls of text do not get read.\n" +
+            "4. **A clear ask.** One sentence, ideally with a deadline: \"Could you approve this by Thursday so I can place the order?\"\n" +
+            "5. **Sign-off.** \"Thanks,\" / \"Best,\" then your name. Consistent, simple.\n\n" +
+            "## Tone: warm and competent\n" +
+            "You are aiming for warm and competent at the same time. Too cold (\"Per my last email, the deadline was Friday.\") reads as hostile. Too soft (\"sooo sorry to bother you again!!\") reads as junior. The middle is plain, friendly, direct: \"Quick reminder the deadline is Friday, let me know if you need more time.\"\n\n" +
+            "## cc, bcc, and reply-all, the rules that save your reputation\n" +
+            "- **cc** (carbon copy): everyone sees who is on it. Use for people who need visibility but not action. Putting a founder's name in cc on a vendor email quietly signals authority.\n" +
+            "- **bcc** (blind carbon copy): recipients cannot see the bcc list. Use it to introduce two people and then \"move someone to bcc\" so their inbox is spared the rest of the thread. Never use bcc to secretly loop someone in on a sensitive conversation, if it surfaces, it looks like a betrayal.\n" +
+            "- **reply-all**: the classic career landmine. Before you hit it, ask: *does every single person on this thread need my reply?* Usually the answer is no, and you should just reply to one person. Accidentally reply-all-ing \"sounds good!\" to 40 people is how you become a cautionary tale.\n\n" +
+            "## A small thing that signals a pro\n" +
+            "Attachments: mention the attachment in the body (\"Invoice attached\") and actually attach it before you hit send. The \"oops, here is the attachment\" follow-up is a tiny credibility leak you can simply stop doing by attaching first, writing second.",
+        },
+        {
+          kind: "reading",
+          title: "Grammarly blog",
+          url: "https://www.grammarly.com/blog/",
+          why: "A solid free reference for tone, grammar, and email phrasing. Browse the business-writing posts. Install the free browser extension to catch typos before clients do.",
+        },
+        {
+          kind: "exercise",
+          title: "Write five subject lines and one full email",
+          body:
+            "Part 1. Write a specific, scannable subject line for each of these situations:\n" +
+            "1. Asking Ama to approve a $300 ad budget by Friday.\n" +
+            "2. Telling the team a Monday meeting moved to Tuesday 10am.\n" +
+            "3. Following up with a supplier who has not replied in 4 days.\n" +
+            "4. Sending a customer their refund confirmation.\n" +
+            "5. Flagging that the website has been down for 20 minutes (urgent).\n\n" +
+            "Part 2. Write the full email for situation 1 (the ad-budget approval), using the five-part structure. Keep it under 120 words. Save both parts in your Toolkit doc under \"Email anatomy practice\".",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "You should use bcc to quietly loop your manager into a tense email thread without the other person knowing.",
+              answer: false,
+              whenRight: "Correct. That is exactly the bcc misuse to avoid. If it ever surfaces it reads as a betrayal. Use bcc for introductions or to spare inboxes, not for secret surveillance.",
+              whenWrong: "No. Secret-looping with bcc is the one use that can blow up your reputation. bcc is for clean introductions and sparing people from long threads, never covert copying.",
+            },
+            {
+              prompt: "A subject line like 'Refund policy question, customer waiting, need answer today' is better than 'Question'.",
+              answer: true,
+              whenRight: "Yes. It tells the reader the topic and the urgency before they open it, so it gets prioritised correctly.",
+              whenWrong: "It is better. A specific subject with the topic and the deadline gets handled faster than a vague 'Question' that could be anything.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      number: 4,
+      title: "Managing up and asking good questions",
+      summary: "Status updates that build trust, expectation-setting, and the art of the well-formed question.",
+      items: [
+        {
+          kind: "lesson",
+          title: "Managing up: making your boss's life easy",
+          body:
+            "## The status update is your trust machine\n" +
+            "The fastest way to make a founder relax is the unprompted status update. When Ama does not hear from you, her brain fills the silence with worry: *did that get done? should I check?* A short, regular update removes that worry, and removing worry is the whole job.\n\n" +
+            "A good update has three parts, often called **Done / Doing / Blocked**:\n\n" +
+            "> *Quick Friday update:*\n" +
+            "> *Done: shipped all 12 orders, replied to every customer email, booked the supplier call for Tuesday.*\n" +
+            "> *Doing: building the September content calendar, will share Monday.*\n" +
+            "> *Blocked: need your okay on the $300 ad budget before I can launch the campaign.*\n\n" +
+            "Three lines. Ama now knows exactly where everything stands and the one thing she needs to do. Send one of these at a regular rhythm (end of day, or end of week) and you will be considered reliable before you have done anything heroic.\n\n" +
+            "## Set expectations before they are violated\n" +
+            "Amateurs go quiet when something will be late and hope no one notices. Pros flag it early: *\"Heads up, the report will be ready Thursday morning, not Wednesday as I said, the data export took longer than expected. Still fine for the Friday meeting.\"* A deadline you reset in advance is professionalism. A deadline you blow in silence is a broken promise. Same delay, completely different read.\n\n" +
+            "## Asking a good question\n" +
+            "You will need answers from busy people constantly. A bad question creates work: \"What should I do about the customer complaint?\" forces Ama to think from scratch. A good question does the thinking for her and leaves a simple decision:\n\n" +
+            "> *\"Customer says her order arrived damaged. I see two options: (a) full refund, or (b) free replacement plus a 10% discount on her next order, which keeps her as a customer. I lean toward (b). Okay to proceed?\"*\n\n" +
+            "Notice the pattern: state the situation, offer options you have already thought through, give your recommendation, ask for a yes/no. This is the single most valuable communication habit in this entire track. It turns you from someone who needs managing into someone who removes decisions from your boss's plate. Do this consistently and you will be handed real authority fast.",
+        },
+        {
+          kind: "exercise",
+          title: "Write a status update and three good questions",
+          body:
+            "Part 1. Imagine your week for Ama looked like this: shipped 8 orders, answered customer emails, drafted next week's social posts (waiting on her review), the photographer cancelled so product photos are delayed, and you need her to confirm whether to reorder the best-selling tote bag. Write a Done / Doing / Blocked update.\n\n" +
+            "Part 2. Turn each of these vague questions into a good question (situation + options + recommendation + simple ask):\n" +
+            "1. \"What do I do about the supplier who keeps being late?\"\n" +
+            "2. \"How should I respond to the negative Instagram comment?\"\n" +
+            "3. \"Should we offer free shipping or not?\"\n\n" +
+            "Save both in your Toolkit doc under \"Managing up\".",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "If a deadline is going to slip, the professional move is to stay quiet and try to catch up before anyone notices.",
+              answer: false,
+              whenRight: "Correct. Flag it early. A deadline reset in advance is professionalism, a deadline blown in silence is a broken promise.",
+              whenWrong: "No. Silence is the amateur move. Flag the slip early with a new date and impact. Resetting in advance protects trust, hoping no one notices destroys it.",
+            },
+            {
+              prompt: "A good question usually includes the situation, a couple of options you have already considered, and your recommendation.",
+              answer: true,
+              whenRight: "Yes. That format turns a question that creates work into a simple yes/no decision, which is exactly what busy people want from you.",
+              whenWrong: "It does. Situation plus options plus your recommendation plus a simple ask is the high-value pattern. It removes a decision from your boss instead of adding one.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      number: 5,
+      title: "Hard conversations",
+      summary: "Saying no, apologising, and turning an angry customer into a calm one, in writing.",
+      items: [
+        {
+          kind: "lesson",
+          title: "Saying no, apologising, and defusing anger",
+          body:
+            "## Saying no without burning the bridge\n" +
+            "You cannot say yes to everything, and trying to is how you miss real deadlines. The skill is declining in a way that keeps the relationship warm. The shape is: acknowledge, decline clearly, offer an alternative.\n\n" +
+            "> *\"I would love to get this out today, but I am finishing the supplier orders that ship this afternoon. I can have it to you first thing tomorrow, or if it is urgent I can pause the orders, your call.\"*\n\n" +
+            "That is a no, but it shows you are protecting priorities (which Ama wants) and it hands her the decision. \"No\" with a reason and an option is a sign of competence, not difficulty.\n\n" +
+            "## The real apology\n" +
+            "Everyone makes mistakes. The thing that separates pros is the recovery. A weak apology is all feelings: \"I am so so sorry, I feel terrible, this is so embarrassing.\" That makes the other person comfort *you*. A strong apology is brief, takes ownership, and moves straight to the fix:\n\n" +
+            "> *\"That is on me, I sent the wrong invoice. The correct one is attached. I have added a second check to my process so it does not happen again. Sorry for the confusion.\"*\n\n" +
+            "Own it, fix it, prevent it, move on. No grovelling. People trust someone who handles their own mistakes cleanly far more than someone who never admits one.\n\n" +
+            "## Defusing an angry customer\n" +
+            "When someone is angry, they want two things before they want a solution: to feel heard, and to feel like a human is on it. Lead with that. The pattern is **acknowledge, apologise for the experience, act**:\n\n" +
+            "> *\"Hi Fatou, you are right to be frustrated, an order three weeks late is not okay and I am sorry. Here is what I am doing right now: I have located your parcel (it is in Tema, out for delivery tomorrow), and I am refunding your shipping fee today. I will personally confirm once it is delivered. Thank you for your patience.\"*\n\n" +
+            "Notice what is missing: no defensiveness, no \"our policy states\", no blaming the courier. You can acknowledge a bad experience without admitting legal fault. The angry customer who is handled well often becomes the most loyal one, because most companies handle them badly and you did not.\n\n" +
+            "## The 24-hour rule for your own anger\n" +
+            "Sometimes a client or customer is rude and you will want to fire back. Do not send that email. Write it if it helps, then delete it. Wait, even an hour, then reply calm and professional. You will never regret the calm version. You will always regret the heated one, and in writing it lives forever.",
+        },
+        {
+          kind: "exercise",
+          title: "Defuse a real angry email",
+          body:
+            "A customer sends Kola this email:\n\n" +
+            "> *\"This is ridiculous. I ordered a gift for my mother's birthday TWO WEEKS ago and it still hasn't arrived. No updates, nothing. Her birthday was yesterday. I want my money back and I'm telling everyone I know not to buy from you. Absolutely unacceptable.\"*\n\n" +
+            "Write the reply, using acknowledge / apologise for the experience / act. Assume you checked and the parcel is genuinely delayed in transit but will arrive in 2 days. Decide what you can offer (refund of shipping, a discount, a small gift) and make it concrete. Keep it under 150 words and human, not corporate.\n\n" +
+            "Then write a second version of a different message: a polite 'no' to Ama who has asked you to also start managing her personal Instagram on top of your current workload. Save both under \"Hard conversations\" in your Toolkit.",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "A strong apology spends most of its words expressing how terrible and embarrassed you feel.",
+              answer: false,
+              whenRight: "Correct. Long apologies make the other person comfort you. Strong ones are brief: own it, fix it, prevent it, move on.",
+              whenWrong: "No. Excessive feeling forces the other person to reassure you. The strong version takes ownership briefly and gets straight to the fix and the prevention.",
+            },
+            {
+              prompt: "With an angry customer, you should lead by explaining your policy and why the delay was not your fault.",
+              answer: false,
+              whenRight: "Right. Defensiveness and policy-quoting escalate anger. Lead with acknowledgement and a concrete action, the person wants to feel heard and see a human acting.",
+              whenWrong: "Other way. Leading with policy or blame makes it worse. Acknowledge the experience, apologise for it, and show the concrete action you are taking. Solutions land better after the person feels heard.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      number: 6,
+      title: "Meetings, async, and being reliable",
+      summary: "Agendas, meeting notes, async vs sync, time zones, and the quiet habits that make you trusted.",
+      items: [
+        {
+          kind: "lesson",
+          title: "Meeting etiquette and the reliability habits",
+          body:
+            "## Meetings: your job is to make them worth it\n" +
+            "As an operator you will run and attend a lot of calls. The professional handles three moments around every meeting:\n\n" +
+            "**Before:** send an agenda. Even three bullet points (\"1. Approve September budget, 2. Decide on new courier, 3. AOB\") transforms a meeting from a ramble into a decision-making session. No agenda often means no point.\n\n" +
+            "**During:** be early, test your audio, mute when not speaking, and take notes. If you are running it, keep it on time. If you said 30 minutes, end at 30 minutes, people remember who respects their calendar.\n\n" +
+            "**After:** send notes within an hour, while it is fresh. The format that matters: **Decisions made** and **Action items (who does what, by when)**. The conversation fades from memory by tomorrow, your notes become the record everyone relies on. The person who sends crisp post-meeting notes quietly becomes the most important person in the room.\n\n" +
+            "## Async vs sync: know when not to meet\n" +
+            "Remote work runs on a choice: should this be a meeting (sync) or a message (async)? A good rule: if it is a simple update or a question with a clear answer, write it, do not schedule a call. Meetings are expensive (everyone stops working), so reserve them for things that genuinely need discussion: decisions with trade-offs, brainstorming, anything emotional or sensitive. Suggesting \"this could be an email\" at the right moment makes you look senior.\n\n" +
+            "## Time zones: the remote operator's daily reality\n" +
+            "You may work for someone in London, New York, or Dubai while sitting in Accra. Always confirm times with a zone: \"3pm GMT\" not just \"3pm\". Learn to convert quickly, and use a tool like Google Calendar (which shows the other person's time) or a world clock. Getting a time zone wrong and missing an international client's call is a brutal first impression you can simply avoid by always stating the zone.\n\n" +
+            "## The quiet habits that build a reputation\n" +
+            "None of these are glamorous, all of them compound:\n" +
+            "- **Reply to acknowledge, even if you cannot act yet.** \"Got it, I will have this done by Thursday\" stops the other person wondering if you saw the message.\n" +
+            "- **Do what you said you would do, by when you said.** This one habit outranks talent.\n" +
+            "- **Close the loop.** When a task is done, say so. Silence after \"can you handle X?\" leaves people anxious.\n" +
+            "- **Be findable and on time.** Boring, decisive. The reliable person gets the opportunities the brilliant-but-flaky person never will.",
+        },
+        {
+          kind: "exercise",
+          title: "Run a meeting on paper",
+          body:
+            "Ama wants a 30-minute team call to plan the December holiday sale. Produce the three artefacts a professional would create around it:\n\n" +
+            "1. **The agenda** (sent the day before). 3-5 bullet points with a rough time for each, plus the meeting goal in one line.\n" +
+            "2. **The meeting notes** (sent after). Invent a realistic set of decisions and write them up as: Decisions made, and Action items in the format \"[Owner] will [task] by [date]\".\n" +
+            "3. **An async judgement call.** Ama also asks \"should we hop on a call to discuss the new packaging colours?\" Write a one-line reply suggesting whether this should be a call or a message, and why.\n\n" +
+            "Save all three under \"Meetings\" in your Toolkit doc.",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "Sending meeting notes with clear decisions and action items is one of the highest-leverage things an operator does.",
+              answer: true,
+              whenRight: "Yes. The conversation fades by tomorrow, your notes become the record. The person who writes them becomes quietly indispensable.",
+              whenWrong: "It really is. Memory of a meeting fades fast, the written decisions and action items are what the team actually runs on afterward.",
+            },
+            {
+              prompt: "When working with an international client, writing '3pm' without the time zone is fine because they will figure it out.",
+              answer: false,
+              whenRight: "Correct. Always state the zone (\"3pm GMT\"). A missed call from an ambiguous time is an avoidable, brutal first impression.",
+              whenWrong: "No. Always include the zone. '3pm' means different things in Accra, London, and New York, and a missed international call over it is entirely avoidable.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      number: 7,
+      title: "Ship your Communication Toolkit",
+      summary: "Assemble your reusable templates and write three real executive emails. Your first portfolio piece.",
+      items: [
+        {
+          kind: "lesson",
+          title: "Turn a week of practice into an asset",
+          body:
+            "## Why templates make you fast and consistent\n" +
+            "You will write the same kinds of messages over and over: a follow-up, a status update, a scheduling note, a polite no, an apology. Re-thinking each one from scratch is slow and inconsistent. A professional keeps a personal template library: a starting point they adapt in seconds. That is what makes an experienced operator look effortless, they are not faster typists, they are not starting from a blank page.\n\n" +
+            "Today you finish that library, and you write three real emails for Ama that go straight into your portfolio. When a future client asks \"can you actually write well?\", you do not say yes, you show them these.\n\n" +
+            "## What makes a good template\n" +
+            "A template is a skeleton with the structure baked in and `[brackets]` for the parts that change:\n\n" +
+            "> **Follow-up template**\n" +
+            "> Subject: Following up, [topic] ([what you need])\n" +
+            "> Hi [name],\n" +
+            "> Following up on [thing], which was due [date]. Could you [specific ask] by [deadline]? If [obstacle], let me know and I will [your backup plan].\n" +
+            "> Thanks, [your name]\n\n" +
+            "The structure (specific reference, clear ask, deadline, backup plan) is the value. You adapt the brackets in 20 seconds and send something that reads like you thought hard about it.\n\n" +
+            "## The portfolio standard\n" +
+            "Everything you keep this week should pass the stranger test: someone who has never met you reads it and thinks *I would let this person handle my inbox.* Clean formatting, no typos, specific, warm, scannable. This is the bar for every deliverable in this track. A portfolio is not a list of things you learned, it is a set of artefacts that prove you can do the work. You are building the first one today.",
+        },
+        {
+          kind: "exercise",
+          title: "Final build: Toolkit + 3 executive emails",
+          body:
+            "This is the Week 1 portfolio deliverable. In your Communication Toolkit doc, complete two things.\n\n" +
+            "**Part A, the Toolkit.** Fill in all five template sections with clean, reusable templates (use `[brackets]` for the variable parts): Status Update, Follow-Up, Scheduling, Saying No, Apology / Bad News. Pull from your practice all week.\n\n" +
+            "**Part B, three executive emails for Ama.** Write three polished, ready-to-send emails as if you are Ama's assistant:\n" +
+            "1. An email to a supplier (Kwesi at Northern Weavers) following up on a late order of 50 baskets, originally due last Friday.\n" +
+            "2. An email to the whole Kola team announcing that the Monday standup is moving to Tuesdays at 10am GMT, with a one-line reason.\n" +
+            "3. A reply to an upset customer whose anniversary gift arrived a week late (you have refunded shipping and the item is now delivered).\n\n" +
+            "Each email must use what you learned: a scannable subject line, BLUF, a clear ask or next step, and a warm-but-competent tone. Proofread every one. Export the finished doc as a PDF named \"Communication-Toolkit-[YourName].pdf\". This is your first portfolio artefact and your Week 1 submission.",
+        },
+        {
+          kind: "swipe",
+          title: "Quick check",
+          cards: [
+            {
+              prompt: "A portfolio is best described as a list of the topics and tools you have studied.",
+              answer: false,
+              whenRight: "Correct. A portfolio is a set of real artefacts that prove you can do the work, not a list of things you learned. Show, do not tell.",
+              whenWrong: "Rethink it. Clients do not hire from a syllabus. A portfolio is the actual work, the emails, the toolkit, the projects, that proves you can do the job.",
+            },
+            {
+              prompt: "Keeping a personal template library is what lets experienced operators produce good messages quickly.",
+              answer: true,
+              whenRight: "Yes. They are not faster typists, they start from a proven skeleton and adapt the brackets, so they are fast and consistent at once.",
+              whenWrong: "It is. The speed comes from never starting from a blank page. A good template bakes in the structure, you just adapt the variable parts.",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  topics: [
+    "What a remote operator does and what they are really paid for",
+    "Business writing and BLUF (Bottom Line Up Front)",
+    "The three-pass edit (point, cut, action)",
+    "Email anatomy: subject lines, structure, tone",
+    "cc, bcc, and reply-all etiquette",
+    "Managing up: Done/Doing/Blocked status updates",
+    "Asking good questions (situation, options, recommendation)",
+    "Hard conversations: saying no, apologising, defusing anger",
+    "Meeting etiquette: agendas, notes, async vs sync, time zones",
+    "Reliability habits that build a professional reputation",
+  ],
+  tasks: [
+    "Create a clean professional email address, signature, and headshot",
+    "Start a Communication Toolkit doc with five template sections",
+    "Rewrite three rambling messages using BLUF and the three-pass edit",
+    "Write five scannable subject lines and one full approval email",
+    "Write a Done/Doing/Blocked status update and three well-formed questions",
+    "Draft a reply that defuses an angry customer, plus a polite 'no'",
+    "Produce a meeting agenda and post-meeting notes with action items",
+    "Finish the five-section Toolkit and write three executive emails for Ama",
+  ],
+  project:
+    "Build your Communication Toolkit: a single document containing five reusable message templates (status update, follow-up, scheduling, saying no, apology/bad news) plus three polished executive emails written on behalf of Ama Mensah, founder of Kola (a late-supplier follow-up, a team scheduling announcement, and an upset-customer reply). Export it as a clean PDF. This is portfolio artefact #1 of 10.",
+  exercises: [
+    "Rewrite three rambling messages with BLUF, cutting length by a third",
+    "Write five specific subject lines and one full budget-approval email",
+    "Write a status update and convert three vague questions into good ones",
+    "Draft a calm, concrete reply to a genuinely angry customer email",
+  ],
+  questions: [
+    "What is a remote operator actually paid for, and why is writing central to it?",
+    "What does BLUF mean and when do you use it?",
+    "When is bcc appropriate and when is it a reputation risk?",
+    "What are the three parts of a strong status update?",
+    "What is the structure of a good question that removes work from your boss?",
+  ],
+  outputs: [
+    "Communication Toolkit PDF with five reusable templates",
+    "Three polished executive emails written for Ama / Kola",
+    "Professional email address, signature, and headshot set up",
+    "A status update and a defused angry-customer reply",
+  ],
+  mastery_questions: [
+    "Set up a professional email address, signature, and profile photo and screenshot the result",
+    "Write a BLUF version of a rambling message so the main point is in the first line",
+    "Cut a wordy sentence by removing hedges (just, maybe, I think) without losing meaning",
+    "Write a scannable subject line that includes the topic and the deadline",
+    "Compose a five-part email (greeting, BLUF, body, clear ask with deadline, sign-off) under 120 words",
+    "Write a Done/Doing/Blocked status update for a realistic week of work",
+    "Turn a vague question into a good one with situation, options, and your recommendation",
+    "Write a reply that defuses an angry customer using acknowledge, apologise, act",
+    "Write a polite 'no' that acknowledges, declines clearly, and offers an alternative",
+    "Produce post-meeting notes listing decisions made and action items as '[owner] will [task] by [date]'",
+  ],
+  ai_assist:
+    "Use AI as your writing coach, never as the author who replaces your judgement. Three high-value moves this week: (1) Paste a draft email into ChatGPT or Claude and ask \"make this clearer and more concise without changing the meaning, and tell me what you cut and why\", then learn from the edits. (2) Ask it to role-play a difficult client so you can practise replies. (3) Ask \"what is the unstated assumption a busy founder might misread in this message?\" Always read and edit AI output before sending. A client can tell when a message is generic AI text, your job is to sound like a sharp human, so use AI to sharpen your voice, not to mute it.",
+  pre_flight:
+    "Before you write a single template, look at your own last 10 sent messages (email or WhatsApp). For each, ask: would a stranger know what this is about and what to do, in ten seconds? Count how many pass. Write the number down. At the end of the week, write the same ten messages again and compare. The gap is the skill you built.",
+  common_mistakes: [
+    "Burying the ask in the middle of a paragraph so a skimming reader misses it",
+    "Over-apologising or over-hedging (just, sorry to bother, no rush, maybe) until you sound junior",
+    "Vague subject lines like 'Question' or 'Update' that get deprioritised in a busy inbox",
+    "Going silent when a deadline will slip instead of flagging it early with a new date",
+    "Hitting reply-all when only one person needed the response",
+  ],
+  debug_help:
+    "When a message is not landing (no reply, or the wrong reply), do not just resend it louder. Re-read it as the recipient: is the ask obvious and is there a deadline? Is the main point in the first line? Did you ask for too many things at once? Most 'they are ignoring me' problems are really 'my message gave them no clear, single, easy next action' problems. Rewrite it down to one clear ask with a date, and it usually moves. If you are stuck on tone, paste it into Claude and ask whether it reads as warm and competent or cold or junior, then adjust.",
+  stretch: [
+    "Write a sixth template: the cold introduction email to a potential new client",
+    "Record a 60-second Loom-style voice note version of one update (many founders prefer voice)",
+    "Create a one-page 'how I communicate' doc you could send a new client to set expectations",
+  ],
+  resources: [
+    { label: "Gmail Help Center", url: "https://support.google.com/mail/", note: "Official, labels, filters, signatures" },
+    { label: "Grammarly blog", url: "https://www.grammarly.com/blog/", note: "Free, business-writing and tone" },
+    { label: "Google Workspace Learning Center", url: "https://support.google.com/a/users/", note: "Free, Docs/Gmail/Calendar basics" },
+  ],
+};
+
+/* ====================================== WEEKS 2-13 (outlines, days TBD) */
+
+const week2 = {
+  number: 2,
+  title: "Digital productivity systems",
+  phase: "Digital Productivity",
+  commitment_hours: "6, 10",
+  context:
+    "A remote operator is only as good as their system. When you are juggling Ama's inbox, the team's tasks, supplier files, and your own work, memory is not a plan. This week you build a digital workspace that never loses anything: a clean file structure, a second brain in Notion, and a personal productivity system so nothing falls through the cracks. By Friday you will have set up a real workspace you could hand to a client on day one and look like a seasoned pro.",
+  topics: [
+    "Google Workspace (Docs, Sheets, Drive) for operators",
+    "Microsoft Office basics and when clients use it",
+    "Notion as a second brain and client workspace",
+    "Cloud storage and file organisation (Drive, Dropbox)",
+    "A consistent file naming convention",
+    "Time management: time-blocking and the daily plan",
+    "Task and information capture so nothing is lost",
+    "Building a repeatable daily and weekly routine",
+  ],
+  tasks: [
+    "Build a clean Google Drive folder structure for a client",
+    "Adopt a file naming convention and apply it",
+    "Create a Notion workspace with a task board and notes hub",
+    "Set up a daily plan / time-blocking template",
+    "Organise a messy set of sample files into the new system",
+  ],
+  project:
+    "Build a complete digital workspace for Kola: an organised Drive (or Notion) with a logical folder structure, a naming convention, a task board, and a daily/weekly planning template. Document how it works in a one-page 'workspace guide' so anyone could navigate it. Portfolio artefact #2.",
+  exercises: [
+    "Design and document a file naming convention with five examples",
+    "Build a Notion task board with status columns and three sample tasks",
+    "Create a time-blocked daily plan template",
+    "Organise 20 messy sample files into a clean folder tree",
+  ],
+  questions: [
+    "Why does an operator need a system rather than relying on memory?",
+    "What makes a good file naming convention?",
+    "When would you choose Notion over Google Docs, or vice versa?",
+  ],
+  outputs: [
+    "Organised cloud workspace (Drive or Notion)",
+    "Documented file naming convention",
+    "Notion task board and notes hub",
+    "Daily/weekly planning template",
+  ],
+  mastery_questions: [
+    "Create a logical top-level folder structure for an e-commerce client",
+    "Write a file naming convention and rename five files to match it",
+    "Build a Notion (or Trello) task board with To Do / Doing / Done columns",
+    "Capture a set of mixed notes and tasks into one organised notes hub",
+    "Create a time-blocked daily plan for a realistic operator's day",
+    "Set up a shared Drive folder with correct view/edit permissions",
+    "Build a simple Google Sheet tracker for orders or tasks",
+    "Write a one-page guide explaining how your workspace is organised",
+    "Demonstrate finding any file in under 10 seconds using your system",
+    "Create a weekly review checklist that keeps the system clean",
+  ],
+  ai_assist:
+    "Use AI to design and document systems faster. Ask it to propose a folder structure for a specific business type, to draft your file naming convention, or to turn a messy brain-dump of tasks into a structured Notion board. Then refine, you own the system, AI just accelerates the first draft.",
+  pre_flight:
+    "Before building anything, write down how you currently lose things: where do tasks slip, where do files disappear, what do you forget? Your system should solve your real failure points, not a generic template.",
+  common_mistakes: [
+    "Building an over-complicated system you will not maintain",
+    "No naming convention, so files become unsearchable within a week",
+    "Capturing tasks in five different places instead of one",
+    "Setting wrong sharing permissions and leaking or blocking access",
+  ],
+  debug_help:
+    "If your system feels like a chore, it is too complex. Strip it back to the minimum that prevents lost work: one place for tasks, one logical file tree, one daily plan. A system you actually use beats a beautiful one you abandon.",
+  stretch: [
+    "Add a simple Notion CRM to track contacts and clients",
+    "Create reusable templates inside Notion for recurring work",
+    "Automate one repetitive step with a Google Sheet formula or filter",
+  ],
+  resources: [
+    { label: "Notion Help & Guides", url: "https://www.notion.so/help", note: "Free, official tutorials" },
+    { label: "Google Workspace Learning Center", url: "https://support.google.com/a/users/", note: "Free, Drive and Docs" },
+  ],
+};
+
+const week3 = {
+  number: 3,
+  title: "Email and calendar management",
+  phase: "Executive Support",
+  commitment_hours: "6, 10",
+  context:
+    "This is the bread and butter of executive support, and the skill most clients hire for first. You will learn to take a chaotic inbox to zero, build filters and labels that triage automatically, manage a calendar across time zones, and coordinate meetings without the endless back-and-forth. This week you run a mock CEO inbox and calendar for Ama and turn the chaos into calm. Master this and you are immediately hireable.",
+  topics: [
+    "Inbox management and getting to inbox zero",
+    "Email triage: labels, filters, folders, priority",
+    "Templates and canned responses for speed",
+    "Calendar management and scheduling",
+    "Appointment coordination without back-and-forth",
+    "Scheduling tools (Calendly and similar)",
+    "Time zones and international scheduling",
+    "Basic travel planning and itineraries",
+  ],
+  tasks: [
+    "Triage a messy mock inbox to zero with labels and filters",
+    "Build canned responses for common email types",
+    "Set up and manage a mock executive calendar",
+    "Coordinate a multi-person meeting across time zones",
+    "Create a simple travel itinerary",
+  ],
+  project:
+    "Run Ama's inbox and calendar for a simulated week: triage a 40-email mock inbox to zero using a label/filter system, schedule five meetings (including one international), resolve a double-booking, and produce a clean weekly calendar plus a travel itinerary for a supplier visit. Document your inbox system. Portfolio artefact #3.",
+  exercises: [
+    "Design a label and filter system and apply it to a mock inbox",
+    "Write four canned responses for recurring email situations",
+    "Schedule a meeting across three time zones and confirm in writing",
+    "Build a one-day travel itinerary with times, addresses, and confirmations",
+  ],
+  questions: [
+    "What is a repeatable system for getting an inbox to zero?",
+    "How do filters and labels save hours per week?",
+    "How do you coordinate a meeting without ten back-and-forth emails?",
+  ],
+  outputs: [
+    "A triaged mock inbox at zero with a documented system",
+    "A set of canned email responses",
+    "A managed weekly calendar with meetings booked",
+    "A travel itinerary document",
+  ],
+  mastery_questions: [
+    "Triage a messy inbox into actionable, waiting, reference, and archive",
+    "Create three Gmail filters that auto-label incoming mail",
+    "Write a canned response and save it for reuse",
+    "Schedule a meeting and send a confirmation with the time zone stated",
+    "Resolve a calendar double-booking and notify everyone affected",
+    "Set up a scheduling link (Calendly or similar) with availability rules",
+    "Convert a meeting time across three time zones correctly",
+    "Block focus time and buffer time on a calendar",
+    "Build a simple travel itinerary with flights, hotel, and meetings",
+    "Document your inbox-zero system so someone else could run it",
+  ],
+  ai_assist:
+    "Use AI to draft canned responses, summarise long email threads into the key decision and action, and convert time zones. Ask it to triage a list of email subjects into priority buckets so you learn the pattern. Always apply your own judgement on what is truly urgent.",
+  pre_flight:
+    "Before touching the inbox, define what 'done' means: what does inbox zero actually look like for this client, and which emails should never reach them at all? Decide your triage categories first.",
+  common_mistakes: [
+    "Treating every email as equally urgent",
+    "Archiving things you will need without a label to find them",
+    "Scheduling without confirming the time zone",
+    "Letting meetings stack with no buffer between them",
+  ],
+  debug_help:
+    "If the inbox keeps refilling to chaos, your filters are doing too little. Automate the repetitive sorting (newsletters, receipts, notifications) so only real decisions land in the main view. The goal is fewer items needing a human, not faster human sorting.",
+  stretch: [
+    "Build an email SOP a future assistant could follow",
+    "Set up snooze and follow-up reminders so nothing is dropped",
+    "Create a VIP filter that flags the most important senders",
+  ],
+  resources: [
+    { label: "Gmail Help: filters and labels", url: "https://support.google.com/mail/", note: "Free, official" },
+    { label: "Calendly Help Center", url: "https://help.calendly.com/", note: "Free, scheduling" },
+  ],
+};
+
+const week4 = {
+  number: 4,
+  title: "Online research",
+  phase: "Research",
+  commitment_hours: "6, 10",
+  context:
+    "Founders constantly need answers: who are our competitors, who could we sell to, is this supplier legitimate, what does the market look like. A research specialist turns vague questions into clear, sourced answers fast. This week you learn advanced search, source verification, competitor and market analysis, and lead generation, then deliver real research reports for Kola that Ama could act on immediately.",
+  topics: [
+    "Advanced search techniques and operators",
+    "Source evaluation and information verification",
+    "Market research fundamentals",
+    "Competitor analysis",
+    "Lead generation and prospect research",
+    "Data collection and organisation in spreadsheets",
+    "Presenting findings clearly",
+    "Avoiding misinformation and bias",
+  ],
+  tasks: [
+    "Run advanced searches to answer a specific business question",
+    "Verify a source and a piece of information",
+    "Build a competitor comparison table",
+    "Compile a prospect/lead list in a spreadsheet",
+    "Write a short research report with sources",
+  ],
+  project:
+    "Deliver three research assets for Kola: a startup/market research report on the West African handmade-goods market, a competitor analysis of five similar brands, and a prospect database of 25 potential wholesale buyers or stockists with contact details and notes. Cite sources throughout. Portfolio artefact #4.",
+  exercises: [
+    "Use search operators to find a specific, hard-to-find fact and cite it",
+    "Verify a claim using at least two independent reliable sources",
+    "Build a five-competitor comparison table with consistent criteria",
+    "Compile a 25-row prospect list with name, role, contact, and a note",
+  ],
+  questions: [
+    "How do you tell a reliable source from an unreliable one?",
+    "What belongs in a competitor analysis?",
+    "What makes a prospect list actually usable for outreach?",
+  ],
+  outputs: [
+    "A sourced market/startup research report",
+    "A competitor analysis table",
+    "A 25-row prospect database",
+    "A short written summary of findings",
+  ],
+  mastery_questions: [
+    "Use at least three search operators to narrow results to a precise answer",
+    "Evaluate a source for credibility (author, date, bias, corroboration)",
+    "Verify one fact against two independent sources",
+    "Build a competitor comparison with consistent columns and a takeaway",
+    "Compile a 20+ row prospect list with clean, structured data",
+    "Find verified contact details for a specific decision-maker",
+    "Summarise a long article into three sourced bullet points",
+    "Spot and flag a misleading or biased claim",
+    "Organise research findings into a readable one-page report",
+    "Cite every claim so a reader can trace it back",
+  ],
+  ai_assist:
+    "Use AI to accelerate research, but verify everything it tells you, AI can invent facts and sources. Good uses: brainstorming search angles, summarising long documents you paste in, structuring a report, drafting a competitor framework. Bad use: trusting an unsourced 'fact' it generates. Treat AI as a fast intern whose work you always fact-check.",
+  pre_flight:
+    "Before researching, write the exact question you are answering and what a useful answer looks like. Vague research ('find stuff about competitors') wastes hours. Specific questions ('which five brands sell similar baskets to West African diaspora buyers, and how do they price?') get answered.",
+  common_mistakes: [
+    "Trusting the first result without checking the source",
+    "Copying AI-generated facts without verifying them",
+    "Collecting data with no consistent structure, so it cannot be used",
+    "Researching endlessly without ever writing the answer down",
+  ],
+  debug_help:
+    "If research is taking forever, your question is too broad or you are perfectionist-collecting. Set a timebox, answer the specific question with the best sourced evidence you have, and note what is uncertain. A clear 80% answer delivered today beats a perfect one next week.",
+  stretch: [
+    "Build a reusable research-report template",
+    "Learn one enrichment tool for finding verified business emails",
+    "Create a source-credibility checklist you apply every time",
+  ],
+  resources: [
+    { label: "Google Search operators guide", url: "https://support.google.com/websearch/answer/2466433", note: "Free, official" },
+    { label: "Be Internet Awesome / source checking", url: "https://www.google.com/search?q=how+to+verify+a+source", note: "Free reference" },
+  ],
+};
+
+const week5 = {
+  number: 5,
+  title: "AI-powered virtual assistant",
+  phase: "AI Operations",
+  commitment_hours: "6, 10",
+  context:
+    "AI is the force multiplier that lets one operator do the work of three, if you know how to direct it. This week you learn practical prompt engineering and build AI into your daily workflow: drafting, summarising, research acceleration, reporting, and light automation. The operators who get hired in the next few years are the ones who make AI do the repetitive work while they apply judgement. You will build an AI-assisted assistant system for Kola.",
+  topics: [
+    "Prompt engineering fundamentals (role, context, task, format)",
+    "Using ChatGPT, Claude, Gemini, and Perplexity well",
+    "AI for drafting and editing communication",
+    "AI for research acceleration and summarising",
+    "AI-assisted reporting and data summaries",
+    "Building reusable prompt templates",
+    "Light workflow automation concepts",
+    "Knowing AI's limits: hallucination, privacy, judgement",
+  ],
+  tasks: [
+    "Write structured prompts that get reliable results",
+    "Build a personal prompt library for recurring tasks",
+    "Use AI to summarise a long document into an action list",
+    "Use AI to draft and then improve a report",
+    "Design an AI-assisted workflow for a real recurring task",
+  ],
+  project:
+    "Build an 'AI-assisted operations system' for Kola: a documented prompt library (at least 10 reusable prompts for drafting, research, summarising, and reporting), plus a worked example of an automated research-to-report workflow that took a task from hours to minutes. Show before/after time. Portfolio artefact #5.",
+  exercises: [
+    "Write a structured prompt (role, context, task, format) and refine it twice",
+    "Summarise a long thread or document into a decisions-and-actions list",
+    "Build five reusable prompt templates for your most common tasks",
+    "Use AI to draft a report, then edit it to sound human and accurate",
+  ],
+  questions: [
+    "What are the parts of a prompt that reliably get good output?",
+    "Where does AI help most in an operator's day, and where is it dangerous?",
+    "How do you keep AI output accurate and on-brand?",
+  ],
+  outputs: [
+    "A documented prompt library (10+ prompts)",
+    "A before/after automated workflow example",
+    "An AI-assisted report",
+    "A summary turning a long document into actions",
+  ],
+  mastery_questions: [
+    "Write a structured prompt using role, context, task, and output format",
+    "Improve a weak prompt and explain why the new version is better",
+    "Use AI to summarise a long document into a decisions-and-actions list",
+    "Build five reusable prompt templates for recurring operator tasks",
+    "Draft a report with AI and edit it for accuracy and human tone",
+    "Use Perplexity (or similar) for sourced research and verify the sources",
+    "Catch a hallucinated fact in AI output and correct it",
+    "Design a multi-step workflow where AI does the repetitive part",
+    "Measure time saved on one task before and after adding AI",
+    "Document an AI workflow so a teammate could reuse it",
+  ],
+  ai_assist:
+    "This whole week is AI assist, so the meta-skill is judgement: when to trust it, when to verify, when to keep a human fully in the loop (anything involving money, legal commitments, or a client's voice on sensitive matters). Build the habit of always reading and owning AI output. The Claude API and ChatGPT are tools, your judgement is the product.",
+  pre_flight:
+    "Before automating anything, list the tasks you do most often and rank them by how repetitive and rule-based they are. Those are your best AI targets. Creative judgement and relationship work stay human.",
+  common_mistakes: [
+    "Sending AI output without reading it, so errors and generic tone slip through",
+    "Vague prompts that produce vague results, then blaming the tool",
+    "Pasting confidential client data into tools without checking privacy",
+    "Trusting AI 'facts' and sources without verification",
+  ],
+  debug_help:
+    "If AI keeps giving mediocre output, the prompt is the problem 90% of the time. Add the missing context: who you are, who it is for, the exact task, the format you want, and an example of good output. Iterate on the prompt instead of fixing the result by hand each time.",
+  stretch: [
+    "Build a simple no-code automation (e.g. a Zapier or Make zap) that uses AI",
+    "Create a 'house style' prompt so AI always writes in your client's voice",
+    "Compare two models on the same task and document which wins where",
+  ],
+  resources: [
+    { label: "OpenAI prompt guidance", url: "https://platform.openai.com/docs/guides/prompt-engineering", note: "Free, official" },
+    { label: "Perplexity", url: "https://www.perplexity.ai/", note: "Free tier, sourced research" },
+  ],
+};
+
+const week6 = {
+  number: 6,
+  title: "Project and task management",
+  phase: "Team Operations",
+  commitment_hours: "6, 10",
+  context:
+    "When a founder says 'can you just keep this organised?', they mean project management. This week you learn to plan projects, break work into tasks, coordinate a team, and report progress using the tools companies actually run on: Trello, Asana, ClickUp, Monday. You will manage a complete project end to end for Kola and build the dashboards that tell everyone where things stand at a glance.",
+  topics: [
+    "Project planning and breaking work into tasks",
+    "Task management boards (Trello, Asana, ClickUp, Monday)",
+    "Assigning owners, deadlines, and dependencies",
+    "Coordinating a team's work",
+    "Progress tracking and status reporting",
+    "Running a project from kickoff to delivery",
+    "Dashboards and at-a-glance status",
+    "Handling scope, delays, and blockers",
+  ],
+  tasks: [
+    "Break a real project into tasks with owners and deadlines",
+    "Set up a project board in Trello or Asana",
+    "Track progress and report status to stakeholders",
+    "Identify and escalate blockers",
+    "Build a simple project dashboard",
+  ],
+  project:
+    "Plan and 'run' a complete project for Kola, the December holiday sale launch: build the task board (with owners, deadlines, and dependencies), write the project plan, produce two weekly status reports, and create a dashboard showing progress at a glance. Portfolio artefact #6.",
+  exercises: [
+    "Decompose a launch into 15-25 tasks with owners and due dates",
+    "Build a Trello/Asana board with lists, cards, labels, and dates",
+    "Write a one-page project status report",
+    "Create a dashboard view that shows progress and blockers",
+  ],
+  questions: [
+    "How do you break a vague goal into a trackable plan?",
+    "What does a useful status report contain?",
+    "How do you keep a project moving when someone is blocked?",
+  ],
+  outputs: [
+    "A project plan with tasks, owners, and deadlines",
+    "A live project board",
+    "Two weekly status reports",
+    "A progress dashboard",
+  ],
+  mastery_questions: [
+    "Break a project goal into tasks with clear owners and deadlines",
+    "Set up a board with To Do / Doing / Done and meaningful labels",
+    "Add dependencies so blocked tasks are visible",
+    "Write a status report covering progress, risks, and next steps",
+    "Build a dashboard that shows project health at a glance",
+    "Identify a blocker and write the escalation message",
+    "Estimate and sequence tasks realistically",
+    "Run a project kickoff: goal, scope, roles, timeline",
+    "Update a board and re-plan when a deadline slips",
+    "Hand a project board to someone else with no verbal explanation needed",
+  ],
+  ai_assist:
+    "Use AI to break a goal into a task list, draft a project plan, and turn raw board updates into a clean status report. Ask it to spot risks and missing steps in your plan. You stay the coordinator who knows the people and the real priorities, AI just speeds the paperwork.",
+  pre_flight:
+    "Before building a board, write the project's one-line goal and its deadline. Every task should ladder up to that goal. If a task does not, question whether it belongs.",
+  common_mistakes: [
+    "Tasks with no owner or no deadline, so nothing actually moves",
+    "A beautiful board no one updates, so it goes stale",
+    "Reporting activity ('lots happening') instead of progress against the goal",
+    "Hiding blockers instead of escalating them early",
+  ],
+  debug_help:
+    "If a project is drifting, it is usually because tasks are too big or ownership is fuzzy. Break the stuck task into smaller concrete steps and assign one named owner with one date. Momentum returns when the next action is small and clearly someone's job.",
+  stretch: [
+    "Learn one automation in your PM tool (auto-move cards, due-date reminders)",
+    "Build a reusable project template for recurring launches",
+    "Create a RACI chart for who is responsible, accountable, consulted, informed",
+  ],
+  resources: [
+    { label: "Trello Guide", url: "https://trello.com/guide", note: "Free, official" },
+    { label: "Asana resources", url: "https://asana.com/resources", note: "Free, PM guides" },
+  ],
+};
+
+const week7 = {
+  number: 7,
+  title: "Customer support operations",
+  phase: "Customer Experience",
+  commitment_hours: "6, 10",
+  context:
+    "Customer support is where many remote operators earn their first international paycheck, and where Kola keeps its customers. This week you learn to run support like a pro: handling tickets, writing a response library, the basics of CRMs and help desks, and resolving conflict so an angry customer becomes a loyal one. You will run a support simulation for Kola and build the response library that makes good support fast and consistent.",
+  topics: [
+    "Customer service fundamentals and mindset",
+    "Support channels and ticketing systems",
+    "Help desk tools (Zendesk, Freshdesk, Gmail-as-helpdesk)",
+    "Writing a response/macro library",
+    "CRM basics and customer records",
+    "Conflict resolution and de-escalation",
+    "Response time, tone, and consistency",
+    "Turning support into retention",
+  ],
+  tasks: [
+    "Handle a queue of mixed support tickets",
+    "Write a library of response templates (macros)",
+    "Set up or simulate a basic help desk / CRM",
+    "De-escalate a difficult customer in writing",
+    "Track and report support metrics",
+  ],
+  project:
+    "Run a Kola support simulation: work a queue of 15 realistic tickets (orders, refunds, complaints, questions), build a response library of 10+ macros, log customers in a simple CRM, and write a short report on what you handled and what could reduce future tickets. Portfolio artefact #7.",
+  exercises: [
+    "Resolve five varied support tickets with appropriate tone and action",
+    "Write 10 reusable response macros for common situations",
+    "De-escalate one genuinely angry customer in writing",
+    "Build a simple CRM/customer log and record interactions",
+  ],
+  questions: [
+    "What turns a one-time buyer into a loyal customer through support?",
+    "When do you use a template versus a personal reply?",
+    "How do you de-escalate without giving away the business?",
+  ],
+  outputs: [
+    "A worked ticket queue with resolutions",
+    "A 10+ macro response library",
+    "A simple CRM/customer log",
+    "A short support report with metrics",
+  ],
+  mastery_questions: [
+    "Resolve a refund request following a clear, fair policy",
+    "Write a response macro and adapt it for a real ticket",
+    "De-escalate an angry customer using acknowledge, apologise, act",
+    "Prioritise a queue by urgency and impact",
+    "Log a customer interaction in a CRM with the key details",
+    "Turn a complaint into a retention moment with a concrete gesture",
+    "Write a clear answer to a confused customer's question",
+    "Set and communicate a realistic response-time expectation",
+    "Identify a recurring ticket type and propose a fix that prevents it",
+    "Report support volume, resolution, and common issues",
+  ],
+  ai_assist:
+    "Use AI to draft macros, suggest de-escalation phrasing, and summarise a long customer history before you reply. Ask it to rewrite a reply to sound more empathetic or more concise. Keep the human in the loop on refunds, exceptions, and anything emotional, customers can tell when they are talking to a robot.",
+  pre_flight:
+    "Before working the queue, decide your policies: what is the refund rule, what can you offer to make things right, and what must go to the founder? Knowing your limits in advance makes you fast and confident.",
+  common_mistakes: [
+    "Slow responses that let a small issue grow into anger",
+    "Copy-pasting a macro that does not fit the actual situation",
+    "Getting defensive or quoting policy at an upset customer",
+    "Not logging interactions, so the next person starts blind",
+  ],
+  debug_help:
+    "If customers keep escalating, look at your first reply: does it acknowledge their feeling and give a concrete next action with a timeline? Most escalation comes from a first response that felt robotic or vague. Lead with a human acknowledgement and a specific action.",
+  stretch: [
+    "Build a short FAQ or help-centre article to deflect common tickets",
+    "Create a tone guide so all support sounds consistent",
+    "Set up basic automation: auto-acknowledgement and routing",
+  ],
+  resources: [
+    { label: "Zendesk blog (support basics)", url: "https://www.zendesk.com/blog/", note: "Free reference" },
+    { label: "Help Scout blog", url: "https://www.helpscout.com/blog/", note: "Free, support writing" },
+  ],
+};
+
+const week8 = {
+  number: 8,
+  title: "Social media management",
+  phase: "Content Operations",
+  commitment_hours: "6, 10",
+  context:
+    "Many founders need someone to run their social presence, and it is a service you can sell on its own. This week you learn content operations: planning a content calendar, creating simple branded graphics in Canva, scheduling posts, managing a community, and reporting on what worked. You will manage Kola's social accounts for a month on paper and produce a complete content plan a client would pay for.",
+  topics: [
+    "Social media basics for business accounts",
+    "Content calendars and planning",
+    "Creating graphics in Canva",
+    "Writing captions and hooks",
+    "Scheduling tools (Buffer, Meta Business Suite)",
+    "Community management and engagement",
+    "Analytics and reporting",
+    "Maintaining a consistent brand voice",
+  ],
+  tasks: [
+    "Build a monthly content calendar",
+    "Design branded post graphics in Canva",
+    "Write captions with hooks and calls to action",
+    "Schedule a week of posts",
+    "Report on engagement metrics",
+  ],
+  project:
+    "Manage Kola's social media for a month: produce a 30-day content calendar, design 8 branded posts in Canva, write all captions, set up a scheduling workflow, and create a monthly analytics report template. Define the brand voice in a short guide. Portfolio artefact #8.",
+  exercises: [
+    "Plan a 2-week content calendar with themes and post types",
+    "Design three on-brand graphics in Canva",
+    "Write five captions, each with a hook and a call to action",
+    "Build a monthly analytics report template",
+  ],
+  questions: [
+    "What makes a content calendar useful rather than just a list?",
+    "What is a 'hook' and why does the first line decide everything?",
+    "Which metrics actually matter for a small business?",
+  ],
+  outputs: [
+    "A 30-day content calendar",
+    "8 branded Canva graphics",
+    "A set of captions and a brand-voice guide",
+    "A monthly analytics report template",
+  ],
+  mastery_questions: [
+    "Build a content calendar with dates, themes, formats, and captions",
+    "Design an on-brand graphic in Canva using a consistent palette",
+    "Write a caption with a scroll-stopping first line",
+    "Schedule posts using Buffer or Meta Business Suite",
+    "Respond to comments and DMs in brand voice",
+    "Read an analytics dashboard and name the best-performing post and why",
+    "Write a monthly performance summary with one recommendation",
+    "Define a brand voice in three to five adjectives with examples",
+    "Repurpose one idea into three different post formats",
+    "Plan a simple campaign around a single goal (e.g. a sale)",
+  ],
+  ai_assist:
+    "Use AI to brainstorm content ideas, draft caption variations, and turn one idea into a week of posts. Ask it to suggest hooks and to adapt a caption to a specific platform. Keep your client's real voice and facts, AI drafts, you make it true and on-brand.",
+  pre_flight:
+    "Before planning content, define the goal (sales, awareness, community) and the audience. Posting without a goal produces busy work that does not move the business.",
+  common_mistakes: [
+    "Posting with no plan, so content is inconsistent and last-minute",
+    "Generic captions with a weak or missing first line",
+    "Ignoring comments and DMs, so the community goes cold",
+    "Reporting vanity metrics (likes) instead of what drove sales or reach",
+  ],
+  debug_help:
+    "If engagement is flat, look at hooks and consistency first. The first line and the first second of a post decide whether anyone stops. And an account that posts erratically loses momentum. Fix the hook, fix the cadence, then worry about everything else.",
+  stretch: [
+    "Create a reusable Canva brand kit and post templates",
+    "Plan a full product-launch campaign across platforms",
+    "Set up UTM links to track which posts drive clicks",
+  ],
+  resources: [
+    { label: "Canva Design School", url: "https://www.canva.com/designschool/", note: "Free, official tutorials" },
+    { label: "Buffer resources", url: "https://buffer.com/resources/", note: "Free, social strategy" },
+  ],
+};
+
+const week9 = {
+  number: 9,
+  title: "Business operations and SOPs",
+  phase: "Operations & SOPs",
+  commitment_hours: "6, 10",
+  context:
+    "This is what turns a good assistant into an operations professional: the ability to look at how a business runs and make it run better. This week you learn to map workflows, write standard operating procedures (SOPs), document processes, and spot improvements. SOPs are also how you make yourself scalable, you can hand work to others. You will build an operations manual for Kola that captures how the business actually works.",
+  topics: [
+    "What an SOP is and why businesses need them",
+    "Process mapping and workflow documentation",
+    "Writing clear, followable SOPs",
+    "Identifying inefficiencies and improvements",
+    "Building checklists and templates",
+    "Documentation that stays current",
+    "Team systems and handoffs",
+    "Turning yourself into a system others can run",
+  ],
+  tasks: [
+    "Map an existing business workflow",
+    "Write a clear SOP someone else could follow",
+    "Spot one inefficiency and propose a fix",
+    "Build a checklist for a recurring process",
+    "Assemble an operations manual",
+  ],
+  project:
+    "Build Kola's operations manual: document at least five core processes as SOPs (order fulfilment, customer support, social posting, supplier ordering, weekly reporting), each with steps, owners, and tools, plus a process improvement proposal for the biggest bottleneck. Portfolio artefact #9.",
+  exercises: [
+    "Map a five-to-ten step workflow visually or in writing",
+    "Write one SOP a stranger could follow without help",
+    "Audit a process and propose one concrete improvement",
+    "Create a reusable checklist for a recurring task",
+  ],
+  questions: [
+    "What makes an SOP good enough that someone new can follow it?",
+    "How do you find the bottleneck in a process?",
+    "Why do SOPs make you more valuable, not more replaceable?",
+  ],
+  outputs: [
+    "At least five written SOPs",
+    "A process map of a core workflow",
+    "A process-improvement proposal",
+    "An assembled operations manual",
+  ],
+  mastery_questions: [
+    "Write an SOP with numbered steps, owner, tools, and expected outcome",
+    "Map a workflow showing each step and handoff",
+    "Test an SOP by having someone (or yourself, cold) follow it exactly",
+    "Identify a bottleneck and quantify its cost in time",
+    "Propose a process improvement with the before and after",
+    "Build a checklist that prevents a common error",
+    "Document a tool setup so it can be reproduced",
+    "Organise multiple SOPs into a navigable manual",
+    "Write a handoff doc so someone can take over a task",
+    "Keep documentation current with a simple review cadence",
+  ],
+  ai_assist:
+    "Use AI to turn your rough notes into a clean, structured SOP, to suggest steps you forgot, and to spot inefficiencies in a process you describe. Ask it to rewrite an SOP at a simpler reading level so anyone can follow it. You provide the real process knowledge, AI formats and pressure-tests it.",
+  pre_flight:
+    "Before documenting, actually do or watch the process once and note every step, including the small ones people skip in their heads. SOPs fail because the writer assumed a step was obvious.",
+  common_mistakes: [
+    "Writing SOPs too vaguely to actually follow ('handle the order')",
+    "Documenting the ideal process instead of the real one",
+    "Creating SOPs no one maintains, so they go stale and get ignored",
+    "Improving a process before understanding why it works the way it does",
+  ],
+  debug_help:
+    "If an SOP does not work, the fastest test is to follow it literally, doing only what it says. Every place you have to guess or add a step from memory is a gap to fix. The document should make your knowledge unnecessary.",
+  stretch: [
+    "Record a screen walkthrough (Loom-style) to pair with a written SOP",
+    "Build a master index of all SOPs with owners and last-reviewed dates",
+    "Propose an automation that removes a manual step entirely",
+  ],
+  resources: [
+    { label: "Atlassian: how to write an SOP", url: "https://www.atlassian.com/work-management", note: "Free reference" },
+    { label: "Notion templates (SOP/wiki)", url: "https://www.notion.so/templates", note: "Free starting points" },
+  ],
+};
+
+const week10 = {
+  number: 10,
+  title: "Remote work mastery",
+  phase: "Remote Work Mastery",
+  commitment_hours: "6, 10",
+  context:
+    "This week is about the business of being a remote operator: how to work with international clients, understand contracts and payments, navigate freelance platforms, and apply for remote roles. The skills mean nothing if you cannot find and keep clients and get paid reliably across borders. You will complete a full remote-work simulation and set yourself up to actually earn.",
+  topics: [
+    "Remote work culture and communication norms",
+    "Working with international clients across cultures and time zones",
+    "Contracts, agreements, and scope",
+    "Getting paid: international payments and invoicing",
+    "Freelance platforms (Upwork, others) and how they work",
+    "Finding and applying for remote jobs",
+    "Rates, packages, and positioning",
+    "Protecting yourself: clear terms and boundaries",
+  ],
+  tasks: [
+    "Set up a way to receive international payments",
+    "Write a simple service agreement / scope doc",
+    "Create a freelance profile or job-application package",
+    "Build a service package with clear deliverables and pricing",
+    "Complete a remote-work simulation end to end",
+  ],
+  project:
+    "Complete a remote-work setup and simulation: a polished freelance/job profile, a service package with tiers and pricing, a simple client agreement template, an invoice template, and a documented payment method. Run one simulated client onboarding from inquiry to signed agreement. Portfolio artefact #10.",
+  exercises: [
+    "Write a one-page service agreement covering scope, timeline, and payment",
+    "Create an invoice template with all required details",
+    "Build a service package with three tiers and clear deliverables",
+    "Draft a freelance profile or cover letter for a real remote listing",
+  ],
+  questions: [
+    "What should a basic client agreement always include?",
+    "How do you get paid reliably from an international client?",
+    "How do you price your services without underselling?",
+  ],
+  outputs: [
+    "A freelance/job profile or application package",
+    "A service package with pricing",
+    "A client agreement and invoice template",
+    "A documented international payment method",
+  ],
+  mastery_questions: [
+    "Write a service agreement covering scope, deliverables, timeline, and payment terms",
+    "Create a professional invoice with all required fields",
+    "Set up at least one method to receive international payments",
+    "Build a tiered service package with clear deliverables per tier",
+    "Write a strong freelance profile or proposal for a real listing",
+    "Set a rate and justify it against the value delivered",
+    "Define your scope and the boundary for 'out of scope' work",
+    "Handle a client asking for free extra work, in writing",
+    "Convert time zones and propose working hours for an overseas client",
+    "Run a mock onboarding from inquiry to agreed scope",
+  ],
+  ai_assist:
+    "Use AI to draft proposals, tailor cover letters to a specific job post, polish your profile, and pressure-test your pricing. Ask it to play a skeptical client so you can practise discovery calls and objection handling. Keep your real terms and numbers, AI helps you present them well.",
+  pre_flight:
+    "Before setting rates, research what the role actually pays internationally and locally, and decide your minimum. Knowing your floor stops you accepting work that is not worth your time out of fear.",
+  common_mistakes: [
+    "Starting work with no written scope, leading to unpaid extra work",
+    "Underpricing dramatically out of fear, then resenting the client",
+    "No clear payment terms, so invoices get paid late or not at all",
+    "Saying yes to everything and burning out instead of setting boundaries",
+  ],
+  debug_help:
+    "If clients keep pushing scope or paying late, the fix is upstream: a clear agreement and invoice terms set at the start. When something is out of scope, point to the agreement calmly and offer it as additional paid work. Boundaries written down in advance are easy to hold.",
+  stretch: [
+    "Build a simple one-page portfolio website linking your 10 projects",
+    "Create a discovery-call script for new client inquiries",
+    "Research and document three platforms where your ideal clients hire",
+  ],
+  resources: [
+    { label: "Upwork resources", url: "https://www.upwork.com/resources/", note: "Free, freelancing guides" },
+    { label: "Wise (international payments)", url: "https://wise.com/", note: "Cross-border payments" },
+  ],
+};
+
+const week11 = {
+  number: 11,
+  title: "Real client experience, part 1",
+  phase: "Real Client Experience",
+  commitment_hours: "8, 12",
+  context:
+    "Theory is over. The next two weeks are about doing real work for real (or realistic) clients across different contexts, because the difference between someone who studied this and someone who can do it is reps under real conditions. Part 1 covers two client types: a startup and an NGO. You will scope the work, deliver it, and have it reviewed against a professional standard, the way an actual engagement runs.",
+  topics: [
+    "Scoping a real engagement and clarifying the ask",
+    "Onboarding: gathering what you need to start",
+    "Delivering operations work for a startup",
+    "Delivering operations work for an NGO context",
+    "Managing a client relationship through a project",
+    "Handling ambiguity and incomplete information",
+    "Receiving and acting on feedback",
+    "Documenting and handing off the work",
+  ],
+  tasks: [
+    "Scope and plan a startup operations project",
+    "Scope and plan an NGO operations project",
+    "Deliver both projects to a professional standard",
+    "Collect feedback and revise",
+    "Document and present the completed work",
+  ],
+  project:
+    "Complete two real-world engagements: a startup project (e.g. set up a founder's inbox, calendar, and task system, or run a product launch) and an NGO project (e.g. build a donor/contact database, draft communications, and create reporting). Each is scoped, delivered, reviewed by a mentor, and added to your portfolio. Portfolio artefacts from a real context.",
+  exercises: [
+    "Write a scope document for the startup engagement",
+    "Write a scope document for the NGO engagement",
+    "Produce the first deliverable for each and request feedback",
+    "Revise both based on feedback and document the change",
+  ],
+  questions: [
+    "How do you scope work when the client's request is vague?",
+    "What changes when the client is an NGO versus a startup?",
+    "How do you respond to critical feedback professionally?",
+  ],
+  outputs: [
+    "Two scoped and delivered client projects",
+    "Scope documents for each",
+    "Mentor-reviewed deliverables",
+    "Documented, presentable final work",
+  ],
+  mastery_questions: [
+    "Turn a vague client request into a clear scope with deliverables and a deadline",
+    "Run a short onboarding to gather everything needed to start",
+    "Deliver a startup operations deliverable to a professional standard",
+    "Deliver an NGO operations deliverable to a professional standard",
+    "Ask a clarifying question that prevents a wrong assumption",
+    "Incorporate mentor feedback and explain what you changed",
+    "Handle missing information without stalling the whole project",
+    "Communicate progress to the client during the engagement",
+    "Document the finished work so the client can use it without you",
+    "Present the outcome and the impact in one clear summary",
+  ],
+  ai_assist:
+    "Use AI to accelerate the real work (drafting, structuring, summarising) but treat these engagements as the test of your judgement. The client is paying for your reliability and decisions, not for AI text. Use it to go faster, then make every deliverable genuinely yours and correct.",
+  pre_flight:
+    "Before starting each engagement, write what success looks like for the client in one sentence and confirm it. Most failed projects fail because the operator solved a different problem than the one the client had.",
+  common_mistakes: [
+    "Starting work before the scope is clear",
+    "Going silent during the project instead of sending updates",
+    "Treating feedback as criticism instead of direction",
+    "Delivering something technically complete that misses the real need",
+  ],
+  debug_help:
+    "If an engagement feels stuck or off-track, go back to the one-sentence goal and confirm it with the client. Re-aligning early is cheap, discovering at delivery that you built the wrong thing is expensive. When unsure, ask one sharp question rather than guessing.",
+  stretch: [
+    "Add a third engagement: a local business project",
+    "Write a short case study of one engagement for your portfolio",
+    "Ask the client for a testimonial you can use",
+  ],
+  resources: [
+    { label: "Notion (client workspaces)", url: "https://www.notion.so/help", note: "Free, for delivery" },
+    { label: "Google Workspace", url: "https://support.google.com/a/users/", note: "Free, delivery tools" },
+  ],
+};
+
+const week12 = {
+  number: 12,
+  title: "Real client experience, part 2",
+  phase: "Real Client Experience",
+  commitment_hours: "8, 12",
+  context:
+    "Part 2 of the real-client phase deepens the experience: a local business project and a full founder-assistant simulation where you operate as someone's right hand for a simulated week, juggling inbox, calendar, tasks, research, and support at once. This is the closest thing to the real job, and it is where everything you have learned has to work together under realistic pressure. Mentors review the whole performance.",
+  topics: [
+    "Delivering operations work for a local business",
+    "The founder-assistant role: doing everything at once",
+    "Prioritising across competing demands",
+    "Context-switching without dropping balls",
+    "Proactive operation (anticipating needs)",
+    "End-to-end ownership of a founder's operations",
+    "Performing under realistic pressure",
+    "Final review and portfolio consolidation",
+  ],
+  tasks: [
+    "Scope and deliver a local business project",
+    "Run a multi-day founder-assistant simulation",
+    "Manage inbox, calendar, tasks, and support together",
+    "Operate proactively, not just reactively",
+    "Consolidate all engagements into the portfolio",
+  ],
+  project:
+    "Complete the local business project and the founder-assistant simulation: operate as Ama's full right hand for a simulated week, handling a live mix of inbox, calendar, tasks, research, support, and reporting, while delivering a local business engagement in parallel. Capture everything as case studies. Final real-world portfolio artefacts.",
+  exercises: [
+    "Write the scope for the local business engagement",
+    "Run a simulated founder day-in-the-life and log how you prioritised",
+    "Handle a sudden urgent issue mid-simulation and document the response",
+    "Write a case study for each of your strongest engagements",
+  ],
+  questions: [
+    "How do you prioritise when everything feels urgent?",
+    "What does operating proactively look like in practice?",
+    "How do you keep quality high while context-switching?",
+  ],
+  outputs: [
+    "A delivered local business project",
+    "A completed founder-assistant simulation log",
+    "Case studies of your best engagements",
+    "A consolidated, reviewed portfolio of real work",
+  ],
+  mastery_questions: [
+    "Prioritise a list of competing tasks and justify the order",
+    "Run a simulated day handling inbox, calendar, and tasks together",
+    "Respond to an unexpected urgent issue without dropping other work",
+    "Anticipate a need and act before being asked",
+    "Deliver a local business operations project to standard",
+    "Keep a clear status visible to the 'founder' throughout",
+    "Switch between four task types in a day without errors",
+    "Write a case study with situation, action, and result",
+    "Consolidate ten projects into a coherent portfolio",
+    "Reflect on the simulation and name your two biggest growth areas",
+  ],
+  ai_assist:
+    "Use AI as your operating partner during the simulation: rapid drafting, summarising long threads, converting time zones, turning your notes into reports. The simulation tests whether you can run real operations fast and well, AI is part of how a modern operator moves quickly. Own every output.",
+  pre_flight:
+    "Before the simulation, set up your daily plan and your capture system so nothing gets lost when things get busy. The operators who stay calm under load are the ones whose system catches the balls, not their memory.",
+  common_mistakes: [
+    "Reacting to whatever is loudest instead of what matters most",
+    "Letting one urgent fire cause three other things to slip silently",
+    "Only doing what is asked, never anticipating",
+    "Finishing the work but never packaging it as portfolio case studies",
+  ],
+  debug_help:
+    "If the simulation feels overwhelming, that is the point and the fix is the system, not heroics. Triage with your priorities, communicate what will wait, and trust your capture system to hold everything. Calm, communicated triage under pressure is exactly the skill being tested.",
+  stretch: [
+    "Add a fourth engagement type you have not tried yet",
+    "Get a testimonial or reference from a real or mentor 'client'",
+    "Record a short video walkthrough of your portfolio",
+  ],
+  resources: [
+    { label: "Notion (portfolio + delivery)", url: "https://www.notion.so/help", note: "Free" },
+    { label: "Loom (walkthroughs)", url: "https://www.loom.com/", note: "Free tier" },
+  ],
+};
+
+const week13 = {
+  number: 13,
+  title: "Career launchpad",
+  phase: "Career Launchpad",
+  commitment_hours: "8, 12",
+  context:
+    "You have the skills and ten real projects. This final week turns that into income: a professional CV, an optimised LinkedIn profile, a portfolio website, interview preparation, and a client-acquisition plan. The goal of the whole track is met here, you finish able to apply for remote roles, pitch freelance clients, and present yourself as the remote operations professional you have become. You will leave with everything packaged and ready to send.",
+  topics: [
+    "CV building for remote and operations roles",
+    "LinkedIn profile optimisation",
+    "Building a portfolio website or page",
+    "Interview preparation (and the operator's interview)",
+    "Client acquisition and outreach",
+    "Personal brand and positioning",
+    "Where to find remote work and how to apply well",
+    "Your 30-day plan after graduation",
+  ],
+  tasks: [
+    "Write a strong, results-focused CV",
+    "Optimise a LinkedIn profile end to end",
+    "Build a portfolio website or page linking your projects",
+    "Prepare for interviews with practised answers",
+    "Create a client-acquisition / job-application plan",
+  ],
+  project:
+    "Build your complete career package: a polished CV, an optimised LinkedIn profile, a portfolio website/page showcasing your 10 projects, an interview-preparation document, and a 30-day client-acquisition plan. This is the capstone that makes you employable on day one. Final portfolio deliverable.",
+  exercises: [
+    "Write a CV with results-focused bullet points (not just duties)",
+    "Rewrite your LinkedIn headline, about, and experience sections",
+    "Build a portfolio page linking all ten projects with short case notes",
+    "Prepare answers to ten common operator interview questions",
+  ],
+  questions: [
+    "What makes a CV stand out for a remote operations role?",
+    "How should your portfolio present the ten projects?",
+    "What is your specific plan to land the first client or role?",
+  ],
+  outputs: [
+    "A professional CV",
+    "An optimised LinkedIn profile",
+    "A portfolio website/page",
+    "An interview-prep doc and a 30-day acquisition plan",
+  ],
+  mastery_questions: [
+    "Write a CV bullet that shows a result, not just a responsibility",
+    "Craft a LinkedIn headline that states who you help and how",
+    "Write a LinkedIn 'about' section in your voice with a clear call to action",
+    "Build a portfolio page that links and frames your ten projects",
+    "Write a case note for one project (situation, action, result)",
+    "Answer 'tell me about yourself' for an operations role in 60 seconds",
+    "Answer a behavioural question using a clear situation-action-result story",
+    "Write a cold outreach message to an ideal client",
+    "Create a target list of 20 potential clients or employers",
+    "Write your concrete 30-day plan to land paid work",
+  ],
+  ai_assist:
+    "Use AI to draft and sharpen your CV bullets, LinkedIn copy, portfolio case notes, and outreach messages, then make them unmistakably yours. Ask it to interview you with hard questions and critique your answers. The final presentation of you should sound like you at your most clear and confident, not like generic AI copy.",
+  pre_flight:
+    "Before writing your CV and profile, list every concrete result from your ten projects: time saved, things organised, customers handled, deliverables shipped. Your materials should be built from real evidence, not adjectives.",
+  common_mistakes: [
+    "A CV that lists duties instead of results",
+    "A LinkedIn profile that is a job-title list with no positioning",
+    "A portfolio that shows files with no context on the impact",
+    "Finishing the course but never actually sending a single application",
+  ],
+  debug_help:
+    "If your materials feel weak, the fix is almost always specificity: replace 'managed social media' with 'planned and ran a 30-day content calendar that did X'. Concrete, evidenced claims from your real projects are what make you credible. You have the evidence, use it.",
+  stretch: [
+    "Record a 60-second video intro for your profile",
+    "Apply to five real listings or pitch five real prospects this week",
+    "Set up a simple system to track applications and follow-ups",
+  ],
+  resources: [
+    { label: "LinkedIn Help", url: "https://www.linkedin.com/help/linkedin", note: "Free, profile basics" },
+    { label: "Canva (CV + portfolio templates)", url: "https://www.canva.com/", note: "Free templates" },
+  ],
+};
+
+/* ============================================================ EMIT */
+const roadmap = {
+  slug: "remote-ops",
+  title: "Remote Operations Professional",
+  total_weeks: 13,
+  weeks: [
+    week1, week2, week3, week4, week5, week6, week7,
+    week8, week9, week10, week11, week12, week13,
+  ],
+};
+
+const out = path.join(process.cwd(), "data", "roadmaps", "remote-ops.json");
+fs.writeFileSync(out, JSON.stringify(roadmap, null, 2));
+JSON.parse(fs.readFileSync(out, "utf8")); // validate round-trip
+const authored = roadmap.weeks.filter((w) => Array.isArray(w.days) && w.days.length).length;
+console.log(`wrote ${out}`);
+console.log(`weeks: ${roadmap.weeks.length}, fully authored (with days): ${authored}`);
+console.log(`phases: ${new Set(roadmap.weeks.map((w) => w.phase)).size}`);

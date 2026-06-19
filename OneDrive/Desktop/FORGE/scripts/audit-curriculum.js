@@ -21,7 +21,7 @@ const DATA_DIR = path.join(__dirname, "..", "data", "roadmaps");
 const SLUGS = [
  "data-science", "data-analysis", "ai-engineering", "ml-engineering",
  "full-stack-web", "mobile-engineering", "devops-cloud", "cybersecurity",
- "bi-analytics", "ai-automation",
+ "bi-analytics", "ai-automation", "remote-ops",
 ];
 
 function readJson(p) { try { return JSON.parse(fs.readFileSync(p, "utf-8")); } catch { return null; } }
