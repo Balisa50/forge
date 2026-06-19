@@ -48,8 +48,13 @@
         {
           "number": 0,
           "title": "Day 0 - Setup: Python 3.11 + OpenAI + Anthropic SDK install",
-          "summary": "Install and verify Python 3.11 + OpenAI + Anthropic SDK install before diving into the week.",
+          "summary": "Today you'll install Python 3.11, the OpenAI and Anthropic SDKs, and Git, then run a command that proves your setup works.",
           "items": [
+            {
+              "kind": "lesson",
+              "title": "Week 1 at a glance",
+              "body": "## Week 1 at a glance\n\n**Goal:** build **Polyglot v0.1**, a command-line AI translator (English to Spanish) that runs in your terminal, tracks what each translation costs, handles errors, and lives on your public GitHub. About 50 lines of Python.\n\n**Why it matters:** this tiny project teaches the core move of AI engineering. You do not write the translation rules yourself (that would be thousands of lines). You write *instructions* for a language model to do it, then wrap those instructions in real engineering: secret management, error handling, cost tracking, shipping. That same pattern powers every AI app you build after this.\n\n**The 7-day arc:**\n- **Day 0** - Setup: install Python 3.11, the OpenAI + Anthropic SDKs, and Git.\n- **Day 1** - What AI engineering actually is (the shift from writing logic to writing prompts).\n- **Day 2** - Python + `.env` discipline: virtualenvs and keeping your API key out of your code.\n- **Day 3** - Your first API call: get a key, call the model, read the usage object.\n- **Day 4** - Make it a real translator: Polyglot v0.1, type English, get Spanish back.\n- **Day 5** - Error handling + retries: survive a flaky network and a grumpy API.\n- **Day 6** - Cost tracking + a real CLI: know what you spend, make it pleasant to use.\n- **Day 7** - Ship v0.1: README, `.env.example`, push to GitHub, tag the release.\n\n**Time:** about 5 to 8 hours across the week.\n\n**By Sunday you will have:** a working AI app on your public GitHub, with a README a stranger can follow, that you wrote and understand end to end."
+            },
             {
               "kind": "lesson",
               "title": "Set up your tooling",
@@ -100,6 +105,11 @@
             },
             {
               "kind": "lesson",
+              "title": "Which AI provider should you use?",
+              "body": "## Which AI provider should you use?\n\nDay 0 installs SDKs for two providers (OpenAI and Anthropic), and you will see free local options mentioned too. That can feel like a decision you are not ready to make. Here is the simple guidance.\n\n**Use OpenAI (model `gpt-4o-mini`) for this week.** It is the most common in industry, has the most examples online, and is cheap: a translation costs roughly $0.0005, so $5 of credit lasts months of learning. Every code example this week uses it.\n\n**No credit card? Use Ollama (free, runs on your computer).**\n- It runs an open model (like Llama 3) locally: no API key, no internet needed once downloaded, no cost.\n- It is slower than OpenAI and needs a few GB of disk, but the skill you are learning (writing prompts and wrapping them in code) is *identical*.\n- You swap one thing: point the client at your local Ollama endpoint instead of OpenAI's. The course shows exactly how on the day you make your first call.\n\n| | OpenAI `gpt-4o-mini` | Ollama (local) |\n|---|---|---|\n| Cost | ~$0.0005 per call (cents) | Free |\n| Setup | API key + a little credit | Download + install |\n| Speed | Fast | Slower (your hardware) |\n| Internet | Required | Only to download once |\n\n**Recommendation:** start with OpenAI if you possibly can, it is the smoothest path and matches the examples. If cost or internet is a barrier, Ollama is a genuinely fine substitute, do not let it block you. Anthropic's Claude is installed too and works the same way; you will use it more in later weeks. Pick one and move on, you can switch later in minutes."
+            },
+            {
+              "kind": "lesson",
               "title": "Zero-cost path (free alternatives)",
               "body": "## Zero-cost path (no credit card required)\n\nThis week mentions industry-standard tools that can cost money. You can complete every step for free, with no card and no trial that auto-renews:\n\n- **LLM calls**, use **Ollama** (runs Llama 3 / Mistral locally, free, no API key): point the base URL at `http://localhost:11434`. The chat shape is identical; you just swap the endpoint. Hugging Face's free Inference API also needs no credit card.\n- **AWS**, use **LocalStack** (mocks AWS APIs on your laptop) plus **MinIO** (local S3). The CLI commands are the same; set `--endpoint-url=http://localhost:4566`. No AWS account or card required.\n- **Hosting**, **Vercel Hobby** is free with no card; Netlify's free tier and GitHub Pages also work.\n\nLearn the concept with the free tool; the paid service is only how some teams run it in production. The skills and the code are the same."
             }
@@ -108,7 +118,7 @@
         {
           "number": 1,
           "title": "What AI engineering is",
-          "summary": "Watch + read + commit to the week's project.",
+          "summary": "Today you'll learn what AI engineering actually is, the shift from writing logic (IF/ELSE) to writing instructions (prompts), and set up Git for version control.",
           "items": [
             {
               "kind": "lesson",
@@ -180,7 +190,7 @@
         {
           "number": 2,
           "title": "Python + .env discipline",
-          "summary": "Virtualenv, packages, and the secret-management habit you'll use for every project.",
+          "summary": "Today you'll create a virtualenv, install your packages, and learn the .env habit that keeps your API key out of your code, forever.",
           "items": [
             {
               "kind": "lesson",
@@ -235,7 +245,7 @@
         {
           "number": 3,
           "title": "First API call",
-          "summary": "Get the key, prove it works, see the usage object.",
+          "summary": "Today you'll get an OpenAI key, make your first completion call, and read the usage object that tells you what the call cost.",
           "items": [
             {
               "kind": "lesson",
@@ -281,7 +291,7 @@
         {
           "number": 4,
           "title": "Make it a real translator",
-          "summary": "Polyglot v0.1, type English, get Spanish.",
+          "summary": "Today you'll build Polyglot v0.1: type English, get Spanish back from the model.",
           "items": [
             {
               "kind": "lesson",
@@ -322,7 +332,7 @@
         {
           "number": 5,
           "title": "Error handling + retries",
-          "summary": "Make the translator survive a flaky network and an angry API.",
+          "summary": "Today you'll make the translator survive real life, a flaky network and an erroring API, by adding retries and error handling.",
           "items": [
             {
               "kind": "lesson",
@@ -363,7 +373,7 @@
         {
           "number": 6,
           "title": "Cost tracking + a real CLI",
-          "summary": "Total spend, per-call cost, friendlier UX.",
+          "summary": "Today you'll track cost per call and total spend, and turn the script into a command-line tool you'd actually enjoy using.",
           "items": [
             {
               "kind": "lesson",
@@ -404,7 +414,7 @@
         {
           "number": 7,
           "title": "Ship v0.1",
-          "summary": "README, .env.example, push, tag.",
+          "summary": "Today you'll ship v0.1: write a README a stranger can follow, add a .env.example, push to GitHub, and tag the release.",
           "items": [
             {
               "kind": "lesson",
