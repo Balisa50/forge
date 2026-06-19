@@ -20,6 +20,7 @@ export interface CuratedRoadmapPickerEntry {
  Icon: LucideIcon;
  gradient: string;
  accent: string; // colour matches the gradient end, used for icon tint
+ hidden?: boolean; // in development: hidden from onboarding/apply/learn pickers
 }
 
 export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
@@ -58,6 +59,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "mobile-engineering",
+ hidden: true,
  title: "Mobile Engineering",
  tagline: "Build apps that live on real phones",
  outcome: "Ship one app to both the App Store and Play Store with real users",
@@ -80,6 +82,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "cybersecurity",
+ hidden: true,
  title: "Cybersecurity",
  tagline: "Find and fix the holes attackers actually exploit",
  outcome: "Earn one real security credit: a bug bounty payout, a published CVE, or a major OSS contribution",
@@ -113,6 +116,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "bi-analytics",
+ hidden: true,
  title: "Business Intelligence",
  tagline: "Build the analytics layer a whole company depends on",
  outcome: "Own the analytics for a whole team or business: Power BI, modelling, automation",
@@ -124,6 +128,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "ai-automation",
+ hidden: true,
  title: "AI Automation",
  tagline: "Build the workflows that run businesses without human hands",
  outcome: "Ship 3 production automations with Make and n8n that include real AI: clients pay you, workflows run 24/7",
@@ -145,3 +150,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  gradient: "from-indigo-500 via-violet-500 to-purple-600",
  },
 ];
+
+export const HIDDEN_SLUGS = new Set(
+ CURATED_ROADMAPS.filter((r) => r.hidden).map((r) => r.slug),
+);

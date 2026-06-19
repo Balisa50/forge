@@ -797,7 +797,7 @@ function RoadmapBrowser({
  </div>
  ) : (
  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.625rem" }}>
- {CURATED_ROADMAPS.map((c) => (
+ {CURATED_ROADMAPS.filter((c) => !c.hidden).map((c) => (
  <button
  key={c.slug}
  type="button"

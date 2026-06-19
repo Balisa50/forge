@@ -175,7 +175,7 @@ export default function ApplyForm({ mentorId, mentorName }: ApplyFormProps) {
  ariaLabel="Path"
  options={[
  { value: "", label: "Not sure yet, help me choose" },
- ...CURATED_ROADMAPS.map((r) => ({ value: r.slug, label: r.title })),
+ ...CURATED_ROADMAPS.filter((r) => !r.hidden).map((r) => ({ value: r.slug, label: r.title })),
  ]}
  />
  </div>

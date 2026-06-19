@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Clock, BookOpen, Target, GraduationCap, Brain, Timer } from "lucide-react";
 import { loadAllRoadmaps, ROADMAP_META } from "@/lib/roadmaps";
+import { HIDDEN_SLUGS } from "@/lib/curated-roadmaps-client";
 import { loadAllExamPaths, totalConcepts } from "@/lib/examPaths";
 
 export const metadata = {
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 // overview card (locked content until signup); clicking an Actuary exam opens
 // it fully (public by design).
 export default async function LearnIndexPage() {
- const roadmaps = loadAllRoadmaps();
+ const roadmaps = loadAllRoadmaps().filter((r) => !HIDDEN_SLUGS.has(r.slug));
  const examPaths = loadAllExamPaths();
 
  return (
