@@ -135,7 +135,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "remote-ops",
- title: "Remote Operations Professional",
+ title: "Remote Operations Professional (Virtual Assistant)",
  tagline: "The remote operator startups, founders and agencies hire (virtual assistant, and beyond)",
  outcome: "Graduate with 10 real projects, a service package, and the skills to land paid remote work before you finish",
  weeks: 13,
