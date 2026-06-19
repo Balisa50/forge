@@ -129,6 +129,11 @@
             },
             {
               "kind": "lesson",
+              "title": "Which AI provider should you use?",
+              "body": "## Which AI provider should you use?\n\nMany automations in this course call an AI model for the \"thinking\" step (extracting, classifying, drafting). You will need a provider. Here is the simple guidance.\n\n**Use OpenAI (`gpt-4o-mini`) as your default.** It has the best support across no-code tools (Zapier, Make, and n8n all ship native OpenAI steps), it is reliable, and it is cheap, cents per run, so a month of building costs a dollar or two. Examples here assume it.\n\n**No credit card? Use a free option:**\n- **Ollama** runs an open model (Llama 3) locally: no key, no cost, no internet once downloaded. It is slower, and you call it via its local HTTP endpoint, which n8n and custom code can hit.\n- **Google Gemini** has a free tier with a generous request limit, fine for learning.\n\n| | OpenAI gpt-4o-mini | Ollama (local) | Gemini (free tier) |\n|---|---|---|---|\n| Cost | cents per run | free | free (limited) |\n| No-code support | best | partial | growing |\n| Internet | required | only to download | required |\n\n**Recommendation:** start with OpenAI for the smoothest path and the most working examples; drop to Ollama or Gemini if cost or access is a barrier. The automation skills (wiring steps, handling the output) are identical whichever you pick."
+            },
+            {
+              "kind": "lesson",
               "title": "Zero-cost path (free alternatives)",
               "body": "## Zero-cost path (no credit card required)\n\nThis week mentions industry-standard tools that can cost money. You can complete every step for free, with no card and no trial that auto-renews:\n\n- **LLM calls**, use **Ollama** (runs Llama 3 / Mistral locally, free, no API key): point the base URL at `http://localhost:11434`. The chat shape is identical; you just swap the endpoint. Hugging Face's free Inference API also needs no credit card.\n- **Google Cloud / BigQuery**, use **DuckDB** (local, the same SQL, blazing fast) or local **Postgres**. No GCP account needed.\n- **Cloud warehouse**, use **DuckDB** or local **Postgres**: identical SQL, zero cost.\n\nLearn the concept with the free tool; the paid service is only how some teams run it in production. The skills and the code are the same."
             }
@@ -398,7 +403,7 @@
         {
           "number": 6,
           "title": "Day 6 - What is AI Automation?",
-          "summary": "Focus: Day 6 - What is AI Automation?",
+          "summary": "Today you'll spot real automation opportunities, listing the repetitive tasks around you that AI could take over.",
           "items": [
             {
               "kind": "lesson",
@@ -439,7 +444,7 @@
         {
           "number": 7,
           "title": "Day 7 - What is AI Automation?",
-          "summary": "Focus: Day 7 - What is AI Automation?",
+          "summary": "Today you'll write up your first automation plan and commit it, wrapping Week 1 with a real artifact.",
           "items": [
             {
               "kind": "lesson",
@@ -812,7 +817,7 @@
         {
           "number": 6,
           "title": "Day 6 - No-code automation with n8n",
-          "summary": "Focus: Day 6 - No-code automation with n8n",
+          "summary": "Today you'll build a working no-code workflow in n8n, end to end.",
           "items": [
             {
               "kind": "lesson",
@@ -853,7 +858,7 @@
         {
           "number": 7,
           "title": "Day 7 - No-code automation with n8n",
-          "summary": "Focus: Day 7 - No-code automation with n8n",
+          "summary": "Today you'll finish, test, and ship your first n8n automation.",
           "items": [
             {
               "kind": "lesson",
@@ -1244,7 +1249,7 @@
         {
           "number": 6,
           "title": "Day 6 - Python for automation",
-          "summary": "Focus: Day 6 - Python for automation",
+          "summary": "Today you'll write a Python script that automates a real, repetitive task.",
           "items": [
             {
               "kind": "lesson",
@@ -1285,7 +1290,7 @@
         {
           "number": 7,
           "title": "Day 7 - Python for automation",
-          "summary": "Focus: Day 7 - Python for automation",
+          "summary": "Today you'll clean up and ship your Python automation.",
           "items": [
             {
               "kind": "lesson",
@@ -1649,7 +1654,7 @@
         {
           "number": 6,
           "title": "Day 6 - Calling AI APIs",
-          "summary": "Focus: Day 6 - Calling AI APIs",
+          "summary": "Today you'll call an AI API from your own code and handle the response cleanly.",
           "items": [
             {
               "kind": "lesson",
@@ -1690,7 +1695,7 @@
         {
           "number": 7,
           "title": "Day 7 - Calling AI APIs",
-          "summary": "Focus: Day 7 - Calling AI APIs",
+          "summary": "Today you'll ship a small tool that does real work through an AI API.",
           "items": [
             {
               "kind": "lesson",
@@ -2069,7 +2074,7 @@
         {
           "number": 6,
           "title": "Day 6 - Prompt engineering for automation",
-          "summary": "Focus: Day 6 - Prompt engineering for automation",
+          "summary": "Today you'll engineer and test prompts that return reliable, structured output a pipeline can trust.",
           "items": [
             {
               "kind": "lesson",
@@ -2110,7 +2115,7 @@
         {
           "number": 7,
           "title": "Day 7 - Prompt engineering for automation",
-          "summary": "Focus: Day 7 - Prompt engineering for automation",
+          "summary": "Today you'll lock in your prompt templates and ship them.",
           "items": [
             {
               "kind": "lesson",
@@ -2494,7 +2499,7 @@
         {
           "number": 6,
           "title": "Day 6 - AI agents, what they are and how they work",
-          "summary": "Focus: Day 6 - AI agents, what they are and how they work",
+          "summary": "Today you'll trace, step by step, how an AI agent decides which action to take.",
           "items": [
             {
               "kind": "lesson",
@@ -2535,7 +2540,7 @@
         {
           "number": 7,
           "title": "Day 7 - AI agents, what they are and how they work",
-          "summary": "Focus: Day 7 - AI agents, what they are and how they work",
+          "summary": "Today you'll wrap up the week by sketching and shipping a simple agent design.",
           "items": [
             {
               "kind": "lesson",
@@ -2899,7 +2904,7 @@
         {
           "number": 6,
           "title": "Day 6 - Web scraping + AI extraction",
-          "summary": "Focus: Day 6 - Web scraping + AI extraction",
+          "summary": "Today you'll scrape a real page and use AI to pull structured data out of it.",
           "items": [
             {
               "kind": "lesson",
@@ -2940,7 +2945,7 @@
         {
           "number": 7,
           "title": "Day 7 - Web scraping + AI extraction",
-          "summary": "Focus: Day 7 - Web scraping + AI extraction",
+          "summary": "Today you'll ship a working scrape-and-extract pipeline.",
           "items": [
             {
               "kind": "lesson",
@@ -3304,7 +3309,7 @@
         {
           "number": 6,
           "title": "Day 6 - Document processing with AI",
-          "summary": "Focus: Day 6 - Document processing with AI",
+          "summary": "Today you'll build a flow that reads a document and extracts the fields you need with AI.",
           "items": [
             {
               "kind": "lesson",
@@ -3345,7 +3350,7 @@
         {
           "number": 7,
           "title": "Day 7 - Document processing with AI",
-          "summary": "Focus: Day 7 - Document processing with AI",
+          "summary": "Today you'll ship your document-processing automation.",
           "items": [
             {
               "kind": "lesson",
@@ -3700,7 +3705,7 @@
         {
           "number": 6,
           "title": "Day 6 - Email and communication automation",
-          "summary": "Focus: Day 6 - Email and communication automation",
+          "summary": "Today you'll automate an email or comms task end to end: triage, draft, or send.",
           "items": [
             {
               "kind": "lesson",
@@ -3741,7 +3746,7 @@
         {
           "number": 7,
           "title": "Day 7 - Email and communication automation",
-          "summary": "Focus: Day 7 - Email and communication automation",
+          "summary": "Today you'll ship your email automation.",
           "items": [
             {
               "kind": "lesson",
@@ -4120,7 +4125,7 @@
         {
           "number": 6,
           "title": "Day 6 - Database and spreadsheet automation",
-          "summary": "Focus: Day 6 - Database and spreadsheet automation",
+          "summary": "Today you'll automate reading from and writing to a database or spreadsheet.",
           "items": [
             {
               "kind": "lesson",
@@ -4161,7 +4166,7 @@
         {
           "number": 7,
           "title": "Day 7 - Database and spreadsheet automation",
-          "summary": "Focus: Day 7 - Database and spreadsheet automation",
+          "summary": "Today you'll ship your data automation.",
           "items": [
             {
               "kind": "lesson",
@@ -4525,7 +4530,7 @@
         {
           "number": 6,
           "title": "Day 6 - LangChain basics",
-          "summary": "Focus: Day 6 - LangChain basics",
+          "summary": "Today you'll build a small LangChain chain that does real work.",
           "items": [
             {
               "kind": "lesson",
@@ -4566,7 +4571,7 @@
         {
           "number": 7,
           "title": "Day 7 - LangChain basics",
-          "summary": "Focus: Day 7 - LangChain basics",
+          "summary": "Today you'll ship your first LangChain pipeline.",
           "items": [
             {
               "kind": "lesson",
@@ -4930,7 +4935,7 @@
         {
           "number": 6,
           "title": "Day 6 - Building your first autonomous agent",
-          "summary": "Focus: Day 6 - Building your first autonomous agent",
+          "summary": "Today you'll give your agent tools and let it complete a multi-step task on its own.",
           "items": [
             {
               "kind": "lesson",
@@ -4971,7 +4976,7 @@
         {
           "number": 7,
           "title": "Day 7 - Building your first autonomous agent",
-          "summary": "Focus: Day 7 - Building your first autonomous agent",
+          "summary": "Today you'll ship your first working autonomous agent.",
           "items": [
             {
               "kind": "lesson",
@@ -5326,7 +5331,7 @@
         {
           "number": 6,
           "title": "Day 6 - Multi-step workflows and orchestration",
-          "summary": "Focus: Day 6 - Multi-step workflows and orchestration",
+          "summary": "Today you'll orchestrate several steps into one reliable multi-step workflow.",
           "items": [
             {
               "kind": "lesson",
@@ -5367,7 +5372,7 @@
         {
           "number": 7,
           "title": "Day 7 - Multi-step workflows and orchestration",
-          "summary": "Focus: Day 7 - Multi-step workflows and orchestration",
+          "summary": "Today you'll ship your orchestrated workflow.",
           "items": [
             {
               "kind": "lesson",
@@ -5736,7 +5741,7 @@
         {
           "number": 6,
           "title": "Day 6 - RAG, retrieval augmented generation",
-          "summary": "Focus: Day 6 - RAG, retrieval augmented generation",
+          "summary": "Today you'll build RAG: ground an AI's answers in your own documents.",
           "items": [
             {
               "kind": "lesson",
@@ -5777,7 +5782,7 @@
         {
           "number": 7,
           "title": "Day 7 - RAG, retrieval augmented generation",
-          "summary": "Focus: Day 7 - RAG, retrieval augmented generation",
+          "summary": "Today you'll ship your RAG pipeline.",
           "items": [
             {
               "kind": "lesson",
@@ -6132,7 +6137,7 @@
         {
           "number": 6,
           "title": "Day 6 - Browser automation and computer use",
-          "summary": "Focus: Day 6 - Browser automation and computer use",
+          "summary": "Today you'll automate a browser to complete a task a human would normally click through.",
           "items": [
             {
               "kind": "lesson",
@@ -6173,7 +6178,7 @@
         {
           "number": 7,
           "title": "Day 7 - Browser automation and computer use",
-          "summary": "Focus: Day 7 - Browser automation and computer use",
+          "summary": "Today you'll ship your browser-automation flow.",
           "items": [
             {
               "kind": "lesson",
@@ -6537,7 +6542,7 @@
         {
           "number": 6,
           "title": "Day 6 - Deploying automation pipelines",
-          "summary": "Focus: Day 6 - Deploying automation pipelines",
+          "summary": "Today you'll deploy an automation so it runs on a schedule without you.",
           "items": [
             {
               "kind": "lesson",
@@ -6578,7 +6583,7 @@
         {
           "number": 7,
           "title": "Day 7 - Deploying automation pipelines",
-          "summary": "Focus: Day 7 - Deploying automation pipelines",
+          "summary": "Today you'll ship a deployed, always-on pipeline.",
           "items": [
             {
               "kind": "lesson",
@@ -6942,7 +6947,7 @@
         {
           "number": 6,
           "title": "Day 6 - Monitoring, logging, and error handling",
-          "summary": "Focus: Day 6 - Monitoring, logging, and error handling",
+          "summary": "Today you'll add monitoring, logging, and error handling so your automation fails safely.",
           "items": [
             {
               "kind": "lesson",
@@ -6983,7 +6988,7 @@
         {
           "number": 7,
           "title": "Day 7 - Monitoring, logging, and error handling",
-          "summary": "Focus: Day 7 - Monitoring, logging, and error handling",
+          "summary": "Today you'll ship a hardened, observable automation.",
           "items": [
             {
               "kind": "lesson",
@@ -7345,7 +7350,7 @@
         {
           "number": 6,
           "title": "Day 6 - Selling automation services",
-          "summary": "Focus: Day 6 - Selling automation services",
+          "summary": "Today you'll package an automation offer and price it for real clients.",
           "items": [
             {
               "kind": "lesson",
@@ -7386,7 +7391,7 @@
         {
           "number": 7,
           "title": "Day 7 - Selling automation services",
-          "summary": "Focus: Day 7 - Selling automation services",
+          "summary": "Today you'll finish your service package and outreach plan.",
           "items": [
             {
               "kind": "lesson",
@@ -7732,7 +7737,7 @@
         {
           "number": 6,
           "title": "Day 6 - Client project, build a real automation",
-          "summary": "Focus: Day 6 - Client project, build a real automation",
+          "summary": "Today you'll build the core of a real client automation.",
           "items": [
             {
               "kind": "lesson",
@@ -7773,7 +7778,7 @@
         {
           "number": 7,
           "title": "Day 7 - Client project, build a real automation",
-          "summary": "Focus: Day 7 - Client project, build a real automation",
+          "summary": "Today you'll ship and hand over your client automation.",
           "items": [
             {
               "kind": "lesson",
@@ -8162,7 +8167,7 @@
         {
           "number": 6,
           "title": "Day 6 - Portfolio and what's next",
-          "summary": "Focus: Day 6 - Portfolio and what's next",
+          "summary": "Today you'll assemble your automation portfolio from everything you built.",
           "items": [
             {
               "kind": "lesson",
@@ -8203,7 +8208,7 @@
         {
           "number": 7,
           "title": "Day 7 - Portfolio and what's next",
-          "summary": "Focus: Day 7 - Portfolio and what's next",
+          "summary": "Today you'll publish your portfolio and map your next steps.",
           "items": [
             {
               "kind": "lesson",
