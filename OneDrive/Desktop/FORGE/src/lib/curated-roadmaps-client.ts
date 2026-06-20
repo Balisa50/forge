@@ -59,7 +59,6 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "mobile-engineering",
- hidden: true,
  title: "Mobile Engineering",
  tagline: "Build apps that live on real phones",
  outcome: "Ship one app to both the App Store and Play Store with real users",
