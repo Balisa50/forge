@@ -116,7 +116,6 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "bi-analytics",
- hidden: true,
  title: "Business Intelligence",
  tagline: "Build the analytics layer a whole company depends on",
  outcome: "Own the analytics for a whole team or business: Power BI, modelling, automation",
