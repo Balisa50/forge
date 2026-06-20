@@ -23,6 +23,7 @@ const VALID_SLUGS = new Set([
  "data-analysis",
  "bi-analytics",
  "remote-ops",
+ "growth-marketing",
 ]);
 
 /** Generate a 10-char code: XXXX-XXXX, base32 (no confusable chars). */

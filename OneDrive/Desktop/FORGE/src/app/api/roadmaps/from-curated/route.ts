@@ -32,6 +32,7 @@ const TRACK_COLOR_BY_SLUG: Record<string, string> = {
  "data-analysis": "#14b8a6",
  "bi-analytics": "#f97316",
  "remote-ops": "#7c3aed",
+ "growth-marketing": "#ec4899",
 };
 
 export async function POST(req: NextRequest) {

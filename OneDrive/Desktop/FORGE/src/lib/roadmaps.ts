@@ -194,6 +194,11 @@ const META: Record<string, { tagline: string; outcome: string; gradient: string 
  outcome: "Graduate with 10 real projects, a service package, and the skills to land paid remote work before you finish",
  gradient: "from-indigo-500 via-violet-500 to-purple-600",
  },
+ "growth-marketing": {
+ tagline: "Grow a real business from zero to 10K followers and leads, the digital marketing skills startups and agencies hire",
+ outcome: "Graduate with a full marketing portfolio (brand, SEO, paid ads, email, analytics, AI workflows) and 12 case studies",
+ gradient: "from-pink-500 via-rose-500 to-orange-500",
+ },
 };
 
 export const ROADMAP_META = META;
@@ -254,7 +259,7 @@ export function loadRoadmap(slug: string): Roadmap | null {
 export const PREVIEW_SLUGS = [
  "data-science", "data-analysis", "ai-engineering", "ml-engineering",
  "devops-cloud", "full-stack-web", "mobile-engineering", "cybersecurity",
- "bi-analytics", "ai-automation", "remote-ops", "data-engineering",
+ "bi-analytics", "ai-automation", "remote-ops", "growth-marketing", "data-engineering",
 ];
 
 /**
