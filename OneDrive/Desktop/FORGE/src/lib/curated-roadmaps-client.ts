@@ -81,7 +81,6 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "cybersecurity",
- hidden: true,
  title: "Cybersecurity",
  tagline: "Find and fix the holes attackers actually exploit",
  outcome: "Earn one real security credit: a bug bounty payout, a published CVE, or a major OSS contribution",
