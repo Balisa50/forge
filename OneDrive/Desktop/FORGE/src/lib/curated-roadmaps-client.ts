@@ -127,7 +127,6 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  },
  {
  slug: "ai-automation",
- hidden: true,
  title: "AI Automation",
  tagline: "Build the workflows that run businesses without human hands",
  outcome: "Ship 3 production automations with Make and n8n that include real AI: clients pay you, workflows run 24/7",
