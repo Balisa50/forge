@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, FileText, ListChecks, Target } from "lucide-react";
+import { ArrowLeft, Clock, FileText, ListChecks, Target, Sigma } from "lucide-react";
 import { loadExamPath, totalConcepts } from "@/lib/examPaths";
+import { loadFormulaSheet } from "@/lib/examFormulaSheets";
 import PathMap, { type PathMapModule } from "@/components/exam/PathMap";
 import ReadinessPanel from "@/components/exam/ReadinessPanel";
 
@@ -23,6 +24,7 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  concepts: m.concepts.map((c) => ({ id: c.id, title: c.title, tagline: c.tagline, minutes: c.minutes })),
  }));
  const concepts = totalConcepts(path);
+ const hasFormulaSheet = !!loadFormulaSheet(slug);
 
  return (
  <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
@@ -57,6 +59,17 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>Passing</p>
  <p className="mt-1" style={{ fontSize: "0.875rem", lineHeight: 1.5 }}>{path.format.passing}</p>
  </div>
+ {hasFormulaSheet && (
+ <Link
+ href={`/learn/exam/${path.slug}/formulas`}
+ className="mt-4 inline-flex items-center gap-2 rounded-lg border px-4 py-2 transition hover:border-[color:var(--accent)]"
+ style={{ borderColor: "rgba(212,175,55,0.35)", background: "rgba(212,175,55,0.06)" }}
+ >
+ <Sigma size={14} style={{ color: "var(--accent)" }} />
+ <span style={{ fontSize: "0.875rem", fontWeight: 600 }}>Formula sheet</span>
+ <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", color: "var(--text-dim)" }}>· printable reference</span>
+ </Link>
+ )}
  </div>
  </section>
 
