@@ -21,6 +21,8 @@ const EXAM_P = [
   "sample-spaces-and-events", "counting-and-axioms", "conditional-probability",
   "bayes-theorem", "independence", "expectation-and-variance",
   "common-discrete-distributions", "common-continuous-distributions",
+  "covariance-and-correlation", "percentiles-and-measures",
+  "double-expectation", "clt-and-sums",
 ];
 const EXAM_FM = ["interest-and-accumulation", "level-annuities", "loan-amortization", "bond-pricing"];
 const CONCEPTS = [...EXAM_P, ...EXAM_FM];

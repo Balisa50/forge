@@ -667,6 +667,217 @@ const GENERATORS: Record<string, Template[]> = {
  money, TIER_DIFF.superhard);
  }),
  ],
+
+ "covariance-and-correlation": [
+  T("easy", () => {
+   const sdx = rint(2, 7), sdy = rint(2, 7), rho = rstep(0.2, 0.8, 0.1);
+   const vx = sdx * sdx, vy = sdy * sdy, cov = round(rho * sdx * sdy, 4);
+   return build(
+    `$\\operatorname{Var}(X)=${vx}$, $\\operatorname{Var}(Y)=${vy}$, and $\\operatorname{Cov}(X,Y)=${fmt(cov, 2)}$. Find the correlation $\\rho_{XY}$.`,
+    round(cov / Math.sqrt(vx * vy), 4),
+    [round(cov / (vx * vy), 4), round(cov / (vx + vy), 4), round(cov / Math.sqrt(vx + vy), 4), round(cov / (sdx + sdy), 4)],
+    `$\\rho=\\dfrac{\\operatorname{Cov}(X,Y)}{\\sqrt{\\operatorname{Var}(X)\\,\\operatorname{Var}(Y)}}=\\dfrac{${fmt(cov, 2)}}{\\sqrt{${vx}\\cdot${vy}}}=\\dfrac{${fmt(cov, 2)}}{${sdx * sdy}}=${fmt(round(cov / (sdx * sdy), 4), 4)}$. Dividing by the product of the variances (not the standard deviations) is the classic slip.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const vx = rint(4, 16), vy = rint(4, 16);
+   const cap = Math.max(1, Math.floor(Math.sqrt(vx * vy)) - 1);
+   const cov = pick([-1, 1]) * rint(1, cap);
+   const a = pick([2, 3]);
+   const b = pick([-3, -2, 2, 3]);
+   const correct = a * a * vx + b * b * vy + 2 * a * b * cov;
+   return build(
+    `$\\operatorname{Var}(X)=${vx}$, $\\operatorname{Var}(Y)=${vy}$, $\\operatorname{Cov}(X,Y)=${cov}$. Find $\\operatorname{Var}(${a}X${b < 0 ? b : "+" + b}Y)$.`,
+    correct,
+    [a * a * vx + b * b * vy, a * a * vx + b * b * vy - 2 * a * b * cov, a * vx + b * vy + 2 * a * b * cov, a * a * vx + b * b * vy + a * b * cov],
+    `$\\operatorname{Var}(aX+bY)=a^2\\operatorname{Var}(X)+b^2\\operatorname{Var}(Y)+2ab\\operatorname{Cov}(X,Y)=${a * a}\\cdot${vx}+${b * b}\\cdot${vy}+2(${a})(${b})(${cov})=${correct}$. Dropping the $2ab\\operatorname{Cov}$ term, or its sign when $b<0$, is the trap.`,
+    integer, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const vx = rint(5, 20), vy = rint(5, 20);
+   const cap = Math.max(1, Math.floor(Math.sqrt(vx * vy)) - 1);
+   const cov = pick([-1, 1]) * rint(1, cap);
+   const a = pick([1, 2, 3]);
+   const b = pick([1, 2, 3].filter((x) => x !== a));
+   const c = pick([2, 3]);
+   const d = pick([-2, -1, 3].filter((x) => x !== c));
+   const correct = a * c * vx + b * d * vy + (a * d + b * c) * cov;
+   return build(
+    `$\\operatorname{Var}(X)=${vx}$, $\\operatorname{Var}(Y)=${vy}$, $\\operatorname{Cov}(X,Y)=${cov}$. Find $\\operatorname{Cov}(${a}X+${b}Y,\\;${c}X${d < 0 ? d : "+" + d}Y)$.`,
+    correct,
+    [a * c * vx + b * d * vy, a * c * vx + b * d * vy + (a * c + b * d) * cov, (a * c + b * d) * (vx + vy), (a + b) * (c + d) * cov],
+    `Bilinearity: $\\operatorname{Cov}(aX+bY,cX+dY)=ac\\operatorname{Var}(X)+bd\\operatorname{Var}(Y)+(ad+bc)\\operatorname{Cov}(X,Y)=${a * c}\\cdot${vx}+${b * d}\\cdot${vy}+(${a * d + b * c})(${cov})=${correct}$. The cross-term coefficient is $ad+bc$, not $ac+bd$, the most common error.`,
+    integer, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const vx = rint(4, 12), vy = rint(4, 12);
+   const cap = Math.max(1, Math.floor(Math.sqrt(vx * vy)) - 1);
+   const cov = pick([-1, 1]) * rint(1, cap);
+   const varSum = vx + vy + 2 * cov;
+   const correct = round((vx + cov) / Math.sqrt(vx * varSum), 4);
+   return build(
+    `$\\operatorname{Var}(X)=${vx}$, $\\operatorname{Var}(Y)=${vy}$, $\\operatorname{Cov}(X,Y)=${cov}$. Find the correlation between $X$ and $X+Y$.`,
+    correct,
+    [round(cov / Math.sqrt(vx * varSum), 4), round((vx + cov) / Math.sqrt(vx * vy), 4), round((vx + cov) / varSum, 4), round(Math.sqrt(vx / varSum), 4)],
+    `$\\operatorname{Cov}(X,X+Y)=\\operatorname{Var}(X)+\\operatorname{Cov}(X,Y)=${vx}+(${cov})=${vx + cov}$ and $\\operatorname{Var}(X+Y)=${vx}+${vy}+2(${cov})=${varSum}$, so $\\rho=\\dfrac{${vx + cov}}{\\sqrt{${vx}\\cdot${varSum}}}=${fmt(correct, 4)}$. Treating $\\operatorname{Cov}(X,X+Y)$ as just $\\operatorname{Cov}(X,Y)$ (forgetting the $\\operatorname{Var}(X)$ piece) is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "percentiles-and-measures": [
+  T("easy", () => {
+   const a = rint(0, 8), b = a + rint(6, 20), p = rstep(0.2, 0.9, 0.1);
+   const correct = round(a + p * (b - a), 4);
+   return build(
+    `$X$ is uniform on $[${a},\\,${b}]$. Find the ${Math.round(p * 100)}th percentile of $X$.`,
+    correct,
+    [round(p * (b - a), 4), round(a + p * b, 4), round((a + b) * p, 4), round(b - p * (b - a), 4)],
+    `A uniform's $p$-th percentile solves $\\dfrac{x-a}{b-a}=p$, so $x=a+p(b-a)=${a}+${fmt(p, 2)}(${b - a})=${fmt(correct, 4)}$. Forgetting to add back the lower bound $a$ is the slip.`,
+    (v) => `$${fmt(v, 4)}$`, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const theta = pick([4, 5, 6, 8, 10, 12, 15, 20, 25, 30]);
+   const p = pick([0.25, 0.5, 0.75, 0.9, 0.95]);
+   const correct = round(-theta * Math.log(1 - p), 4);
+   return build(
+    `$X$ is exponential with mean $${theta}$. Find its ${Math.round(p * 100)}th percentile.`,
+    correct,
+    [round(-theta * Math.log(p), 4), round(theta * Math.log(1 - p), 4), round(theta * p, 4), round(-Math.log(1 - p), 4)],
+    `Set the CDF $1-e^{-x/${theta}}=${p}$: $x=-${theta}\\ln(1-${p})=-${theta}\\ln(${round(1 - p, 2)})=${fmt(correct, 4)}$. Using $\\ln p$ instead of $\\ln(1-p)$ inverts the tail, the usual error.`,
+    (v) => `$${fmt(v, 4)}$`, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const theta = pick([100, 200, 250, 500, 1000]);
+   const alpha = pick([2, 3, 4]);
+   const p = pick([0.5, 0.75, 0.9, 0.95, 0.99]);
+   const correct = round(theta * Math.pow(1 - p, -1 / alpha), 2);
+   return build(
+    `$X$ is Pareto with CDF $F(x)=1-\\left(\\dfrac{${theta}}{x}\\right)^{${alpha}}$ for $x>${theta}$. Find the ${Math.round(p * 100)}th percentile.`,
+    correct,
+    [round(theta * Math.pow(1 - p, 1 / alpha), 2), round(theta * Math.pow(p, -1 / alpha), 2), round(theta / (1 - p), 2), round(theta * (1 + p), 2)],
+    `Invert the CDF: $1-(\\theta/x)^{\\alpha}=p\\Rightarrow(\\theta/x)^{\\alpha}=1-p\\Rightarrow x=\\theta(1-p)^{-1/\\alpha}=${theta}(${round(1 - p, 2)})^{-1/${alpha}}=${fmt(correct, 2)}$. Missing the negative exponent (from inverting $\\theta/x$) is where it breaks.`,
+    (v) => `$${fmt(v, 2)}$`, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const b = rint(4, 15);
+   const p = pick([0.6, 0.7, 0.75, 0.8, 0.9]);
+   const xp = round(p * b, 4);
+   const correct = round(xp * xp, 4);
+   return build(
+    `$X$ is uniform on $[0,\\,${b}]$ and $Y=X^2$. Find the ${Math.round(p * 100)}th percentile of $Y$.`,
+    correct,
+    [round((b * b) / 3, 4), round((b * b) / 4, 4), xp, round(b * b * p, 4)],
+    `Percentiles are preserved under a strictly increasing transform. The $p$-th percentile of $X$ is $${fmt(xp, 4)}$ (uniform), so the $p$-th percentile of $Y=X^2$ is $(${fmt(xp, 4)})^2=${fmt(correct, 4)}$. Computing $E[X^2]=${fmt(round(b * b / 3, 4), 4)}$ answers a different question, the classic trap of confusing a percentile with a mean.`,
+    (v) => `$${fmt(v, 4)}$`, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "double-expectation": [
+  T("easy", () => {
+   const q = pick([0.3, 0.4, 0.6, 0.7]);
+   const m0 = pick([10, 20, 30, 40]);
+   const m1 = pick([60, 80, 100, 120]);
+   const correct = round((1 - q) * m0 + q * m1, 4);
+   return build(
+    `A risk is high-type with probability $${fmt(q, 2)}$ (expected claim $${m1}$) and low-type otherwise (expected claim $${m0}$). Find the overall expected claim $E[X]$.`,
+    correct,
+    [round(q * m0 + (1 - q) * m1, 4), round((m0 + m1) / 2, 4), round(q * m1, 4), round(m0 + q * (m1 - m0) * 2, 4)],
+    `Law of total expectation: $E[X]=E[E[X\\mid \\text{type}]]=(1-${fmt(q, 2)})(${m0})+${fmt(q, 2)}(${m1})=${fmt(correct, 4)}$. Swapping which probability multiplies which mean is the trap.`,
+    (v) => `$${fmt(v, 2)}$`, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const n = rint(5, 20);
+   const p = rstep(0.1, 0.6, 0.1);
+   const mu = pick([5, 10, 20, 50]);
+   const correct = round(n * p * mu, 4);
+   return build(
+    `The number of claims $N$ is binomial$(${n},\\,${fmt(p, 1)})$ and each claim has mean $${mu}$, independent of $N$. Find the expected aggregate $E[S]=E[N]\\,E[X]$.`,
+    correct,
+    [round(n * mu, 4), round(p * mu, 4), round(n * p + mu, 4), round(n * p * mu * p, 4)],
+    `$E[N]=np=${n}(${fmt(p, 1)})=${fmt(n * p, 2)}$, so $E[S]=E[N]E[X]=${fmt(n * p, 2)}\\times${mu}=${fmt(correct, 4)}$. Using $n$ instead of $E[N]=np$ is the common slip.`,
+    (v) => `$${fmt(v, 2)}$`, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const lam = rint(2, 10);
+   const mu = pick([10, 20, 30, 50]);
+   const sd = pick([5, 10, 20]);
+   const correct = lam * (sd * sd + mu * mu);
+   return build(
+    `Aggregate claims $S$ are compound with claim count $N$ (mean and variance both $${lam}$) and i.i.d. severities of mean $${mu}$, standard deviation $${sd}$. Find $\\operatorname{Var}(S)$.`,
+    correct,
+    [lam * sd * sd, lam * mu * mu, lam * (sd + mu) * (sd + mu), lam * sd * sd + mu * mu],
+    `Compound variance: $\\operatorname{Var}(S)=E[N]\\operatorname{Var}(X)+\\operatorname{Var}(N)E[X]^2=${lam}(${sd * sd})+${lam}(${mu * mu})=${lam}(${sd * sd}+${mu * mu})=${correct}$. Keeping only $E[N]\\operatorname{Var}(X)$ and forgetting the frequency-variance term $\\operatorname{Var}(N)E[X]^2$ is the classic trap.`,
+    integer, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const lam = rint(2, 12);
+   const mu = pick([5, 10, 15, 20, 25, 50]);
+   const correct = 2 * lam * mu * mu;
+   return build(
+    `Claims arrive as a Poisson process with mean count $${lam}$, and each claim size is exponential with mean $${mu}$. Find the variance of total claims $\\operatorname{Var}(S)$.`,
+    correct,
+    [lam * mu * mu, 2 * mu * mu, lam * mu, lam * lam * 2 * mu * mu],
+    `For compound Poisson, $\\operatorname{Var}(S)=\\lambda\\,E[X^2]$. An exponential with mean $${mu}$ has $E[X^2]=2\\mu^2=2(${mu * mu})=${2 * mu * mu}$, so $\\operatorname{Var}(S)=${lam}\\times${2 * mu * mu}=${correct}$. Using $E[X^2]=\\mu^2$ (forgetting an exponential's variance equals its mean squared) gives $\\lambda\\mu^2$, the trap.`,
+    integer, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "clt-and-sums": [
+  T("easy", () => {
+   const n = rint(20, 200);
+   const sigma = pick([50, 100, 150, 200, 250, 500]);
+   const correct = round(sigma * Math.sqrt(n), 2);
+   return build(
+    `An insurer has ${n} independent claims, each with standard deviation $\\$${sigma}$. Find the standard deviation of the TOTAL claims.`,
+    correct,
+    [round(sigma * n, 2), round(sigma, 2), round(sigma / Math.sqrt(n), 2), round(sigma * Math.sqrt(2 * n), 2)],
+    `For a sum of $n$ independent pieces, variances add: $\\operatorname{Var}(\\text{total})=n\\sigma^2$, so $\\operatorname{SD}=\\sigma\\sqrt{n}=${sigma}\\sqrt{${n}}=${fmt(correct, 2)}$. Multiplying the SD by $n$ instead of $\\sqrt{n}$ is the error, that scales the variance, not the SD.`,
+    (v) => `$${fmt(v, 2)}$`, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const n = rint(30, 120);
+   const mu = pick([5, 10, 15, 20]);
+   const sigma = pick([2, 3, 4, 5]);
+   const z = pick([-1.5, -1, -0.5, 0.5, 1, 1.5]);
+   const K = round(n * mu + z * sigma * Math.sqrt(n), 1);
+   const zA = (K - n * mu) / (sigma * Math.sqrt(n));
+   const correct = round(normalCdf(zA), 4);
+   return build(
+    `${n} independent claims each have mean $${mu}$ and standard deviation $${sigma}$. Using the normal approximation, find $P(\\text{total} < ${fmt(K, 1)})$.`,
+    correct,
+    [round(1 - correct, 4), round(normalCdf(zA * Math.sqrt(n)), 4), round(normalCdf(zA / Math.sqrt(n)), 4), 0.5],
+    `Total $\\approx N(n\\mu,\\,n\\sigma^2)=N(${n * mu},\\,${n * sigma * sigma})$. Standardize: $z=\\dfrac{${fmt(K, 1)}-${n * mu}}{${sigma}\\sqrt{${n}}}=${fmt(zA, 3)}$, so $P=\\Phi(${fmt(zA, 3)})=${fmt(correct, 4)}$. Dividing by $\\sigma$ alone, forgetting the $\\sqrt{n}$, is the classic trap.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const n = pick([25, 36, 49, 64, 100]);
+   const mu = pick([50, 60, 70, 80, 100]);
+   const sigma = pick([10, 12, 15, 20]);
+   const z = pick([-2, -1.5, -1, 1, 1.5, 2]);
+   const se = sigma / Math.sqrt(n);
+   const c = round(mu + z * se, 2);
+   const zA = (c - mu) / se;
+   const correct = round(1 - normalCdf(zA), 4);
+   return build(
+    `A sample of ${n} observations comes from a population with mean $${mu}$ and standard deviation $${sigma}$. Find $P(\\bar X > ${fmt(c, 2)})$ by the normal approximation.`,
+    correct,
+    [round(normalCdf(zA), 4), round(1 - normalCdf(zA / Math.sqrt(n)), 4), round(1 - normalCdf(zA * Math.sqrt(n)), 4), 0.5],
+    `The sample mean has standard error $\\sigma/\\sqrt{n}=${sigma}/${Math.round(Math.sqrt(n))}=${fmt(se, 3)}$. Standardize: $z=\\dfrac{${fmt(c, 2)}-${mu}}{${fmt(se, 3)}}=${fmt(zA, 3)}$, so $P(\\bar X>${fmt(c, 2)})=1-\\Phi(${fmt(zA, 3)})=${fmt(correct, 4)}$. Using $\\sigma$ rather than $\\sigma/\\sqrt{n}$ for the spread of a MEAN is the trap.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const n = pick([100, 400, 900, 1600, 2500]);
+   const mu = pick([100, 200, 250, 500]);
+   const sigma = pick([50, 100, 150, 200, 300]);
+   const correct = round(mu + 1.645 * sigma / Math.sqrt(n), 2);
+   return build(
+    `An insurer writes ${n} independent policies, each with expected loss $\\$${mu}$ and standard deviation $\\$${sigma}$. What premium per policy makes $P(\\text{total losses} < \\text{total premium}) \\ge 0.95$ under the normal approximation?`,
+    correct,
+    [round(mu + 1.96 * sigma / Math.sqrt(n), 2), round(mu + 1.645 * sigma / n, 2), round(mu + 1.645 * sigma * Math.sqrt(n), 2), round(mu + 1.645 * sigma, 2)],
+    `Total losses $\\approx N(n\\mu,\\,n\\sigma^2)$. Need $np \\ge n\\mu + 1.645\\,\\sigma\\sqrt{n}$ (the one-sided $95\\%$ point is $z=1.645$), so $p \\ge \\mu + \\dfrac{1.645\\,\\sigma}{\\sqrt{n}}=${mu}+\\dfrac{1.645(${sigma})}{${Math.round(Math.sqrt(n))}}=${fmt(correct, 2)}$. Using $z=1.96$ (the two-sided / $97.5\\%$ point) is the classic mistake.`,
+    (v) => `$${fmt(v, 2)}$`, TIER_DIFF.superhard);
+  }),
+ ],
 };
 
 /* ───────────────────────── no-repeat tracker ───────────────────────── */
