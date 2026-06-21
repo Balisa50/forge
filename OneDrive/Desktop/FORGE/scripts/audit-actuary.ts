@@ -24,7 +24,10 @@ const EXAM_P = [
   "covariance-and-correlation", "percentiles-and-measures",
   "double-expectation", "clt-and-sums",
 ];
-const EXAM_FM = ["interest-and-accumulation", "level-annuities", "loan-amortization", "bond-pricing"];
+const EXAM_FM = [
+  "interest-and-accumulation", "level-annuities", "loan-amortization", "bond-pricing",
+  "nominal-rates-and-force", "perpetuities-and-varying", "geometric-annuities", "spot-forward-rates",
+];
 const CONCEPTS = [...EXAM_P, ...EXAM_FM];
 
 const ATTEMPTS = 120; // > the 100 the spec demands

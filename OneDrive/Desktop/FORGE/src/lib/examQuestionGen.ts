@@ -81,7 +81,10 @@ function normalCdf(z: number): number {
 }
 
 /* formatters */
-const money = (v: number) => `$\\$${(Math.round(v * 100) / 100)}$`;
+// Render amounts as a plain number inside one $...$ span. A literal `\$` cannot
+// be shown here: renderRichText's tokenizer treats the `$` in `\$` as a closing
+// delimiter, so `$\$1000$` garbles to "\1000$". Number-in-math reads cleanly.
+const money = (v: number) => `$${(Math.round(v * 100) / 100)}$`;
 const prob = (v: number) => `$${fmt(v, 4)}$`;
 const integer = (v: number) => `$${Math.round(v)}$`;
 
@@ -385,7 +388,7 @@ const GENERATORS: Record<string, Template[]> = {
  T("easy", () => {
  const win = rint(5, 40), pH = rstep(0.3, 0.7, 0.05);
  const e = pH * win;
- return build(`A game pays $\\$${win}$ if a biased coin (heads with probability $${fmt(pH, 2)}$) lands heads, and $\\$0$ otherwise. Find the expected payout.`,
+ return build(`A game pays $${win}$ if a biased coin (heads with probability $${fmt(pH, 2)}$) lands heads, and $0$ otherwise. Find the expected payout.`,
  round(e, 4), [round(win / 2, 4), round(pH * win * (1 - pH), 4), round(win, 4), round((1 - pH) * win, 4)],
  `Expected payout weights each outcome by its probability: $${fmt(pH, 2)}\\cdot${win}+${fmt(round(1 - pH, 2), 2)}\\cdot 0=${fmt(e, 4)}$. Splitting the prize in half ignores that heads is not 50/50 here.`,
  prob, TIER_DIFF.easy);
@@ -411,7 +414,7 @@ const GENERATORS: Record<string, Template[]> = {
  // roll a 6-sided die; on a 6 win M; else reroll with prize halved each time
  // E = sum_{k>=1} (5/6)^{k-1}(1/6) M (1/2)^{k-1} = (M/6) * 1/(1-5/12) = 2M/7
  const e = (2 * M) / 7;
- return build(`You roll a fair die for a prize of $\\$${M}$. On a 6 you win the current prize; on 1, 5 you roll again but the prize HALVES. Find the expected winnings.`,
+ return build(`You roll a fair die for a prize of $${M}$. On a 6 you win the current prize; on 1, 5 you roll again but the prize HALVES. Find the expected winnings.`,
  round(e, 4), [round(M / 6, 4), round(M / 2, 4), round(M / 7, 4), round((5 * M) / 12, 4)],
  `Win on roll $k$ with probability $(5/6)^{k-1}(1/6)$ for prize $${M}(1/2)^{k-1}$. Summing, $E=\\tfrac{${M}}{6}\\sum_{k\\ge1}(5/12)^{k-1}=\\tfrac{${M}}{6}\\cdot\\tfrac1{1-5/12}=\\tfrac{2\\cdot${M}}{7}=${fmt(e, 4)}$. The trap is ignoring that BOTH the win-probability and the prize decay geometrically, their product gives ratio $5/12$, not $5/6$.`,
  prob, TIER_DIFF.superhard);
@@ -496,17 +499,17 @@ const GENERATORS: Record<string, Template[]> = {
  T("easy", () => {
  const P = pick([1000, 2000, 5000, 1500]), i = pick([0.04, 0.05, 0.06, 0.08]), n = rint(3, 10);
  const av = P * (1 + i) ** n;
- return build(`$\\$${P}$ is invested at ${pct(i)} effective annual interest for ${n} years. Find the accumulated value.`,
+ return build(`$${P}$ is invested at ${pct(i)} effective annual interest for ${n} years. Find the accumulated value.`,
  round(av, 2), [round(P * (1 + n * i), 2), round(P * (1 + i) ** (n - 1), 2), round(P + P * i * n + 1, 2), round(P * (1 + i / n) ** n, 2)],
- `Compound accumulation: $${P}(1+${fmt(i, 2)})^{${n}}=${money(round(av, 2)).slice(2, -1)}$. Using simple interest $P(1+ni)$ understates it, the trap when the problem says "effective".`,
+ `Compound accumulation: $${P}(1+${fmt(i, 2)})^{${n}}=${money(round(av, 2)).slice(1, -1)}$. Using simple interest $P(1+ni)$ understates it, the trap when the problem says "effective".`,
  money, TIER_DIFF.easy);
  }),
  T("medium", () => {
  const F = pick([5000, 10000, 8000]), i = pick([0.05, 0.06, 0.07]), n = rint(4, 12);
  const pv = F * vOf(i) ** n;
- return build(`A payment of $\\$${F}$ is due in ${n} years. At ${pct(i)} effective, find its present value.`,
+ return build(`A payment of $${F}$ is due in ${n} years. At ${pct(i)} effective, find its present value.`,
  round(pv, 2), [round(F * (1 - n * i), 2), round(F * vOf(i) ** (n - 1), 2), round(F / (1 + n * i), 2), round(F * (1 + i) ** n, 2)],
- `Discount: $${F}\\,v^{${n}}=${F}(1+${fmt(i, 2)})^{-${n}}=${money(round(pv, 2)).slice(2, -1)}$. Accumulating instead of discounting (using $(1+i)^n$) is the sign-of-time trap.`,
+ `Discount: $${F}\\,v^{${n}}=${F}(1+${fmt(i, 2)})^{-${n}}=${money(round(pv, 2)).slice(1, -1)}$. Accumulating instead of discounting (using $(1+i)^n$) is the sign-of-time trap.`,
  money, TIER_DIFF.medium);
  }),
  T("hard", () => {
@@ -521,9 +524,9 @@ const GENERATORS: Record<string, Template[]> = {
  const A = pick([1000, 2000, 3000]), B = pick([1500, 2500]), i = pick([0.05, 0.06, 0.08]);
  const t1 = rint(0, 1), t2 = rint(3, 4), valAt = 5;
  const val = A * (1 + i) ** (valAt - t1) + B * (1 + i) ** (valAt - t2);
- return build(`Deposits of $\\$${A}$ at time ${t1} and $\\$${B}$ at time ${t2} earn ${pct(i)} effective. Find the accumulated value at time ${valAt}.`,
+ return build(`Deposits of $${A}$ at time ${t1} and $${B}$ at time ${t2} earn ${pct(i)} effective. Find the accumulated value at time ${valAt}.`,
  round(val, 2), [round((A + B) * (1 + i) ** valAt, 2), round(A * (1 + i) ** valAt + B * (1 + i) ** valAt, 2), round(A * (1 + i) ** (valAt - t2) + B * (1 + i) ** (valAt - t1), 2), round(A * (1 + i) ** t1 + B * (1 + i) ** t2, 2)],
- `Accumulate each deposit by its OWN time to ${valAt}: $${A}(1+${fmt(i, 2)})^{${valAt - t1}}+${B}(1+${fmt(i, 2)})^{${valAt - t2}}=${money(round(val, 2)).slice(2, -1)}$. The trap is using a single common exponent, each cash flow has a different time-to-valuation.`,
+ `Accumulate each deposit by its OWN time to ${valAt}: $${A}(1+${fmt(i, 2)})^{${valAt - t1}}+${B}(1+${fmt(i, 2)})^{${valAt - t2}}=${money(round(val, 2)).slice(1, -1)}$. The trap is using a single common exponent, each cash flow has a different time-to-valuation.`,
  money, TIER_DIFF.superhard);
  }),
  T("superhard", () => {
@@ -560,33 +563,33 @@ const GENERATORS: Record<string, Template[]> = {
  T("easy", () => {
  const P = pick([1000, 500, 2000]), i = pick([0.05, 0.06, 0.08]), n = rint(5, 15);
  const pv = P * aImm(n, i);
- return build(`Find the present value of $\\$${P}$ paid at the END of each year for ${n} years at ${pct(i)} effective.`,
+ return build(`Find the present value of $${P}$ paid at the END of each year for ${n} years at ${pct(i)} effective.`,
  round(pv, 2), [round(P * sImm(n, i), 2), round(P * aDue(n, i), 2), round(P * n * vOf(i) ** n, 2), round(P * aImm(n, i) * vOf(i), 2)],
- `Annuity-immediate PV: $${P}\\,a_{\\overline{${n}}|}=${P}\\cdot\\dfrac{1-v^{${n}}}{${fmt(i, 2)}}=${money(round(pv, 2)).slice(2, -1)}$. Using $s_{\\overline{n}|}$ gives the FUTURE value, the most common annuity slip.`,
+ `Annuity-immediate PV: $${P}\\,a_{\\overline{${n}}|}=${P}\\cdot\\dfrac{1-v^{${n}}}{${fmt(i, 2)}}=${money(round(pv, 2)).slice(1, -1)}$. Using $s_{\\overline{n}|}$ gives the FUTURE value, the most common annuity slip.`,
  money, TIER_DIFF.easy);
  }),
  T("medium", () => {
  const P = pick([200, 300, 500]), i = pick([0.05, 0.06, 0.07]), n = rint(5, 12);
  const av = P * sImm(n, i);
- return build(`Find the accumulated value at the end of ${n} years of $\\$${P}$ deposited at the END of each year at ${pct(i)} effective.`,
+ return build(`Find the accumulated value at the end of ${n} years of $${P}$ deposited at the END of each year at ${pct(i)} effective.`,
  round(av, 2), [round(P * aImm(n, i), 2), round(P * n, 2), round(P * sImm(n, i) * vOf(i), 2), round(P * ((1 + i) ** n), 2)],
- `Annuity-immediate AV: $${P}\\,s_{\\overline{${n}}|}=${P}\\cdot\\dfrac{(1+${fmt(i, 2)})^{${n}}-1}{${fmt(i, 2)}}=${money(round(av, 2)).slice(2, -1)}$. Confusing it with the PV $a_{\\overline{n}|}$ is the trap.`,
+ `Annuity-immediate AV: $${P}\\,s_{\\overline{${n}}|}=${P}\\cdot\\dfrac{(1+${fmt(i, 2)})^{${n}}-1}{${fmt(i, 2)}}=${money(round(av, 2)).slice(1, -1)}$. Confusing it with the PV $a_{\\overline{n}|}$ is the trap.`,
  money, TIER_DIFF.medium);
  }),
  T("hard", () => {
  const target = pick([50000, 100000, 75000]), i = pick([0.05, 0.06, 0.07]), n = rint(10, 25);
  const pmt = target / sImm(n, i);
- return build(`How much must be deposited at the END of each year for ${n} years at ${pct(i)} to accumulate $\\$${target}$?`,
+ return build(`How much must be deposited at the END of each year for ${n} years at ${pct(i)} to accumulate $${target}$?`,
  round(pmt, 2), [round(target / aImm(n, i), 2), round(target / n, 2), round(target * i, 2), round(target / aDue(n, i), 2)],
- `Solve $X\\,s_{\\overline{${n}}|}=${target}$, so $X=\\dfrac{${target}}{s_{\\overline{${n}}|}}=${money(round(pmt, 2)).slice(2, -1)}$. Dividing by $a_{\\overline{n}|}$ (a PV factor) instead of $s_{\\overline{n}|}$ (an AV factor) is the trap.`,
+ `Solve $X\\,s_{\\overline{${n}}|}=${target}$, so $X=\\dfrac{${target}}{s_{\\overline{${n}}|}}=${money(round(pmt, 2)).slice(1, -1)}$. Dividing by $a_{\\overline{n}|}$ (a PV factor) instead of $s_{\\overline{n}|}$ (an AV factor) is the trap.`,
  money, TIER_DIFF.hard);
  }),
  T("superhard", () => {
  const P = pick([1000, 1500, 2000]), i = pick([0.05, 0.06, 0.08]), n = rint(8, 12), defer = rint(3, 5);
  const pv = P * aImm(n, i) * vOf(i) ** defer;
- return build(`An annuity pays $\\$${P}$ at the end of each year for ${n} years, but the FIRST payment is at the end of year ${defer + 1}. At ${pct(i)} effective, find the present value today.`,
+ return build(`An annuity pays $${P}$ at the end of each year for ${n} years, but the FIRST payment is at the end of year ${defer + 1}. At ${pct(i)} effective, find the present value today.`,
  round(pv, 2), [round(P * aImm(n, i), 2), round(P * aImm(n + defer, i), 2), round(P * aImm(n, i) * vOf(i) ** (defer - 1), 2), round(P * aImm(n - defer, i), 2)],
- `A deferred annuity: value the $${n}$-year annuity one period before its first payment, then discount ${defer} more years: $${P}\\,a_{\\overline{${n}}|}\\,v^{${defer}}=${money(round(pv, 2)).slice(2, -1)}$. Off-by-one on the deferral exponent (using $v^{${defer - 1}}$ or $v^{${defer + 1}}$) is the classic trap.`,
+ `A deferred annuity: value the $${n}$-year annuity one period before its first payment, then discount ${defer} more years: $${P}\\,a_{\\overline{${n}}|}\\,v^{${defer}}=${money(round(pv, 2)).slice(1, -1)}$. Off-by-one on the deferral exponent (using $v^{${defer - 1}}$ or $v^{${defer + 1}}$) is the classic trap.`,
  money, TIER_DIFF.superhard);
  }),
  ],
@@ -595,36 +598,36 @@ const GENERATORS: Record<string, Template[]> = {
  T("easy", () => {
  const L = pick([10000, 20000, 15000]), i = pick([0.05, 0.06, 0.08]), n = rint(5, 15);
  const pmt = L / aImm(n, i);
- return build(`A $\\$${L}$ loan at ${pct(i)} effective is repaid by level END-of-year payments over ${n} years. Find the annual payment.`,
+ return build(`A $${L}$ loan at ${pct(i)} effective is repaid by level END-of-year payments over ${n} years. Find the annual payment.`,
  round(pmt, 2), [round(L / sImm(n, i), 2), round(L / n, 2), round(L * i, 2), round(L * vOf(i) ** n, 2)],
- `Level payment: $X=\\dfrac{L}{a_{\\overline{${n}}|}}=\\dfrac{${L}}{a_{\\overline{${n}}|}}=${money(round(pmt, 2)).slice(2, -1)}$. The loan PV equals the PV of payments, so you divide by $a_{\\overline{n}|}$, not $s_{\\overline{n}|}$.`,
+ `Level payment: $X=\\dfrac{L}{a_{\\overline{${n}}|}}=\\dfrac{${L}}{a_{\\overline{${n}}|}}=${money(round(pmt, 2)).slice(1, -1)}$. The loan PV equals the PV of payments, so you divide by $a_{\\overline{n}|}$, not $s_{\\overline{n}|}$.`,
  money, TIER_DIFF.easy);
  }),
  T("medium", () => {
  const L = pick([10000, 20000, 15000]), i = pick([0.05, 0.06, 0.08]), n = rint(8, 15), k = rint(2, 5);
  const pmt = L / aImm(n, i);
  const bal = pmt * aImm(n - k, i);
- return build(`A $\\$${L}$ loan at ${pct(i)} is amortized over ${n} years with level payments. Find the outstanding balance just after the ${k}-th payment.`,
+ return build(`A $${L}$ loan at ${pct(i)} is amortized over ${n} years with level payments. Find the outstanding balance just after the ${k}-th payment.`,
  round(bal, 2), [round(pmt * aImm(k, i), 2), round(L - k * pmt, 2), round(pmt * sImm(n - k, i), 2), round(L * (1 + i) ** k - pmt * k, 2)],
- `Prospective method: the balance equals the PV of the REMAINING $${n - k}$ payments, $X\\,a_{\\overline{${n - k}}|}=${money(round(bal, 2)).slice(2, -1)}$. Subtracting payments from principal ($L-k\\cdot X$) ignores interest and is wrong.`,
+ `Prospective method: the balance equals the PV of the REMAINING $${n - k}$ payments, $X\\,a_{\\overline{${n - k}}|}=${money(round(bal, 2)).slice(1, -1)}$. Subtracting payments from principal ($L-k\\cdot X$) ignores interest and is wrong.`,
  money, TIER_DIFF.medium);
  }),
  T("hard", () => {
  const L = pick([10000, 20000, 25000]), i = pick([0.05, 0.06, 0.08]), n = rint(8, 15), t = rint(2, 5);
  const pmt = L / aImm(n, i);
  const interest = pmt * (1 - vOf(i) ** (n - t + 1));
- return build(`A $\\$${L}$ loan at ${pct(i)} is amortized with level payments over ${n} years. Find the INTEREST portion of the ${t}-th payment.`,
+ return build(`A $${L}$ loan at ${pct(i)} is amortized with level payments over ${n} years. Find the INTEREST portion of the ${t}-th payment.`,
  round(interest, 2), [round(pmt * vOf(i) ** (n - t + 1), 2), round(L * i, 2), round(pmt - L * i, 2), round(pmt * (1 - vOf(i) ** (n - t)), 2)],
- `Interest in payment $t$ is $X\\,(1-v^{n-t+1})=${money(round(interest, 2)).slice(2, -1)}$; the rest is principal $X v^{n-t+1}$. Using $L\\cdot i$ only works for the FIRST payment, the trap once $t>1$.`,
+ `Interest in payment $t$ is $X\\,(1-v^{n-t+1})=${money(round(interest, 2)).slice(1, -1)}$; the rest is principal $X v^{n-t+1}$. Using $L\\cdot i$ only works for the FIRST payment, the trap once $t>1$.`,
  money, TIER_DIFF.hard);
  }),
  T("superhard", () => {
  const L = pick([10000, 20000, 30000]), i = pick([0.05, 0.06, 0.08]), n = rint(10, 20);
  const pmt = L / aImm(n, i);
  const totalInterest = pmt * n - L;
- return build(`A $\\$${L}$ loan at ${pct(i)} is repaid by level payments over ${n} years. Find the TOTAL interest paid over the life of the loan.`,
+ return build(`A $${L}$ loan at ${pct(i)} is repaid by level payments over ${n} years. Find the TOTAL interest paid over the life of the loan.`,
  round(totalInterest, 2), [round(L * i * n, 2), round(pmt * n, 2), round(L * ((1 + i) ** n - 1), 2), round(pmt * aImm(n, i), 2)],
- `Total paid is $n\\cdot X=${money(round(pmt * n, 2)).slice(2, -1)}$; subtract the principal $${L}$ to isolate interest: $${money(round(totalInterest, 2)).slice(2, -1)}$. Using $L\\cdot i\\cdot n$ (simple interest on the full balance) ignores that principal declines each year.`,
+ `Total paid is $n\\cdot X=${money(round(pmt * n, 2)).slice(1, -1)}$; subtract the principal $${L}$ to isolate interest: $${money(round(totalInterest, 2)).slice(1, -1)}$. Using $L\\cdot i\\cdot n$ (simple interest on the full balance) ignores that principal declines each year.`,
  money, TIER_DIFF.superhard);
  }),
  ],
@@ -633,27 +636,27 @@ const GENERATORS: Record<string, Template[]> = {
  T("easy", () => {
  const F = 1000, r = pick([0.04, 0.05, 0.06]), i = pick([0.05, 0.06, 0.07]), n = rint(5, 15);
  const price = F * r * aImm(n, i) + F * vOf(i) ** n;
- return build(`A $\\$1000$ par bond pays annual coupons at ${pct(r)} and matures in ${n} years. At a yield of ${pct(i)}, find the price.`,
+ return build(`A $1000$ par bond pays annual coupons at ${pct(r)} and matures in ${n} years. At a yield of ${pct(i)}, find the price.`,
  round(price, 2), [round(F * r * aImm(n, i), 2), round(F * vOf(i) ** n, 2), round(F * r * sImm(n, i) + F, 2), round(F + F * r * n, 2)],
- `Price = PV of coupons + PV of redemption: $${F}\\cdot${fmt(r, 2)}\\,a_{\\overline{${n}}|}+${F}v^{${n}}=${money(round(price, 2)).slice(2, -1)}$. Dropping either piece is the trap.`,
+ `Price = PV of coupons + PV of redemption: $${F}\\cdot${fmt(r, 2)}\\,a_{\\overline{${n}}|}+${F}v^{${n}}=${money(round(price, 2)).slice(1, -1)}$. Dropping either piece is the trap.`,
  money, TIER_DIFF.easy);
  }),
  T("medium", () => {
  const F = 1000, r = pick([0.06, 0.07, 0.08]), i = pick([0.04, 0.05]), n = rint(6, 12);
  const price = F * r * aImm(n, i) + F * vOf(i) ** n;
  const premium = price - F;
- return build(`A $\\$1000$ bond with ${pct(r)} annual coupons matures in ${n} years, priced to yield ${pct(i)}. Find the premium (price minus redemption).`,
+ return build(`A $1000$ bond with ${pct(r)} annual coupons matures in ${n} years, priced to yield ${pct(i)}. Find the premium (price minus redemption).`,
  round(premium, 2), [round(F - price, 2), round(price, 2), round(F * (r - i) * n, 2), round(F * r * aImm(n, i), 2)],
- `Since the coupon ${pct(r)} exceeds the yield ${pct(i)}, the bond sells at a premium: price $${money(round(price, 2)).slice(2, -1)}$ minus par $${F}$ = $${money(round(premium, 2)).slice(2, -1)}$. A coupon-above-yield bond is ALWAYS a premium bond.`,
+ `Since the coupon ${pct(r)} exceeds the yield ${pct(i)}, the bond sells at a premium: price $${money(round(price, 2)).slice(1, -1)}$ minus par $${F}$ = $${money(round(premium, 2)).slice(1, -1)}$. A coupon-above-yield bond is ALWAYS a premium bond.`,
  money, TIER_DIFF.medium);
  }),
  T("hard", () => {
  const F = 1000, r = pick([0.05, 0.06, 0.07]), i = pick([0.05, 0.06, 0.07]), n = rint(8, 14), k = rint(2, 5);
  const price = F * r * aImm(n, i) + F * vOf(i) ** n;
  const book = F * r * aImm(n - k, i) + F * vOf(i) ** (n - k);
- return build(`A $\\$1000$ bond, ${pct(r)} annual coupons, ${n} years, yield ${pct(i)}. Find the book value just after the ${k}-th coupon.`,
+ return build(`A $1000$ bond, ${pct(r)} annual coupons, ${n} years, yield ${pct(i)}. Find the book value just after the ${k}-th coupon.`,
  round(book, 2), [round(price, 2), round(F * r * aImm(k, i) + F * vOf(i) ** k, 2), round(F, 2), round(book * (1 + i), 2)],
- `Book value = PV of the REMAINING $${n - k}$ coupons plus redemption, at the original yield: $${F}\\cdot${fmt(r, 2)}\\,a_{\\overline{${n - k}}|}+${F}v^{${n - k}}=${money(round(book, 2)).slice(2, -1)}$. Re-pricing the full ${n}-year stream ignores the coupons already paid.`,
+ `Book value = PV of the REMAINING $${n - k}$ coupons plus redemption, at the original yield: $${F}\\cdot${fmt(r, 2)}\\,a_{\\overline{${n - k}}|}+${F}v^{${n - k}}=${money(round(book, 2)).slice(1, -1)}$. Re-pricing the full ${n}-year stream ignores the coupons already paid.`,
  money, TIER_DIFF.hard);
  }),
  T("superhard", () => {
@@ -661,9 +664,9 @@ const GENERATORS: Record<string, Template[]> = {
  const priceCall = F * r * aImm(nCall, i) + F * vOf(i) ** nCall;
  const priceMat = F * r * aImm(nMat, i) + F * vOf(i) ** nMat;
  const worst = Math.min(priceCall, priceMat);
- return build(`A $\\$1000$ bond pays ${pct(r)} annual coupons, is callable at par in ${nCall} years, and otherwise matures in ${nMat} years. To GUARANTEE a yield of at least ${pct(i)}, what price should an investor pay?`,
+ return build(`A $1000$ bond pays ${pct(r)} annual coupons, is callable at par in ${nCall} years, and otherwise matures in ${nMat} years. To GUARANTEE a yield of at least ${pct(i)}, what price should an investor pay?`,
  round(worst, 2), [round(Math.max(priceCall, priceMat), 2), round((priceCall + priceMat) / 2, 2), round(F, 2), round(priceMat, 2)],
- `This is a premium bond (coupon ${pct(r)} > yield ${pct(i)}), so the issuer calls EARLY to stop overpaying coupons, worst case for the investor. Price at every call/maturity date and take the MINIMUM: call-date price $${money(round(priceCall, 2)).slice(2, -1)}$ vs maturity price $${money(round(priceMat, 2)).slice(2, -1)}$, so pay $${money(round(worst, 2)).slice(2, -1)}$. Paying the higher price risks a yield below ${pct(i)} if called, the yield-to-worst trap.`,
+ `This is a premium bond (coupon ${pct(r)} > yield ${pct(i)}), so the issuer calls EARLY to stop overpaying coupons, worst case for the investor. Price at every call/maturity date and take the MINIMUM: call-date price $${money(round(priceCall, 2)).slice(1, -1)}$ vs maturity price $${money(round(priceMat, 2)).slice(1, -1)}$, so pay $${money(round(worst, 2)).slice(1, -1)}$. Paying the higher price risks a yield below ${pct(i)} if called, the yield-to-worst trap.`,
  money, TIER_DIFF.superhard);
  }),
  ],
@@ -828,7 +831,7 @@ const GENERATORS: Record<string, Template[]> = {
    const sigma = pick([50, 100, 150, 200, 250, 500]);
    const correct = round(sigma * Math.sqrt(n), 2);
    return build(
-    `An insurer has ${n} independent claims, each with standard deviation $\\$${sigma}$. Find the standard deviation of the TOTAL claims.`,
+    `An insurer has ${n} independent claims, each with standard deviation $${sigma}$. Find the standard deviation of the TOTAL claims.`,
     correct,
     [round(sigma * n, 2), round(sigma, 2), round(sigma / Math.sqrt(n), 2), round(sigma * Math.sqrt(2 * n), 2)],
     `For a sum of $n$ independent pieces, variances add: $\\operatorname{Var}(\\text{total})=n\\sigma^2$, so $\\operatorname{SD}=\\sigma\\sqrt{n}=${sigma}\\sqrt{${n}}=${fmt(correct, 2)}$. Multiplying the SD by $n$ instead of $\\sqrt{n}$ is the error, that scales the variance, not the SD.`,
@@ -871,11 +874,171 @@ const GENERATORS: Record<string, Template[]> = {
    const sigma = pick([50, 100, 150, 200, 300]);
    const correct = round(mu + 1.645 * sigma / Math.sqrt(n), 2);
    return build(
-    `An insurer writes ${n} independent policies, each with expected loss $\\$${mu}$ and standard deviation $\\$${sigma}$. What premium per policy makes $P(\\text{total losses} < \\text{total premium}) \\ge 0.95$ under the normal approximation?`,
+    `An insurer writes ${n} independent policies, each with expected loss $${mu}$ and standard deviation $${sigma}$. What premium per policy makes $P(\\text{total losses} < \\text{total premium}) \\ge 0.95$ under the normal approximation?`,
     correct,
     [round(mu + 1.96 * sigma / Math.sqrt(n), 2), round(mu + 1.645 * sigma / n, 2), round(mu + 1.645 * sigma * Math.sqrt(n), 2), round(mu + 1.645 * sigma, 2)],
     `Total losses $\\approx N(n\\mu,\\,n\\sigma^2)$. Need $np \\ge n\\mu + 1.645\\,\\sigma\\sqrt{n}$ (the one-sided $95\\%$ point is $z=1.645$), so $p \\ge \\mu + \\dfrac{1.645\\,\\sigma}{\\sqrt{n}}=${mu}+\\dfrac{1.645(${sigma})}{${Math.round(Math.sqrt(n))}}=${fmt(correct, 2)}$. Using $z=1.96$ (the two-sided / $97.5\\%$ point) is the classic mistake.`,
     (v) => `$${fmt(v, 2)}$`, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "nominal-rates-and-force": [
+  T("easy", () => {
+   const i = rstep(0.02, 0.15, 0.002);
+   const delta = round(Math.log(1 + i), 5);
+   return build(`An account earns an effective annual interest rate of ${pct(i)}. Find the equivalent constant force of interest $\\delta$.`,
+    delta, [round(i, 5), round(i / (1 + i), 5), round(2 * Math.log(1 + i / 2), 5), round((1 + i) ** 0.5 - 1, 5)],
+    `The force is the continuous-compounding equivalent: $\\delta=\\ln(1+i)=\\ln(1+${fmt(i, 3)})=${fmt(delta, 5)}$. Reporting $i$ itself, or the effective discount rate $d=\\frac{i}{1+i}$, is the classic force-vs-discount slip; both sit just below $i$.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const m = pick([2, 4, 12]);
+   const dm = rstep(0.02, 0.13, 0.005);
+   const conv = m === 2 ? "semiannually" : m === 4 ? "quarterly" : "monthly";
+   const i = round((1 - dm / m) ** (-m) - 1, 5);
+   return build(`A nominal annual rate of DISCOUNT of ${pct(dm)} convertible ${conv} is given. Find the equivalent effective annual rate of interest.`,
+    i, [round(dm, 5), round((1 + dm / m) ** m - 1, 5), round(1 / (1 - dm) - 1, 5), round(dm / (1 - dm), 5)],
+    `A nominal discount rate accumulates as $\\left(1-\\frac{d^{(${m})}}{${m}}\\right)^{-${m}}$, so $v=\\left(1-\\frac{${fmt(dm, 4)}}{${m}}\\right)^{${m}}$ and $i=v^{-1}-1=${fmt(i, 5)}$. Treating $d^{(${m})}$ like a nominal INTEREST rate (a $+$ sign) is the trap.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const p = pick([2, 4, 12]), q = pick([2, 4, 12]);
+   const ip = rstep(0.03, 0.13, 0.005);
+   const ieff = (1 + ip / p) ** p - 1;
+   const dq = round(q * (1 - (1 + ieff) ** (-1 / q)), 5);
+   const conv = (mm: number) => (mm === 2 ? "semiannually" : mm === 4 ? "quarterly" : "monthly");
+   return build(`A nominal annual interest rate of ${pct(ip)} convertible ${conv(p)} is equivalent to a nominal annual rate of DISCOUNT $d^{(${q})}$ convertible ${conv(q)}. Find $d^{(${q})}$.`,
+    dq, [round(ip, 5), round(q * ((1 + ieff) ** (1 / q) - 1), 5), round(ieff / (1 + ieff), 5), round(ieff, 5)],
+    `First the effective rate: $i=\\left(1+\\frac{${fmt(ip, 3)}}{${p}}\\right)^{${p}}-1=${fmt(ieff, 5)}$. Then $d^{(${q})}=${q}\\left(1-(1+i)^{-1/${q}}\\right)=${fmt(dq, 5)}$. Computing $i^{(${q})}=${q}((1+i)^{1/${q}}-1)$ (interest, not discount) is the trap; discount uses $1-v^{1/${q}}$.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const P = pick([1000, 2000, 5000]);
+   const dm = rstep(0.04, 0.09, 0.005);
+   const delta = rstep(0.03, 0.07, 0.005);
+   const y1 = pick([4, 5, 6]), y2 = pick([2, 3]);
+   const av = round(P * (1 - dm / 12) ** (-12 * y1) * Math.exp(delta * y2), 2);
+   return build(`$${P}$ is invested. For the first ${y1} years it earns a nominal rate of discount of ${pct(dm)} convertible monthly; for the next ${y2} years it earns a constant force of interest of ${pct(delta)}. Find the accumulated value at the end of ${y1 + y2} years.`,
+    av, [round(P * (1 + dm / 12) ** (12 * y1) * Math.exp(delta * y2), 2), round(P * (1 - dm) ** (-y1) * Math.exp(delta * y2), 2), round(P * (1 - dm / 12) ** (-12 * y1) * (1 + delta * y2), 2), round(P * (1 - dm / 12) ** (-12 * y1) * (1 + delta) ** y2, 2)],
+    `Accumulate in two stages. Discount phase: $\\left(1-\\frac{${fmt(dm, 3)}}{12}\\right)^{-12\\cdot${y1}}$. Force phase: $e^{${fmt(delta, 3)}\\cdot${y2}}$. Multiplying gives ${av}. Using $(1+d/12)^{+12y}$ (discount treated as interest) or dropping the force exponent ${y2} are the traps.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "perpetuities-and-varying": [
+  T("easy", () => {
+   const X = 50 * rint(1, 20), i = rstep(0.03, 0.10, 0.0025);
+   const pv = round(X / i, 2);
+   return build(`A perpetuity-immediate pays $${X}$ at the end of each year forever. At an effective annual rate of ${pct(i, 2)}, find its present value.`,
+    pv, [round(X * (1 + i) / i, 2), round(X * i, 2), round(X / (i * i), 2), round(X * vOf(i) / i, 2)],
+    `Perpetuity-immediate: $PV=\\frac{X}{i}=\\frac{${X}}{${fmt(i, 4)}}=${pv}$. The perpetuity-DUE value $\\frac{X}{d}=\\frac{X(1+i)}{i}$ values the same payments one period earlier, the timing trap.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const X = 50 * rint(2, 16), i = rstep(0.04, 0.10, 0.0025), k = rint(3, 9);
+   const pv = round((X / i) * vOf(i) ** k, 2);
+   return build(`A perpetuity-immediate pays $${X}$ annually, but the FIRST payment is at the end of year ${k + 1}. At ${pct(i, 2)} effective, find the present value today.`,
+    pv, [round(X / i, 2), round((X / i) * vOf(i) ** (k - 1), 2), round((X / i) * vOf(i) ** (k + 1), 2), round((X / i) * (1 + i) ** k, 2)],
+    `Value the perpetuity one period before its first payment (at time ${k}) as $\\frac{X}{i}$, then discount ${k} years: $\\frac{X}{i}v^{${k}}=${pv}$. Off-by-one on the deferral exponent is the classic trap.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const X = 50 * rint(1, 12), i = rstep(0.04, 0.12, 0.0025);
+   const pv = round(X * (1 + i) / (i * i), 2);
+   return build(`A perpetuity-immediate pays $${X}$ at the end of year 1, $${2 * X}$ at the end of year 2, $${3 * X}$ at the end of year 3, increasing by $${X}$ each year forever. At ${pct(i, 2)} effective, find the present value.`,
+    pv, [round(X / (i * i), 2), round(X / i, 2), round(X * (2 + i) / (i * i), 2), round(X * (1 + i) / i, 2)],
+    `Increasing perpetuity-immediate: $PV=X\\left(\\frac{1}{i}+\\frac{1}{i^2}\\right)=\\frac{X(1+i)}{i^2}=${pv}$. Using only $\\frac{X}{i^2}$ (dropping the level part) is the trap.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const X = 50 * rint(2, 12), C = pick([10, 20, 25, 50]), i = rstep(0.04, 0.10, 0.0025);
+   const pv = round(X / i + C / (i * i), 2);
+   return build(`A perpetuity-immediate pays $${X}$ at the end of year 1, and each subsequent annual payment is $${C}$ larger than the one before, forever. At ${pct(i, 2)} effective, find the present value.`,
+    pv, [round(X / i + C / i, 2), round((X + C) / i, 2), round(X / i, 2), round(X / i + C * (1 + i) / (i * i), 2)],
+    `Split into a level perpetuity plus an arithmetic-increasing one: $PV=\\frac{X}{i}+\\frac{C}{i^2}=${pv}$. The increasing piece carries $\\frac{C}{i^2}$ (an extra power of $i$); using $\\frac{C}{i}$ is the trap.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "geometric-annuities": [
+  T("easy", () => {
+   const X = 100 * rint(1, 10), i = rstep(0.05, 0.10, 0.0025), g = rstep(0.02, 0.04, 0.005), n = rint(8, 20);
+   const pv = round(X * (1 - ((1 + g) / (1 + i)) ** n) / (i - g), 2);
+   return build(`An annuity-immediate makes ${n} annual payments. The first is $${X}$ and each later payment is ${pct(g, 1)} larger than the previous. At ${pct(i, 2)} effective, find the present value.`,
+    pv, [round(X * aImm(n, i), 2), round(X * (1 - ((1 + g) / (1 + i)) ** n) / (i + g), 2), round(X * (1 - ((1 + i) / (1 + g)) ** n) / (i - g), 2), round(X * n / (1 + i), 2)],
+    `Geometric annuity-immediate: $PV=X\\cdot\\frac{1-\\left(\\frac{1+g}{1+i}\\right)^{n}}{i-g}=${pv}$. Discount by the NET rate $i-g$. Ignoring growth (level $Xa_{\\overline{n}|}$) or using $i+g$ are the classic traps.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const X = 100 * rint(1, 12), i = rstep(0.05, 0.12, 0.0025), g = rstep(0.01, 0.04, 0.005);
+   const pv = round(X / (i - g), 2);
+   return build(`A perpetuity-immediate pays $${X}$ at the end of year 1, and each later payment grows by ${pct(g, 1)} per year forever. At ${pct(i, 2)} effective (with $i>g$), find the present value.`,
+    pv, [round(X / i, 2), round(X / (i + g), 2), round(X * (1 + g) / (i - g), 2), round(X * (1 - g) / i, 2)],
+    `A geometric (Gordon-growth) perpetuity: $PV=\\frac{X}{i-g}=${pv}$, valid only when $i>g$. Forgetting to subtract the growth (using $\\frac{X}{i}$) understates it, this is the dividend-discount model.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const X = 100 * rint(1, 10), i = rstep(0.05, 0.10, 0.0025), g = rstep(0.02, 0.04, 0.005), n = rint(8, 18);
+   const av = round(X * ((1 + i) ** n - (1 + g) ** n) / (i - g), 2);
+   return build(`An annuity-immediate makes ${n} annual payments; the first is $${X}$ and each grows ${pct(g, 1)} per year. At ${pct(i, 2)} effective, find the ACCUMULATED value just after the last payment.`,
+    av, [round(X * sImm(n, i), 2), round(X * ((1 + i) ** n - (1 + g) ** n) / (i + g), 2), round(X * ((1 + g) ** n - (1 + i) ** n) / (i - g), 2), round(X * (1 - ((1 + g) / (1 + i)) ** n) / (i - g), 2)],
+    `Accumulate the geometric annuity: $AV=X\\cdot\\frac{(1+i)^{n}-(1+g)^{n}}{i-g}=${av}$ (the PV grown by $(1+i)^n$). Using the level $Xs_{\\overline{n}|}$ ignores growth, the trap.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const X = 100 * rint(1, 10), i = rstep(0.06, 0.12, 0.0025), g = rstep(0.02, 0.05, 0.005);
+   const pv = round(X / (i - g), 2);
+   return build(`An investor pays $${pv}$ today for a perpetuity-immediate whose first payment (one year from now) is $${X}$, with every later payment ${pct(g, 1)} larger than the one before. Find the effective annual yield $i$ the investor earns.`,
+    round(i, 5), [round(X / pv, 5), round(g + X / (pv * (1 + g)), 5), round(X / pv - g, 5), round(g, 5)],
+    `Invert the Gordon perpetuity $PV=\\frac{X}{i-g}$: $i=g+\\frac{X}{PV}=${fmt(g, 3)}+\\frac{${X}}{${pv}}=${fmt(round(i, 5), 5)}$. Reporting just $\\frac{X}{PV}$ (forgetting to add the growth $g$ back) is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "spot-forward-rates": [
+  T("easy", () => {
+   const t = rint(1, 4);
+   const s1 = rstep(0.03, 0.06, 0.0025);
+   const s2 = round(s1 + pick([0.003, 0.005, 0.007, 0.01, 0.012]), 4);
+   const f = round((1 + s2) ** (t + 1) / (1 + s1) ** t - 1, 5);
+   return build(`The ${t}-year spot rate is ${pct(s1, 2)} and the ${t + 1}-year spot rate is ${pct(s2, 2)}. Find the 1-year forward rate from year ${t} to year ${t + 1}.`,
+    f, [round(s2, 5), round(s2 - s1, 5), round((1 + s2) / (1 + s1) - 1, 5), round(2 * s2 - s1, 5)],
+    `Forwards compound the spots: $(1+s_{${t + 1}})^{${t + 1}}=(1+s_{${t}})^{${t}}(1+f)$, so $f=\\frac{(1+s_{${t + 1}})^{${t + 1}}}{(1+s_{${t}})^{${t}}}-1=${fmt(f, 5)}$. The naive $s_{${t + 1}}-s_{${t}}$ ignores compounding over the first ${t} years.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const a = rint(1, 3), gap = pick([2, 3]), b = a + gap;
+   const sa = rstep(0.03, 0.05, 0.0025);
+   const sb = round(sa + pick([0.005, 0.008, 0.01, 0.012]), 4);
+   const f = round(((1 + sb) ** b / (1 + sa) ** a) ** (1 / (b - a)) - 1, 5);
+   return build(`The ${a}-year spot rate is ${pct(sa, 2)} and the ${b}-year spot rate is ${pct(sb, 2)}. Find the annual forward rate that applies over the ${gap}-year period from year ${a} to year ${b}.`,
+    f, [round((1 + sb) ** b / (1 + sa) ** a - 1, 5), round(sb - sa, 5), round(sb, 5), round((1 + sb) / (1 + sa) - 1, 5)],
+    `Over $b-a=${gap}$ years: $(1+s_{${b}})^{${b}}=(1+s_{${a}})^{${a}}(1+f)^{${gap}}$, so $f=\\left(\\frac{(1+s_{${b}})^{${b}}}{(1+s_{${a}})^{${a}}}\\right)^{1/${gap}}-1=${fmt(f, 5)}$. Skipping the ${gap}-th root leaves a TOTAL growth, not an annual rate.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const X = pick([1000, 500, 2000, 1500]);
+   const s1 = rstep(0.03, 0.05, 0.0025);
+   const s2 = round(s1 + pick([0.002, 0.004, 0.006]), 4);
+   const s3 = round(s2 + pick([0.002, 0.004]), 4);
+   const pv = round(X * ((1 + s1) ** -1 + (1 + s2) ** -2 + (1 + s3) ** -3), 2);
+   return build(`Annual effective spot rates are $s_1=${pct(s1, 2)}$, $s_2=${pct(s2, 2)}$, $s_3=${pct(s3, 2)}$. Find the present value of payments of $${X}$ at the end of years 1, 2, and 3.`,
+    pv, [round(X * ((1 + s3) ** -1 + (1 + s3) ** -2 + (1 + s3) ** -3), 2), round(X * ((1 + s1) ** -1 + (1 + s1) ** -2 + (1 + s1) ** -3), 2), round(X * ((1 + s1) ** -1 + (1 + s2) ** -1 + (1 + s3) ** -1), 2), round(3 * X, 2)],
+    `Discount each payment at its OWN spot rate: $PV=X\\big[(1+s_1)^{-1}+(1+s_2)^{-2}+(1+s_3)^{-3}\\big]=${pv}$. Using a single flat rate (e.g. $s_3$ as a yield for all three years) is the classic mistake, the spot curve is not flat.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const s1 = rstep(0.03, 0.05, 0.0025);
+   const s2true = round(s1 + pick([0.005, 0.008, 0.01, 0.012]), 4);
+   const c = pick([0.04, 0.05, 0.06, 0.07, 0.08]);
+   const v1 = (1 + s1) ** -1;
+   const price = round(100 * c * v1 + (100 + 100 * c) * (1 + s2true) ** -2, 2);
+   const v2 = (price - 100 * c * v1) / (100 + 100 * c);
+   const s2 = round(v2 ** (-1 / 2) - 1, 5);
+   return build(`A 2-year bond with face $100$ pays annual coupons of ${pct(c, 0)} and is priced at $${price}$. The 1-year spot rate is ${pct(s1, 2)}. Find the 2-year spot rate.`,
+    s2, [round(v2 ** -1 - 1, 5), round(s1, 5), round(v2 ** (-1 / 2), 5), round(c, 5)],
+    `Bootstrap: the first coupon is discounted at $s_1$, so strip it out: $v^2=\\frac{P-100c\\,(1+s_1)^{-1}}{100+100c}$, then $s_2=(v^2)^{-1/2}-1=${fmt(s2, 5)}$. Annualizing $v^2$ as a one-year factor ($(v^2)^{-1}-1$) is the trap.`,
+    prob, TIER_DIFF.superhard);
   }),
  ],
 };
@@ -1262,7 +1425,7 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  const nMatch = q.q.match(/for (\d+) years/);
  const n = nMatch ? parseInt(nMatch[1]) : 5;
  // First dollar amount is the lump-sum invested
- const t0Match = q.q.match(/\\\$([0-9,]+)/);
+ const t0Match = q.q.match(/\$([0-9,]+)/);
  const t0val = t0Match ? -parseFloat(t0Match[1].replace(/,/g, "")) : -1000;
  return {
  kind: "timeline",
@@ -1283,7 +1446,7 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  const nMatch = q.q.match(/(\d+) years/) ?? q.q.match(/(\d+)-year/);
  const n = nMatch ? parseInt(nMatch[1]) : 10;
  // Payment amount: first dollar amount in the stem
- const pmtMatch = q.q.match(/\\\$(\d+)/);
+ const pmtMatch = q.q.match(/\$(\d+)/);
  const pmt = pmtMatch ? parseInt(pmtMatch[1]) : 1000;
  return {
  kind: "timeline",
@@ -1308,7 +1471,7 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  const nMatch = q.q.match(/(\d+) years/);
  const n = nMatch ? parseInt(nMatch[1]) : 10;
  // Loan principal: first dollar amount
- const loanMatch = q.q.match(/\\\$([0-9,]+)/);
+ const loanMatch = q.q.match(/\$([0-9,]+)/);
  const L = loanMatch ? parseFloat(loanMatch[1].replace(/,/g, "")) : 10000;
  const pmt = +(L / aImm(n, rate)).toFixed(2);
  return {
@@ -1336,7 +1499,7 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  const allN = [...q.q.matchAll(/(\d+) years/g)].map(m => parseInt(m[1]));
  const n = allN.length ? Math.max(...allN) : 10;
  // Coupon payment = face × coupon rate; face is first dollar amount
- const faceMatch = q.q.match(/\\\$(\d{3,})/);
+ const faceMatch = q.q.match(/\$(\d{3,})/);
  const face = faceMatch ? parseInt(faceMatch[1]) : 1000;
  const couponRateMatch = q.q.match(/([0-9]+(?:\.[0-9]+)?)\\% annual coupon/) ?? q.q.match(/coupons at ([0-9]+(?:\.[0-9]+)?)\\%/i);
  const couponRate = couponRateMatch ? parseFloat(couponRateMatch[1]) / 100 : 0.06;
@@ -1347,6 +1510,30 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  labels: { n, pmt, rate, t0val: -face },
  };
  },
+ },
+ "nominal-rates-and-force": {
+  trick: "Convert everything to an **effective annual $i$** first, then translate: $\\delta=\\ln(1+i)$, $d=\\frac{i}{1+i}$, $i^{(m)}=m((1+i)^{1/m}-1)$, $d^{(m)}=m(1-(1+i)^{-1/m})$.",
+  formula: "$\\left(1+\\frac{i^{(m)}}{m}\\right)^{m}=1+i=\\left(1-\\frac{d^{(m)}}{m}\\right)^{-m}=e^{\\delta}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "perpetuities-and-varying": {
+  trick: "Perpetuity-immediate level $=\\frac{X}{i}$, due $=\\frac{X}{d}$. Increasing $1,2,3,\\dots$ $=\\frac{1}{i}+\\frac{1}{i^2}$. Arithmetic $X,X+C,\\dots=\\frac{X}{i}+\\frac{C}{i^2}$.",
+  formula: "$a_{\\overline{\\infty}|}=\\frac{1}{i},\\qquad (Ia)_{\\overline{\\infty}|}=\\frac{1}{i}+\\frac{1}{i^2}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "geometric-annuities": {
+  trick: "Geometric payments → discount at the **net rate** $i-g$: finite $PV=X\\frac{1-((1+g)/(1+i))^n}{i-g}$, perpetuity $PV=\\frac{X}{i-g}$ (needs $i>g$).",
+  formula: "$PV=X\\cdot\\dfrac{1-\\left(\\frac{1+g}{1+i}\\right)^{n}}{i-g}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "spot-forward-rates": {
+  trick: "Forwards **compound** spots: $(1+s_b)^b=(1+s_a)^a(1+f)^{b-a}$. Price multi-period cash flows by discounting each at its OWN spot $(1+s_t)^{-t}$, never one flat rate.",
+  formula: "$(1+s_b)^{b}=(1+s_a)^{a}(1+f_{[a,b]})^{b-a}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
  },
 };
 
