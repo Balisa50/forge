@@ -13,7 +13,8 @@ export type VisibilityKey =
  | "journal"
  | "leaderboard"
  | "calendar"
- | "notes";
+ | "notes"
+ | "appeal";
 
 export type VisibilityMap = Record<VisibilityKey, boolean>;
 
@@ -25,6 +26,7 @@ export const DEFAULT_VISIBILITY: VisibilityMap = {
  leaderboard: true,
  calendar: true,
  notes: true,
+ appeal: true,
 };
 
 export function parseVisibility(raw: unknown): Partial<VisibilityMap> {

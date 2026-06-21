@@ -17,6 +17,7 @@ const LABELS: Record<ActiveKey, { title: string; desc: string }> = {
  journal: { title: "Journal", desc: "Chronological build log" },
  calendar: { title: "Calendar", desc: "90-day check-in heatmap" },
  notes: { title: "Mentor Notes", desc: "Your conversation thread" },
+ appeal: { title: "Appeal option", desc: "Let this mentee appeal a suspension" },
 };
 const ACTIVE_KEYS = Object.keys(LABELS) as ActiveKey[];
 

@@ -24,9 +24,11 @@ interface Props {
  pactWhy?: string | null;
  /** If the mentee already sent an appeal, pass it here so the form is pre-resolved. */
  hasAppeal?: boolean;
+ /** Mentor-controlled: if false, no appeal option is shown to the mentee. */
+ allowAppeal?: boolean;
 }
 
-export default function SuspensionLetter({ menteeName, mentorName, reason, bannedAt, pactWhy, hasAppeal = false }: Props) {
+export default function SuspensionLetter({ menteeName, mentorName, reason, bannedAt, pactWhy, hasAppeal = false, allowAppeal = true }: Props) {
  const firstName = menteeName?.split(" ")[0] ?? "there";
  const mentor = mentorName ?? "your mentor";
  const date = new Date(bannedAt).toLocaleDateString("en-US", {
@@ -196,7 +198,11 @@ export default function SuspensionLetter({ menteeName, mentorName, reason, banne
 
  {/* Appeal section */}
  <div style={{ marginTop: "1.75rem", borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
- {appealSent ? (
+ {!allowAppeal ? (
+ <p style={{ fontSize: "0.875rem", color: "var(--text-dim)", lineHeight: 1.6 }}>
+ An appeal is not available for this suspension. If you believe this is a mistake, you can reach out to {mentor} directly.
+ </p>
+ ) : appealSent ? (
  /* Already sent, show confirmation */
  <div
  style={{

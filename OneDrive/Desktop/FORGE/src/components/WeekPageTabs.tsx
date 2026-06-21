@@ -518,7 +518,7 @@ export default function WeekPageTabs({
 
  <div style={{ flex: 1, minWidth: 0 }}>
  <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: isLocked ? "var(--text-dim)" : "var(--text-primary)", lineHeight: 1.3 }}>
- Day {d.number}, {d.title}
+ Day {d.number}, {d.title.replace(/^Day\s*\d+\s*[-,:]\s*/i, "")}
  </p>
  {isLocked && (
  <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "0.25rem", fontFamily: "var(--font-mono)" }}>

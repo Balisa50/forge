@@ -6,7 +6,7 @@ import SuspensionLetter from "@/components/SuspensionLetter";
 import InviteRequired from "@/components/InviteRequired";
 import ClientRememberName from "@/components/ClientRememberName";
 import MessageToast from "@/components/MessageToast";
-import { effectiveVisibility } from "@/lib/visibility";
+import { effectiveVisibility, parseVisibility } from "@/lib/visibility";
 import { soloModeEnabled } from "@/lib/modes";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -60,7 +60,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
  reason={suspension.banReason}
  bannedAt={suspension.bannedAt!.toISOString()}
  pactWhy={pact?.why ?? null}
- hasAppeal={suspension.banAppeal !== null}
+ hasAppeal={suspension.banAppeal !== null} allowAppeal={parseVisibility(suspension.visibility).appeal !== false}
  />
  );
  }

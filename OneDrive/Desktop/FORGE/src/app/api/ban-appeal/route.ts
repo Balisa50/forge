@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { parseVisibility } from "@/lib/visibility";
 
 const MIN_LENGTH = 80;
 const MAX_LENGTH = 1200;
@@ -41,11 +42,16 @@ export async function POST(req: NextRequest) {
  // Find the active suspension for this mentee.
  const link = await prisma.mentorLink.findFirst({
  where: { menteeId: session.user.id, isActive: true, bannedAt: { not: null } },
- select: { id: true, banAppeal: true },
+ select: { id: true, banAppeal: true, visibility: true },
  });
 
  if (!link) {
  return NextResponse.json({ error: "No active suspension found." }, { status: 404 });
+ }
+
+ // Mentor controls whether this suspension may be appealed at all.
+ if (parseVisibility(link.visibility).appeal === false) {
+ return NextResponse.json({ error: "Your mentor has not enabled appeals for this suspension." }, { status: 403 });
  }
 
  // One shot, if they already sent an appeal, refuse.
