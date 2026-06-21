@@ -67,6 +67,34 @@
               "answer": "$P(\\text{at least one}) = 0.80$"
             },
             {
+              "kind": "intuition",
+              "title": "From two circles to three",
+              "body": "Two circles cut the room into **four** regions; three circles cut it into **seven** (plus the outside). The exam lives in the difference between them. *Only A* is the sliver of $A$ touching nothing else. *Exactly two* is the three lens-shaped overlaps that avoid the centre. *All three* is the centre. *At least one* is everything inside any circle. Mixing up *exactly one* with *at least one* is the most expensive habit on three-set problems, so train your eye on the picture below before you touch a formula."
+            },
+            {
+              "kind": "widget",
+              "title": "See all seven regions",
+              "widget": { "id": "venn-three-set", "caption": "Click each event, exactly one, exactly two, all three, at least one, none, and watch which regions it actually covers." }
+            },
+            {
+              "kind": "formula",
+              "title": "Counting the seven regions",
+              "body": "With **counts** instead of probabilities the identities become region arithmetic. Let $S=|A|+|B|+|C|$ (singles), $P=|A\\cap B|+|A\\cap C|+|B\\cap C|$ (the three **full** pairwise overlaps, each still containing the centre), and $T=|A\\cap B\\cap C|$ (the centre). Then $$|A\\cup B\\cup C| = S - P + T \\quad(\\text{at least one})$$ $$\\text{exactly two} = P - 3T, \\qquad \\text{exactly one} = S - 2P + 3T.$$ The coefficients $-2P$ and $+3T$ are the whole game: a region inside two circles was over-counted, a region inside all three was counted three times. **Exactly one is never the union** — burn that in."
+            },
+            {
+              "kind": "worked",
+              "title": "SOA-style: translate the counts (annuities)",
+              "body": "An insurer sells indexed ($I$), fixed ($F$) and variable ($V$) annuities. In a year $|I|=7000$, $|F|=5000$, $|V|=6000$. The number buying both $I$ and $V$ is $300$ more than both $I$ and $F$, and $1200$ more than both $F$ and $V$. Of those buying both $I$ and $V$, $25\\%$ also buy $F$. Exactly $3800$ buy only $I$, and every customer buys at least one. How many buy **exactly one** type?",
+              "steps": [
+                "Name the full pairwise overlaps $a=|I\\cap F|$, $b=|I\\cap V|$, $c=|F\\cap V|$ and the centre $t=|I\\cap F\\cap V|$. The clues give $b=a+300$, $b=c+1200$, and $t=0.25\\,b$ (25\\% of $I\\cap V$ also buy $F$).",
+                "Only-$I$ satisfies $|I|=\\text{only }I+(a-t)+(b-t)+t=\\text{only }I+a+b-t$, so $7000=3800+a+b-t\\Rightarrow a+b-t=3200$.",
+                "Substitute $a=b-300$ and $t=0.25b$: $(b-300)+b-0.25b=3200\\Rightarrow 1.75b=3500\\Rightarrow b=2000$. Hence $a=1700$, $c=800$, $t=500$.",
+                "Recover the other singles: only $F=|F|-(a+c-t)=5000-2000=3000$; only $V=|V|-(b+c-t)=6000-2300=3700$.",
+                "**Exactly one** $=\\text{only }I+\\text{only }F+\\text{only }V=3800+3000+3700=10500$. Trap answers: $14000$ is 'at least one' (the full total), $3000$ is exactly-two."
+              ],
+              "answer": "$10{,}500$ customers buy exactly one type"
+            },
+            {
               "kind": "worked",
               "title": "Read a Venn by its regions",
               "body": "Given $P(A) = 0.6$, $P(B) = 0.5$, and $P(A \\cap B) = 0.3$, find (a) only $A$, (b) exactly one of the two, and (c) neither.",

@@ -448,6 +448,102 @@ draw();
  ),
 };
 
+/* ───────────────────── Three-set Venn (the 7 regions) ───────────────────── */
+const vennThreeSet: ConceptWidgetDef = {
+ id: "venn-three-set",
+ title: "Three-set Venn, the seven regions",
+ blurb: "Click an event and watch exactly which of the seven regions it sweeps in. The gap between 'exactly one' and 'at least one' is where most marks are lost.",
+ bridge:
+ "Every SOA three-set counting question is this picture in words. Translate the totals into the seven disjoint regions, then read off whichever event they ask for, exactly one, exactly two, only A, none, never confuse them again.",
+ html: () =>
+ widgetDoc(
+ `
+<div class="w-title">Three-set Venn · 100 insurance clients</div>
+<div class="w-sub">A = Auto · B = Life · C = Health · click an event below</div>
+<canvas id="vn" width="320" height="250" style="max-width:100%"></canvas>
+<div class="w-row" id="btns" style="flex-wrap:wrap;gap:6px;justify-content:center"></div>
+<div class="w-note" id="out"></div>
+`,
+ `
+var R={oA:20,oB:15,oC:10,AB:12,AC:8,BC:6,ABC:5,none:24};
+var cvs=document.getElementById("vn"),ctx=cvs.getContext("2d");
+var A={x:122,y:104,r:64},B={x:198,y:104,r:64},C={x:160,y:168,r:64};
+var MAP={A:A,B:B,C:C};
+function circle(c,g){g.beginPath();g.arc(c.x,c.y,c.r,0,7);g.fill();}
+// build a gold mask for ONE atom defined by which sets it is inside/outside
+function atomCanvas(inSets){
+ var t=document.createElement("canvas");t.width=320;t.height=250;var x=t.getContext("2d");
+ x.fillStyle="#D4AF37";
+ var ins=["A","B","C"].filter(function(k){return inSets[k]===true;});
+ var outs=["A","B","C"].filter(function(k){return inSets[k]===false;});
+ if(ins.length===0){x.fillRect(0,0,320,250);}
+ else{x.globalCompositeOperation="source-over";circle(MAP[ins[0]],x);
+  for(var i=1;i<ins.length;i++){x.globalCompositeOperation="destination-in";circle(MAP[ins[i]],x);}}
+ for(var j=0;j<outs.length;j++){x.globalCompositeOperation="destination-out";circle(MAP[outs[j]],x);}
+ return t;
+}
+var ATOM={
+ onlyA:{in:{A:true,B:false,C:false},c:[92,96],n:R.oA},
+ onlyB:{in:{A:false,B:true,C:false},c:[228,96],n:R.oB},
+ onlyC:{in:{A:false,B:false,C:true},c:[160,205],n:R.oC},
+ AB:{in:{A:true,B:true,C:false},c:[160,80],n:R.AB},
+ AC:{in:{A:true,B:false,C:true},c:[116,150],n:R.AC},
+ BC:{in:{A:false,B:true,C:true},c:[204,150],n:R.BC},
+ ABC:{in:{A:true,B:true,C:true},c:[160,122],n:R.ABC},
+ none:{in:{A:false,B:false,C:false},c:[296,236],n:R.none}
+};
+var EVENTS=[
+ {k:"one",label:"Exactly one",atoms:["onlyA","onlyB","onlyC"],
+  note:function(s){return "<b>Exactly one</b> = only-A + only-B + only-C = "+R.oA+" + "+R.oB+" + "+R.oC+" = <b style='color:#D4AF37'>"+s+"</b>";}},
+ {k:"two",label:"Exactly two",atoms:["AB","AC","BC"],
+  note:function(s){return "<b>Exactly two</b> = the three lens-only regions = "+R.AB+" + "+R.AC+" + "+R.BC+" = <b style='color:#D4AF37'>"+s+"</b>";}},
+ {k:"all",label:"All three",atoms:["ABC"],
+  note:function(s){return "<b>All three</b> = the center only = <b style='color:#D4AF37'>"+s+"</b>";}},
+ {k:"atleast",label:"At least one",atoms:["onlyA","onlyB","onlyC","AB","AC","BC","ABC"],
+  note:function(s){return "<b>At least one</b> = everything inside a circle = <b style='color:#D4AF37'>"+s+"</b>. Note it is NOT exactly one, it sweeps in every overlap too.";}},
+ {k:"A",label:"Buy A (Auto)",atoms:["onlyA","AB","AC","ABC"],
+  note:function(s){return "<b>Buy A</b> = the whole A circle = "+R.oA+" + "+R.AB+" + "+R.AC+" + "+R.ABC+" = <b style='color:#D4AF37'>"+s+"</b>";}},
+ {k:"none",label:"None",atoms:["none"],
+  note:function(s){return "<b>None</b> = outside all three circles = <b style='color:#D4AF37'>"+s+"</b>. Always 100 minus 'at least one'.";}}
+];
+function sumOf(atoms){var s=0;atoms.forEach(function(a){s+=ATOM[a].n;});return s;}
+function draw(ev){
+ ctx.clearRect(0,0,320,250);
+ ctx.globalCompositeOperation="source-over";ctx.globalAlpha=1;
+ ctx.fillStyle="rgba(96,165,250,0.12)";circle(A,ctx);
+ ctx.fillStyle="rgba(52,211,153,0.12)";circle(B,ctx);
+ ctx.fillStyle="rgba(244,114,182,0.12)";circle(C,ctx);
+ var hot={};
+ if(ev){ev.atoms.forEach(function(a){hot[a]=true;});
+  ctx.globalAlpha=0.5;
+  ev.atoms.forEach(function(a){ctx.drawImage(atomCanvas(ATOM[a].in),0,0);});
+  ctx.globalAlpha=1;}
+ ctx.lineWidth=1.5;ctx.strokeStyle="#8a7c63";
+ [A,B,C].forEach(function(c){ctx.beginPath();ctx.arc(c.x,c.y,c.r,0,7);ctx.stroke();});
+ ctx.font="bold 11px monospace";ctx.fillStyle="#cbb88f";ctx.textAlign="center";
+ ctx.fillText("A",A.x-44,A.y-46);ctx.fillText("B",B.x+44,B.y-46);ctx.fillText("C",C.x,C.y+58);
+ Object.keys(ATOM).forEach(function(k){var a=ATOM[k];
+  ctx.font=(hot[k]?"bold 13px":"12px")+" monospace";
+  ctx.fillStyle=hot[k]?"#1a1208":"#9a8c6f";
+  ctx.fillText(String(a.n),a.c[0],a.c[1]+4);});
+}
+var out=document.getElementById("out"),btns=document.getElementById("btns");
+EVENTS.forEach(function(ev){var b=document.createElement("button");b.className="w-pick";b.textContent=ev.label;
+ b.addEventListener("click",function(){select(ev,b);});btns.appendChild(b);});
+function select(ev,b){[].forEach.call(btns.children,function(x){x.className="w-pick muted";});
+ if(b)b.className="w-pick right";draw(ev);out.innerHTML=ev.note(sumOf(ev.atoms))+"<br><span style='color:#8a7c63'>All seven regions sum to 100 clients.</span>";}
+select(EVENTS[0],btns.children[0]);
+`,
+ {
+ question: "Of these 100 clients, how many buy EXACTLY ONE product?",
+ options: ["45", "76", "26"],
+ answer: 0,
+ reveal:
+ "<b>45</b> = only-A + only-B + only-C = 20 + 15 + 10. The trap is <b>76</b> ('at least one'), which also counts every overlap; <b>26</b> is exactly-two.",
+ },
+ ),
+};
+
 export const actuaryWidgets: ConceptWidgetDef[] = [
  bayesBox,
  distExplorer,
@@ -456,4 +552,5 @@ export const actuaryWidgets: ConceptWidgetDef[] = [
  totalVariance,
  bondBookValue,
  spotForward,
+ vennThreeSet,
 ];
