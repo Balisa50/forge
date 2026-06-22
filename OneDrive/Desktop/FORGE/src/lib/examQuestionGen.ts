@@ -1562,6 +1562,198 @@ const GENERATORS: Record<string, Template[]> = {
     prob, TIER_DIFF.superhard);
   }),
  ],
+
+ "deferred-and-continuous-annuities": [
+  T("easy", () => {
+   const R = pick([100, 500, 1000, 200, 1500, 300]);
+   const i = rstep(0.04, 0.10, 0.0025);
+   const n = rint(5, 15), m = rint(2, 6);
+   const pv = round(R * aImm(n, i) * vOf(i) ** m, 2);
+   return build(`An annuity-immediate pays $${R}$ at the end of each year for ${n} years, but the first payment is deferred so it occurs at the end of year ${m + 1}. At ${pct(i, 2)} effective, find the present value.`,
+    pv, [round(R * aImm(n, i), 2), round(R * aImm(n, i) * vOf(i) ** (m - 1), 2), round(R * aImm(n + m, i), 2), round(R * aImm(n, i) * vOf(i) ** (m + 1), 2)],
+    `Value the $${n}$-year annuity one period before its first payment, then discount the $${m}$-year deferral: $${R}\\,a_{\\overline{${n}}|}\\,v^{${m}}=${pv}$. Off-by-one on the deferral exponent is the classic trap.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const R = pick([100, 500, 1000, 200, 1500, 2000]);
+   const i = rstep(0.04, 0.10, 0.0025);
+   const n = rint(5, 20);
+   const delta = Math.log(1 + i);
+   const pv = round(R * (1 - vOf(i) ** n) / delta, 2);
+   return build(`A continuous annuity pays at a rate of $${R}$ per year, continuously, for ${n} years. At ${pct(i, 2)} effective, find the present value.`,
+    pv, [round(R * aImm(n, i), 2), round(R * (1 - vOf(i) ** n) / i, 2), round(R * ((1 + i) ** n - 1) / delta, 2), round(R * n, 2)],
+    `A continuous annuity discounts with the FORCE: $\\bar a_{\\overline{${n}}|}=\\frac{1-v^{${n}}}{\\delta}$ where $\\delta=\\ln(1+i)=${fmt(delta, 5)}$. So PV $=${R}\\cdot\\frac{1-v^{${n}}}{\\delta}=${pv}$. Using $i$ instead of $\\delta$ in the denominator is the trap.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const R = pick([100, 500, 1000, 200, 1500]);
+   const i = rstep(0.04, 0.10, 0.0025);
+   const n = rint(5, 20);
+   const delta = Math.log(1 + i);
+   const av = round(R * ((1 + i) ** n - 1) / delta, 2);
+   return build(`A continuous annuity pays at a rate of $${R}$ per year for ${n} years. At ${pct(i, 2)} effective, find the ACCUMULATED value at the end of ${n} years.`,
+    av, [round(R * (1 - vOf(i) ** n) / delta, 2), round(R * ((1 + i) ** n - 1) / i, 2), round(R * sImm(n, i), 2), round(R * n * (1 + i) ** n, 2)],
+    `The continuous accumulated value is $\\bar s_{\\overline{${n}}|}=\\frac{(1+i)^{${n}}-1}{\\delta}$ with $\\delta=\\ln(1+i)=${fmt(delta, 5)}$, so AV $=${R}\\cdot\\frac{(1+i)^{${n}}-1}{\\delta}=${av}$. Confusing it with the present value $\\bar a_{\\overline{n}|}$ is the trap.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const i = rstep(0.04, 0.10, 0.0025);
+   const n = rint(5, 15);
+   const delta = Math.log(1 + i);
+   const abar = (1 - vOf(i) ** n) / delta;
+   const pv = round((abar - n * vOf(i) ** n) / delta, 4);
+   return build(`A continuously-increasing continuous annuity pays at the instantaneous rate of $t$ per year at time $t$, for $${n}$ years (at time $t$ the payment rate is $t$). At ${pct(i, 2)} effective, find the present value $(\\bar I\\bar a)_{\\overline{${n}}|}$.`,
+    pv, [round(abar, 4), round((abar - n * vOf(i) ** n) / i, 4), round(n * n / 2 * vOf(i) ** n, 4), round((abar - n * vOf(i) ** n) / delta + n, 4)],
+    `Integrate the rate against the discount: $(\\bar I\\bar a)_{\\overline{${n}}|}=\\int_0^{${n}} t\\,v^{t}\\,dt=\\frac{\\bar a_{\\overline{${n}}|}-${n}v^{${n}}}{\\delta}=${fmt(pv, 4)}$, with $\\delta=${fmt(delta, 5)}$ and $\\bar a_{\\overline{${n}}|}=${fmt(abar, 4)}$. Dividing by $i$ rather than $\\delta$ is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "bond-amortization": [
+  T("easy", () => {
+   const F = pick([1000, 5000, 10000]);
+   const cr = pick([0.04, 0.05, 0.06, 0.07, 0.08]);
+   const i = pick([0.04, 0.05, 0.06, 0.07]);
+   const n = rint(8, 15), t = rint(2, 6);
+   const bt = round(F * cr * aImm(n - t, i) + F * vOf(i) ** (n - t), 2);
+   return build(`A $${F}$ par-value bond pays ${pct(cr, 0)} annual coupons, matures in ${n} years, and is bought to yield ${pct(i, 0)}. Find the book value just after the ${t}-th coupon.`,
+    bt, [round(F * cr * aImm(n, i) + F * vOf(i) ** n, 2), round(F * cr * aImm(n - t, i) + F * vOf(i) ** (n - t) + F * cr, 2), round(F, 2), round(F * cr * aImm(t, i) + F * vOf(i) ** t, 2)],
+    `Book value is the PROSPECTIVE price of the remaining cash flows: $B_{${t}}=Fr\\,a_{\\overline{${n - t}}|}+F v^{${n - t}}=${bt}$. It uses the time remaining $(${n}-${t})$, not the original term.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const F = pick([1000, 5000, 10000]);
+   const cr = pick([0.05, 0.06, 0.07, 0.08]);
+   const i = pick([0.04, 0.05, 0.06]);
+   const n = rint(8, 15), t = rint(2, 6);
+   const bPrev = F * cr * aImm(n - t + 1, i) + F * vOf(i) ** (n - t + 1);
+   const interest = round(i * bPrev, 2);
+   return build(`A $${F}$ par bond with ${pct(cr, 0)} annual coupons matures in ${n} years, bought to yield ${pct(i, 0)}. Find the INTEREST earned in the ${t}-th coupon (the amortization schedule's interest column).`,
+    interest, [round(F * cr, 2), round(i * F, 2), round(F * cr - i * bPrev, 2), round(i * (F * cr * aImm(n - t, i) + F * vOf(i) ** (n - t)), 2)],
+    `Interest earned in period ${t} is the yield on the PRIOR book value: $i\\cdot B_{${t - 1}}=${fmt(i, 2)}\\times${fmt(round(bPrev, 2), 2)}=${interest}$. The coupon $Fr=${fmt(F * cr, 2)}$ is the cash; the rest of it amortizes principal.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const F = pick([1000, 5000, 10000]);
+   const cr = pick([0.06, 0.07, 0.08]);
+   const i = pick([0.04, 0.05]);
+   const n = rint(8, 15), t = rint(2, 6);
+   const adj = round((F * cr - F * i) * vOf(i) ** (n - t + 1), 2);
+   return build(`A $${F}$ par bond, ${pct(cr, 0)} annual coupons, ${n} years, yield ${pct(i, 0)}. Find the principal adjustment (write-down) in the ${t}-th coupon.`,
+    adj, [round(F * cr - F * i, 2), round(F * cr, 2), round((F * cr - F * i) * vOf(i) ** (n - t), 2), round(F * i, 2)],
+    `The write-down equals coupon minus interest, which simplifies to $(Fr-Fi)\\,v^{n-t+1}=(${fmt(F * cr, 0)}-${fmt(F * i, 0)})v^{${n - t + 1}}=${adj}$. The undiscounted $(Fr-Fi)$ is the FINAL period's adjustment only.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const F = pick([1000, 5000, 10000]);
+   const cr = pick([0.05, 0.06, 0.07, 0.08]);
+   const i = pick([0.04, 0.05, 0.06]);
+   const n = rint(10, 16), t1 = rint(2, 4), k = rint(3, 5);
+   const t2 = t1 + k;
+   const b1 = F * cr * aImm(n - t1, i) + F * vOf(i) ** (n - t1);
+   const b2 = round(b1 * (1 + i) ** k - F * cr * sImm(k, i), 2);
+   return build(`A $${F}$ par bond (${pct(cr, 0)} coupons, yield ${pct(i, 0)}, ${n} years) has book value $${round(b1, 2)}$ just after coupon ${t1}. Find the book value just after coupon ${t2}.`,
+    b2, [round(b1, 2), round(b1 * (1 + i) ** k, 2), round(b1 - F * cr * k, 2), round(b1 * (1 + i) ** k - F * cr * aImm(k, i), 2)],
+    `Roll the book value forward: each period it earns interest then loses the coupon, so $B_{${t2}}=B_{${t1}}(1+i)^{${k}}-Fr\\,s_{\\overline{${k}}|}=${b2}$. Forgetting the accumulated coupons $Fr\\,s_{\\overline{k}|}$ is the trap.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "callable-bonds": [
+  T("easy", () => {
+   const F = pick([1000, 5000, 10000]);
+   const i = pick([0.04, 0.05, 0.06]);
+   const cr = round(i + pick([0.01, 0.015, 0.02, 0.025]), 4);
+   const c = rint(5, 9), n = c + rint(3, 6);
+   const price = round(F * cr * aImm(c, i) + F * vOf(i) ** c, 2);
+   return build(`A $${F}$ par bond pays ${pct(cr, 1)} annual coupons, is callable at par after ${c} years, and otherwise matures in ${n} years. To GUARANTEE a yield of at least ${pct(i, 0)}, what price should an investor pay?`,
+    price, [round(F * cr * aImm(n, i) + F * vOf(i) ** n, 2), round(F, 2), round(F * cr * aImm(c, i) + F * vOf(i) ** c + F * cr, 2), round(F * cr * aImm(n, i) + F * vOf(i) ** c, 2)],
+    `Coupon ${pct(cr, 1)} $>$ yield ${pct(i, 0)} makes this a PREMIUM bond, so the issuer calls at the EARLIEST date (worst case for the investor). Price at year ${c}: $Fr\\,a_{\\overline{${c}}|}+F v^{${c}}=${price}$. Pricing to maturity would risk a yield below ${pct(i, 0)} if called.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const F = pick([1000, 5000, 10000]);
+   const i = pick([0.05, 0.06, 0.07]);
+   const cr = round(i - pick([0.01, 0.015, 0.02]), 4);
+   const c = rint(4, 7), n = c + rint(3, 6);
+   const price = round(F * cr * aImm(n, i) + F * vOf(i) ** n, 2);
+   return build(`A $${F}$ par bond pays ${pct(cr, 1)} annual coupons, is callable at par after ${c} years, and otherwise matures in ${n} years. To GUARANTEE a yield of at least ${pct(i, 0)}, what price should an investor pay?`,
+    price, [round(F * cr * aImm(c, i) + F * vOf(i) ** c, 2), round(F, 2), round(F * cr * aImm(n, i) + F * vOf(i) ** c, 2), round(F * cr * aImm(n, i), 2)],
+    `Coupon ${pct(cr, 1)} $<$ yield ${pct(i, 0)} makes this a DISCOUNT bond, so the worst case is the LATEST redemption (maturity at year ${n}). Price $=Fr\\,a_{\\overline{${n}}|}+F v^{${n}}=${price}$. A discount bond is never called early to the investor's disadvantage.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const F = 1000;
+   const i = pick([0.05, 0.06, 0.07]);
+   const cr = round(i + pick([0.01, 0.02]), 4);
+   const Ccall = pick([1050, 1100, 1025, 1075]);
+   const c = rint(5, 8), n = c + rint(3, 6);
+   const pCall = F * cr * aImm(c, i) + Ccall * vOf(i) ** c;
+   const pMat = F * cr * aImm(n, i) + F * vOf(i) ** n;
+   const price = round(Math.min(pCall, pMat), 2);
+   return build(`A $1000$ par bond pays ${pct(cr, 1)} annual coupons. It is callable for $${Ccall}$ after ${c} years, or it matures at par ($1000$) in ${n} years. At a yield of ${pct(i, 0)}, find the price that guarantees the yield (price to the worst case).`,
+    price, [round(Math.max(pCall, pMat), 2), round((pCall + pMat) / 2, 2), round(F * cr * aImm(c, i) + F * vOf(i) ** c, 2), round(F, 2)],
+    `With a call premium you cannot assume the earliest date, you must price EVERY redemption and take the minimum: call value $${fmt(round(pCall, 2), 2)}$ vs maturity value $${fmt(round(pMat, 2), 2)}$, so pay $${price}$. The lower price is the one that still attains ${pct(i, 0)} in every scenario.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const F = 1000;
+   const i = pick([0.05, 0.06, 0.07]);
+   const cr = round(i + pick([0.01, 0.015, 0.02]), 4);
+   const c1 = rint(4, 6), c2 = c1 + rint(2, 4), n = c2 + rint(2, 4);
+   const dates = [c1, c2, n];
+   const prices = dates.map((d) => F * cr * aImm(d, i) + F * vOf(i) ** d);
+   const price = round(Math.min(...prices), 2);
+   return build(`A $1000$ par bond pays ${pct(cr, 1)} annual coupons and is callable at par at the end of year ${c1} or year ${c2}, otherwise maturing at par in year ${n}. At a yield of ${pct(i, 0)}, find the price that guarantees the yield.`,
+    price, [round(Math.max(...prices), 2), round(prices[1], 2), round(prices[2], 2), round(F, 2)],
+    `Price the bond at EVERY possible redemption date $\\{${c1},${c2},${n}\\}$ and take the minimum. Since the coupon ${pct(cr, 1)} exceeds the yield (a premium bond), the earliest date year ${c1} is worst, giving $${price}$. Always confirm by valuing each date rather than assuming.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "duration-and-immunization": [
+  T("easy", () => {
+   const n = rint(3, 20);
+   const i = rstep(0.03, 0.10, 0.0025);
+   const dmod = round(n / (1 + i), 4);
+   return build(`A zero-coupon bond matures in ${n} years and is priced at a yield of ${pct(i, 2)}. Find its MODIFIED duration.`,
+    dmod, [round(n, 4), round(n * (1 + i), 4), round(n / (1 + i) ** 2, 4), round((n - 1) / (1 + i), 4)],
+    `A zero's Macaulay duration is its term, $${n}$ years; the modified duration divides by $(1+i)$: $D_{mod}=\\frac{${n}}{1+${fmt(i, 4)}}=${fmt(dmod, 4)}$. Reporting the Macaulay duration $${n}$ (forgetting the $(1+i)$) is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const cf1 = pick([100, 200, 500, 1000]), cf2 = pick([100, 300, 800, 1500]);
+   const t1 = rint(1, 3), t2 = rint(5, 9);
+   const i = rstep(0.04, 0.09, 0.0025);
+   const p1 = cf1 * vOf(i) ** t1, p2 = cf2 * vOf(i) ** t2;
+   const dmac = round((t1 * p1 + t2 * p2) / (p1 + p2), 4);
+   return build(`A portfolio pays $${cf1}$ at the end of year ${t1} and $${cf2}$ at the end of year ${t2}. At ${pct(i, 2)} effective, find the Macaulay duration.`,
+    dmac, [round((t1 + t2) / 2, 4), round((t1 * cf1 + t2 * cf2) / (cf1 + cf2), 4), round((t1 * p1 + t2 * p2) / (p1 + p2) / (1 + i), 4), round(t2, 4)],
+    `Macaulay duration is the PV-weighted average time: $D=\\frac{${t1}\\,P_1+${t2}\\,P_2}{P_1+P_2}$ where $P_k$ is each flow's present value, giving $${fmt(dmac, 4)}$. Weighting by raw cash flows (not present values) is the trap.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const P = pick([10000, 50000, 25000, 100000]);
+   const dmod = pick([4.5, 6.2, 7.8, 3.5, 9.1, 5.0]);
+   const di = pick([0.005, 0.01, 0.0075, -0.005, -0.01]);
+   const newP = round(P * (1 - dmod * di), 2);
+   return build(`A bond portfolio worth $${P}$ has modified duration ${dmod}. Using the first-order (duration) approximation, estimate its value if the yield ${di >= 0 ? "rises" : "falls"} by ${pct(Math.abs(di), 2)}.`,
+    newP, [round(P * (1 + dmod * di), 2), round(P * (1 - dmod), 2), round(P - dmod * di, 2), round(P * (1 - dmod * di / (1 + 0.05)), 2)],
+    `The duration estimate is $\\Delta P\\approx -D_{mod}\\,P\\,\\Delta i$, so new value $\\approx ${P}(1-${dmod}\\times(${fmt(di, 4)}))=${newP}$. Price moves OPPOSITE to yield; the sign of $-D_{mod}\\Delta i$ is the whole point.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const L = pick([10000, 50000, 100000, 25000]);
+   const i = rstep(0.04, 0.08, 0.0025);
+   const t1 = rint(2, 4), n = t1 + rint(2, 4), t2 = n + rint(2, 4);
+   const pvL = L * vOf(i) ** n;
+   const p1 = round(pvL * (t2 - n) / (t2 - t1), 2);
+   return build(`A single liability of $${L}$ is due in ${n} years. It is to be immunized (PV- and duration-matched) at ${pct(i, 2)} using two zero-coupon bonds maturing in ${t1} and ${t2} years. Find the present value to invest in the ${t1}-year bond.`,
+    p1, [round(pvL * (n - t1) / (t2 - t1), 2), round(pvL / 2, 2), round(pvL, 2), round(L * (t2 - n) / (t2 - t1), 2)],
+    `Matching PV and duration gives $P_1=PV_L\\cdot\\frac{t_2-n}{t_2-t_1}$ where $PV_L=${L}v^{${n}}=${fmt(round(pvL, 2), 2)}$. So $P_1=${fmt(round(pvL, 2), 2)}\\cdot\\frac{${t2}-${n}}{${t2}-${t1}}=${p1}$. (The other bond gets $PV_L\\frac{n-t_1}{t_2-t_1}$; the weights are the lever arms around year ${n}.)`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
 };
 
 /* ───────────────────────── no-repeat tracker ───────────────────────── */
@@ -2125,6 +2317,30 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  "yield-rates-npv": {
   trick: "NPV discounts every cash flow at the cost of capital and nets the outlay. The IRR is the rate making $NPV=0$; for a single future payout it is $\\left(\\frac{A}{C_0}\\right)^{1/n}-1$, otherwise solve the polynomial in $v$.",
   formula: "$NPV=\\sum CF_t\\,v^t,\\qquad IRR:\\ NPV=0$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "deferred-and-continuous-annuities": {
+  trick: "Deferred: value the annuity one period before its first payment, then discount the deferral $v^m$. Continuous: discount with the FORCE $\\delta=\\ln(1+i)$ in the denominator, $\\bar a_{\\overline n|}=\\frac{1-v^n}{\\delta}$.",
+  formula: "$\\bar a_{\\overline{n}|}=\\frac{1-v^{n}}{\\delta},\\qquad {}_{m|}a_{\\overline{n}|}=a_{\\overline{n}|}\\,v^{m}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "bond-amortization": {
+  trick: "Book value is the prospective price of the REMAINING flows: $B_t=Fr\\,a_{\\overline{n-t}|}+Cv^{n-t}$. Each coupon splits into interest $iB_{t-1}$ and principal adjustment $(Fr-Ci)v^{n-t+1}$.",
+  formula: "$B_t=Fr\\,a_{\\overline{n-t}|}+Cv^{n-t},\\qquad B_{t}=B_{t-1}(1+i)-Fr$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "callable-bonds": {
+  trick: "Price to the WORST redemption date (yield-to-worst). Premium bond (coupon $>$ yield) $\\Rightarrow$ earliest call; discount bond $\\Rightarrow$ latest. With a call premium, price EVERY date and take the minimum.",
+  formula: "$\\text{price}=\\min_{\\text{dates }d}\\left[Fr\\,a_{\\overline{d}|}+C_d\\,v^{d}\\right]$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "duration-and-immunization": {
+  trick: "Macaulay $=$ PV-weighted average time; modified $=$ Macaulay$/(1+i)$. Price move $\\Delta P\\approx -D_{mod}P\\,\\Delta i$. Redington immunization: match PV and duration, with assets MORE convex than liabilities.",
+  formula: "$D_{Mac}=\\frac{\\sum t\\,v^{t}CF_t}{\\sum v^{t}CF_t},\\qquad \\Delta P\\approx -D_{mod}\\,P\\,\\Delta i$",
   decode: FM_DECODE,
   sanity: FM_SANITY,
  },
