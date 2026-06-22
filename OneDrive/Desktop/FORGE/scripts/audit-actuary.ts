@@ -29,6 +29,7 @@ const EXAM_P = [
 const EXAM_FM = [
   "interest-and-accumulation", "level-annuities", "loan-amortization", "bond-pricing",
   "nominal-rates-and-force", "perpetuities-and-varying", "geometric-annuities", "spot-forward-rates",
+  "equation-of-value", "sinking-funds", "dollar-time-weighted", "yield-rates-npv",
 ];
 const CONCEPTS = [...EXAM_P, ...EXAM_FM];
 

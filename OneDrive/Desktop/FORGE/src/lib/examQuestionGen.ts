@@ -1374,6 +1374,194 @@ const GENERATORS: Record<string, Template[]> = {
     prob, TIER_DIFF.superhard);
   }),
  ],
+
+ "equation-of-value": [
+  T("easy", () => {
+   const L = pick([1000, 2000, 5000, 10000, 1500, 3000]);
+   const i = rstep(0.04, 0.10, 0.0025);
+   const t1 = rint(1, 3), t2 = rint(4, 7);
+   const x = round(L / (vOf(i) ** t1 + vOf(i) ** t2), 2);
+   return build(`A debt of $${L}$ is repaid by two EQUAL payments of $X$, one at the end of year ${t1} and one at the end of year ${t2}. At ${pct(i, 2)} effective, find $X$.`,
+    x, [round(L / 2, 2), round(L / (2 * vOf(i) ** t1), 2), round(L * i, 2), round(L / (vOf(i) ** t1 + vOf(i) ** t2) / 2, 2)],
+    `Set PV of payments $=$ debt: $X(v^{${t1}}+v^{${t2}})=${L}$, so $X=\\frac{${L}}{v^{${t1}}+v^{${t2}}}=${x}$. Splitting the debt in half (ignoring the time value) is the trap.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const A = pick([100, 200, 500, 1000]), B = pick([150, 300, 250, 400]);
+   const i = rstep(0.04, 0.10, 0.0025);
+   const t1 = rint(1, 3), T = rint(5, 8);
+   const x = round(A * (1 + i) ** T + B * (1 + i) ** (T - t1), 2);
+   return build(`A fund receives $${A}$ at time $0$ and $${B}$ at the end of year ${t1}. It earns ${pct(i, 2)} effective. Find the fund balance at the end of year ${T}.`,
+    x, [round((A + B) * (1 + i) ** T, 2), round(A * (1 + i) ** T + B * (1 + i) ** (T + t1), 2), round(A * (1 + i) ** T + B * (1 + i) ** T, 2), round((A + B) * (1 + i) ** (T - t1), 2)],
+    `Accumulate each deposit to time ${T} over its OWN horizon: $${A}(1+i)^{${T}}+${B}(1+i)^{${T - t1}}=${x}$. The second deposit grows only ${T - t1} years (it arrives at year ${t1}); using ${T} for both is the trap.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const A = pick([1000, 2000, 1500]), B = pick([500, 800, 1200]), C = pick([300, 600, 900]);
+   const i = rstep(0.04, 0.09, 0.0025);
+   const t1 = 1, t2 = rint(3, 4), t3 = rint(6, 8), T = rint(9, 11);
+   const v = round(A * (1 + i) ** (T - t1) + B * (1 + i) ** (T - t2) + C * (1 + i) ** (T - t3), 2);
+   return build(`Payments of $${A}$, $${B}$, and $${C}$ are made at the ends of years ${t1}, ${t2}, and ${t3}. At ${pct(i, 2)} effective, find their combined accumulated value at the end of year ${T}.`,
+    v, [round((A + B + C) * (1 + i) ** T, 2), round(A * (1 + i) ** (T - t1) + B * (1 + i) ** (T - t2) + C * (1 + i) ** (T - t3) + (A + B + C) * 0.01, 2), round(A * (1 + i) ** t1 + B * (1 + i) ** t2 + C * (1 + i) ** t3, 2), round((A + B + C) * (1 + i) ** (T - t2), 2)],
+    `Value each cash flow at the comparison date $t=${T}$: $${A}(1+i)^{${T - t1}}+${B}(1+i)^{${T - t2}}+${C}(1+i)^{${T - t3}}=${v}$. The equation of value is invariant to the comparison date, but each flow's exponent is its OWN distance to it.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const A = pick([1000, 2000, 1500, 800]), B = pick([1500, 2500, 1200, 3000]);
+   const i = rstep(0.04, 0.10, 0.0025);
+   const t1 = rint(1, 3), t2 = rint(5, 9);
+   const num = A * vOf(i) ** t1 + B * vOf(i) ** t2;
+   const Texact = round(Math.log((A + B) / num) / Math.log(1 + i), 3);
+   const approx = round((A * t1 + B * t2) / (A + B), 3);
+   return build(`A payment of $${A}$ at the end of year ${t1} and $${B}$ at the end of year ${t2} are to be replaced by a SINGLE payment of $${A + B}$ at time $T$, of equal value at ${pct(i, 2)} effective. Find the exact $T$.`,
+    Texact, [approx, round(Texact + 0.5, 3), round((t1 + t2) / 2, 3), round(Math.log(num / (A + B)) / Math.log(1 + i), 3)],
+    `Equate values: $(${A + B})v^{T}=${A}v^{${t1}}+${B}v^{${t2}}$, so $v^{T}=\\frac{${A}v^{${t1}}+${B}v^{${t2}}}{${A + B}}$ and $T=\\frac{\\ln[(${A + B})/(${A}v^{${t1}}+${B}v^{${t2}})]}{\\ln(1+i)}=${fmt(Texact, 3)}$. The method of equated time $\\bar t=\\frac{\\sum t_k A_k}{\\sum A_k}=${fmt(approx, 3)}$ only APPROXIMATES it (and is always slightly larger).`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "sinking-funds": [
+  T("easy", () => {
+   const L = pick([10000, 20000, 50000, 100000, 15000]);
+   const j = rstep(0.04, 0.09, 0.0025);
+   const n = rint(5, 20);
+   const d = round(L / sImm(n, j), 2);
+   return build(`A loan of $${L}$ is repaid by the SINKING-FUND method over ${n} years; the fund earns ${pct(j, 2)} effective. Find the annual sinking-fund deposit.`,
+    d, [round(L / aImm(n, j), 2), round(L / n, 2), round(L * j, 2), round(L * j / n, 2)],
+    `The deposits must accumulate to the loan: $D\\,s_{\\overline{${n}}|}=${L}$, so $D=\\frac{${L}}{s_{\\overline{${n}}|}}=${d}$. Dividing by $a_{\\overline{n}|}$ (a PV factor) instead of $s_{\\overline{n}|}$ (an AV factor) is the trap.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const L = pick([10000, 20000, 50000, 15000, 25000]);
+   const i = rstep(0.06, 0.11, 0.0025);
+   const j = round(i - pick([0.01, 0.015, 0.02, 0.025]), 4);
+   const n = rint(8, 20);
+   const total = round(L * i + L / sImm(n, j), 2);
+   return build(`A loan of $${L}$ is repaid by the sinking-fund method over ${n} years. The borrower pays ${pct(i, 2)} interest to the lender and deposits into a fund earning ${pct(j, 2)}. Find the TOTAL annual payment.`,
+    total, [round(L / sImm(n, j), 2), round(L * i + L / aImm(n, j), 2), round(L / aImm(n, i), 2), round(L * i, 2)],
+    `Total $=$ interest to lender $+$ sinking-fund deposit $=${L}(${fmt(i, 4)})+\\frac{${L}}{s_{\\overline{${n}}|}^{\\,${pct(j, 2)}}}=${total}$. The interest is on the FULL loan every year (principal never declines under this method).`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const L = pick([10000, 20000, 50000, 30000]);
+   const j = rstep(0.05, 0.09, 0.0025);
+   const n = rint(10, 20), t = rint(3, 8);
+   const bal = round((L / sImm(n, j)) * sImm(t, j), 2);
+   return build(`A loan of $${L}$ uses the sinking-fund method over ${n} years with a fund earning ${pct(j, 2)}. Find the amount in the sinking fund just after the ${t}-th deposit.`,
+    bal, [round(L * t / n, 2), round((L / sImm(n, j)) * aImm(t, j), 2), round((L / sImm(n, j)) * t, 2), round(L * sImm(t, j) / sImm(n, j) * vOf(j) ** t, 2)],
+    `Each deposit is $D=\\frac{${L}}{s_{\\overline{${n}}|}}$; after ${t} of them the fund holds $D\\,s_{\\overline{${t}}|}=${bal}$. A straight-line $\\frac{${L}\\cdot${t}}{${n}}$ ignores the interest the fund has earned.`,
+    money, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const L = pick([10000, 20000, 50000, 25000]);
+   const i = rstep(0.07, 0.11, 0.0025);
+   const j = round(i - pick([0.02, 0.025, 0.03, 0.035]), 4);
+   const n = rint(10, 20);
+   const extra = round(L * (1 / sImm(n, j) - 1 / sImm(n, i)), 2);
+   return build(`A loan of $${L}$ over ${n} years can be repaid two ways: amortized at ${pct(i, 2)}, or sinking-fund (pay ${pct(i, 2)} interest, deposit to a fund earning only ${pct(j, 2)}). How much MORE per year does the sinking-fund method cost?`,
+    extra, [round(L / sImm(n, j), 2), round(L / aImm(n, i), 2), round(L * (i - j), 2), round(L * (1 / aImm(n, j) - 1 / aImm(n, i)), 2)],
+    `Amortization pays $L(i+\\tfrac{1}{s_{\\overline n|}^i})$; sinking-fund pays $L(i+\\tfrac{1}{s_{\\overline n|}^j})$. The difference is $L\\left(\\frac{1}{s_{\\overline{${n}}|}^{\\,${pct(j, 2)}}}-\\frac{1}{s_{\\overline{${n}}|}^{\\,${pct(i, 2)}}}\\right)=${extra}$, the penalty for the fund earning less than the loan rate.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "dollar-time-weighted": [
+  T("easy", () => {
+   const B0 = pick([10000, 20000, 50000, 100000, 5000]);
+   const D = pick([5000, 10000, 2000, 20000]);
+   const t = pick([0.25, 0.5, 0.75]);
+   const I = pick([500, 1000, 1500, 2000, 800, 1200]);
+   const B1 = B0 + D + I;
+   const idw = round(I / (B0 + D * (1 - t)), 5);
+   return build(`A fund starts the year with $${B0}$. A deposit of $${D}$ is made at time $t=${t}$. The year-end balance is $${B1}$. Find the dollar-weighted (money-weighted) yield.`,
+    idw, [round(I / B0, 5), round(I / (B0 + D), 5), round(I / (B0 + D * t), 5), round(B1 / B0 - 1, 5)],
+    `Interest earned is $${B1}-${B0}-${D}=${I}$. Dollar-weighting uses simple-interest exposure: $i=\\frac{I}{B_0+D(1-t)}=\\frac{${I}}{${B0}+${D}(1-${t})}=${fmt(idw, 5)}$. The deposit only works for the remaining $(1-${t})$ of the year.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const B0 = pick([100, 200, 500, 1000]);
+   const M = round(B0 * pick([1.05, 1.08, 1.1, 0.95, 1.12]), 2);
+   const D = pick([100, 200, 50, 300]);
+   const B1 = round((M + D) * pick([1.04, 1.06, 0.97, 1.1, 1.03]), 2);
+   const itw = round((M / B0) * (B1 / (M + D)) - 1, 5);
+   return build(`A fund holds $${B0}$ at the start of the year. Just BEFORE a deposit of $${D}$ at mid-year the balance is $${M}$; the year-end balance is $${B1}$. Find the time-weighted yield.`,
+    itw, [round(B1 / B0 - 1, 5), round((M / B0) * (B1 / M) - 1, 5), round((B1 - B0 - D) / B0, 5), round(M / B0 + B1 / (M + D) - 1, 5)],
+    `Time-weighting multiplies the sub-period growth factors and ignores the deposit's timing: $(1+i)=\\frac{${M}}{${B0}}\\cdot\\frac{${B1}}{${M}+${D}}$, so $i=${fmt(itw, 5)}$. Dividing only end by start ($\\frac{B_1}{B_0}-1$) double-counts the deposit.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const B0 = pick([1000, 2000, 5000]);
+   const M1 = round(B0 * pick([1.04, 1.06, 0.98, 1.08]), 2);
+   const D1 = pick([500, 1000, 300]);
+   const M2 = round((M1 + D1) * pick([1.03, 1.05, 0.97, 1.07]), 2);
+   const D2 = pick([400, 800, 200]);
+   const B1 = round((M2 + D2) * pick([1.02, 1.05, 0.99, 1.06]), 2);
+   const itw = round((M1 / B0) * (M2 / (M1 + D1)) * (B1 / (M2 + D2)) - 1, 5);
+   return build(`A fund (start $${B0}$) is valued just before each external flow: balance $${M1}$ before a deposit of $${D1}$, then $${M2}$ before a deposit of $${D2}$, and ends at $${B1}$. Find the time-weighted yield.`,
+    itw, [round(B1 / B0 - 1, 5), round((M1 / B0) * (M2 / M1) * (B1 / M2) - 1, 5), round((M1 / B0) * (M2 / (M1 + D1)) - 1, 5), round(B1 / (B0 + D1 + D2) - 1, 5)],
+    `Chain ALL sub-period factors: $(1+i)=\\frac{${M1}}{${B0}}\\cdot\\frac{${M2}}{${M1}+${D1}}\\cdot\\frac{${B1}}{${M2}+${D2}}$, giving $i=${fmt(itw, 5)}$. Each interim valuation must be taken just BEFORE its cash flow.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const B0 = pick([50000, 100000, 20000, 80000]);
+   const D1 = pick([10000, 20000, 5000]), t1 = pick([0.25, 0.3, 0.5]);
+   const W2 = pick([5000, 10000, 8000]), t2 = pick([0.6, 0.75, 0.8]);
+   const I = pick([2000, 5000, 3000, 4000]);
+   const B1 = B0 + D1 - W2 + I;
+   const denom = B0 + D1 * (1 - t1) - W2 * (1 - t2);
+   const idw = round(I / denom, 5);
+   return build(`A fund starts at $${B0}$. A deposit of $${D1}$ is made at time $${t1}$ and a WITHDRAWAL of $${W2}$ at time $${t2}$. The year-end balance is $${B1}$. Find the dollar-weighted yield.`,
+    idw, [round(I / B0, 5), round(I / (B0 + D1 - W2), 5), round(I / (B0 + D1 * (1 - t1) + W2 * (1 - t2)), 5), round(B1 / B0 - 1, 5)],
+    `Net interest $=${B1}-${B0}-${D1}+${W2}=${I}$. Each flow is weighted by its time in the fund (the withdrawal REDUCES exposure): $i=\\frac{${I}}{${B0}+${D1}(1-${t1})-${W2}(1-${t2})}=${fmt(idw, 5)}$. Sign errors on the withdrawal's weight are the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "yield-rates-npv": [
+  T("easy", () => {
+   const C0 = pick([1000, 2000, 5000, 1500]);
+   const R1 = pick([600, 800, 1200, 1000]), R2 = pick([700, 900, 1500, 1100]);
+   const i = rstep(0.05, 0.12, 0.0025);
+   const t1 = 1, t2 = 2;
+   const npv = round(-C0 + R1 * vOf(i) ** t1 + R2 * vOf(i) ** t2, 2);
+   return build(`A project costs $${C0}$ now and returns $${R1}$ at the end of year 1 and $${R2}$ at the end of year 2. At a ${pct(i, 2)} cost of capital, find the net present value.`,
+    npv, [round(-C0 + R1 + R2, 2), round(R1 * vOf(i) + R2 * vOf(i) ** 2, 2), round(-C0 + (R1 + R2) * vOf(i) ** 2, 2), round(-C0 + R1 * vOf(i) ** 2 + R2 * vOf(i), 2)],
+    `Discount every inflow and net the cost: $NPV=-${C0}+${R1}v+${R2}v^2=${npv}$ at $i=${pct(i, 2)}$. Adding undiscounted cash flows ignores the time value of money.`,
+    money, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const C0 = pick([5000, 10000, 20000, 8000]);
+   const R = pick([1000, 1500, 2000, 2500]);
+   const i = rstep(0.05, 0.10, 0.0025);
+   const n = rint(6, 15);
+   const npv = round(-C0 + R * aImm(n, i), 2);
+   return build(`A project costs $${C0}$ today and returns $${R}$ at the end of each year for ${n} years. At ${pct(i, 2)} effective, find the net present value.`,
+    npv, [round(-C0 + R * n, 2), round(-C0 + R * sImm(n, i), 2), round(R * aImm(n, i), 2), round(-C0 + R * aDue(n, i), 2)],
+    `The inflows are a level annuity-immediate: $NPV=-${C0}+${R}\\,a_{\\overline{${n}}|}=${npv}$. Using $s_{\\overline{n}|}$ (an accumulated value) instead of $a_{\\overline{n}|}$ (a present value) is the trap.`,
+    money, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const C0 = pick([1000, 2000, 5000, 4000]);
+   const i = rstep(0.05, 0.15, 0.005);
+   const n = rint(3, 10);
+   const A = round(C0 * (1 + i) ** n, 2);
+   const irr = round((A / C0) ** (1 / n) - 1, 5);
+   return build(`An investment of $${C0}$ grows to a single payout of $${A}$ after ${n} years. Find the annual yield (internal rate of return).`,
+    irr, [round((A - C0) / C0, 5), round((A - C0) / (C0 * n), 5), round(A / C0 - 1, 5), round((A / C0) ** n - 1, 5)],
+    `The IRR sets PV of inflow $=$ cost: $${C0}(1+i)^{${n}}=${A}$, so $i=\\left(\\frac{${A}}{${C0}}\\right)^{1/${n}}-1=${fmt(irr, 5)}$. Dividing total growth by $${n}$ (a simple-interest average) understates the compounded yield.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const i = rstep(0.06, 0.20, 0.005);
+   const R1 = pick([500, 1000, 800, 1200]), R2 = pick([1000, 1500, 2000, 1300]);
+   const v = vOf(i);
+   const C0 = round(R1 * v + R2 * v * v, 2);
+   return build(`A project costs $${C0}$ now and returns $${R1}$ at the end of year 1 and $${R2}$ at the end of year 2. Find the internal rate of return (the yield $i$ with $NPV=0$).`,
+    round(i, 5), [round(R1 / C0, 5), round((R1 + R2) / C0 - 1, 5), round((R1 + R2 - C0) / (2 * C0), 5), round(((R1 + R2) / C0) ** (1 / 2) - 1, 5)],
+    `Set $NPV=0$: $${C0}=${R1}v+${R2}v^2$, a quadratic in $v$. The positive root is $v=\\frac{-${R1}+\\sqrt{${R1}^2+4(${R2})(${C0})}}{2(${R2})}$, giving $i=\\frac1v-1=${fmt(round(i, 5), 5)}$. A single-cash-flow shortcut ignores that two payments at different times set the yield.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
 };
 
 /* ───────────────────────── no-repeat tracker ───────────────────────── */
@@ -1915,6 +2103,30 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
   formula: "$f_{Y\\mid X}(y\\mid x)=\\frac{f(x,y)}{f_X(x)}$",
   decode: GENERIC_PROB_DECODE,
   sanity: GENERIC_PROB_SANITY,
+ },
+ "equation-of-value": {
+  trick: "Pick ONE comparison date, accumulate/discount every cash flow to it, set inflows $=$ outflows. The equation is invariant to the date you choose, but each flow's exponent is its own distance to it.",
+  formula: "$\\sum \\text{inflows}\\cdot(1+i)^{T-t_k}=\\sum \\text{outflows}\\cdot(1+i)^{T-t_k}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "sinking-funds": {
+  trick: "Borrower pays interest $Li$ to the lender EVERY period (principal never declines) AND deposits $D=\\frac{L}{s_{\\overline n|}^{\\,j}}$ into a fund earning $j$. Total $=Li+D$. Extra vs amortizing $=L(\\frac1{s^j}-\\frac1{s^i})$.",
+  formula: "$D=\\dfrac{L}{s_{\\overline{n}|}^{\\,j}},\\qquad \\text{total}=Li+D$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "dollar-time-weighted": {
+  trick: "Time-weighted MULTIPLIES sub-period growth factors (value just BEFORE each flow) — measures the manager. Dollar-weighted solves the equation of value (simple-interest exposure $B_0+\\sum F_k(1-t_k)$) — measures the investor's actual return.",
+  formula: "$1+i_{TW}=\\prod\\frac{B_k^{-}}{B_{k-1}^{+}},\\qquad i_{DW}=\\frac{I}{B_0+\\sum F_k(1-t_k)}$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "yield-rates-npv": {
+  trick: "NPV discounts every cash flow at the cost of capital and nets the outlay. The IRR is the rate making $NPV=0$; for a single future payout it is $\\left(\\frac{A}{C_0}\\right)^{1/n}-1$, otherwise solve the polynomial in $v$.",
+  formula: "$NPV=\\sum CF_t\\,v^t,\\qquad IRR:\\ NPV=0$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
  },
 };
 
