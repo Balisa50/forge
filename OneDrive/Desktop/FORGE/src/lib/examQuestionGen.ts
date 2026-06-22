@@ -1041,6 +1041,179 @@ const GENERATORS: Record<string, Template[]> = {
     prob, TIER_DIFF.superhard);
   }),
  ],
+
+ "mgf-and-moments": [
+  T("easy", () => {
+   const alpha = rint(1, 8);
+   const theta = pick([2, 3, 4, 5, 0.5, 1.5, 2.5, 10, 6, 8]);
+   const mean = round(alpha * theta, 4);
+   return build(`The moment generating function of $X$ is $M(t)=(1-${theta}t)^{-${alpha}}$ for $t<1/${theta}$. Find $E[X]$.`,
+    mean, [round(theta, 4), round(alpha, 4), round(alpha * theta * theta, 4), round(alpha + theta, 4)],
+    `Moments come from derivatives at $0$: $E[X]=M'(0)$. With $M'(t)=\\alpha\\theta(1-${theta}t)^{-(\\alpha+1)}$, $E[X]=\\alpha\\theta=${alpha}\\cdot${theta}=${fmt(mean, 4)}$. This is a Gamma$(\\alpha=${alpha},\\theta=${theta})$ MGF; reporting $\\theta$ alone (forgetting $\\alpha$) is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const alpha = rint(2, 8);
+   const theta = pick([2, 3, 4, 5, 1.5, 2.5, 6, 8, 10, 0.5]);
+   const variance = round(alpha * theta * theta, 4);
+   return build(`The moment generating function of $X$ is $M(t)=(1-${theta}t)^{-${alpha}}$. Find $\\operatorname{Var}(X)$.`,
+    variance, [round(alpha * theta, 4), round(alpha * (alpha + 1) * theta * theta, 4), round((alpha * theta) ** 2, 4), round(theta * theta, 4)],
+    `$E[X]=\\alpha\\theta$ and $E[X^2]=M''(0)=\\alpha(\\alpha+1)\\theta^2$, so $\\operatorname{Var}=E[X^2]-(E[X])^2=\\alpha\\theta^2=${alpha}\\cdot${theta}^2=${fmt(variance, 4)}$. Using $E[X^2]$ itself (forgetting to subtract $(E[X])^2$) is the trap.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const theta = pick([2, 3, 4, 5, 1.5, 2.5, 6]);
+   const a1 = rint(1, 5), a2 = rint(1, 5);
+   const variance = round((a1 + a2) * theta * theta, 4);
+   return build(`$X$ and $Y$ are independent with $M_X(t)=(1-${theta}t)^{-${a1}}$ and $M_Y(t)=(1-${theta}t)^{-${a2}}$. Find $\\operatorname{Var}(X+Y)$.`,
+    variance, [round(a1 * theta * theta + a2 * theta, 4), round((a1 + a2) * theta, 4), round(a1 * a2 * theta * theta, 4), round((a1 + a2) * (a1 + a2 + 1) * theta * theta, 4)],
+    `Independent MGFs multiply: $M_{X+Y}(t)=(1-${theta}t)^{-(${a1}+${a2})}$, a Gamma$(\\alpha=${a1 + a2},\\theta=${theta})$. So $\\operatorname{Var}(X+Y)=(\\alpha_1+\\alpha_2)\\theta^2=${a1 + a2}\\cdot${theta}^2=${fmt(variance, 4)}$. Variances of independent sums ADD; each part is $\\alpha_i\\theta^2$.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const mu = rint(1, 8);
+   const s2 = pick([1, 2, 4, 9, 16, 3, 5, 6, 8, 25]);
+   const m3 = round(mu ** 3 + 3 * mu * s2, 4);
+   return build(`$X$ has moment generating function $M(t)=e^{${mu}t+${s2 / 2}t^2}$. Find $E[X^3]$.`,
+    m3, [round(mu ** 3, 4), round(mu ** 3 + mu * s2, 4), round(mu + 3 * mu * s2, 4), round(3 * mu * s2, 4)],
+    `Matching $e^{\\mu t+\\sigma^2 t^2/2}$ identifies a Normal$(\\mu=${mu},\\sigma^2=${s2})$. Its third moment is $E[X^3]=\\mu^3+3\\mu\\sigma^2=${mu}^3+3(${mu})(${s2})=${fmt(m3, 4)}$. Forgetting the $3\\mu\\sigma^2$ term (reporting $\\mu^3$) is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "transformations-univariate": [
+  T("easy", () => {
+   const theta = pick([2, 3, 4, 5, 10, 6, 8, 1.5, 2.5, 12]);
+   const c = pick([2, 3, 0.5, 4, 1.5]);
+   const y = c * theta * pick([1, 2, 0.5, 1.5, 3]);
+   const p = round(Math.exp(-y / (c * theta)), 4);
+   return build(`$X$ is exponential with mean $${theta}$, and $Y=${c}X$. Find $P(Y>${round(y, 2)})$.`,
+    p, [round(Math.exp(-y / theta), 4), round(Math.exp(-c * y / theta), 4), round(1 - Math.exp(-y / (c * theta)), 4), round(Math.exp(-y / (c + theta)), 4)],
+    `Scaling an exponential scales its mean: $Y=${c}X$ is exponential with mean $${c}\\cdot${theta}=${round(c * theta, 2)}$, so $P(Y>y)=e^{-y/(${round(c * theta, 2)})}=${fmt(p, 4)}$. Using the old mean $${theta}$ (forgetting the scale) is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const theta = pick([2, 3, 4, 5, 10, 6, 8, 1.5, 12, 2.5]);
+   const y = theta * pick([0.5, 1, 1.5, 2, 0.25, 3, 0.75]);
+   const p = round(Math.exp(-y / theta), 4);
+   return build(`$X$ is uniform on $(0,1)$ and $Y=-${theta}\\ln(1-X)$. Find $P(Y>${round(y, 3)})$.`,
+    p, [round(1 - Math.exp(-y / theta), 4), round(Math.exp(-y), 4), round(Math.exp(-theta * y), 4), round(Math.exp(-y / theta) / 2, 4)],
+    `Invert: $P(Y\\le y)=P\\!\\left(X\\le 1-e^{-y/${theta}}\\right)=1-e^{-y/${theta}}$, so $Y$ is exponential with mean $${theta}$ and $P(Y>y)=e^{-y/${theta}}=${fmt(p, 4)}$. This is the inverse-CDF (probability-integral) transform.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const n = pick([2, 3, 4, 5, 6]);
+   const y = rstep(0.1, 0.9, 0.05);
+   const p = round(y ** n, 5);
+   return build(`$X$ is uniform on $(0,1)$ and $Y=X^{1/${n}}$. Find $P(Y\\le ${fmt(y, 2)})$.`,
+    p, [round(y ** (1 / n), 5), round(y, 5), round(n * y ** (n - 1), 5), round(y ** (n - 1), 5)],
+    `CDF method: $P(Y\\le y)=P(X^{1/${n}}\\le y)=P(X\\le y^{${n}})=y^{${n}}=${fmt(p, 5)}$ for $0<y<1$ (so $Y\\sim$ Beta$(${n},1)$). Inverting the exponent to $y^{1/${n}}$ is the trap.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const a = rint(6, 15);
+   const yv = pick([0.25, 1, 4, 9, 16, 25]);
+   const sqrtY = Math.sqrt(yv);
+   const f = round(1 / (2 * a * sqrtY), 5);
+   return build(`$X$ is uniform on $(-${a},${a})$ and $Y=X^2$. Find the probability density $f_Y(${yv})$.`,
+    f, [round(1 / (a * sqrtY), 5), round(1 / (2 * a * yv), 5), round(1 / (2 * a), 5), round(1 / (a * yv), 5)],
+    `$Y=X^2$ is non-monotonic: both $x=\\pm\\sqrt{y}$ map to $y$. With $f_X=\\frac{1}{2(${a})}$, $f_Y(y)=2\\,f_X(\\sqrt y)\\left|\\frac{dx}{dy}\\right|=2\\cdot\\frac{1}{2(${a})}\\cdot\\frac{1}{2\\sqrt y}=\\frac{1}{2(${a})\\sqrt y}=${fmt(f, 5)}$. Dropping the factor of $2$ for the two roots is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "order-statistics": [
+  T("easy", () => {
+   const n = rint(2, 12);
+   const theta = pick([1, 2, 5, 10, 4, 8, 20, 6, 3, 100]);
+   const e = round(n * theta / (n + 1), 4);
+   return build(`$X_1,\\dots,X_{${n}}$ are independent and uniform on $(0,${theta})$. Find $E\\!\\left[\\max(X_1,\\dots,X_{${n}})\\right]$.`,
+    e, [round(theta, 4), round(theta / (n + 1), 4), round(theta / 2, 4), round(theta * (n + 1) / n, 4)],
+    `The maximum of $${n}$ iid Uniform$(0,\\theta)$ has CDF $(x/\\theta)^{${n}}$, giving density $\\frac{${n}x^{${n}-1}}{\\theta^{${n}}}$ and $E[X_{(${n})}]=\\frac{${n}}{${n}+1}\\theta=${fmt(e, 4)}$. By symmetry $E[\\min]=\\frac{\\theta}{n+1}$; swapping them is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const n = rint(2, 12);
+   const theta = pick([2, 5, 10, 4, 8, 20, 6, 3, 12, 100]);
+   const e = round(theta / n, 4);
+   return build(`$X_1,\\dots,X_{${n}}$ are independent, each exponential with mean $${theta}$. Find $E\\!\\left[\\min(X_1,\\dots,X_{${n}})\\right]$.`,
+    e, [round(theta, 4), round(theta / (n + 1), 4), round(theta * n, 4), round(theta / (n * n), 4)],
+    `The minimum of $${n}$ independent exponentials is exponential with rate equal to the SUM of the rates, $\\frac{${n}}{${theta}}$, hence mean $\\frac{${theta}}{${n}}=${fmt(e, 4)}$. The memoryless minimum is the fastest of the competing clocks.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const n = rint(2, 8);
+   const theta = pick([10, 20, 100, 5, 50, 4, 8]);
+   const m = round(theta * pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8]), 2);
+   const p = round((m / theta) ** n, 5);
+   return build(`$X_1,\\dots,X_{${n}}$ are independent and uniform on $(0,${theta})$. Find $P\\!\\left(\\max(X_1,\\dots,X_{${n}})\\le ${m}\\right)$.`,
+    p, [round(m / theta, 5), round(1 - (1 - m / theta) ** n, 5), round(n * (m / theta) ** (n - 1), 5), round((1 - m / theta) ** n, 5)],
+    `Every observation must be $\\le ${m}$: $P(\\max\\le m)=\\left(\\frac{m}{\\theta}\\right)^{${n}}=\\left(\\frac{${m}}{${theta}}\\right)^{${n}}=${fmt(p, 5)}$. The single-variable probability $\\frac{m}{\\theta}$ (forgetting all $${n}$ must comply) is the trap.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const n = rint(4, 8);
+   const k = rint(2, n - 1);
+   const pp = pick([0.3, 0.4, 0.5, 0.6, 0.7]);
+   let tail = 0;
+   for (let j = k; j <= n; j++) tail += nCr(n, j) * pp ** j * (1 - pp) ** (n - j);
+   const correct = round(tail, 5);
+   const single = round(nCr(n, k) * pp ** k * (1 - pp) ** (n - k), 5);
+   return build(`$X_1,\\dots,X_{${n}}$ are independent and uniform on $(0,\\theta)$. For a threshold $m$ with $\\frac{m}{\\theta}=${pp}$, find $P\\!\\left(X_{(${k})}\\le m\\right)$ (the $${k}$-th smallest is at most $m$).`,
+    correct, [single, round(1 - tail, 5), round(pp ** k, 5), round(nCr(n, k) * pp ** k, 5)],
+    `$X_{(${k})}\\le m$ means at least $${k}$ of the $${n}$ observations fall below $m$, each with probability $\\frac{m}{\\theta}=${pp}$. So $P=\\sum_{j=${k}}^{${n}}\\binom{${n}}{j}(${pp})^{j}(1-${pp})^{${n}-j}=${fmt(correct, 5)}$. Taking only the $j=${k}$ term ignores that "at least $k$" is a binomial tail.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "sums-and-convolutions": [
+  T("easy", () => {
+   const l1 = pick([1, 2, 3, 1.5, 2.5, 0.5, 4]);
+   const l2 = pick([1, 2, 3, 1.5, 0.5, 2.5, 4]);
+   const k = rint(0, 4);
+   const s = l1 + l2;
+   const p = round(Math.exp(-s) * s ** k / fact(k), 5);
+   return build(`$X$ and $Y$ are independent Poisson random variables with means $${l1}$ and $${l2}$. Find $P(X+Y=${k})$.`,
+    p, [round(Math.exp(-l1) * l1 ** k / fact(k), 5), round(Math.exp(-s) * s ** k, 5), round(Math.exp(-s), 5), round(Math.exp(-s) * l1 ** k / fact(k), 5)],
+    `A sum of independent Poissons is Poisson with the means ADDED: $X+Y\\sim$ Poisson$(${l1}+${l2}=${round(s, 2)})$. So $P(X+Y=${k})=\\frac{e^{-${round(s, 2)}}(${round(s, 2)})^{${k}}}{${k}!}=${fmt(p, 5)}$. Using only one of the two means is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const mu1 = rint(2, 10), mu2 = rint(2, 10);
+   const v1 = pick([4, 9, 16, 25, 1, 36]), v2 = pick([9, 16, 4, 25, 49, 1]);
+   const mSum = mu1 + mu2, sd = Math.sqrt(v1 + v2);
+   const vthr = round(mSum + pick([-1, 0, 1, 2, -2]) * sd, 2);
+   const z = (vthr - mSum) / sd;
+   const p = round(1 - normalCdf(z), 4);
+   return build(`$X\\sim N(${mu1},${v1})$ and $Y\\sim N(${mu2},${v2})$ are independent. Find $P(X+Y>${vthr})$.`,
+    p, [round(1 - normalCdf((vthr - mSum) / (Math.sqrt(v1) + Math.sqrt(v2))), 4), round(normalCdf(z), 4), round(1 - normalCdf((vthr - mSum) / (v1 + v2)), 4), round(1 - normalCdf((vthr - mSum) / Math.sqrt(v1 * v2)), 4)],
+    `Independent normals add: $X+Y\\sim N(${mSum},\\,${v1 + v2})$ (means AND variances add). Standardize: $z=\\frac{${vthr}-${mSum}}{\\sqrt{${v1 + v2}}}=${fmt(z, 3)}$, so $P=1-\\Phi(z)=${fmt(p, 4)}$. Adding standard deviations instead of variances is the classic error.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const n = rint(2, 5);
+   const theta = pick([1, 2, 5, 10, 4, 0.5]);
+   const t = round(theta * n * pick([0.5, 0.75, 1, 1.25, 1.5]), 2);
+   const lt = t / theta;
+   let tail = 0;
+   for (let j = 0; j < n; j++) tail += Math.exp(-lt) * lt ** j / fact(j);
+   const p = round(1 - tail, 5);
+   return build(`$S=X_1+\\dots+X_{${n}}$, where the $X_i$ are independent exponentials each with mean $${theta}$. Find $P(S\\le ${t})$.`,
+    p, [round(1 - Math.exp(-lt), 5), round(tail, 5), round(Math.exp(-lt) * lt ** (n - 1) / fact(n - 1), 5), round(1 - Math.exp(-t), 5)],
+    `A sum of $${n}$ iid exponentials is Erlang (Gamma with integer shape): $P(S\\le t)=1-\\sum_{j=0}^{${n - 1}} e^{-t/${theta}}\\frac{(t/${theta})^{j}}{j!}=${fmt(p, 5)}$, with $t/\\theta=${fmt(lt, 3)}$. Using a single exponential $1-e^{-t/\\theta}$ ignores that it takes $${n}$ events.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const a = rint(2, 12);
+   const rfac = pick([0.3, 0.5, 0.7, 0.9, 1.2, 1.4, 1.6, 1.8]);
+   const s = round(a * rfac, 2);
+   const p = round(rfac <= 1 ? rfac * rfac / 2 : 1 - (2 - rfac) ** 2 / 2, 5);
+   return build(`$X$ and $Y$ are independent, each uniform on $(0,${a})$. Find $P(X+Y\\le ${s})$.`,
+    p, [round(rfac * rfac / 2, 5), round(s / (2 * a), 5), round((s / (2 * a)) ** 2, 5), round(rfac <= 1 ? rfac / 2 : 1 - (2 - rfac) / 2, 5)],
+    `The sum of two independent uniforms is TRIANGULAR on $(0,${2 * a})$. With $r=\\frac{s}{${a}}=${fmt(rfac, 2)}$: for $r\\le 1$, $P=\\frac{r^2}{2}$; for $r>1$, $P=1-\\frac{(2-r)^2}{2}$. Here $P=${fmt(p, 5)}$. Treating the sum as uniform (a straight $\\frac{s}{2a}$) ignores the triangular shape.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
 };
 
 /* ───────────────────────── no-repeat tracker ───────────────────────── */
@@ -1534,6 +1707,30 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
   formula: "$(1+s_b)^{b}=(1+s_a)^{a}(1+f_{[a,b]})^{b-a}$",
   decode: FM_DECODE,
   sanity: FM_SANITY,
+ },
+ "mgf-and-moments": {
+  trick: "$E[X^n]=M^{(n)}(0)$ (differentiate, then set $t=0$). Recognize the named MGF: Gamma $=(1-\\theta t)^{-\\alpha}$, Normal $=e^{\\mu t+\\sigma^2 t^2/2}$, Poisson $=e^{\\lambda(e^t-1)}$. Independent sums multiply MGFs.",
+  formula: "$M_X(t)=E[e^{tX}],\\quad E[X^n]=M_X^{(n)}(0),\\quad M_{X+Y}=M_X M_Y$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "transformations-univariate": {
+  trick: "Monotonic $g$: use the CDF method $F_Y(y)=P(g(X)\\le y)$ then differentiate, or $f_Y(y)=f_X(x)\\left|\\frac{dx}{dy}\\right|$. Non-monotonic (e.g. $Y=X^2$): SUM over every $x$ root.",
+  formula: "$f_Y(y)=\\sum_i f_X(x_i)\\left|\\dfrac{dx_i}{dy}\\right|$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "order-statistics": {
+  trick: "$\\max\\le m \\Leftrightarrow$ ALL $\\le m$, so $F_{(n)}=F^n$. $\\min>m \\Leftrightarrow$ ALL $>m$, so $S_{(1)}=S^n$. For Uniform$(0,\\theta)$: $E[X_{(k)}]=\\frac{k\\theta}{n+1}$.",
+  formula: "$F_{\\max}(m)=F(m)^n,\\quad F_{\\min}(m)=1-[1-F(m)]^n$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "sums-and-convolutions": {
+  trick: "Closure: independent Poissons $\\to$ Poisson$(\\sum\\lambda)$; independent Normals $\\to$ Normal (means AND variances add); $n$ iid Exponentials $\\to$ Erlang/Gamma. Otherwise convolve.",
+  formula: "$f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
  },
 };
 

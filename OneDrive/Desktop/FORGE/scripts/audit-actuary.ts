@@ -23,6 +23,7 @@ const EXAM_P = [
   "common-discrete-distributions", "common-continuous-distributions",
   "covariance-and-correlation", "percentiles-and-measures",
   "double-expectation", "clt-and-sums",
+  "mgf-and-moments", "transformations-univariate", "order-statistics", "sums-and-convolutions",
 ];
 const EXAM_FM = [
   "interest-and-accumulation", "level-annuities", "loan-amortization", "bond-pricing",
