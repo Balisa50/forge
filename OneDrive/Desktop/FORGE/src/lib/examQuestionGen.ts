@@ -112,10 +112,24 @@ function build(
  }
  let bump = 1;
  while (vals.length < 5) {
- const cand = round(correct * (1 + 0.12 * bump) + 0.001 * bump, 6);
+ const cand = round(correct * (1 + 0.12 * bump) + (Math.max(Math.abs(correct), 0.5) * 0.1 + 0.001) * bump, 6);
  if (!vals.some((v) => Math.abs(v - cand) < tol)) vals.push(cand);
  bump++;
- if (bump > 50) break;
+ if (bump > 60) break;
+ }
+ // Guarantee every option formats to a DISTINCT string: two identical-looking
+ // choices are a quality defect (numeric dedup above misses values that ROUND
+ // to the same display). Nudge any duplicate distractor — never the correct
+ // value — until its formatted string differs.
+ const shown = new Set<string>([format(correct)]);
+ for (let i = 0; i < vals.length; i++) {
+ if (Math.abs(vals[i] - correct) < tol) continue;
+ let s = format(vals[i]);
+ for (let g = 0; shown.has(s) && g < 100; g++) {
+ vals[i] = round(vals[i] + Math.max(Math.abs(vals[i]), 0.5) * 0.05 * (g + 1), 6);
+ s = format(vals[i]);
+ }
+ shown.add(s);
  }
  for (let i = vals.length - 1; i > 0; i--) {
  const j = rint(0, i);
@@ -1246,8 +1260,8 @@ const GENERATORS: Record<string, Template[]> = {
     prob, TIER_DIFF.hard);
   }),
   T("superhard", () => {
-   const theta = pick([500, 1000, 2000, 800, 1500, 250]);
-   const d = round(theta * pick([0.25, 0.5, 0.75, 1, 1.5]), 0);
+   const theta = pick([500, 1000, 2000, 800, 1500, 250, 750, 3000, 1200, 400]);
+   const d = round(theta * pick([0.2, 0.3, 0.4, 0.5, 0.6, 0.75, 1, 1.25]), 0);
    const ans = round(theta * Math.exp(-d / theta), 2);
    return build(`Losses $X$ are exponential with mean $${theta}$. An insurance policy with deductible $${d}$ pays $(X-${d})_+$ (the loss above the deductible, or $0$). Find the expected payment per loss.`,
     ans, [round(theta - d, 2), round(theta, 2), round(theta * Math.exp(-d / theta) - d, 2), round((theta - d) * Math.exp(-d / theta), 2)],
