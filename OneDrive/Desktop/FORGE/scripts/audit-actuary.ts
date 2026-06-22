@@ -3,7 +3,8 @@
  *   1. No question repeats across 100+ attempts per concept (exact stem match).
  *   2. Every concept exposes all four difficulty tiers.
  *   3. Every default sitting contains a super-hard question (the "sweat").
- *   4. Every generated question is structurally valid (5 choices, correct in 0..4).
+ *   4. Every generated question is structurally valid (5 choices, all rendering
+ *      to DISTINCT strings, correct in 0..4).
  *
  * Run: npx tsx scripts/audit-actuary.ts
  */
@@ -59,6 +60,7 @@ for (const c of CONCEPTS) {
     const [q] = generateByTier(c, tier, 1);
     if (!q) { structOk = false; break; }
     if (q.choices.length !== 5 || q.correct < 0 || q.correct > 4) structOk = false;
+    if (new Set(q.choices.map((s) => s.trim())).size !== 5) structOk = false; // no two identical-looking options
     if (seen.has(q.q)) dup++;
     seen.add(q.q);
   }

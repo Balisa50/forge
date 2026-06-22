@@ -44,6 +44,12 @@ export function Tex({ children, block = false }: { children: string; block?: boo
  */
 const TOKEN_RE = /(\$\$[^$]+?\$\$)|(\$[^$\n]+?\$)|(\*\*[\s\S]+?\*\*)|(`[^`]+?`)/g;
 
+// Outside math, LaTeX escapes like `\%` and `\$` should display as literal
+// symbols — KaTeX only runs inside `$...$`, so in prose the backslash would show
+// verbatim ("8\%"). Strip it from prose fragments so percentages/amounts read
+// cleanly. (In-math text goes through renderTeX untouched, where `\%` is correct.)
+const plainProse = (s: string) => s.replace(/\\([%$&#_])/g, "$1");
+
 export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[] {
   if (!text) return [];
   const nodes: React.ReactNode[] = [];
@@ -53,7 +59,7 @@ export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[]
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) {
     if (m.index > last) {
-      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{text.slice(last, m.index)}</React.Fragment>);
+      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(text.slice(last, m.index))}</React.Fragment>);
     }
     const tok = m[0];
     if (m[1]) {
@@ -98,7 +104,7 @@ export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[]
     last = m.index + tok.length;
   }
   if (last < text.length) {
-    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{text.slice(last)}</React.Fragment>);
+    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(text.slice(last))}</React.Fragment>);
   }
   return nodes;
 }

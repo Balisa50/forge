@@ -1241,8 +1241,8 @@ const GENERATORS: Record<string, Template[]> = {
     prob, TIER_DIFF.easy);
   }),
   T("medium", () => {
-   const theta = pick([2, 3, 4, 5, 10, 6, 8, 12]);
-   const m = round(theta * pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8]), 2);
+   const theta = pick([2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20]);
+   const m = round(theta * pick([0.25, 0.3, 0.35, 0.4, 0.5, 0.55, 0.6, 0.7, 0.75, 0.8]), 2);
    const ans = round(1 - (m / theta) ** 2, 5);
    return build(`The density of $X$ is $f(x)=\\frac{2x}{${theta * theta}}$ for $0<x<${theta}$ (and $0$ otherwise). Find $P(X>${m})$.`,
     ans, [round((m / theta) ** 2, 5), round(1 - m / theta, 5), round(m / theta, 5), round(1 - (m / theta) ** 3, 5)],
@@ -1858,7 +1858,7 @@ const GENERATORS: Record<string, Template[]> = {
    const value = round(N * (Rstar - Rold) * ann, 2);
    return build(`A 3-year payer swap (pays fixed ${pct(Rold, 2)}, receives floating) has notional $${N}$. Current 1-, 2-, 3-year spot rates are ${pct(s1, 2)}, ${pct(s2, 2)}, ${pct(s3, 2)}. Find the swap's market value to the fixed-rate payer.`,
     value, [round(N * (Rold - Rstar) * ann, 2), round(N * (Rstar - Rold), 2), round(N * (Rstar - Rold) * 3, 2), round((Rstar - Rold) * ann, 2)],
-    `The current par swap rate is $R^*=\\frac{1-P_3}{P_1+P_2+P_3}=${fmt(round(Rstar, 5), 5)}$. A payer swap is worth $N(R^*-R)\\sum P_t=${N}(${fmt(round(Rstar, 5), 5)}-${fmt(Rold, 4)})(${fmt(round(ann, 5), 5)})=${value}$. Locking a fixed rate BELOW today's market is a gain to the payer.`,
+    `The current par swap rate is $R^*=\\frac{1-P_3}{P_1+P_2+P_3}=${fmt(round(Rstar, 5), 5)}$. A payer swap is worth $N(R^*-R)\\sum P_t=${N}(${fmt(round(Rstar, 5), 5)}-${fmt(Rold, 4)})(${fmt(round(ann, 5), 5)})=${value}$. The payer locked ${pct(Rold, 2)}, ${Rold < Rstar ? "below" : "above"} today's par rate of ${pct(round(Rstar, 4), 2)}, so the swap is ${value >= 0 ? "an asset (positive value)" : "a liability (negative value)"} to the fixed-rate payer.`,
     money, TIER_DIFF.superhard);
   }),
  ],
