@@ -31,6 +31,7 @@ const EXAM_FM = [
   "nominal-rates-and-force", "perpetuities-and-varying", "geometric-annuities", "spot-forward-rates",
   "equation-of-value", "sinking-funds", "dollar-time-weighted", "yield-rates-npv",
   "deferred-and-continuous-annuities", "bond-amortization", "callable-bonds", "duration-and-immunization",
+  "convexity-and-matching", "interest-rate-swaps", "determinants-of-interest",
 ];
 const CONCEPTS = [...EXAM_P, ...EXAM_FM];
 

@@ -1754,6 +1754,142 @@ const GENERATORS: Record<string, Template[]> = {
     money, TIER_DIFF.superhard);
   }),
  ],
+
+ "convexity-and-matching": [
+  T("easy", () => {
+   const n = rint(3, 20);
+   const i = rstep(0.03, 0.10, 0.0025);
+   const conv = round(n * (n + 1) / (1 + i) ** 2, 4);
+   return build(`A zero-coupon bond matures in ${n} years at a yield of ${pct(i, 2)}. Find its (modified) convexity.`,
+    conv, [round(n * n / (1 + i) ** 2, 4), round(n * (n + 1) / (1 + i), 4), round(n * (n + 1), 4), round(n / (1 + i) ** 2, 4)],
+    `For a zero $P=(1+i)^{-${n}}$, so $P''=${n}\\cdot${n + 1}(1+i)^{-${n}-2}$ and convexity $=\\frac{P''}{P}=\\frac{${n}(${n}+1)}{(1+i)^2}=${fmt(conv, 4)}$. Using $n^2$ instead of $n(n+1)$ is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const D = pick([4.5, 6.2, 7.8, 3.5, 9.1, 5.0, 8.4]);
+   const C = pick([25, 40, 60, 18, 80, 50]);
+   const di = pick([0.01, 0.015, 0.02, -0.01, -0.015, 0.005]);
+   const pct_ = round(-D * di + 0.5 * C * di * di, 5);
+   return build(`A bond has modified duration ${D} and convexity ${C}. Using the second-order (duration + convexity) approximation, estimate the fractional change in price if the yield ${di >= 0 ? "rises" : "falls"} by ${pct(Math.abs(di), 2)}.`,
+    pct_, [round(-D * di, 5), round(-D * di - 0.5 * C * di * di, 5), round(-D * di + C * di * di, 5), round(0.5 * C * di * di, 5)],
+    `The second-order estimate is $\\frac{\\Delta P}{P}\\approx -D\\,\\Delta i+\\tfrac12 C(\\Delta i)^2=-(${D})(${fmt(di, 4)})+\\tfrac12(${C})(${fmt(di, 4)})^2=${fmt(pct_, 5)}$. Convexity is a POSITIVE correction; dropping it (duration only) underestimates the price for a yield drop.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const cf1 = pick([100, 200, 500, 1000]), cf2 = pick([100, 300, 800, 1500]);
+   const t1 = rint(1, 3), t2 = rint(5, 9);
+   const i = rstep(0.04, 0.09, 0.0025);
+   const p1 = cf1 * vOf(i) ** t1, p2 = cf2 * vOf(i) ** t2;
+   const conv = round((cf1 * t1 * (t1 + 1) * vOf(i) ** (t1 + 2) + cf2 * t2 * (t2 + 1) * vOf(i) ** (t2 + 2)) / (p1 + p2), 4);
+   return build(`A portfolio pays $${cf1}$ at the end of year ${t1} and $${cf2}$ at the end of year ${t2}. At ${pct(i, 2)} effective, find its (modified) convexity.`,
+    conv, [round((cf1 * t1 * t1 * vOf(i) ** (t1 + 2) + cf2 * t2 * t2 * vOf(i) ** (t2 + 2)) / (p1 + p2), 4), round((t1 * (t1 + 1) + t2 * (t2 + 1)) / 2, 4), round((cf1 * t1 * (t1 + 1) * vOf(i) ** t1 + cf2 * t2 * (t2 + 1) * vOf(i) ** t2) / (p1 + p2), 4), round((p1 * t1 * (t1 + 1) + p2 * t2 * (t2 + 1)) / (p1 + p2), 4)],
+    `Convexity $=\\frac{1}{P}\\sum CF_t\\,t(t+1)v^{t+2}=\\frac{${cf1}\\cdot${t1}(${t1}+1)v^{${t1 + 2}}+${cf2}\\cdot${t2}(${t2}+1)v^{${t2 + 2}}}{P}=${fmt(conv, 4)}$. Each term carries TWO extra powers of $v$ (from differentiating $v^t$ twice).`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const P = pick([10000, 50000, 100000, 25000]);
+   const C = pick([40, 60, 80, 100, 120, 50]);
+   const di = pick([0.01, 0.015, 0.02, 0.025, 0.03]);
+   const corr = round(0.5 * C * P * di * di, 2);
+   return build(`A bond portfolio worth $${P}$ has convexity ${C}. A duration-only estimate of the new value after a yield move of ${pct(di, 1)} omits the convexity term. By how many dollars does the convexity correction adjust the estimate?`,
+    corr, [round(C * P * di * di, 2), round(0.5 * C * P * di, 2), round(0.5 * C * di * di, 2), round(P * di * di, 2)],
+    `The convexity term in $\\Delta P\\approx P(-D\\,\\Delta i+\\tfrac12 C\\,\\Delta i^2)$ contributes $\\tfrac12 C P\\,\\Delta i^2=\\tfrac12(${C})(${P})(${fmt(di, 3)})^2=${corr}$. It is always POSITIVE (convexity helps the holder), and it is what duration alone misses.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "interest-rate-swaps": [
+  T("easy", () => {
+   const s1 = rstep(0.02, 0.06, 0.0025);
+   const s2 = round(s1 + pick([0.003, 0.005, 0.008, 0.01]), 4);
+   const P1 = (1 + s1) ** -1, P2 = (1 + s2) ** -2;
+   const R = round((1 - P2) / (P1 + P2), 5);
+   return build(`The 1-year and 2-year spot rates are ${pct(s1, 2)} and ${pct(s2, 2)}. Find the fixed rate of a 2-year interest-rate swap (the rate making the swap's value zero).`,
+    R, [round(s2, 5), round((1 - P2) / P2, 5), round((s1 + s2) / 2, 5), round(s1, 5)],
+    `The swap rate equates fixed and floating legs: $R=\\frac{1-P_2}{P_1+P_2}$ where $P_t=(1+s_t)^{-t}$. With $P_1=${fmt(round(P1, 5), 5)}$, $P_2=${fmt(round(P2, 5), 5)}$, $R=${fmt(R, 5)}$. It is a discount-factor-weighted average of the forward rates, not just the final spot.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const s1 = rstep(0.02, 0.05, 0.0025);
+   const s2 = round(s1 + pick([0.003, 0.005, 0.007]), 4);
+   const s3 = round(s2 + pick([0.003, 0.005, 0.007]), 4);
+   const P1 = (1 + s1) ** -1, P2 = (1 + s2) ** -2, P3 = (1 + s3) ** -3;
+   const R = round((1 - P3) / (P1 + P2 + P3), 5);
+   return build(`The 1-, 2-, and 3-year spot rates are ${pct(s1, 2)}, ${pct(s2, 2)}, and ${pct(s3, 2)}. Find the fixed rate of a 3-year interest-rate swap.`,
+    R, [round(s3, 5), round((1 - P3) / P3, 5), round((s1 + s2 + s3) / 3, 5), round((1 - P3) / (P1 + P2), 5)],
+    `$R=\\frac{1-P_3}{P_1+P_2+P_3}$ with $P_t=(1+s_t)^{-t}$, giving $R=${fmt(R, 5)}$. The denominator is the swap's "annuity" (sum of discount factors); the numerator $1-P_n$ is the floating leg's value.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const s1 = rstep(0.02, 0.05, 0.0025);
+   const s2 = round(s1 + pick([0.003, 0.005, 0.006]), 4);
+   const s3 = round(s2 + pick([0.003, 0.005]), 4);
+   const s4 = round(s3 + pick([0.002, 0.004]), 4);
+   const P1 = (1 + s1) ** -1, P2 = (1 + s2) ** -2, P3 = (1 + s3) ** -3, P4 = (1 + s4) ** -4;
+   const R = round((1 - P4) / (P1 + P2 + P3 + P4), 5);
+   return build(`Spot rates for years 1-4 are ${pct(s1, 2)}, ${pct(s2, 2)}, ${pct(s3, 2)}, ${pct(s4, 2)}. Find the fixed rate of a 4-year interest-rate swap.`,
+    R, [round(s4, 5), round((1 - P4) / P4, 5), round((1 - P4) / (P1 + P2 + P3), 5), round((s1 + s2 + s3 + s4) / 4, 5)],
+    `$R=\\frac{1-P_4}{P_1+P_2+P_3+P_4}$ where $P_t=(1+s_t)^{-t}$, so $R=${fmt(R, 5)}$. Adding a year just extends both the floating-leg value $1-P_n$ and the annuity denominator.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const N = pick([1000000, 500000, 2000000, 5000000]);
+   const s1 = rstep(0.02, 0.05, 0.0025);
+   const s2 = round(s1 + pick([0.004, 0.006, 0.008]), 4);
+   const s3 = round(s2 + pick([0.004, 0.006]), 4);
+   const P1 = (1 + s1) ** -1, P2 = (1 + s2) ** -2, P3 = (1 + s3) ** -3;
+   const ann = P1 + P2 + P3;
+   const Rstar = (1 - P3) / ann;
+   const Rold = round(Rstar - pick([0.005, 0.008, 0.01, -0.005, -0.008]), 4);
+   const value = round(N * (Rstar - Rold) * ann, 2);
+   return build(`A 3-year payer swap (pays fixed ${pct(Rold, 2)}, receives floating) has notional $${N}$. Current 1-, 2-, 3-year spot rates are ${pct(s1, 2)}, ${pct(s2, 2)}, ${pct(s3, 2)}. Find the swap's market value to the fixed-rate payer.`,
+    value, [round(N * (Rold - Rstar) * ann, 2), round(N * (Rstar - Rold), 2), round(N * (Rstar - Rold) * 3, 2), round((Rstar - Rold) * ann, 2)],
+    `The current par swap rate is $R^*=\\frac{1-P_3}{P_1+P_2+P_3}=${fmt(round(Rstar, 5), 5)}$. A payer swap is worth $N(R^*-R)\\sum P_t=${N}(${fmt(round(Rstar, 5), 5)}-${fmt(Rold, 4)})(${fmt(round(ann, 5), 5)})=${value}$. Locking a fixed rate BELOW today's market is a gain to the payer.`,
+    money, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "determinants-of-interest": [
+  T("easy", () => {
+   const r = rstep(0.01, 0.05, 0.0025);
+   const e = rstep(0.01, 0.06, 0.0025);
+   const i = round((1 + r) * (1 + e) - 1, 5);
+   return build(`The real interest rate is ${pct(r, 2)} and expected inflation is ${pct(e, 2)}. Using the (exact) Fisher equation, find the nominal interest rate.`,
+    i, [round(r + e, 5), round(r * e, 5), round((1 + r) / (1 + e) - 1, 5), round(r + e - r * e, 5)],
+    `Fisher: $(1+i)=(1+r)(1+e)=(1+${fmt(r, 4)})(1+${fmt(e, 4)})$, so $i=${fmt(i, 5)}$. The approximation $i\\approx r+e$ omits the cross term $re=${fmt(round(r * e, 5), 5)}$.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const i = rstep(0.04, 0.12, 0.0025);
+   const e = rstep(0.01, 0.06, 0.0025);
+   const r = round((1 + i) / (1 + e) - 1, 5);
+   return build(`A bond yields a nominal ${pct(i, 2)} while inflation runs at ${pct(e, 2)}. Using the exact Fisher relation, find the real rate of return.`,
+    r, [round(i - e, 5), round((1 + e) / (1 + i) - 1, 5), round(i / e - 1, 5), round(i - e + i * e, 5)],
+    `Solve Fisher for the real rate: $1+r=\\frac{1+i}{1+e}=\\frac{1+${fmt(i, 4)}}{1+${fmt(e, 4)}}$, so $r=${fmt(r, 5)}$. The shortcut $r\\approx i-e$ overstates it slightly when rates are high.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const r = rstep(0.01, 0.03, 0.0025);
+   const e = rstep(0.015, 0.04, 0.0025);
+   const d = rstep(0.005, 0.03, 0.0025);
+   const x = rstep(0.005, 0.02, 0.0025);
+   const i = round(r + e + d + x, 5);
+   return build(`A corporate bond's nominal yield of ${pct(i, 2)} decomposes (additively) into a real rate ${pct(r, 2)}, an inflation premium ${pct(e, 2)}, a default-risk premium ${pct(d, 2)}, and a liquidity/maturity premium. Find the liquidity/maturity premium.`,
+    x, [round(i - r - e, 5), round(r + e + d, 5), round(i - d, 5), round(i / (r + e + d) - 1, 5)],
+    `The additive build-up is $i=r+e+d+(\\text{liq/mat})$, so the liquidity/maturity premium $=${fmt(i, 4)}-${fmt(r, 4)}-${fmt(e, 4)}-${fmt(d, 4)}=${fmt(x, 5)}$. Each premium compensates a distinct risk stacked onto the real rate.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const r = rstep(0.01, 0.04, 0.0025);
+   const e = rstep(0.015, 0.05, 0.0025);
+   const p = rstep(0.01, 0.04, 0.0025);
+   const i = round((1 + r) * (1 + e) * (1 + p) - 1, 5);
+   return build(`A bond's nominal yield ${pct(i, 2)} reflects three multiplicative factors: a real rate, expected inflation ${pct(e, 2)}, and a risk premium ${pct(p, 2)}, via $(1+i)=(1+r)(1+e)(1+\\text{premium})$. Find the real rate $r$.`,
+    r, [round(i - e - p, 5), round((1 + i) / (1 + e) - 1, 5), round((1 + i) / (1 + e + p) - 1, 5), round(i - e - p - e * p, 5)],
+    `Peel off both factors: $1+r=\\frac{1+i}{(1+e)(1+p)}=\\frac{1+${fmt(i, 4)}}{(1+${fmt(e, 4)})(1+${fmt(p, 4)})}$, so $r=${fmt(r, 5)}$. Subtracting $e$ and $p$ additively ignores their cross terms.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
 };
 
 /* ───────────────────────── no-repeat tracker ───────────────────────── */
@@ -2341,6 +2477,24 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  "duration-and-immunization": {
   trick: "Macaulay $=$ PV-weighted average time; modified $=$ Macaulay$/(1+i)$. Price move $\\Delta P\\approx -D_{mod}P\\,\\Delta i$. Redington immunization: match PV and duration, with assets MORE convex than liabilities.",
   formula: "$D_{Mac}=\\frac{\\sum t\\,v^{t}CF_t}{\\sum v^{t}CF_t},\\qquad \\Delta P\\approx -D_{mod}\\,P\\,\\Delta i$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "convexity-and-matching": {
+  trick: "Convexity is the SECOND-order term: $\\frac{\\Delta P}{P}\\approx -D\\,\\Delta i+\\tfrac12 C(\\Delta i)^2$. It is always positive (it helps the holder). Compute $C=\\frac1P\\sum CF_t\\,t(t+1)v^{t+2}$; a zero's is $\\frac{n(n+1)}{(1+i)^2}$.",
+  formula: "$C=\\frac{1}{P}\\sum CF_t\\,t(t+1)v^{t+2},\\qquad \\frac{\\Delta P}{P}\\approx -D\\Delta i+\\tfrac12 C\\Delta i^2$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "interest-rate-swaps": {
+  trick: "Par swap rate $R=\\frac{1-P_n}{\\sum_{t}P_t}$ with $P_t=(1+s_t)^{-t}$. A seasoned payer swap (pays fixed $R$) is worth $N(R^*-R)\\sum P_t$, where $R^*$ is today's par rate.",
+  formula: "$R=\\dfrac{1-P_n}{\\sum_{t=1}^{n}P_t},\\qquad V_{\\text{payer}}=N(R^*-R)\\textstyle\\sum P_t$",
+  decode: FM_DECODE,
+  sanity: FM_SANITY,
+ },
+ "determinants-of-interest": {
+  trick: "Fisher (exact): $(1+i)=(1+r)(1+e)$ — the $\\approx i=r+e$ shortcut drops the cross term $re$. Nominal yield builds up from a real rate plus inflation, default, liquidity, and maturity premiums.",
+  formula: "$(1+i)=(1+r)(1+e),\\qquad i\\approx r+e+\\text{(risk premiums)}$",
   decode: FM_DECODE,
   sanity: FM_SANITY,
  },
