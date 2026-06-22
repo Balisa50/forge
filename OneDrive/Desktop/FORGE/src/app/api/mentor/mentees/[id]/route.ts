@@ -30,7 +30,7 @@ export async function GET(
 
  const mentee = await prisma.user.findUnique({
  where: { id: menteeId },
- select: { id: true, name: true, email: true, image: true, createdAt: true, isCodeOnly: true },
+ select: { id: true, name: true, email: true, image: true, createdAt: true, isCodeOnly: true, personalId: true },
  });
  if (!mentee) {
  return NextResponse.json({ error: "Mentee not found" }, { status: 404 });

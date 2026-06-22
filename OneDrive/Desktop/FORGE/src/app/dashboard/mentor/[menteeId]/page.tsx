@@ -87,6 +87,8 @@ interface Mentee {
  /** True when the mentee was created via this program's invite code (no
  * Google/email login of their own). Only these can be hard-deleted. */
  isCodeOnly: boolean;
+ /** Permanent Personal ID the mentor uses to refer to invite-created mentees. */
+ personalId: string | null;
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -458,7 +460,7 @@ export default function MenteeDrilldownPage() {
  <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", overflowWrap: "anywhere" }}>{mentee.name ?? mentee.email}</h1>
  {/* overflowWrap:anywhere lets the long mentee_xxxxxxx@forge.local
  break mid-string instead of pushing the row off-screen. */}
- <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", overflowWrap: "anywhere", wordBreak: "break-all" }}>{mentee.email}</p>
+ <p style={{ color: "var(--text-dim)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)", overflowWrap: "anywhere", wordBreak: "break-all" }}>{mentee.isCodeOnly && mentee.personalId ? `ID ${mentee.personalId}` : mentee.email}</p>
  <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
  <span>Tasks {stats.total} · {stats.verified} passed · {stats.failed} failed · {stats.pending} awaiting</span>
  {stats.lastCheckinLabel && (
