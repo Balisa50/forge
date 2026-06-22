@@ -221,7 +221,13 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  gap: "0.5rem",
  }}
  >
- <Flame size={20} /> THE FORGE
+ <span style={{ width: 30, height: 30, borderRadius: 8, background: "linear-gradient(135deg, var(--accent), #fbbf24)", display: "grid", placeItems: "center", boxShadow: "0 0 0 1px rgba(212,175,55,0.35), 0 2px 10px rgba(212,175,55,0.25)", flexShrink: 0 }}>
+ <Flame size={17} strokeWidth={2.4} style={{ color: "#0a0a0a" }} />
+ </span>
+ <span style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+ <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.5rem", letterSpacing: "0.4em", color: "var(--text-dim)", marginBottom: "0.15rem" }}>THE</span>
+ <span style={{ fontSize: "1.25rem", fontWeight: 800, letterSpacing: "0.08em" }}>FORGE</span>
+ </span>
  </span>
  </Link>
  {/* Desktop-only Messages + bell, sit next to the logo so each panel
