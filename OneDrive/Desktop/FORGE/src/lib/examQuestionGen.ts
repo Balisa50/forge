@@ -1214,6 +1214,166 @@ const GENERATORS: Record<string, Template[]> = {
     prob, TIER_DIFF.superhard);
   }),
  ],
+
+ "random-variables-and-distributions": [
+  T("easy", () => {
+   const n = rint(5, 15);
+   const p = pick([0.2, 0.3, 0.4, 0.5, 0.6, 0.25, 0.1, 0.35]);
+   const k = rint(2, Math.min(n - 2, 8));
+   const ans = round(nCr(n, k) * p ** k * (1 - p) ** (n - k), 5);
+   return build(`$X$ is binomial with ${n} trials and success probability $${p}$. Find $P(X=${k})$.`,
+    ans, [round(p ** k * (1 - p) ** (n - k), 5), round(nCr(n, k) * p ** k, 5), round(nCr(n, k) * p ** k * (1 - p) ** n, 5), round(Math.exp(-n * p) * (n * p) ** k / fact(k), 5)],
+    `Binomial pmf: $P(X=k)=\\binom{${n}}{${k}}(${p})^{${k}}(1-${p})^{${n}-${k}}=${fmt(ans, 5)}$. Forgetting the count $\\binom{${n}}{${k}}$ of arrangements (using just $p^k(1-p)^{n-k}$) is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const theta = pick([2, 3, 4, 5, 10, 6, 8, 12]);
+   const m = round(theta * pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8]), 2);
+   const ans = round(1 - (m / theta) ** 2, 5);
+   return build(`The density of $X$ is $f(x)=\\frac{2x}{${theta * theta}}$ for $0<x<${theta}$ (and $0$ otherwise). Find $P(X>${m})$.`,
+    ans, [round((m / theta) ** 2, 5), round(1 - m / theta, 5), round(m / theta, 5), round(1 - (m / theta) ** 3, 5)],
+    `$f(x)=\\frac{2x}{\\theta^2}$ has CDF $F(x)=\\left(\\frac{x}{\\theta}\\right)^2$, so $P(X>${m})=1-\\left(\\frac{${m}}{${theta}}\\right)^2=${fmt(ans, 5)}$. Forgetting to take the complement (reporting $F(m)$) is the trap.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const theta = pick([100, 200, 500, 1000, 50, 250]);
+   const alpha = pick([2, 3, 1.5, 4, 2.5]);
+   const p = pick([0.5, 0.75, 0.9, 0.8, 0.95]);
+   const xp = round(theta * (1 - p) ** (-1 / alpha), 2);
+   return build(`$X$ follows a Pareto distribution with CDF $F(x)=1-\\left(\\frac{${theta}}{x}\\right)^{${alpha}}$ for $x>${theta}$. Find the ${round(p * 100, 0)}-th percentile of $X$.`,
+    xp, [round(theta * (1 - p) ** (1 / alpha), 2), round(theta / (1 - p), 2), round(theta * p ** (-1 / alpha), 2), round(theta * (1 - p) ** (-alpha), 2)],
+    `Set $F(x_p)=${p}$: $1-\\left(\\frac{${theta}}{x}\\right)^{${alpha}}=${p}\\Rightarrow \\left(\\frac{${theta}}{x}\\right)^{${alpha}}=${round(1 - p, 2)}\\Rightarrow x_p=${theta}(1-${p})^{-1/${alpha}}=${fmt(xp, 2)}$. Flipping the sign of the exponent is the trap.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const theta = pick([500, 1000, 2000, 800, 1500, 250]);
+   const d = round(theta * pick([0.25, 0.5, 0.75, 1, 1.5]), 0);
+   const ans = round(theta * Math.exp(-d / theta), 2);
+   return build(`Losses $X$ are exponential with mean $${theta}$. An insurance policy with deductible $${d}$ pays $(X-${d})_+$ (the loss above the deductible, or $0$). Find the expected payment per loss.`,
+    ans, [round(theta - d, 2), round(theta, 2), round(theta * Math.exp(-d / theta) - d, 2), round((theta - d) * Math.exp(-d / theta), 2)],
+    `For an exponential loss, the expected payment per loss with deductible $d$ is $E[(X-d)_+]=\\theta e^{-d/\\theta}=${theta}\\,e^{-${d}/${theta}}=${fmt(ans, 2)}$. The memoryless property makes the excess over $d$ exponential again (mean $\\theta$), scaled by the survival $e^{-d/\\theta}$. Using $\\theta-d$ (as if losses were certain) is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "gamma-beta-lognormal": [
+  T("easy", () => {
+   const alpha = rint(2, 9);
+   const theta = pick([2, 3, 4, 5, 1.5, 2.5, 6, 10]);
+   const variance = round(alpha * theta * theta, 4);
+   return build(`$X$ has a Gamma distribution with shape $\\alpha=${alpha}$ and scale $\\theta=${theta}$. Find $\\operatorname{Var}(X)$.`,
+    variance, [round(alpha * theta, 4), round((alpha * theta) ** 2, 4), round(theta * theta, 4), round(alpha * alpha * theta, 4)],
+    `For Gamma$(\\alpha,\\theta)$: $E[X]=\\alpha\\theta$ and $\\operatorname{Var}(X)=\\alpha\\theta^2=${alpha}\\cdot${theta}^2=${fmt(variance, 4)}$. Using $\\alpha\\theta$ (the mean) or $(\\alpha\\theta)^2$ (the mean squared) is the trap.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const mu = pick([0, 0.5, 1, 1.5, 2, -0.5, 0.25, 1.25]);
+   const sigma = pick([0.5, 1, 0.25, 0.75, 1.5, 0.4]);
+   const ans = round(Math.exp(mu + sigma * sigma / 2), 4);
+   return build(`$X$ is lognormal: $\\ln X\\sim N(\\mu=${mu},\\,\\sigma=${sigma})$. Find $E[X]$.`,
+    ans, [round(Math.exp(mu), 4), round(Math.exp(mu + sigma), 4), round(Math.exp(mu - sigma * sigma / 2), 4), round(Math.exp(mu) * sigma, 4)],
+    `For a lognormal, $E[X]=e^{\\mu+\\sigma^2/2}=e^{${mu}+${round(sigma * sigma / 2, 4)}}=${fmt(ans, 4)}$. The $+\\sigma^2/2$ correction is essential: $e^{\\mu}$ is the MEDIAN, not the mean.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const a = rint(1, 6), b = rint(1, 6);
+   const variance = round((a * b) / ((a + b) ** 2 * (a + b + 1)), 5);
+   return build(`$X$ has a Beta distribution with parameters $a=${a}$ and $b=${b}$ (on $(0,1)$). Find $\\operatorname{Var}(X)$.`,
+    variance, [round(a / (a + b), 5), round((a * b) / ((a + b) ** 2), 5), round((a * b) / ((a + b) ** 3), 5), round(a / ((a + b) * (a + b + 1)), 5)],
+    `For Beta$(a,b)$: $E[X]=\\frac{a}{a+b}$ and $\\operatorname{Var}(X)=\\frac{ab}{(a+b)^2(a+b+1)}=\\frac{${a}\\cdot${b}}{${(a + b) ** 2}\\cdot${a + b + 1}}=${fmt(variance, 5)}$. Dropping the $(a+b+1)$ factor is the trap.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const mu = pick([0, 0.5, 1, 1.5, 2, 0.25, 1.25, 0.75]);
+   const sigma = pick([0.5, 1, 0.75, 1.5, 0.4, 1.25]);
+   const x = pick([1, 2, 3, 5, 4, 6, 8, 10]);
+   const z = (Math.log(x) - mu) / sigma;
+   const ans = round(normalCdf(z), 4);
+   return build(`$X$ is lognormal with $\\ln X\\sim N(${mu},\\,\\sigma=${sigma})$. Find $P(X\\le ${x})$.`,
+    ans, [round(1 - normalCdf(z), 4), round(normalCdf((x - mu) / sigma), 4), round(normalCdf(Math.log(x) - mu), 4), round(normalCdf((Math.log(x) - mu) / (sigma * sigma)), 4)],
+    `Lognormal probabilities go through the normal CDF: $P(X\\le ${x})=P(\\ln X\\le \\ln ${x})=\\Phi\\!\\left(\\frac{\\ln ${x}-${mu}}{${sigma}}\\right)=\\Phi(${fmt(z, 3)})=${fmt(ans, 4)}$. Forgetting the $\\ln$ (using $x$ directly) is the trap.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "joint-and-marginal": [
+  T("easy", () => {
+   const a = rint(2, 10), b = rint(2, 10);
+   const c = round(4 / (a * a * b * b), 5);
+   return build(`The joint density of $X$ and $Y$ is $f(x,y)=c\\,xy$ for $0<x<${a}$, $0<y<${b}$ (and $0$ otherwise). Find the constant $c$.`,
+    c, [round(1 / (a * b), 5), round(2 / (a * a * b * b), 5), round(4 / (a * b), 5), round(1 / (a * a * b * b), 5)],
+    `Total probability is $1$: $\\int_0^{${a}}\\!\\int_0^{${b}} c\\,xy\\,dy\\,dx=c\\cdot\\frac{${a}^2}{2}\\cdot\\frac{${b}^2}{2}=\\frac{c\\,${a * a}\\cdot${b * b}}{4}=1$, so $c=\\frac{4}{${a * a}\\cdot${b * b}}=${fmt(c, 5)}$.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const a = rint(2, 9), b = rint(2, 9);
+   const x0 = round(a * pick([0.25, 0.5, 0.75, 0.4, 0.6, 0.8]), 2);
+   const fx = round(2 * x0 / (a * a), 5);
+   return build(`The joint density of $X$ and $Y$ is $f(x,y)=\\frac{4xy}{${a * a * b * b}}$ on $0<x<${a}$, $0<y<${b}$. Find the marginal density $f_X(${x0})$.`,
+    fx, [round(x0 / (a * a), 5), round(2 * x0 / a, 5), round(4 * x0 / (a * a), 5), round(2 * x0 / (a * a * b), 5)],
+    `Integrate $y$ out: $f_X(x)=\\int_0^{${b}}\\frac{4xy}{${a * a * b * b}}\\,dy=\\frac{4x}{${a * a * b * b}}\\cdot\\frac{${b}^2}{2}=\\frac{2x}{${a * a}}$, so $f_X(${x0})=${fmt(fx, 5)}$. (Note $X$ and $Y$ are independent here.)`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const a = pick([2, 3, 4, 5, 10, 6]), b = pick([2, 3, 5, 4, 8, 6]);
+   const x0 = round(a * pick([0.5, 1, 1.5, 0.75, 2]), 2);
+   const y0 = round(b * pick([0.5, 1, 1.5, 0.75, 2]), 2);
+   const ans = round((1 - Math.exp(-x0 / a)) * (1 - Math.exp(-y0 / b)), 5);
+   return build(`$X$ and $Y$ are independent exponentials with means $${a}$ and $${b}$. Find $P(X\\le ${x0},\\;Y\\le ${y0})$.`,
+    ans, [round(1 - Math.exp(-x0 / a) - Math.exp(-y0 / b), 5), round((1 - Math.exp(-x0 / a)) + (1 - Math.exp(-y0 / b)), 5), round(Math.exp(-x0 / a) * Math.exp(-y0 / b), 5), round(1 - Math.exp(-x0 / a) * Math.exp(-y0 / b), 5)],
+    `Independence factors the joint CDF: $P(X\\le ${x0},Y\\le ${y0})=\\left(1-e^{-${x0}/${a}}\\right)\\left(1-e^{-${y0}/${b}}\\right)=${fmt(ans, 5)}$. Adding the two marginal probabilities instead of multiplying is the trap.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const a = rint(1, 10), b = rint(1, 10);
+   const ans = round(b / (a + b), 5);
+   return build(`Two components have independent exponential lifetimes: $X$ with mean $${a}$ and $Y$ with mean $${b}$. Find $P(X<Y)$ (the probability $X$ fails first).`,
+    ans, [round(a / (a + b), 5), round(0.5, 5), round(b / a, 5), round((b * b) / (a * a + b * b), 5)],
+    `For independent exponentials, $P(X<Y)=\\frac{\\lambda_X}{\\lambda_X+\\lambda_Y}$ where $\\lambda=1/\\text{mean}$. So $P(X<Y)=\\frac{1/${a}}{1/${a}+1/${b}}=\\frac{${b}}{${a}+${b}}=${fmt(ans, 5)}$. The faster clock (smaller mean) is more likely to fire first.`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
+
+ "conditional-distributions": [
+  T("easy", () => {
+   const theta = pick([2, 3, 4, 5, 10, 6, 8, 12]);
+   const s = round(theta * pick([0.5, 1, 1.5, 2]), 1);
+   const t = round(theta * pick([0.5, 1, 1.5, 2, 0.25]), 2);
+   const ans = round(Math.exp(-t / theta), 4);
+   return build(`$X$ is exponential with mean $${theta}$. Find $P(X>${round(s + t, 2)}\\mid X>${s})$.`,
+    ans, [round(Math.exp(-(s + t) / theta), 4), round(Math.exp(-s / theta), 4), round(1 - Math.exp(-t / theta), 4), round(Math.exp(-t / (theta * 2)), 4)],
+    `The exponential is MEMORYLESS: $P(X>s+t\\mid X>s)=P(X>t)=e^{-t/${theta}}=e^{-${t}/${theta}}=${fmt(ans, 4)}$. The past survival to time $${s}$ is irrelevant; only the extra $${t}$ matters.`,
+    prob, TIER_DIFF.easy);
+  }),
+  T("medium", () => {
+   const theta = pick([10, 20, 50, 100, 8, 12, 40]);
+   const a = round(theta * pick([0.2, 0.3, 0.4, 0.5]), 1);
+   const b = round(theta * pick([0.6, 0.7, 0.8, 0.9]), 1);
+   const ans = round((theta - b) / (theta - a), 5);
+   return build(`$X$ is uniform on $(0,${theta})$. Find $P(X>${b}\\mid X>${a})$.`,
+    ans, [round((theta - b) / theta, 5), round(b / a, 5), round(1 - (theta - b) / (theta - a), 5), round((theta - a) / (theta - b), 5)],
+    `Condition on the surviving range: given $X>${a}$, $X$ is uniform on $(${a},${theta})$, so $P(X>${b}\\mid X>${a})=\\frac{${theta}-${b}}{${theta}-${a}}=${fmt(ans, 5)}$. Using the unconditional $\\frac{\\theta-b}{\\theta}$ is the trap.`,
+    prob, TIER_DIFF.medium);
+  }),
+  T("hard", () => {
+   const theta = pick([2, 3, 4, 5, 10, 6, 8, 12]);
+   const d = round(theta * pick([0.5, 1, 1.5, 2, 0.75]), 2);
+   const ans = round(theta + d, 2);
+   return build(`$X$ is exponential with mean $${theta}$. Find $E[X\\mid X>${d}]$.`,
+    ans, [round(theta, 2), round(d, 2), round(theta - d, 2), round(theta * Math.exp(-d / theta) + d, 2)],
+    `By memorylessness, the excess $X-${d}$ given $X>${d}$ is again exponential with mean $${theta}$, so $E[X\\mid X>${d}]=${d}+${theta}=${fmt(ans, 2)}$. The conditional mean is the threshold plus the (undiminished) mean.`,
+    prob, TIER_DIFF.hard);
+  }),
+  T("superhard", () => {
+   const theta = pick([4, 6, 8, 10, 12, 5]);
+   const y0 = round(theta * pick([0.3, 0.5, 0.7, 0.9, 0.4, 0.6]), 2);
+   const ans = round(y0 * y0 / 12, 5);
+   return build(`$(X,Y)$ is uniform on the triangle $0<x<y<${theta}$. Find $\\operatorname{Var}(X\\mid Y=${y0})$.`,
+    ans, [round(y0 / 2, 5), round(y0 * y0 / 4, 5), round(theta * theta / 12, 5), round(y0 / 12, 5)],
+    `For fixed $Y=${y0}$, the density is flat in $x$ over $(0,${y0})$, so $X\\mid Y=${y0}\\sim\\text{Uniform}(0,${y0})$. A uniform on $(0,L)$ has variance $\\frac{L^2}{12}$, hence $\\operatorname{Var}(X\\mid Y=${y0})=\\frac{${y0}^2}{12}=${fmt(ans, 5)}$. ($E[X\\mid Y]=\\frac{Y}{2}$ is the conditional mean, not the variance.)`,
+    prob, TIER_DIFF.superhard);
+  }),
+ ],
 };
 
 /* ───────────────────────── no-repeat tracker ───────────────────────── */
@@ -1729,6 +1889,30 @@ const CONCEPT_ENRICHMENT: Record<string, ConceptEnrichment> = {
  "sums-and-convolutions": {
   trick: "Closure: independent Poissons $\\to$ Poisson$(\\sum\\lambda)$; independent Normals $\\to$ Normal (means AND variances add); $n$ iid Exponentials $\\to$ Erlang/Gamma. Otherwise convolve.",
   formula: "$f_{X+Y}(s)=\\int f_X(x)f_Y(s-x)\\,dx$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "random-variables-and-distributions": {
+  trick: "Name the distribution, then reach for its pmf/pdf and survival. $P(X>m)=1-F(m)$. Insurance payment with deductible $d$: $E[(X-d)_+]$ (for exponential $=\\theta e^{-d/\\theta}$).",
+  formula: "$P(X>m)=1-F(m),\\qquad E[(X-d)_+]=\\int_d^\\infty (x-d)f(x)\\,dx$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "gamma-beta-lognormal": {
+  trick: "Gamma$(\\alpha,\\theta)$: $E=\\alpha\\theta$, $\\operatorname{Var}=\\alpha\\theta^2$. Lognormal: $E=e^{\\mu+\\sigma^2/2}$, probabilities via $\\Phi\\!\\left(\\frac{\\ln x-\\mu}{\\sigma}\\right)$. Beta$(a,b)$: $E=\\frac{a}{a+b}$.",
+  formula: "$E[\\text{LN}]=e^{\\mu+\\sigma^2/2},\\quad \\operatorname{Var}[\\text{Beta}]=\\frac{ab}{(a+b)^2(a+b+1)}$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "joint-and-marginal": {
+  trick: "Normalize so the joint integrates to $1$. Marginal: integrate the OTHER variable out. Independent $\\Rightarrow$ joint factors, so the joint CDF is the product of marginals.",
+  formula: "$f_X(x)=\\int f(x,y)\\,dy,\\qquad P(X<Y)=\\tfrac{\\lambda_X}{\\lambda_X+\\lambda_Y}\\ (\\text{indep. exp.})$",
+  decode: GENERIC_PROB_DECODE,
+  sanity: GENERIC_PROB_SANITY,
+ },
+ "conditional-distributions": {
+  trick: "Condition by RESTRICTING and renormalizing. Exponential is memoryless: $P(X>s+t\\mid X>s)=P(X>t)$ and $E[X\\mid X>d]=d+\\theta$. For a flat joint, the conditional is uniform.",
+  formula: "$f_{Y\\mid X}(y\\mid x)=\\frac{f(x,y)}{f_X(x)}$",
   decode: GENERIC_PROB_DECODE,
   sanity: GENERIC_PROB_SANITY,
  },

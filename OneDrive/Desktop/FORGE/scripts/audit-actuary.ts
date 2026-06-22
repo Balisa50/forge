@@ -24,6 +24,7 @@ const EXAM_P = [
   "covariance-and-correlation", "percentiles-and-measures",
   "double-expectation", "clt-and-sums",
   "mgf-and-moments", "transformations-univariate", "order-statistics", "sums-and-convolutions",
+  "random-variables-and-distributions", "gamma-beta-lognormal", "joint-and-marginal", "conditional-distributions",
 ];
 const EXAM_FM = [
   "interest-and-accumulation", "level-annuities", "loan-amortization", "bond-pricing",
