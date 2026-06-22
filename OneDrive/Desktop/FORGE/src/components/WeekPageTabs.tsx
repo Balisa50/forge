@@ -652,7 +652,7 @@ export default function WeekPageTabs({
  padding: 0,
  cursor: "pointer",
  flexShrink: 0,
- marginTop: 0,
+ minHeight: 0,
  position: "relative",
  width: 20, height: 20,
  }}
