@@ -98,6 +98,7 @@ export default async function MentorDashboardPage() {
  totalTasks,
  checkedInToday: lastDate?.getTime() === today.getTime(),
  recentCheckins: roadmap?.checkins ?? [],
+     lastActivityAt: lastCheckin ? new Date(lastCheckin.createdAt).getTime() : 0,
  };
  } catch (e) {
  console.error(`[mentor-dashboard] Failed to load mentee ${link.mentee.id}:`, e);
@@ -110,10 +111,14 @@ export default async function MentorDashboardPage() {
  totalTasks: 0,
  checkedInToday: false,
  recentCheckins: [],
+     lastActivityAt: 0,
  };
  }
  })
  ));
+
+ // Most-recently-active mentees first; idle ones (no check-ins) sink to the bottom.
+ mentees.sort((a, b) => b.lastActivityAt - a.lastActivityAt);
 
  // Aggregate stats, collapsible row at the top of the page
  const totalMentees = mentees.length;
@@ -168,12 +173,14 @@ export default async function MentorDashboardPage() {
  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
  Your Mentees
  </div>
+ {awaitingReview > 0 && (
  <Link
  href="/dashboard/mentor/reviews"
  style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", fontFamily: "var(--font-mono)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--accent)", padding: "0.4rem 0.75rem", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 6 }}
  >
- Pending reviews <ArrowRight size={11} />
+ {awaitingReview} pending review{awaitingReview === 1 ? "" : "s"} <ArrowRight size={11} />
  </Link>
+ )}
  </div>
 
  <div className="flex flex-col gap-6">

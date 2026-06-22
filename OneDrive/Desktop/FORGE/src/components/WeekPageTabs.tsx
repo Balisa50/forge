@@ -643,7 +643,7 @@ export default function WeekPageTabs({
  >
  {/* Header row, check toggle + kind/icon badge + kind label/title.
  Stays compact; never grows. Title wraps within its column. */}
- <div style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
+ <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
  <button
  onClick={() => toggle(key)}
  style={{
@@ -652,7 +652,7 @@ export default function WeekPageTabs({
  padding: 0,
  cursor: "pointer",
  flexShrink: 0,
- marginTop: "0.125rem",
+ marginTop: 0,
  position: "relative",
  width: 20, height: 20,
  }}
@@ -682,7 +682,7 @@ export default function WeekPageTabs({
  </span>
  </button>
 
- <span style={{ width: 26, height: 26, borderRadius: 6, background: `${accent}1f`, color: accent, display: "grid", placeItems: "center", flexShrink: 0, marginTop: "0.0625rem" }}>
+ <span style={{ width: 26, height: 26, borderRadius: 6, background: `${accent}1f`, color: accent, display: "grid", placeItems: "center", flexShrink: 0 }}>
  <Icon size={13} />
  </span>
 
