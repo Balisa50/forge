@@ -42,11 +42,17 @@ export async function POST(req: NextRequest) {
  // Find the active suspension for this mentee.
  const link = await prisma.mentorLink.findFirst({
  where: { menteeId: session.user.id, isActive: true, bannedAt: { not: null } },
- select: { id: true, banAppeal: true, visibility: true },
+ select: { id: true, banAppeal: true, visibility: true, org: { select: { allowMenteeAppeals: true } } },
  });
 
  if (!link) {
  return NextResponse.json({ error: "No active suspension found." }, { status: 404 });
+ }
+
+ // Org-admin policy overrides everything: if the mentor's org disabled mentee
+ // appeals, none is possible regardless of the per-suspension mentor flag.
+ if (link.org && link.org.allowMenteeAppeals === false) {
+ return NextResponse.json({ error: "Appeals are disabled by your organization." }, { status: 403 });
  }
 
  // Mentor controls whether this suspension may be appealed at all.

@@ -403,6 +403,9 @@ model Organization {
   website       String?
   inviteCode    String   @unique @default(cuid())
   maxSeats      Int      @default(50)
+  /// Org-admin control: when false, suspended mentees in this org cannot send a
+  /// ban appeal, overriding the per-suspension mentor setting.
+  allowMenteeAppeals Boolean @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

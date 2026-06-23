@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Users, GraduationCap, Shield, Layers, UserCheck, AlertTriangle, TrendingUp } from "lucide-react";
 import OrgInviteCode from "@/components/OrgInviteCode";
 import OrgSetup from "@/components/OrgSetup";
+import OrgAppealToggle from "@/components/OrgAppealToggle";
 
 export default async function OrgOverviewPage() {
  const session = await auth();
@@ -119,6 +120,14 @@ export default async function OrgOverviewPage() {
  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)", marginTop: "0.75rem" }}>
  {org._count.members} / {org.maxSeats} seats used
  </div>
+ </div>
+ )}
+
+ {/* Suspension appeals policy (admin only) */}
+ {isAdmin && (
+ <div className="forge-panel" style={{ padding: "1.25rem" }}>
+ <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", letterSpacing: "0.05em", marginBottom: "1rem" }}>Suspension Appeals</h2>
+ <OrgAppealToggle initial={org.allowMenteeAppeals} />
  </div>
  )}
 
