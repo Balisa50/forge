@@ -207,7 +207,7 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  const navContent = (
  <>
  {/* Logo + Bell (desktop) / Close (mobile) */}
- <div style={{ padding: "0 1.5rem", marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+ <div className="nav-drawer-logo" style={{ padding: "0 1.5rem", marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
  <Link href="/dashboard" className="nav-drawer-logo" style={{ textDecoration: "none", flex: 1, minWidth: 0 }} onClick={closeMobile}>
  <span
  style={{
