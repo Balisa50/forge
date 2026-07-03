@@ -101,72 +101,111 @@ export default function MentorInvitesPanel() {
  } catch { /* */ }
  };
 
- const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+ // Resolved after mount so server and client markup agree.
+ const [baseUrl, setBaseUrl] = useState("https://forge-ab.vercel.app");
+ useEffect(() => { setBaseUrl(window.location.origin); }, []);
+
+ const fieldLabel = {
+ display: "block",
+ fontFamily: "var(--font-mono)",
+ fontSize: "0.625rem",
+ letterSpacing: "0.12em",
+ textTransform: "uppercase",
+ color: "var(--text-dim)",
+ marginBottom: "0.375rem",
+ } as const;
 
  return (
  <section className="forge-panel" style={{ padding: "1.5rem", marginBottom: "2rem" }}>
  <div style={{ marginBottom: "1rem" }}>
- <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem" }}>Invite a mentee</h2>
+ <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem" }}>Invite directly by name</h2>
  <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", marginTop: "0.25rem", lineHeight: 1.55 }}>
- Enter your mentee&apos;s <strong style={{ color: "var(--accent)" }}>full name</strong> + their path. You&apos;ll get TWO codes:<br/>
- <span style={{ color: "var(--accent)" }}>① Join link</span> (single-use, locked to that name) and <span style={{ color: "var(--accent)" }}>② Personal ID</span> (their permanent return code). Send both privately.
+ The invite is locked to the name you enter. You get a single-use <strong style={{ color: "var(--accent)" }}>join link</strong> and
+ a permanent <strong style={{ color: "var(--accent)" }}>Personal ID</strong> — send both to your mentee privately.
  </p>
  </div>
 
  {/* New invite form */}
+ <div style={{ background: "var(--bg-card)", padding: "1rem", borderRadius: 8, marginBottom: "1.25rem" }}>
  <div
+ className="responsive-form-row"
  style={{
  display: "grid",
- gridTemplateColumns: "1.5fr 1.5fr 1fr 0.7fr auto",
- gap: "0.5rem",
- background: "var(--bg-card)",
- padding: "0.875rem",
- borderRadius: 8,
- marginBottom: "1.25rem",
+ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)",
+ gap: "0.75rem",
+ marginBottom: "0.75rem",
  }}
- className="responsive-form-row"
  >
+ <label style={{ minWidth: 0 }}>
+ <span style={fieldLabel}>Mentee&apos;s full name — required</span>
  <input
  value={draft.expectedName}
  onChange={(e) => setDraft({ ...draft, expectedName: e.target.value })}
- placeholder="Mentee's full name (required)"
- style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--accent)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 600 }}
+ placeholder="e.g. Fatou Ceesay"
+ style={{ width: "100%", padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--accent)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 600 }}
  />
+ </label>
+ <label style={{ minWidth: 0 }}>
+ <span style={fieldLabel}>Path</span>
  <ForgeSelect
  value={draft.roadmapSlug}
  onChange={(v) => setDraft({ ...draft, roadmapSlug: v })}
  ariaLabel="Path"
  className=""
- buttonStyle={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
+ buttonStyle={{ width: "100%", padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
  options={[
- { value: "", label: "Path (mentee picks)" },
+ { value: "", label: "Mentee picks their own" },
  ...CURATED_ROADMAPS.map((r) => ({ value: r.slug, label: r.title })),
  ]}
  />
+ </label>
+ </div>
+ <div
+ className="responsive-form-row"
+ style={{
+ display: "grid",
+ gridTemplateColumns: "minmax(0, 1fr) minmax(90px, 130px) auto",
+ gap: "0.75rem",
+ alignItems: "end",
+ }}
+ >
+ <label style={{ minWidth: 0 }}>
+ <span style={fieldLabel}>Note — only you see it</span>
  <input
  value={draft.label}
  onChange={(e) => setDraft({ ...draft, label: e.target.value })}
- placeholder="Note (optional)"
- style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
+ placeholder="Optional"
+ style={{ width: "100%", padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
  />
+ </label>
+ <label style={{ minWidth: 0 }}>
+ <span style={fieldLabel}>Expires in days</span>
  <input
  value={draft.expiresInDays}
  onChange={(e) => setDraft({ ...draft, expiresInDays: e.target.value.replace(/[^0-9]/g, "") })}
- placeholder="Expires (days)"
- style={{ padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}
+ placeholder="30"
+ inputMode="numeric"
+ style={{ width: "100%", padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem", fontFamily: "var(--font-mono)" }}
  />
+ </label>
  <button
  onClick={create}
  disabled={creating || !draft.expectedName.trim()}
  className="forge-btn forge-btn-primary"
- style={{ padding: "0.5rem 0.875rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center" }}
+ style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", display: "inline-flex", gap: "0.375rem", alignItems: "center", justifyContent: "center", whiteSpace: "nowrap" }}
  >
  {creating ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
  Generate codes
  </button>
  </div>
+ </div>
 
  {/* Active invites */}
+ {!loading && invites.length > 0 && (
+ <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
+ Your invites
+ </p>
+ )}
  {loading ? (
  <div style={{ color: "var(--text-dim)", fontSize: "0.875rem" }}>Loading…</div>
  ) : invites.length === 0 ? (
@@ -221,7 +260,7 @@ export default function MentorInvitesPanel() {
  {/* Code 1: Join link */}
  <div style={{ padding: "0.625rem 0.75rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6 }}>
  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.1em", color: "var(--text-dim)", textTransform: "uppercase", marginBottom: "0.25rem" }}>
- ① Join link (one-time)
+ Join link · one-time
  </div>
  <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexWrap: "wrap" }}>
  <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-primary)" }}>
@@ -240,11 +279,11 @@ export default function MentorInvitesPanel() {
  {/* Code 2: Personal ID */}
  <div style={{ padding: "0.625rem 0.75rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6 }}>
  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.1em", color: "var(--text-dim)", textTransform: "uppercase", marginBottom: "0.25rem" }}>
- ② Personal ID (permanent)
+ Personal ID · permanent
  </div>
  <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexWrap: "wrap" }}>
  <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", fontWeight: 600, color: "var(--accent)" }}>
- {i.personalIdIssued ?? ", "}
+ {i.personalIdIssued ?? "—"}
  </code>
  {i.personalIdIssued && (
  <button

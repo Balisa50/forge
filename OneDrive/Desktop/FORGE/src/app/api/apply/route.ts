@@ -41,6 +41,18 @@ export async function POST(req: NextRequest) {
  );
  }
 
+ // Validate the mentor tag. An application saved with a bogus mentorId is
+ // invisible to everyone (not global, not any real mentor's), so a typoed
+ // or stale link would silently swallow it. Unknown mentor -> global queue.
+ let validMentorId: string | null = null;
+ if (mentorId) {
+ const mentor = await prisma.user.findUnique({
+ where: { id: mentorId },
+ select: { role: true },
+ });
+ if (mentor?.role === "mentor") validMentorId = mentorId;
+ }
+
  await prisma.mentorApplication.create({
  data: {
  applicantName: applicantName.slice(0, 120),
@@ -48,7 +60,7 @@ export async function POST(req: NextRequest) {
  trackSlug,
  motivation: motivation.slice(0, 2000),
  commitment: commitment?.slice(0, 300) ?? null,
- mentorId: mentorId ?? null,
+ mentorId: validMentorId,
  },
  });
 

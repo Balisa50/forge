@@ -13,20 +13,25 @@ export default async function DashboardLayout({ children }: { children: React.Re
  const session = await auth();
  if (!session?.user) redirect("/login");
 
- const [dbUser, membership, mentorLinks, forgePact] = await Promise.all([
- prisma.user.findUnique({
+ // One joined query instead of four. This layout runs on EVERY dashboard
+ // navigation, so each extra round trip here is felt on every click.
+ // `mentees` = MentorLink rows where this user IS the mentee; it carries
+ // every active mentor's visibility + suspension state. Mentee surfaces
+ // ALWAYS show mentorDisplayName when set (persona name), never the
+ // mentor's real name.
+ const dbUser = await prisma.user.findUnique({
  where: { id: session.user.id! },
- select: { role: true, onboardingDone: true, isAlsoLearning: true, isGuest: true, name: true, mentorDisplayName: true },
- }),
- prisma.orgMembership.findFirst({
- where: { userId: session.user.id! },
- select: { role: true },
- }),
- // Pull every active mentor's visibility + suspension state for this user.
- // Mentee surfaces ALWAYS show mentorDisplayName when set (persona name),
- // never the mentor's real name.
- prisma.mentorLink.findMany({
- where: { menteeId: session.user.id!, isActive: true },
+ select: {
+ role: true,
+ onboardingDone: true,
+ isAlsoLearning: true,
+ isGuest: true,
+ name: true,
+ mentorDisplayName: true,
+ orgMemberships: { select: { role: true }, take: 1 },
+ forgePact: { select: { id: true } },
+ mentees: {
+ where: { isActive: true },
  select: {
  visibility: true,
  bannedAt: true,
@@ -34,9 +39,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
  banAppeal: true,
  mentor: { select: { name: true, mentorDisplayName: true } },
  },
- }),
- prisma.forgePact.findUnique({ where: { userId: session.user.id! }, select: { id: true } }),
- ]);
+ },
+ },
+ });
+ const membership = dbUser?.orgMemberships[0] ?? null;
+ const mentorLinks = dbUser?.mentees ?? [];
+ const forgePact = dbUser?.forgePact ?? null;
 
  // Stale JWT pointing to a deleted user, boot via signout so the cookie
  // is cleared. Just `redirect("/login")` would loop infinitely because the

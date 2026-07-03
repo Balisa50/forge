@@ -6,6 +6,8 @@ import { KeyRound, Copy, Check, RotateCw, AlertTriangle, Loader2, Eye, EyeOff, C
 interface Props {
  menteeId: string;
  menteeName: string | null;
+ /** Start expanded (used when the card is the main content of a tab). */
+ defaultOpen?: boolean;
 }
 
 /**
@@ -14,8 +16,8 @@ interface Props {
  * replacement for the old "send recovery email" pipeline: faster, no spam
  * risk, no @forge.local edge cases.
  */
-export default function MenteeRecoveryCard({ menteeId, menteeName }: Props) {
- const [open, setOpen] = useState(false); // collapsed by default
+export default function MenteeRecoveryCard({ menteeId, menteeName, defaultOpen = false }: Props) {
+ const [open, setOpen] = useState(defaultOpen);
  const [personalId, setPersonalId] = useState<string | null>(null);
  const [loading, setLoading] = useState(false);
  const [loaded, setLoaded] = useState(false);

@@ -21,12 +21,11 @@ const LABELS: Record<ActiveKey, { title: string; desc: string }> = {
 };
 const ACTIVE_KEYS = Object.keys(LABELS) as ActiveKey[];
 
-export default function MentorVisibilityControls({ menteeId, menteeName }: { menteeId: string; menteeName: string }) {
+export default function MentorVisibilityControls({ menteeId, menteeName, defaultOpen = false }: { menteeId: string; menteeName: string; defaultOpen?: boolean }) {
  const [visibility, setVisibility] = useState<VisibilityMap | null>(null);
  const [saving, setSaving] = useState<VisibilityKey | null>(null);
- // Collapsed by default so the mentor's mentee page does not eat the screen
- // with a section they only configure once. Click the header to toggle.
- const [open, setOpen] = useState(false);
+ // Collapsible; starts expanded when it is the main content of a tab.
+ const [open, setOpen] = useState(defaultOpen);
 
  const load = useCallback(async () => {
  const res = await fetch(`/api/mentor/visibility?menteeId=${menteeId}`);

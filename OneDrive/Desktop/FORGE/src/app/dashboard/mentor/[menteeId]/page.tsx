@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, Lock, Loader2, UserMinus, Trash2 } from "lucide-react";
+import { ArrowLeft, MessageSquare, Lock, Loader2, UserMinus, Trash2, Map, KeyRound, Award } from "lucide-react";
 import MentorVisibilityControls from "@/components/MentorVisibilityControls";
 import Dialog, { type DialogConfig } from "@/components/Dialog";
 import MentorWeekDetail from "@/components/MentorWeekDetail";
@@ -109,15 +109,27 @@ const STATUS_LABEL: Record<string, string> = {
  failed: "Failed",
 };
 
+const TABS = [
+ { key: "roadmap", label: "Roadmap", Icon: Map },
+ { key: "access", label: "Access & ID", Icon: KeyRound },
+ { key: "certificate", label: "Certificate", Icon: Award },
+] as const;
+type TabKey = (typeof TABS)[number]["key"];
+
 export default function MenteeDrilldownPage() {
  const params = useParams<{ menteeId: string }>();
  const menteeId = params.menteeId;
  const router = useRouter();
- // ?tool=recovery|visibility, driven from the contextual sidebar. When
- // set, only that tool's panel renders at the top of the page. When null,
- // the page shows the roadmap view normally.
+ // In-page tabs: roadmap (default) | access | certificate. Legacy ?tool=
+ // links from the retired sidebar section resolve to the matching tab.
  const searchParams = useSearchParams();
- const activeTool = searchParams.get("tool");
+ const rawTab = searchParams.get("tab") ?? searchParams.get("tool");
+ const activeTab: TabKey =
+ rawTab === "access" || rawTab === "recovery" || rawTab === "visibility"
+ ? "access"
+ : rawTab === "certificate"
+ ? "certificate"
+ : "roadmap";
 
  const [mentee, setMentee] = useState<Mentee | null>(null);
  const [roadmaps, setRoadmaps] = useState<MenteeRoadmap[]>([]);
@@ -470,11 +482,8 @@ export default function MenteeDrilldownPage() {
  )}
  </div>
  </div>
- {/* Manage actions only appear on the default Roadmap view, tool
- drilldowns (Recovery / Visibility / Certificate) hide them so each
- tool page has a single clear concern. Suspend = temporary lockout;
- Remove = unlink (reversible); Delete = permanent wipe (invite-only). */}
- {!activeTool && (
+ {/* Manage actions. Suspend = temporary lockout; Remove = unlink
+ (reversible); Delete = permanent wipe (invite-only accounts). */}
  <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0, flexWrap: "wrap" }}>
  {!suspension && (
  <button
@@ -533,7 +542,6 @@ export default function MenteeDrilldownPage() {
  </button>
  )}
  </div>
- )}
  </div>
 
  {/* Suspension banner, shows when this mentee is currently suspended */}
@@ -609,17 +617,61 @@ export default function MenteeDrilldownPage() {
  </div>
  )}
 
- {/* Mentor tools, controlled from the contextual sidebar. Only the
- requested tool renders on the page, eliminating the stacked-card
- clutter. Default state (no ?tool) shows nothing here, page goes
- straight to the mentee's roadmap. */}
- {activeTool === "recovery" && (
- <MenteeRecoveryCard menteeId={menteeId} menteeName={mentee.name} />
+ {/* Tab bar — everything about this mentee lives on this one page.
+ Tabs are links (?tab=) so views stay shareable and the browser
+ back button works; switching tabs never refetches the roadmap. */}
+ <div
+ role="tablist"
+ style={{
+ display: "flex",
+ gap: "0.25rem",
+ borderBottom: "1px solid var(--border)",
+ marginBottom: "1.5rem",
+ overflowX: "auto",
+ }}
+ >
+ {TABS.map(({ key, label, Icon }) => {
+ const active = activeTab === key;
+ return (
+ <Link
+ key={key}
+ role="tab"
+ aria-selected={active}
+ href={key === "roadmap" ? `/dashboard/mentor/${menteeId}` : `/dashboard/mentor/${menteeId}?tab=${key}`}
+ scroll={false}
+ style={{
+ display: "inline-flex",
+ alignItems: "center",
+ gap: "0.4rem",
+ padding: "0.625rem 0.875rem",
+ fontFamily: "var(--font-body)",
+ fontWeight: 600,
+ fontSize: "0.8125rem",
+ whiteSpace: "nowrap",
+ color: active ? "var(--accent)" : "var(--text-secondary)",
+ borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
+ marginBottom: -1,
+ textDecoration: "none",
+ }}
+ >
+ <Icon size={14} strokeWidth={active ? 2.5 : 2} />
+ {label}
+ </Link>
+ );
+ })}
+ </div>
+
+ {/* ── Access & ID tab ── */}
+ {activeTab === "access" && (
+ <>
+ <MenteeRecoveryCard menteeId={menteeId} menteeName={mentee.name} defaultOpen />
+ <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} defaultOpen />
+ </>
  )}
- {activeTool === "visibility" && (
- <MentorVisibilityControls menteeId={menteeId} menteeName={mentee.name ?? mentee.email} />
- )}
- {activeTool === "certificate" && roadmaps.length > 0 && (
+
+ {/* ── Certificate tab ── */}
+ {activeTab === "certificate" && (
+ roadmaps.length > 0 ? (
  <div style={{ marginBottom: "1.5rem" }}>
  {roadmaps.map((roadmap) => (
  <div key={roadmap.id} style={{ marginBottom: "0.75rem" }}>
@@ -639,14 +691,20 @@ export default function MenteeDrilldownPage() {
  menteeId={menteeId}
  menteeName={mentee.name ?? mentee.email}
  roadmapId={roadmap.id}
+ defaultOpen={roadmaps.length === 1}
  />
  </div>
  ))}
  </div>
+ ) : (
+ <div className="forge-panel" style={{ padding: "1.5rem", color: "var(--text-secondary)", fontSize: "0.875rem" }}>
+ No roadmap assigned yet, so there is no certificate to release. Assign a roadmap from the Roadmap tab first.
+ </div>
+ )
  )}
 
  {/* Roadmaps, empty state lets the mentor PICK one on their behalf */}
- {roadmaps.length === 0 && (
+ {activeTab === "roadmap" && roadmaps.length === 0 && (
  <div className="forge-panel" style={{ padding: "1.5rem" }}>
  <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "0.375rem" }}>
  Assign a roadmap
@@ -718,9 +776,8 @@ export default function MenteeDrilldownPage() {
  </div>
  )}
 
- {/* Roadmap view, hidden when any tool is active so the sidebar drill
- is a true full-screen replacement, not a layered panel. */}
- {!activeTool && roadmaps.map((roadmap) => (
+ {/* Roadmap view */}
+ {activeTab === "roadmap" && roadmaps.map((roadmap) => (
  <div key={roadmap.id} style={{ marginBottom: "2rem" }}>
  <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.125rem", marginBottom: "1rem" }}>{roadmap.title}</h2>
 

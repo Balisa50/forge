@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, XCircle, Users, ArrowRight, MessageSquare, UserPlus, Send, Inbox } from "lucide-react";
+import { CheckCircle2, XCircle, Users, ArrowRight, UserPlus, Send } from "lucide-react";
 import MentorOnboardingCard from "@/components/MentorOnboardingCard";
 import MentorStatRow from "@/components/MentorStatRow";
 
@@ -10,13 +10,14 @@ export default async function MentorDashboardPage() {
  const session = await auth();
  if (!session?.user?.id) redirect("/login");
 
- const mentor = await prisma.user.findUnique({
+ // One parallel batch instead of sequential awaits — this page renders on
+ // every visit, so round trips to the DB are the whole page latency.
+ const [mentor, mentorLinks, awaitingReview] = await Promise.all([
+ prisma.user.findUnique({
  where: { id: session.user.id },
  select: { name: true },
- });
-
- // Get all mentee links for this user
- const mentorLinks = await prisma.mentorLink.findMany({
+ }),
+ prisma.mentorLink.findMany({
  where: { mentorId: session.user.id, isActive: true },
  include: {
  mentee: {
@@ -28,7 +29,18 @@ export default async function MentorDashboardPage() {
  },
  },
  },
- });
+ }),
+ // "Awaiting review" across all mentees — the inbox count that drives
+ // clicks into /dashboard/mentor/reviews.
+ prisma.interrogation.count({
+ where: {
+ mode: "mentor_async",
+ mentorReviewerId: session.user.id,
+ mentorReviewedAt: null,
+ completedAt: { not: null },
+ },
+ }),
+ ]);
 
  if (mentorLinks.length === 0) {
  return (
@@ -45,7 +57,7 @@ export default async function MentorDashboardPage() {
  </p>
  </div>
  <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
- <UserPlus size={15} /> Invite a mentee
+ <UserPlus size={15} /> Add mentees
  </Link>
  </div>
 
@@ -60,25 +72,40 @@ export default async function MentorDashboardPage() {
  );
  }
 
- // Fetch detailed progress for each mentee. Per-mentee try/catch so one
- // broken record doesn't crash the entire dashboard.
- const mentees = (await Promise.all(
- mentorLinks.map(async (link) => {
- try {
- const roadmap = await prisma.roadmap.findFirst({
- where: { userId: link.mentee.id, isActive: true },
- include: {
- tracks: { include: { phases: { include: { tasks: true } } } },
+ // ONE query for every mentee's roadmap progress instead of a deep query
+ // per mentee (the old N+1 was the main reason this page took seconds).
+ // Only task statuses and the last few check-ins come back — not the whole
+ // curriculum tree.
+ const menteeIds = mentorLinks.map((l) => l.mentee.id);
+ const allRoadmaps = menteeIds.length
+ ? await prisma.roadmap.findMany({
+ where: { userId: { in: menteeIds }, isActive: true },
+ orderBy: { createdAt: "desc" },
+ select: {
+ userId: true,
+ title: true,
+ tracks: { select: { phases: { select: { tasks: { select: { status: true } } } } } },
  checkins: {
  orderBy: { createdAt: "desc" },
  take: 10,
- include: {
+ select: {
+ id: true,
+ status: true,
+ createdAt: true,
+ taskId: true,
  task: { select: { title: true } },
  },
  },
  },
- });
+ })
+ : [];
+ const roadmapByUser = new Map<string, (typeof allRoadmaps)[number]>();
+ for (const r of allRoadmaps) {
+ if (!roadmapByUser.has(r.userId)) roadmapByUser.set(r.userId, r);
+ }
 
+ const mentees = mentorLinks.map((link) => {
+ const roadmap = roadmapByUser.get(link.mentee.id);
  const allTasks = roadmap?.tracks.flatMap((t) => t.phases.flatMap((p) => p.tasks)) ?? [];
  const verifiedTasks = allTasks.filter((t) => t.status === "verified").length;
  const totalTasks = allTasks.length;
@@ -98,24 +125,9 @@ export default async function MentorDashboardPage() {
  totalTasks,
  checkedInToday: lastDate?.getTime() === today.getTime(),
  recentCheckins: roadmap?.checkins ?? [],
-     lastActivityAt: lastCheckin ? new Date(lastCheckin.createdAt).getTime() : 0,
+ lastActivityAt: lastCheckin ? new Date(lastCheckin.createdAt).getTime() : 0,
  };
- } catch (e) {
- console.error(`[mentor-dashboard] Failed to load mentee ${link.mentee.id}:`, e);
- return {
- user: link.mentee,
- note: link.note,
- roadmapTitle: null,
- progress: 0,
- verifiedTasks: 0,
- totalTasks: 0,
- checkedInToday: false,
- recentCheckins: [],
-     lastActivityAt: 0,
- };
- }
- })
- ));
+ });
 
  // Most-recently-active mentees first; idle ones (no check-ins) sink to the bottom.
  mentees.sort((a, b) => b.lastActivityAt - a.lastActivityAt);
@@ -123,18 +135,6 @@ export default async function MentorDashboardPage() {
  // Aggregate stats, collapsible row at the top of the page
  const totalMentees = mentees.length;
  const activeToday = mentees.filter((m) => m.checkedInToday).length;
-
- // "Awaiting review" total across all this mentor's mentees, checkins
- // whose mentor-async interrogation has completed but mentor hasn't graded
- // yet. This is the inbox count that drives clicks into /dashboard/mentor/reviews.
- const awaitingReview = await prisma.interrogation.count({
- where: {
- mode: "mentor_async",
- mentorReviewerId: session.user.id,
- mentorReviewedAt: null,
- completedAt: { not: null },
- },
- });
 
  return (
  <div>
@@ -153,11 +153,8 @@ export default async function MentorDashboardPage() {
  <Link href="/dashboard/mentor/release" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
  <Send size={15} /> Release a week
  </Link>
- <Link href="/dashboard/mentor/applications" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
- <Inbox size={15} /> Applications
- </Link>
  <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
- <UserPlus size={15} /> Invite a mentee
+ <UserPlus size={15} /> Add mentees
  </Link>
  </div>
  </div>
@@ -261,7 +258,7 @@ export default async function MentorDashboardPage() {
  ? <CheckCircle2 size={12} color="var(--green)" />
  : <XCircle size={12} color="var(--red)" />
  }
- <span style={{ fontSize: "0.8125rem" }}>{latest.task?.title ?? ", "}</span>
+ <span style={{ fontSize: "0.8125rem" }}>{latest.task?.title ?? "—"}</span>
  </div>
  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
  {new Date(latest.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}

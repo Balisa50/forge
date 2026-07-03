@@ -9,6 +9,8 @@ interface Props {
  menteeId: string;
  menteeName: string;
  roadmapId: string;
+ /** Start expanded (used when the card is the main content of a tab). */
+ defaultOpen?: boolean;
 }
 
 interface Status {
@@ -29,8 +31,8 @@ interface Status {
  * Shows the full preview using the same artwork the mentee will eventually
  * receive, plus a Release button that's only enabled at 100% verified.
  */
-export default function MentorCertReleaseCard({ menteeId, menteeName, roadmapId }: Props) {
- const [open, setOpen] = useState(false);
+export default function MentorCertReleaseCard({ menteeId, menteeName, roadmapId, defaultOpen = false }: Props) {
+ const [open, setOpen] = useState(defaultOpen);
  const [status, setStatus] = useState<Status | null>(null);
  const [loading, setLoading] = useState(false);
  const [releasing, setReleasing] = useState(false);
