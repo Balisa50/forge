@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Clock, BookOpen, Target, GraduationCap, Brain, Timer } from "lucide-react";
 import { loadAllRoadmaps, ROADMAP_META } from "@/lib/roadmaps";
-import { HIDDEN_SLUGS } from "@/lib/curated-roadmaps-client";
+import { VISIBLE_SLUGS } from "@/lib/curated-roadmaps-client";
 import { loadAllExamPaths, totalConcepts } from "@/lib/examPaths";
 
 export const metadata = {
@@ -13,15 +13,19 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 // The hub is PUBLIC so anyone can browse. Clicking a build roadmap shows its
-// overview card (locked content until signup); clicking an Actuary exam opens
-// it fully (public by design).
+// overview (locked content until signup); clicking an Actuary exam opens it
+// fully (public by design).
+//
+// Visibility is OPT-IN: a roadmap renders here only if its slug is in
+// VISIBLE_SLUGS (curated AND not flagged hidden). A JSON file on disk alone
+// never publishes a track.
 export default async function LearnIndexPage() {
- const roadmaps = loadAllRoadmaps().filter((r) => !HIDDEN_SLUGS.has(r.slug));
+ const roadmaps = loadAllRoadmaps().filter((r) => VISIBLE_SLUGS.has(r.slug));
  const examPaths = loadAllExamPaths();
 
  return (
  <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
- <section className="mx-auto max-w-6xl px-6 pt-20 pb-12">
+ <section className="mx-auto max-w-6xl px-6 pt-20 pb-10">
  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", letterSpacing: "0.32em", color: "var(--accent)", textTransform: "uppercase" }}>
  ~/forge/roadmaps
  </p>
@@ -35,8 +39,10 @@ export default async function LearnIndexPage() {
  </p>
  </section>
 
+ {/* Flat editorial list, content sits on the page, separated by hairlines,
+ each track keyed by its gradient accent bar. No boxes. */}
  <section className="mx-auto max-w-6xl px-6 pb-24">
- <div className="grid gap-5 md:grid-cols-3">
+ <div className="border-t border-[color:var(--border)]">
  {roadmaps.map((r) => {
  const meta = ROADMAP_META[r.slug];
  // Defensive: some roadmaps (e.g. AI Automation) ship with days-only
@@ -48,29 +54,32 @@ export default async function LearnIndexPage() {
  <Link
  key={r.slug}
  href={`/learn/${r.slug}`}
- className="group block rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-6 transition hover:border-[color:var(--accent)]"
+ className="group flex items-stretch gap-5 border-b border-[color:var(--border)] py-6 transition md:gap-8"
  >
- <div
- style={{ height: 6, borderRadius: 4 }}
- className={`mb-5 w-full bg-gradient-to-r ${meta?.gradient ?? "from-cyan-500 to-blue-500"}`}
- />
- <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", fontWeight: 700 }}>{r.title}</h2>
+ <div className={`w-1 shrink-0 rounded-full bg-gradient-to-b ${meta?.gradient ?? "from-cyan-500 to-blue-500"} opacity-70 transition group-hover:opacity-100`} />
+ <div className="min-w-0 flex-1">
+ <h2 className="transition group-hover:text-[color:var(--accent)]" style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", fontWeight: 700, lineHeight: 1.2 }}>
+ {r.title}
+ </h2>
  {meta && (
- <p style={{ color: "var(--text-secondary)", marginTop: "0.5rem", fontSize: "0.9375rem", lineHeight: 1.55 }}>
+ <p style={{ color: "var(--text-secondary)", marginTop: "0.375rem", fontSize: "0.9375rem", lineHeight: 1.55, maxWidth: 640 }}>
  {meta.tagline}
  </p>
  )}
- <ul className="mt-5 space-y-2" style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-dim)" }}>
- <li className="flex items-center gap-2"><Clock size={13} /> {r.total_weeks} weeks · {phases.length} phases</li>
- <li className="flex items-center gap-2"><BookOpen size={13} /> {totalTopics} curated topics</li>
- <li className="flex items-center gap-2"><Target size={13} /> {totalProjects} real-world projects</li>
- </ul>
- <p
- className="mt-6 inline-flex items-center gap-1 text-sm font-medium transition group-hover:translate-x-1"
- style={{ color: "var(--accent)" }}
- >
- Explore the roadmap <ArrowRight size={14} />
+ <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 md:hidden" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
+ <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {r.total_weeks} wks</span>
+ <span className="inline-flex items-center gap-1.5"><BookOpen size={12} /> {totalTopics} topics</span>
+ <span className="inline-flex items-center gap-1.5"><Target size={12} /> {totalProjects} projects</span>
  </p>
+ </div>
+ <div className="hidden shrink-0 flex-col items-end justify-center gap-1.5 md:flex" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
+ <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {r.total_weeks} weeks · {phases.length} phases</span>
+ <span className="inline-flex items-center gap-1.5"><BookOpen size={12} /> {totalTopics} curated topics</span>
+ <span className="inline-flex items-center gap-1.5"><Target size={12} /> {totalProjects} real-world projects</span>
+ </div>
+ <div className="hidden items-center sm:flex">
+ <ArrowRight size={18} className="transition group-hover:translate-x-1" style={{ color: "var(--accent)" }} />
+ </div>
  </Link>
  );
  })}
@@ -96,36 +105,44 @@ export default async function LearnIndexPage() {
  resurface on a spaced schedule until recall is automatic. Progress saves on your device, no login, share the link with anyone.
  </p>
 
- <div className="mt-8 grid gap-5 md:grid-cols-2">
+ <div className="mt-10 border-t border-[color:var(--border)]">
  {examPaths.map((p) => {
  const concepts = totalConcepts(p);
  return (
  <Link
  key={p.slug}
  href={`/learn/exam/${p.slug}`}
- className="group block rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-6 transition hover:border-[color:var(--accent)]"
+ className="group flex items-stretch gap-5 border-b border-[color:var(--border)] py-6 transition md:gap-8"
  >
- <div style={{ height: 6, borderRadius: 4 }} className={`mb-5 w-full bg-gradient-to-r ${p.gradient}`} />
- <div className="flex items-center gap-2">
+ <div className={`w-1 shrink-0 rounded-full bg-gradient-to-b ${p.gradient} opacity-70 transition group-hover:opacity-100`} />
+ <div className="min-w-0 flex-1">
+ <div className="flex items-center gap-3">
  <span
- className="grid h-9 w-9 place-items-center rounded-lg font-bold"
+ className="grid h-9 w-9 shrink-0 place-items-center rounded-lg font-bold"
  style={{ fontFamily: "var(--font-mono)", background: "rgba(212,175,55,0.12)", color: "var(--accent)", border: "1px solid rgba(212,175,55,0.3)" }}
  >
  {p.exam}
  </span>
- <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700 }}>{p.title}</h3>
+ <h3 className="transition group-hover:text-[color:var(--accent)]" style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700, lineHeight: 1.2 }}>
+ {p.title}
+ </h3>
  </div>
- <p style={{ color: "var(--text-secondary)", marginTop: "0.75rem", fontSize: "0.9375rem", lineHeight: 1.55 }}>
+ <p style={{ color: "var(--text-secondary)", marginTop: "0.5rem", fontSize: "0.9375rem", lineHeight: 1.55, maxWidth: 640 }}>
  {p.subtitle}
  </p>
- <ul className="mt-5 space-y-2" style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-dim)" }}>
- <li className="flex items-center gap-2"><Brain size={13} /> {concepts} concepts · {p.modules.length} modules</li>
- <li className="flex items-center gap-2"><Timer size={13} /> timed mastery gates + spaced review</li>
- <li className="flex items-center gap-2"><Target size={13} /> {p.format.questions} questions · {p.format.minutes} min on exam day</li>
- </ul>
- <p className="mt-6 inline-flex items-center gap-1 text-sm font-medium transition group-hover:translate-x-1" style={{ color: "var(--accent)" }}>
- Start mastering Exam {p.exam} <ArrowRight size={14} />
+ <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 md:hidden" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
+ <span className="inline-flex items-center gap-1.5"><Brain size={12} /> {concepts} concepts</span>
+ <span className="inline-flex items-center gap-1.5"><Timer size={12} /> timed gates</span>
  </p>
+ </div>
+ <div className="hidden shrink-0 flex-col items-end justify-center gap-1.5 md:flex" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
+ <span className="inline-flex items-center gap-1.5"><Brain size={12} /> {concepts} concepts · {p.modules.length} modules</span>
+ <span className="inline-flex items-center gap-1.5"><Timer size={12} /> timed mastery gates + spaced review</span>
+ <span className="inline-flex items-center gap-1.5"><Target size={12} /> {p.format.questions} questions · {p.format.minutes} min on exam day</span>
+ </div>
+ <div className="hidden items-center sm:flex">
+ <ArrowRight size={18} className="transition group-hover:translate-x-1" style={{ color: "var(--accent)" }} />
+ </div>
  </Link>
  );
  })}

@@ -7,6 +7,9 @@
  * clicks "Complete". That forces a beat of closure, mentally finishing the
  * material instead of racing into the test. Once completed (persisted per
  * concept), the real MasteryQuiz renders. Completion survives reloads.
+ *
+ * Flat treatment: the closure moment is anchored by a gold top rule on the
+ * page itself, not floated in a box.
  */
 
 import { useEffect, useState } from "react";
@@ -61,7 +64,7 @@ export default function MasteryGate({
  return (
  <div>
  {/* Completion closure */}
- <div className="rounded-2xl border border-[color:var(--border)] p-6 text-center" style={{ background: "var(--bg-panel)" }}>
+ <div className="border-t-2 pt-8 text-center" style={{ borderColor: "var(--accent)" }}>
  <h3 style={{ fontFamily: "var(--font-headline)", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
  Finished the lesson?
  </h3>
@@ -77,16 +80,12 @@ export default function MasteryGate({
  </button>
  </div>
 
- {/* Locked quiz placeholder */}
- <div
- className="mt-4 rounded-2xl border border-dashed border-[color:var(--border)] p-6 text-center"
- style={{ opacity: 0.55 }}
- aria-disabled
- >
- <Lock size={22} style={{ color: "var(--text-dim)", margin: "0 auto 0.5rem" }} />
- <p style={{ color: "var(--text-dim)", fontSize: "0.875rem", marginBottom: "1rem" }}>
- Mastery quiz locked. Click <strong style={{ color: "var(--text-secondary)" }}>Complete</strong> above to unlock it.
+ {/* Locked quiz, flat, dimmed, sits under a hairline */}
+ <div className="mt-8 border-t border-[color:var(--border)] pt-6 text-center" style={{ opacity: 0.55 }} aria-disabled>
+ <p className="inline-flex items-center justify-center gap-2" style={{ color: "var(--text-dim)", fontSize: "0.875rem", marginBottom: "1rem" }}>
+ <Lock size={15} /> Mastery quiz locked. Click <strong style={{ color: "var(--text-secondary)" }}>Complete</strong> above to unlock it.
  </p>
+ <div>
  <button
  disabled
  className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 font-semibold"
@@ -94,6 +93,7 @@ export default function MasteryGate({
  >
  <Trophy size={16} /> Start mastery quiz
  </button>
+ </div>
  </div>
  </div>
  );

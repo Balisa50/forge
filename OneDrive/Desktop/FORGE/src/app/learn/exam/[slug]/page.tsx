@@ -55,7 +55,7 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  <span className="inline-flex items-center gap-1.5"><ListChecks size={12} /> {path.format.choices} choices each</span>
  <span className="inline-flex items-center gap-1.5"><Target size={12} /> {concepts} concepts</span>
  </div>
- <div className="mt-3 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-3" style={{ maxWidth: 720 }}>
+ <div className="mt-4" style={{ maxWidth: 720, borderLeft: "3px solid var(--accent)", paddingLeft: "1rem" }}>
  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>Passing</p>
  <p className="mt-1" style={{ fontSize: "0.875rem", lineHeight: 1.5 }}>{path.format.passing}</p>
  </div>

@@ -46,7 +46,7 @@ export default async function FormulaSheetPage({ params }: { params: Promise<{ s
         {/* Groups */}
         <div className="mt-8 space-y-8">
           {sheet.groups.map((g, gi) => (
-            <section key={gi} className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-5">
+            <section key={gi} className="border-t border-[color:var(--border)] pt-5">
               <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.1875rem", fontWeight: 700 }}>{g.heading}</h2>
               {g.blurb && (
                 <p className="mt-1" style={{ color: "var(--text-dim)", fontSize: "0.8125rem", lineHeight: 1.5 }}>{g.blurb}</p>

@@ -155,7 +155,7 @@ export default function MentorInvitesPanel() {
  buttonStyle={{ width: "100%", padding: "0.5rem 0.625rem", background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: 6, color: "var(--text-primary)", fontSize: "0.8125rem" }}
  options={[
  { value: "", label: "Mentee picks their own" },
- ...CURATED_ROADMAPS.map((r) => ({ value: r.slug, label: r.title })),
+ ...CURATED_ROADMAPS.filter((r) => !r.hidden).map((r) => ({ value: r.slug, label: r.title })),
  ]}
  />
  </label>

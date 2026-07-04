@@ -6,6 +6,7 @@
  * Progress is marked ONLY when the student clicks "Start this concept", never
  * passively on page open. Once started (or already mastered), it shows a clear
  * confirmation so the student never wonders whether the system registered them.
+ * The confirmation is a flat status line, not a boxed banner.
  */
 
 import { Play, CheckCircle2 } from "lucide-react";
@@ -22,8 +23,8 @@ export default function StartConceptButton({ slug, conceptId }: { slug: string; 
  if (started) {
  return (
  <div
- className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5"
- style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "#34d399", fontSize: "0.875rem", fontWeight: 600 }}
+ className="inline-flex items-center gap-2"
+ style={{ color: "#34d399", fontSize: "0.875rem", fontWeight: 600, minHeight: 44 }}
  >
  <CheckCircle2 size={16} />
  Concept started. Your progress is being tracked.

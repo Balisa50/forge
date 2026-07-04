@@ -144,6 +144,7 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  Icon: Headset,
  accent: "#a78bfa",
  gradient: "from-indigo-500 via-violet-500 to-purple-600",
+ hidden: true, // in development: not announced yet
  },
  {
  slug: "growth-marketing",
@@ -155,9 +156,20 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  Icon: Megaphone,
  accent: "#ec4899",
  gradient: "from-pink-500 via-rose-500 to-orange-500",
+ hidden: true, // in development: not announced yet
  },
 ];
 
 export const HIDDEN_SLUGS = new Set(
  CURATED_ROADMAPS.filter((r) => r.hidden).map((r) => r.slug),
+);
+
+/**
+ * Opt-IN visibility for every public surface (/learn, landing page, pickers).
+ * A roadmap JSON on disk is NOT enough to publish a track: it must have a
+ * curated entry here AND not be flagged hidden. This is what stops a freshly
+ * committed draft roadmap from leaking to the public site.
+ */
+export const VISIBLE_SLUGS = new Set(
+ CURATED_ROADMAPS.filter((r) => !r.hidden).map((r) => r.slug),
 );

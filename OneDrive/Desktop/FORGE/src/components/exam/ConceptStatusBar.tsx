@@ -7,6 +7,8 @@
  * review date once mastered. Reads live so it updates the instant the quiz
  * below records a pass. Progress is NOT tracked here, that only happens when
  * the student explicitly clicks "Start this concept" (see StartConceptButton).
+ *
+ * Renders flat (no box): a status line the rest of the header hangs off.
  */
 
 import { CheckCircle2, CircleDot, Circle, CalendarClock } from "lucide-react";
@@ -31,7 +33,7 @@ export default function ConceptStatusBar({ slug, conceptId }: { slug: string; co
 
  return (
  <div
- className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-panel)] px-4 py-2.5"
+ className="flex flex-wrap items-center gap-x-5 gap-y-2"
  style={{ opacity: ready ? 1 : 0.5, transition: "opacity 0.3s" }}
  >
  <span className="inline-flex items-center gap-1.5" style={{ fontSize: "0.8125rem", fontWeight: 600, color }}>

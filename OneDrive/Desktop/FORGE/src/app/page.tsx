@@ -204,14 +204,14 @@ export default function LandingPage() {
  ~/forge/roadmaps
  </p>
  <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.1 }}>
- 9 paths. <span style={{ color: "var(--accent)" }}>One standard.</span>
+ {CURATED_ROADMAPS.filter((r) => !r.hidden).length} paths. <span style={{ color: "var(--accent)" }}>One standard.</span>
  </h2>
  <p style={{ color: "var(--text-secondary)", fontSize: "1rem", maxWidth: 560, margin: "0 auto", lineHeight: 1.6 }}>
  Each path is hand-curated. Each week ships a real artefact. The full curriculum opens after you sign up.
  </p>
  </div>
  <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
- {CURATED_ROADMAPS.map((r) => {
+ {CURATED_ROADMAPS.filter((r) => !r.hidden).map((r) => {
  const Icon = r.Icon;
  return (
  <div

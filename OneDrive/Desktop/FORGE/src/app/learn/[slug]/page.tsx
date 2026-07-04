@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock, Layers, Lock, Check } from "lucide-react";
 import { loadAllRoadmaps, loadRoadmap, ROADMAP_META, getPhaseGroups } from "@/lib/roadmaps";
+import { HIDDEN_SLUGS } from "@/lib/curated-roadmaps-client";
 import { auth } from "@/lib/auth";
 
 // Force dynamic so the auth check runs on every request - no static prerender
@@ -11,6 +12,10 @@ export const dynamic = "force-dynamic";
 export default async function RoadmapDetail({ params }: { params: Promise<{ slug: string }> }) {
  const session = await auth();
  const { slug } = await params;
+
+ // Hidden (in-development) tracks are not publicly browsable, even by direct
+ // URL. Members keep access so an already-assigned mentee is never locked out.
+ if (!session?.user?.id && HIDDEN_SLUGS.has(slug)) return notFound();
 
  const roadmap = loadRoadmap(slug);
  if (!roadmap) return notFound();
@@ -40,9 +45,9 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  </div>
  </section>
 
- <section className="mx-auto max-w-3xl px-6 py-10 space-y-5">
- {/* What this path covers */}
- <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-5">
+ <section className="mx-auto max-w-4xl px-6 py-10 space-y-10">
+ {/* What this path covers, flat on the page, accent rule not a box */}
+ <div style={{ borderLeft: "3px solid var(--accent)", paddingLeft: "1.25rem" }}>
  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>What this path covers</p>
  <ul className="mt-3 space-y-2">
  {groups.map((g, i) => (
@@ -56,8 +61,8 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
 
  {/* Skills you'll gain */}
  {meta?.outcome && (
- <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-5">
- <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>Skills you'll gain</p>
+ <div style={{ borderLeft: "3px solid var(--green)", paddingLeft: "1.25rem" }}>
+ <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--green)", textTransform: "uppercase" }}>Skills you&apos;ll gain</p>
  <p className="mt-2 inline-flex items-start gap-2" style={{ color: "var(--text-primary)", fontSize: "0.9375rem", lineHeight: 1.55 }}>
  <Check size={16} style={{ color: "var(--green)", marginTop: 3, flexShrink: 0 }} /> {meta.outcome}
  </p>
@@ -65,13 +70,13 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  )}
 
  {/* Time to complete */}
- <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-5 flex flex-wrap gap-6" style={{ fontSize: "0.875rem" }}>
+ <div className="flex flex-wrap gap-6 border-t border-[color:var(--border)] pt-6" style={{ fontSize: "0.875rem" }}>
  <span className="inline-flex items-center gap-2"><Clock size={15} style={{ color: "var(--accent)" }} /> <strong>{roadmap.total_weeks} weeks</strong> <span style={{ color: "var(--text-dim)" }}>estimated</span></span>
  <span className="inline-flex items-center gap-2"><Layers size={15} style={{ color: "var(--accent)" }} /> <strong>{groups.length} phases</strong></span>
  </div>
 
- {/* Locked + CTA */}
- <div className="rounded-xl p-6 text-center" style={{ border: "1px solid var(--accent)", background: "rgba(245,158,11,0.05)" }}>
+ {/* Locked + CTA, flat, anchored by a top accent rule */}
+ <div className="border-t-2 pt-8 text-center" style={{ borderColor: "var(--accent)" }}>
  <Lock size={28} style={{ color: "var(--accent)", margin: "0 auto 0.75rem" }} />
  <h2 style={{ fontFamily: "var(--font-headline)", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>The full path is locked</h2>
  <p style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 440, margin: "0 auto 1.25rem", lineHeight: 1.55 }}>
@@ -121,8 +126,8 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  <span className="inline-flex items-center gap-1.5"><Layers size={12} /> {groups.length} phases</span>
  </div>
  {meta?.outcome && (
- <div className="mt-4 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-3">
- <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>What you'll have at the end</p>
+ <div className="mt-4" style={{ borderLeft: "3px solid var(--accent)", paddingLeft: "1rem" }}>
+ <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>What you&apos;ll have at the end</p>
  <p className="mt-1" style={{ color: "var(--text-primary)", fontSize: "0.875rem", lineHeight: 1.5 }}>{meta.outcome}</p>
  </div>
  )}
@@ -144,12 +149,12 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  · {g.weeks.length} {g.weeks.length === 1 ? "week" : "weeks"}
  </span>
  </div>
- <ul className="space-y-3">
+ <ul className="border-t border-[color:var(--border)]">
  {g.weeks.map((w) => (
  <li key={w.number}>
  <Link
  href={`/learn/${roadmap.slug}/${w.number}`}
- className="flex items-center gap-5 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-panel)] p-5 transition hover:border-[color:var(--accent)] hover:bg-[color:var(--bg-elev)]"
+ className="flex items-center gap-5 border-b border-[color:var(--border)] py-5 transition hover:bg-[rgba(255,255,255,0.02)]"
  >
  <span
  className={`shrink-0 grid h-12 w-12 place-items-center rounded-lg bg-gradient-to-br ${meta?.gradient ?? "from-cyan-500 to-blue-500"} text-white font-semibold`}

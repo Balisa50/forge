@@ -720,7 +720,7 @@ export default function MenteeDrilldownPage() {
  gap: "0.75rem",
  }}
  >
- {CURATED_ROADMAPS.map((r) => {
+ {CURATED_ROADMAPS.filter((r) => !r.hidden).map((r) => {
  const Icon = r.Icon;
  const busy = seedingSlug === r.slug;
  const disabled = seedingSlug !== null;

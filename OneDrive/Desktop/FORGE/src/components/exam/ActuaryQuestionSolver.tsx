@@ -46,7 +46,7 @@ export default function ActuaryQuestionSolver({ question }: { question: MasteryQ
  const isCorrect = checked && picked === question.correct;
 
  return (
- <div className="forge-panel" style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+ <div style={{ borderLeft: "3px solid var(--border)", paddingLeft: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
  {/* Stem */}
  <div style={{ fontSize: "1rem", color: "var(--text-primary)", lineHeight: 1.7 }}>
  {RT(question.q, "stem")}
@@ -192,8 +192,10 @@ export default function ActuaryQuestionSolver({ question }: { question: MasteryQ
 }
 
 function Panel({ title, icon: Icon, accent = "var(--accent)", children }: { title: string; icon: typeof Zap; accent?: string; children: React.ReactNode }) {
+ // Flat reveal: a colored left rule keys the panel to its purpose, content
+ // sits directly on the page (no box).
  return (
- <div style={{ borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-card)", padding: "0.875rem 1rem" }}>
+ <div style={{ borderLeft: `3px solid ${accent}`, paddingLeft: "1rem" }}>
  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.16em", textTransform: "uppercase", color: accent, marginBottom: "0.625rem", fontWeight: 700 }}>
  <Icon size={12} /> {title}
  </div>
