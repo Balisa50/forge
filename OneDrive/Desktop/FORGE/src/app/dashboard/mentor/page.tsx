@@ -149,14 +149,11 @@ export default async function MentorDashboardPage() {
  {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
  </p>
  </div>
- <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+ {/* Single primary action. "Add mentees" lives in the sidebar — repeating
+ it here was redundant chrome. */}
  <Link href="/dashboard/mentor/release" className="forge-btn forge-btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
  <Send size={15} /> Release a week
  </Link>
- <Link href="/dashboard/mentor/invite" className="forge-btn forge-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1.125rem" }}>
- <UserPlus size={15} /> Add mentees
- </Link>
- </div>
  </div>
 
  <MentorStatRow

@@ -28,6 +28,8 @@ import {
  Menu,
  X,
  Award,
+ PanelLeftClose,
+ PanelLeftOpen,
 } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 
@@ -140,6 +142,27 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  const [mobileOpen, setMobileOpen] = useState(false);
  const [signingOut, setSigningOut] = useState(false);
 
+ // Desktop sidebar collapse + edge-hover peek. `collapsed` hides the sidebar
+ // so pages get the full screen; a slim hot strip on the left edge (plus a
+ // floating button) peeks it back as an overlay on hover. The choice persists
+ // per device. Hydrated in an effect so SSR markup always matches the client.
+ const [collapsed, setCollapsed] = useState(false);
+ const [peek, setPeek] = useState(false);
+ useEffect(() => {
+ try { setCollapsed(window.localStorage.getItem("forge.nav.collapsed") === "1"); } catch { /* private mode */ }
+ }, []);
+ useEffect(() => {
+ document.body.classList.toggle("nav-collapsed", collapsed);
+ return () => document.body.classList.remove("nav-collapsed");
+ }, [collapsed]);
+ // Navigating (click inside the peeked overlay) closes the peek.
+ useEffect(() => { setPeek(false); }, [pathname]);
+ const setCollapsedPersist = useCallback((v: boolean) => {
+ setCollapsed(v);
+ setPeek(false);
+ try { window.localStorage.setItem("forge.nav.collapsed", v ? "1" : "0"); } catch { /* */ }
+ }, []);
+
  // Pending-review count for mentors, polled so the Reviews nav item carries a
  // live badge (and the mobile hamburger shows a dot when the sidebar is shut).
  const isMentor = userRole === "mentor";
@@ -220,6 +243,15 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  <span className="nav-bell-desktop" style={{ alignItems: "center", gap: "0.125rem" }}>
  <NotificationBell view="messages" icon={MessageSquare} title="Messages" emptyText="No messages yet" align="left" direction="down" />
  <NotificationBell view="events" icon={Bell} title="Notifications" align="left" direction="down" />
+ <button
+ onClick={() => setCollapsedPersist(!collapsed)}
+ className="nav-collapse-btn"
+ title={collapsed ? "Pin sidebar open" : "Hide sidebar"}
+ aria-label={collapsed ? "Pin sidebar open" : "Hide sidebar"}
+ style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "0.3rem", display: "inline-flex", alignItems: "center", borderRadius: 6 }}
+ >
+ {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+ </button>
  </span>
  {/* Close button on mobile */}
  <button
@@ -418,9 +450,33 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  />
  )}
 
+ {/* Collapsed-mode helpers (desktop only): a slim hover strip on the left
+ edge peeks the sidebar as an overlay; the floating button pins it back. */}
+ {collapsed && (
+ <>
+ <div
+ className="nav-hotzone"
+ onMouseEnter={() => setPeek(true)}
+ aria-hidden
+ />
+ {!peek && (
+ <button
+ className="nav-float-open"
+ onClick={() => setCollapsedPersist(false)}
+ onMouseEnter={() => setPeek(true)}
+ title="Show sidebar"
+ aria-label="Show sidebar"
+ >
+ <PanelLeftOpen size={16} />
+ </button>
+ )}
+ </>
+ )}
+
  {/* Sidebar */}
  <nav
- className={`dashboard-sidebar ${mobileOpen ? "open" : ""}`}
+ className={`dashboard-sidebar ${mobileOpen ? "open" : ""} ${peek ? "peek" : ""}`}
+ onMouseLeave={() => { if (collapsed) setPeek(false); }}
  style={{
  position: "fixed",
  left: 0,
@@ -442,7 +498,42 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  <style>{`
  @keyframes forge-spin { to { transform: rotate(360deg); } }
  .nav-bell-desktop { display: inline-flex; }
+ .nav-collapse-btn:hover { color: var(--accent) !important; background: rgba(245,158,11,0.08); }
+ .nav-hotzone, .nav-float-open { display: none; }
+ @media (min-width: 769px) {
+ .dashboard-main { transition: margin-left 0.25s ease; }
+ body.nav-collapsed .dashboard-sidebar { transform: translateX(-100%); }
+ body.nav-collapsed .dashboard-sidebar.peek {
+ transform: translateX(0);
+ box-shadow: 12px 0 40px rgba(0,0,0,0.5);
+ }
+ body.nav-collapsed .dashboard-main { margin-left: 0 !important; }
+ body.nav-collapsed .nav-hotzone {
+ display: block;
+ position: fixed;
+ left: 0; top: 0; bottom: 0;
+ width: 14px;
+ z-index: 46;
+ }
+ body.nav-collapsed .nav-float-open {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ position: fixed;
+ top: 14px; left: 14px;
+ width: 34px; height: 34px;
+ border-radius: 8px;
+ background: var(--bg-panel);
+ border: 1px solid var(--border);
+ color: var(--text-secondary);
+ cursor: pointer;
+ z-index: 46;
+ transition: color 0.15s, border-color 0.15s;
+ }
+ body.nav-collapsed .nav-float-open:hover { color: var(--accent); border-color: var(--accent); }
+ }
  @media (max-width: 768px) {
+ .nav-collapse-btn { display: none !important; }
  .nav-hamburger-bar { display: flex !important; }
  .nav-overlay { display: block !important; }
  .nav-close-btn { display: block !important; }
