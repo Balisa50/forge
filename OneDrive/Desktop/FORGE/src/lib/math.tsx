@@ -1,12 +1,24 @@
 /**
  * Server-side math rendering for the actuary concept path.
  *
- * Content strings use inline `$...$` and display `$$...$$` LaTeX. KaTeX renders
- * to static HTML on the server (no client JS, no layout shift). The output is
- * our own trusted content, so dangerouslySetInnerHTML on the KaTeX span is safe.
+ * Content strings use inline `$...$` and display `$$...$$` LaTeX, plus
+ * `**bold**`, `*italic*`, and `` `code` ``. KaTeX renders to static HTML on the
+ * server (no client JS, no layout shift). The output is our own trusted
+ * content, so dangerouslySetInnerHTML on the KaTeX span is safe.
  *
  * The KaTeX stylesheet is imported once by the exam route segment, so these
  * components only emit the markup KaTeX produces.
+ *
+ * THE DOLLAR PROBLEM. A literal dollar is authored as `\$` and appears in BOTH
+ * contexts:
+ *   - in prose  ("costs \$5000")            -> must display as a plain "$"
+ *   - inside math ("$... = \$747.26$")      -> KaTeX's own escape for "$"
+ * So a `\$` must NEVER be treated as a math delimiter. The tokenizer enforces
+ * that with a negative lookbehind `(?<!\\)` on every `$` delimiter: an escaped
+ * dollar can never open or close math. Inside a math token `\$` is passed to
+ * KaTeX untouched (it renders "$"); in prose it is unescaped to "$". This
+ * replaces an earlier sentinel hack that corrupted in-math `\$` with a NUL and
+ * made KaTeX dump raw LaTeX onto the page.
  */
 
 import katex from "katex";
@@ -32,45 +44,28 @@ export function Tex({ children, block = false }: { children: string; block?: boo
 }
 
 /**
- * Render a paragraph of text that interleaves prose with `$...$` inline math,
- * `$$...$$` display math, `**bold**`, and `` `code` ``.
- *
- * One left-to-right tokenizer handles every mark in a single pass. The order
- * matters for one reason only — **bold can wrap math** (e.g. `**the mean $\mu$
- * matters**`). The earlier two-stage approach split on `$` first, which orphaned
- * the `**` markers into separate prose segments and rendered them as literal
- * asterisks on the page. Here a bold span is matched whole, then its inner text
- * is rendered recursively, so any math (or code) inside it still resolves.
+ * One left-to-right tokenizer for every mark, in a single pass. Order matters:
+ * display before inline math, bold before italic. `(?<!\\)` guards keep an
+ * escaped `\$` from ever acting as a math delimiter; inside inline math the
+ * `(?:\\.|[^$\n])` body lets escapes like `\$`, `\,`, `\{` live in the formula.
  */
-const TOKEN_RE = /(\$\$[^$]+?\$\$)|(\$[^$\n]+?\$)|(\*\*[\s\S]+?\*\*)|(`[^`]+?`)/g;
+const TOKEN_RE = /((?<!\\)\$\$[\s\S]+?(?<!\\)\$\$)|((?<!\\)\$(?:\\.|[^$\n])+?(?<!\\)\$)|(\*\*[\s\S]+?\*\*)|((?<!\*)\*(?:\\.|[^*\n])+?\*(?!\*))|(`[^`]+?`)/g;
 
-// A literal dollar sign in prose is authored as `\$` (money: "\$1", "\$5000").
-// It must NEVER act as a math delimiter, or it pairs with the next real `$` and
-// swallows the sentence between them into KaTeX (which strips spaces, producing
-// garbage like "1andaneffectiveannualratei"). We swap every `\$` for a private
-// sentinel BEFORE tokenizing, so only true math dollars remain, then restore the
-// sentinel to a plain `$` in prose. NUL never appears in real content.
-const DOLLAR_SENTINEL = String.fromCharCode(0);
-
-// Outside math, LaTeX escapes like `\%` should display as literal symbols —
-// KaTeX only runs inside `$...$`, so in prose the backslash would show verbatim
-// ("8\%"). Strip it from prose fragments (and restore money dollars from the
-// sentinel) so percentages/amounts read cleanly. (In-math text goes through
-// renderTeX untouched, where `\%` is correct.)
-const plainProse = (s: string) =>
-  s.split(DOLLAR_SENTINEL).join("$").replace(/\\([%&#_])/g, "$1");
+// In prose, LaTeX escapes like `\$`, `\%`, `\&` should display as the literal
+// symbol — KaTeX only runs inside `$...$`, so in prose the backslash would show
+// verbatim ("8\%"). Strip it. (In-math text is untouched, where `\%` is correct.)
+const plainProse = (s: string) => s.replace(/\\([$%&#_])/g, "$1");
 
 export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[] {
   if (!text) return [];
-  const src = text.split("\\$").join(DOLLAR_SENTINEL);
   const nodes: React.ReactNode[] = [];
   const re = new RegExp(TOKEN_RE.source, "g");
   let last = 0;
   let k = 0;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(src))) {
+  while ((m = re.exec(text))) {
     if (m.index > last) {
-      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(src.slice(last, m.index))}</React.Fragment>);
+      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(text.slice(last, m.index))}</React.Fragment>);
     }
     const tok = m[0];
     if (m[1]) {
@@ -95,6 +90,13 @@ export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[]
         </strong>,
       );
     } else if (m[4]) {
+      // *italic* — recurse so inner math still renders
+      nodes.push(
+        <em key={`${keyPrefix}-e${k}`}>
+          {renderRichText(tok.slice(1, -1), `${keyPrefix}-e${k++}`)}
+        </em>,
+      );
+    } else if (m[5]) {
       // `code`
       nodes.push(
         <code
@@ -114,8 +116,8 @@ export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[]
     }
     last = m.index + tok.length;
   }
-  if (last < src.length) {
-    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(src.slice(last))}</React.Fragment>);
+  if (last < text.length) {
+    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(text.slice(last))}</React.Fragment>);
   }
   return nodes;
 }

@@ -29,7 +29,7 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  return (
  <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
  <section className="border-b border-[color:var(--border)]">
- <div className="mx-auto max-w-3xl px-6 pt-8 pb-6">
+ <div className="mx-auto w-full max-w-[1180px] px-6 pt-8 pb-6 md:px-12">
  <Link href="/learn" className="inline-flex items-center gap-1.5 text-xs" style={{ fontFamily: "var(--font-mono)", color: "var(--text-dim)" }}>
  <ArrowLeft size={12} /> all roadmaps
  </Link>
@@ -45,7 +45,7 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  </div>
  </section>
 
- <section className="mx-auto max-w-4xl px-6 py-10 space-y-10">
+ <section className="mx-auto w-full max-w-[1180px] px-6 py-10 space-y-10 md:px-12">
  {/* What this path covers, flat on the page, accent rule not a box */}
  <div style={{ borderLeft: "3px solid var(--accent)", paddingLeft: "1.25rem" }}>
  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>What this path covers</p>
@@ -98,7 +98,7 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
  {/* Compact banner */}
  <section className="border-b border-[color:var(--border)]">
- <div className="mx-auto max-w-5xl px-6 pt-8 pb-6">
+ <div className="mx-auto w-full max-w-[1180px] px-6 pt-8 pb-6 md:px-12">
  <Link
  href="/learn"
  className="inline-flex items-center gap-1.5 text-xs"
@@ -135,7 +135,7 @@ export default async function RoadmapDetail({ params }: { params: Promise<{ slug
  </section>
 
  {/* Phase groups */}
- <section className="mx-auto max-w-6xl px-6 py-12 space-y-12">
+ <section className="mx-auto w-full max-w-[1180px] px-6 py-12 space-y-12 md:px-12">
  {groups.map((g, gi) => (
  <div key={g.phase}>
  <div className="mb-6 flex items-baseline gap-3">

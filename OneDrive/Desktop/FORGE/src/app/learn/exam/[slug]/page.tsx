@@ -41,10 +41,10 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  <h1 className="mt-2" style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(1.75rem, 5vw, 2.75rem)", fontWeight: 700, lineHeight: 1.1 }}>
  {path.title}
  </h1>
- <p className="mt-2" style={{ color: "var(--text-secondary)", fontSize: "1rem", maxWidth: 680, lineHeight: 1.6 }}>
+ <p className="mt-2" style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.6 }}>
  {path.subtitle}
  </p>
- <p className="mt-4" style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", maxWidth: 720, lineHeight: 1.7 }}>
+ <p className="mt-4" style={{ color: "var(--text-secondary)", fontSize: "0.9375rem", lineHeight: 1.7 }}>
  {path.intro}
  </p>
 
@@ -55,7 +55,7 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  <span className="inline-flex items-center gap-1.5"><ListChecks size={12} /> {path.format.choices} choices each</span>
  <span className="inline-flex items-center gap-1.5"><Target size={12} /> {concepts} concepts</span>
  </div>
- <div className="mt-4" style={{ maxWidth: 720, borderLeft: "3px solid var(--accent)", paddingLeft: "1rem" }}>
+ <div className="mt-4" style={{ borderLeft: "3px solid var(--accent)", paddingLeft: "1rem" }}>
  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.5625rem", letterSpacing: "0.18em", color: "var(--accent)", textTransform: "uppercase" }}>Passing</p>
  <p className="mt-1" style={{ fontSize: "0.875rem", lineHeight: 1.5 }}>{path.format.passing}</p>
  </div>
