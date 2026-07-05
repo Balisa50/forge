@@ -144,7 +144,6 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  Icon: Headset,
  accent: "#a78bfa",
  gradient: "from-indigo-500 via-violet-500 to-purple-600",
- hidden: true, // in development: not announced yet
  },
  {
  slug: "growth-marketing",
@@ -156,7 +155,6 @@ export const CURATED_ROADMAPS: CuratedRoadmapPickerEntry[] = [
  Icon: Megaphone,
  accent: "#ec4899",
  gradient: "from-pink-500 via-rose-500 to-orange-500",
- hidden: true, // in development: not announced yet
  },
 ];
 

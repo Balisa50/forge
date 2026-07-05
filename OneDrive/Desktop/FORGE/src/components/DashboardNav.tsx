@@ -450,27 +450,16 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  />
  )}
 
- {/* Collapsed-mode helpers (desktop only): a slim hover strip on the left
- edge peeks the sidebar as an overlay; the floating button pins it back. */}
+ {/* Collapsed-mode helper (desktop only): a slim invisible hover strip on
+ the very left edge. Brushing it peeks the sidebar in as an overlay; the
+ pin toggle then lives INSIDE the sidebar header. No floating button —
+ nothing sits on top of the page content while you read/scroll. */}
  {collapsed && (
- <>
  <div
  className="nav-hotzone"
  onMouseEnter={() => setPeek(true)}
  aria-hidden
  />
- {!peek && (
- <button
- className="nav-float-open"
- onClick={() => setCollapsedPersist(false)}
- onMouseEnter={() => setPeek(true)}
- title="Show sidebar"
- aria-label="Show sidebar"
- >
- <PanelLeftOpen size={16} />
- </button>
- )}
- </>
  )}
 
  {/* Sidebar */}
@@ -499,7 +488,7 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  @keyframes forge-spin { to { transform: rotate(360deg); } }
  .nav-bell-desktop { display: inline-flex; }
  .nav-collapse-btn:hover { color: var(--accent) !important; background: rgba(245,158,11,0.08); }
- .nav-hotzone, .nav-float-open { display: none; }
+ .nav-hotzone { display: none; }
  @media (min-width: 769px) {
  .dashboard-main { transition: margin-left 0.25s ease; }
  body.nav-collapsed .dashboard-sidebar { transform: translateX(-100%); }
@@ -515,22 +504,6 @@ export default function DashboardNav({ user, userRole, orgRole, isAlsoLearning =
  width: 14px;
  z-index: 46;
  }
- body.nav-collapsed .nav-float-open {
- display: inline-flex;
- align-items: center;
- justify-content: center;
- position: fixed;
- top: 14px; left: 14px;
- width: 34px; height: 34px;
- border-radius: 8px;
- background: var(--bg-panel);
- border: 1px solid var(--border);
- color: var(--text-secondary);
- cursor: pointer;
- z-index: 46;
- transition: color 0.15s, border-color 0.15s;
- }
- body.nav-collapsed .nav-float-open:hover { color: var(--accent); border-color: var(--accent); }
  }
  @media (max-width: 768px) {
  .nav-collapse-btn { display: none !important; }

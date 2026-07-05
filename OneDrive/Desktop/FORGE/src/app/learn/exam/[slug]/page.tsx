@@ -30,7 +30,7 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
  {/* Banner */}
  <section className="border-b border-[color:var(--border)]" style={{ background: "linear-gradient(180deg, rgba(212,175,55,0.05), transparent)" }}>
- <div className="mx-auto max-w-5xl px-6 pt-8 pb-7">
+ <div className="mx-auto w-full max-w-[1180px] px-6 pt-8 pb-7 md:px-12">
  <Link href="/learn" className="inline-flex items-center gap-1.5 text-xs" style={{ fontFamily: "var(--font-mono)", color: "var(--text-dim)" }}>
  <ArrowLeft size={12} /> all paths
  </Link>
@@ -73,7 +73,7 @@ export default async function ExamPathPage({ params }: { params: Promise<{ slug:
  </div>
  </section>
 
- <section className="mx-auto max-w-5xl px-6 py-10">
+ <section className="mx-auto w-full max-w-[1180px] px-6 py-10 md:px-12">
  <ReadinessPanel slug={path.slug} modules={modules} />
  <PathMap slug={path.slug} gradient={path.gradient} modules={modules} />
  </section>

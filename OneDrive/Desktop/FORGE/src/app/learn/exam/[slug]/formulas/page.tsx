@@ -17,7 +17,7 @@ export default async function FormulaSheetPage({ params }: { params: Promise<{ s
 
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
-      <article className="mx-auto max-w-3xl px-6 pt-8 pb-20">
+      <article className="mx-auto w-full max-w-[1000px] px-6 pt-8 pb-20 md:px-12">
         {/* Breadcrumb + print */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link

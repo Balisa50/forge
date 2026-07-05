@@ -44,22 +44,33 @@ export function Tex({ children, block = false }: { children: string; block?: boo
  */
 const TOKEN_RE = /(\$\$[^$]+?\$\$)|(\$[^$\n]+?\$)|(\*\*[\s\S]+?\*\*)|(`[^`]+?`)/g;
 
-// Outside math, LaTeX escapes like `\%` and `\$` should display as literal
-// symbols — KaTeX only runs inside `$...$`, so in prose the backslash would show
-// verbatim ("8\%"). Strip it from prose fragments so percentages/amounts read
-// cleanly. (In-math text goes through renderTeX untouched, where `\%` is correct.)
-const plainProse = (s: string) => s.replace(/\\([%$&#_])/g, "$1");
+// A literal dollar sign in prose is authored as `\$` (money: "\$1", "\$5000").
+// It must NEVER act as a math delimiter, or it pairs with the next real `$` and
+// swallows the sentence between them into KaTeX (which strips spaces, producing
+// garbage like "1andaneffectiveannualratei"). We swap every `\$` for a private
+// sentinel BEFORE tokenizing, so only true math dollars remain, then restore the
+// sentinel to a plain `$` in prose. NUL never appears in real content.
+const DOLLAR_SENTINEL = String.fromCharCode(0);
+
+// Outside math, LaTeX escapes like `\%` should display as literal symbols —
+// KaTeX only runs inside `$...$`, so in prose the backslash would show verbatim
+// ("8\%"). Strip it from prose fragments (and restore money dollars from the
+// sentinel) so percentages/amounts read cleanly. (In-math text goes through
+// renderTeX untouched, where `\%` is correct.)
+const plainProse = (s: string) =>
+  s.split(DOLLAR_SENTINEL).join("$").replace(/\\([%&#_])/g, "$1");
 
 export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[] {
   if (!text) return [];
+  const src = text.split("\\$").join(DOLLAR_SENTINEL);
   const nodes: React.ReactNode[] = [];
   const re = new RegExp(TOKEN_RE.source, "g");
   let last = 0;
   let k = 0;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(text))) {
+  while ((m = re.exec(src))) {
     if (m.index > last) {
-      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(text.slice(last, m.index))}</React.Fragment>);
+      nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(src.slice(last, m.index))}</React.Fragment>);
     }
     const tok = m[0];
     if (m[1]) {
@@ -103,8 +114,8 @@ export function renderRichText(text: string, keyPrefix = "m"): React.ReactNode[]
     }
     last = m.index + tok.length;
   }
-  if (last < text.length) {
-    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(text.slice(last))}</React.Fragment>);
+  if (last < src.length) {
+    nodes.push(<React.Fragment key={`${keyPrefix}-p${k++}`}>{plainProse(src.slice(last))}</React.Fragment>);
   }
   return nodes;
 }

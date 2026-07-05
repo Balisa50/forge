@@ -14,9 +14,9 @@ export const dynamic = "force-dynamic";
 
 // Actuary concept pages are PUBLIC by design, full lessons + quiz, no login wall.
 //
-// Layout: editorial two-column on large screens, a wide flat reading column
-// (no cards, content sits on the page) plus a sticky status rail. On small
-// screens the rail content stacks under the title.
+// Layout: one flowing full-width column — no reserved side rail (that left dead
+// space next to the content). The concept's live status is a compact strip
+// under the title. Content uses the whole reading area.
 export default async function ConceptPage({ params }: { params: Promise<{ slug: string; concept: string }> }) {
  const { slug, concept: conceptId } = await params;
 
@@ -36,7 +36,7 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
 
  return (
  <main style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
- <article className="mx-auto max-w-6xl px-6 pt-8 pb-20">
+ <article className="mx-auto w-full px-6 pt-8 pb-20 md:px-12" style={{ maxWidth: 1180 }}>
  {/* Breadcrumb */}
  <div className="flex flex-wrap items-center gap-2" style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
  <Link href={`/learn/exam/${slug}`} className="inline-flex items-center gap-1.5 hover:text-[color:var(--accent)]">
@@ -46,23 +46,23 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
  <span style={{ color: "var(--accent)" }}>{module.title}</span>
  </div>
 
- <div className="mt-5 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-14">
- {/* Reading column */}
- <div className="min-w-0">
- <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(1.75rem, 4.5vw, 2.75rem)", fontWeight: 700, lineHeight: 1.1 }}>
+ {/* Title */}
+ <h1 className="mt-5" style={{ fontFamily: "var(--font-headline)", fontSize: "clamp(1.75rem, 4.5vw, 2.75rem)", fontWeight: 700, lineHeight: 1.1 }}>
  {concept.title}
  </h1>
- <p className="mt-2" style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.55, maxWidth: 680 }}>
+ <p className="mt-2" style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", lineHeight: 1.55, maxWidth: 760 }}>
  {concept.tagline}
  </p>
 
- {/* Status + start, stacked here on small screens; the rail owns them on lg+ */}
- <div className="mt-5 space-y-4 lg:hidden">
- <div className="inline-flex items-center gap-1.5" style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
+ {/* Live status + start, one compact strip under the title (no side rail) */}
+ <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-[color:var(--border)] py-3">
+ <span className="inline-flex items-center gap-1.5" style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
  <Clock size={11} /> ~{concept.minutes} min focused
- </div>
+ </span>
  <ConceptStatusBar slug={slug} conceptId={conceptId} />
+ <div className="ml-auto">
  <StartConceptButton slug={slug} conceptId={conceptId} />
+ </div>
  </div>
 
  {/* Teaching arc */}
@@ -120,22 +120,6 @@ export default async function ConceptPage({ params }: { params: Promise<{ slug: 
  </Link>
  ) : <div />}
  </nav>
- </div>
-
- {/* Sticky status rail (lg+) */}
- <aside className="hidden lg:block">
- <div className="sticky top-8 space-y-5 border-l border-[color:var(--border)] pl-6">
- <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-dim)" }}>
- This concept
- </p>
- <div className="inline-flex items-center gap-1.5" style={{ fontFamily: "var(--font-mono)", fontSize: "0.6875rem", color: "var(--text-dim)" }}>
- <Clock size={11} /> ~{concept.minutes} min focused
- </div>
- <ConceptStatusBar slug={slug} conceptId={conceptId} />
- <StartConceptButton slug={slug} conceptId={conceptId} />
- </div>
- </aside>
- </div>
  </article>
  </main>
  );
