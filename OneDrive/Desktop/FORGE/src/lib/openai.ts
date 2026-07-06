@@ -3,33 +3,32 @@ import OpenAI from "openai";
 /**
  * THE FORGE, AI Client
  *
- * Uses OpenRouter with automatic fallback models.
- * Primary: Qwen 3 (235B), best for deep technical questions
- * Fallbacks: DeepSeek V3, Llama 4 Maverick, reliable alternatives
+ * Runs on NVIDIA's free OpenAI-compatible endpoint (was OpenRouter). One key,
+ * NVIDIA_API_KEY, all free models. The general chain drives the exam engine and
+ * everyday generation; THE PROFESSOR (mentor) runs on a heavier reasoning model.
  */
 
 const globalForAI = globalThis as unknown as { openai: OpenAI };
 
-// Model priority list, tries each in order if previous fails
-// Current as of April 2026, uses fast non-thinking models for reliability
+// General-purpose model chain, tried in order on failure. All free on NVIDIA.
 export const FORGE_MODELS = [
- process.env.FORGE_AI_MODEL || "qwen/qwen3-max",
- "deepseek/deepseek-v3.2",
- "mistralai/mistral-large-2512",
- "openai/gpt-oss-120b:free",
+ process.env.FORGE_AI_MODEL || "mistralai/mistral-medium-3.5-128b",
+ "deepseek-ai/deepseek-v4-flash",
+ "z-ai/glm-5.2",
 ];
 
 export const FORGE_MODEL = FORGE_MODELS[0];
 
+// THE PROFESSOR judges real student work and must reason hard, so the mentor
+// runs on a heavier model than the general chain. Overridable via env.
+export const FORGE_MENTOR_MODEL =
+ process.env.FORGE_MENTOR_MODEL || "deepseek-ai/deepseek-v4-pro";
+
 export const openai =
  globalForAI.openai ??
  new OpenAI({
- apiKey: process.env.OPENROUTER_API_KEY,
- baseURL: "https://openrouter.ai/api/v1",
- defaultHeaders: {
- "HTTP-Referer": process.env.NEXTAUTH_URL || "http://localhost:3000",
- "X-Title": "THE FORGE",
- },
+ apiKey: process.env.NVIDIA_API_KEY,
+ baseURL: "https://integrate.api.nvidia.com/v1",
  });
 
 if (process.env.NODE_ENV !== "production") {

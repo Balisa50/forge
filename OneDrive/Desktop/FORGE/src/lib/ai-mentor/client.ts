@@ -1,18 +1,13 @@
 /**
- * Anthropic Claude wrapper for THE PROFESSOR.
+ * THE PROFESSOR (mentor) LLM wrapper.
  *
- * Lazy: we DO NOT import the @anthropic-ai/sdk at module load time. The
- * SDK is only required when an actual call is made AND the API key is
- * present AND the feature flag is on. This keeps build + cold-start
- * costs at zero while the feature is dormant.
+ * Runs on NVIDIA's free endpoint via the shared FORGE client, using the heavy
+ * reasoning model (FORGE_MENTOR_MODEL) so verdicts on real student work are
+ * sharp. Was Anthropic Claude Sonnet; the paid key ran out.
  */
 
 import { composeSystemPrompt, type VerificationResult } from "./persona";
-
-// Pricing per million tokens (Sonnet 4.5 standard rates - update when Anthropic adjusts)
-// Used purely to estimate cost-per-interaction for the audit log.
-const SONNET_INPUT_COST_PER_M_TOKENS = 3.0;
-const SONNET_OUTPUT_COST_PER_M_TOKENS = 15.0;
+import { openai, FORGE_MENTOR_MODEL } from "../openai";
 
 export interface ProfessorCallOpts {
  studentFirstName: string;
@@ -45,14 +40,9 @@ export interface ProfessorCallResult {
  * off. Callers should check aiMentorEnabled() first.
  */
 export async function callTheProfessor(opts: ProfessorCallOpts): Promise<ProfessorCallResult> {
- const apiKey = process.env.ANTHROPIC_API_KEY;
- if (!apiKey) {
- throw new Error("ANTHROPIC_API_KEY is not set - cannot call The Professor");
+ if (!process.env.NVIDIA_API_KEY) {
+ throw new Error("NVIDIA_API_KEY is not set - cannot call The Professor");
  }
-
- // Dynamic import keeps the SDK out of the build until first actual use.
- const { default: Anthropic } = await import("@anthropic-ai/sdk");
- const client = new Anthropic({ apiKey });
 
  const systemPrompt = composeSystemPrompt({
  studentFirstName: opts.studentFirstName,
@@ -68,24 +58,19 @@ export async function callTheProfessor(opts: ProfessorCallOpts): Promise<Profess
  ? `${opts.userMessage}\n\nReturn ONLY a JSON object matching the VerificationResult schema. No prose before or after.`
  : opts.userMessage;
 
- const response = await client.messages.create({
- model: "claude-sonnet-4-5",
+ const response = await openai.chat.completions.create({
+ model: FORGE_MENTOR_MODEL,
  max_tokens: opts.maxTokens ?? 1500,
- system: systemPrompt,
- messages: [{ role: "user", content: userContent }],
+ messages: [
+ { role: "system", content: systemPrompt },
+ { role: "user", content: userContent },
+ ],
  });
 
- // Extract text from the response content blocks
- let text = "";
- for (const block of response.content) {
- if (block.type === "text") text += block.text;
- }
-
- const inputTokens = response.usage.input_tokens;
- const outputTokens = response.usage.output_tokens;
- const costUsd =
- (inputTokens * SONNET_INPUT_COST_PER_M_TOKENS) / 1_000_000 +
- (outputTokens * SONNET_OUTPUT_COST_PER_M_TOKENS) / 1_000_000;
+ const text = response.choices[0]?.message?.content ?? "";
+ const inputTokens = response.usage?.prompt_tokens ?? 0;
+ const outputTokens = response.usage?.completion_tokens ?? 0;
+ const costUsd = 0; // NVIDIA free endpoint
 
  return { text, inputTokens, outputTokens, costUsd };
 }

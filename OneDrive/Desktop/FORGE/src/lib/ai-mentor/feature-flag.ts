@@ -18,10 +18,10 @@ export function aiMentorEnabled(opts?: { userId?: string }): boolean {
  if (allowed.length > 0 && !allowed.includes(opts.userId)) return false;
  }
 
- // Belt + braces: require the Anthropic key to actually be present
- // before claiming we are enabled. Prevents a half-configured deploy
- // from claiming the feature is on.
- if (!process.env.ANTHROPIC_API_KEY) return false;
+ // Belt + braces: require the NVIDIA key to actually be present before
+ // claiming we are enabled. Prevents a half-configured deploy from
+ // claiming the feature is on.
+ if (!process.env.NVIDIA_API_KEY) return false;
 
  return true;
 }
