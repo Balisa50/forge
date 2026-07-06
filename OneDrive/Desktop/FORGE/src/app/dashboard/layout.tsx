@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import DashboardNav from "@/components/DashboardNav";
 import SuspensionLetter from "@/components/SuspensionLetter";
@@ -8,7 +9,11 @@ import ClientRememberName from "@/components/ClientRememberName";
 import MessageToast from "@/components/MessageToast";
 import ProfessorMessage from "@/components/ProfessorMessage";
 import { effectiveVisibility, parseVisibility } from "@/lib/visibility";
+import { maybeIdleNudge } from "@/lib/ai-mentor/proactive";
 import { soloModeEnabled } from "@/lib/modes";
+
+// Room for the idle-nudge review (background LLM call via next/after) to finish.
+export const maxDuration = 60;
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
  const session = await auth();
@@ -95,6 +100,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
  const visibility = effectiveVisibility(mentorLinks.map((l) => l.visibility));
  const hasMentor = mentorLinks.length > 0;
+
+ // THE PROFESSOR notices you. After the page renders, check (cheaply, guarded)
+ // whether this learner has gone quiet and, if so, generate a nudge that pops
+ // up next poll. No-ops fast when not enabled / not idle / nudged recently.
+ after(() => maybeIdleNudge(session.user!.id!));
 
  return (
  <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex" }}>
