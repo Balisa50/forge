@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import RoadmapView from "@/components/RoadmapView";
+import AskProfessor from "@/components/AskProfessor";
 import Link from "next/link";
 import { loadAllRoadmaps, type RoadmapWeek } from "@/lib/roadmaps";
 import { Map as MapIcon } from "lucide-react";
@@ -83,6 +84,8 @@ export default async function RoadmapPage() {
  </div>
  <Link href="/dashboard/checkin" className="forge-btn forge-btn-primary">Check In Today</Link>
  </div>
+
+ <AskProfessor />
 
  <RoadmapView roadmap={roadmap} curatedSlug={curatedSlug} weekByTaskId={weekByTaskId} />
  </div>

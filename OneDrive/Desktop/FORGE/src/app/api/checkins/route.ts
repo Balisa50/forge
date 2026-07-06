@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyProjectUrl } from "@/lib/verify-url";
+import { runProactiveReview } from "@/lib/ai-mentor/proactive";
 import {
  type FileAttachment, MAX_TOTAL_BYTES, MAX_FILE_BYTES, getFileExtension, isAcceptedExtension,
  normalizeSubmissionConfig, validateSubmission,
@@ -9,6 +10,10 @@ import {
 import { loadRoadmap } from "@/lib/roadmaps";
 import { curatedSlugForTitle } from "@/lib/curated-slug";
 import { sendNotification } from "@/lib/notify";
+
+// The Professor's proactive review runs after the response via next/after; give
+// the function room to finish that background LLM + repo-inspection work.
+export const maxDuration = 60;
 
 function isHttpUrl(s: string): boolean {
  try {
@@ -424,6 +429,29 @@ export async function POST(req: NextRequest) {
  }
  } catch (err) {
  console.warn("[checkins] mentor notify failed:", err instanceof Error ? err.message : err);
+ }
+
+ // PROACTIVE AI MENTOR. If The Professor is on for this solo learner and they
+ // shipped a real artefact (repo or live URL), review it AFTER the response is
+ // sent (next/after) so the check-in stays instant. The Professor then drops a
+ // message on their dashboard unprompted. runProactiveReview no-ops when the
+ // mentor is disabled or the learner is over budget.
+ if (evidenceUrl || videoUrl) {
+ const submissionNote =
+ incomingAnswers
+ .map((a) => (typeof a?.answer === "string" ? a.answer.trim() : ""))
+ .filter(Boolean)
+ .join("\n") || "(shipped a project URL / evidence, no written answers)";
+ after(() =>
+ runProactiveReview({
+ userId,
+ taskId: task.id,
+ checkinId: checkin.id,
+ description: submissionNote,
+ evidenceUrl,
+ videoUrl,
+ }),
+ );
  }
 
  return NextResponse.json({ checkinId: checkin.id, passed: true }, { status: 201 });
