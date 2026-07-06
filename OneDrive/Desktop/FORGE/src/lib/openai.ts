@@ -27,7 +27,10 @@ export const FORGE_MENTOR_MODEL =
 export const openai =
  globalForAI.openai ??
  new OpenAI({
- apiKey: process.env.NVIDIA_API_KEY,
+ // Placeholder when unset so the SDK constructor never throws at build/
+ // module-load time (Next evaluates this during "collect page data").
+ // Real calls 401 only if NVIDIA_API_KEY is genuinely missing at runtime.
+ apiKey: process.env.NVIDIA_API_KEY || "nvapi-not-set",
  baseURL: "https://integrate.api.nvidia.com/v1",
  });
 
