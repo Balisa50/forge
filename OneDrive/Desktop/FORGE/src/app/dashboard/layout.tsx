@@ -10,6 +10,7 @@ import MessageToast from "@/components/MessageToast";
 import ProfessorMessage from "@/components/ProfessorMessage";
 import { effectiveVisibility, parseVisibility } from "@/lib/visibility";
 import { maybeIdleNudge } from "@/lib/ai-mentor/proactive";
+import { releaseNextWeek } from "@/lib/ai-mentor/release";
 import { soloModeEnabled } from "@/lib/modes";
 
 // Room for the idle-nudge review (background LLM call via next/after) to finish.
@@ -105,6 +106,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
  // whether this learner has gone quiet and, if so, generate a nudge that pops
  // up next poll. No-ops fast when not enabled / not idle / nudged recently.
  after(() => maybeIdleNudge(session.user!.id!));
+
+ // PACED PROGRESSION (solo learners only). The lazy release: the first time a
+ // fast finisher comes back after their passed week's minimum duration is up,
+ // the next week opens. No-ops fast when they have a human mentor, the current
+ // week isn't verified, its time isn't up, or there's nothing left to release.
+ if (!hasMentor) after(() => releaseNextWeek(session.user!.id!));
 
  return (
  <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex" }}>

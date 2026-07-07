@@ -180,10 +180,12 @@ Questions you asked:\n${questions.map((q, i) => `Q${i + 1}: ${q.prompt}`).join("
  });
  }
 
- // On a pass, THE PROFESSOR releases the next week (progression is the AI's
- // job for a solo learner). Runs after the response so grading stays snappy.
+ // On a pass, THE PROFESSOR releases the next week — but PACED: it only opens
+ // now if the week's minimum duration is already up. Finish early and the work
+ // is verified while the next week stays scheduled; announce tells them when.
+ // Progression is the AI's job for a solo learner. Runs after the response.
  if (passed) {
- after(() => releaseNextWeek(userId));
+ after(() => releaseNextWeek(userId, { announce: true }));
  }
 
  // Audit + a message that pops on the dashboard.

@@ -7,7 +7,7 @@
  */
 
 import { composeSystemPrompt, type VerificationResult } from "./persona";
-import { openai, FORGE_MENTOR_MODEL } from "../openai";
+import { createWithMentorFallback } from "../openai";
 
 export interface ProfessorCallOpts {
  studentFirstName: string;
@@ -58,8 +58,9 @@ export async function callTheProfessor(opts: ProfessorCallOpts): Promise<Profess
  ? `${opts.userMessage}\n\nReturn ONLY a JSON object matching the VerificationResult schema. No prose before or after.`
  : opts.userMessage;
 
- const response = await openai.chat.completions.create({
- model: FORGE_MENTOR_MODEL,
+ // Resilient: leads with the heavy reasoning model, retries transient errors,
+ // then degrades down FORGE_MENTOR_MODELS. Only throws if EVERY model fails.
+ const { completion } = await createWithMentorFallback({
  max_tokens: opts.maxTokens ?? 1500,
  messages: [
  { role: "system", content: systemPrompt },
@@ -67,9 +68,9 @@ export async function callTheProfessor(opts: ProfessorCallOpts): Promise<Profess
  ],
  });
 
- const text = response.choices[0]?.message?.content ?? "";
- const inputTokens = response.usage?.prompt_tokens ?? 0;
- const outputTokens = response.usage?.completion_tokens ?? 0;
+ const text = completion.choices[0]?.message?.content ?? "";
+ const inputTokens = completion.usage?.prompt_tokens ?? 0;
+ const outputTokens = completion.usage?.completion_tokens ?? 0;
  const costUsd = 0; // NVIDIA free endpoint
 
  return { text, inputTokens, outputTokens, costUsd };
@@ -89,6 +90,11 @@ ${opts.masteryAnswers.map((a, i) => `Q${i + 1}: ${a}`).join("\n\n")}
 Evidence I have access to:
 ${opts.evidenceSummary}`;
 
+ // Grading is the one path a student is BLOCKED on, so we don't let a single
+ // malformed-JSON reply fail it: try up to twice (each attempt rotates the
+ // resilient model chain internally), and only surface an error if both fail.
+ let lastErr: unknown;
+ for (let attempt = 0; attempt < 2; attempt++) {
  const raw = await callTheProfessor({
  ...opts,
  userMessage,
@@ -96,23 +102,16 @@ ${opts.evidenceSummary}`;
  maxTokens: 2000,
  });
 
- // Parse the JSON response. If it fails, log it - we'd rather know than silently 200.
- let parsed: unknown;
  try {
- // Strip any accidental code fence wrapping
- const cleaned = raw.text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
- parsed = JSON.parse(cleaned);
- } catch (e) {
- throw new Error(`The Professor returned invalid JSON: ${(e as Error).message}\nRaw: ${raw.text.slice(0, 500)}`);
- }
+ // Strip fences / any prose around the object.
+ const cleaned = extractJsonObject(raw.text);
+ const p = JSON.parse(cleaned) as Partial<VerificationResult>;
 
- // Light validation - we don't want a malformed object to slip through.
- const p = parsed as Partial<VerificationResult>;
  if (!p.verdict || !["verified", "needs_work", "rejected"].includes(p.verdict)) {
- throw new Error(`The Professor returned invalid verdict: ${JSON.stringify(p.verdict)}`);
+ throw new Error(`invalid verdict: ${JSON.stringify(p.verdict)}`);
  }
  if (typeof p.feedback !== "string" || p.feedback.length < 10) {
- throw new Error(`The Professor returned invalid feedback`);
+ throw new Error("invalid feedback");
  }
 
  return {
@@ -126,6 +125,22 @@ ${opts.evidenceSummary}`;
  },
  raw,
  };
+ } catch (e) {
+ lastErr = e;
+ console.warn(`[ai-mentor] grade parse failed (attempt ${attempt + 1}/2):`, (e as Error).message);
+ }
+ }
+
+ throw new Error(`The Professor returned invalid grading JSON after 2 attempts: ${(lastErr as Error)?.message}`);
+}
+
+/** Pull the first {...} object out of a model reply, tolerating fences/prose. */
+function extractJsonObject(text: string): string {
+ const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
+ const start = trimmed.indexOf("{");
+ const end = trimmed.lastIndexOf("}");
+ if (start !== -1 && end !== -1 && end > start) return trimmed.slice(start, end + 1);
+ return trimmed;
 }
 
 /**
