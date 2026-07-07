@@ -148,7 +148,12 @@ ${opts.evidenceSummary}
 Return ONLY a JSON object, no prose, exactly this shape:
 {"reaction": "one or two blunt sentences reacting to what you see", "questions": ["...", "...", "..."]}
 
-Write exactly ${n} questions. Each question MUST be answerable only by someone who genuinely did THIS specific work: anchor every question to a concrete detail in their evidence — a function or line they wrote, a parameter or library they chose, a metric they reported, a design decision they made. NEVER ask a generic question that could apply to any project. If the evidence is thin or fake, ask questions that expose that. Return ONLY the JSON.`;
+Write exactly ${n} questions ENGINEERED so that an AI answering on the student's behalf cannot fake them, and only someone who genuinely lived this work can answer. Rules for the questions:
+- Anchor every question to a concrete, specific detail visible in THEIR evidence: a function or line they wrote, a variable or parameter they named, a library or value they chose, a metric they reported, a commit they made.
+- Prefer EXPERIENTIAL and DECISION questions over definitional ones: what broke while they built this and how they found it; what they tried first that did not work; why they chose X over Y for THEIR specific data/case; what would break if a particular function or line were removed; what they would change if they rebuilt it; an odd result and what caused it.
+- BAN textbook / definitional questions ("what is X?", "explain how Y works") — an AI answers those perfectly and they prove nothing. Every question must be about THIS project, not the concept in general.
+- If the evidence is thin, empty, or looks fabricated, ask questions whose only honest answer exposes that.
+Return ONLY the JSON.`;
 
  const raw = await callTheProfessor({ ...opts, userMessage, requireJson: false, maxTokens: 900 });
 

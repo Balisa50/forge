@@ -12,12 +12,13 @@
  * answered by someone who did the work. Grading reuses verifyWithTheProfessor.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { aiMentorEnabled, AI_MENTOR_DISABLED_RESPONSE } from "@/lib/ai-mentor/feature-flag";
 import { verifyWithTheProfessor } from "@/lib/ai-mentor/client";
 import { checkBudget } from "@/lib/ai-mentor/budget";
+import { releaseNextWeek } from "@/lib/ai-mentor/release";
 
 // Grading is a heavy reasoning-model call; give it room.
 export const maxDuration = 60;
@@ -133,7 +134,15 @@ export async function POST(req: NextRequest) {
  weekTitle: task?.title ?? "(week)",
  weekBrief: task?.detail,
  priorWarningCount: 0,
- userMessage: `${first} is defending Week ${weekNumber}. Below are YOUR defence questions and their answers. Grade STRICTLY: each answer must show genuine, first-hand understanding of THEIR specific work as shown in the evidence. Reward real understanding; fail vague, evasive, generic, or AI-sounding answers, or answers that contradict the evidence. Do not pass work the student cannot actually defend.\n\nQuestions you asked:\n${questions.map((q, i) => `Q${i + 1}: ${q.prompt}`).join("\n")}`,
+ userMessage: `${first} is defending Week ${weekNumber}. Below are YOUR defence questions and their answers. Grade STRICTLY and actively HUNT for answers written by an AI rather than by the student.
+
+How to tell them apart:
+- A REAL answer from someone who did the work is specific and often a little messy. It names their OWN functions, variables, numbers, files, and decisions; it references concrete things visible in the evidence; it can describe what actually broke, what they tried, why they chose what they chose FOR THIS project.
+- An AI-WRITTEN answer is fluent, polished, generic, and over-structured (tidy lists, "it's important to note", textbook phrasing, hedging). It explains the CONCEPT correctly but never the student's SPECIFIC implementation, and it would read identically for any project.
+
+If an answer is correct-sounding but does NOT tie to concrete specifics from THIS student's actual code and evidence, treat it as likely AI-generated and do NOT pass it. Reward specific, first-hand detail; fail generic fluency and anything that contradicts the evidence. Only a student who truly built this can point to their own code — one who did not will speak in generalities. Do not pass work the student cannot genuinely defend.
+
+Questions you asked:\n${questions.map((q, i) => `Q${i + 1}: ${q.prompt}`).join("\n")}`,
  masteryAnswers: answers,
  evidenceSummary,
  });
@@ -169,6 +178,12 @@ export async function POST(req: NextRequest) {
  where: { id: interro.checkin.taskId },
  data: passed ? { status: "verified", verifiedAt: new Date() } : { status: "available" },
  });
+ }
+
+ // On a pass, THE PROFESSOR releases the next week (progression is the AI's
+ // job for a solo learner). Runs after the response so grading stays snappy.
+ if (passed) {
+ after(() => releaseNextWeek(userId));
  }
 
  // Audit + a message that pops on the dashboard.
