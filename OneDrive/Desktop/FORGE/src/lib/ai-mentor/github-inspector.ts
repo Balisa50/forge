@@ -26,6 +26,9 @@ export interface RepoInspection {
  pushedAt: string | null;
  readme: { exists: boolean; preview: string };
  fileTree: { path: string; size: number; type: "blob" | "tree" }[];
+ /** Actual contents of the 2-3 most important source files, so The Professor
+  * judges the real code, not just that a filename exists. */
+ keyFiles: { path: string; size: number; preview: string }[];
  recentCommits: { sha: string; message: string; date: string; author: string }[];
  /** Red flags the AI should pay attention to. */
  warnings: string[];
@@ -55,7 +58,7 @@ export async function inspectGithubRepo(url: string): Promise<RepoInspection> {
  return {
  url, owner: "", repo: "", exists: false, isEmpty: false, defaultBranch: "",
  description: null, stars: 0, language: null, createdAt: "", updatedAt: "", pushedAt: null,
- readme: { exists: false, preview: "" }, fileTree: [], recentCommits: [],
+ readme: { exists: false, preview: "" }, fileTree: [], keyFiles: [], recentCommits: [],
  warnings: ["URL does not look like a GitHub repository (e.g. https://github.com/user/repo)"],
  };
  }
@@ -79,7 +82,7 @@ export async function inspectGithubRepo(url: string): Promise<RepoInspection> {
  return {
  url, owner, repo, exists: false, isEmpty: false, defaultBranch: "",
  description: null, stars: 0, language: null, createdAt: "", updatedAt: "", pushedAt: null,
- readme: { exists: false, preview: "" }, fileTree: [], recentCommits: [],
+ readme: { exists: false, preview: "" }, fileTree: [], keyFiles: [], recentCommits: [],
  warnings: [`Repository not accessible (HTTP ${meta.status}). It may be private or non-existent.`],
  };
  }
@@ -110,19 +113,63 @@ export async function inspectGithubRepo(url: string): Promise<RepoInspection> {
  warnings.push("Could not fetch README.");
  }
 
- // 3) File tree (top level only, fast)
+ // 3) File tree (recursive, so key source files in subfolders are visible)
  let fileTree: RepoInspection["fileTree"] = [];
+ const keyFiles: RepoInspection["keyFiles"] = [];
  const tree = await gh<{ tree: Array<{ path: string; size?: number; type: string }> }>(
- `/repos/${owner}/${repo}/git/trees/${meta.data.default_branch}?recursive=0`,
+ `/repos/${owner}/${repo}/git/trees/${meta.data.default_branch}?recursive=1`,
  );
  if (tree.ok && tree.data) {
+ const blobs = tree.data.tree.filter(
+ (x): x is { path: string; size: number; type: "blob" } => x.type === "blob",
+ );
  fileTree = tree.data.tree
  .filter((x): x is { path: string; size: number; type: "blob" | "tree" } =>
  x.type === "blob" || x.type === "tree",
  )
  .map((x) => ({ path: x.path, size: x.size ?? 0, type: x.type as "blob" | "tree" }))
- .slice(0, 50);
+ .slice(0, 60);
  if (fileTree.length === 0) warnings.push("Default branch has no files.");
+
+ // Read the ACTUAL contents of the 3 most important source files. This is
+ // what lets The Professor judge the real code, not just that a filename
+ // exists, an empty train.py can no longer pass as real work.
+ const SRC = /\.(py|ipynb|ts|tsx|js|jsx|mjs|r|jl|java|go|rs|c|cc|cpp|sql)$/i;
+ const IGNORE = /(^|\/)(node_modules|\.next|dist|build|out|vendor|\.venv|env)\/|package-lock\.json|yarn\.lock|pnpm-lock\.yaml|\.min\./i;
+ const ENTRY = /(^|\/)(main|app|train|model|models|index|server|api|run|pipeline|solution)\.\w+$/i;
+ const candidates = blobs
+ .filter((f) => SRC.test(f.path) && !IGNORE.test(f.path))
+ .sort((a, b) => {
+ const ea = ENTRY.test(a.path) ? 1 : 0;
+ const eb = ENTRY.test(b.path) ? 1 : 0;
+ if (ea !== eb) return eb - ea; // entry points first
+ return (b.size ?? 0) - (a.size ?? 0); // then largest
+ })
+ .slice(0, 3);
+
+ for (const f of candidates) {
+ try {
+ const res = await fetch(
+ `https://api.github.com/repos/${owner}/${repo}/contents/${f.path.split("/").map(encodeURIComponent).join("/")}?ref=${meta.data.default_branch}`,
+ {
+ headers: {
+ Accept: "application/vnd.github.raw",
+ "X-GitHub-Api-Version": "2022-11-28",
+ ...(process.env.GITHUB_PAT ? { Authorization: `Bearer ${process.env.GITHUB_PAT}` } : {}),
+ },
+ },
+ );
+ if (res.ok) {
+ const raw = await res.text();
+ keyFiles.push({ path: f.path, size: f.size ?? raw.length, preview: raw.slice(0, 1800) });
+ if (raw.trim().length < 40) {
+ warnings.push(`${f.path} exists but is nearly empty (under 40 characters of code) - check it is real work.`);
+ }
+ }
+ } catch {
+ /* skip an unreadable file */
+ }
+ }
  }
 
  // 4) Recent commits (last 10)
@@ -172,6 +219,7 @@ export async function inspectGithubRepo(url: string): Promise<RepoInspection> {
  pushedAt: meta.data.pushed_at,
  readme,
  fileTree,
+ keyFiles,
  recentCommits,
  warnings,
  };
@@ -193,6 +241,12 @@ export function formatInspectionForProfessor(inspection: RepoInspection): string
  inspection.recentCommits.map((c) => ` ${c.sha} ${c.date} - ${c.author}: "${c.message}"`).join("\n") || " (none)",
  `README (first 2000 chars):`,
  inspection.readme.exists ? inspection.readme.preview : "(no README)",
+ `Key source files - ACTUAL CONTENTS (judge the real code, not the filename; verify the README's claims against this):`,
+ inspection.keyFiles.length > 0
+ ? inspection.keyFiles
+ .map((f) => `----- ${f.path} (${f.size} bytes) -----\n${f.preview}`)
+ .join("\n\n")
+ : " (no source files could be read)",
  ];
  if (inspection.warnings.length > 0) {
  lines.push("", "RED FLAGS DETECTED:");
