@@ -127,3 +127,44 @@ ${opts.evidenceSummary}`;
  raw,
  };
 }
+
+/**
+ * Generate a short reaction + defence questions from the student's actual work.
+ *
+ * The questions must be answerable ONLY by someone who did THIS work — each one
+ * anchored to a concrete detail in the inspected evidence (a function they
+ * wrote, a parameter they chose, a number they reported). This is the viva: the
+ * student then answers, and verifyWithTheProfessor grades the answers strictly.
+ */
+export async function generateDefenceQuestions(
+ opts: Omit<ProfessorCallOpts, "requireJson"> & { evidenceSummary: string; count?: number },
+): Promise<{ reaction: string; questions: string[]; raw: ProfessorCallResult }> {
+ const n = opts.count ?? 3;
+ const userMessage = `${opts.userMessage}
+
+The student's inspected evidence (their actual source code, README, commit history, live site):
+${opts.evidenceSummary}
+
+Return ONLY a JSON object, no prose, exactly this shape:
+{"reaction": "one or two blunt sentences reacting to what you see", "questions": ["...", "...", "..."]}
+
+Write exactly ${n} questions. Each question MUST be answerable only by someone who genuinely did THIS specific work: anchor every question to a concrete detail in their evidence — a function or line they wrote, a parameter or library they chose, a metric they reported, a design decision they made. NEVER ask a generic question that could apply to any project. If the evidence is thin or fake, ask questions that expose that. Return ONLY the JSON.`;
+
+ const raw = await callTheProfessor({ ...opts, userMessage, requireJson: false, maxTokens: 900 });
+
+ const cleaned = raw.text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
+ let parsed: { reaction?: unknown; questions?: unknown } = {};
+ try {
+ parsed = JSON.parse(cleaned);
+ } catch {
+ // Fall back: pull anything that looks like a question line.
+ const lines = raw.text.split("\n").map((l) => l.replace(/^[\s\d.)*-]+/, "").trim()).filter((l) => l.endsWith("?"));
+ parsed = { reaction: "", questions: lines };
+ }
+
+ const questions = Array.isArray(parsed.questions)
+ ? parsed.questions.filter((q): q is string => typeof q === "string" && q.trim().length > 3).slice(0, n)
+ : [];
+ const reaction = typeof parsed.reaction === "string" ? parsed.reaction.trim() : "";
+ return { reaction, questions, raw };
+}

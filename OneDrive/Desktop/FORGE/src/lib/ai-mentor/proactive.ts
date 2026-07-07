@@ -14,7 +14,7 @@
 import { prisma } from "@/lib/prisma";
 import { aiMentorEnabled } from "./feature-flag";
 import { checkBudget } from "./budget";
-import { callTheProfessor } from "./client";
+import { callTheProfessor, generateDefenceQuestions } from "./client";
 import { inspectGithubRepo, formatInspectionForProfessor } from "./github-inspector";
 import { inspectLiveUrl, formatUrlInspectionForProfessor } from "./url-fetcher";
 
@@ -33,6 +33,15 @@ const isHttp = (u?: string | null) => !!u && /^https?:\/\//i.test(u);
 export async function runProactiveReview(input: ReviewInput): Promise<void> {
  try {
  if (!aiMentorEnabled({ userId: input.userId })) return;
+
+ // The Professor only reviews SOLO learners. If a human mentor is on this
+ // learner, their submission goes to that mentor's review queue — don't
+ // touch it (and don't overwrite their mentor_async interrogation).
+ const humanMentor = await prisma.mentorLink.findFirst({
+ where: { menteeId: input.userId, isActive: true },
+ select: { id: true },
+ });
+ if (humanMentor) return;
 
  // Cost guardrail — silently skip if the learner is over budget.
  const budget = await checkBudget(input.userId);
@@ -92,54 +101,79 @@ export async function runProactiveReview(input: ReviewInput): Promise<void> {
  }
  const evidenceSummary = evidence.join("\n\n---\n\n") || "No inspectable artefact was attached.";
 
- const userMessage = `${user.name?.split(" ")[0] ?? "The student"} just submitted work for Week ${weekNumber} without being asked to. This is a PROACTIVE review, they did not request it.
+ const first = user.name?.split(" ")[0] ?? "Student";
 
-Their submission note: "${input.description}"
-
-Inspected evidence (ground truth):
-${evidenceSummary}
-
-Speak to them directly, first person, as their mentor reaching out. Do all of this, grounded strictly in the inspected evidence, never generic:
-1. Say what is genuinely good, and be specific about why.
-2. Cross-check their claims and their README against what the code ACTUALLY is. If they contradict each other (the README claims one library or feature but the code does something else, a "deployed" link that is broken, a claimed test suite that is empty), name the contradiction exactly and call it out. Do not let it slide.
-3. Name what is weak or missing.
-4. If the work is genuinely strong, do NOT just praise it, raise the bar: give them the harder thing to reach for next. If it is thin, fake, or falls short of the week's standard, say so plainly.
-5. End with the single most important thing to do next.
-Keep it under 180 words.`;
-
- const result = await callTheProfessor({
- studentFirstName: user.name?.split(" ")[0] ?? "Student",
+ // Read the work and, in one call, react + generate the defence questions.
+ const gen = await generateDefenceQuestions({
+ studentFirstName: first,
  trackTitle: task.phase.track.roadmap.title,
  weekNumber,
  weekTitle: task.title,
  weekBrief: task.detail,
  priorWarningCount,
  priorInteractionSummary,
- userMessage,
- maxTokens: 700,
+ userMessage: `${first} just shipped Week ${weekNumber} without being asked. Their submission note: "${input.description}". Before you sign anything off, you are going to make them defend the work.`,
+ evidenceSummary,
+ count: 3,
  });
+ const { reaction, questions } = gen;
 
- const text = result.text.trim();
- if (!text) return;
+ // Store the questions on THIS check-in's interrogation (ai_solo defence),
+ // stashing the evidence so grading later judges against exactly what was
+ // reviewed. Interrogation is 1:1 with the check-in, so upsert on checkinId.
+ if (questions.length > 0) {
+ const transcript: Array<Record<string, unknown>> = [
+ { role: "system", type: "EVIDENCE", content: evidenceSummary },
+ ];
+ questions.forEach((q, i) =>
+ transcript.push({ role: "assistant", type: "AI_QUESTION", questionNumber: i + 1, content: q }),
+ );
+ await prisma.interrogation.upsert({
+ where: { checkinId: input.checkinId },
+ create: {
+ checkinId: input.checkinId,
+ mode: "ai_solo",
+ isDefence: true,
+ transcript: transcript as unknown as object,
+ tokensUsed: gen.raw.inputTokens + gen.raw.outputTokens,
+ },
+ update: {
+ mode: "ai_solo",
+ isDefence: true,
+ transcript: transcript as unknown as object,
+ passed: false,
+ overallScore: 0,
+ feedback: null,
+ completedAt: null,
+ },
+ });
+ }
 
- // Audit trail + the message that will pop on the dashboard.
+ const popup =
+ questions.length > 0
+ ? `${reaction ? reaction + "\n\n" : ""}I've left ${questions.length} question${questions.length === 1 ? "" : "s"} about your work on your Roadmap. Answer them to lock in this week — I want to see you can defend what you shipped.`
+ : reaction || "I've looked at your submission.";
+
  await prisma.aIMentorInteraction.create({
  data: {
  userId: input.userId,
  taskId: input.taskId,
  kind: "review",
- response: text,
- evidence: { checkinId: input.checkinId, evidenceUrl: input.evidenceUrl ?? null },
- tokensUsed: result.inputTokens + result.outputTokens,
- costUsd: result.costUsd,
+ response: reaction || popup,
+ evidence: { checkinId: input.checkinId, evidenceUrl: input.evidenceUrl ?? null, questions },
+ tokensUsed: gen.raw.inputTokens + gen.raw.outputTokens,
+ costUsd: gen.raw.costUsd,
  },
  });
  await prisma.notification.create({
  data: {
  userId: input.userId,
  kind: "professor-message",
- title: `The Professor reviewed your Week ${weekNumber} work`,
- body: text,
+ title:
+ questions.length > 0
+ ? `The Professor has ${questions.length} question${questions.length === 1 ? "" : "s"} about your Week ${weekNumber} work`
+ : `The Professor reviewed your Week ${weekNumber} work`,
+ body: popup,
  href: "/dashboard/roadmap",
  },
  });
