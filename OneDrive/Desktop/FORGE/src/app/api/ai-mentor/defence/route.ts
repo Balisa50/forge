@@ -37,6 +37,50 @@ function evidenceOf(t: TItem[]): string {
  return t.find((x) => x.type === "EVIDENCE")?.content ?? "";
 }
 
+// Sanitize the client proctor report before it ever touches the DB or the
+// grader. Caps counts + payload sizes so a tampered client can't bloat the row.
+type ProctorPayload = {
+ proctored: boolean;
+ summary: string;
+ events: { role: "proctor"; kind: "event"; event: { type: string; label: string }; timestamp: string }[];
+ snapshots: { role: "proctor"; kind: "snapshot"; content: string; timestamp: string }[];
+};
+function sanitizeProctor(raw: unknown): ProctorPayload | null {
+ if (!raw || typeof raw !== "object") return null;
+ const r = raw as Record<string, unknown>;
+ const events = Array.isArray(r.events)
+ ? (r.events as Record<string, unknown>[])
+ .filter((e) => e && typeof e === "object" && e.event)
+ .slice(0, 60)
+ .map((e) => ({
+ role: "proctor" as const,
+ kind: "event" as const,
+ event: {
+ type: String((e.event as Record<string, unknown>)?.type ?? "flag").slice(0, 40),
+ label: String((e.event as Record<string, unknown>)?.label ?? "").slice(0, 120),
+ },
+ timestamp: typeof e.timestamp === "string" ? e.timestamp.slice(0, 40) : new Date().toISOString(),
+ }))
+ : [];
+ const snapshots = Array.isArray(r.snapshots)
+ ? (r.snapshots as Record<string, unknown>[])
+ .filter((s) => s && typeof s.content === "string" && (s.content as string).startsWith("data:image/"))
+ .slice(0, 6)
+ .map((s) => ({
+ role: "proctor" as const,
+ kind: "snapshot" as const,
+ content: (s.content as string).slice(0, 60000),
+ timestamp: typeof s.timestamp === "string" ? s.timestamp.slice(0, 40) : new Date().toISOString(),
+ }))
+ : [];
+ return {
+ proctored: r.proctored === true,
+ summary: typeof r.summary === "string" ? r.summary.slice(0, 500) : "",
+ events,
+ snapshots,
+ };
+}
+
 export async function GET() {
  const session = await auth();
  if (!session?.user?.id) return NextResponse.json({ defence: null });
@@ -83,6 +127,7 @@ export async function POST(req: NextRequest) {
  ? body.answers.map((a: unknown) => (typeof a === "string" ? a : "")).map((a: string) => a.slice(0, 4000))
  : [];
  if (!interrogationId) return NextResponse.json({ error: "interrogationId required" }, { status: 400 });
+ const proctor = sanitizeProctor(body.proctor);
 
  // Load the interrogation and confirm the caller owns it.
  const interro = await prisma.interrogation.findUnique({
@@ -142,6 +187,8 @@ How to tell them apart:
 
 If an answer is correct-sounding but does NOT tie to concrete specifics from THIS student's actual code and evidence, treat it as likely AI-generated and do NOT pass it. Reward specific, first-hand detail; fail generic fluency and anything that contradicts the evidence. Only a student who truly built this can point to their own code — one who did not will speak in generalities. Do not pass work the student cannot genuinely defend.
 
+${proctor ? `PROCTORING REPORT for this live defence: ${proctor.summary} If the session was heavily flagged (face absent, more than one person on camera, repeatedly looking away, or leaving the page), treat that as a serious integrity concern and factor it into your verdict and feedback — a clean camera does not by itself pass weak answers, but heavy flags alongside generic answers are strong grounds to withhold a pass. Do not mention exact flag counts; speak to it as the mentor who was watching.` : ""}
+
 Questions you asked:\n${questions.map((q, i) => `Q${i + 1}: ${q.prompt}`).join("\n")}`,
  masteryAnswers: answers,
  evidenceSummary,
@@ -154,11 +201,14 @@ Questions you asked:\n${questions.map((q, i) => `Q${i + 1}: ${q.prompt}`).join("
  const passed = verdict === "verified";
  const score = verdict === "verified" ? 10 : verdict === "needs_work" ? 5 : 2;
 
- // Append the answers + verdict to the transcript, close the interrogation.
+ // Append the answers + verdict + proctor record to the transcript, close it.
+ // Proctor entries use role "proctor" (kind event|snapshot) — the same shape
+ // the mentor Reviews page already renders.
  const finalTranscript = [
  ...t,
  ...answers.map((a, i) => ({ role: "user", type: "AI_ANSWER", questionNumber: i + 1, content: a })),
  { role: "assistant", type: "VERDICT", content: graded.result.feedback, verdict },
+ ...(proctor ? [...proctor.events, ...proctor.snapshots] : []),
  ];
  await prisma.interrogation.update({
  where: { id: interro.id },

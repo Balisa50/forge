@@ -12,6 +12,14 @@
 
 import { useEffect, useState } from "react";
 import { GraduationCap, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import ProctorView from "@/components/ProctorView";
+import { useProctor } from "@/lib/proctor/useProctor";
+
+// Camera check is ON by default. Set NEXT_PUBLIC_PROCTOR_ENABLED="false" to skip
+// it entirely; set NEXT_PUBLIC_PROCTOR_REQUIRED="true" to HARD-block a defence
+// when the camera is denied (default is required-with-fallback: allow but flag).
+const PROCTOR_ENABLED = process.env.NEXT_PUBLIC_PROCTOR_ENABLED !== "false";
+const PROCTOR_REQUIRED = process.env.NEXT_PUBLIC_PROCTOR_REQUIRED === "true";
 
 interface Defence {
  interrogationId: string;
@@ -33,6 +41,12 @@ export default function DefendPanel() {
  const [error, setError] = useState<string | null>(null);
  const [result, setResult] = useState<Verdict | null>(null);
 
+ // Proctor runs only while actively defending (questions up, not yet graded).
+ const proctorOn = PROCTOR_ENABLED && !!defence && !result;
+ const proctor = useProctor(proctorOn);
+ const proctorFailed =
+ proctor.status === "denied" || proctor.status === "unsupported" || proctor.status === "error";
+
  useEffect(() => {
  let cancelled = false;
  (async () => {
@@ -52,17 +66,20 @@ export default function DefendPanel() {
  const setAnswer = (i: number, v: string) =>
  setAnswers((prev) => prev.map((a, j) => (j === i ? v : a)));
 
- const ready = defence && answers.every((a) => a.trim().length >= 3) && !submitting;
+ // Hard-required mode blocks submit while the camera is denied/unavailable.
+ const blockedByProctor = PROCTOR_REQUIRED && proctorFailed;
+ const ready = defence && answers.every((a) => a.trim().length >= 3) && !submitting && !blockedByProctor;
 
  const submit = async () => {
  if (!defence || !ready) return;
  setSubmitting(true);
  setError(null);
  try {
+ const report = PROCTOR_ENABLED ? proctor.getReport() : undefined;
  const res = await fetch("/api/ai-mentor/defence", {
  method: "POST",
  headers: { "Content-Type": "application/json" },
- body: JSON.stringify({ interrogationId: defence.interrogationId, answers }),
+ body: JSON.stringify({ interrogationId: defence.interrogationId, answers, proctor: report }),
  });
  const data = await res.json().catch(() => ({}));
  if (res.status === 429) { setError(data.message || "Give it a minute — you've hit the rate limit."); return; }
@@ -109,6 +126,20 @@ export default function DefendPanel() {
  <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.55, marginBottom: "1.125rem", maxWidth: 680 }}>
  The Professor reviewed <strong style={{ color: "var(--text-primary)" }}>{defence.weekTitle}</strong> and has {defence.questions.length} question{defence.questions.length === 1 ? "" : "s"} about your actual code. Answer honestly and specifically — it marks strictly, and passing this locks in the week.
  </p>
+
+ {PROCTOR_ENABLED && (
+ <ProctorView
+ status={proctor.status}
+ coaching={proctor.coaching}
+ flagCount={proctor.flagCount}
+ videoRef={proctor.videoRef}
+ />
+ )}
+ {blockedByProctor && (
+ <p style={{ marginBottom: "1rem", color: "var(--red)", fontSize: "0.8125rem" }}>
+ A working camera is required to defend your work. Enable camera access and reload this page to continue.
+ </p>
+ )}
 
  <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
  {defence.questions.map((q, i) => (
