@@ -8,7 +8,7 @@ An AI interrogator reads what you say you did today and cross-examines you on it
 
 1. You hit the lock screen
 2. Log what you actually did today
-3. The interrogator grills you — specific questions, uncomfortable, hard to fake
+3. The interrogator grills you. Specific questions, uncomfortable, hard to fake
 4. Convince it and you're in
 5. Skip a day and the streak is gone
 
