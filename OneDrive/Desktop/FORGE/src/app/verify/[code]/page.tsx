@@ -4,7 +4,13 @@ import { Shield, CheckCircle2, XCircle } from "lucide-react";
 async function verifyCertificate(code: string) {
  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
  try {
- const res = await fetch(`${baseUrl}/api/certificate?code=${code}`, { cache: "no-store" });
+ // This page server-renders a certificate check, so an unbounded call blocks
+ // the render itself. The catch below already degrades to an invalid result,
+ // which is the right answer when verification cannot be completed.
+ const res = await fetch(`${baseUrl}/api/certificate?code=${code}`, {
+ cache: "no-store",
+ signal: AbortSignal.timeout(8_000),
+ });
  return res.json();
  } catch {
  return { valid: false };

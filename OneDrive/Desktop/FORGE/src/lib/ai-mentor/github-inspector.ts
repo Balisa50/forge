@@ -11,6 +11,12 @@
  * unauthenticated limit (fine for low-volume early stage).
  */
 
+// The mentor inspects a learner's repository while they wait on the response,
+// so an unbounded call to GitHub leaves them staring at a spinner whenever the
+// API is slow or rate limiting. Ten seconds is far beyond a healthy response
+// and every caller here already handles a failure by degrading.
+const GITHUB_TIMEOUT_MS = 10_000;
+
 export interface RepoInspection {
  url: string;
  owner: string;
@@ -46,7 +52,10 @@ async function gh<T>(path: string): Promise<{ ok: boolean; status: number; data?
  "X-GitHub-Api-Version": "2022-11-28",
  };
  if (process.env.GITHUB_PAT) headers.Authorization = `Bearer ${process.env.GITHUB_PAT}`;
- const res = await fetch(`https://api.github.com${path}`, { headers });
+ const res = await fetch(`https://api.github.com${path}`, {
+    headers,
+    signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS),
+  });
  if (!res.ok) return { ok: false, status: res.status };
  const data = (await res.json()) as T;
  return { ok: true, status: res.status, data };
@@ -100,6 +109,7 @@ export async function inspectGithubRepo(url: string): Promise<RepoInspection> {
  Accept: "application/vnd.github.raw",
  ...(process.env.GITHUB_PAT ? { Authorization: `Bearer ${process.env.GITHUB_PAT}` } : {}),
  },
+   signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS),
  },
  );
  if (readmeRes.ok) {
@@ -157,6 +167,7 @@ export async function inspectGithubRepo(url: string): Promise<RepoInspection> {
  "X-GitHub-Api-Version": "2022-11-28",
  ...(process.env.GITHUB_PAT ? { Authorization: `Bearer ${process.env.GITHUB_PAT}` } : {}),
  },
+   signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS),
  },
  );
  if (res.ok) {
