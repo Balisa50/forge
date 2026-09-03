@@ -2,8 +2,9 @@
 // Critical: NO NEW DAY. We prepend a NumPy lesson + canonical reading + a
 // dedicated "Quick check — NumPy basics" swipe into D1's existing items
 // array. The downstream vector lesson now has a real prerequisite to lean on.
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const w2 = ds.weeks[1]; // W2: Math you actually need

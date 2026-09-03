@@ -1,8 +1,9 @@
 // Rebuild DS W40-W41 to the teach->swipe->project standard.
 // W40 Reinforcement Learning — the practical intro
 // W41 Recommender Systems — the algorithms behind every feed
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

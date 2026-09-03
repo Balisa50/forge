@@ -1,8 +1,9 @@
 // Rebuild DS W35-W36 to the teach->swipe->project standard.
 // W35 Causal Inference - going beyond correlation
 // W36 ML Fairness and Bias - the audit you actually run
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

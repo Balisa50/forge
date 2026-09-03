@@ -4,8 +4,9 @@
 //   W3 Polyglot v0.3 — eval set + LLM-as-judge
 //   W4 Polyglot v0.4 — prompt injection defence
 //   W5 OpenAI + Anthropic SDKs in depth
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/ai-engineering.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'ai-engineering.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

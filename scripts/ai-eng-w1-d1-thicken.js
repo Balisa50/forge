@@ -10,8 +10,9 @@
 //      teaches the same first-call concept the video would have covered.
 //
 // Idempotent: re-running checks for the marker phrase before patching.
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/ai-engineering.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'ai-engineering.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const w1 = ds.weeks[0];

@@ -9,8 +9,9 @@
 // it sits well inside the platform's 15-min hard cap (10-min preferred).
 //
 // Idempotent: re-running the script skips when the video is already there.
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const w2 = ds.weeks[1];

@@ -20,7 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps';
+const ROOT = path.join(__dirname, '..', 'data', 'roadmaps');
 
 // ─── Tool teach library ──────────────────────────────────────────────
 // Each entry returns an ORDER of items to prepend into W1 D1. Lesson

@@ -14,7 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps';
+const ROOT = path.join(__dirname, '..', 'data', 'roadmaps');
 const TRACKS = [
   'data-science', 'data-analysis', 'ai-engineering', 'ml-engineering',
   'full-stack-web', 'mobile-engineering', 'devops-cloud', 'cybersecurity',

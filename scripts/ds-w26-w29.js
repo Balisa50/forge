@@ -1,8 +1,9 @@
 // Rebuild DS W26-W29 to the teach -> swipe -> project standard.
 // W26 Cloud + BigQuery, W27 Energy Forecast v1.0 ship + retro,
 // W28 Capstone v0.1 (pick + scope), W29 Capstone v0.2 (build).
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

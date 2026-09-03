@@ -2,8 +2,9 @@
 // of Data Analysis Week 2, before the existing Day 1 (Series). The renderer
 // iterates week.days in order, so a day with number:0 displays first as
 // "Day 0 — Your Coding Environment". No other days are modified.
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-analysis.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-analysis.json');
 const d = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 const w2 = d.weeks.find(w => w.number === 2);
 if (!w2) throw new Error('W2 not found');

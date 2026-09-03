@@ -1,8 +1,9 @@
 // Rebuild DS W42-W43 to the teach->swipe->project standard.
 // W42 Distributed ML — when your data does not fit on one laptop
 // W43 Privacy and Differential Privacy — the senior-DS topic nobody teaches
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

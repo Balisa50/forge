@@ -390,7 +390,7 @@ function buildDay0(env) {
   return recipes[env];
 }
 
-const ROOT = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps';
+const ROOT = path.join(__dirname, '..', 'data', 'roadmaps');
 
 let added = 0;
 let skipped = 0;

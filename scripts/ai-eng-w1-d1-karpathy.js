@@ -15,8 +15,9 @@
 //   exception, not a precedent for adding more 60-min videos.
 //
 // Idempotent: skip if the video is already present.
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/ai-engineering.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'ai-engineering.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const w1 = ds.weeks[0];

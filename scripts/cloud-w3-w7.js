@@ -4,8 +4,9 @@
 //   W5 Docker from first principles
 //   W6 Docker Compose + the inner loop
 //   W7 Image hardening + scanning + supply chain
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/devops-cloud.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'devops-cloud.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

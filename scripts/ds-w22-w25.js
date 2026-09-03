@@ -1,8 +1,9 @@
 // Rebuild DS W22-W25 to the teach -> swipe -> project standard. Carries the
 // Energy Forecast project arc forward (v0.2 ARIMA -> v0.3 Prophet -> v0.4 LSTM)
 // and lands W25 on MLOps + drift monitoring.
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });

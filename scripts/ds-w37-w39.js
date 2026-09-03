@@ -3,8 +3,9 @@
 //   W37 v0.2 — Reproducibility + rigorous evaluation
 //   W38 v0.3 — Refactor + tests + Docker + deploy
 //   W39 v1.0 — Story + readers + interview-ready ship
+const path = require('path');
 const fs = require('fs');
-const FILE = 'C:/Users/Abdoulie Balisa/OneDrive/Desktop/FORGE/data/roadmaps/data-science.json';
+const FILE = path.join(__dirname, '..', 'data', 'roadmaps', 'data-science.json');
 const ds = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 
 const L = (title, body) => ({ kind: 'lesson', title, body });
